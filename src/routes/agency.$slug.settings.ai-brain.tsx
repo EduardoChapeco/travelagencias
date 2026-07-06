@@ -60,16 +60,16 @@ function BrainPanel() {
   const inboundCount = inboxMessages.filter((m: any) => m.direction === 'inbound').length;
 
   return (
-    <div className="flex h-full flex-col overflow-hidden bg-background">
+    <div className="flex h-full flex-col overflow-hidden">
       <HeaderPortal>
         <div className="flex items-center gap-2">
            <Badge variant="outline" className="bg-brand/10 text-brand border-none">
              <Zap className="w-3 h-3 mr-1" /> Cérebro Ativo (Gemini 2.5)
            </Badge>
-        </div>
+         </div>
       </HeaderPortal>
 
-      <div className="flex-1 overflow-y-auto p-4 md:p-6 space-y-6">
+      <div className="flex-1 overflow-y-auto px-4 md:px-6 py-4 min-h-0 space-y-6">
         <div>
           <h1 className="text-xl font-bold text-foreground flex items-center gap-2">
             <Brain className="h-5 w-5 text-brand" /> Cérebro Vetorial & Inbox IA

@@ -256,7 +256,7 @@ function FinancialSettingsPage() {
   if (!agency) return null;
 
   return (
-    <div className="flex h-full flex-col overflow-hidden bg-background">
+    <div className="flex h-full flex-col overflow-hidden">
       <HeaderPortal>
         <div className="flex items-center gap-2">
           {activeTab === "commissions" && (
@@ -271,24 +271,24 @@ function FinancialSettingsPage() {
       </HeaderPortal>
 
       {/* Tabs Menu */}
-      <div className="border-b border-border bg-white shrink-0 px-4 md:px-6">
-        <div className="flex gap-4">
+      <div className="flex flex-col sm:flex-row gap-2 sm:items-center justify-between border-b border-border bg-surface/50 px-4 md:px-6 py-3 shrink-0 no-margin-bottom">
+        <div className="flex bg-surface p-0.5 rounded-full border border-border text-xs gap-1 shrink-0 flex-nowrap">
           <button
             onClick={() => setActiveTab("closing")}
-            className={`py-3.5 text-xs font-bold border-b-2 transition-colors cursor-pointer ${
+            className={`px-3 py-1 text-xs font-semibold rounded-full transition-all cursor-pointer whitespace-nowrap ${
               activeTab === "closing"
-                ? "border-brand text-brand"
-                : "border-transparent text-muted-foreground hover:text-foreground"
+                ? "bg-white/10 text-white border border-white/5 shadow-xs"
+                : "text-white/60 hover:text-white"
             }`}
           >
             Fechamento Mensal
           </button>
           <button
             onClick={() => setActiveTab("commissions")}
-            className={`py-3.5 text-xs font-bold border-b-2 transition-colors cursor-pointer ${
+            className={`px-3 py-1 text-xs font-semibold rounded-full transition-all cursor-pointer whitespace-nowrap ${
               activeTab === "commissions"
-                ? "border-brand text-brand"
-                : "border-transparent text-muted-foreground hover:text-foreground"
+                ? "bg-white/10 text-white border border-white/5 shadow-xs"
+                : "text-white/60 hover:text-white"
             }`}
           >
             Planos de Comissões
@@ -296,7 +296,7 @@ function FinancialSettingsPage() {
         </div>
       </div>
 
-      <div className="flex-1 overflow-y-auto p-4 md:p-6 min-h-0">
+      <div className="flex-1 overflow-y-auto px-4 md:px-6 py-4 min-h-0">
         {/* ─────────────────────────────────────────────────────────────────────
             TAB: Fechamento Contábil Mensal
             ───────────────────────────────────────────────────────────────────── */}

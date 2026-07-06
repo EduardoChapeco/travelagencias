@@ -356,6 +356,66 @@
     padding: 10px 20px !important;
   }
 
+  .os-workspace .no-margin-bottom {
+    margin-bottom: 0px !important;
+  }
+
+  /* Unificação de controles da barra de ferramentas (Search, Filtros, Actions) */
+  .os-workspace div[class*="border-b"][class*="px-4"] input,
+  .os-workspace div[class*="border-b"][class*="px-4"] select,
+  .os-workspace .flex-col.sm\:flex-row.gap-2.border-b input,
+  .os-workspace .flex-col.sm\:flex-row.gap-2.border-b select,
+  .os-workspace [data-toolbar] input,
+  .os-workspace [data-toolbar] select {
+    height: 32px !important; /* h-8 */
+    border-radius: 9999px !important; /* rounded-full */
+    background: rgba(255, 255, 255, 0.05) !important;
+    border: 1px solid rgba(255, 255, 255, 0.09) !important;
+    color: rgba(255, 255, 255, 0.90) !important;
+    font-size: 11px !important;
+    padding-left: 12px !important;
+    padding-right: 12px !important;
+    outline: none !important;
+    transition: border-color 0.2s ease, background-color 0.2s ease !important;
+  }
+
+  .os-workspace div[class*="border-b"][class*="px-4"] input:focus,
+  .os-workspace div[class*="border-b"][class*="px-4"] select:focus {
+    border-color: rgba(255, 255, 255, 0.20) !important;
+    background: rgba(255, 255, 255, 0.08) !important;
+  }
+
+  .os-workspace div[class*="border-b"][class*="px-4"] input[placeholder*="Buscar"],
+  .os-workspace div[class*="border-b"][class*="px-4"] input[class*="pl-8"] {
+    padding-left: 32px !important; /* Mantém espaço para o ícone de busca */
+  }
+
+  .os-workspace div[class*="border-b"][class*="px-4"] button,
+  .os-workspace .flex-col.sm\:flex-row.gap-2.border-b button,
+  .os-workspace [data-toolbar] button {
+    height: 32px !important; /* h-8 */
+    border-radius: 9999px !important; /* rounded-full */
+    font-size: 11px !important;
+    padding-left: 14px !important;
+    padding-right: 14px !important;
+    font-weight: 600 !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 6px !important;
+  }
+
+  /* Ajuste para botões de ícone simples ficarem redondos e sem esticar */
+  .os-workspace div[class*="border-b"][class*="px-4"] button.p-1,
+  .os-workspace div[class*="border-b"][class*="px-4"] button.p-1.5,
+  .os-workspace div[class*="border-b"][class*="px-4"] button[class*="w-7"][class*="h-7"],
+  .os-workspace div[class*="border-b"][class*="px-4"] button[class*="w-8"][class*="h-8"] {
+    width: 32px !important;
+    height: 32px !important;
+    padding: 0 !important;
+    border-radius: 9999px !important;
+  }
+
   /* Tabs internas dos módulos → pill rounded-full no item ativo */
   .os-workspace [role="tablist"] {
     background: rgba(255, 255, 255, 0.05) !important;

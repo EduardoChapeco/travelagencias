@@ -1,6 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { cn } from "@/lib/utils";
 import { Plus, BookOpen, Edit2, Eye, Search, Workflow, ClipboardList, Trash2 } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
@@ -94,52 +95,54 @@ function KnowledgePage() {
   );
 
   return (
-    <div className="flex h-full flex-col overflow-hidden bg-background">
+    <div className="flex h-full flex-col overflow-hidden">
       <HeaderPortal>
         <div className="flex items-center gap-2">
           {/* Actions */}
           {tab === "articles" ? (
             <button
               onClick={() => setOpen(true)}
-              className="flex h-8 items-center justify-center gap-1.5 rounded bg-brand px-2 sm:px-2.5 text-xs font-bold text-brand-foreground hover:bg-brand/90 transition-colors cursor-pointer"
+              className="flex h-8 items-center justify-center gap-1.5 rounded-full bg-brand px-3 text-xs font-semibold text-brand-foreground hover:bg-brand/90 transition-colors cursor-pointer"
               title="Novo Artigo"
             >
-              <Plus className="h-3 w-3" />
-              <span className="hidden sm:inline">Artigo</span>
+              <Plus className="h-3.5 w-3.5" />
+              <span>Novo Artigo</span>
             </button>
           ) : (
             <button
               onClick={() => setPlaybookOpen(true)}
-              className="flex h-8 items-center justify-center gap-1.5 rounded bg-brand px-2 sm:px-2.5 text-xs font-bold text-brand-foreground hover:bg-brand/90 transition-colors cursor-pointer"
+              className="flex h-8 items-center justify-center gap-1.5 rounded-full bg-brand px-3 text-xs font-semibold text-brand-foreground hover:bg-brand/90 transition-colors cursor-pointer"
               title="Novo Playbook"
             >
-              <Plus className="h-3 w-3" />
-              <span className="hidden sm:inline">Playbook</span>
+              <Plus className="h-3.5 w-3.5" />
+              <span>Novo Playbook</span>
             </button>
           )}
         </div>
       </HeaderPortal>
 
-      <div className="flex flex-col sm:flex-row gap-2 sm:items-center justify-between border-b border-border bg-surface/50 px-4 md:px-6 py-3 shrink-0">
+      <div className="flex flex-col sm:flex-row gap-2 sm:items-center justify-between border-b border-border bg-surface/50 px-4 md:px-6 py-3 shrink-0 no-margin-bottom">
         {/* Tab Switcher */}
-        <div className="flex items-center gap-1 rounded bg-surface p-0.5 border border-border/60 w-full sm:w-auto justify-center sm:justify-start">
+        <div className="flex bg-surface p-0.5 rounded-full border border-border text-xs gap-1 shrink-0 flex-nowrap w-full sm:w-auto justify-center sm:justify-start">
           <button
             onClick={() => setTab("articles")}
-            className={`rounded px-2.5 py-1 ds-label-caps transition-all ${
+            className={cn(
+              "px-3 py-1 text-xs font-semibold rounded-full transition-all cursor-pointer whitespace-nowrap",
               tab === "articles"
-                ? "bg-surface-alt text-foreground border border-border/40"
-                : "text-muted-foreground hover:text-foreground"
-            }`}
+                ? "bg-white/10 text-white border border-white/5 shadow-xs"
+                : "text-white/60 hover:text-white"
+            )}
           >
             Guias
           </button>
           <button
             onClick={() => setTab("playbooks")}
-            className={`rounded px-2.5 py-1 ds-label-caps transition-all ${
+            className={cn(
+              "px-3 py-1 text-xs font-semibold rounded-full transition-all cursor-pointer whitespace-nowrap",
               tab === "playbooks"
-                ? "bg-surface-alt text-foreground border border-border/40"
-                : "text-muted-foreground hover:text-foreground"
-            }`}
+                ? "bg-white/10 text-white border border-white/5 shadow-xs"
+                : "text-white/60 hover:text-white"
+            )}
           >
             Playbooks
           </button>
@@ -153,14 +156,14 @@ function KnowledgePage() {
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             placeholder="Buscar..."
-            className="h-8 w-full rounded border border-border bg-surface pl-8 pr-2 text-xs outline-none focus:border-brand text-foreground"
+            className="h-8 w-full rounded-full border border-border bg-surface pl-8 pr-2 text-xs outline-none focus:border-brand text-foreground"
           />
         </div>
       </div>
 
       {/* ARTICLES TAB */}
       {tab === "articles" && (
-        <div className="flex-1 overflow-y-auto p-4 md:p-6 min-h-0">
+        <div className="flex-1 overflow-y-auto px-4 md:px-6 py-4 min-h-0">
           {q.isLoading && <div className="text-sm text-muted-foreground">Carregando…</div>}
           {filtered.length === 0 && !q.isLoading && (
             <EmptyState
@@ -169,34 +172,33 @@ function KnowledgePage() {
             />
           )}
 
-          <div className="grid grid-cols-1 gap-3 md:grid-cols-2 xl:grid-cols-3">
-            {filtered.map((a) => (
+          <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6 pb-12">
+            {filtered.map((a: any) => (
               <button
                 key={a.id}
                 onClick={() => setViewing(a)}
-                className="group rounded-2xl border border-border bg-surface p-5 text-left transition-all hover:border-brand/40 cursor-pointer"
+                className="group rounded-2xl border border-border bg-surface p-5 text-left transition-all hover:border-brand/40 cursor-pointer flex flex-col justify-between"
               >
-                <div className="flex items-start justify-between gap-2">
-                  <BookOpen className="h-4 w-4 text-muted-foreground" />
-                  <StatusBadge tone={a.is_internal ? "warning" : "info"}>
-                    {a.is_internal ? "interno" : "público"}
-                  </StatusBadge>
-                </div>
-                <div className="mt-2 font-semibold flex items-center justify-between gap-2">
-                  {a.title}
-                  <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                    <button
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        setEditing(a);
-                      }}
-                      className="p-1 hover:bg-surface-alt rounded text-muted-foreground cursor-pointer"
-                    >
-                      <Edit2 className="w-3.5 h-3.5" />
-                    </button>
+                <div>
+                  <div className="flex items-center justify-between mb-2">
+                    <span className="text-[10px] font-semibold text-brand tracking-widest uppercase">
+                      {a.is_internal ? "Interno" : "Público"}
+                    </span>
+                    {a.ai_generated_at && (
+                      <span className="flex items-center gap-1 text-[9px] font-bold text-success bg-success/10 border border-success/20 px-2 py-0.5 rounded-full">
+                        <Plus className="w-2.5 h-2.5" /> IA
+                      </span>
+                    )}
                   </div>
+                  <h3 className="font-bold text-foreground text-sm leading-snug group-hover:text-brand transition-colors mb-2">
+                    {a.title}
+                  </h3>
+                  <p className="text-xs text-muted-foreground line-clamp-3 mb-4 leading-relaxed">
+                    {a.summary || "Sem sumário disponível."}
+                  </p>
                 </div>
-                <div className="text-xs text-muted-foreground flex items-center justify-between">
+
+                <div className="flex items-center justify-between pt-4 border-t border-border/40 text-[10px] font-bold text-muted-foreground uppercase tracking-wider mt-auto">
                   {a.category ?? "Geral"}
                   {!a.is_internal && (
                     <span className="flex items-center gap-1">
@@ -206,7 +208,7 @@ function KnowledgePage() {
                 </div>
                 {a.tags?.length > 0 && (
                   <div className="mt-2 flex flex-wrap gap-1">
-                    {a.tags.map((t) => (
+                    {a.tags.map((t: string) => (
                       <span key={t} className="rounded bg-surface-alt px-1.5 py-0.5 text-[10px]">
                         {t}
                       </span>
@@ -221,7 +223,7 @@ function KnowledgePage() {
 
       {/* PLAYBOOKS TAB */}
       {tab === "playbooks" && (
-        <div className="flex-1 overflow-y-auto p-4 md:p-6 min-h-0">
+        <div className="flex-1 overflow-y-auto px-4 md:px-6 py-4 min-h-0">
           {playbooksQ.isLoading && <div className="text-sm text-muted-foreground">Carregando…</div>}
           {filteredPlaybooks.length === 0 && !playbooksQ.isLoading && (
             <EmptyState

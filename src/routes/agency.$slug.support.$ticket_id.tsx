@@ -1,4 +1,4 @@
-import { createFileRoute, useNavigate, useParams } from "@tanstack/react-router";
+import { createFileRoute, useNavigate, useParams, Link } from "@tanstack/react-router";
 import { useState, useCallback, useEffect } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useAgency } from "@/lib/agency-context";
@@ -45,7 +45,7 @@ const REFUND_STATUS_OPTIONS = [
 
 function TicketAdvancedRoute() {
   const { agency } = useAgency();
-  const { ticket_id } = useParams({ from: "/agency/$slug/support/$ticket_id" });
+  const { slug, ticket_id } = useParams({ from: "/agency/$slug/support/$ticket_id" });
   const navigate = useNavigate();
   const qc = useQueryClient();
 
@@ -249,18 +249,19 @@ function TicketAdvancedRoute() {
     || "Não atribuído";
 
   return (
-    <div className="flex h-[calc(100vh-4rem)] bg-background overflow-hidden">
+    <div className="flex h-[calc(100vh-4rem)] overflow-hidden">
       {/* ── Esquerda: Timeline e Interação ────────────────────────────────── */}
       <div className="flex-1 flex flex-col min-w-0 border-r border-border">
         {/* Header */}
         <div className="p-6 border-b border-border bg-surface flex flex-col gap-4">
-          <div className="flex items-start gap-4">
-            <button
-              onClick={() => navigate({ to: ".." })}
-              className="p-2 hover:bg-surface-muted rounded-full shrink-0 mt-0.5"
+          <div className="flex items-center gap-4">
+            <Link
+              to="/agency/$slug/support"
+              params={{ slug }}
+              className="flex h-8 w-8 items-center justify-center rounded-full border border-white/10 bg-white/5 text-white/70 hover:bg-white/10 transition-colors shrink-0 cursor-pointer"
             >
-              <ArrowLeft className="w-5 h-5 text-muted-foreground" />
-            </button>
+              <ArrowLeft className="h-4 w-4" />
+            </Link>
             <div className="flex-1 min-w-0">
               <h1 className="text-xl font-bold text-foreground flex items-start gap-2 flex-wrap">
                 <span className="flex-1 min-w-0">{ticket.title}</span>

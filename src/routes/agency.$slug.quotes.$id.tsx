@@ -622,13 +622,13 @@ Resuma de forma profissional e persuasiva (estilo consultor premium de turismo) 
   const budgetLimit = intent?.budget?.amount || 0;
 
   return (
-    <div className="flex h-full flex-col overflow-hidden bg-background">
+    <div className="flex h-full flex-col overflow-hidden">
       <HeaderPortal>
         <div className="flex items-center gap-2">
           <Link
             to="/agency/$slug/quotes"
             params={{ slug }}
-            className="inline-flex h-8 items-center gap-1.5 rounded border border-border px-3 text-xs font-bold text-foreground hover:bg-surface-alt transition-colors"
+            className="inline-flex h-8 items-center gap-1.5 rounded-full border border-white/10 bg-white/5 px-3 text-xs font-bold text-white/90 hover:bg-white/10 transition-colors cursor-pointer"
           >
             <ArrowLeft className="h-3.5 w-3.5" />
             Cotações

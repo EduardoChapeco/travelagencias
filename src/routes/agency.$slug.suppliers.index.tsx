@@ -297,7 +297,7 @@ function SuppliersPage() {
   };
 
   return (
-    <div className="flex h-full flex-col overflow-hidden bg-background">
+    <div className="flex h-full flex-col overflow-hidden">
       <HeaderPortal>
         <div className="flex items-center gap-2">
           <PrimaryButton
@@ -322,61 +322,64 @@ function SuppliersPage() {
 
       <div className="flex flex-1 overflow-hidden">
         {/* ── Sidebar de filtros ── */}
-        <aside className="hidden lg:flex w-52 shrink-0 flex-col border-r border-border bg-surface overflow-y-auto">
+        <aside className="hidden lg:flex w-52 shrink-0 flex-col border-r border-border bg-transparent overflow-y-auto">
           <div className="px-4 pt-5 pb-3">
-            <div className="text-[10px] uppercase tracking-widest font-semibold text-muted-foreground mb-3">
+            <div className="text-[10px] uppercase tracking-widest font-semibold text-white/50 mb-3">
               Categoria
             </div>
             <div className="space-y-0.5">
-              {KIND_FILTERS.map((f) => (
+              {[
+                { id: "all", label: "Todas" },
+                { id: "operator", label: "Operadora GDS" },
+                { id: "hotel", label: "Hotel / Hospedagem" },
+                { id: "flight", label: "Aéreo / Cia Aérea" },
+                { id: "transfer", label: "Receptivo / Transfer" },
+                { id: "insurance", label: "Seguro Viagem" },
+                { id: "visa", label: "Assessoria Consular" },
+                { id: "other", label: "Outros" },
+              ].map((c) => (
                 <button
-                  key={f.value}
-                  onClick={() => setKindFilter(f.value)}
+                  key={c.id}
+                  onClick={() => setKindFilter(c.id as any)}
                   className={cn(
-                    "w-full flex items-center gap-2 rounded-full px-2.5 py-1.5 text-xs transition-colors text-left",
-                    kindFilter === f.value
-                      ? "bg-[--brand-primary,theme(colors.pink.500)]/10 text-[--brand-primary,theme(colors.pink.600)] font-semibold"
-                      : "text-foreground hover:bg-surface-alt",
+                    "w-full text-left px-3 py-1.5 text-xs font-semibold rounded-full transition-colors cursor-pointer",
+                    kindFilter === c.id
+                      ? "bg-white/10 text-white font-bold"
+                      : "text-white/60 hover:text-white hover:bg-white/[0.02]",
                   )}
                 >
-                  {f.value !== "all" && <KindIcon kind={f.value} />}
-                  {f.label}
-                  {f.value !== "all" && (
-                    <span className="ml-auto text-[10px] text-muted-foreground">
-                      {q.data?.filter((s) => s.kind === f.value).length ?? 0}
-                    </span>
-                  )}
+                  {c.label}
                 </button>
               ))}
             </div>
           </div>
 
           {/* Stats Summary */}
-          <div className="mt-auto border-t border-border px-4 py-4 space-y-3">
-            <div className="text-[10px] uppercase tracking-widest font-semibold text-muted-foreground mb-2">
+          <div className="mt-auto border-t border-white/10 px-4 py-4 space-y-3">
+            <div className="text-[10px] uppercase tracking-widest font-semibold text-white/50 mb-2">
               Visão Geral
             </div>
             <div className="grid grid-cols-2 gap-2">
-              <div className="rounded-2xl border border-border bg-white p-2 text-center">
-                <div className="text-lg font-bold text-foreground">{stats.total}</div>
-                <div className="text-[10px] text-muted-foreground">Total</div>
+              <div className="rounded-2xl border border-white/10 bg-white/5 p-2 text-center">
+                <div className="text-lg font-bold text-white">{stats.total}</div>
+                <div className="text-[10px] text-white/50">Total</div>
               </div>
-              <div className="rounded-2xl border border-border bg-white p-2 text-center">
-                <div className="text-lg font-bold text-green-600">{stats.active}</div>
-                <div className="text-[10px] text-muted-foreground">Ativos</div>
+              <div className="rounded-2xl border border-white/10 bg-white/5 p-2 text-center">
+                <div className="text-lg font-bold text-green-400">{stats.active}</div>
+                <div className="text-[10px] text-white/50">Ativos</div>
               </div>
-              <div className="col-span-2 rounded-2xl border border-border bg-white p-2 text-center">
-                <div className="text-lg font-bold text-[--brand-primary,theme(colors.pink.500)] font-mono">
+              <div className="col-span-2 rounded-2xl border border-white/10 bg-white/5 p-2 text-center">
+                <div className="text-lg font-bold text-pink-400 font-mono">
                   {stats.avgCommission}%
                 </div>
-                <div className="text-[10px] text-muted-foreground">Markup médio</div>
+                <div className="text-[10px] text-white/50">Markup médio</div>
               </div>
             </div>
           </div>
         </aside>
 
         {/* ── Conteúdo principal ── */}
-        <div className="flex flex-1 flex-col overflow-hidden">
+        <div className="flex flex-1 flex-col overflow-hidden bg-transparent">
           {/* Toolbar */}
           <div className="flex flex-col sm:flex-row gap-2 sm:items-center border-b border-border bg-surface/50 px-4 md:px-5 py-2.5 shrink-0">
             <div className="relative flex-1 max-w-sm">
@@ -398,11 +401,14 @@ function SuppliersPage() {
                 onChange={(e) => setKindFilter(e.target.value)}
                 className="h-8 w-full appearance-none rounded-full border border-border bg-white pl-8 pr-8 text-xs outline-none focus:border-[--brand-primary,theme(colors.pink.400)] text-foreground"
               >
-                {KIND_FILTERS.map((f) => (
-                  <option key={f.value} value={f.value}>
-                    {f.label}
-                  </option>
-                ))}
+                <option value="all">Todas Categorias</option>
+                <option value="operator">Operadora GDS</option>
+                <option value="hotel">Hotel / Hospedagem</option>
+                <option value="flight">Aéreo / Cia Aérea</option>
+                <option value="transfer">Receptivo / Transfer</option>
+                <option value="insurance">Seguro Viagem</option>
+                <option value="visa">Assessoria Consular</option>
+                <option value="other">Outros</option>
               </select>
               <ChevronDown className="absolute right-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground pointer-events-none" />
             </div>
@@ -441,7 +447,7 @@ function SuppliersPage() {
           </div>
 
           {/* Main list/grid */}
-          <div className="flex-1 overflow-y-auto p-4 md:p-5">
+          <div className="flex-1 overflow-y-auto px-4 md:px-5 py-4">
             {q.isError && (
               <div className="flex flex-col items-center justify-center py-16 px-6 text-center rounded-[24px] border border-red-200 bg-red-50/60 mb-6">
                 <div className="h-10 w-10 rounded-full bg-red-100 flex items-center justify-center mb-3">

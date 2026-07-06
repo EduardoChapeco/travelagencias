@@ -169,7 +169,7 @@ function VisasPage() {
   const activeVisa = activeId ? (localVisas ?? []).find((v) => v.id === activeId) : null;
 
   return (
-    <div className="flex h-full flex-col overflow-hidden bg-background">
+    <div className="flex h-full flex-col overflow-hidden">
       <HeaderPortal>
         <div className="flex items-center gap-1.5 text-xs text-muted-foreground font-semibold px-2">
           Painel de Processos Consulares
@@ -178,7 +178,7 @@ function VisasPage() {
           <Link
             to="/agency/$slug/visas-catalog"
             params={{ slug }}
-            className="text-xs font-bold uppercase tracking-widest text-muted-foreground hover:text-foreground flex items-center gap-1.5 transition-colors border border-border px-3 py-1.5 rounded-full bg-surface-alt/50"
+            className="inline-flex h-8 items-center gap-1.5 rounded-full border border-white/10 bg-white/5 px-3 text-xs font-bold text-white/90 hover:bg-white/10 transition-colors cursor-pointer"
           >
             <FileText className="w-3.5 h-3.5" /> Catálogo
           </Link>

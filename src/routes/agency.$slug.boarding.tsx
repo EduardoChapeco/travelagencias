@@ -244,10 +244,10 @@ function BoardingKanbanPage() {
           <div className="flex items-center border border-border rounded-full p-0.5 bg-surface-alt">
             <button
               onClick={() => setViewMode("kanban")}
-              className={`flex h-7 items-center gap-1.5 px-2.5 text-xs font-semibold rounded-full transition-colors cursor-pointer ${
+              className={`flex h-7 items-center gap-1.5 px-2.5 text-xs font-semibold rounded-full transition-all cursor-pointer ${
                 viewMode === "kanban"
-                  ? "bg-surface text-foreground shadow-none"
-                  : "text-muted-foreground hover:text-foreground"
+                  ? "bg-white/10 text-white border border-white/5 shadow-xs"
+                  : "text-white/60 hover:text-white"
               }`}
               title="Visualização em Quadro (Kanban)"
             >
@@ -256,10 +256,10 @@ function BoardingKanbanPage() {
             </button>
             <button
               onClick={() => setViewMode("list")}
-              className={`flex h-7 items-center gap-1.5 px-2.5 text-xs font-semibold rounded-full transition-colors cursor-pointer ${
+              className={`flex h-7 items-center gap-1.5 px-2.5 text-xs font-semibold rounded-full transition-all cursor-pointer ${
                 viewMode === "list"
-                  ? "bg-surface text-foreground shadow-none"
-                  : "text-muted-foreground hover:text-foreground"
+                  ? "bg-white/10 text-white border border-white/5 shadow-xs"
+                  : "text-white/60 hover:text-white"
               }`}
               title="Visualização em Lista"
             >
@@ -268,10 +268,10 @@ function BoardingKanbanPage() {
             </button>
             <button
               onClick={() => setViewMode("calendar")}
-              className={`flex h-7 items-center gap-1.5 px-2.5 text-xs font-semibold rounded-full transition-colors cursor-pointer ${
+              className={`flex h-7 items-center gap-1.5 px-2.5 text-xs font-semibold rounded-full transition-all cursor-pointer ${
                 viewMode === "calendar"
-                  ? "bg-surface text-foreground shadow-none"
-                  : "text-muted-foreground hover:text-foreground"
+                  ? "bg-white/10 text-white border border-white/5 shadow-xs"
+                  : "text-white/60 hover:text-white"
               }`}
               title="Visualização em Calendário"
             >
@@ -322,7 +322,7 @@ function BoardingKanbanPage() {
 
       {q.isError && (
         <div className="flex flex-1 items-center justify-center p-6">
-          <div className="flex flex-col items-center max-w-md text-center space-y-3 bg-danger/10 p-6 rounded-full border border-danger/20">
+          <div className="flex flex-col items-center max-w-md text-center space-y-3 bg-danger/10 p-6 rounded-[24px] border border-danger/20">
             <div className="h-12 w-12 rounded-full bg-danger/20 flex items-center justify-center text-danger mb-2">
               <X className="h-6 w-6" />
             </div>

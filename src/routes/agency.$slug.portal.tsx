@@ -35,10 +35,10 @@ function Page() {
   }
 
   return (
-    <div className="flex h-full flex-col overflow-hidden bg-background">
+    <div className="flex h-full flex-col overflow-hidden">
       {/* ── Top Bar de Ações e Sub-Navegação ──────────────────────────────────────────── */}
-      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between px-4 py-2 bg-[var(--surface)] border-b shrink-0 gap-2">
-        <TabsList className="h-8 bg-[var(--surface-alt)] rounded-2xl p-0.5 flex-wrap gap-0">
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between px-4 md:px-6 py-3 bg-surface/50 border-b border-border shrink-0 gap-2 no-margin-bottom">
+        <TabsList className="flex bg-surface p-0.5 rounded-full border border-border text-xs gap-1 shrink-0 flex-nowrap">
           {tabs.map((tab) => {
             const active =
               pathname === tab.path ||
@@ -48,10 +48,10 @@ function Page() {
                 key={tab.path}
                 type="button"
                 onClick={() => navigate({ to: tab.path as any })}
-                className={`inline-flex items-center justify-center h-7 px-2.5 text-[11px] font-semibold rounded-full transition-all cursor-pointer ${
+                className={`inline-flex items-center justify-center h-7 px-3 text-[11px] font-semibold rounded-full transition-all cursor-pointer whitespace-nowrap ${
                   active
-                    ? "bg-[var(--surface)] text-foreground shadow-xs"
-                    : "text-muted-foreground hover:text-foreground"
+                    ? "bg-white/10 text-white border border-white/5 shadow-xs"
+                    : "text-white/60 hover:text-white"
                 }`}
               >
                 {tab.label}

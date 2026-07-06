@@ -1119,9 +1119,9 @@ function RoomingListDashboard() {
   const handlePrint = () => window.print();
 
   return (
-    <div className="flex flex-col h-full bg-background text-foreground overflow-hidden">
+    <div className="flex flex-col h-full text-foreground overflow-hidden">
       {/* Header */}
-      <div className="flex items-center justify-between gap-4 border-b border-border px-4 md:px-6 py-4 shrink-0 print:hidden bg-surface/20">
+      <div className="flex items-center justify-between gap-4 border-b border-border px-4 md:px-6 py-3 shrink-0 print:hidden bg-surface/50 no-margin-bottom">
         <div className="flex items-center gap-3">
           <div className="flex h-9 w-9 items-center justify-center rounded-2xl bg-brand/10 text-brand">
             <BedDouble className="h-5 w-5" />
@@ -1167,7 +1167,7 @@ function RoomingListDashboard() {
           <option value="closed">Fechado</option>
         </select>
 
-        {(search || statusFilter !== "all") && (
+        {search || statusFilter !== "all" ? (
           <button
             className="h-8 text-xs text-muted-foreground hover:text-foreground font-semibold cursor-pointer"
             onClick={() => {
@@ -1177,11 +1177,11 @@ function RoomingListDashboard() {
           >
             Limpar filtros
           </button>
-        )}
+        ) : null}
       </div>
 
       {/* Content list */}
-      <div className="flex-1 overflow-y-auto p-4 md:p-6 space-y-4">
+      <div className="flex-1 overflow-y-auto px-4 md:px-6 py-4 space-y-4">
         {toursQ.isError && (
           <div className="flex flex-col items-center justify-center py-12 px-6 text-center rounded-[24px] border border-red-200 bg-red-50/60 max-w-2xl mx-auto">
             <div className="h-9 w-9 rounded-full bg-red-100 flex items-center justify-center mb-2">

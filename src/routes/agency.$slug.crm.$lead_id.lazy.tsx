@@ -725,7 +725,7 @@ function LeadDetailPage() {
                     type="checkbox"
                     checked={lead.lgpd_accepted || false}
                     onChange={(e) => handleLgpdToggle(e.target.checked)}
-                    className="h-5 w-5 rounded border-border bg-background text-brand focus:ring-brand cursor-pointer"
+                    className="h-5 w-5 rounded border-border bg-white/5 text-brand focus:ring-brand cursor-pointer"
                   />
                 </div>
 
@@ -737,7 +737,7 @@ function LeadDetailPage() {
                     </label>
                     <Select
                       value={lead.stage_id}
-                      className="rounded-[24px] border-border bg-background h-10 w-full text-xs"
+                      className="rounded-[24px] border-border bg-white/5 h-10 w-full text-xs"
                       onChange={async (e) => {
                         const newStage = e.target.value;
                         if (newStage === lead.stage_id) return;
@@ -774,7 +774,7 @@ function LeadDetailPage() {
                     </label>
                     <Select
                       value={lead.owner_id || ""}
-                      className="rounded-[24px] border-border bg-background h-10 w-full text-xs"
+                      className="rounded-[24px] border-border bg-white/5 h-10 w-full text-xs"
                       onChange={async (e) => {
                         const val = e.target.value || null;
                         try {

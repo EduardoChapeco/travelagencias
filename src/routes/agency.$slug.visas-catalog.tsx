@@ -1,6 +1,7 @@
 import { createFileRoute, Link, useParams } from "@tanstack/react-router";
 import { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { cn } from "@/lib/utils";
 import { ArrowLeft, Plus, Save, Trash2, Calendar, DollarSign, Globe } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAgency } from "@/lib/agency-context";
@@ -61,7 +62,7 @@ function VisasCatalogPage() {
   const filteredData = q.data?.filter((req) => activeTab === "all" || req.category === activeTab);
 
   return (
-    <div className="flex h-full flex-col overflow-hidden bg-background">
+    <div className="flex h-full flex-col overflow-hidden">
       <ConfirmDialog />
 
       <HeaderPortal>
@@ -80,12 +81,12 @@ function VisasCatalogPage() {
           <Link
             to="/agency/$slug/visas"
             params={{ slug }}
-            className="text-xs font-semibold uppercase tracking-widest text-muted-foreground hover:text-brand flex items-center gap-1 border border-border/60 bg-surface-alt/40 px-2.5 py-1 rounded-full shrink-0"
+            className="inline-flex h-8 items-center gap-1.5 rounded-full border border-white/10 bg-white/5 px-3 text-xs font-bold text-white/90 hover:bg-white/10 transition-colors cursor-pointer shrink-0"
           >
-            <ArrowLeft className="w-3 h-3" /> Voltar
+            <ArrowLeft className="w-3.5 h-3.5" /> Voltar
           </Link>
           <div className="h-4 w-px bg-border/80 shrink-0" />
-          <div className="flex items-center gap-1 rounded-full border border-border bg-surface p-0.5 text-xs overflow-x-auto no-scrollbar max-w-full shrink-0">
+          <div className="flex bg-surface p-0.5 rounded-full border border-border text-xs gap-1 shrink-0 overflow-x-auto no-scrollbar max-w-full">
             {[
               { id: "all", label: "Todos" },
               { id: "visa", label: "Vistos" },
@@ -97,11 +98,12 @@ function VisasCatalogPage() {
               <button
                 key={tab.id}
                 onClick={() => setActiveTab(tab.id as any)}
-                className={`rounded px-2.5 py-1 font-semibold transition-colors cursor-pointer shrink-0 ${
+                className={cn(
+                  "px-3 py-1 text-xs font-semibold rounded-full transition-all cursor-pointer shrink-0",
                   activeTab === tab.id
-                    ? "bg-surface-alt text-foreground border border-border/50"
-                    : "text-muted-foreground hover:text-foreground"
-                }`}
+                    ? "bg-white/10 text-white border border-white/5 shadow-xs"
+                    : "text-white/60 hover:text-white"
+                )}
               >
                 {tab.label}
               </button>
@@ -110,7 +112,7 @@ function VisasCatalogPage() {
         </div>
       </div>
 
-      <div className="flex-1 overflow-y-auto p-4 md:p-6 min-h-0">
+      <div className="flex-1 overflow-y-auto px-4 md:px-6 py-4 min-h-0">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {filteredData?.map((req) => (
             <div

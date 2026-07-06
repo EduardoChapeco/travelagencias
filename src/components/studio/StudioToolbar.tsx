@@ -30,14 +30,14 @@ export function StudioToolbar({
   children,
 }: StudioToolbarProps) {
   return (
-    <header className="flex h-16 items-center justify-between border-b border-border bg-surface dark:bg-zinc-950 px-6 shrink-0">
-      <div className="flex items-center gap-4 flex-1 min-w-0">
+    <header data-toolbar className="flex h-14 items-center justify-between border-b border-border bg-surface/50 px-4 md:px-6 shrink-0">
+      <div className="flex items-center gap-3 flex-1 min-w-0">
         <Link
           to={backTo as any}
           params={backParams as any}
-          className="text-muted-foreground hover:text-foreground transition-colors shrink-0"
+          className="flex h-8 w-8 items-center justify-center rounded-full border border-white/10 bg-white/5 text-white/70 hover:bg-white/10 transition-colors shrink-0 cursor-pointer"
         >
-          <ArrowLeft className="h-5 w-5" />
+          <ArrowLeft className="h-4 w-4" />
         </Link>
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-2">

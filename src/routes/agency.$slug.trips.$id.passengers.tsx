@@ -298,18 +298,18 @@ function PassengersPage() {
           </p>
         </div>
       )}
-      <div className="mb-8 flex items-start justify-between gap-4">
+      <div className="mb-6 flex items-start justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-extrabold tracking-tight text-foreground">Rooming List</h1>
+          <h1 className="text-2xl font-extrabold tracking-tight text-foreground">Passageiros</h1>
           <p className="mt-1 text-sm text-muted-foreground">
             Gerencie os passageiros vinculados a este roteiro e seus documentos operacionais.
           </p>
         </div>
         <button
           onClick={() => setOpen(true)}
-          className="flex h-10 items-center gap-2 rounded-2xl bg-brand px-4 text-sm font-bold text-brand-foreground hover:bg-brand/90 transition-colors"
+          className="flex h-8 items-center gap-1.5 rounded-full bg-brand px-3.5 text-xs font-semibold text-brand-foreground hover:bg-brand/90 transition-colors cursor-pointer"
         >
-          <Plus className="h-4 w-4" /> Adicionar Passageiro
+          <Plus className="h-3.5 w-3.5" /> Adicionar Passageiro
         </button>
       </div>
 

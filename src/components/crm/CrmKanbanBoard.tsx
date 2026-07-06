@@ -133,7 +133,7 @@ function Column({
               {stage.name}
             </span>
           </div>
-          <span className="flex h-5 min-w-[20px] items-center justify-center rounded-full bg-background px-1.5 text-[10px] font-bold text-muted-foreground ring-1 ring-border">
+          <span className="flex h-5 min-w-[20px] items-center justify-center rounded-full bg-white/10 px-1.5 text-[10px] font-bold text-white/85 border border-white/5">
             {leads.length}
           </span>
         </div>
@@ -195,7 +195,7 @@ function MobileStageAccordion({
             <span className="text-xs font-extrabold uppercase tracking-widest text-foreground">
               {stage.name}
             </span>
-            <span className="flex h-5 min-w-[20px] items-center justify-center rounded-full bg-background px-1.5 text-[10px] font-bold text-muted-foreground ring-1 ring-border">
+            <span className="flex h-5 min-w-[20px] items-center justify-center rounded-full bg-white/10 px-1.5 text-[10px] font-bold text-white/85 border border-white/5">
               {leads.length}
             </span>
           </div>

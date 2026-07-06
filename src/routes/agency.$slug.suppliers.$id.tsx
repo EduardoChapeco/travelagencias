@@ -1123,7 +1123,7 @@ function SupplierDetailsPage() {
     <div className="flex h-full overflow-hidden">
       {/* Main content */}
       <div className="flex-1 overflow-y-auto">
-        <div className="p-4 md:p-6 max-w-4xl pb-20">
+        <div className="px-4 md:px-6 py-4 max-w-4xl pb-20">
           <HeaderPortal>
             <div className="flex items-center gap-2">
               <StatusBadge tone={supplier.is_active ? "success" : "neutral"}>
@@ -1135,7 +1135,7 @@ function SupplierDetailsPage() {
           <Link
             to="/agency/$slug/suppliers"
             params={{ slug }}
-            className="mb-4 inline-flex items-center gap-1.5 text-xs text-muted-foreground hover:text-foreground transition-colors"
+            className="mb-4 inline-flex h-8 items-center gap-1.5 rounded-full border border-white/10 bg-white/5 px-3 text-xs font-bold text-white/90 hover:bg-white/10 transition-colors cursor-pointer"
           >
             <ArrowLeft className="h-3.5 w-3.5" /> Voltar para {getModuleName("suppliers", agency)}
           </Link>
@@ -1188,7 +1188,7 @@ function SupplierDetailsPage() {
 
           {/* Tabs */}
           <Tabs defaultValue="geral" className="w-full">
-            <TabsList className="w-full justify-start rounded-none border-b border-border bg-transparent p-0 overflow-x-auto no-scrollbar flex-nowrap flex shrink-0 mb-6">
+            <TabsList className="flex bg-surface p-0.5 rounded-full border border-border text-xs gap-1 shrink-0 overflow-x-auto no-scrollbar max-w-full mb-6">
               {[
                 { value: "geral", label: "Geral", icon: Building2 },
                 { value: "catalogo", label: "Catálogo", icon: Package },
@@ -1199,7 +1199,7 @@ function SupplierDetailsPage() {
                 <TabsTrigger
                   key={value}
                   value={value}
-                  className="relative flex items-center gap-1.5 rounded-none border-b-2 border-transparent px-4 pb-3 pt-2 text-sm font-semibold text-muted-foreground shadow-none data-[state=active]:border-[--brand-primary,theme(colors.pink.500)] data-[state=active]:text-foreground data-[state=active]:shadow-none shrink-0 cursor-pointer"
+                  className="inline-flex items-center justify-center h-7 px-3 text-[11px] font-semibold rounded-full transition-all gap-1.5 whitespace-nowrap cursor-pointer data-[state=active]:bg-white/10 data-[state=active]:text-white data-[state=active]:border data-[state=active]:border-white/5 data-[state=active]:shadow-xs text-white/60 hover:text-white"
                 >
                   <TIcon className="h-3.5 w-3.5" />
                   {label}

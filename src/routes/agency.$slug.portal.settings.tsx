@@ -149,7 +149,7 @@ function PortalSettingsPage() {
   ];
 
   return (
-    <div className="flex h-full flex-col overflow-hidden bg-background">
+    <div className="flex h-full flex-col overflow-hidden">
       <HeaderPortal>
         <div className="flex items-center gap-2">
           <a
@@ -172,17 +172,17 @@ function PortalSettingsPage() {
         </div>
       </HeaderPortal>
 
-      <div className="flex flex-col sm:flex-row gap-2 sm:items-center border-b border-border bg-surface/50 px-4 md:px-6 py-3 shrink-0 overflow-x-auto no-scrollbar flex-nowrap whitespace-nowrap">
-        <div className="flex gap-1 overflow-x-auto rounded-full border border-border bg-surface p-1 no-scrollbar flex-nowrap shrink-0">
+      <div className="flex flex-col sm:flex-row gap-2 sm:items-center border-b border-border bg-surface/50 px-4 md:px-6 py-3 shrink-0 overflow-x-auto no-scrollbar flex-nowrap whitespace-nowrap no-margin-bottom">
+        <div className="flex bg-surface p-0.5 rounded-full border border-border text-xs gap-1 shrink-0 flex-nowrap">
           {TABS.map((t) => (
             <button
               key={t.id}
               type="button"
               onClick={() => setTab(t.id)}
-              className={`flex shrink-0 items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-semibold transition-colors cursor-pointer ${
+              className={`flex shrink-0 items-center gap-1.5 rounded-full px-3 py-1 text-xs font-semibold transition-all cursor-pointer whitespace-nowrap ${
                 tab === t.id
-                  ? "bg-surface-alt text-foreground border border-border/50"
-                  : "text-muted-foreground hover:text-foreground hover:bg-surface-alt"
+                  ? "bg-white/10 text-white border border-white/5 shadow-xs"
+                  : "text-white/60 hover:text-white"
               }`}
             >
               <t.icon className="h-3.5 w-3.5" />
@@ -192,7 +192,7 @@ function PortalSettingsPage() {
         </div>
       </div>
 
-      <div className="flex-1 overflow-y-auto p-4 md:p-6 min-h-0">
+      <div className="flex-1 overflow-y-auto px-4 md:px-6 py-4 min-h-0">
         {q.isError && (
           <div className="flex flex-col items-center justify-center py-10 px-6 text-center rounded-[24px] border border-red-200 bg-red-50/60 mb-6 max-w-2xl mx-auto shrink-0">
             <div className="h-9 w-9 rounded-full bg-red-100 flex items-center justify-center mb-2">

@@ -146,7 +146,7 @@ function ProposalsList() {
   }
 
   return (
-    <div className="flex h-full flex-col overflow-hidden bg-background">
+    <div className="flex h-full flex-col overflow-hidden">
       <HeaderPortal>
         <div className="flex items-center gap-2">
           <button
@@ -206,7 +206,7 @@ function ProposalsList() {
         </div>
       </div>
 
-      <div className="flex-1 overflow-y-auto p-4 md:p-6 min-h-0 flex flex-col gap-4">
+      <div className="flex-1 overflow-y-auto px-4 md:px-6 py-4 min-h-0 flex flex-col gap-4">
         {list.isLoading && <div className="text-sm text-muted-foreground">Carregando…</div>}
         {list.isError && (
           <div className="p-4 rounded-[24px] border border-red-200 bg-red-50/50 text-xs text-red-800 flex items-center gap-2 m-2">
@@ -222,7 +222,7 @@ function ProposalsList() {
           />
         ) : (
           <div className="space-y-4">
-            <div className="overflow-hidden rounded-full border border-border bg-surface">
+            <div className="overflow-hidden rounded-[24px] border border-border bg-surface">
               <div className="overflow-x-auto w-full">
                 <table className="w-full text-sm">
                   <thead className="bg-surface-alt/40 text-left text-[11px] uppercase tracking-wide text-muted-foreground">

@@ -567,76 +567,74 @@ Texto: "${aiText}"`;
   });
 
   return (
-    <div className="flex h-full flex-col overflow-hidden bg-background">
+    <div className="flex h-full flex-col overflow-hidden">
       {/* Top Bar / Header Contextual Unificado */}
-      <div className="flex flex-col md:flex-row items-center justify-between px-6 py-2.5 bg-surface border-b shrink-0 gap-4">
-        <div className="overflow-x-auto no-scrollbar w-full md:w-auto">
-          <div className="flex gap-4 h-9 items-center">
-            <button
-              onClick={() => {
-                setActiveTab("quotes");
-                setSearchQuery("");
-              }}
-              className={`px-3 py-2 text-xs font-semibold border-b-2 transition-all cursor-pointer whitespace-nowrap ${
-                activeTab === "quotes"
-                  ? "border-brand text-brand"
-                  : "border-transparent text-muted-foreground hover:text-foreground"
-              }`}
-            >
-              Cotações Ativas
-            </button>
-            <button
-              onClick={() => {
-                setActiveTab("knowledge");
-                setSearchQuery("");
-              }}
-              className={`px-3 py-2 text-xs font-semibold border-b-2 transition-all cursor-pointer whitespace-nowrap ${
-                activeTab === "knowledge"
-                  ? "border-brand text-brand"
-                  : "border-transparent text-muted-foreground hover:text-foreground"
-              }`}
-            >
-              Cérebro Global &amp; RAG
-            </button>
-            <button
-              onClick={() => {
-                setActiveTab("rules");
-                setSearchQuery("");
-              }}
-              className={`px-3 py-2 text-xs font-semibold border-b-2 transition-all cursor-pointer flex items-center gap-1.5 whitespace-nowrap ${
-                activeTab === "rules"
-                  ? "border-brand text-brand"
-                  : "border-transparent text-muted-foreground hover:text-foreground"
-              }`}
-            >
-              <Zap className="h-3.5 w-3.5" />
-              Regras &amp; IA
-              {ruleCandidates.filter((c: any) => c.status === "pending").length > 0 && (
-                <span className="ml-1 inline-flex h-4 min-w-4 items-center justify-center rounded-full bg-warning/20 px-1 text-[9px] font-bold text-warning">
-                  {ruleCandidates.filter((c: any) => c.status === "pending").length}
-                </span>
-              )}
-            </button>
-            <button
-              onClick={() => {
-                setActiveTab("promotions");
-                setSearchQuery("");
-              }}
-              className={`px-3 py-2 text-xs font-semibold border-b-2 transition-all cursor-pointer flex items-center gap-1.5 whitespace-nowrap ${
-                activeTab === "promotions"
-                  ? "border-brand text-brand"
-                  : "border-transparent text-muted-foreground hover:text-foreground"
-              }`}
-            >
-              <Bell className="h-3.5 w-3.5" />
-              Monitor de Promoções
-              {promotionCandidates.filter((c: any) => c.status === "new").length > 0 && (
-                <span className="ml-1 inline-flex h-4 min-w-4 items-center justify-center rounded-full bg-success/20 px-1 text-[9px] font-bold text-success">
-                  {promotionCandidates.filter((c: any) => c.status === "new").length}
-                </span>
-              )}
-            </button>
-          </div>
+      <div className="flex flex-col md:flex-row gap-2 md:items-center justify-between border-b border-border bg-surface/50 px-4 md:px-6 py-3 shrink-0">
+        <div className="flex bg-surface p-0.5 rounded-full border border-border text-xs gap-1 shrink-0 overflow-x-auto no-scrollbar max-w-full">
+          <button
+            onClick={() => {
+              setActiveTab("quotes");
+              setSearchQuery("");
+            }}
+            className={`px-3 py-1 text-xs font-semibold rounded-full transition-all cursor-pointer whitespace-nowrap ${
+              activeTab === "quotes"
+                ? "bg-white/10 text-white border border-white/5 shadow-xs"
+                : "text-white/60 hover:text-white"
+            }`}
+          >
+            Cotações Ativas
+          </button>
+          <button
+            onClick={() => {
+              setActiveTab("knowledge");
+              setSearchQuery("");
+            }}
+            className={`px-3 py-1 text-xs font-semibold rounded-full transition-all cursor-pointer whitespace-nowrap ${
+              activeTab === "knowledge"
+                ? "bg-white/10 text-white border border-white/5 shadow-xs"
+                : "text-white/60 hover:text-white"
+            }`}
+          >
+            Cérebro Global &amp; RAG
+          </button>
+          <button
+            onClick={() => {
+              setActiveTab("rules");
+              setSearchQuery("");
+            }}
+            className={`px-3 py-1 text-xs font-semibold rounded-full transition-all cursor-pointer flex items-center gap-1.5 whitespace-nowrap ${
+              activeTab === "rules"
+                ? "bg-white/10 text-white border border-white/5 shadow-xs"
+                : "text-white/60 hover:text-white"
+            }`}
+          >
+            <Zap className="h-3.5 w-3.5" />
+            Regras &amp; IA
+            {ruleCandidates.filter((c: any) => c.status === "pending").length > 0 && (
+              <span className="ml-1 inline-flex h-4 min-w-4 items-center justify-center rounded-full bg-warning/20 px-1 text-[9px] font-bold text-warning">
+                {ruleCandidates.filter((c: any) => c.status === "pending").length}
+              </span>
+            )}
+          </button>
+          <button
+            onClick={() => {
+              setActiveTab("promotions");
+              setSearchQuery("");
+            }}
+            className={`px-3 py-1 text-xs font-semibold rounded-full transition-all cursor-pointer flex items-center gap-1.5 whitespace-nowrap ${
+              activeTab === "promotions"
+                ? "bg-white/10 text-white border border-white/5 shadow-xs"
+                : "text-white/60 hover:text-white"
+            }`}
+          >
+            <Bell className="h-3.5 w-3.5" />
+            Monitor de Promoções
+            {promotionCandidates.filter((c: any) => c.status === "new").length > 0 && (
+              <span className="ml-1 inline-flex h-4 min-w-4 items-center justify-center rounded-full bg-success/20 px-1 text-[9px] font-bold text-success">
+                {promotionCandidates.filter((c: any) => c.status === "new").length}
+              </span>
+            )}
+          </button>
         </div>
 
         <div className="flex items-center gap-2.5 w-full md:w-auto justify-end">
@@ -689,7 +687,7 @@ Texto: "${aiText}"`;
       </div>
 
       {/* Main Content */}
-      <div className="flex-1 overflow-y-auto">
+      <div className="flex-1 overflow-y-auto px-4 md:px-6 py-4">
         {activeTab === "quotes" ? (
           isQuotesError ? (
             <div className="p-4 rounded-[24px] border border-red-200 bg-red-50/50 text-xs text-red-800 flex items-center gap-2 m-6">
@@ -707,7 +705,7 @@ Texto: "${aiText}"`;
               action={<PrimaryButton onClick={() => setNewOpen(true)}>Criar Cotação</PrimaryButton>}
             />
           ) : (
-            <div className="border-t border-border">
+            <div className="rounded-[24px] border border-border overflow-hidden bg-surface">
               <table className="w-full text-left border-collapse text-xs">
                 <thead>
                   <tr className="bg-surface-alt border-b border-border text-muted-foreground font-semibold">

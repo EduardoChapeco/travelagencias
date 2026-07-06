@@ -1,6 +1,7 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { cn } from "@/lib/utils";
 import {
   Plus,
   Trash2,
@@ -391,8 +392,8 @@ function PagesPage() {
         </div>
       </HeaderPortal>
 
-      <div className="flex flex-col sm:flex-row gap-2 sm:items-center border-b border-border bg-surface/50 px-4 md:px-6 py-3 shrink-0 justify-between">
-        <div className="flex flex-wrap gap-1 bg-surface p-0.5 rounded-full border border-border text-xs overflow-x-auto no-scrollbar shrink-0">
+      <div className="flex flex-col sm:flex-row gap-2 sm:items-center border-b border-border bg-surface/50 px-4 md:px-6 py-3 shrink-0 justify-between no-margin-bottom">
+        <div className="flex bg-surface p-0.5 rounded-full border border-border text-xs gap-1 shrink-0 overflow-x-auto no-scrollbar max-w-full">
           {(["all", "sites", "biolinks", "mobile_landings", "templates"] as const).map((tabId) => {
             const labels = {
               all: "Todas as Páginas",
@@ -405,11 +406,12 @@ function PagesPage() {
               <button
                 key={tabId}
                 onClick={() => setActiveTab(tabId)}
-                className={`rounded-full px-3 py-1 font-semibold transition-colors shrink-0 cursor-pointer ${
+                className={cn(
+                  "px-3 py-1 text-xs font-semibold rounded-full transition-all cursor-pointer shrink-0",
                   activeTab === tabId
-                    ? "bg-white/10 text-white border border-white/5"
+                    ? "bg-white/10 text-white border border-white/5 shadow-xs"
                     : "text-white/60 hover:text-white"
-                }`}
+                )}
               >
                 {labels[tabId]}
               </button>
@@ -449,7 +451,7 @@ function PagesPage() {
         {/* Modern Analytics & Highlight Row */}
         {agency && (
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
-            <div className="rounded-full border border-border/60 bg-surface p-5 flex items-center justify-between">
+            <div className="rounded-[24px] border border-border/60 bg-surface p-5 flex items-center justify-between">
               <div>
                 <span className="text-[11px] font-bold uppercase tracking-wider text-muted-foreground">
                   Páginas Criadas
@@ -461,10 +463,10 @@ function PagesPage() {
               </div>
             </div>
 
-            <div className="rounded-full border border-border/60 bg-surface p-5 flex items-center justify-between">
+            <div className="rounded-[24px] border border-border/60 bg-surface p-5 flex items-center justify-between">
               <div>
                 <span className="text-[11px] font-bold uppercase tracking-wider text-muted-foreground">
-                  Visualizações
+                  Acessos Totais
                 </span>
                 <h3 className="text-2xl font-black text-foreground mt-1">{totalViews}</h3>
               </div>
@@ -473,7 +475,7 @@ function PagesPage() {
               </div>
             </div>
 
-            <div className="rounded-full border border-border/60 bg-surface p-5 flex items-center justify-between">
+            <div className="rounded-[24px] border border-border/60 bg-surface p-5 flex items-center justify-between">
               <div>
                 <span className="text-[11px] font-bold uppercase tracking-wider text-muted-foreground">
                   Cliques em Links
@@ -485,7 +487,7 @@ function PagesPage() {
               </div>
             </div>
 
-            <div className="rounded-full border border-border/60 bg-surface p-5 flex items-center justify-between">
+            <div className="rounded-[24px] border border-border/60 bg-surface p-5 flex items-center justify-between">
               <div>
                 <span className="text-[11px] font-bold uppercase tracking-wider text-muted-foreground">
                   CTR Geral
@@ -519,11 +521,11 @@ function PagesPage() {
                 return (
                   <div
                     key={tpl.id}
-                    className="group relative flex flex-col justify-between rounded-full border border-border/60 bg-surface p-5 transition-all duration-300 hover:border-brand/40 hover:-translate-y-0.5"
+                    className="group relative flex flex-col justify-between rounded-[24px] border border-border/60 bg-surface p-5 transition-all duration-300 hover:border-brand/40 hover:-translate-y-0.5"
                   >
                     <div className="space-y-4">
                       {/* Visual Preview Block */}
-                      <div className="relative overflow-hidden rounded-full">
+                      <div className="relative overflow-hidden rounded-[20px]">
                         <PageMiniPreview template={tpl.id} />
                         <div className="absolute top-2 right-2 rounded-full px-2 py-0.5 text-[9px] uppercase font-black font-mono tracking-wider bg-background border text-foreground">
                           {isBiolink

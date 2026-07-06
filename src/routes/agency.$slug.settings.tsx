@@ -116,7 +116,7 @@ function Page() {
   if (!agency) return null;
 
   return (
-    <div className="flex h-full flex-col overflow-hidden bg-background">
+    <div className="flex h-full flex-col overflow-hidden">
       <HeaderPortal>
         <div className="flex items-center gap-2">
           <button
@@ -131,7 +131,7 @@ function Page() {
         </div>
       </HeaderPortal>
 
-      <div className="flex-1 overflow-y-auto p-4 md:p-6 min-h-0">
+      <div className="flex-1 overflow-y-auto px-4 md:px-6 py-4 min-h-0">
         <div className="max-w-2xl space-y-6">
           {/* Header card com identidade */}
           <div className="flex items-center gap-4 rounded-[24px] border border-border bg-surface px-5 py-4">

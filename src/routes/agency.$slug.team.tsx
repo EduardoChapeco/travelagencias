@@ -135,7 +135,7 @@ function TeamPage() {
   }
 
   return (
-    <div className="flex h-full flex-col overflow-hidden bg-background">
+    <div className="flex h-full flex-col overflow-hidden">
       <HeaderPortal>
         <div className="flex items-center gap-2">
           <button
@@ -147,7 +147,7 @@ function TeamPage() {
         </div>
       </HeaderPortal>
 
-      <div className="flex flex-col sm:flex-row gap-2 sm:items-center border-b border-border bg-surface/50 px-4 md:px-6 py-3 shrink-0">
+      <div className="flex flex-col sm:flex-row gap-2 sm:items-center border-b border-border bg-surface/50 px-4 md:px-6 py-3 shrink-0 no-margin-bottom">
         <div className="relative w-full sm:w-64">
           <span className="absolute inset-y-0 left-2.5 top-1/2 -translate-y-1/2 flex items-center pointer-events-none">
             <svg
@@ -174,7 +174,7 @@ function TeamPage() {
         </div>
       </div>
 
-      <div className="flex-1 overflow-y-auto p-4 md:p-6 min-h-0">
+      <div className="flex-1 overflow-y-auto px-4 md:px-6 py-4 min-h-0">
         {(members.isError || invites.isError) && (
           <div className="flex flex-col items-center justify-center py-10 px-6 text-center rounded-[24px] border border-red-200 bg-red-50/60 mb-6 max-w-2xl mx-auto shrink-0">
             <div className="h-9 w-9 rounded-full bg-red-100 flex items-center justify-center mb-2">
@@ -193,7 +193,7 @@ function TeamPage() {
         {filteredMembers.length === 0 ? (
           <EmptyState title="Sem membros" description="Nenhum membro encontrado ou cadastrado." />
         ) : (
-          <div className="overflow-hidden rounded-2xl border border-border mb-6">
+          <div className="overflow-hidden rounded-[24px] border border-border mb-6 bg-surface">
             <table className="w-full text-sm">
               <thead className="bg-surface-alt/40 text-left text-[11px] uppercase text-muted-foreground">
                 <tr>

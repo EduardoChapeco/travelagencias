@@ -8,7 +8,7 @@ export const Route = createFileRoute('/agency/$slug/settings/bot')({
 
 function BotSettingsPage() {
   return (
-    <div className="flex flex-col h-[calc(100vh-4rem)] p-6 gap-6">
+    <div className="flex flex-col h-[calc(100vh-4rem)] px-4 md:px-6 py-4 gap-6">
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-3xl font-bold tracking-tight">Chatbot Visual Builder</h1>

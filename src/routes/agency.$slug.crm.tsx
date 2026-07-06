@@ -183,24 +183,24 @@ function CRMPage() {
     <div className="flex h-full flex-col overflow-hidden bg-transparent">
       <Tabs value={activeTab} onValueChange={setActiveTab} className="flex flex-col flex-1 min-h-0">
         {/* ── Top Bar de Ações e Sub-Navegação ──────────────────────────────────────────── */}
-        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between px-4 py-2 bg-[var(--surface)] border-b shrink-0 gap-2">
-          <TabsList className="h-8 bg-[var(--surface-alt)] rounded-2xl p-0.5 flex-wrap gap-0">
+        <div className="flex flex-col sm:flex-row gap-2 sm:items-center justify-between border-b border-border bg-surface/50 px-4 md:px-6 py-3 shrink-0 no-margin-bottom">
+          <TabsList className="h-8 bg-white/5 border border-white/5 rounded-full p-0.5 flex-wrap gap-0">
             <TabsTrigger
               value="kanban"
-              className="h-7 px-2.5 text-[11px] font-semibold rounded-full data-[state=active]:bg-[var(--surface)] data-[state=active]:shadow-xs transition-all"
+              className="h-7 px-2.5 text-[11px] font-semibold rounded-full data-[state=active]:bg-white/10 data-[state=active]:text-white data-[state=active]:border data-[state=active]:border-white/5 transition-all text-white/60 hover:text-white"
             >
               Funil de Vendas (Kanban)
             </TabsTrigger>
             <TabsTrigger
               value="archived"
-              className="h-7 px-2.5 text-[11px] font-semibold rounded-full data-[state=active]:bg-[var(--surface)] data-[state=active]:shadow-xs transition-all"
+              className="h-7 px-2.5 text-[11px] font-semibold rounded-full data-[state=active]:bg-white/10 data-[state=active]:text-white data-[state=active]:border data-[state=active]:border-white/5 transition-all text-white/60 hover:text-white"
             >
               Leads Arquivados
             </TabsTrigger>
             {isAgencyAdmin && (
               <TabsTrigger
                 value="admin"
-                className="h-7 px-2.5 text-[11px] font-semibold rounded-full data-[state=active]:bg-[var(--surface)] data-[state=active]:shadow-xs transition-all"
+                className="h-7 px-2.5 text-[11px] font-semibold rounded-full data-[state=active]:bg-white/10 data-[state=active]:text-white data-[state=active]:border data-[state=active]:border-white/5 transition-all text-white/60 hover:text-white"
               >
                 Configurações
               </TabsTrigger>
@@ -416,7 +416,7 @@ function CRMPage() {
       )}
 
       {activeTab === "admin" && agency && (
-        <div className="flex-1 overflow-y-auto p-4 md:p-6 bg-background">
+        <div className="flex-1 overflow-y-auto px-4 md:px-6 py-4">
           <ModuleAdminPanel
             moduleKey="crm"
             moduleName="CRM"

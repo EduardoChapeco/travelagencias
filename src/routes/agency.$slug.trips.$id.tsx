@@ -1,4 +1,4 @@
-import { createFileRoute, Link, Outlet, useNavigate, useParams } from "@tanstack/react-router";
+import { createFileRoute, Link, Outlet, useNavigate, useParams, useLocation } from "@tanstack/react-router";
 import { TabsList } from "@/components/ui/tabs";
 import { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
@@ -59,6 +59,7 @@ function getDaysToTrip(travelStart?: string | null): number | null {
 
 function TripLayout() {
   const { slug, id } = Route.useParams();
+  const { pathname } = useLocation();
   const { agency, isAgencyAdmin } = useAgency();
   const navigate = useNavigate();
   const qc = useQueryClient();
@@ -69,6 +70,16 @@ function TripLayout() {
   const [importBookingId, setImportBookingId] = useState("");
   const [showEmitModal, setShowEmitModal] = useState(false);
   const [emitStep, setEmitStep] = useState(1);
+
+  const getTabClass = (tabPath: string, exact = false) => {
+    const active = exact ? pathname === tabPath : pathname.startsWith(tabPath);
+    return cn(
+      "inline-flex items-center justify-center h-7 px-3 text-[11px] font-semibold rounded-full transition-all gap-1.5 whitespace-nowrap cursor-pointer",
+      active
+        ? "bg-white/10 text-white border border-white/5 shadow-xs"
+        : "text-white/60 hover:text-white"
+    );
+  };
 
   // Query para verificar se esta viagem já está vinculada ao GDS Infotravel
   const linkQ = useQuery({
@@ -308,17 +319,17 @@ function TripLayout() {
   }
 
   return (
-    <div className="flex h-full flex-col overflow-hidden bg-background">
+    <div className="flex h-full flex-col overflow-hidden">
       <ConfirmDialog />
 
       {/* ── Sticky Trip Header Bar ─────────────────────────────────── */}
-      <div className="px-4 md:px-6 pt-4 md:pt-4 flex flex-col gap-4 bg-surface border-b border-border shrink-0">
+      <div className="px-4 md:px-6 py-3 flex flex-col gap-3.5 bg-surface/50 border-b border-border shrink-0 no-margin-bottom">
         {/* Nav + Ações */}
         <div className="flex items-center justify-between">
           <Link
             to="/agency/$slug/trips"
             params={{ slug }}
-            className="inline-flex items-center gap-1.5 text-xs font-medium text-muted-foreground hover:text-foreground transition-colors bg-surface-alt px-2.5 py-1.5 rounded-full"
+            className="inline-flex h-8 items-center gap-1.5 rounded-full border border-white/10 bg-white/5 px-3 text-xs font-bold text-white/90 hover:bg-white/10 transition-colors cursor-pointer"
           >
             <ArrowLeft className="h-3.5 w-3.5" />
             <span className="hidden sm:inline">Voltar para {getModuleName("trips", agency)}</span>
@@ -516,107 +527,105 @@ function TripLayout() {
           </div>
         )}
 
-        {/* Tabs */}
-        <div className="border-b border-border bg-[var(--surface)] px-4 py-2 shrink-0 overflow-x-auto no-scrollbar">
-          <TabsList className="h-8 bg-[var(--surface-alt)] rounded-2xl p-0.5 inline-flex flex-nowrap gap-0">
-            <Link
-              to="/agency/$slug/trips/$id"
-              params={{ slug, id }}
-              activeOptions={{ exact: true }}
-              className="inline-flex items-center justify-center h-7 px-3 text-[11px] font-semibold rounded-full transition-all data-[status=active]:bg-[var(--surface)] data-[status=active]:text-foreground data-[status=active]:shadow-xs text-muted-foreground hover:text-foreground gap-1.5 whitespace-nowrap"
-            >
-              <ReceiptText className="h-3.5 w-3.5" />
-              Visão Geral
-            </Link>
-            <Link
-              to="/agency/$slug/trips/$id/passengers"
-              params={{ slug, id }}
-              className="inline-flex items-center justify-center h-7 px-3 text-[11px] font-semibold rounded-full transition-all data-[status=active]:bg-[var(--surface)] data-[status=active]:text-foreground data-[status=active]:shadow-xs text-muted-foreground hover:text-foreground gap-1.5 whitespace-nowrap"
-            >
-              <Users className="h-3.5 w-3.5" />
-              Passageiros ({paxQ.data?.length ?? 0})
-            </Link>
-            <Link
-              to="/agency/$slug/trips/$id/financial"
-              params={{ slug, id }}
-              className="inline-flex items-center justify-center h-7 px-3 text-[11px] font-semibold rounded-full transition-all data-[status=active]:bg-[var(--surface)] data-[status=active]:text-foreground data-[status=active]:shadow-xs text-muted-foreground hover:text-foreground gap-1.5 whitespace-nowrap"
-            >
-              <span className="text-[11px] font-extrabold">R$</span>
-              Financeiro
-            </Link>
-            <Link
-              to="/agency/$slug/trips/$id/flights"
-              params={{ slug, id }}
-              className="inline-flex items-center justify-center h-7 px-3 text-[11px] font-semibold rounded-full transition-all data-[status=active]:bg-[var(--surface)] data-[status=active]:text-foreground data-[status=active]:shadow-xs text-muted-foreground hover:text-foreground gap-1.5 whitespace-nowrap"
-            >
-              <Plane className="h-3.5 w-3.5" />
-              Aéreos
-            </Link>
-            <Link
-              to="/agency/$slug/trips/$id/reaccommodation"
-              params={{ slug, id }}
-              className="inline-flex items-center justify-center h-7 px-3 text-[11px] font-semibold rounded-full transition-all data-[status=active]:bg-[var(--surface)] data-[status=active]:text-foreground data-[status=active]:shadow-xs text-muted-foreground hover:text-foreground gap-1.5 whitespace-nowrap"
-            >
-              <Clock className="h-3.5 w-3.5 text-rose-500" />
-              Reacomodação
-            </Link>
-            <Link
-              to="/agency/$slug/trips/$id/lodging"
-              params={{ slug, id }}
-              className="inline-flex items-center justify-center h-7 px-3 text-[11px] font-semibold rounded-full transition-all data-[status=active]:bg-[var(--surface)] data-[status=active]:text-foreground data-[status=active]:shadow-xs text-muted-foreground hover:text-foreground gap-1.5 whitespace-nowrap"
-            >
-              <Hotel className="h-3.5 w-3.5" />
-              Hospedagem
-            </Link>
-            <Link
-              to="/agency/$slug/trips/$id/contract"
-              params={{ slug, id }}
-              className="inline-flex items-center justify-center h-7 px-3 text-[11px] font-semibold rounded-full transition-all data-[status=active]:bg-[var(--surface)] data-[status=active]:text-foreground data-[status=active]:shadow-xs text-muted-foreground hover:text-foreground gap-1.5 whitespace-nowrap"
-            >
-              <FileSignature className="h-3.5 w-3.5" />
-              Contrato
-            </Link>
-            <Link
-              to="/agency/$slug/trips/$id/confirmation"
-              params={{ slug, id }}
-              className="inline-flex items-center justify-center h-7 px-3 text-[11px] font-semibold rounded-full transition-all data-[status=active]:bg-[var(--surface)] data-[status=active]:text-foreground data-[status=active]:shadow-xs text-muted-foreground hover:text-foreground gap-1.5 whitespace-nowrap"
-            >
-              <CheckCircle2 className="h-3.5 w-3.5" />
-              Confirmação
-            </Link>
-            <Link
-              to="/agency/$slug/trips/$id/vouchers"
-              params={{ slug, id }}
-              className="inline-flex items-center justify-center h-7 px-3 text-[11px] font-semibold rounded-full transition-all data-[status=active]:bg-[var(--surface)] data-[status=active]:text-foreground data-[status=active]:shadow-xs text-muted-foreground hover:text-foreground gap-1.5 whitespace-nowrap"
-            >
-              <Ticket className="h-3.5 w-3.5" />
-              Voucher
-            </Link>
-            <Link
-              to="/agency/$slug/trips/$id/boarding"
-              params={{ slug, id }}
-              className="inline-flex items-center justify-center h-7 px-3 text-[11px] font-semibold rounded-full transition-all data-[status=active]:bg-[var(--surface)] data-[status=active]:text-foreground data-[status=active]:shadow-xs text-muted-foreground hover:text-foreground gap-1.5 whitespace-nowrap"
-            >
-              <Navigation className="h-3.5 w-3.5" />
-              Check-in & Embarque
-            </Link>
-            <Link
-              to="/agency/$slug/trips/$id/destination"
-              params={{ slug, id }}
-              className="inline-flex items-center justify-center h-7 px-3 text-[11px] font-semibold rounded-full transition-all data-[status=active]:bg-[var(--surface)] data-[status=active]:text-foreground data-[status=active]:shadow-xs text-muted-foreground hover:text-foreground gap-1.5 whitespace-nowrap"
-            >
-              <MapPin className="h-3.5 w-3.5" />
-              Destino & Segurança
-            </Link>
-            <Link
-              to="/agency/$slug/trips/$id/history"
-              params={{ slug, id }}
-              className="inline-flex items-center justify-center h-7 px-3 text-[11px] font-semibold rounded-full transition-all data-[status=active]:bg-[var(--surface)] data-[status=active]:text-foreground data-[status=active]:shadow-xs text-muted-foreground hover:text-foreground gap-1.5 whitespace-nowrap"
-            >
-              <Clock className="h-3.5 w-3.5" />
-              Histórico
-            </Link>
-          </TabsList>
+        {/* Tabs — pill format */}
+        <div className="flex bg-surface p-0.5 rounded-full border border-border text-xs gap-1 shrink-0 overflow-x-auto no-scrollbar max-w-full">
+          <Link
+            to="/agency/$slug/trips/$id"
+            params={{ slug, id }}
+            activeOptions={{ exact: true }}
+            className={getTabClass(`/agency/${slug}/trips/${id}`, true)}
+          >
+            <ReceiptText className="h-3.5 w-3.5" />
+            Visão Geral
+          </Link>
+          <Link
+            to="/agency/$slug/trips/$id/passengers"
+            params={{ slug, id }}
+            className={getTabClass(`/agency/${slug}/trips/${id}/passengers`)}
+          >
+            <Users className="h-3.5 w-3.5" />
+            Passageiros ({paxQ.data?.length ?? 0})
+          </Link>
+          <Link
+            to="/agency/$slug/trips/$id/financial"
+            params={{ slug, id }}
+            className={getTabClass(`/agency/${slug}/trips/${id}/financial`)}
+          >
+            <span className="text-[11px] font-extrabold">R$</span>
+            Financeiro
+          </Link>
+          <Link
+            to="/agency/$slug/trips/$id/flights"
+            params={{ slug, id }}
+            className={getTabClass(`/agency/${slug}/trips/${id}/flights`)}
+          >
+            <Plane className="h-3.5 w-3.5" />
+            Aéreos
+          </Link>
+          <Link
+            to="/agency/$slug/trips/$id/reaccommodation"
+            params={{ slug, id }}
+            className={getTabClass(`/agency/${slug}/trips/${id}/reaccommodation`)}
+          >
+            <Clock className="h-3.5 w-3.5 text-rose-500" />
+            Reacomodação
+          </Link>
+          <Link
+            to="/agency/$slug/trips/$id/lodging"
+            params={{ slug, id }}
+            className={getTabClass(`/agency/${slug}/trips/${id}/lodging`)}
+          >
+            <Hotel className="h-3.5 w-3.5" />
+            Hospedagem
+          </Link>
+          <Link
+            to="/agency/$slug/trips/$id/contract"
+            params={{ slug, id }}
+            className={getTabClass(`/agency/${slug}/trips/${id}/contract`)}
+          >
+            <FileSignature className="h-3.5 w-3.5" />
+            Contrato
+          </Link>
+          <Link
+            to="/agency/$slug/trips/$id/confirmation"
+            params={{ slug, id }}
+            className={getTabClass(`/agency/${slug}/trips/${id}/confirmation`)}
+          >
+            <CheckCircle2 className="h-3.5 w-3.5" />
+            Confirmação
+          </Link>
+          <Link
+            to="/agency/$slug/trips/$id/vouchers"
+            params={{ slug, id }}
+            className={getTabClass(`/agency/${slug}/trips/${id}/vouchers`)}
+          >
+            <Ticket className="h-3.5 w-3.5" />
+            Voucher
+          </Link>
+          <Link
+            to="/agency/$slug/trips/$id/boarding"
+            params={{ slug, id }}
+            className={getTabClass(`/agency/${slug}/trips/${id}/boarding`)}
+          >
+            <Navigation className="h-3.5 w-3.5" />
+            Check-in & Embarque
+          </Link>
+          <Link
+            to="/agency/$slug/trips/$id/destination"
+            params={{ slug, id }}
+            className={getTabClass(`/agency/${slug}/trips/$id/destination`)}
+          >
+            <MapPin className="h-3.5 w-3.5" />
+            Destino & Segurança
+          </Link>
+          <Link
+            to="/agency/$slug/trips/$id/history"
+            params={{ slug, id }}
+            className={getTabClass(`/agency/${slug}/trips/${id}/history`)}
+          >
+            <Clock className="h-3.5 w-3.5" />
+            Histórico
+          </Link>
         </div>
       </div>
 
