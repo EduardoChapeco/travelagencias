@@ -19,7 +19,7 @@ const defaultHours = (): BusinessHours =>
   ) as BusinessHours;
 
 export const Route = createFileRoute("/auth/onboarding")({
-  head: () => ({ meta: [{ title: "Configure sua agência · TravelOS" }] }),
+  head: ({ context }: any) => ({ meta: [{ title: `Configure sua agência · ${context?.brand?.platform_name || 'Turis'}` }] }),
   component: Page,
 });
 
@@ -264,7 +264,7 @@ function Page() {
               </Field>
               <Field
                 label="URL da sua agência no sistema"
-                hint={`travelos.app/agency/${slugValue || "minha-agencia"}`}
+                hint={`turis.app/agency/${slugValue || "minha-agencia"}`}
                 error={errors.slug?.message}
               >
                 <Input

@@ -1,5 +1,5 @@
 -- =============================================================================
--- TravelOS — Master Security & Architecture Audit Fixes
+-- Turis — Master Security & Architecture Audit Fixes
 -- Migration: 20260609000005_master_audit_fixes
 -- =============================================================================
 

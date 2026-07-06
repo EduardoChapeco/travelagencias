@@ -33,7 +33,7 @@ import { PlanForm } from "@/components/trips/financial/PlanForm";
 import { AddRecordSheet } from "@/components/trips/financial/AddRecordSheet";
 
 export const Route = createFileRoute("/agency/$slug/trips/$id/financial")({
-  head: () => ({ meta: [{ title: "Financeiro da Viagem · TravelOS" }] }),
+  head: ({ context }: any) => ({ meta: [{ title: `Financeiro da Viagem · ${context?.brand?.platform_name || 'Turis'}` }] }),
   component: TripFinancial,
 });
 

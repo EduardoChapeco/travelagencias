@@ -1,4 +1,4 @@
-# Design System e Responsividade (TravelOS)
+# Design System e Responsividade (Turis)
 
 Este relatório audita a aderência visual da interface ao tema "Light Editorial SaaS / Flat Premium" e analisa o comportamento responsivo de tabelas e painéis em diferentes larguras de tela.
 

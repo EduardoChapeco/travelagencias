@@ -1,5 +1,5 @@
 # PLAN.md (A.I.R.I. Phase 2 - P.L.A.N.)
-**Objetivo:** Transformar o TravelOS numa central Omnichannel (Umbler Talk + Mail) mantendo 100% de compatibilidade retroativa.
+**Objetivo:** Transformar o Turis numa central Omnichannel (Umbler Talk + Mail) mantendo 100% de compatibilidade retroativa.
 
 ## 1. Módulo INBOX WhatsApp (Onda 1 e 2)
 **User Story:** Como atendente, quero ver todas as conversas do WhatsApp em tempo real sem recarregar a tela.

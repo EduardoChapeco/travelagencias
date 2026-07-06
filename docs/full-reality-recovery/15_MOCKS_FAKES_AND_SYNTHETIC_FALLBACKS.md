@@ -1,6 +1,6 @@
 # 15 Auditoria de Mocks, Fakes e Fallbacks
 
-Neste documento registramos a verificação de integridade operacional do TravelOS para garantir que nenhuma funcionalidade esteja usando simulações estáticas, dados sintéticos ou placeholders de "Em Construção".
+Neste documento registramos a verificação de integridade operacional do Turis para garantir que nenhuma funcionalidade esteja usando simulações estáticas, dados sintéticos ou placeholders de "Em Construção".
 
 ---
 

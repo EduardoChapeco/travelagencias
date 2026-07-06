@@ -61,7 +61,7 @@ import {
 import { toast } from "sonner";
 
 export const Route = createFileRoute("/agency/$slug/rooming-list")({
-  head: () => ({ meta: [{ title: "Rooming List · TravelOS" }] }),
+  head: ({ context }: any) => ({ meta: [{ title: `Rooming List · ${context?.brand?.platform_name || 'Turis'}` }] }),
   component: RoomingListDashboard,
 });
 

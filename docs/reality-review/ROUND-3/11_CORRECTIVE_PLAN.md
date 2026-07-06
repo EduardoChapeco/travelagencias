@@ -1,4 +1,4 @@
-# Plano Corretivo Contábil e Operacional — Rodada 3 (TravelOS)
+# Plano Corretivo Contábil e Operacional — Rodada 3 (Turis)
 
 Este plano corretivo estabelece o encerramento das principais pendências estruturais de segurança e lógica contábil, indicando os refinamentos subsequentes recomendados.
 

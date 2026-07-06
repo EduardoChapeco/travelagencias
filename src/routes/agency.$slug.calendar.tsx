@@ -40,7 +40,7 @@ import {
 import { Field, Input, Select, PrimaryButton, GhostButton } from "@/components/ui/form";
 
 export const Route = createFileRoute("/agency/$slug/calendar")({
-  head: () => ({ meta: [{ title: "Agenda · TravelOS" }] }),
+  head: ({ context }: any) => ({ meta: [{ title: `Agenda · ${context?.brand?.platform_name || 'Turis'}` }] }),
   component: CalendarPage,
 });
 

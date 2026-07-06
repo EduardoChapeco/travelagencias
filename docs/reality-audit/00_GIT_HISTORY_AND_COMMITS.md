@@ -1,6 +1,6 @@
 # Histórico Git e Commits Recentes
 
-Este documento faz parte da Auditoria Técnica Forense do TravelAgencias/TravelOS e rastreia o histórico de commits, commits recentes e as modificações locais que ainda não foram consolidadas.
+Este documento faz parte da Auditoria Técnica Forense do TravelAgencias/Turis e rastreia o histórico de commits, commits recentes e as modificações locais que ainda não foram consolidadas.
 
 ---
 

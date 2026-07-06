@@ -30,7 +30,7 @@ import { SheetPage } from "@/components/ui/sheet";
 import { HeaderPortal } from "@/components/shell/HeaderPortal";
 
 export const Route = createFileRoute("/agency/$slug/portal/pages/")({
-  head: () => ({ meta: [{ title: "Painel de Páginas do Portal · TravelOS" }] }),
+  head: ({ context }: any) => ({ meta: [{ title: `Painel de Páginas do Portal · ${context?.brand?.platform_name || 'Turis'}` }] }),
   component: PagesPage,
 });
 

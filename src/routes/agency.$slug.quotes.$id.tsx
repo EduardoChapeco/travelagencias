@@ -56,7 +56,7 @@ import { createProposal } from "@/services/proposals";
 import { runMarketSimulation, fetchSimulationRunsForQuote } from "@/services/quotes-simulation";
 
 export const Route = createFileRoute("/agency/$slug/quotes/$id")({
-  head: () => ({ meta: [{ title: "Central de Decisão VibeTour · TravelOS" }] }),
+  head: ({ context }: any) => ({ meta: [{ title: `Central de Decisão VibeTour · ${context?.brand?.platform_name || 'Turis'}` }] }),
   component: QuoteDetailWorkspacePage,
 });
 
@@ -387,7 +387,7 @@ Resuma de forma profissional e persuasiva (estilo consultor premium de turismo) 
           action: "completion",
           prompt,
           systemPrompt:
-            "Você é o especialista de viagens sênior do TravelOS. Ajude o operador a explicar a cotação.",
+            "Você é o especialista de viagens sênior do Turis. Ajude o operador a explicar a cotação.",
           modelPreference: "smart",
         },
       });
@@ -962,7 +962,7 @@ Resuma de forma profissional e persuasiva (estilo consultor premium de turismo) 
                               )}
                             </div>
                             <span className="text-[10px] font-medium text-muted-foreground">
-                              Scorecard v1
+                              Scorecard
                             </span>
                           </div>
                           <div className="flex flex-col items-end">

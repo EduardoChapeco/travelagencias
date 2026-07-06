@@ -26,7 +26,7 @@ import {
 } from "@/components/ui/form";
 
 export const Route = createFileRoute("/agency/$slug/settings/financial")({
-  head: () => ({ meta: [{ title: "Fechamentos & Comissões · TravelOS" }] }),
+  head: ({ context }: any) => ({ meta: [{ title: `Fechamentos & Comissões · ${context?.brand?.platform_name || 'Turis'}` }] }),
   component: FinancialSettingsPage,
 });
 

@@ -1,5 +1,5 @@
 -- =============================================================================
--- TravelOS — Schema Fixes for Production
+-- Turis — Schema Fixes for Production
 -- Migration: 20260605000001_schema_fixes_production
 -- 
 -- Corrige:

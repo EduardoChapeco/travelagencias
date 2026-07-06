@@ -1,7 +1,7 @@
 # 07. Canonical Channel Data Model (Modelo Canônico de Dados dos Canais)
 
 ## 1. Tabelas de Integração Unificadas
-Para evitar duplicação de dados, o TravelOS consolidará o modelo com base no schema `Umbler Inbox Foundation` (criado em 2026-08-01):
+Para evitar duplicação de dados, o Turis consolidará o modelo com base no schema `Umbler Inbox Foundation` (criado em 2026-08-01):
 
 ### Tabela `public.channels`
 Define cada canal físico ativo na agência:

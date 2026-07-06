@@ -1,6 +1,6 @@
 # 03. Matriz de Endpoints vs. Implementação Real
 
-Esta matriz detalha o estado de implementação física no **TravelOS** de cada funcionalidade crítica da API **Infotravel/Infotera**, comparando a capacidade oficial documentada no Swagger da plataforma com o código do repositório.
+Esta matriz detalha o estado de implementação física no **Turis** de cada funcionalidade crítica da API **Infotravel/Infotera**, comparando a capacidade oficial documentada no Swagger da plataforma com o código do repositório.
 
 ---
 
@@ -25,4 +25,4 @@ Esta matriz detalha o estado de implementação física no **TravelOS** de cada 
 
 ## 2. Conclusão da Análise de Cobertura
 
-Atualmente, o **TravelOS possui cobertura zero (0%) de integração real** com a API do Infotravel em ambientes de produção. As telas existentes baseiam-se em fluxos estáticos e mocks acoplados na Edge Function, operando exclusivamente em modo Sandbox demonstrativo. O reordenamento dos caminhos (endpoints) e a estruturação de mapeadores de dados constituem os primeiros passos para a ativação do ecossistema real.
+Atualmente, o **Turis possui cobertura zero (0%) de integração real** com a API do Infotravel em ambientes de produção. As telas existentes baseiam-se em fluxos estáticos e mocks acoplados na Edge Function, operando exclusivamente em modo Sandbox demonstrativo. O reordenamento dos caminhos (endpoints) e a estruturação de mapeadores de dados constituem os primeiros passos para a ativação do ecossistema real.

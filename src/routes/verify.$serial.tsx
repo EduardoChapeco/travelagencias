@@ -5,7 +5,7 @@ import { verifyContract } from "@/services/public";
 export const Route = createFileRoute("/verify/$serial")({
   head: ({ params }) => ({
     meta: [
-      { title: `Verificação de assinatura ${params.serial} · TravelOS` },
+      { title: `Verificação de assinatura ${params.serial} · Turis` },
       { name: "description", content: "Validação pública de contrato assinado" },
     ],
   }),
@@ -51,7 +51,7 @@ function Page() {
       <div className="overflow-hidden rounded-2xl bg-surface  ring-1 ring-border/50">
         <div className="border-b border-border/50 bg-surface-alt/30 px-6 py-4 text-center">
           <h2 className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">
-            Sistema de Autenticidade TravelOS
+            Sistema de Autenticidade Turis
           </h2>
         </div>
         <div className="p-8">

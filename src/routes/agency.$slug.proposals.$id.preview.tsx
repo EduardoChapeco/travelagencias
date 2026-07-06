@@ -6,7 +6,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { money, fmtDate } from "@/components/ui/form";
 
 export const Route = createFileRoute("/agency/$slug/proposals/$id/preview")({
-  head: () => ({ meta: [{ title: "Pré-visualização da Proposta · TravelOS" }] }),
+  head: ({ context }: any) => ({ meta: [{ title: `Pré-visualização da Proposta · ${context?.brand?.platform_name || 'Turis'}` }] }),
   component: ProposalPreview,
 });
 

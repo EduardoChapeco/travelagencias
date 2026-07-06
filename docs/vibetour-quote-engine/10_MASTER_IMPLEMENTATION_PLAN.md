@@ -1,6 +1,6 @@
 # 10. Plano Mestre de Implementação (Master Implementation Plan)
 
-Este documento descreve o roteiro de fases ordenadas por dependência técnica para a implementação completa e segura do motor inteligente de cotação VibeTour no TravelOS.
+Este documento descreve o roteiro de fases ordenadas por dependência técnica para a implementação completa e segura do motor inteligente de cotação VibeTour no Turis.
 
 ---
 

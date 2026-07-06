@@ -22,7 +22,7 @@ import { BlockRenderer } from "@/components/portal/BlockRenderer";
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "TravelOS — O Workspace Definitivo para Agências de Viagens" },
+      { title: "Turis — O Workspace Definitivo para Agências de Viagens" },
       {
         name: "description",
         content:
@@ -140,7 +140,7 @@ function Landing() {
             </div>
             <div className="flex flex-col">
               <span className="text-sm font-bold tracking-tight text-foreground leading-none">
-                TravelOS
+                Turis
               </span>
               <span className="text-[8px] font-bold uppercase tracking-widest text-muted-foreground mt-0.5 leading-none">
                 B2B Workspace
@@ -257,7 +257,7 @@ function Landing() {
               O Contraste do Sucesso
             </p>
             <h2 className="ds-h1 text-foreground">
-              Como sua agência opera hoje vs. no <span className="text-accent">TravelOS</span>
+              Como sua agência opera hoje vs. no <span className="text-accent">Turis</span>
             </h2>
             <p className="text-muted-foreground text-sm mt-3 font-medium leading-relaxed max-w-2xl mx-auto">
               O amadorismo e o atraso processual cobram um preço alto na conversão. Compare a
@@ -311,13 +311,13 @@ function Landing() {
               </ul>
             </div>
 
-            {/* O Jeito TravelOS */}
+            {/* O Jeito Turis */}
             <div className="rounded-xl border-2 border-primary bg-surface p-8 space-y-6 relative hover:border-primary transition-all duration-300">
               <div className="absolute -top-3.5 right-6 rounded-full bg-primary px-3 py-1 text-[8px] font-bold uppercase tracking-wider text-primary-foreground">
                 Fórmula de Alto Lucro
               </div>
               <h3 className="text-base font-bold text-primary flex items-center gap-3">
-                <Sparkles className="h-5 w-5 shrink-0 text-accent" />O Jeito Inteligente TravelOS
+                <Sparkles className="h-5 w-5 shrink-0 text-accent" />O Jeito Inteligente Turis
               </h3>
               <ul className="space-y-4 text-xs text-foreground font-semibold">
                 <li className="flex gap-2.5 items-start">
@@ -442,7 +442,7 @@ function Landing() {
               </div>
               <p className="text-muted-foreground italic text-xs leading-relaxed font-semibold">
                 "O fechamento das minhas propostas subiu mais de 30% desde que comecei a usar o
-                TravelOS. O cliente abre a proposta interativa no celular, assina ali mesmo em 1
+                Turis. O cliente abre a proposta interativa no celular, assina ali mesmo em 1
                 minuto e eu recebo o aviso imediato no WhatsApp. Reduziu meu ciclo de venda de dias
                 para minutos."
               </p>
@@ -469,7 +469,7 @@ function Landing() {
               </div>
               <p className="text-muted-foreground italic text-xs leading-relaxed font-semibold">
                 "Antes vivíamos correndo o risco de embarcar cliente com passaporte vencido ou sem
-                vistos. O robô de alertas automáticos do TravelOS salvou nossa agência de um baita
+                vistos. O robô de alertas automáticos do Turis salvou nossa agência de um baita
                 prejuízo no mês passado. O financeiro integrado com a margem líquida por viagem
                 também é fantástico."
               </p>
@@ -529,11 +529,11 @@ function Landing() {
               T
             </div>
             <span className="text-xs font-bold text-foreground tracking-tight uppercase">
-              TravelOS
+              Turis
             </span>
           </div>
           <p className="text-[10px] text-muted-foreground font-semibold">
-            © {new Date().getFullYear()} TravelOS. Desenvolvido exclusivamente para profissionais de
+            © {new Date().getFullYear()} Turis. Desenvolvido exclusivamente para profissionais de
             turismo.
           </p>
           <div className="flex items-center gap-6 text-[10px] text-muted-foreground font-bold uppercase tracking-wider">

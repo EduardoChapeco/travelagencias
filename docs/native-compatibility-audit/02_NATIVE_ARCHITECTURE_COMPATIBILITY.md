@@ -1,6 +1,6 @@
-# Compatibilidade com a Arquitetura Nativa do TravelOS
+# Compatibilidade com a Arquitetura Nativa do Turis
 
-Este documento avalia se o Motor VibeTour foi construído respeitando as diretrizes arquiteturais canônicas do ecossistema TravelAgencias/TravelOS ou se foram introduzidos atalhos, duplicações ou desvios de design.
+Este documento avalia se o Motor VibeTour foi construído respeitando as diretrizes arquiteturais canônicas do ecossistema TravelAgencias/Turis ou se foram introduzidos atalhos, duplicações ou desvios de design.
 
 ---
 

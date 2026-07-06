@@ -1,4 +1,4 @@
-# Master Plan de Evolução e Pendências — TravelOS
+# Master Plan de Evolução e Pendências — Turis
 
 Este documento serve como inventário detalhado e planejamento técnico para as próximas fases de evolução sistêmica e controle de auditoria de alterações.
 
@@ -8,7 +8,7 @@ Este documento serve como inventário detalhado e planejamento técnico para as 
 
 **Status: 100% Concluído & Homologado**
 
-Implementamos a reformulação visual completa da plataforma TravelOS para o novo estilo visual premium (Light Editorial SaaS), garantindo conformidade total de tipografia fluida, eliminação de sombras e border-radii consistentes em todos os módulos core.
+Implementamos a reformulação visual completa da plataforma Turis para o novo estilo visual premium (Light Editorial SaaS), garantindo conformidade total de tipografia fluida, eliminação de sombras e border-radii consistentes em todos os módulos core.
 
 - [x] **Fase 0: Inventário** (Mapeamento de rotas e regressões na tabela de auditoria)
 - [x] **Fase 1: Design System & CSS Tokens** (Cores, fontes fluidas, botões e campos no `form.tsx`)

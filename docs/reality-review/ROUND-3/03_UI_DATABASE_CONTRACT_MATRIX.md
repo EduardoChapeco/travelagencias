@@ -1,4 +1,4 @@
-# Matriz de Contratos: UI vs. Tabelas do Banco — Rodada 3 (TravelOS)
+# Matriz de Contratos: UI vs. Tabelas do Banco — Rodada 3 (Turis)
 
 Este documento mapeia o acoplamento de dados entre as rotas de interface no frontend e as tabelas reais do banco de dados PostgreSQL.
 

@@ -35,7 +35,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { SearchableSelect } from "@/components/ui/searchable-select";
 
 export const Route = createFileRoute("/agency/$slug/financial/cash")({
-  head: () => ({ meta: [{ title: "Caixa Diário · TravelOS" }] }),
+  head: ({ context }: any) => ({ meta: [{ title: `Caixa Diário · ${context?.brand?.platform_name || 'Turis'}` }] }),
   component: CashPage,
 });
 

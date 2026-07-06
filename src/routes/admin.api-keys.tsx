@@ -15,7 +15,7 @@ import {
 } from "@/services/admin";
 
 export const Route = createFileRoute("/admin/api-keys")({
-  head: () => ({ meta: [{ title: "Chaves Globais · TravelOS Admin" }] }),
+  head: () => ({ meta: [{ title: "Chaves Globais · Turis Admin" }] }),
   component: Page,
 });
 

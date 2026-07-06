@@ -21,7 +21,7 @@ import { ActionRegistry } from "@/lib/ai/ActionRegistry";
 
 // @ts-ignore
 export const Route = createFileRoute("/agency/$slug/settings/ai-audit")({
-  head: () => ({ meta: [{ title: "Auditoria de IA · TravelOS" }] }),
+  head: ({ context }: any) => ({ meta: [{ title: `Auditoria de IA · ${context?.brand?.platform_name || 'Turis'}` }] }),
   component: Page,
 });
 

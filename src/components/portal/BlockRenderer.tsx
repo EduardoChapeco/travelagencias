@@ -177,7 +177,7 @@ export function BlockStyleWrapper({
 
   const radiusMap = {
     none: "rounded-none",
-    md: "rounded-xl",
+    md: "rounded-3xl",
     lg: "rounded-3xl",
     full: "rounded-[2rem]",
   };
@@ -192,13 +192,13 @@ export function BlockStyleWrapper({
   const borderClass = borderMap[border_effect as keyof typeof borderMap] || "";
 
   const shadowMap = {
-    none: "",
-    sm: "shadow-sm",
-    md: "shadow-md",
-    lg: "shadow-2xl shadow-black/25",
-    glow: "shadow-lg shadow-indigo-500/20",
+    none: " shadow-none",
+    sm: " shadow-none",
+    md: " shadow-none",
+    lg: " shadow-none",
+    glow: " shadow-none",
   };
-  const shadowClass = shadowMap[shadow_effect as keyof typeof shadowMap] || "";
+  const shadowClass = shadowMap[shadow_effect as keyof typeof shadowMap] || " shadow-none";
 
   return (
     <div
@@ -468,7 +468,7 @@ function renderBlock(
                       target={b.cta_link.startsWith("http") ? "_blank" : undefined}
                       rel="noreferrer"
                       onClick={() => handleLinkClick(b.cta_link)}
-                      className="inline-flex h-12 items-center justify-center rounded-xl bg-brand px-6 text-sm font-bold text-brand-foreground transition-all hover:scale-105 active:scale-95"
+                      className="inline-flex h-12 items-center justify-center rounded-3xl bg-brand px-6 text-sm font-bold text-brand-foreground transition-all hover:scale-105 active:scale-95"
                     >
                       {b.cta_label}
                     </a>
@@ -510,7 +510,7 @@ function renderBlock(
                     target={b.cta_link.startsWith("http") ? "_blank" : undefined}
                     rel="noreferrer"
                     onClick={() => handleLinkClick(b.cta_link)}
-                    className="inline-flex h-11 items-center justify-center rounded-xl bg-brand px-5 text-xs font-bold text-brand-foreground transition-all hover:scale-105 active:scale-95"
+                    className="inline-flex h-11 items-center justify-center rounded-3xl bg-brand px-5 text-xs font-bold text-brand-foreground transition-all hover:scale-105 active:scale-95"
                   >
                     {b.cta_label}
                   </a>
@@ -593,7 +593,7 @@ function renderBlock(
             {b.images.map((img, i) => (
               <div
                 key={i}
-                className="aspect-square overflow-hidden rounded-xl bg-surface-alt group"
+                className="aspect-square overflow-hidden rounded-3xl bg-surface-alt group"
               >
                 <img
                   src={img}
@@ -658,7 +658,7 @@ function renderBlock(
                   key={i}
                   className="flex items-center gap-5 bg-surface-alt/15 p-5 rounded-2xl border border-border/40 hover:bg-surface-alt/25 transition-colors"
                 >
-                  <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-brand/10 text-brand">
+                  <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-3xl bg-brand/10 text-brand">
                     {renderIconByName(item.icon, "h-5 w-5")}
                   </div>
                   <div>
@@ -684,7 +684,7 @@ function renderBlock(
                 key={i}
                 className="flex flex-col items-start bg-surface-alt/30 p-6 rounded-2xl border border-border/50 transition-all hover:-translate-y-1"
               >
-                <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-brand/10 text-brand mb-4">
+                <div className="flex h-12 w-12 items-center justify-center rounded-3xl bg-brand/10 text-brand mb-4">
                   {renderIconByName(item.icon, "h-6 w-6")}
                 </div>
                 <h3 className="text-xl font-semibold mb-2">{item.title}</h3>
@@ -1021,7 +1021,7 @@ function renderBlock(
               "flex items-center p-4 transition-transform hover:scale-105 active:scale-95 border";
 
             if (rounded === "none") baseClasses += "rounded-none";
-            else if (rounded === "md") baseClasses += "rounded-xl";
+            else if (rounded === "md") baseClasses += "rounded-3xl";
             else baseClasses += "rounded-full";
 
             if (item.highlight) {
@@ -1082,7 +1082,7 @@ function renderBlock(
           <Link
             to={"/auth/login" as any}
             onClick={() => handleLinkClick("/auth/login")}
-            className="inline-flex h-11 items-center justify-center rounded-xl bg-brand px-6 text-sm font-bold text-brand-foreground transition-all hover:scale-105"
+            className="inline-flex h-11 items-center justify-center rounded-3xl bg-brand px-6 text-sm font-bold text-brand-foreground transition-all hover:scale-105"
           >
             {b.button_label || "Acessar Painel"}
           </Link>
@@ -1130,7 +1130,7 @@ function renderBlock(
                     <div className="h-full w-full bg-surface-alt" />
                   )}
                   {item.price && (
-                    <div className="absolute top-3 right-3 rounded-md bg-brand px-2.5 py-1 text-xs font-bold text-brand-foreground">
+                    <div className="absolute top-3 right-3 rounded-2xl bg-brand px-2.5 py-1 text-xs font-bold text-brand-foreground">
                       {item.price}
                     </div>
                   )}
@@ -1445,7 +1445,7 @@ function NewsletterBlock({
             "Inscreva seu e-mail e seja o primeiro a saber sobre nossos novos roteiros."}
         </p>
         {subscribed ? (
-          <div className="flex items-center gap-2 text-emerald-600 dark:text-emerald-400 font-bold text-xs bg-emerald-50 dark:bg-emerald-900/10 px-4 py-2 rounded-xl border border-emerald-200/40 font-semibold">
+          <div className="flex items-center gap-2 text-emerald-600 dark:text-emerald-400 font-bold text-xs bg-emerald-50 dark:bg-emerald-900/10 px-4 py-2 rounded-3xl border border-emerald-200/40 font-semibold">
             <CheckCircle2 className="h-4 w-4" /> Cadastro realizado com sucesso!
           </div>
         ) : (
@@ -1460,12 +1460,12 @@ function NewsletterBlock({
               value={emailInput}
               onChange={(e) => setEmailInput(e.target.value)}
               placeholder={block.placeholder || "Seu melhor e-mail"}
-              className="flex-1 h-11 px-4 rounded-xl border border-border bg-surface text-xs text-foreground placeholder:text-muted-foreground/50 focus:border-brand/60 focus:ring-1 focus:ring-brand/60 outline-none transition-colors"
+              className="flex-1 h-11 px-4 rounded-3xl border border-border bg-surface text-xs text-foreground placeholder:text-muted-foreground/50 focus:border-brand/60 focus:ring-1 focus:ring-brand/60 outline-none transition-colors"
             />
             <button
               type="submit"
               disabled={loading}
-              className="h-11 rounded-xl bg-brand hover:bg-brand/90 px-6 text-xs font-bold text-brand-foreground transition-all hover:scale-105 active:scale-95 cursor-pointer disabled:opacity-50"
+              className="h-11 rounded-3xl bg-brand hover:bg-brand/90 px-6 text-xs font-bold text-brand-foreground transition-all hover:scale-105 active:scale-95 cursor-pointer disabled:opacity-50"
             >
               {loading ? "Cadastrando..." : block.button_label || "Cadastrar"}
             </button>
@@ -1609,7 +1609,7 @@ function PendingContractsWidgetBlock({
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="w-full mt-0.5 rounded-lg border border-border bg-surface px-3 py-1.5 text-xs outline-none focus:border-brand"
+                className="w-full mt-0.5 rounded-2xl border border-border bg-surface px-3 py-1.5 text-xs outline-none focus:border-brand"
                 placeholder="seu@email.com"
               />
             </div>
@@ -1621,7 +1621,7 @@ function PendingContractsWidgetBlock({
                 type="text"
                 value={document}
                 onChange={(e) => setDocument(e.target.value)}
-                className="w-full mt-0.5 rounded-lg border border-border bg-surface px-3 py-1.5 text-xs outline-none focus:border-brand"
+                className="w-full mt-0.5 rounded-2xl border border-border bg-surface px-3 py-1.5 text-xs outline-none focus:border-brand"
                 placeholder="000.000.000-00"
               />
             </div>
@@ -1629,7 +1629,7 @@ function PendingContractsWidgetBlock({
           <button
             type="submit"
             disabled={searching}
-            className="w-full mt-2 h-9 rounded-lg bg-brand text-brand-foreground font-bold text-xs hover:bg-brand/90 transition-colors disabled:opacity-50"
+            className="w-full mt-2 h-9 rounded-2xl bg-brand text-brand-foreground font-bold text-xs hover:bg-brand/90 transition-colors disabled:opacity-50"
           >
             {searching ? "Buscando..." : "Consultar Contratos"}
           </button>
@@ -1645,7 +1645,7 @@ function PendingContractsWidgetBlock({
               target="_blank"
               rel="noreferrer"
               onClick={() => handleLinkClick(`/m/contract/${c.public_token}`)}
-              className="flex items-center justify-between p-3 rounded-xl bg-surface border border-border/80 hover:border-yellow-500/50 transition-colors text-left"
+              className="flex items-center justify-between p-3 rounded-3xl bg-surface border border-border/80 hover:border-yellow-500/50 transition-colors text-left"
             >
               <div className="flex flex-col truncate max-w-[220px]">
                 <span className="text-xs font-semibold text-foreground truncate">
@@ -1703,7 +1703,7 @@ function GroupTourDetailsBlock({ block, agencySlug }: { block: any; agencySlug: 
     );
   if (!tour)
     return (
-      <div className="mx-auto max-w-4xl p-8 border border-dashed border-border rounded-xl text-center bg-surface-alt/30 text-muted-foreground">
+      <div className="mx-auto max-w-4xl p-8 border border-dashed border-border rounded-3xl text-center bg-surface-alt/30 text-muted-foreground">
         <p className="font-semibold text-sm">Tour não encontrado</p>
         <p className="text-xs mt-1">Configure o ID do roteiro no painel lateral.</p>
       </div>
@@ -1813,7 +1813,7 @@ function SupportTicketBlock({ block, agencySlug }: { block: any; agencySlug: str
               type="email"
               value={f.email}
               onChange={(e) => setF({ ...f, email: e.target.value })}
-              className="w-full rounded-xl border border-border bg-surface-alt px-4 py-3 text-sm focus:border-brand outline-none"
+              className="w-full rounded-3xl border border-border bg-surface-alt px-4 py-3 text-sm focus:border-brand outline-none"
               placeholder="seu@email.com"
             />
           </div>
@@ -1823,7 +1823,7 @@ function SupportTicketBlock({ block, agencySlug }: { block: any; agencySlug: str
               required
               value={f.subject}
               onChange={(e) => setF({ ...f, subject: e.target.value })}
-              className="w-full rounded-xl border border-border bg-surface-alt px-4 py-3 text-sm focus:border-brand outline-none"
+              className="w-full rounded-3xl border border-border bg-surface-alt px-4 py-3 text-sm focus:border-brand outline-none"
               placeholder="Ex: Dúvida sobre reserva"
             />
           </div>
@@ -1833,7 +1833,7 @@ function SupportTicketBlock({ block, agencySlug }: { block: any; agencySlug: str
               required
               value={f.description}
               onChange={(e) => setF({ ...f, description: e.target.value })}
-              className="w-full rounded-xl border border-border bg-surface-alt px-4 py-3 text-sm focus:border-brand outline-none resize-y"
+              className="w-full rounded-3xl border border-border bg-surface-alt px-4 py-3 text-sm focus:border-brand outline-none resize-y"
               placeholder="Descreva o problema com detalhes..."
               rows={4}
             />
@@ -1841,7 +1841,7 @@ function SupportTicketBlock({ block, agencySlug }: { block: any; agencySlug: str
           <button
             type="submit"
             disabled={busy}
-            className="w-full h-12 rounded-xl bg-brand text-brand-foreground font-bold hover:bg-brand/90 disabled:opacity-50 transition-colors"
+            className="w-full h-12 rounded-3xl bg-brand text-brand-foreground font-bold hover:bg-brand/90 disabled:opacity-50 transition-colors"
           >
             {busy ? "Enviando..." : "Abrir Chamado"}
           </button>
@@ -1931,7 +1931,7 @@ function ToursGridBlock({
               ) : (
                 <div className="h-full w-full bg-surface-alt" />
               )}
-              <div className="absolute bottom-3 right-3 rounded-md bg-background/90 px-2 py-1 text-xs font-bold backdrop-blur-sm">
+              <div className="absolute bottom-3 right-3 rounded-2xl bg-background/90 px-2 py-1 text-xs font-bold backdrop-blur-sm">
                 {t.departure_date
                   ? new Date(t.departure_date).toLocaleDateString("pt-BR")
                   : "A Confirmar"}
@@ -2129,7 +2129,7 @@ function ContactBlock({ block, agencySlug }: { block: any; agencySlug: string })
               required
               value={f.name}
               onChange={(e) => setF({ ...f, name: e.target.value })}
-              className="w-full rounded-xl border border-border bg-surface px-4 py-3 text-sm outline-none focus:border-brand"
+              className="w-full rounded-3xl border border-border bg-surface px-4 py-3 text-sm outline-none focus:border-brand"
               placeholder="Como quer ser chamado?"
             />
           </div>
@@ -2140,7 +2140,7 @@ function ContactBlock({ block, agencySlug }: { block: any; agencySlug: string })
                 type="email"
                 value={f.email}
                 onChange={(e) => setF({ ...f, email: e.target.value })}
-                className="w-full rounded-xl border border-border bg-surface px-4 py-3 text-sm outline-none focus:border-brand"
+                className="w-full rounded-3xl border border-border bg-surface px-4 py-3 text-sm outline-none focus:border-brand"
                 placeholder="seu@email.com"
               />
             </div>
@@ -2150,7 +2150,7 @@ function ContactBlock({ block, agencySlug }: { block: any; agencySlug: string })
                 required
                 value={f.phone}
                 onChange={(e) => setF({ ...f, phone: e.target.value })}
-                className="w-full rounded-xl border border-border bg-surface px-4 py-3 text-sm outline-none focus:border-brand"
+                className="w-full rounded-3xl border border-border bg-surface px-4 py-3 text-sm outline-none focus:border-brand"
                 placeholder="(00) 00000-0000"
               />
             </div>
@@ -2160,7 +2160,7 @@ function ContactBlock({ block, agencySlug }: { block: any; agencySlug: string })
             <textarea
               value={f.notes}
               onChange={(e) => setF({ ...f, notes: e.target.value })}
-              className="w-full rounded-xl border border-border bg-surface px-4 py-3 text-sm outline-none focus:border-brand resize-y"
+              className="w-full rounded-3xl border border-border bg-surface px-4 py-3 text-sm outline-none focus:border-brand resize-y"
               placeholder="Descreva o que você busca..."
               rows={3}
             />
@@ -2169,7 +2169,7 @@ function ContactBlock({ block, agencySlug }: { block: any; agencySlug: string })
             <button
               type="submit"
               disabled={busy}
-              className="w-full flex items-center justify-center gap-2 h-12 rounded-xl bg-foreground text-background font-bold hover:bg-foreground/90 disabled:opacity-50 transition-colors"
+              className="w-full flex items-center justify-center gap-2 h-12 rounded-3xl bg-foreground text-background font-bold hover:bg-foreground/90 disabled:opacity-50 transition-colors"
             >
               {busy ? (
                 "Enviando..."
@@ -2255,7 +2255,7 @@ function ToursCarouselBlock({
               ) : (
                 <div className="h-full w-full bg-surface-alt" />
               )}
-              <div className="absolute bottom-3 right-3 rounded-md bg-background/90 px-2 py-1 text-[10px] font-bold backdrop-blur-sm">
+              <div className="absolute bottom-3 right-3 rounded-2xl bg-background/90 px-2 py-1 text-[10px] font-bold backdrop-blur-sm">
                 {t.departure_date
                   ? new Date(t.departure_date).toLocaleDateString("pt-BR")
                   : "A Confirmar"}
@@ -2697,7 +2697,7 @@ function CountdownTourBlock({
           ].map((t, idx) => (
             <div
               key={idx}
-              className="flex flex-col items-center bg-surface-alt/60 border border-border/50 rounded-xl px-3 py-2 min-w-[56px]"
+              className="flex flex-col items-center bg-surface-alt/60 border border-border/50 rounded-3xl px-3 py-2 min-w-[56px]"
             >
               <span className="text-xl font-black text-brand tabular-nums">{t.value}</span>
               <span className="text-[9px] uppercase tracking-wider font-bold text-muted-foreground mt-0.5">
@@ -2711,7 +2711,7 @@ function CountdownTourBlock({
           to="/p/$agency_slug/tour/$id"
           params={{ agency_slug: agencySlug, id: tour.id }}
           onClick={() => handleLinkClick(`/p/${agencySlug}/tour/${tour.id}`)}
-          className="w-full flex h-11 items-center justify-center rounded-xl bg-brand text-xs font-bold text-brand-foreground hover:scale-[1.02] active:scale-95 transition-all"
+          className="w-full flex h-11 items-center justify-center rounded-3xl bg-brand text-xs font-bold text-brand-foreground hover:scale-[1.02] active:scale-95 transition-all"
         >
           {block.button_label || "Quero Garantir Minha Vaga"}
         </Link>
@@ -2918,7 +2918,7 @@ function AgencyVouchersBlock({
               placeholder="Seu e-mail cadastrado"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className="w-full h-11 px-4 rounded-xl border border-border bg-surface-alt text-xs text-foreground focus:border-brand focus:ring-1 focus:ring-brand outline-none"
+              className="w-full h-11 px-4 rounded-3xl border border-border bg-surface-alt text-xs text-foreground focus:border-brand focus:ring-1 focus:ring-brand outline-none"
             />
             <input
               type="text"
@@ -2926,12 +2926,12 @@ function AgencyVouchersBlock({
               placeholder="CPF ou Documento"
               value={document}
               onChange={(e) => setDocument(e.target.value)}
-              className="w-full h-11 px-4 rounded-xl border border-border bg-surface-alt text-xs text-foreground focus:border-brand focus:ring-1 focus:ring-brand outline-none"
+              className="w-full h-11 px-4 rounded-3xl border border-border bg-surface-alt text-xs text-foreground focus:border-brand focus:ring-1 focus:ring-brand outline-none"
             />
             <button
               type="submit"
               disabled={loading}
-              className="w-full h-11 rounded-xl bg-brand text-brand-foreground font-bold text-xs hover:bg-brand/90 transition-all disabled:opacity-50"
+              className="w-full h-11 rounded-3xl bg-brand text-brand-foreground font-bold text-xs hover:bg-brand/90 transition-all disabled:opacity-50"
             >
               {loading ? "Buscando..." : "Buscar Meus Vouchers"}
             </button>
@@ -3027,7 +3027,7 @@ function WeatherForecastBlock({ block }: { block: any }) {
           {forecast.map((f, idx) => (
             <div
               key={idx}
-              className="flex flex-col items-center bg-surface border border-border/40 rounded-xl p-2 min-w-[56px]"
+              className="flex flex-col items-center bg-surface border border-border/40 rounded-3xl p-2 min-w-[56px]"
             >
               <span className="text-[10px] text-muted-foreground font-semibold">
                 {idx === 0 ? "Hoje" : idx === 1 ? "Amanhã" : "Depois"}
@@ -3157,7 +3157,7 @@ function LeadCaptureCallbackBlock({ block, agencySlug }: { block: any; agencySlu
         </p>
 
         {done ? (
-          <div className="text-xs text-emerald-600 dark:text-emerald-400 font-bold py-2 bg-emerald-500/10 px-4 rounded-xl border border-emerald-500/20">
+          <div className="text-xs text-emerald-600 dark:text-emerald-400 font-bold py-2 bg-emerald-500/10 px-4 rounded-3xl border border-emerald-500/20">
             Tudo pronto! Entraremos em contato em breve.
           </div>
         ) : (
@@ -3168,7 +3168,7 @@ function LeadCaptureCallbackBlock({ block, agencySlug }: { block: any; agencySlu
               placeholder="Seu nome"
               value={name}
               onChange={(e) => setName(e.target.value)}
-              className="w-full sm:flex-1 h-10 px-3 rounded-lg border border-border bg-surface text-xs text-foreground focus:border-brand focus:ring-1 focus:ring-brand outline-none"
+              className="w-full sm:flex-1 h-10 px-3 rounded-2xl border border-border bg-surface text-xs text-foreground focus:border-brand focus:ring-1 focus:ring-brand outline-none"
             />
             <input
               type="tel"
@@ -3176,12 +3176,12 @@ function LeadCaptureCallbackBlock({ block, agencySlug }: { block: any; agencySlu
               placeholder="(00) 00000-0000"
               value={phone}
               onChange={(e) => setPhone(e.target.value)}
-              className="w-full sm:flex-1 h-10 px-3 rounded-lg border border-border bg-surface text-xs text-foreground focus:border-brand focus:ring-1 focus:ring-brand outline-none"
+              className="w-full sm:flex-1 h-10 px-3 rounded-2xl border border-border bg-surface text-xs text-foreground focus:border-brand focus:ring-1 focus:ring-brand outline-none"
             />
             <button
               type="submit"
               disabled={loading}
-              className="w-full sm:w-auto shrink-0 h-10 px-4 rounded-lg bg-brand text-brand-foreground font-bold text-xs hover:bg-brand/90 transition-all cursor-pointer disabled:opacity-50"
+              className="w-full sm:w-auto shrink-0 h-10 px-4 rounded-2xl bg-brand text-brand-foreground font-bold text-xs hover:bg-brand/90 transition-all cursor-pointer disabled:opacity-50"
             >
               Ligar
             </button>
@@ -3242,13 +3242,13 @@ function PaymentGatewaysDisplayBlock({ block, agencyId }: { block: any; agencyId
         </h4>
 
         <div className="flex flex-wrap items-center justify-center gap-4 text-xs font-semibold text-muted-foreground">
-          <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-surface-alt border border-border/40">
+          <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-2xl bg-surface-alt border border-border/40">
             <Coins className="h-4 w-4 text-brand" /> Pix com desconto
           </div>
-          <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-surface-alt border border-border/40">
+          <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-2xl bg-surface-alt border border-border/40">
             <CreditCard className="h-4 w-4 text-brand" /> Cartão até 10x
           </div>
-          <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-surface-alt border border-border/40">
+          <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-2xl bg-surface-alt border border-border/40">
             <Ticket className="h-4 w-4 text-brand" /> Boleto Facilitado
           </div>
         </div>
@@ -3371,7 +3371,7 @@ function TravelTipsFaqBlock({ block, agencyId }: { block: any; agencyId?: string
           {defaultTips.map((tip, idx) => (
             <details
               key={idx}
-              className="group rounded-xl border border-border bg-surface px-4 py-3 cursor-pointer"
+              className="group rounded-3xl border border-border bg-surface px-4 py-3 cursor-pointer"
             >
               <summary className="flex justify-between items-center text-xs font-bold text-foreground select-none">
                 {tip.title}
@@ -3396,7 +3396,7 @@ function TravelTipsFaqBlock({ block, agencyId }: { block: any; agencyId?: string
         {articles.map((art) => (
           <details
             key={art.id}
-            className="group rounded-xl border border-border bg-surface px-4 py-3 cursor-pointer"
+            className="group rounded-3xl border border-border bg-surface px-4 py-3 cursor-pointer"
           >
             <summary className="flex justify-between items-center text-xs font-bold text-foreground select-none">
               {art.title}
@@ -3479,7 +3479,7 @@ function GiftCardsStoreBlock({ block, agencySlug }: { block: any; agencySlug: st
         </p>
         <button
           onClick={handleGiftClick}
-          className="mt-2 h-10 px-5 rounded-lg bg-brand text-brand-foreground font-bold text-xs hover:bg-brand/90 transition-all cursor-pointer hover:scale-105 active:scale-95"
+          className="mt-2 h-10 px-5 rounded-2xl bg-brand text-brand-foreground font-bold text-xs hover:bg-brand/90 transition-all cursor-pointer hover:scale-105 active:scale-95"
         >
           Presentear Agora
         </button>
@@ -3562,7 +3562,7 @@ function CorporateRfpFormBlock({ block, agencySlug }: { block: any; agencySlug: 
               placeholder="Razão Social ou Nome Fantasia"
               value={f.company_name}
               onChange={(e) => setF({ ...f, company_name: e.target.value })}
-              className="w-full h-10 px-3 rounded-lg border border-border bg-surface-alt text-xs text-foreground outline-none focus:border-brand"
+              className="w-full h-10 px-3 rounded-2xl border border-border bg-surface-alt text-xs text-foreground outline-none focus:border-brand"
             />
             <input
               type="text"
@@ -3570,7 +3570,7 @@ function CorporateRfpFormBlock({ block, agencySlug }: { block: any; agencySlug: 
               placeholder="CNPJ"
               value={f.cnpj}
               onChange={(e) => setF({ ...f, cnpj: e.target.value })}
-              className="w-full h-10 px-3 rounded-lg border border-border bg-surface-alt text-xs text-foreground outline-none focus:border-brand"
+              className="w-full h-10 px-3 rounded-2xl border border-border bg-surface-alt text-xs text-foreground outline-none focus:border-brand"
             />
             <div className="grid grid-cols-2 gap-2">
               <input
@@ -3579,7 +3579,7 @@ function CorporateRfpFormBlock({ block, agencySlug }: { block: any; agencySlug: 
                 placeholder="Contato"
                 value={f.requester_name}
                 onChange={(e) => setF({ ...f, requester_name: e.target.value })}
-                className="w-full h-10 px-3 rounded-lg border border-border bg-surface-alt text-xs text-foreground outline-none focus:border-brand"
+                className="w-full h-10 px-3 rounded-2xl border border-border bg-surface-alt text-xs text-foreground outline-none focus:border-brand"
               />
               <input
                 type="tel"
@@ -3587,7 +3587,7 @@ function CorporateRfpFormBlock({ block, agencySlug }: { block: any; agencySlug: 
                 placeholder="WhatsApp"
                 value={f.phone}
                 onChange={(e) => setF({ ...f, phone: e.target.value })}
-                className="w-full h-10 px-3 rounded-lg border border-border bg-surface-alt text-xs text-foreground outline-none focus:border-brand"
+                className="w-full h-10 px-3 rounded-2xl border border-border bg-surface-alt text-xs text-foreground outline-none focus:border-brand"
               />
             </div>
             <input
@@ -3596,7 +3596,7 @@ function CorporateRfpFormBlock({ block, agencySlug }: { block: any; agencySlug: 
               placeholder="E-mail corporativo"
               value={f.email}
               onChange={(e) => setF({ ...f, email: e.target.value })}
-              className="w-full h-10 px-3 rounded-lg border border-border bg-surface-alt text-xs text-foreground outline-none focus:border-brand"
+              className="w-full h-10 px-3 rounded-2xl border border-border bg-surface-alt text-xs text-foreground outline-none focus:border-brand"
             />
             <input
               type="text"
@@ -3604,19 +3604,19 @@ function CorporateRfpFormBlock({ block, agencySlug }: { block: any; agencySlug: 
               placeholder="Destino desejado"
               value={f.destination}
               onChange={(e) => setF({ ...f, destination: e.target.value })}
-              className="w-full h-10 px-3 rounded-lg border border-border bg-surface-alt text-xs text-foreground outline-none focus:border-brand"
+              className="w-full h-10 px-3 rounded-2xl border border-border bg-surface-alt text-xs text-foreground outline-none focus:border-brand"
             />
             <textarea
               placeholder="Detalhes adicionais (Datas, preferências de hotéis, etc.)"
               value={f.details}
               onChange={(e) => setF({ ...f, details: e.target.value })}
-              className="w-full px-3 py-2 rounded-lg border border-border bg-surface-alt text-xs text-foreground outline-none focus:border-brand resize-y"
+              className="w-full px-3 py-2 rounded-2xl border border-border bg-surface-alt text-xs text-foreground outline-none focus:border-brand resize-y"
               rows={2}
             />
             <button
               type="submit"
               disabled={busy}
-              className="w-full h-10 rounded-lg bg-brand text-brand-foreground font-bold text-xs hover:bg-brand/90 transition-all disabled:opacity-50"
+              className="w-full h-10 rounded-2xl bg-brand text-brand-foreground font-bold text-xs hover:bg-brand/90 transition-all disabled:opacity-50"
             >
               {busy ? "Enviando..." : "Enviar Solicitação B2B"}
             </button>
@@ -3691,7 +3691,7 @@ function ClientDocumentUploadBlock({ block, agencyId }: { block: any; agencyId?:
               placeholder="Seu Nome Completo"
               value={clientName}
               onChange={(e) => setClientName(e.target.value)}
-              className="w-full h-10 px-3 rounded-lg border border-border bg-surface-alt text-xs text-foreground outline-none focus:border-brand"
+              className="w-full h-10 px-3 rounded-2xl border border-border bg-surface-alt text-xs text-foreground outline-none focus:border-brand"
             />
             <input
               type="text"
@@ -3699,7 +3699,7 @@ function ClientDocumentUploadBlock({ block, agencyId }: { block: any; agencyId?:
               placeholder="Seu CPF (apenas números)"
               value={clientCpf}
               onChange={(e) => setClientCpf(e.target.value)}
-              className="w-full h-10 px-3 rounded-lg border border-border bg-surface-alt text-xs text-foreground outline-none focus:border-brand"
+              className="w-full h-10 px-3 rounded-2xl border border-border bg-surface-alt text-xs text-foreground outline-none focus:border-brand"
             />
             <div className="space-y-2">
               <label className="text-[10px] font-bold text-muted-foreground uppercase">
@@ -3711,14 +3711,14 @@ function ClientDocumentUploadBlock({ block, agencyId }: { block: any; agencyId?:
                 placeholder="Ex: Link do Google Drive, Dropbox ou mídia pública"
                 value={fileUrl}
                 onChange={(e) => setFileUrl(e.target.value)}
-                className="w-full h-10 px-3 rounded-lg border border-border bg-surface-alt text-xs text-foreground outline-none focus:border-brand"
+                className="w-full h-10 px-3 rounded-2xl border border-border bg-surface-alt text-xs text-foreground outline-none focus:border-brand"
               />
             </div>
 
             <button
               type="submit"
               disabled={busy}
-              className="w-full h-10 rounded-lg bg-brand text-brand-foreground font-bold text-xs hover:bg-brand/90 transition-all disabled:opacity-50 flex items-center justify-center gap-1.5"
+              className="w-full h-10 rounded-2xl bg-brand text-brand-foreground font-bold text-xs hover:bg-brand/90 transition-all disabled:opacity-50 flex items-center justify-center gap-1.5"
             >
               <Upload className="w-3.5 h-3.5" /> {busy ? "Enviando..." : "Enviar Documento"}
             </button>
@@ -3768,7 +3768,7 @@ function BiolinkNewsletterBoxBlock({ block, agencySlug }: { block: any; agencySl
   return (
     <div className="mx-auto max-w-md w-full px-4 py-2">
       {done ? (
-        <div className="text-[10px] text-center text-emerald-600 font-bold bg-emerald-50 dark:bg-emerald-950/20 py-2.5 rounded-xl border border-emerald-100">
+        <div className="text-[10px] text-center text-emerald-600 font-bold bg-emerald-50 dark:bg-emerald-950/20 py-2.5 rounded-3xl border border-emerald-100">
           Inscrito com sucesso! Obrigado.
         </div>
       ) : (
@@ -3787,7 +3787,7 @@ function BiolinkNewsletterBoxBlock({ block, agencySlug }: { block: any; agencySl
           <button
             type="submit"
             disabled={busy}
-            className="h-9 px-4 rounded-xl bg-brand text-brand-foreground text-[10px] font-bold hover:bg-brand/90 transition-all cursor-pointer disabled:opacity-50 shrink-0"
+            className="h-9 px-4 rounded-3xl bg-brand text-brand-foreground text-[10px] font-bold hover:bg-brand/90 transition-all cursor-pointer disabled:opacity-50 shrink-0"
           >
             {busy ? "Salvando..." : block.button_label || "Inscrever"}
           </button>
@@ -3895,7 +3895,7 @@ function VisaCheckerBlock({ block }: { block: any }) {
                 required
                 value={origin}
                 onChange={(e) => setOrigin(e.target.value)}
-                className="w-full mt-1 h-10 px-3 rounded-lg border border-border bg-surface text-xs outline-none focus:border-brand"
+                className="w-full mt-1 h-10 px-3 rounded-2xl border border-border bg-surface text-xs outline-none focus:border-brand"
                 placeholder="Ex: Brasil"
               />
             </div>
@@ -3908,7 +3908,7 @@ function VisaCheckerBlock({ block }: { block: any }) {
                 required
                 value={dest}
                 onChange={(e) => setDest(e.target.value)}
-                className="w-full mt-1 h-10 px-3 rounded-lg border border-border bg-surface text-xs outline-none focus:border-brand"
+                className="w-full mt-1 h-10 px-3 rounded-2xl border border-border bg-surface text-xs outline-none focus:border-brand"
                 placeholder="Ex: Japão"
               />
             </div>
@@ -3916,7 +3916,7 @@ function VisaCheckerBlock({ block }: { block: any }) {
           <button
             type="submit"
             disabled={loading}
-            className="w-full h-10 rounded-lg bg-brand text-brand-foreground font-bold text-xs hover:bg-brand/90 transition-all disabled:opacity-50"
+            className="w-full h-10 rounded-2xl bg-brand text-brand-foreground font-bold text-xs hover:bg-brand/90 transition-all disabled:opacity-50"
           >
             {loading ? "Verificando..." : "Consultar Requisitos"}
           </button>
@@ -3959,7 +3959,7 @@ function VisaCheckerBlock({ block }: { block: any }) {
                     <span className="text-[10px] font-bold text-muted-foreground uppercase block mb-1">
                       Documentos Necessários
                     </span>
-                    <p className="text-muted-foreground leading-relaxed bg-surface-alt/40 p-2.5 rounded-lg border border-border/40 text-[11px]">
+                    <p className="text-muted-foreground leading-relaxed bg-surface-alt/40 p-2.5 rounded-2xl border border-border/40 text-[11px]">
                       {result.required_documents}
                     </p>
                   </div>
@@ -4106,7 +4106,7 @@ function InsuranceSimulatorBlock({ block, agencySlug }: { block: any; agencySlug
               <select
                 value={region}
                 onChange={(e) => setRegion(e.target.value)}
-                className="w-full h-10 px-3 rounded-lg border border-border bg-surface text-xs outline-none focus:border-brand"
+                className="w-full h-10 px-3 rounded-2xl border border-border bg-surface text-xs outline-none focus:border-brand"
               >
                 <option value="Europe">Europa (Schengen obrigatório)</option>
                 <option value="NorthAmerica">América do Norte / EUA</option>
@@ -4126,7 +4126,7 @@ function InsuranceSimulatorBlock({ block, agencySlug }: { block: any; agencySlug
                   min={1}
                   value={days}
                   onChange={(e) => setDays(Number(e.target.value) || 1)}
-                  className="w-full h-10 px-3 rounded-lg border border-border bg-surface text-xs outline-none focus:border-brand"
+                  className="w-full h-10 px-3 rounded-2xl border border-border bg-surface text-xs outline-none focus:border-brand"
                 />
               </div>
               <div>
@@ -4138,7 +4138,7 @@ function InsuranceSimulatorBlock({ block, agencySlug }: { block: any; agencySlug
                   min={1}
                   value={paxCount}
                   onChange={(e) => setPaxCount(Number(e.target.value) || 1)}
-                  className="w-full h-10 px-3 rounded-lg border border-border bg-surface text-xs outline-none focus:border-brand"
+                  className="w-full h-10 px-3 rounded-2xl border border-border bg-surface text-xs outline-none focus:border-brand"
                 />
               </div>
             </div>
@@ -4157,7 +4157,7 @@ function InsuranceSimulatorBlock({ block, agencySlug }: { block: any; agencySlug
                     key={age.key}
                     type="button"
                     onClick={() => setAgeRange(age.key)}
-                    className={`py-2 rounded-lg text-[10px] font-bold border transition-colors${ageRange === age.key ? "bg-brand text-brand-foreground border-brand" : "bg-surface-alt/40 border-border hover:bg-surface-alt/80"}`}
+                    className={`py-2 rounded-2xl text-[10px] font-bold border transition-colors${ageRange === age.key ? "bg-brand text-brand-foreground border-brand" : "bg-surface-alt/40 border-border hover:bg-surface-alt/80"}`}
                   >
                     {age.label}
                   </button>
@@ -4172,7 +4172,7 @@ function InsuranceSimulatorBlock({ block, agencySlug }: { block: any; agencySlug
               {plans.map((p, idx) => (
                 <div
                   key={idx}
-                  className="flex justify-between items-center p-3 rounded-xl border border-border bg-surface-alt/30 hover:border-brand/40 transition-colors"
+                  className="flex justify-between items-center p-3 rounded-3xl border border-border bg-surface-alt/30 hover:border-brand/40 transition-colors"
                 >
                   <div>
                     <span className="text-xs font-bold text-foreground block leading-tight">
@@ -4184,7 +4184,7 @@ function InsuranceSimulatorBlock({ block, agencySlug }: { block: any; agencySlug
                   </div>
                   <button
                     onClick={() => handleSelectPlan(p)}
-                    className="h-8 px-3.5 rounded-lg bg-brand text-brand-foreground text-[10px] font-bold hover:bg-brand/90 transition-colors shrink-0"
+                    className="h-8 px-3.5 rounded-2xl bg-brand text-brand-foreground text-[10px] font-bold hover:bg-brand/90 transition-colors shrink-0"
                   >
                     R$ {p.price.toFixed(0)}
                   </button>
@@ -4217,7 +4217,7 @@ function InsuranceSimulatorBlock({ block, agencySlug }: { block: any; agencySlug
                 required
                 value={name}
                 onChange={(e) => setName(e.target.value)}
-                className="w-full h-10 px-3 rounded-lg border border-border bg-surface text-xs outline-none focus:border-brand"
+                className="w-full h-10 px-3 rounded-2xl border border-border bg-surface text-xs outline-none focus:border-brand"
                 placeholder="Ex: Ana Silva"
               />
             </div>
@@ -4230,7 +4230,7 @@ function InsuranceSimulatorBlock({ block, agencySlug }: { block: any; agencySlug
                 required
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="w-full h-10 px-3 rounded-lg border border-border bg-surface text-xs outline-none focus:border-brand"
+                className="w-full h-10 px-3 rounded-2xl border border-border bg-surface text-xs outline-none focus:border-brand"
                 placeholder="Ex: ana@email.com"
               />
             </div>
@@ -4243,7 +4243,7 @@ function InsuranceSimulatorBlock({ block, agencySlug }: { block: any; agencySlug
                 required
                 value={phone}
                 onChange={(e) => setPhone(e.target.value)}
-                className="w-full h-10 px-3 rounded-lg border border-border bg-surface text-xs outline-none focus:border-brand"
+                className="w-full h-10 px-3 rounded-2xl border border-border bg-surface text-xs outline-none focus:border-brand"
                 placeholder="(00) 00000-0000"
               />
             </div>
@@ -4252,14 +4252,14 @@ function InsuranceSimulatorBlock({ block, agencySlug }: { block: any; agencySlug
               <button
                 type="button"
                 onClick={() => setStep("simulate")}
-                className="flex-1 h-10 rounded-lg border border-border text-foreground font-bold text-xs hover:bg-surface-alt transition-colors"
+                className="flex-1 h-10 rounded-2xl border border-border text-foreground font-bold text-xs hover:bg-surface-alt transition-colors"
               >
                 Voltar
               </button>
               <button
                 type="submit"
                 disabled={loading}
-                className="flex-[2] h-10 rounded-lg bg-brand text-brand-foreground font-bold text-xs hover:bg-brand/90 transition-all disabled:opacity-50"
+                className="flex-[2] h-10 rounded-2xl bg-brand text-brand-foreground font-bold text-xs hover:bg-brand/90 transition-all disabled:opacity-50"
               >
                 {loading ? "Enviando..." : "Contratar Cobertura"}
               </button>
@@ -4357,14 +4357,14 @@ function ReviewsSubmissionFormBlock({ block, agencyId }: { block: any; agencyId?
                 placeholder="Seu nome"
                 value={name}
                 onChange={(e) => setName(e.target.value)}
-                className="w-full h-10 px-3 rounded-lg border border-border bg-surface-alt text-xs text-foreground outline-none focus:border-brand"
+                className="w-full h-10 px-3 rounded-2xl border border-border bg-surface-alt text-xs text-foreground outline-none focus:border-brand"
               />
               <input
                 type="text"
                 placeholder="Ex: Viajei para Gramado"
                 value={role}
                 onChange={(e) => setRole(e.target.value)}
-                className="w-full h-10 px-3 rounded-lg border border-border bg-surface-alt text-xs text-foreground outline-none focus:border-brand"
+                className="w-full h-10 px-3 rounded-2xl border border-border bg-surface-alt text-xs text-foreground outline-none focus:border-brand"
               />
             </div>
 
@@ -4373,14 +4373,14 @@ function ReviewsSubmissionFormBlock({ block, agencyId }: { block: any; agencyId?
               placeholder="Descreva brevemente como foi sua experiência..."
               value={text}
               onChange={(e) => setText(e.target.value)}
-              className="w-full px-3 py-2 rounded-lg border border-border bg-surface-alt text-xs text-foreground outline-none focus:border-brand resize-y"
+              className="w-full px-3 py-2 rounded-2xl border border-border bg-surface-alt text-xs text-foreground outline-none focus:border-brand resize-y"
               rows={3}
             />
 
             <button
               type="submit"
               disabled={loading || !agencyId}
-              className="w-full h-10 rounded-lg bg-brand text-brand-foreground font-bold text-xs hover:bg-brand/90 transition-all disabled:opacity-50"
+              className="w-full h-10 rounded-2xl bg-brand text-brand-foreground font-bold text-xs hover:bg-brand/90 transition-all disabled:opacity-50"
             >
               {loading ? "Enviando..." : "Enviar Avaliação"}
             </button>
@@ -4531,7 +4531,7 @@ function CustomPackageLeadBuilderBlock({ block, agencySlug }: { block: any; agen
                 required
                 value={dest}
                 onChange={(e) => setDest(e.target.value)}
-                className="w-full h-10 px-3 rounded-lg border border-border bg-surface text-xs outline-none focus:border-brand"
+                className="w-full h-10 px-3 rounded-2xl border border-border bg-surface text-xs outline-none focus:border-brand"
                 placeholder="Ex: Egito ou Fernando de Noronha"
               />
             </div>
@@ -4544,7 +4544,7 @@ function CustomPackageLeadBuilderBlock({ block, agencySlug }: { block: any; agen
                   type="date"
                   value={date}
                   onChange={(e) => setDate(e.target.value)}
-                  className="w-full h-10 px-3 rounded-lg border border-border bg-surface text-xs outline-none focus:border-brand"
+                  className="w-full h-10 px-3 rounded-2xl border border-border bg-surface text-xs outline-none focus:border-brand"
                 />
               </div>
               <div className="space-y-1">
@@ -4556,7 +4556,7 @@ function CustomPackageLeadBuilderBlock({ block, agencySlug }: { block: any; agen
                   min={1}
                   value={days}
                   onChange={(e) => setDays(Number(e.target.value) || 7)}
-                  className="w-full h-10 px-3 rounded-lg border border-border bg-surface text-xs outline-none focus:border-brand"
+                  className="w-full h-10 px-3 rounded-2xl border border-border bg-surface text-xs outline-none focus:border-brand"
                 />
               </div>
             </div>
@@ -4564,7 +4564,7 @@ function CustomPackageLeadBuilderBlock({ block, agencySlug }: { block: any; agen
               type="button"
               disabled={!dest.trim()}
               onClick={handleNext}
-              className="w-full h-10 mt-2 rounded-lg bg-brand text-brand-foreground font-bold text-xs hover:bg-brand/90 transition-colors disabled:opacity-50"
+              className="w-full h-10 mt-2 rounded-2xl bg-brand text-brand-foreground font-bold text-xs hover:bg-brand/90 transition-colors disabled:opacity-50"
             >
               Continuar
             </button>
@@ -4583,7 +4583,7 @@ function CustomPackageLeadBuilderBlock({ block, agencySlug }: { block: any; agen
                   min={1}
                   value={adults}
                   onChange={(e) => setAdults(Number(e.target.value) || 2)}
-                  className="w-full h-10 px-3 rounded-lg border border-border bg-surface text-xs outline-none focus:border-brand"
+                  className="w-full h-10 px-3 rounded-2xl border border-border bg-surface text-xs outline-none focus:border-brand"
                 />
               </div>
               <div className="space-y-1">
@@ -4593,7 +4593,7 @@ function CustomPackageLeadBuilderBlock({ block, agencySlug }: { block: any; agen
                 <select
                   value={hotelStars}
                   onChange={(e) => setHotelStars(e.target.value)}
-                  className="w-full h-10 px-3 rounded-lg border border-border bg-surface text-xs outline-none focus:border-brand"
+                  className="w-full h-10 px-3 rounded-2xl border border-border bg-surface text-xs outline-none focus:border-brand"
                 >
                   <option value="3">Padrão 3 estrelas</option>
                   <option value="4">Premium 4 estrelas</option>
@@ -4616,7 +4616,7 @@ function CustomPackageLeadBuilderBlock({ block, agencySlug }: { block: any; agen
                     key={b.key}
                     type="button"
                     onClick={() => setBudget(b.key)}
-                    className={`py-2 rounded-lg text-[10px] font-bold border transition-colors${budget === b.key ? "bg-brand text-brand-foreground border-brand" : "bg-surface-alt/40 border-border hover:bg-surface-alt/80"}`}
+                    className={`py-2 rounded-2xl text-[10px] font-bold border transition-colors${budget === b.key ? "bg-brand text-brand-foreground border-brand" : "bg-surface-alt/40 border-border hover:bg-surface-alt/80"}`}
                   >
                     {b.label}
                   </button>
@@ -4628,14 +4628,14 @@ function CustomPackageLeadBuilderBlock({ block, agencySlug }: { block: any; agen
               <button
                 type="button"
                 onClick={handlePrev}
-                className="flex-1 h-10 rounded-lg border border-border text-foreground font-bold text-xs hover:bg-surface-alt transition-colors"
+                className="flex-1 h-10 rounded-2xl border border-border text-foreground font-bold text-xs hover:bg-surface-alt transition-colors"
               >
                 Voltar
               </button>
               <button
                 type="button"
                 onClick={handleNext}
-                className="flex-1 h-10 rounded-lg bg-brand text-brand-foreground font-bold text-xs hover:bg-brand/90 transition-colors"
+                className="flex-1 h-10 rounded-2xl bg-brand text-brand-foreground font-bold text-xs hover:bg-brand/90 transition-colors"
               >
                 Continuar
               </button>
@@ -4654,7 +4654,7 @@ function CustomPackageLeadBuilderBlock({ block, agencySlug }: { block: any; agen
                 required
                 value={name}
                 onChange={(e) => setName(e.target.value)}
-                className="w-full h-10 px-3 rounded-lg border border-border bg-surface text-xs outline-none focus:border-brand"
+                className="w-full h-10 px-3 rounded-2xl border border-border bg-surface text-xs outline-none focus:border-brand"
                 placeholder="Ex: Carlos Santos"
               />
             </div>
@@ -4667,7 +4667,7 @@ function CustomPackageLeadBuilderBlock({ block, agencySlug }: { block: any; agen
                 required
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="w-full h-10 px-3 rounded-lg border border-border bg-surface text-xs outline-none focus:border-brand"
+                className="w-full h-10 px-3 rounded-2xl border border-border bg-surface text-xs outline-none focus:border-brand"
                 placeholder="Ex: carlos@email.com"
               />
             </div>
@@ -4680,7 +4680,7 @@ function CustomPackageLeadBuilderBlock({ block, agencySlug }: { block: any; agen
                 required
                 value={phone}
                 onChange={(e) => setPhone(e.target.value)}
-                className="w-full h-10 px-3 rounded-lg border border-border bg-surface text-xs outline-none focus:border-brand"
+                className="w-full h-10 px-3 rounded-2xl border border-border bg-surface text-xs outline-none focus:border-brand"
                 placeholder="(00) 00000-0000"
               />
             </div>
@@ -4689,14 +4689,14 @@ function CustomPackageLeadBuilderBlock({ block, agencySlug }: { block: any; agen
               <button
                 type="button"
                 onClick={handlePrev}
-                className="flex-1 h-10 rounded-lg border border-border text-foreground font-bold text-xs hover:bg-surface-alt transition-colors"
+                className="flex-1 h-10 rounded-2xl border border-border text-foreground font-bold text-xs hover:bg-surface-alt transition-colors"
               >
                 Voltar
               </button>
               <button
                 type="submit"
                 disabled={loading}
-                className="flex-1 h-10 rounded-lg bg-brand text-brand-foreground font-bold text-xs hover:bg-brand/90 transition-all disabled:opacity-50"
+                className="flex-1 h-10 rounded-2xl bg-brand text-brand-foreground font-bold text-xs hover:bg-brand/90 transition-all disabled:opacity-50"
               >
                 {loading ? "Processando..." : "Solicitar Roteiro"}
               </button>
@@ -4840,7 +4840,7 @@ function FaqCategoryAccordionBlock({ block, agencyId }: { block: any; agencyId?:
         {articles.map((art) => (
           <details
             key={art.id}
-            className="group rounded-xl border border-border bg-surface px-4 py-3 cursor-pointer transition-colors hover:border-brand/40"
+            className="group rounded-3xl border border-border bg-surface px-4 py-3 cursor-pointer transition-colors hover:border-brand/40"
           >
             <summary className="flex justify-between items-center text-xs font-bold text-foreground select-none">
               {art.title}
@@ -4933,7 +4933,7 @@ function CurrencyCalculatorBlock({ block }: { block: any }) {
               <select
                 value={fromCur}
                 onChange={(e) => setFromCur(e.target.value)}
-                className="w-full mt-0.5 h-10 px-2 rounded-lg border border-border bg-surface text-xs font-bold outline-none"
+                className="w-full mt-0.5 h-10 px-2 rounded-2xl border border-border bg-surface text-xs font-bold outline-none"
               >
                 <option value="USD">USD - Dólar</option>
                 <option value="EUR">EUR - Euro</option>
@@ -4945,7 +4945,7 @@ function CurrencyCalculatorBlock({ block }: { block: any }) {
             <button
               type="button"
               onClick={swapCurrencies}
-              className="mt-4 p-2 rounded-lg border border-border hover:bg-surface-alt transition-colors shrink-0 text-muted-foreground"
+              className="mt-4 p-2 rounded-2xl border border-border hover:bg-surface-alt transition-colors shrink-0 text-muted-foreground"
             >
               ⇄
             </button>
@@ -4955,7 +4955,7 @@ function CurrencyCalculatorBlock({ block }: { block: any }) {
               <select
                 value={toCur}
                 onChange={(e) => setToCur(e.target.value)}
-                className="w-full mt-0.5 h-10 px-2 rounded-lg border border-border bg-surface text-xs font-bold outline-none"
+                className="w-full mt-0.5 h-10 px-2 rounded-2xl border border-border bg-surface text-xs font-bold outline-none"
               >
                 <option value="BRL">BRL - Real</option>
                 <option value="USD">USD - Dólar</option>
@@ -4971,12 +4971,12 @@ function CurrencyCalculatorBlock({ block }: { block: any }) {
               type="text"
               value={amount}
               onChange={(e) => setAmount(e.target.value.replace(/[^0-9.]/g, ""))}
-              className="w-full mt-0.5 h-10 px-3 rounded-lg border border-border bg-surface text-xs font-bold outline-none focus:border-brand"
+              className="w-full mt-0.5 h-10 px-3 rounded-2xl border border-border bg-surface text-xs font-bold outline-none focus:border-brand"
               placeholder="100"
             />
           </div>
 
-          <div className="p-3 bg-brand/5 border border-brand/10 rounded-xl flex justify-between items-center mt-2.5">
+          <div className="p-3 bg-brand/5 border border-brand/10 rounded-3xl flex justify-between items-center mt-2.5">
             <span className="text-[10px] font-bold text-muted-foreground uppercase">
               Resultado Estimado
             </span>
@@ -5053,12 +5053,12 @@ function InteractiveFlightTrackerBlock({ block }: { block: any }) {
             placeholder="Ex: AD2412, LA3120"
             value={code}
             onChange={(e) => setCode(e.target.value)}
-            className="flex-1 h-10 px-3 rounded-lg border border-border bg-surface text-xs font-mono font-bold uppercase tracking-wider outline-none focus:border-brand"
+            className="flex-1 h-10 px-3 rounded-2xl border border-border bg-surface text-xs font-mono font-bold uppercase tracking-wider outline-none focus:border-brand"
           />
           <button
             type="submit"
             disabled={loading}
-            className="h-10 px-4 rounded-lg bg-brand text-brand-foreground font-bold text-xs hover:bg-brand/90 transition-all cursor-pointer disabled:opacity-50 shrink-0"
+            className="h-10 px-4 rounded-2xl bg-brand text-brand-foreground font-bold text-xs hover:bg-brand/90 transition-all cursor-pointer disabled:opacity-50 shrink-0"
           >
             {loading ? "Buscando..." : "Consultar"}
           </button>
@@ -5092,7 +5092,7 @@ function InteractiveFlightTrackerBlock({ block }: { block: any }) {
             </div>
 
             <div className="grid grid-cols-3 gap-2 border-t border-border/40 pt-3 text-center">
-              <div className="bg-surface-alt/40 border border-border/40 rounded-xl p-2">
+              <div className="bg-surface-alt/40 border border-border/40 rounded-3xl p-2">
                 <span className="text-[8px] uppercase tracking-wider text-muted-foreground font-bold">
                   Terminal
                 </span>
@@ -5100,13 +5100,13 @@ function InteractiveFlightTrackerBlock({ block }: { block: any }) {
                   {flight.terminal}
                 </span>
               </div>
-              <div className="bg-surface-alt/40 border border-border/40 rounded-xl p-2">
+              <div className="bg-surface-alt/40 border border-border/40 rounded-3xl p-2">
                 <span className="text-[8px] uppercase tracking-wider text-muted-foreground font-bold">
                   Portão
                 </span>
                 <span className="text-sm font-black text-brand block mt-0.5">{flight.gate}</span>
               </div>
-              <div className="bg-surface-alt/40 border border-border/40 rounded-xl p-2">
+              <div className="bg-surface-alt/40 border border-border/40 rounded-3xl p-2">
                 <span className="text-[8px] uppercase tracking-wider text-muted-foreground font-bold">
                   Esteira
                 </span>
@@ -5125,7 +5125,7 @@ function InteractiveFlightTrackerBlock({ block }: { block: any }) {
 // ─── BIOLINK QR CODE SHARE BLOCK ─────────────────────────────────────────────
 function BiolinkQrCodeShareBlock({ block }: { block: any }) {
   const [copied, setCopied] = useState(false);
-  const currentUrl = typeof window !== "undefined" ? window.location.href : "https://travelos.app";
+  const currentUrl = typeof window !== "undefined" ? window.location.href : "https://turis.app";
 
   const handleShare = async () => {
     if (navigator.share) {
@@ -5160,7 +5160,7 @@ function BiolinkQrCodeShareBlock({ block }: { block: any }) {
 
         <button
           onClick={handleShare}
-          className="w-full flex items-center justify-center gap-2 h-11 rounded-xl bg-brand text-brand-foreground font-bold text-xs hover:bg-brand/90 transition-all cursor-pointer"
+          className="w-full flex items-center justify-center gap-2 h-11 rounded-3xl bg-brand text-brand-foreground font-bold text-xs hover:bg-brand/90 transition-all cursor-pointer"
         >
           <Share2 className="w-4 h-4" />
           {copied ? "Link Copiado!" : "Compartilhar Link"}
@@ -5235,7 +5235,7 @@ function ClientBoardingTimelineBlock({ block, agencyId }: { block: any; agencyId
                     {step.desc}
                   </p>
                 </div>
-                <span className="text-[10px] font-mono text-muted-foreground bg-surface-alt/60 px-2 py-0.5 rounded-md font-bold">
+                <span className="text-[10px] font-mono text-muted-foreground bg-surface-alt/60 px-2 py-0.5 rounded-2xl font-bold">
                   {step.time}
                 </span>
               </div>

@@ -23,7 +23,7 @@ export const Route = createFileRoute("/agency/$slug/proposals/new")({
     lead_id: z.string().optional(),
     client_id: z.string().optional(),
   }),
-  head: () => ({ meta: [{ title: "Nova cotação · TravelOS" }] }),
+  head: ({ context }: any) => ({ meta: [{ title: `Nova cotação · ${context?.brand?.platform_name || 'Turis'}` }] }),
   component: NewProposal,
 });
 

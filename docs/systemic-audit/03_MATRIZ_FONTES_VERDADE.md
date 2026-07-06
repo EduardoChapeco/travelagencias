@@ -1,4 +1,4 @@
-# 03. Matriz de Fontes de Verdade - TravelOS
+# 03. Matriz de Fontes de Verdade - Turis
 
 Este documento estabelece as fontes únicas de verdade (SSoT) para todas as entidades operacionais da plataforma, definindo onde os dados ativos residem, em quais casos são permitidos snapshots de auditoria e como as tabelas são sincronizadas.
 

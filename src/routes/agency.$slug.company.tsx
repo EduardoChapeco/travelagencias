@@ -36,7 +36,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { HeaderPortal } from "@/components/shell/HeaderPortal";
 
 export const Route = createFileRoute("/agency/$slug/company")({
-  head: () => ({ meta: [{ title: "Minha empresa · TravelOS" }] }),
+  head: ({ context }: any) => ({ meta: [{ title: `Minha empresa · ${context?.brand?.platform_name || 'Turis'}` }] }),
   component: Page,
 });
 

@@ -1,6 +1,6 @@
 # 01 Reconstrução dos Requisitos
 
-Neste documento, consolidamos todos os requisitos explícitos solicitados para a plataforma TravelOS/TravelAgências, extraídos do histórico e das especificações.
+Neste documento, consolidamos todos os requisitos explícitos solicitados para a plataforma Turis/TravelAgências, extraídos do histórico e das especificações.
 
 ---
 

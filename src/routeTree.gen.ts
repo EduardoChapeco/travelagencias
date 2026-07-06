@@ -22,7 +22,9 @@ import { Route as AdminIndexRouteImport } from './routes/admin.index'
 import { Route as VerifySerialRouteImport } from './routes/verify.$serial'
 import { Route as PAgency_slugRouteImport } from './routes/p.$agency_slug'
 import { Route as InboxOauthCallbackRouteImport } from './routes/inbox.oauth-callback'
+import { Route as ClientWalletRouteImport } from './routes/client.wallet'
 import { Route as ClientTripsRouteImport } from './routes/client.trips'
+import { Route as ClientSupportRouteImport } from './routes/client.support'
 import { Route as ClientProfileRouteImport } from './routes/client.profile'
 import { Route as ClientPaymentsRouteImport } from './routes/client.payments'
 import { Route as ClientNotificationsRouteImport } from './routes/client.notifications'
@@ -30,6 +32,7 @@ import { Route as ClientGiftcardsRouteImport } from './routes/client.giftcards'
 import { Route as ClientDocumentsRouteImport } from './routes/client.documents'
 import { Route as ClientCouponsRouteImport } from './routes/client.coupons'
 import { Route as ClientConsentsRouteImport } from './routes/client.consents'
+import { Route as ClientChatRouteImport } from './routes/client.chat'
 import { Route as BuilderAiRouteImport } from './routes/builder.ai'
 import { Route as AuthResetPasswordRouteImport } from './routes/auth.reset-password'
 import { Route as AuthRegisterRouteImport } from './routes/auth.register'
@@ -51,6 +54,7 @@ import { Route as AdminApiKeysRouteImport } from './routes/admin.api-keys'
 import { Route as AdminAgentsRouteImport } from './routes/admin.agents'
 import { Route as AdminAgenciesRouteImport } from './routes/admin.agencies'
 import { Route as PAgency_slugIndexRouteImport } from './routes/p.$agency_slug.index'
+import { Route as ClientQuotesIndexRouteImport } from './routes/client.quotes.index'
 import { Route as AgencySlugIndexRouteImport } from './routes/agency.$slug.index'
 import { Route as PCorporateApproveRouteImport } from './routes/p.corporate.approve'
 import { Route as PAgency_slugContactRouteImport } from './routes/p.$agency_slug.contact'
@@ -63,6 +67,7 @@ import { Route as MInviteTokenRouteImport } from './routes/m.invite.$token'
 import { Route as MContractTokenRouteImport } from './routes/m.contract.$token'
 import { Route as MCheckinTokenRouteImport } from './routes/m.checkin.$token'
 import { Route as ClientTripsIdRouteImport } from './routes/client.trips.$id'
+import { Route as ClientQuotesIdRouteImport } from './routes/client.quotes.$id'
 import { Route as ApiPublicMcpRouteImport } from './routes/api/public/mcp'
 import { Route as ApiPublicManifestRouteImport } from './routes/api/public/manifest'
 import { Route as AgencySlugVouchersRouteImport } from './routes/agency.$slug.vouchers'
@@ -92,12 +97,14 @@ import { Route as AgencySlugContractsRouteImport } from './routes/agency.$slug.c
 import { Route as AgencySlugCompetitorsRouteImport } from './routes/agency.$slug.competitors'
 import { Route as AgencySlugCompanyRouteImport } from './routes/agency.$slug.company'
 import { Route as AgencySlugClientsRouteImport } from './routes/agency.$slug.clients'
+import { Route as AgencySlugClientAppBuilderRouteImport } from './routes/agency.$slug.client-app-builder'
 import { Route as AgencySlugCalendarRouteImport } from './routes/agency.$slug.calendar'
 import { Route as AgencySlugBusLayoutsRouteImport } from './routes/agency.$slug.bus-layouts'
 import { Route as AgencySlugBrandRouteImport } from './routes/agency.$slug.brand'
 import { Route as AgencySlugBoardingRouteImport } from './routes/agency.$slug.boarding'
 import { Route as AgencySlugBillingRouteImport } from './routes/agency.$slug.billing'
 import { Route as AdminAgenciesIdRouteImport } from './routes/admin.agencies.$id'
+import { Route as PAgency_slugLojaIndexRouteImport } from './routes/p.$agency_slug.loja.index'
 import { Route as PAgency_slugKbIndexRouteImport } from './routes/p.$agency_slug.kb.index'
 import { Route as AgencySlugTripsIndexRouteImport } from './routes/agency.$slug.trips.index'
 import { Route as AgencySlugSuppliersIndexRouteImport } from './routes/agency.$slug.suppliers.index'
@@ -107,6 +114,7 @@ import { Route as AgencySlugPortalIndexRouteImport } from './routes/agency.$slug
 import { Route as AgencySlugGroupToursIndexRouteImport } from './routes/agency.$slug.group-tours.index'
 import { Route as PAgency_slugVisaIdRouteImport } from './routes/p.$agency_slug.visa.$id'
 import { Route as PAgency_slugTourIdRouteImport } from './routes/p.$agency_slug.tour.$id'
+import { Route as PAgency_slugLojaItem_idRouteImport } from './routes/p.$agency_slug.loja.$item_id'
 import { Route as PAgency_slugKbSlugRouteImport } from './routes/p.$agency_slug.kb.$slug'
 import { Route as PAgency_slugBlogSlugRouteImport } from './routes/p.$agency_slug.blog.$slug'
 import { Route as ApiPublicSitemapAgency_slugRouteImport } from './routes/api/public/sitemap.$agency_slug'
@@ -216,9 +224,19 @@ const InboxOauthCallbackRoute = InboxOauthCallbackRouteImport.update({
   path: '/inbox/oauth-callback',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ClientWalletRoute = ClientWalletRouteImport.update({
+  id: '/wallet',
+  path: '/wallet',
+  getParentRoute: () => ClientRoute,
+} as any)
 const ClientTripsRoute = ClientTripsRouteImport.update({
   id: '/trips',
   path: '/trips',
+  getParentRoute: () => ClientRoute,
+} as any)
+const ClientSupportRoute = ClientSupportRouteImport.update({
+  id: '/support',
+  path: '/support',
   getParentRoute: () => ClientRoute,
 } as any)
 const ClientProfileRoute = ClientProfileRouteImport.update({
@@ -254,6 +272,11 @@ const ClientCouponsRoute = ClientCouponsRouteImport.update({
 const ClientConsentsRoute = ClientConsentsRouteImport.update({
   id: '/consents',
   path: '/consents',
+  getParentRoute: () => ClientRoute,
+} as any)
+const ClientChatRoute = ClientChatRouteImport.update({
+  id: '/chat',
+  path: '/chat',
   getParentRoute: () => ClientRoute,
 } as any)
 const BuilderAiRoute = BuilderAiRouteImport.update({
@@ -361,6 +384,11 @@ const PAgency_slugIndexRoute = PAgency_slugIndexRouteImport.update({
   path: '/',
   getParentRoute: () => PAgency_slugRoute,
 } as any)
+const ClientQuotesIndexRoute = ClientQuotesIndexRouteImport.update({
+  id: '/quotes/',
+  path: '/quotes/',
+  getParentRoute: () => ClientRoute,
+} as any)
 const AgencySlugIndexRoute = AgencySlugIndexRouteImport.update({
   id: '/',
   path: '/',
@@ -420,6 +448,11 @@ const ClientTripsIdRoute = ClientTripsIdRouteImport.update({
   id: '/$id',
   path: '/$id',
   getParentRoute: () => ClientTripsRoute,
+} as any)
+const ClientQuotesIdRoute = ClientQuotesIdRouteImport.update({
+  id: '/quotes/$id',
+  path: '/quotes/$id',
+  getParentRoute: () => ClientRoute,
 } as any)
 const ApiPublicMcpRoute = ApiPublicMcpRouteImport.update({
   id: '/api/public/mcp',
@@ -567,6 +600,12 @@ const AgencySlugClientsRoute = AgencySlugClientsRouteImport.update({
   path: '/clients',
   getParentRoute: () => AgencySlugRoute,
 } as any)
+const AgencySlugClientAppBuilderRoute =
+  AgencySlugClientAppBuilderRouteImport.update({
+    id: '/client-app-builder',
+    path: '/client-app-builder',
+    getParentRoute: () => AgencySlugRoute,
+  } as any)
 const AgencySlugCalendarRoute = AgencySlugCalendarRouteImport.update({
   id: '/calendar',
   path: '/calendar',
@@ -596,6 +635,11 @@ const AdminAgenciesIdRoute = AdminAgenciesIdRouteImport.update({
   id: '/$id',
   path: '/$id',
   getParentRoute: () => AdminAgenciesRoute,
+} as any)
+const PAgency_slugLojaIndexRoute = PAgency_slugLojaIndexRouteImport.update({
+  id: '/loja/',
+  path: '/loja/',
+  getParentRoute: () => PAgency_slugRoute,
 } as any)
 const PAgency_slugKbIndexRoute = PAgency_slugKbIndexRouteImport.update({
   id: '/kb/',
@@ -643,6 +687,11 @@ const PAgency_slugVisaIdRoute = PAgency_slugVisaIdRouteImport.update({
 const PAgency_slugTourIdRoute = PAgency_slugTourIdRouteImport.update({
   id: '/tour/$id',
   path: '/tour/$id',
+  getParentRoute: () => PAgency_slugRoute,
+} as any)
+const PAgency_slugLojaItem_idRoute = PAgency_slugLojaItem_idRouteImport.update({
+  id: '/loja/$item_id',
+  path: '/loja/$item_id',
   getParentRoute: () => PAgency_slugRoute,
 } as any)
 const PAgency_slugKbSlugRoute = PAgency_slugKbSlugRouteImport.update({
@@ -919,6 +968,7 @@ export interface FileRoutesByFullPath {
   '/auth/register': typeof AuthRegisterRoute
   '/auth/reset-password': typeof AuthResetPasswordRoute
   '/builder/ai': typeof BuilderAiRoute
+  '/client/chat': typeof ClientChatRoute
   '/client/consents': typeof ClientConsentsRoute
   '/client/coupons': typeof ClientCouponsRoute
   '/client/documents': typeof ClientDocumentsRoute
@@ -926,7 +976,9 @@ export interface FileRoutesByFullPath {
   '/client/notifications': typeof ClientNotificationsRoute
   '/client/payments': typeof ClientPaymentsRoute
   '/client/profile': typeof ClientProfileRoute
+  '/client/support': typeof ClientSupportRoute
   '/client/trips': typeof ClientTripsRouteWithChildren
+  '/client/wallet': typeof ClientWalletRoute
   '/inbox/oauth-callback': typeof InboxOauthCallbackRoute
   '/p/$agency_slug': typeof PAgency_slugRouteWithChildren
   '/verify/$serial': typeof VerifySerialRoute
@@ -939,6 +991,7 @@ export interface FileRoutesByFullPath {
   '/agency/$slug/brand': typeof AgencySlugBrandRoute
   '/agency/$slug/bus-layouts': typeof AgencySlugBusLayoutsRouteWithChildren
   '/agency/$slug/calendar': typeof AgencySlugCalendarRoute
+  '/agency/$slug/client-app-builder': typeof AgencySlugClientAppBuilderRoute
   '/agency/$slug/clients': typeof AgencySlugClientsRouteWithChildren
   '/agency/$slug/company': typeof AgencySlugCompanyRoute
   '/agency/$slug/competitors': typeof AgencySlugCompetitorsRoute
@@ -968,6 +1021,7 @@ export interface FileRoutesByFullPath {
   '/agency/$slug/vouchers': typeof AgencySlugVouchersRoute
   '/api/public/manifest': typeof ApiPublicManifestRoute
   '/api/public/mcp': typeof ApiPublicMcpRoute
+  '/client/quotes/$id': typeof ClientQuotesIdRoute
   '/client/trips/$id': typeof ClientTripsIdRoute
   '/m/checkin/$token': typeof MCheckinTokenRoute
   '/m/contract/$token': typeof MContractTokenRoute
@@ -980,6 +1034,7 @@ export interface FileRoutesByFullPath {
   '/p/$agency_slug/contact': typeof PAgency_slugContactRoute
   '/p/corporate/approve': typeof PCorporateApproveRoute
   '/agency/$slug/': typeof AgencySlugIndexRoute
+  '/client/quotes/': typeof ClientQuotesIndexRoute
   '/p/$agency_slug/': typeof PAgency_slugIndexRoute
   '/agency/$slug/bus-layouts/$id': typeof AgencySlugBusLayoutsIdRoute
   '/agency/$slug/clients/$id': typeof AgencySlugClientsIdRoute
@@ -1009,6 +1064,7 @@ export interface FileRoutesByFullPath {
   '/api/public/sitemap/$agency_slug': typeof ApiPublicSitemapAgency_slugRoute
   '/p/$agency_slug/blog/$slug': typeof PAgency_slugBlogSlugRoute
   '/p/$agency_slug/kb/$slug': typeof PAgency_slugKbSlugRoute
+  '/p/$agency_slug/loja/$item_id': typeof PAgency_slugLojaItem_idRoute
   '/p/$agency_slug/tour/$id': typeof PAgency_slugTourIdRoute
   '/p/$agency_slug/visa/$id': typeof PAgency_slugVisaIdRoute
   '/agency/$slug/group-tours/': typeof AgencySlugGroupToursIndexRoute
@@ -1018,6 +1074,7 @@ export interface FileRoutesByFullPath {
   '/agency/$slug/suppliers/': typeof AgencySlugSuppliersIndexRoute
   '/agency/$slug/trips/': typeof AgencySlugTripsIndexRoute
   '/p/$agency_slug/kb/': typeof PAgency_slugKbIndexRoute
+  '/p/$agency_slug/loja/': typeof PAgency_slugLojaIndexRoute
   '/agency/$slug/portal/pages/$page_id': typeof AgencySlugPortalPagesPage_idRoute
   '/agency/$slug/proposals/$id/preview': typeof AgencySlugProposalsIdPreviewRoute
   '/agency/$slug/trips/$id/boarding': typeof AgencySlugTripsIdBoardingRoute
@@ -1058,6 +1115,7 @@ export interface FileRoutesByTo {
   '/auth/register': typeof AuthRegisterRoute
   '/auth/reset-password': typeof AuthResetPasswordRoute
   '/builder/ai': typeof BuilderAiRoute
+  '/client/chat': typeof ClientChatRoute
   '/client/consents': typeof ClientConsentsRoute
   '/client/coupons': typeof ClientCouponsRoute
   '/client/documents': typeof ClientDocumentsRoute
@@ -1065,7 +1123,9 @@ export interface FileRoutesByTo {
   '/client/notifications': typeof ClientNotificationsRoute
   '/client/payments': typeof ClientPaymentsRoute
   '/client/profile': typeof ClientProfileRoute
+  '/client/support': typeof ClientSupportRoute
   '/client/trips': typeof ClientTripsRouteWithChildren
+  '/client/wallet': typeof ClientWalletRoute
   '/inbox/oauth-callback': typeof InboxOauthCallbackRoute
   '/verify/$serial': typeof VerifySerialRoute
   '/admin': typeof AdminIndexRoute
@@ -1077,6 +1137,7 @@ export interface FileRoutesByTo {
   '/agency/$slug/brand': typeof AgencySlugBrandRoute
   '/agency/$slug/bus-layouts': typeof AgencySlugBusLayoutsRouteWithChildren
   '/agency/$slug/calendar': typeof AgencySlugCalendarRoute
+  '/agency/$slug/client-app-builder': typeof AgencySlugClientAppBuilderRoute
   '/agency/$slug/clients': typeof AgencySlugClientsRouteWithChildren
   '/agency/$slug/company': typeof AgencySlugCompanyRoute
   '/agency/$slug/competitors': typeof AgencySlugCompetitorsRoute
@@ -1102,6 +1163,7 @@ export interface FileRoutesByTo {
   '/agency/$slug/vouchers': typeof AgencySlugVouchersRoute
   '/api/public/manifest': typeof ApiPublicManifestRoute
   '/api/public/mcp': typeof ApiPublicMcpRoute
+  '/client/quotes/$id': typeof ClientQuotesIdRoute
   '/client/trips/$id': typeof ClientTripsIdRoute
   '/m/checkin/$token': typeof MCheckinTokenRoute
   '/m/contract/$token': typeof MContractTokenRoute
@@ -1114,6 +1176,7 @@ export interface FileRoutesByTo {
   '/p/$agency_slug/contact': typeof PAgency_slugContactRoute
   '/p/corporate/approve': typeof PCorporateApproveRoute
   '/agency/$slug': typeof AgencySlugIndexRoute
+  '/client/quotes': typeof ClientQuotesIndexRoute
   '/p/$agency_slug': typeof PAgency_slugIndexRoute
   '/agency/$slug/bus-layouts/$id': typeof AgencySlugBusLayoutsIdRoute
   '/agency/$slug/clients/$id': typeof AgencySlugClientsIdRoute
@@ -1141,6 +1204,7 @@ export interface FileRoutesByTo {
   '/api/public/sitemap/$agency_slug': typeof ApiPublicSitemapAgency_slugRoute
   '/p/$agency_slug/blog/$slug': typeof PAgency_slugBlogSlugRoute
   '/p/$agency_slug/kb/$slug': typeof PAgency_slugKbSlugRoute
+  '/p/$agency_slug/loja/$item_id': typeof PAgency_slugLojaItem_idRoute
   '/p/$agency_slug/tour/$id': typeof PAgency_slugTourIdRoute
   '/p/$agency_slug/visa/$id': typeof PAgency_slugVisaIdRoute
   '/agency/$slug/group-tours': typeof AgencySlugGroupToursIndexRoute
@@ -1150,6 +1214,7 @@ export interface FileRoutesByTo {
   '/agency/$slug/suppliers': typeof AgencySlugSuppliersIndexRoute
   '/agency/$slug/trips': typeof AgencySlugTripsIndexRoute
   '/p/$agency_slug/kb': typeof PAgency_slugKbIndexRoute
+  '/p/$agency_slug/loja': typeof PAgency_slugLojaIndexRoute
   '/agency/$slug/portal/pages/$page_id': typeof AgencySlugPortalPagesPage_idRoute
   '/agency/$slug/proposals/$id/preview': typeof AgencySlugProposalsIdPreviewRoute
   '/agency/$slug/trips/$id/boarding': typeof AgencySlugTripsIdBoardingRoute
@@ -1195,6 +1260,7 @@ export interface FileRoutesById {
   '/auth/register': typeof AuthRegisterRoute
   '/auth/reset-password': typeof AuthResetPasswordRoute
   '/builder/ai': typeof BuilderAiRoute
+  '/client/chat': typeof ClientChatRoute
   '/client/consents': typeof ClientConsentsRoute
   '/client/coupons': typeof ClientCouponsRoute
   '/client/documents': typeof ClientDocumentsRoute
@@ -1202,7 +1268,9 @@ export interface FileRoutesById {
   '/client/notifications': typeof ClientNotificationsRoute
   '/client/payments': typeof ClientPaymentsRoute
   '/client/profile': typeof ClientProfileRoute
+  '/client/support': typeof ClientSupportRoute
   '/client/trips': typeof ClientTripsRouteWithChildren
+  '/client/wallet': typeof ClientWalletRoute
   '/inbox/oauth-callback': typeof InboxOauthCallbackRoute
   '/p/$agency_slug': typeof PAgency_slugRouteWithChildren
   '/verify/$serial': typeof VerifySerialRoute
@@ -1215,6 +1283,7 @@ export interface FileRoutesById {
   '/agency/$slug/brand': typeof AgencySlugBrandRoute
   '/agency/$slug/bus-layouts': typeof AgencySlugBusLayoutsRouteWithChildren
   '/agency/$slug/calendar': typeof AgencySlugCalendarRoute
+  '/agency/$slug/client-app-builder': typeof AgencySlugClientAppBuilderRoute
   '/agency/$slug/clients': typeof AgencySlugClientsRouteWithChildren
   '/agency/$slug/company': typeof AgencySlugCompanyRoute
   '/agency/$slug/competitors': typeof AgencySlugCompetitorsRoute
@@ -1244,6 +1313,7 @@ export interface FileRoutesById {
   '/agency/$slug/vouchers': typeof AgencySlugVouchersRoute
   '/api/public/manifest': typeof ApiPublicManifestRoute
   '/api/public/mcp': typeof ApiPublicMcpRoute
+  '/client/quotes/$id': typeof ClientQuotesIdRoute
   '/client/trips/$id': typeof ClientTripsIdRoute
   '/m/checkin/$token': typeof MCheckinTokenRoute
   '/m/contract/$token': typeof MContractTokenRoute
@@ -1256,6 +1326,7 @@ export interface FileRoutesById {
   '/p/$agency_slug/contact': typeof PAgency_slugContactRoute
   '/p/corporate/approve': typeof PCorporateApproveRoute
   '/agency/$slug/': typeof AgencySlugIndexRoute
+  '/client/quotes/': typeof ClientQuotesIndexRoute
   '/p/$agency_slug/': typeof PAgency_slugIndexRoute
   '/agency/$slug/bus-layouts/$id': typeof AgencySlugBusLayoutsIdRoute
   '/agency/$slug/clients/$id': typeof AgencySlugClientsIdRoute
@@ -1285,6 +1356,7 @@ export interface FileRoutesById {
   '/api/public/sitemap/$agency_slug': typeof ApiPublicSitemapAgency_slugRoute
   '/p/$agency_slug/blog/$slug': typeof PAgency_slugBlogSlugRoute
   '/p/$agency_slug/kb/$slug': typeof PAgency_slugKbSlugRoute
+  '/p/$agency_slug/loja/$item_id': typeof PAgency_slugLojaItem_idRoute
   '/p/$agency_slug/tour/$id': typeof PAgency_slugTourIdRoute
   '/p/$agency_slug/visa/$id': typeof PAgency_slugVisaIdRoute
   '/agency/$slug/group-tours/': typeof AgencySlugGroupToursIndexRoute
@@ -1294,6 +1366,7 @@ export interface FileRoutesById {
   '/agency/$slug/suppliers/': typeof AgencySlugSuppliersIndexRoute
   '/agency/$slug/trips/': typeof AgencySlugTripsIndexRoute
   '/p/$agency_slug/kb/': typeof PAgency_slugKbIndexRoute
+  '/p/$agency_slug/loja/': typeof PAgency_slugLojaIndexRoute
   '/agency/$slug/portal/pages/$page_id': typeof AgencySlugPortalPagesPage_idRoute
   '/agency/$slug/proposals/$id/preview': typeof AgencySlugProposalsIdPreviewRoute
   '/agency/$slug/trips/$id/boarding': typeof AgencySlugTripsIdBoardingRoute
@@ -1340,6 +1413,7 @@ export interface FileRouteTypes {
     | '/auth/register'
     | '/auth/reset-password'
     | '/builder/ai'
+    | '/client/chat'
     | '/client/consents'
     | '/client/coupons'
     | '/client/documents'
@@ -1347,7 +1421,9 @@ export interface FileRouteTypes {
     | '/client/notifications'
     | '/client/payments'
     | '/client/profile'
+    | '/client/support'
     | '/client/trips'
+    | '/client/wallet'
     | '/inbox/oauth-callback'
     | '/p/$agency_slug'
     | '/verify/$serial'
@@ -1360,6 +1436,7 @@ export interface FileRouteTypes {
     | '/agency/$slug/brand'
     | '/agency/$slug/bus-layouts'
     | '/agency/$slug/calendar'
+    | '/agency/$slug/client-app-builder'
     | '/agency/$slug/clients'
     | '/agency/$slug/company'
     | '/agency/$slug/competitors'
@@ -1389,6 +1466,7 @@ export interface FileRouteTypes {
     | '/agency/$slug/vouchers'
     | '/api/public/manifest'
     | '/api/public/mcp'
+    | '/client/quotes/$id'
     | '/client/trips/$id'
     | '/m/checkin/$token'
     | '/m/contract/$token'
@@ -1401,6 +1479,7 @@ export interface FileRouteTypes {
     | '/p/$agency_slug/contact'
     | '/p/corporate/approve'
     | '/agency/$slug/'
+    | '/client/quotes/'
     | '/p/$agency_slug/'
     | '/agency/$slug/bus-layouts/$id'
     | '/agency/$slug/clients/$id'
@@ -1430,6 +1509,7 @@ export interface FileRouteTypes {
     | '/api/public/sitemap/$agency_slug'
     | '/p/$agency_slug/blog/$slug'
     | '/p/$agency_slug/kb/$slug'
+    | '/p/$agency_slug/loja/$item_id'
     | '/p/$agency_slug/tour/$id'
     | '/p/$agency_slug/visa/$id'
     | '/agency/$slug/group-tours/'
@@ -1439,6 +1519,7 @@ export interface FileRouteTypes {
     | '/agency/$slug/suppliers/'
     | '/agency/$slug/trips/'
     | '/p/$agency_slug/kb/'
+    | '/p/$agency_slug/loja/'
     | '/agency/$slug/portal/pages/$page_id'
     | '/agency/$slug/proposals/$id/preview'
     | '/agency/$slug/trips/$id/boarding'
@@ -1479,6 +1560,7 @@ export interface FileRouteTypes {
     | '/auth/register'
     | '/auth/reset-password'
     | '/builder/ai'
+    | '/client/chat'
     | '/client/consents'
     | '/client/coupons'
     | '/client/documents'
@@ -1486,7 +1568,9 @@ export interface FileRouteTypes {
     | '/client/notifications'
     | '/client/payments'
     | '/client/profile'
+    | '/client/support'
     | '/client/trips'
+    | '/client/wallet'
     | '/inbox/oauth-callback'
     | '/verify/$serial'
     | '/admin'
@@ -1498,6 +1582,7 @@ export interface FileRouteTypes {
     | '/agency/$slug/brand'
     | '/agency/$slug/bus-layouts'
     | '/agency/$slug/calendar'
+    | '/agency/$slug/client-app-builder'
     | '/agency/$slug/clients'
     | '/agency/$slug/company'
     | '/agency/$slug/competitors'
@@ -1523,6 +1608,7 @@ export interface FileRouteTypes {
     | '/agency/$slug/vouchers'
     | '/api/public/manifest'
     | '/api/public/mcp'
+    | '/client/quotes/$id'
     | '/client/trips/$id'
     | '/m/checkin/$token'
     | '/m/contract/$token'
@@ -1535,6 +1621,7 @@ export interface FileRouteTypes {
     | '/p/$agency_slug/contact'
     | '/p/corporate/approve'
     | '/agency/$slug'
+    | '/client/quotes'
     | '/p/$agency_slug'
     | '/agency/$slug/bus-layouts/$id'
     | '/agency/$slug/clients/$id'
@@ -1562,6 +1649,7 @@ export interface FileRouteTypes {
     | '/api/public/sitemap/$agency_slug'
     | '/p/$agency_slug/blog/$slug'
     | '/p/$agency_slug/kb/$slug'
+    | '/p/$agency_slug/loja/$item_id'
     | '/p/$agency_slug/tour/$id'
     | '/p/$agency_slug/visa/$id'
     | '/agency/$slug/group-tours'
@@ -1571,6 +1659,7 @@ export interface FileRouteTypes {
     | '/agency/$slug/suppliers'
     | '/agency/$slug/trips'
     | '/p/$agency_slug/kb'
+    | '/p/$agency_slug/loja'
     | '/agency/$slug/portal/pages/$page_id'
     | '/agency/$slug/proposals/$id/preview'
     | '/agency/$slug/trips/$id/boarding'
@@ -1615,6 +1704,7 @@ export interface FileRouteTypes {
     | '/auth/register'
     | '/auth/reset-password'
     | '/builder/ai'
+    | '/client/chat'
     | '/client/consents'
     | '/client/coupons'
     | '/client/documents'
@@ -1622,7 +1712,9 @@ export interface FileRouteTypes {
     | '/client/notifications'
     | '/client/payments'
     | '/client/profile'
+    | '/client/support'
     | '/client/trips'
+    | '/client/wallet'
     | '/inbox/oauth-callback'
     | '/p/$agency_slug'
     | '/verify/$serial'
@@ -1635,6 +1727,7 @@ export interface FileRouteTypes {
     | '/agency/$slug/brand'
     | '/agency/$slug/bus-layouts'
     | '/agency/$slug/calendar'
+    | '/agency/$slug/client-app-builder'
     | '/agency/$slug/clients'
     | '/agency/$slug/company'
     | '/agency/$slug/competitors'
@@ -1664,6 +1757,7 @@ export interface FileRouteTypes {
     | '/agency/$slug/vouchers'
     | '/api/public/manifest'
     | '/api/public/mcp'
+    | '/client/quotes/$id'
     | '/client/trips/$id'
     | '/m/checkin/$token'
     | '/m/contract/$token'
@@ -1676,6 +1770,7 @@ export interface FileRouteTypes {
     | '/p/$agency_slug/contact'
     | '/p/corporate/approve'
     | '/agency/$slug/'
+    | '/client/quotes/'
     | '/p/$agency_slug/'
     | '/agency/$slug/bus-layouts/$id'
     | '/agency/$slug/clients/$id'
@@ -1705,6 +1800,7 @@ export interface FileRouteTypes {
     | '/api/public/sitemap/$agency_slug'
     | '/p/$agency_slug/blog/$slug'
     | '/p/$agency_slug/kb/$slug'
+    | '/p/$agency_slug/loja/$item_id'
     | '/p/$agency_slug/tour/$id'
     | '/p/$agency_slug/visa/$id'
     | '/agency/$slug/group-tours/'
@@ -1714,6 +1810,7 @@ export interface FileRouteTypes {
     | '/agency/$slug/suppliers/'
     | '/agency/$slug/trips/'
     | '/p/$agency_slug/kb/'
+    | '/p/$agency_slug/loja/'
     | '/agency/$slug/portal/pages/$page_id'
     | '/agency/$slug/proposals/$id/preview'
     | '/agency/$slug/trips/$id/boarding'
@@ -1850,11 +1947,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof InboxOauthCallbackRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/client/wallet': {
+      id: '/client/wallet'
+      path: '/wallet'
+      fullPath: '/client/wallet'
+      preLoaderRoute: typeof ClientWalletRouteImport
+      parentRoute: typeof ClientRoute
+    }
     '/client/trips': {
       id: '/client/trips'
       path: '/trips'
       fullPath: '/client/trips'
       preLoaderRoute: typeof ClientTripsRouteImport
+      parentRoute: typeof ClientRoute
+    }
+    '/client/support': {
+      id: '/client/support'
+      path: '/support'
+      fullPath: '/client/support'
+      preLoaderRoute: typeof ClientSupportRouteImport
       parentRoute: typeof ClientRoute
     }
     '/client/profile': {
@@ -1904,6 +2015,13 @@ declare module '@tanstack/react-router' {
       path: '/consents'
       fullPath: '/client/consents'
       preLoaderRoute: typeof ClientConsentsRouteImport
+      parentRoute: typeof ClientRoute
+    }
+    '/client/chat': {
+      id: '/client/chat'
+      path: '/chat'
+      fullPath: '/client/chat'
+      preLoaderRoute: typeof ClientChatRouteImport
       parentRoute: typeof ClientRoute
     }
     '/builder/ai': {
@@ -2053,6 +2171,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PAgency_slugIndexRouteImport
       parentRoute: typeof PAgency_slugRoute
     }
+    '/client/quotes/': {
+      id: '/client/quotes/'
+      path: '/quotes'
+      fullPath: '/client/quotes/'
+      preLoaderRoute: typeof ClientQuotesIndexRouteImport
+      parentRoute: typeof ClientRoute
+    }
     '/agency/$slug/': {
       id: '/agency/$slug/'
       path: '/'
@@ -2136,6 +2261,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/client/trips/$id'
       preLoaderRoute: typeof ClientTripsIdRouteImport
       parentRoute: typeof ClientTripsRoute
+    }
+    '/client/quotes/$id': {
+      id: '/client/quotes/$id'
+      path: '/quotes/$id'
+      fullPath: '/client/quotes/$id'
+      preLoaderRoute: typeof ClientQuotesIdRouteImport
+      parentRoute: typeof ClientRoute
     }
     '/api/public/mcp': {
       id: '/api/public/mcp'
@@ -2340,6 +2472,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AgencySlugClientsRouteImport
       parentRoute: typeof AgencySlugRoute
     }
+    '/agency/$slug/client-app-builder': {
+      id: '/agency/$slug/client-app-builder'
+      path: '/client-app-builder'
+      fullPath: '/agency/$slug/client-app-builder'
+      preLoaderRoute: typeof AgencySlugClientAppBuilderRouteImport
+      parentRoute: typeof AgencySlugRoute
+    }
     '/agency/$slug/calendar': {
       id: '/agency/$slug/calendar'
       path: '/calendar'
@@ -2381,6 +2520,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/admin/agencies/$id'
       preLoaderRoute: typeof AdminAgenciesIdRouteImport
       parentRoute: typeof AdminAgenciesRoute
+    }
+    '/p/$agency_slug/loja/': {
+      id: '/p/$agency_slug/loja/'
+      path: '/loja'
+      fullPath: '/p/$agency_slug/loja/'
+      preLoaderRoute: typeof PAgency_slugLojaIndexRouteImport
+      parentRoute: typeof PAgency_slugRoute
     }
     '/p/$agency_slug/kb/': {
       id: '/p/$agency_slug/kb/'
@@ -2443,6 +2589,13 @@ declare module '@tanstack/react-router' {
       path: '/tour/$id'
       fullPath: '/p/$agency_slug/tour/$id'
       preLoaderRoute: typeof PAgency_slugTourIdRouteImport
+      parentRoute: typeof PAgency_slugRoute
+    }
+    '/p/$agency_slug/loja/$item_id': {
+      id: '/p/$agency_slug/loja/$item_id'
+      path: '/loja/$item_id'
+      fullPath: '/p/$agency_slug/loja/$item_id'
+      preLoaderRoute: typeof PAgency_slugLojaItem_idRouteImport
       parentRoute: typeof PAgency_slugRoute
     }
     '/p/$agency_slug/kb/$slug': {
@@ -2830,6 +2983,7 @@ const ClientTripsRouteWithChildren = ClientTripsRoute._addFileChildren(
 )
 
 interface ClientRouteChildren {
+  ClientChatRoute: typeof ClientChatRoute
   ClientConsentsRoute: typeof ClientConsentsRoute
   ClientCouponsRoute: typeof ClientCouponsRoute
   ClientDocumentsRoute: typeof ClientDocumentsRoute
@@ -2837,11 +2991,16 @@ interface ClientRouteChildren {
   ClientNotificationsRoute: typeof ClientNotificationsRoute
   ClientPaymentsRoute: typeof ClientPaymentsRoute
   ClientProfileRoute: typeof ClientProfileRoute
+  ClientSupportRoute: typeof ClientSupportRoute
   ClientTripsRoute: typeof ClientTripsRouteWithChildren
+  ClientWalletRoute: typeof ClientWalletRoute
   ClientIndexRoute: typeof ClientIndexRoute
+  ClientQuotesIdRoute: typeof ClientQuotesIdRoute
+  ClientQuotesIndexRoute: typeof ClientQuotesIndexRoute
 }
 
 const ClientRouteChildren: ClientRouteChildren = {
+  ClientChatRoute: ClientChatRoute,
   ClientConsentsRoute: ClientConsentsRoute,
   ClientCouponsRoute: ClientCouponsRoute,
   ClientDocumentsRoute: ClientDocumentsRoute,
@@ -2849,8 +3008,12 @@ const ClientRouteChildren: ClientRouteChildren = {
   ClientNotificationsRoute: ClientNotificationsRoute,
   ClientPaymentsRoute: ClientPaymentsRoute,
   ClientProfileRoute: ClientProfileRoute,
+  ClientSupportRoute: ClientSupportRoute,
   ClientTripsRoute: ClientTripsRouteWithChildren,
+  ClientWalletRoute: ClientWalletRoute,
   ClientIndexRoute: ClientIndexRoute,
+  ClientQuotesIdRoute: ClientQuotesIdRoute,
+  ClientQuotesIndexRoute: ClientQuotesIndexRoute,
 }
 
 const ClientRouteWithChildren =
@@ -3078,6 +3241,7 @@ interface AgencySlugRouteChildren {
   AgencySlugBrandRoute: typeof AgencySlugBrandRoute
   AgencySlugBusLayoutsRoute: typeof AgencySlugBusLayoutsRouteWithChildren
   AgencySlugCalendarRoute: typeof AgencySlugCalendarRoute
+  AgencySlugClientAppBuilderRoute: typeof AgencySlugClientAppBuilderRoute
   AgencySlugClientsRoute: typeof AgencySlugClientsRouteWithChildren
   AgencySlugCompanyRoute: typeof AgencySlugCompanyRoute
   AgencySlugCompetitorsRoute: typeof AgencySlugCompetitorsRoute
@@ -3118,6 +3282,7 @@ const AgencySlugRouteChildren: AgencySlugRouteChildren = {
   AgencySlugBrandRoute: AgencySlugBrandRoute,
   AgencySlugBusLayoutsRoute: AgencySlugBusLayoutsRouteWithChildren,
   AgencySlugCalendarRoute: AgencySlugCalendarRoute,
+  AgencySlugClientAppBuilderRoute: AgencySlugClientAppBuilderRoute,
   AgencySlugClientsRoute: AgencySlugClientsRouteWithChildren,
   AgencySlugCompanyRoute: AgencySlugCompanyRoute,
   AgencySlugCompetitorsRoute: AgencySlugCompetitorsRoute,
@@ -3163,9 +3328,11 @@ interface PAgency_slugRouteChildren {
   PAgency_slugIndexRoute: typeof PAgency_slugIndexRoute
   PAgency_slugBlogSlugRoute: typeof PAgency_slugBlogSlugRoute
   PAgency_slugKbSlugRoute: typeof PAgency_slugKbSlugRoute
+  PAgency_slugLojaItem_idRoute: typeof PAgency_slugLojaItem_idRoute
   PAgency_slugTourIdRoute: typeof PAgency_slugTourIdRoute
   PAgency_slugVisaIdRoute: typeof PAgency_slugVisaIdRoute
   PAgency_slugKbIndexRoute: typeof PAgency_slugKbIndexRoute
+  PAgency_slugLojaIndexRoute: typeof PAgency_slugLojaIndexRoute
 }
 
 const PAgency_slugRouteChildren: PAgency_slugRouteChildren = {
@@ -3174,9 +3341,11 @@ const PAgency_slugRouteChildren: PAgency_slugRouteChildren = {
   PAgency_slugIndexRoute: PAgency_slugIndexRoute,
   PAgency_slugBlogSlugRoute: PAgency_slugBlogSlugRoute,
   PAgency_slugKbSlugRoute: PAgency_slugKbSlugRoute,
+  PAgency_slugLojaItem_idRoute: PAgency_slugLojaItem_idRoute,
   PAgency_slugTourIdRoute: PAgency_slugTourIdRoute,
   PAgency_slugVisaIdRoute: PAgency_slugVisaIdRoute,
   PAgency_slugKbIndexRoute: PAgency_slugKbIndexRoute,
+  PAgency_slugLojaIndexRoute: PAgency_slugLojaIndexRoute,
 }
 
 const PAgency_slugRouteWithChildren = PAgency_slugRoute._addFileChildren(

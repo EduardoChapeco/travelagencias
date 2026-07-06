@@ -1,6 +1,6 @@
 # 18 Revisão do Frontend e Design System
 
-Neste documento analisamos a fidelidade dos componentes ao Design System do TravelOS (Vanilla CSS + Radix + Tailwind configurado) e a usabilidade em resoluções de produção.
+Neste documento analisamos a fidelidade dos componentes ao Design System do Turis (Vanilla CSS + Radix + Tailwind configurado) e a usabilidade em resoluções de produção.
 
 ---
 

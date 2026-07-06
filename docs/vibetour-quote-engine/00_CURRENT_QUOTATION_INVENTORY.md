@@ -1,6 +1,6 @@
 # 00. Inventário do Sistema de Cotação Atual (Current Quotation Inventory)
 
-Este documento realiza o inventário das telas, fluxos, arquivos e serviços existentes relacionados a cotações e propostas no TravelOS.
+Este documento realiza o inventário das telas, fluxos, arquivos e serviços existentes relacionados a cotações e propostas no Turis.
 
 ---
 
@@ -20,5 +20,5 @@ Este documento realiza o inventário das telas, fluxos, arquivos e serviços exi
 
 ## 2. Diagnóstico de Cobertura e Gaps
 
-- **Cotação Multicenário**: Atualmente **ausente**. O TravelOS cria apenas propostas lineares de cenário único. Não há capacidade nativa de testar opções alternativas (voos mais tarde, noites extras) dentro do mesmo contexto de cotação de forma estruturada.
+- **Cotação Multicenário**: Atualmente **ausente**. O Turis cria apenas propostas lineares de cenário único. Não há capacidade nativa de testar opções alternativas (voos mais tarde, noites extras) dentro do mesmo contexto de cotação de forma estruturada.
 - **Mapeamento de Mocks**: **0**. Toda a gravação e manipulação de cotações/propostas no banco Supabase é real e integrada com as regras de totais e RLS da agência.

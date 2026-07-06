@@ -35,7 +35,7 @@ export async function exportBoardingListXlsx(
   cards: BoardingExportCard[],
   options: { filename?: string; agencyName?: string } = {},
 ): Promise<void> {
-  const { filename = "lista-embarque", agencyName = "TravelOS" } = options;
+  const { filename = "lista-embarque", agencyName = "Turis" } = options;
 
   const rows = cards.map((card) => {
     const checklistTotal = card.checklist?.length ?? 0;
@@ -525,7 +525,7 @@ export async function exportRoomingListPdf(
     doc.setFontSize(8);
     doc.setTextColor(148, 163, 184); // slate-400
     doc.text(`Página ${pageNum}`, pageWidth / 2, pageHeight - 10, { align: "center" });
-    doc.text("TravelOS - Sistema de Gestão", margin, pageHeight - 10);
+    doc.text("Turis - Sistema de Gestão", margin, pageHeight - 10);
   };
 
   // Desenhar cabeçalho/rodapé da primeira página

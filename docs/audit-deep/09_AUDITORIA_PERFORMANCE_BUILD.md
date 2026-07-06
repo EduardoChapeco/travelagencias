@@ -10,7 +10,7 @@ Este documento analisa o comportamento da build de produção do Vite, o empacot
 - **Tratamento de PWA:** Implementa o plugin `vite-plugin-pwa` de forma customizada (`safePwaPlugins`) com ganchos envolvidos para evitar a execução do Workbox durante a build de SSR (Server-Side Rendering). Isso corrige problemas históricos de geração de cache precache em builds híbridas.
 - **Gargalo de Memória (Build OOM - Out of Memory):**
   - O deploy em produção depende da instrução `--max-old-space-size=4096` no script de CI/CD para evitar travamentos de memória.
-  - **Causa Raiz:** O arquivo `vite.config.ts` **não possui** lógica explícita de `rollupOptions.output.manualChunks` ou minificação agressiva. Ao compilar um sistema denso como o TravelOS (que importa Lucide Icons de forma massiva, Leaflet para mapas, Recharts para gráficos financeiros, Tiptap como editor rico, html2canvas e jsPDF para geração de documentos), o compilador consome toda a memória heap padrão do Node.js.
+  - **Causa Raiz:** O arquivo `vite.config.ts` **não possui** lógica explícita de `rollupOptions.output.manualChunks` ou minificação agressiva. Ao compilar um sistema denso como o Turis (que importa Lucide Icons de forma massiva, Leaflet para mapas, Recharts para gráficos financeiros, Tiptap como editor rico, html2canvas e jsPDF para geração de documentos), o compilador consome toda a memória heap padrão do Node.js.
   - **Correção Recomendada:** Configurar manualChunks no Rollup para separar as dependências pesadas (`@supabase/supabase-js`, `leaflet`, `recharts`, `jspdf`, `html2canvas`) em chunks independentes, otimizando o cacheamento do navegador e diminuindo a pegada de processamento da build.
 
 ---

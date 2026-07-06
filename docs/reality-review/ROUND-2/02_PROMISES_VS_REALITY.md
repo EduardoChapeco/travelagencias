@@ -1,4 +1,4 @@
-# Promessas vs. Realidade — Rodada 2 (TravelOS)
+# Promessas vs. Realidade — Rodada 2 (Turis)
 
 Este documento compara individualmente cada funcionalidade planejada com a realidade física de sua implementação na árvore de trabalho local e no banco de dados.
 

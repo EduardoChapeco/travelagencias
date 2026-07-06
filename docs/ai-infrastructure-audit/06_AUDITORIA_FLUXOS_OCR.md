@@ -1,6 +1,6 @@
 # Auditoria dos Fluxos de Ingestão e Processamento de OCR
 
-Este documento analisa os fluxos de processamento de OCR (Propostas, Vouchers, Passageiros, Boletos) no TravelAgencias/TravelOS, detalhando as fragilidades de processamento e propondo melhorias de resiliência.
+Este documento analisa os fluxos de processamento de OCR (Propostas, Vouchers, Passageiros, Boletos) no TravelAgencias/Turis, detalhando as fragilidades de processamento e propondo melhorias de resiliência.
 
 ---
 

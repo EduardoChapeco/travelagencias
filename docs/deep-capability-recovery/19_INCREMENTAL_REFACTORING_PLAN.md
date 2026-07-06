@@ -1,12 +1,12 @@
 # 19. Incremental Refactoring Plan (Plano de Refatoração)
 
-Este relatório descreve o cronograma de fases e gates de validação para as próximas melhorias e manutenções do TravelOS.
+Este relatório descreve o cronograma de fases e gates de validação para as próximas melhorias e manutenções do Turis.
 
 ---
 
 ## 1. Cronograma de Fases e Prioridades
 
-As atividades de engenharia e refatoração do TravelOS seguem a ordem rígida de criticidade:
+As atividades de engenharia e refatoração do Turis seguem a ordem rígida de criticidade:
 
 1. **Fase P0 (Segurança e RLS):**
    * Auditoria de chaves em commits do git, rotação de chaves e correção de FKs para perfis na tabela de tarefas.

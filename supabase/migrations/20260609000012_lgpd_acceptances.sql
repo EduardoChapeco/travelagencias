@@ -1,4 +1,4 @@
--- TravelOS — LGPD & Legal Acceptances Governance
+-- Turis — LGPD & Legal Acceptances Governance
 -- Migration: 20260609000010_lgpd_acceptances
 
 -- =========================================================================

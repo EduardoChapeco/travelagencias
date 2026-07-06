@@ -1,6 +1,6 @@
 # 07. Segurança e Isolamento Multi-Tenancy
 
-Este documento audita a segurança do ecossistema TravelOS, analisando o isolamento de dados entre empresas (tenants), controle de privilégios dos usuários, segurança do portal B2C do passageiro, e resiliência contra injeções e vazamentos.
+Este documento audita a segurança do ecossistema Turis, analisando o isolamento de dados entre empresas (tenants), controle de privilégios dos usuários, segurança do portal B2C do passageiro, e resiliência contra injeções e vazamentos.
 
 ---
 

@@ -1,12 +1,12 @@
 # 06. Infraestrutura de Memória e Recuperação IA (Memory and RAG Infrastructure)
 
-Este documento analisa as estruturas de vetores, embeddings e mecanismos de busca semântica (RAG) presentes no TravelOS.
+Este documento analisa as estruturas de vetores, embeddings e mecanismos de busca semântica (RAG) presentes no Turis.
 
 ---
 
 ## 1. Embeddings e pgvector
 
-O TravelOS já possui suporte nativo a banco vetorial e geração de embeddings:
+O Turis já possui suporte nativo a banco vetorial e geração de embeddings:
 
 - **Tabela do Banco**: `public.omnichannel_message_embeddings` contém uma coluna `embedding` (do tipo `vector` de 1536 dimensões no PostgreSQL).
 - **Gerador de Vetores**: O arquivo `src/lib/api/ai-chat.functions.ts` exporta a função `getEmbedding`:

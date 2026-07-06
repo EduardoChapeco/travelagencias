@@ -1,6 +1,6 @@
 # 13 Evidências de Fluxos End-to-End
 
-Neste documento reunimos as evidências operacionais de fluxos que estão 100% funcionais no TravelOS, conectando o banco de dados Supabase diretamente à renderização do frontend.
+Neste documento reunimos as evidências operacionais de fluxos que estão 100% funcionais no Turis, conectando o banco de dados Supabase diretamente à renderização do frontend.
 
 ---
 

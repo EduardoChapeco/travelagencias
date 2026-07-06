@@ -1,8 +1,8 @@
-# Matriz de Execução Pós-Auditoria: TravelOS
+# Matriz de Execução Pós-Auditoria: Turis
 
 **Faseamento Estruturado para Produção**
 
-Este documento organiza as etapas de desenvolvimento, estabilização e compatibilização do TravelOS baseando-se nos resultados da Auditoria Forense. Nenhuma etapa técnica deve ser executada fora das diretrizes aqui estabelecidas.
+Este documento organiza as etapas de desenvolvimento, estabilização e compatibilização do Turis baseando-se nos resultados da Auditoria Forense. Nenhuma etapa técnica deve ser executada fora das diretrizes aqui estabelecidas.
 
 ---
 

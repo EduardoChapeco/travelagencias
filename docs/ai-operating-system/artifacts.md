@@ -1,12 +1,12 @@
-# Sistema Operacional de Engenharia do TravelOS: Catálogo de Artefatos
+# Sistema Operacional de Engenharia do Turis: Catálogo de Artefatos
 
-Este catálogo define a estrutura exata e o conteúdo obrigatório para cada um dos 20 artefatos técnicos gerados pelo Antigravity durante o desenvolvimento do TravelOS. Toda entrega de funcionalidade deve referenciar estes templates em seu diretório de documentação.
+Este catálogo define a estrutura exata e o conteúdo obrigatório para cada um dos 20 artefatos técnicos gerados pelo Antigravity durante o desenvolvimento do Turis. Toda entrega de funcionalidade deve referenciar estes templates em seu diretório de documentação.
 
 ---
 
 ## 1. Product Intent Brief
 
-Documento de alinhamento estratégico que descreve o valor da funcionalidade para o ecossistema TravelOS.
+Documento de alinhamento estratégico que descreve o valor da funcionalidade para o ecossistema Turis.
 
 ```markdown
 # Product Intent Brief: [Nome da Feature]

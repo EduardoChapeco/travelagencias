@@ -1,6 +1,6 @@
 # Relatório Executivo da Verdade: Auditoria Técnica Forense
 
-Este documento sintetiza de forma honesta e transparente as conclusões técnicas da auditoria de infraestrutura e interfaces do TravelAgencias/TravelOS.
+Este documento sintetiza de forma honesta e transparente as conclusões técnicas da auditoria de infraestrutura e interfaces do TravelAgencias/Turis.
 
 ---
 

@@ -1,7 +1,7 @@
 # 03. WhatsApp Embedded Signup (Fluxo de Onboarding WhatsApp)
 
 ## 1. Contexto do Embedded Signup
-O WhatsApp Embedded Signup é o fluxo recomendado pela Meta para que clientes finais (neste caso, as agências de turismo operadoras do TravelOS) conectem suas próprias contas do WhatsApp Business diretamente à plataforma de forma self-service.
+O WhatsApp Embedded Signup é o fluxo recomendado pela Meta para que clientes finais (neste caso, as agências de turismo operadoras do Turis) conectem suas próprias contas do WhatsApp Business diretamente à plataforma de forma self-service.
 
 ## 2. Implementação Necessária no Frontend
 Falta carregar o SDK de JavaScript da Meta (`fbsdk.js`) de forma dinâmica ou estática e inicializar o fluxo usando o modal de login do Facebook com as permissões corretas:

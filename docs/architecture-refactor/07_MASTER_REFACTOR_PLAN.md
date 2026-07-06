@@ -1,6 +1,6 @@
 # Plano Diretor de Refatoração (Master Refactor Plan)
 
-Este documento descreve as 11 fases de execução (de Fase 0 a Fase 10) para a refatoração, modularização e estabilização do TravelAgencias/TravelOS.
+Este documento descreve as 11 fases de execução (de Fase 0 a Fase 10) para a refatoração, modularização e estabilização do TravelAgencias/Turis.
 
 ---
 
@@ -8,7 +8,7 @@ Este documento descreve as 11 fases de execução (de Fase 0 a Fase 10) para a r
 
 ```mermaid
 gantt
-    title Refatoração Arquitetural TravelOS
+    title Refatoração Arquitetural Turis
     dateFormat  YYYY-MM-DD
     section Fase 0 a 2
     Fase 0 - Proteção e Baseline       :active, p0, 2026-06-22, 2d

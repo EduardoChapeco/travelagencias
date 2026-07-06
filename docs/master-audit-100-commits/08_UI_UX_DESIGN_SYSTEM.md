@@ -1,12 +1,12 @@
 # 08. Interface, Usabilidade e Conformidade Visual
 
-Este documento apresenta a auditoria de responsividade em múltiplos viewports e a validação estética de conformidade com o design system do TravelOS.
+Este documento apresenta a auditoria de responsividade em múltiplos viewports e a validação estética de conformidade com o design system do Turis.
 
 ---
 
 ## 1. Auditoria de Responsividade e Comportamento em Telas
 
-As páginas e módulos do TravelOS foram auditados em múltiplos viewports, do mobile ao desktop de alta resolução, apresentando os seguintes comportamentos:
+As páginas e módulos do Turis foram auditados em múltiplos viewports, do mobile ao desktop de alta resolução, apresentando os seguintes comportamentos:
 
 - **360px a 390px (Smartphones)**:
   - **Sidebar & Shell**: A navegação contextual é ocultada automaticamente, liberando a tela. O menu principal é acessível via botão hambúrguer no topo.

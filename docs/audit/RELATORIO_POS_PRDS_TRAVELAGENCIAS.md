@@ -1,4 +1,4 @@
-# Relatório Técnico de Auditoria Pós-PRDs — TravelAgencias (TravelOS)
+# Relatório Técnico de Auditoria Pós-PRDs — TravelAgencias (Turis)
 
 **Data:** Junho de 2026
 **Status do Projeto:** Pós-Implementação das Fases 1 a 3 (e parciais 4/5)
@@ -19,7 +19,7 @@ Durante as interações recentes, foram consumidos e analisados os seguintes con
 
 ## 2. O que foi entendido
 
-A visão macro (TravelOS / VoyageOS) é que a plataforma deixe de ser um simples CRM e se torne um "Sistema Operacional" inteligente.
+A visão macro (Turis / VoyageOS) é que a plataforma deixe de ser um simples CRM e se torne um "Sistema Operacional" inteligente.
 
 - **Fornecedores:** Não apenas nomes de empresas e telefone, mas um catálogo rico de hotéis, transfers e passeios, alimentado automaticamente via OCR de vouchers reais em PDF.
 - **Identidade Visual e Responsividade:** A plataforma precisa ser 100% _white-label_ no frontend do cliente e nos documentos gerados. O `brandKit` precisa injetar fontes (Google Fonts) e cores CSS em tempo real nas propostas, vouchers, e portais. Painéis laterais no Admin não devem ser "espremidos" em resoluções menores.
@@ -54,7 +54,7 @@ Baseado nos logs e na árvore de diretórios, as seguintes entregas foram conclu
 
 ## 6. O que ficou incompleto
 
-- **Catálogo Global (Cross-Agency):** O banco de dados foi estruturado (fase de inteligência), mas a lógica de curadoria que move um "Produto de Fornecedor Privado da Agência" para o "Catálogo Global do TravelOS" ainda não possui interface administrativa.
+- **Catálogo Global (Cross-Agency):** O banco de dados foi estruturado (fase de inteligência), mas a lógica de curadoria que move um "Produto de Fornecedor Privado da Agência" para o "Catálogo Global do Turis" ainda não possui interface administrativa.
 - **Versionamento Visual do Contrato Legado:** As cláusulas e o library registry existem no Supabase, mas a interface React do editor de contratos ainda precisa migrar do modelo array hardcoded para ler do backend dinamicamente.
 
 ## 7. O que pode ter quebrado (Riscos Imediatos)
@@ -81,7 +81,7 @@ Baseado nos logs e na árvore de diretórios, as seguintes entregas foram conclu
 ## 11. O que ainda falta fazer para concluir a visão completa
 
 1. **Ativar OCR UI Workflow:** Finalizar a jornada onde o Agente sobe um Voucher no chat/upload, o sistema exibe um preview dinâmico de parsing ("Encontramos 1 Hotel, 2 Transfers"), o Agente clica em "Validar e Ingerir" e o banco se autoalimenta.
-2. **Dashboard de Governança Global (Super Admin):** Desenvolver um painel restrito para que a "Excelência Tour / TravelOS" audite os metadados gerados (AI Cost Control, veracidade dos catálogos).
+2. **Dashboard de Governança Global (Super Admin):** Desenvolver um painel restrito para que a "Turis Tecnologia / Turis" audite os metadados gerados (AI Cost Control, veracidade dos catálogos).
 3. **Módulo Completo de Rooming List DnD:** Habilitar arrastar e soltar de passageiros entre quartos de hotéis dentro da view operacional de Embarque.
 4. **Editor de Contratos Visual:** Consolidar a UI onde a agência arrasta cláusulas da _Library_, e gera um snapshot para aquele passageiro específico.
 5. **Automação Pós-Embarque:** Enviar alertas no WhatsApp integrado baseados no `boarding_operational_upgrade` (ex: "Seu transfer chega em 30 min no lobby").

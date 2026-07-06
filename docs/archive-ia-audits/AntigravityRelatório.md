@@ -2,7 +2,7 @@
 
 ## 1. Resumo executivo honesto
 
-Este relatório apresenta um diagnóstico crítico, retrospectivo e holístico sobre as sucessivas refatorações conduzidas por agentes de Inteligência Artificial (Lovable, Antigravity e assemelhados) no projeto TravelOS. O objetivo deste documento é estabelecer controle de danos, governança técnica e alinhar as expectativas operacionais com o estado real do código.
+Este relatório apresenta um diagnóstico crítico, retrospectivo e holístico sobre as sucessivas refatorações conduzidas por agentes de Inteligência Artificial (Lovable, Antigravity e assemelhados) no projeto Turis. O objetivo deste documento é estabelecer controle de danos, governança técnica e alinhar as expectativas operacionais com o estado real do código.
 
 O projeto passou por múltiplos ciclos de reescrita automatizada de código, frequentemente focados em resolver sintomas imediatos em vez de tratar causas estruturais. Esse fluxo operacional desregulamentado resultou em:
 
@@ -23,7 +23,7 @@ Este relatório assume o colapso da confiança nas declarações de prontidão d
 
 ## 2. Contexto do problema
 
-O processo de desenvolvimento do TravelOS por agentes de IA apresentou um padrão cíclico recorrente e disfuncional:
+O processo de desenvolvimento do Turis por agentes de IA apresentou um padrão cíclico recorrente e disfuncional:
 
 1. O usuário solicita uma alteração operacional, correção ou melhoria estética.
 2. A IA aplica modificações rápidas em arquivos do frontend ou backend, sem mapear previamente o inventário de dependências ou os impactos colaterais nos componentes e rotas adjacentes.
@@ -73,7 +73,7 @@ A causa raiz desse padrão não reside na falta de capacidade técnica do códig
 - Páginas de domínio operacional diferente apresentavam headers inconsistentes, botões com preenchimento (padding) e fontes variadas, e margens quebrassem o alinhamento em layouts de largura fluida.
 - Uso descontrolado de classes de cor Tailwind hardcoded (`text-emerald-600`, `bg-amber-100`, `border-slate-200`) em detrimento dos tokens semânticos declarados no CSS central.
 - Inserção de estilos proibidos na constituição visual do projeto: gradientes lineares (`bg-gradient-to-r`), efeitos de sombra (`shadow-md`, `drop-shadow-sm`) e glassmorphism decorativo em cards comuns.
-- Confusão por parte da IA ao interpretar "UI Premium" como o acúmulo de efeitos visuais chamativos, enquanto a diretriz explícita do TravelOS exige o padrão **Flat Premium** (superfícies limpas, bordas finas, contraste tipográfico e alta usabilidade funcional).
+- Confusão por parte da IA ao interpretar "UI Premium" como o acúmulo de efeitos visuais chamativos, enquanto a diretriz explícita do Turis exige o padrão **Flat Premium** (superfícies limpas, bordas finas, contraste tipográfico e alta usabilidade funcional).
 
 ### 3.5 Regras pétreas de UI ignoradas
 
@@ -119,7 +119,7 @@ A causa raiz desse padrão não reside na falta de capacidade técnica do códig
 
 ## 4. Taxonomia dos problemas identificados
 
-Abaixo está descrita a classificação formal das anomalias encontradas na governança, código e infraestrutura do TravelOS.
+Abaixo está descrita a classificação formal das anomalias encontradas na governança, código e infraestrutura do Turis.
 
 ```
 [Taxonomia de Anomalias]
@@ -277,9 +277,9 @@ Abaixo está descrita a classificação formal das anomalias encontradas na gove
 
 ### 5.2 Perspectiva de Staff Frontend Engineer / UI Architect
 
-- **Conformidade do Design System:** O TravelOS possui uma estrutura de tokens definida em `src/styles.css`, contudo, a UI real falha na adesão contínua. Encontram-se múltiplas instâncias de espaçamentos inconsistentes e classes utilitárias de cores hardcoded.
+- **Conformidade do Design System:** O Turis possui uma estrutura de tokens definida em `src/styles.css`, contudo, a UI real falha na adesão contínua. Encontram-se múltiplas instâncias de espaçamentos inconsistentes e classes utilitárias de cores hardcoded.
 - **Definição de "Premium":**
-  - **O que NÃO é:** O padrão premium no TravelOS não consiste na adição de efeitos estéticos como sombras, degradês de cor ou efeitos de vidro translúcido. Essas soluções mascaram uma hierarquia visual deficiente.
+  - **O que NÃO é:** O padrão premium no Turis não consiste na adição de efeitos estéticos como sombras, degradês de cor ou efeitos de vidro translúcido. Essas soluções mascaram uma hierarquia visual deficiente.
   - **O que É:** O padrão **Flat Premium** baseia-se em clareza extrema, consistência tipográfica, grades estritas de espaçamento, preenchimento correto de dados, transições e micro-animações suaves para mudanças de estado, tratamento proativo de erros e responsividade real a partir de 375px até telas ultra-wide.
 - **Estados de Interface:** Atualmente, a maior parte das telas carece de tratamento adequado de erros e carregamentos. É comum deparar-se com listas vazias sem ação de criação sugerida (`EmptyState`), ou travamentos silenciosos por falta de fallbacks de erro (`ErrorState`).
 
@@ -298,7 +298,7 @@ Abaixo está descrita a classificação formal das anomalias encontradas na gove
 
 ### 5.5 Perspectiva de Product/Tourism Operations
 
-- **Fluxo de Trabalho da Agência de Turismo:** A plataforma TravelOS simula corretamente operações básicas de CRUD de propostas, passageiros e vouchers. No entanto, o sistema opera de forma desconectada sob a perspectiva do dia a dia do operador de agência.
+- **Fluxo de Trabalho da Agência de Turismo:** A plataforma Turis simula corretamente operações básicas de CRUD de propostas, passageiros e vouchers. No entanto, o sistema opera de forma desconectada sob a perspectiva do dia a dia do operador de agência.
 - **Inconsistência de Fluxo Operacional:** Os dados de um lead no CRM que aceita uma proposta não fluem de maneira transparente para a criação automática da viagem correspondente. O operador precisa reinserir informações como dados dos passageiros, valores contratuais e informações de voo em telas distintas, aumentando a possibilidade de erros operacionais. O sistema precisa garantir rastreabilidade completa e automações orientadas à jornada do agente.
 
 ### 5.6 Perspectiva de QA Regression Engineer
@@ -461,12 +461,12 @@ Antes de iniciar qualquer refatoração em massa:
 
 ## 15. Novo framework operacional recomendado
 
-### TravelOS Integrity Operating Framework
+### Turis Integrity Operating Framework
 
 O framework operacional é dividido em fases sequenciais bloqueantes. O progresso para a fase subsequente depende da entrega dos artefatos e da aprovação dos respectivos revisores.
 
 ```
-[TravelOS Operating Framework]
+[Turis Operating Framework]
  Intake ➔ Inventory ➔ Schema Check ➔ Controlled Fix ➔ Release Gate ➔ Delivery Proof
 ```
 
@@ -485,7 +485,7 @@ O framework operacional é dividido em fases sequenciais bloqueantes. O progress
 
 ## 16. Definition of Done revisada
 
-Uma entrega no projeto TravelOS só é considerada concluída e qualificada para deploy se atender aos seguintes requisitos:
+Uma entrega no projeto Turis só é considerada concluída e qualificada para deploy se atender aos seguintes requisitos:
 
 1. **Rastreabilidade de Schema:** Toda alteração de dados possui um arquivo de migration correspondente na pasta `supabase/migrations/` e os tipos TypeScript gerados em `src/integrations/supabase/types.ts` estão atualizados e integrados sem erros de compilação.
 2. **Segurança de Acesso (RLS):** Toda tabela de negócios multi-tenant possui políticas de RLS estruturadas que restringem acessos cruzados entre agências (cross-tenant), utilizando funções seguras no banco de dados.
@@ -500,7 +500,7 @@ Uma entrega no projeto TravelOS só é considerada concluída e qualificada para
 
 ## 17. Checklist de revisão futura
 
-Antes de iniciar qualquer desenvolvimento ou refatoração no TravelOS, preencha o seguinte checklist mental e operacional:
+Antes de iniciar qualquer desenvolvimento ou refatoração no Turis, preencha o seguinte checklist mental e operacional:
 
 - [ ] Quais são os arquivos e rotas envolvidos na funcionalidade atual?
 - [ ] Existem componentes, hooks ou wizards antigos que exercem funções similares e que devem ser reutilizados ou removidos?
@@ -520,7 +520,7 @@ Antes de iniciar qualquer desenvolvimento ou refatoração no TravelOS, preencha
 
 ## 18. Recomendações finais
 
-1. **Estabilização priorizada sobre novas features:** Parar imediatamente a introdução de novos módulos operacionais no TravelOS e direcionar os esforços para sanar os riscos de segurança, RLS e drifts de migrations detalhados na Fase A do plano de reconstrução.
+1. **Estabilização priorizada sobre novas features:** Parar imediatamente a introdução de novos módulos operacionais no Turis e direcionar os esforços para sanar os riscos de segurança, RLS e drifts de migrations detalhados na Fase A do plano de reconstrução.
 2. **Migração estruturada do Admin Master:** Eliminar o anti-padrão de serialização de planos, termos de uso e identidade global em campos JSON da tabela `api_keys`. Desenvolver migrações para mover esses dados para as tabelas `plans`, `policy_documents` e `global_settings` correspondentes.
 3. **Consolidação do CRM e Embarques:** Substituir as chamadas de banco diretas e isoladas do frontend por RPCs seguras e queries parametrizadas por meio de `src/services/crm.ts` e `src/services/boarding.ts`.
 4. **Remoção de Código Morto:** Conduzir varreduras sistemáticas para remover arquivos órfãos, rascunhos de wizards antigos e rotas malformadas que geram lentidão no typecheck.
@@ -533,7 +533,7 @@ Antes de iniciar qualquer desenvolvimento ou refatoração no TravelOS, preencha
 
 ## 19. Status final do relatório
 
-- Este relatório **não atesta a estabilidade ou correção** dos fluxos atuais da plataforma TravelOS.
+- Este relatório **não atesta a estabilidade ou correção** dos fluxos atuais da plataforma Turis.
 - Este relatório **documenta as inconsistências e define as métricas necessárias** para provar a conformidade técnica.
 - Este documento funciona como o marco de governança operacional que deve nortear toda nova tarefa de desenvolvimento.
 - A próxima etapa recomendada consiste em rodar as matrizes de verificação detalhadas contra os arquivos reais do código-fonte para obter o status honesto de cada item.
@@ -545,7 +545,7 @@ Antes de iniciar qualquer desenvolvimento ou refatoração no TravelOS, preencha
 
 ### Prompt 1 — Auditoria de integridade
 
-> "Leia o arquivo `AntigravityRelatório.md` na raiz do projeto. Execute a matriz Planejado vs Implementado vs Atual em relação ao código-fonte atual do TravelOS. Forneça um diagnóstico completo de integridade estrutural contendo evidências por arquivo, rota e tabela de banco, sem aplicar alterações."
+> "Leia o arquivo `AntigravityRelatório.md` na raiz do projeto. Execute a matriz Planejado vs Implementado vs Atual em relação ao código-fonte atual do Turis. Forneça um diagnóstico completo de integridade estrutural contendo evidências por arquivo, rota e tabela de banco, sem aplicar alterações."
 
 ### Prompt 2 — Correção controlada
 

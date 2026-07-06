@@ -1,4 +1,4 @@
--- TravelOS — Master Agency Creation & Invites
+-- Turis — Master Agency Creation & Invites
 -- Migration: 20260609000011_admin_create_agency
 
 -- =========================================================================

@@ -24,7 +24,7 @@ const RadarMapWidget = lazy(() =>
 );
 
 export const Route = createFileRoute("/agency/$slug/radar")({
-  head: () => ({ meta: [{ title: "Radar de Clientes ao Vivo · TravelOS" }] }),
+  head: ({ context }: any) => ({ meta: [{ title: `Radar de Clientes ao Vivo · ${context?.brand?.platform_name || 'Turis'}` }] }),
   component: RadarTVPage,
 } as any);
 

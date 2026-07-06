@@ -6,7 +6,7 @@ import { fetchPublicLeadForm, submitPublicLeadForm } from "@/services/public";
 import { Field, Input, PrimaryButton, Textarea } from "@/components/ui/form";
 
 export const Route = createFileRoute("/p/$agency_slug/visa/$id")({
-  head: () => ({ meta: [{ title: "Solicitação de visto · TravelOS" }] }),
+  head: ({ context }: any) => ({ meta: [{ title: `Solicitação de visto · ${context?.brand?.platform_name || 'Turis'}` }] }),
   component: Page,
 });
 

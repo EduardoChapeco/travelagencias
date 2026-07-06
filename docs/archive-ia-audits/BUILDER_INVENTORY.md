@@ -1,6 +1,6 @@
 # BUILDER INVENTORY - TRAVELOS PORTAL BUILDER & BRAND KIT
 
-This document registers the mapping of all resources, database structures, and frontend components related to the Site/Portal Builder, AI Builder, and Brand Module of TravelOS.
+This document registers the mapping of all resources, database structures, and frontend components related to the Site/Portal Builder, AI Builder, and Brand Module of Turis.
 
 ---
 

@@ -1,6 +1,6 @@
 # 14. Plano Corretivo Mestre
 
-Este documento detalha o planejamento estratégico de correções recomendadas para o TravelOS, estruturado por dependência técnica com base nas vulnerabilidades, riscos e dívidas mapeados na auditoria forense de pré-produção.
+Este documento detalha o planejamento estratégico de correções recomendadas para o Turis, estruturado por dependência técnica com base nas vulnerabilidades, riscos e dívidas mapeados na auditoria forense de pré-produção.
 
 ---
 

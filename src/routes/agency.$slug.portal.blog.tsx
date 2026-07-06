@@ -37,7 +37,7 @@ import { FileUploader } from "@/components/uploads/FileUploader";
 import { RichTextEditor } from "@/components/ui/RichTextEditor";
 
 export const Route = createFileRoute("/agency/$slug/portal/blog")({
-  head: () => ({ meta: [{ title: "Blog · TravelOS" }] }),
+  head: ({ context }: any) => ({ meta: [{ title: `Blog · ${context?.brand?.platform_name || 'Turis'}` }] }),
   component: BlogPage,
 });
 

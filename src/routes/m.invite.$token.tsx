@@ -5,7 +5,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { PrimaryButton, GhostButton } from "@/components/ui/form";
 
 export const Route = createFileRoute("/m/invite/$token")({
-  head: () => ({ meta: [{ title: "Aceitar convite · TravelOS" }] }),
+  head: ({ context }: any) => ({ meta: [{ title: `Aceitar convite · ${context?.brand?.platform_name || 'Turis'}` }] }),
   component: AcceptInvitePage,
 });
 

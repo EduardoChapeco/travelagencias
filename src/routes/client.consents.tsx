@@ -8,7 +8,7 @@ import { cn } from "@/lib/utils";
 import { toast } from "sonner";
 
 export const Route = createFileRoute("/client/consents")({
-  head: () => ({ meta: [{ title: "Privacidade e LGPD · TravelOS" }] }),
+  head: ({ context }: any) => ({ meta: [{ title: `Privacidade e LGPD · ${context?.brand?.platform_name || 'Turis'}` }] }),
   component: ClientConsentsPage,
 });
 

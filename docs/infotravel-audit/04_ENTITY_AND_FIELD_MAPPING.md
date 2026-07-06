@@ -1,6 +1,6 @@
 # 04. Mapeamento de Entidades e Dicionário de Campos
 
-Este documento estabelece o mapeamento lógico e a tradução de campos ("Data Mapping") entre os objetos da API **Infotravel/Infotera** (DTOs prefixados com `Api` e schemas JSON) e o modelo relacional de banco de dados do **TravelOS**.
+Este documento estabelece o mapeamento lógico e a tradução de campos ("Data Mapping") entre os objetos da API **Infotravel/Infotera** (DTOs prefixados com `Api` e schemas JSON) e o modelo relacional de banco de dados do **Turis**.
 
 ---
 
@@ -16,7 +16,7 @@ CREATE TABLE IF NOT EXISTS public.external_entity_links (
   entity_type          text NOT NULL, -- booking, client, passenger, hotel, flight, invoice, etc.
   external_id          text NOT NULL, -- ID físico do objeto na base do Infotravel
   internal_entity_type text NOT NULL, -- trips, clients, trip_passengers, financial_transactions, etc.
-  internal_id          uuid NOT NULL, -- ID (PK) correspondente na base do TravelOS
+  internal_id          uuid NOT NULL, -- ID (PK) correspondente na base do Turis
   external_version     int NOT NULL DEFAULT 1, -- Versão do registro retornado pela API
   last_synced_at       timestamptz NOT NULL DEFAULT now(),
   checksum             text, -- Hash MD5/SHA256 do payload cru para detectar alterações sem escrita
@@ -32,16 +32,16 @@ CREATE INDEX IF NOT EXISTS idx_external_links_internal ON public.external_entity
 
 ## 2. Matriz de Mapeamento de Entidades
 
-| Entidade Infotravel | Entidade TravelOS  | Tabela de Destino              | Chave de Vínculo Externo                  |        Direção da Sincronização        |
+| Entidade Infotravel | Entidade Turis  | Tabela de Destino              | Chave de Vínculo Externo                  |        Direção da Sincronização        |
 | :------------------ | :----------------- | :----------------------------- | :---------------------------------------- | :------------------------------------: |
-| `ApiBooking`        | Viagem / Reserva   | `public.trips`                 | `ApiBooking.id` (ou locator)              | `Infotravel` → `TravelOS` (Unilateral) |
+| `ApiBooking`        | Viagem / Reserva   | `public.trips`                 | `ApiBooking.id` (ou locator)              | `Infotravel` → `Turis` (Unilateral) |
 | `ApiClient`         | Cliente Principal  | `public.clients`               | `ApiClient.id` / `ApiClient.externalCode` |  `Bilateral` (Se editado via Portal)   |
-| `ApiName`           | Passageiro         | `public.trip_passengers`       | `ApiName.id` / `ApiName.document`         | `Infotravel` → `TravelOS` (Unilateral) |
-| `ApiHotel`          | Hotel / Acomodação | `public.boarding_rooming_list` | `ApiHotel.id`                             | `Infotravel` → `TravelOS` (Unilateral) |
-| `ApiFlight`         | Trecho Aéreo / Voo | `public.flight_segments`       | `ApiFlight.id`                            | `Infotravel` → `TravelOS` (Unilateral) |
-| `ApiPayment`        | Transação Contábil | `public.cash_transactions`     | `ApiPayment.id`                           | `Infotravel` → `TravelOS` (Unilateral) |
-| `ApiInvoice`        | Fatura / Recibo    | `public.financial_records`     | `ApiInvoice.id`                           | `Infotravel` → `TravelOS` (Unilateral) |
-| `Contract`          | Contrato Legal     | `public.contracts`             | `Contract.url` (ou identificador)         | `Infotravel` → `TravelOS` (Unilateral) |
+| `ApiName`           | Passageiro         | `public.trip_passengers`       | `ApiName.id` / `ApiName.document`         | `Infotravel` → `Turis` (Unilateral) |
+| `ApiHotel`          | Hotel / Acomodação | `public.boarding_rooming_list` | `ApiHotel.id`                             | `Infotravel` → `Turis` (Unilateral) |
+| `ApiFlight`         | Trecho Aéreo / Voo | `public.flight_segments`       | `ApiFlight.id`                            | `Infotravel` → `Turis` (Unilateral) |
+| `ApiPayment`        | Transação Contábil | `public.cash_transactions`     | `ApiPayment.id`                           | `Infotravel` → `Turis` (Unilateral) |
+| `ApiInvoice`        | Fatura / Recibo    | `public.financial_records`     | `ApiInvoice.id`                           | `Infotravel` → `Turis` (Unilateral) |
+| `Contract`          | Contrato Legal     | `public.contracts`             | `Contract.url` (ou identificador)         | `Infotravel` → `Turis` (Unilateral) |
 
 ---
 

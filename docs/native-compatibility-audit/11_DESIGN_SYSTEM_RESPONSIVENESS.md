@@ -1,12 +1,12 @@
 # Design System, Cores e Responsividade (UI/UX Audit)
 
-Este documento avalia a fidelidade visual das telas do módulo VibeTour em relação ao Design System corporativo do TravelOS e testa seu comportamento sob diversas resoluções de tela e dispositivos.
+Este documento avalia a fidelidade visual das telas do módulo VibeTour em relação ao Design System corporativo do Turis e testa seu comportamento sob diversas resoluções de tela e dispositivos.
 
 ---
 
 ## 1. Fidelidade Visual ao Design System
 
-As rotas `quotes.index.tsx` e `quotes.$id.tsx` foram auditadas e apresentam alto alinhamento com a linguagem visual canônica do TravelOS:
+As rotas `quotes.index.tsx` e `quotes.$id.tsx` foram auditadas e apresentam alto alinhamento com a linguagem visual canônica do Turis:
 
 - **Tipografia**: Utiliza fontes semânticas do projeto através de classes Tailwind padrão (ex: `text-sm`, `font-semibold`, `text-muted-foreground`).
 - **Cores e Bordas**: Alinhadas com os tokens de cor corporativos do projeto (ex: `bg-background`, `bg-surface-alt`, `border-border`, `text-brand`). Não foram identificadas cores discrepantes declaradas de forma hardcoded (como cores RGB arbitrárias).

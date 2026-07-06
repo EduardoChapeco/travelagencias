@@ -1,4 +1,4 @@
-# Histórico Recente de Commits e Promessas (TravelOS)
+# Histórico Recente de Commits e Promessas (Turis)
 
 Este relatório compila os commits recentes do Git e as promessas de implementação declaradas localmente no working tree, identificando quais arquivos foram modificados e o estado contábil de cada promessa.
 

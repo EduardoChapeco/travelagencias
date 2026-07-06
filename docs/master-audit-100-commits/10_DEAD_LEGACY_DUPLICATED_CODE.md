@@ -1,6 +1,6 @@
 # 10. Código Morto, Legado e Duplicações
 
-Este documento identifica componentes obsoletos, rotas redundantes, campos de tabelas abandonados e lógica duplicada que representam dívida técnica no repositório do TravelOS.
+Este documento identifica componentes obsoletos, rotas redundantes, campos de tabelas abandonados e lógica duplicada que representam dívida técnica no repositório do Turis.
 
 ---
 

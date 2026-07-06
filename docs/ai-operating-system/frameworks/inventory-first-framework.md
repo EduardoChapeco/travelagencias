@@ -1,10 +1,10 @@
 # Framework: Inventory First
 
-**Propósito:** Impedir a criação de código redundante ou duplicado, código morto, tabelas sobressalentes ou componentes de UI repetidos. Toda tarefa de engenharia deve iniciar obrigatoriamente com uma varredura profunda no ecossistema TravelOS para mapear ativos reutilizáveis ou refatoráveis.
+**Propósito:** Impedir a criação de código redundante ou duplicado, código morto, tabelas sobressalentes ou componentes de UI repetidos. Toda tarefa de engenharia deve iniciar obrigatoriamente com uma varredura profunda no ecossistema Turis para mapear ativos reutilizáveis ou refatoráveis.
 
 ---
 
-## 1. Diretórios de Busca Obrigatórios (TravelOS)
+## 1. Diretórios de Busca Obrigatórios (Turis)
 
 Ao receber a listagem de componentes e entidades que o **Prompt Monsterizer** planejou, o agente **Inventory First Architect** deve realizar buscas explícitas utilizando a ferramenta `grep_search` nos seguintes caminhos físicos:
 
@@ -39,7 +39,7 @@ Todo relatório de inventário deve apresentar a tabela de decisão preenchida c
 - **REUSAR:** O recurso já existe exatamente como necessário. Deve-se apenas importá-lo no novo fluxo.
 - **REFATORAR/EXTENDER:** O recurso existe parcialmente. Deve-se adicionar propriedades (`props` no React ou colunas na tabela) para cobrir o novo requisito sem quebrar a retrocompatibilidade.
 - **MIGRAR/DELETAR:** O recurso existe de forma duplicada ou obsoleta. Deve ser substituído pela versão padronizada global.
-- **CRIAR NOVO:** O recurso é inédito no TravelOS e nenhuma entidade próxima ou genérica pode ser reaproveitada.
+- **CRIAR NOVO:** O recurso é inédito no Turis e nenhuma entidade próxima ou genérica pode ser reaproveitada.
 
 ```markdown
 ### 📋 MATRIZ DE DECISÃO DE ATIVOS

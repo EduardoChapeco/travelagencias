@@ -6,7 +6,7 @@ Este documento registra a linha de base técnica do ambiente de desenvolvimento 
 
 ## 1. Dados Baselines do Sistema
 
-- **Repositório Workspace**: `c:\Users\Excelência Tour SMO\.gemini\antigravity-ide\scratch\travelagencias`
+- **Repositório Workspace**: `c:\Users\Turis Tecnologia SMO\.gemini\antigravity-ide\scratch\travelagencias`
 - **Sistema Operacional**: Windows 11 (PowerShell / CMD)
 - **Branch Git Ativo**: `main` (em sincronia com `origin/main`)
 - **URL do Supabase Remoto**: `https://esmppoxxnyiscidzsjvy.supabase.co`

@@ -8,12 +8,12 @@ O modal gera um QR Code no frontend utilizando a API pública do QR Server:
 
 ```typescript
 const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=100x100&data=${encodeURIComponent(
-  `Autenticação TravelOS: ${authCode} | Valor: ${money(data.amount)} | Pago por: ${data.payerName}`,
+  `Autenticação Turis: ${authCode} | Valor: ${money(data.amount)} | Pago por: ${data.payerName}`,
 )}`;
 ```
 
 - **Crítica**: O QR Code **não aponta para uma página de validação real** no portal público da agência. Ele codifica apenas uma string de texto simples com os dados da transação.
-- **Risco**: Se um cliente escanear o QR Code no celular, o aparelho exibirá apenas uma string de texto cru ao invés de abrir uma página de validação segura do TravelOS. Isso classifica o QR Code como **decorativo/simbólico**, incapaz de prover verificação de autenticidade contra falsificações.
+- **Risco**: Se um cliente escanear o QR Code no celular, o aparelho exibirá apenas uma string de texto cru ao invés de abrir uma página de validação segura do Turis. Isso classifica o QR Code como **decorativo/simbólico**, incapaz de prover verificação de autenticidade contra falsificações.
 
 ### Falta de Snapshots e Imutabilidade
 
@@ -35,7 +35,7 @@ O layout A4 utiliza termos como:
 
 - _"Recibo de Pagamento"_
 - _"Autenticação de Transação"_
-- _"Assinado digitalmente por TravelOS"_
+- _"Assinado digitalmente por Turis"_
 - **Crítica**: O documento **não apresenta nenhum aviso legal ou disclaimer** informando ao consumidor que aquele recibo _não possui validade fiscal de nota fiscal_ (NF-e/NFS-e). Isso pode induzir clientes e operadores ao erro contábil ou fiscal.
 
 ---

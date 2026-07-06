@@ -1,6 +1,6 @@
-# Rastreamento de Fluxos e Integrações — Rodada 2 (TravelOS)
+# Rastreamento de Fluxos e Integrações — Rodada 2 (Turis)
 
-Este documento detalha o rastreamento técnico de fluxos ponta a ponta e integrações externas no ecossistema do TravelOS.
+Este documento detalha o rastreamento técnico de fluxos ponta a ponta e integrações externas no ecossistema do Turis.
 
 ---
 

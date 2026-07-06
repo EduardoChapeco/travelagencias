@@ -7,8 +7,8 @@ import { Scale, Mail, Calendar, Building2 } from "lucide-react";
 export const Route = (createFileRoute as any)("/terms")({
   head: () => ({
     meta: [
-      { title: "Termos de Uso · TravelOS" },
-      { name: "description", content: "Termos e condições de uso da plataforma TravelOS." },
+      { title: "Termos de Uso · Turis" },
+      { name: "description", content: "Termos e condições de uso da plataforma Turis." },
     ],
   }),
   component: TermsPage,
@@ -39,7 +39,7 @@ function TermsPage() {
         <div className="max-w-4xl mx-auto flex items-center justify-between">
           <div className="flex items-center gap-2">
             <Scale className="h-5 w-5 text-brand" />
-            <span className="font-bold text-sm tracking-tight text-foreground">TravelOS Portal</span>
+            <span className="font-bold text-sm tracking-tight text-foreground">Turis Portal</span>
           </div>
           <span className="text-xs text-muted-foreground">Compliance & Termos</span>
         </div>
@@ -54,7 +54,7 @@ function TermsPage() {
             </span>
             <h1 className="text-3xl font-black text-foreground mt-3 tracking-tight">Termos de Uso</h1>
             <p className="text-sm text-muted-foreground mt-2 leading-relaxed">
-              Estes Termos de Uso regulam o acesso e utilização da plataforma TravelOS. Ao acessar o sistema, você declara estar ciente e de acordo com as regras estabelecidas.
+              Estes Termos de Uso regulam o acesso e utilização da plataforma Turis. Ao acessar o sistema, você declara estar ciente e de acordo com as regras estabelecidas.
             </p>
           </div>
 
@@ -81,12 +81,12 @@ function TermsPage() {
             <div className="space-y-6 text-sm text-foreground/80 leading-relaxed">
               <h2 className="text-base font-bold text-foreground">1. Aceite dos Termos</h2>
               <p>
-                O uso dos serviços da plataforma TravelOS implica no aceite irrestrito destes Termos de Uso e da Política de Privacidade. Caso discorde de qualquer cláusula, você deve suspender a utilização imediatamente.
+                O uso dos serviços da plataforma Turis implica no aceite irrestrito destes Termos de Uso e da Política de Privacidade. Caso discorde de qualquer cláusula, você deve suspender a utilização imediatamente.
               </p>
 
               <h2 className="text-base font-bold text-foreground">2. Integrações de Terceiros e Meta APIs</h2>
               <p>
-                O TravelOS provê facilidades de integração com serviços externos, como a API Oficial do WhatsApp e o Instagram Business. A agência usuária declara-se ciente de que o funcionamento destas integrações está sujeito às políticas, limites de requisição e disponibilidade das próprias empresas fornecedoras destes serviços (Meta Platforms Inc.), eximindo a plataforma de responsabilidade por instabilidades na infraestrutura alheia.
+                O Turis provê facilidades de integração com serviços externos, como a API Oficial do WhatsApp e o Instagram Business. A agência usuária declara-se ciente de que o funcionamento destas integrações está sujeito às políticas, limites de requisição e disponibilidade das próprias empresas fornecedoras destes serviços (Meta Platforms Inc.), eximindo a plataforma de responsabilidade por instabilidades na infraestrutura alheia.
               </p>
 
               <h2 className="text-base font-bold text-foreground">3. Uso Aceitável do Inbox</h2>
@@ -96,7 +96,7 @@ function TermsPage() {
 
               <h2 className="text-base font-bold text-foreground">4. Limitação de Responsabilidade</h2>
               <p>
-                O TravelOS é provido no estado em que se encontra, não garantindo que o sistema operará livre de pequenas interrupções temporárias ou bugs decorrentes de atualizações de navegadores ou APIs de parceiros terceiros.
+                O Turis é provido no estado em que se encontra, não garantindo que o sistema operará livre de pequenas interrupções temporárias ou bugs decorrentes de atualizações de navegadores ou APIs de parceiros terceiros.
               </p>
             </div>
           )}
@@ -108,7 +108,7 @@ function TermsPage() {
         <div className="max-w-4xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
           <div className="flex items-center gap-1.5">
             <Building2 className="h-3.5 w-3.5" />
-            <span>TravelOS © 2026</span>
+            <span>Turis © 2026</span>
           </div>
           <div className="flex gap-4">
             <a href="/privacy" className="hover:underline">Privacidade</a>

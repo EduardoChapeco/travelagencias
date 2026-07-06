@@ -31,7 +31,7 @@ import { PrimaryButton, fmtDate, StatusBadge } from "@/components/ui/form";
 import { NewVisaWizard } from "@/components/visas/NewVisaWizard";
 
 export const Route = createFileRoute("/agency/$slug/visas")({
-  head: () => ({ meta: [{ title: "Vistos e Passaportes · TravelOS" }] }),
+  head: ({ context }: any) => ({ meta: [{ title: `Vistos e Passaportes · ${context?.brand?.platform_name || 'Turis'}` }] }),
   component: VisasPage,
 });
 

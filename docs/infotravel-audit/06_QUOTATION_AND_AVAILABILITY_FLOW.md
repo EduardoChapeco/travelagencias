@@ -1,16 +1,16 @@
 # 06. Fluxo de Cotação e Consulta de Disponibilidade
 
-Este documento detalha o fluxo de consulta de tarifas e disponibilidade em tempo real na API **Infotravel/Infotera**, definindo o processo de normalização das respostas para o modelo interno do **TravelOS**.
+Este documento detalha o fluxo de consulta de tarifas e disponibilidade em tempo real na API **Infotravel/Infotera**, definindo o processo de normalização das respostas para o modelo interno do **Turis**.
 
 ---
 
 ## 1. O Pipeline de Busca e Disponibilidade
 
-Diferente de sistemas legados que acoplam a interface aos dados crus do fornecedor, a busca de tarifas do TravelOS deve passar por uma camada de filtragem e normalização para garantir rapidez e conformidade visual:
+Diferente de sistemas legados que acoplam a interface aos dados crus do fornecedor, a busca de tarifas do Turis deve passar por uma camada de filtragem e normalização para garantir rapidez e conformidade visual:
 
 ```txt
 Operador seleciona filtros (Datas, Passageiros, Destino)
-  → Envia requisição para a rota interna do TravelOS
+  → Envia requisição para a rota interna do Turis
   → Dispara chamada concorrente para os endpoints da API Infotravel:
       - Hotéis: `POST /api/v1/avail/hotel`
       - Voos: `GET /api/v1/avail/flight`
@@ -85,5 +85,5 @@ export interface NormalizedOffer {
 
 ## 3. Benefícios da Camada de Normalização
 
-- **Agnosticidade de UI**: O frontend do TravelOS torna-se 100% agnóstico em relação à API do Infotravel. Se a agência decidir integrar outro consolidador futuramente, basta escrever um novo mapeador para o tipo `NormalizedOffer`, mantendo as telas de busca, carrinho e propostas intocadas.
+- **Agnosticidade de UI**: O frontend do Turis torna-se 100% agnóstico em relação à API do Infotravel. Se a agência decidir integrar outro consolidador futuramente, basta escrever um novo mapeador para o tipo `NormalizedOffer`, mantendo as telas de busca, carrinho e propostas intocadas.
 - **Segurança na Margem de Lucro**: O cálculo de markup e comissões é feito exclusivamente no lado do servidor, impedindo a manipulação de preços via ferramentas de inspeção do navegador pelo cliente final.

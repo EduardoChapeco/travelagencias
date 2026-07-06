@@ -21,7 +21,7 @@ import { toast } from "sonner";
 import { logTripAudit } from "@/services/audit";
 
 export const Route = createFileRoute("/agency/$slug/trips/$id/lodging")({
-  head: () => ({ meta: [{ title: "Hospedagem · TravelOS" }] }),
+  head: ({ context }: any) => ({ meta: [{ title: `Hospedagem · ${context?.brand?.platform_name || 'Turis'}` }] }),
   component: TripLodgingPage,
 });
 

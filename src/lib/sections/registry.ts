@@ -3345,11 +3345,11 @@ export const SECTION_REGISTRY: Record<string, SectionDefinition> = {
         type: "text",
         label: "Copyright",
         required: true,
-        defaultValue: "© 2026 TravelOS Agência. Todos os direitos reservados.",
+        defaultValue: "© 2026 Turis Agência. Todos os direitos reservados.",
       },
     ],
     defaultConfig: {
-      copyright: "© 2026 TravelOS Agência. Todos os direitos reservados.",
+      copyright: "© 2026 Turis Agência. Todos os direitos reservados.",
     },
     defaultStyles: { ...DEFAULT_STYLES, paddingTop: "sm", paddingBottom: "sm" },
     defaultAnimation: { ...DEFAULT_ANIMATION, type: "fadeIn" },

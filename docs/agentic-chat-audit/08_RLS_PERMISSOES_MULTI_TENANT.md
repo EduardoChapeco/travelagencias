@@ -6,7 +6,7 @@ Este documento audita a blindagem de segurança no banco de dados baseada em pol
 
 ## 1. Políticas RLS Mapeadas no Banco
 
-A migração de banco [20260715000000_ai_chat_improvements.sql](file:///c:/Users/Excelência Tour SMO/.gemini/antigravity-ide/scratch/travelagencias/supabase/migrations/20260715000000_ai_chat_improvements.sql) assegura o isolamento de tenant rígido:
+A migração de banco [20260715000000_ai_chat_improvements.sql](file:///c:/Users/Turis Tecnologia SMO/.gemini/antigravity-ide/scratch/travelagencias/supabase/migrations/20260715000000_ai_chat_improvements.sql) assegura o isolamento de tenant rígido:
 
 - **Tabela ai_chat_feedback**:
   - Habilita RLS.
@@ -29,7 +29,7 @@ A migração de banco [20260715000000_ai_chat_improvements.sql](file:///c:/Users
 
 Para reforçar a proteção na camada de aplicação:
 
-- **Autenticação**: As TanStack Server Functions em [ActionExecutor.ts](file:///c:/Users/Excelência Tour SMO/.gemini/antigravity-ide/scratch/travelagencias/src/lib/ai/ActionExecutor.ts) e [ai-chat.functions.ts](file:///c:/Users/Excelência Tour SMO/.gemini/antigravity-ide/scratch/travelagencias/src/lib/api/ai-chat.functions.ts) utilizam o middleware `requireSupabaseAuth` que valida o JWT do remetente.
+- **Autenticação**: As TanStack Server Functions em [ActionExecutor.ts](file:///c:/Users/Turis Tecnologia SMO/.gemini/antigravity-ide/scratch/travelagencias/src/lib/ai/ActionExecutor.ts) e [ai-chat.functions.ts](file:///c:/Users/Turis Tecnologia SMO/.gemini/antigravity-ide/scratch/travelagencias/src/lib/api/ai-chat.functions.ts) utilizam o middleware `requireSupabaseAuth` que valida o JWT do remetente.
 - **Isolamento de Tenant**: O executor valida no banco se o operador que disparou a ação pertence à agência passada no payload (`user_roles` query). Se não houver registro ativo, dispara exceção imediata de acesso negado.
 
 ---

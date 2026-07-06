@@ -58,7 +58,7 @@ import { generateOmnichannelReply } from "@/lib/api/ai-chat.functions";
 const db = supabase as any;
 
 export const Route = createFileRoute("/agency/$slug/inbox")({
-  head: () => ({ meta: [{ title: "Caixa de Entrada · TravelOS" }] }),
+  head: ({ context }: any) => ({ meta: [{ title: `Caixa de Entrada · ${context?.brand?.platform_name || 'Turis'}` }] }),
   component: InboxModule,
 });
 

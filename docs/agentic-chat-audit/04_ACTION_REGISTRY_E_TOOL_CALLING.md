@@ -6,9 +6,9 @@ Este documento audita o registro central de ações da IA, os esquemas de valida
 
 ## 1. Catálogo e Registro de Ações
 
-O TravelOS possui um registro central de ferramentas declarativas que impede lógica difusa ou espalhada em prompts textuais:
+O Turis possui um registro central de ferramentas declarativas que impede lógica difusa ou espalhada em prompts textuais:
 
-- **Arquivo**: [ActionRegistry.ts](file:///c:/Users/Excelência Tour SMO/.gemini/antigravity-ide/scratch/travelagencias/src/lib/ai/ActionRegistry.ts)
+- **Arquivo**: [ActionRegistry.ts](file:///c:/Users/Turis Tecnologia SMO/.gemini/antigravity-ide/scratch/travelagencias/src/lib/ai/ActionRegistry.ts)
 - **Estrutura**: Define a interface `ActionDefinition` e exporta o objeto `ActionRegistry` contendo as **23 ações de negócio** mapeadas.
 - **Campos Obrigatórios**: Cada ação possui `code`, `name`, `description`, `domain`, `inputSchema` (Zod), `allowedRoles`, `requiresConfirmation` e `riskLevel`.
 
@@ -46,7 +46,7 @@ O catálogo mapeia exatamente as seguintes ferramentas de negócio:
 
 ## 3. Integração com a Requisição de IA (Tool Calling)
 
-No arquivo [ai-chat.functions.ts](file:///c:/Users/Excelência Tour SMO/.gemini/antigravity-ide/scratch/travelagencias/src/lib/api/ai-chat.functions.ts):
+No arquivo [ai-chat.functions.ts](file:///c:/Users/Turis Tecnologia SMO/.gemini/antigravity-ide/scratch/travelagencias/src/lib/api/ai-chat.functions.ts):
 
 - **Conversor de Schemas**: A função `zodToOpenAiSchema` lê as propriedades do schema Zod de entrada e converte para o formato JSON Schema suportado pela API de chat da OpenAI/Gemini.
 - **Mapeamento de Ferramentas**: Converte o catálogo `ActionRegistry` em ferramentas nativas (`type: "function"`).

@@ -1,6 +1,6 @@
 # Resumo Executivo Honesto: Estado do Chat Agêntico
 
-Este documento fornece um relatório gerencial e comercial honesto, sem jargões de desenvolvimento, sobre a maturidade e o funcionamento do Chat de IA na plataforma TravelOS.
+Este documento fornece um relatório gerencial e comercial honesto, sem jargões de desenvolvimento, sobre a maturidade e o funcionamento do Chat de IA na plataforma Turis.
 
 ---
 

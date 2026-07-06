@@ -1,6 +1,6 @@
-# 08. Plano Mestre de Refatoração - TravelOS
+# 08. Plano Mestre de Refatoração - Turis
 
-Este documento apresenta o plano estratégico de refatorações sistemáticas do TravelOS, definindo as fases de melhoria técnica, cronograma recomendado e o detalhamento completo da Fase 1 para início imediato.
+Este documento apresenta o plano estratégico de refatorações sistemáticas do Turis, definindo as fases de melhoria técnica, cronograma recomendado e o detalhamento completo da Fase 1 para início imediato.
 
 ---
 

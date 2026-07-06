@@ -1,6 +1,6 @@
-# Qualidade de Código e Arquitetura — Rodada 3 (TravelOS)
+# Qualidade de Código e Arquitetura — Rodada 3 (Turis)
 
-Este documento avalia a arquitetura lógica e os padrões de projeto adotados na implementação do subsistema contábil do TravelOS.
+Este documento avalia a arquitetura lógica e os padrões de projeto adotados na implementação do subsistema contábil do Turis.
 
 ---
 

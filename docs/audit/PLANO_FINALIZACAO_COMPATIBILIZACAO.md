@@ -1,9 +1,9 @@
-# Plano de Finalização e Compatibilização TravelOS
+# Plano de Finalização e Compatibilização Turis
 
 **Fatiamento por Microfases Executáveis**  
 **Data:** 19 de Junho de 2026
 
-Este plano operacional detalha o roteiro para estabilizar, compatibilizar e integrar todos os módulos do TravelOS após as auditorias forenses, mantendo a integridade do design plano **Light Editorial SaaS** e corrigindo lacunas funcionais.
+Este plano operacional detalha o roteiro para estabilizar, compatibilizar e integrar todos os módulos do Turis após as auditorias forenses, mantendo a integridade do design plano **Light Editorial SaaS** e corrigindo lacunas funcionais.
 
 ---
 

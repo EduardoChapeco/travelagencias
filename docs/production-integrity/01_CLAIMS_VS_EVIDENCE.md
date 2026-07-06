@@ -1,6 +1,6 @@
 # 01. Matriz de Validação: Afirmações vs. Evidências Reais
 
-Este documento analisa individualmente cada afirmação técnica feita no walkthrough de estabilização do TravelOS e a confronta com a realidade técnica do repositório local, banco de dados remoto e ambiente publicado.
+Este documento analisa individualmente cada afirmação técnica feita no walkthrough de estabilização do Turis e a confronta com a realidade técnica do repositório local, banco de dados remoto e ambiente publicado.
 
 ## Matriz de Integridade Técnica
 

@@ -1,6 +1,6 @@
 # 07. Routes, Navigation and Sidebars (Rotas e Navegação)
 
-Este relatório mapeia o fluxo de navegação do TravelOS e a arquitetura de sidebars do shell de navegação.
+Este relatório mapeia o fluxo de navegação do Turis e a arquitetura de sidebars do shell de navegação.
 
 ---
 

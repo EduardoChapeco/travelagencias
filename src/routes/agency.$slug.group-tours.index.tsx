@@ -11,7 +11,7 @@ import { NewGroupTourWizard } from "@/components/group-tours/NewGroupTourWizard"
 import { StatusBadge, fmtDate, money } from "@/components/ui/form";
 
 export const Route = createFileRoute("/agency/$slug/group-tours/")({
-  head: () => ({ meta: [{ title: "Excursões em grupo · TravelOS" }] }),
+  head: ({ context }: any) => ({ meta: [{ title: `Excursões em grupo · ${context?.brand?.platform_name || 'Turis'}` }] }),
   component: GroupToursPage,
 });
 

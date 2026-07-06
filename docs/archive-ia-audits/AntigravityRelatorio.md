@@ -1,6 +1,6 @@
 # AntigravityRelatório.md
 
-> Relatório técnico, histórico e holístico sobre o estado real do TravelOS após sucessivas refatorações conduzidas por IA (Lovable / Antigravity).
+> Relatório técnico, histórico e holístico sobre o estado real do Turis após sucessivas refatorações conduzidas por IA (Lovable / Antigravity).
 > Documento de **controle de danos e governança técnica**. Não é celebração, não é marketing, não é veredito final de qualidade.
 > Fonte da verdade: código atual, migrations atuais, schemas atuais, rotas atuais, componentes atuais e histórico observado de problemas.
 
@@ -10,7 +10,7 @@
 
 | Item                                 | Valor                                                                                                                                                                                 |
 | ------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Projeto                              | TravelOS                                                                                                                                                                              |
+| Projeto                              | Turis                                                                                                                                                                              |
 | Stack                                | TanStack Start v1 + React 19 + Vite 7 + Tailwind v4 + Supabase (Lovable Cloud)                                                                                                        |
 | Autoria simulada                     | Principal SWE, Staff FE, Design System Architect, Supabase Architect, Security Architect, QA Regression, Product Ops, Tourism SaaS Specialist, Release Manager, AI Governance Auditor |
 | Escopo                               | Diagnóstico histórico + matrizes de verificação + framework anti-regressão                                                                                                            |
@@ -21,7 +21,7 @@
 
 ## 1. Resumo executivo honesto
 
-O TravelOS passou por múltiplos ciclos de refatoração, reescrita e correção conduzidos por agentes de IA. Esses ciclos foram amplos, frequentemente fora de um inventário prévio e quase sempre encerrados com declarações de sucesso pela própria IA. O efeito observável é um conjunto recorrente de riscos:
+O Turis passou por múltiplos ciclos de refatoração, reescrita e correção conduzidos por agentes de IA. Esses ciclos foram amplos, frequentemente fora de um inventário prévio e quase sempre encerrados com declarações de sucesso pela própria IA. O efeito observável é um conjunto recorrente de riscos:
 
 - **Desalinhamento planejamento ↔ implementação**: PRDs/prompts internos prometem CMS avançado, CRM premium, Admin Master enterprise, mas o código atual entrega, em vários módulos, CRUD raso, listas básicas ou backend oculto.
 - **Quebra de rotas e telas em branco**: queries para colunas inexistentes (`leads.deleted_at`, `boarding_cards.departure_date`, `boarding_cards.passengers_count`, view `vw_admin_agents`) produziram erros 400/empty silenciosos.
@@ -197,8 +197,8 @@ Perguntas a responder com evidência:
 
 ### 5.2 Staff Frontend / Design System Architect
 
-**Premium no TravelOS NÃO é**: gradiente, sombra, glass, card bonito sem fluxo.
-**Premium no TravelOS É**: Flat Premium — clareza, consistência, hierarquia, estados úteis, responsividade, ações contextuais, persistência, integração entre módulos.
+**Premium no Turis NÃO é**: gradiente, sombra, glass, card bonito sem fluxo.
+**Premium no Turis É**: Flat Premium — clareza, consistência, hierarquia, estados úteis, responsividade, ações contextuais, persistência, integração entre módulos.
 Pontos a validar: tokens centralizados em `src/styles.css`; ausência de cores Tailwind soltas; um único `PageHeader`/`PageShell`; um único padrão de tabela/empty/loading/error; um único padrão de formulário em `Sheet`.
 
 ### 5.3 Supabase / PostgreSQL Architect
@@ -360,7 +360,7 @@ Buscar: rotas órfãs, components antigos, services paralelos, hooks duplicados,
 ## 13. Diagnóstico de causa raiz
 
 1. **Ausência de fonte única da verdade** para regras do projeto (UI, schema, business).
-2. **IA aplicando padrões genéricos de treinamento** em vez de respeitar convenções TravelOS.
+2. **IA aplicando padrões genéricos de treinamento** em vez de respeitar convenções Turis.
 3. **Falta de visual regression / preview manual** em cada PR.
 4. **Falta de schema contract** UI ↔ Supabase verificável em CI.
 5. **Falta de release gate** com evidência exigida.
@@ -468,7 +468,7 @@ Antes de refatorar:
 
 ---
 
-## 15. TravelOS Integrity Operating Framework
+## 15. Turis Integrity Operating Framework
 
 | Fase                         | Objetivo              | Entradas             | Saídas                          | Artefatos        | Bloqueadores           | Quem revisa        |
 | ---------------------------- | --------------------- | -------------------- | ------------------------------- | ---------------- | ---------------------- | ------------------ |
@@ -490,7 +490,7 @@ Antes de refatorar:
 
 ---
 
-## 16. Definition of Done (TravelOS)
+## 16. Definition of Done (Turis)
 
 Uma entrega só é concluída se **todos** os itens forem comprovados:
 

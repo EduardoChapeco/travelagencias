@@ -1,6 +1,6 @@
 # 01. Análise Forense dos Últimos 100 Commits
 
-Este documento apresenta a análise individualizada e em lote dos últimos 100 commits do repositório do TravelOS, identificando a intenção declarada, alterações físicas, regressões e o estado real de cada entrega em produção.
+Este documento apresenta a análise individualizada e em lote dos últimos 100 commits do repositório do Turis, identificando a intenção declarada, alterações físicas, regressões e o estado real de cada entrega em produção.
 
 ---
 

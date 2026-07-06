@@ -1,4 +1,4 @@
--- TravelOS — SaaS Billing, Invoices & Proration Engine
+-- Turis — SaaS Billing, Invoices & Proration Engine
 -- Migration: 20260618000000_billing_and_proration
 
 -- =========================================================================

@@ -73,7 +73,7 @@ export function ConfirmationCard({
   // Retrieve execution state from localStorage to persist user decisions across reloads
   useEffect(() => {
     if (typeof window === "undefined") return;
-    const key = `travelos.aichat.action.${messageId}`;
+    const key = `turis.aichat.action.${messageId}`;
     const saved = window.localStorage.getItem(key);
     if (saved) {
       try {
@@ -91,7 +91,7 @@ export function ConfirmationCard({
     setOutcomeMessage(msg);
     if (typeof window !== "undefined") {
       window.localStorage.setItem(
-        `travelos.aichat.action.${messageId}`,
+        `turis.aichat.action.${messageId}`,
         JSON.stringify({ status: newStatus, message: msg }),
       );
     }

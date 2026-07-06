@@ -9,8 +9,8 @@ import { Field, Input, Select, PrimaryButton } from "@/components/ui/form";
 export const Route = (createFileRoute as any)("/data-deletion")({
   head: () => ({
     meta: [
-      { title: "Exclusão de Dados · TravelOS" },
-      { name: "description", content: "Solicite a exclusão dos seus dados da plataforma TravelOS." },
+      { title: "Exclusão de Dados · Turis" },
+      { name: "description", content: "Solicite a exclusão dos seus dados da plataforma Turis." },
     ],
   }),
   component: DataDeletionPage,
@@ -86,7 +86,7 @@ function DataDeletionPage() {
         <div className="max-w-4xl mx-auto flex items-center justify-between">
           <div className="flex items-center gap-2">
             <Trash2 className="h-5 w-5 text-destructive" />
-            <span className="font-bold text-sm tracking-tight text-foreground">TravelOS Portal</span>
+            <span className="font-bold text-sm tracking-tight text-foreground">Turis Portal</span>
           </div>
           <span className="text-xs text-muted-foreground">LGPD & Compliance</span>
         </div>
@@ -200,7 +200,7 @@ function DataDeletionPage() {
       <footer className="border-t border-border bg-surface-alt/20 py-6 px-6 text-center text-xs text-muted-foreground shrink-0">
         <div className="max-w-4xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
           <div className="flex items-center gap-1.5">
-            <span>TravelOS © 2026</span>
+            <span>Turis © 2026</span>
           </div>
           <div className="flex gap-4">
             <a href="/privacy" className="hover:underline">Privacidade</a>

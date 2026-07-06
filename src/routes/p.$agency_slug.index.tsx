@@ -38,7 +38,7 @@ export const Route = createFileRoute("/p/$agency_slug/")({
       name: agency.name,
       image: agency.logo_url,
       description: desc,
-      url: `https://travelos.com/p/${agency.slug}`,
+      url: `https://turis.com/p/${agency.slug}`,
       telephone: company?.phone || company?.whatsapp,
     };
     return {
@@ -141,7 +141,7 @@ function HomePage() {
     );
   }
 
-  // ── LEGACY FALLBACK: Layout editorial pré-montado ────────────────────────────
+  // ── STANDARD FALLBACK: Layout editorial pré-montado ────────────────────────────
   const brandColor = agency.brand_color || "#151515";
   const brandFg = agency.brand_color_fg || "#FFFFFF";
 
@@ -681,7 +681,7 @@ function HomePage() {
             <p className="text-xs text-muted-foreground text-center md:text-right">
               © {new Date().getFullYear()} {agency.name}. Todos os direitos reservados.
               <br />
-              <span className="opacity-50">Powered by TravelOS</span>
+              <span className="opacity-50">Powered by Turis</span>
             </p>
           </div>
         </div>

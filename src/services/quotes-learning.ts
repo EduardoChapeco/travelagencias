@@ -73,7 +73,7 @@ Resultado: ${dec.outcome === "accepted" ? "Aceito" : "Rejeitado"}
 ---`;
     }
 
-    const systemPrompt = `Você é o Motor de Decision Learning do TravelOS VibeTour.
+    const systemPrompt = `Você é o Motor de Decision Learning do Turis VibeTour.
 Sua função é analisar o histórico de decisões e justificativas de agentes de viagens para identificar se há padrões repetitivos de recusa de voos/hotéis de certa categoria.
 Se você identificar um padrão consistente (ex: rejeitam voos partindo muito cedo, ou rejeitam hotéis com tarifas não reembolsáveis), você deve propor uma regra lógica candidata para automatizar essa penalização/bônus na cotação.
 

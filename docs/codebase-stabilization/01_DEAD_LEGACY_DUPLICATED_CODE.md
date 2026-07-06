@@ -1,4 +1,4 @@
-# 01. Código Morto, Legado e Duplicado - TravelOS
+# 01. Código Morto, Legado e Duplicado - Turis
 
 Este documento identifica duplicações de fontes de verdade, arquivos órfãos sem consumo no frontend, stubs e arquivos monolíticos que violam o princípio de responsabilidade única.
 

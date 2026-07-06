@@ -1,6 +1,6 @@
-# Fluxo de Comissionamento de Vendedores (TravelOS)
+# Fluxo de Comissionamento de Vendedores (Turis)
 
-Este relatório detalha a dinâmica atual de cálculo e processamento das comissões de vendedores/agentes no TravelOS, confrontando o código atual com as diretrizes do master PRD.
+Este relatório detalha a dinâmica atual de cálculo e processamento das comissões de vendedores/agentes no Turis, confrontando o código atual com as diretrizes do master PRD.
 
 ---
 

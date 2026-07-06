@@ -1,6 +1,6 @@
 # 13. Arquitetura de Sincronização Bilateral e Fila de Mensagens
 
-Este documento detalha o design de software para o mecanismo de sincronização bilateral entre o **TravelOS** e a API **Infotravel/Infotera**, definindo as lógicas de controle, controle de concorrência, retentativas e tratamento de conflitos cadastrais.
+Este documento detalha o design de software para o mecanismo de sincronização bilateral entre o **Turis** e a API **Infotravel/Infotera**, definindo as lógicas de controle, controle de concorrência, retentativas e tratamento de conflitos cadastrais.
 
 ---
 
@@ -8,13 +8,13 @@ Este documento detalha o design de software para o mecanismo de sincronização 
 
 Antes de desenhar o sincronismo, classificamos o suporte físico da API com base no inventário oficial para evitar falsas promessas de "tempo real bilateral" onde a API só permite consulta:
 
-- **Sincronização de Leitura (Infotravel $\rightarrow$ TravelOS)**:
+- **Sincronização de Leitura (Infotravel $\rightarrow$ Turis)**:
   - _Reservas, Passageiros, Invoices, Contratos_: Totalmente suportados via consultas incrementais (`GET /api/v1/booking/{id}` e `/api/v1/backoffice/booking/search`).
-- **Sincronização de Escrita (TravelOS $\rightarrow$ Infotravel)**:
+- **Sincronização de Escrita (Turis $\rightarrow$ Infotravel)**:
   - _Criação de Reservas_: Suportada via `POST /api/v1/booking`.
   - _Confirmação/Cancelamento_: Suportados via `POST /api/v1/booking/{id}/confirm` e `DELETE /api/v1/booking/{id}/cancel`.
   - _Atualização de Passageiros_: Parcialmente suportada via `PUT /api/v1/product/transfer/{id}` e similares.
-  - _Contabilidade e Fluxo de Caixa_: **Leitura apenas**. A API não possui endpoints para o TravelOS enviar dados de fluxo de caixa local para o banco da Infotravel. Apenas importamos os lançamentos de caixa da operadora.
+  - _Contabilidade e Fluxo de Caixa_: **Leitura apenas**. A API não possui endpoints para o Turis enviar dados de fluxo de caixa local para o banco da Infotravel. Apenas importamos os lançamentos de caixa da operadora.
   - _Cadastro de Clientes_: Parcialmente suportado via `POST /api/v1/user/register` e `PUT /api/v1/user/{userId}`.
 
 ---
@@ -84,7 +84,7 @@ CREATE TABLE IF NOT EXISTS public.sync_conflicts (
 ## 3. Lógica de Polling Incremental, Retries e Resiliência
 
 - **Polling de Entrada (Sem Webhooks)**:
-  Como a API do Infotravel não fornece webhooks nativos para notificar alterações nas reservas, o TravelOS implementará um mecanismo de **Polling Incremental**. A cada 15 minutos, um worker executa uma busca na API (`GET /api/v1/backoffice/booking/search`) com a janela temporal correspondente aos últimos 30 minutos (garantindo sobreposição para evitar perdas). O cursor de data (`last_successful_sync_at`) é salvo em `public.sync_checkpoints`.
+  Como a API do Infotravel não fornece webhooks nativos para notificar alterações nas reservas, o Turis implementará um mecanismo de **Polling Incremental**. A cada 15 minutos, um worker executa uma busca na API (`GET /api/v1/backoffice/booking/search`) com a janela temporal correspondente aos últimos 30 minutos (garantindo sobreposição para evitar perdas). O cursor de data (`last_successful_sync_at`) é salvo em `public.sync_checkpoints`.
 - **Políticas de Retentativa com Exponential Backoff**:
   Falhas temporárias de rede ao enviar mutações (`sync_outbox`) são tratadas automaticamente pelo worker. A cada falha, o tempo para a próxima tentativa é recalculado usando a fórmula de **Atraso Exponencial**:
   $$\text{Atraso} = 2^{\text{attempts}} \times 30\text{ segundos} + \text{jitter}$$

@@ -1,4 +1,4 @@
-# Matriz de UI, Banco e Contratos de Dados (TravelOS)
+# Matriz de UI, Banco e Contratos de Dados (Turis)
 
 Esta matriz mapeia o acoplamento entre os componentes de interface (UI), esquemas de validação, chaves de persistência e políticas de banco de dados para as principais interações do subsistema financeiro e de IA.
 

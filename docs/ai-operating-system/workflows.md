@@ -1,4 +1,4 @@
-# Sistema Operacional de Engenharia do TravelOS: Workflows Obrigatórios
+# Sistema Operacional de Engenharia do Turis: Workflows Obrigatórios
 
 Este documento especifica os fluxos de trabalho operacionais que o Antigravity deve executar. Cada workflow descreve a entrada, o papel de coordenação, as etapas procedimentais e as saídas esperadas.
 

@@ -159,7 +159,7 @@ export interface ApiBooking {
 // ─── Resolvedores de Mapeamento Canônico (Mappers) ──────────────────────────
 
 /**
- * Converte um resultado de busca de hotel da Infotravel para o modelo de Hotel do TravelOS
+ * Converte um resultado de busca de hotel da Infotravel para o modelo de Hotel do Turis
  */
 export function mapApiHotelToCanonical(avail: ApiHotelAvail): Hotel {
   const hotelId =
@@ -202,7 +202,7 @@ export function mapApiHotelToCanonical(avail: ApiHotelAvail): Hotel {
 }
 
 /**
- * Converte um resultado de busca de voo da Infotravel para o modelo de Voo do TravelOS
+ * Converte um resultado de busca de voo da Infotravel para o modelo de Voo do Turis
  */
 export function mapApiFlightToCanonical(avail: ApiFlightAvail): Flight {
   const primaryRoute = avail.routes?.[0];

@@ -391,7 +391,7 @@ export const CMS_TEMPLATES: PageTemplate[] = [
         type: "biolink_header",
         avatar_url:
           "https://images.unsplash.com/photo-1570295999919-56ceb5ecca61?auto=format&fit=crop&w=150&q=80",
-        name: "Excelência Tour",
+        name: "Turis Tecnologia",
         bio: "<p>Agência de Viagens Boutique</p><p>Ajudamos você a explorar o melhor do mundo.</p>",
         bg_color: "#F8FAFC",
         text_color: "#0F172A",
@@ -1139,7 +1139,7 @@ export const CMS_TEMPLATES: PageTemplate[] = [
       {
         id: "promo-fest-hero",
         type: "hero",
-        title: "Festival de Viagens TravelOS",
+        title: "Festival de Viagens Turis",
         subtitle:
           "Os destinos mais desejados do mundo com tarifas aéreas promocionais imperdíveis.",
         bg_image_url:

@@ -82,7 +82,7 @@ BEGIN
 
   -- Montar subject e body do email
   v_subject := format('[%s] Nova mensagem no chamado %s: %s',
-    COALESCE(v_agency_name, 'TravelOS'),
+    COALESCE(v_agency_name, 'Turis'),
     v_ticket.code,
     v_ticket.title
   );
@@ -93,7 +93,7 @@ BEGIN
     || E'Prioridade: %s\n'
     || E'Tipo: %s\n\n'
     || E'Mensagem:\n%s\n\n'
-    || E'Acesse o painel TravelOS para responder.',
+    || E'Acesse o painel Turis para responder.',
     v_ticket.code,
     v_ticket.title,
     v_ticket.priority,
@@ -186,7 +186,7 @@ BEGIN
   END IF;
 
   v_subject := format('[URGENTE] %s — Novo chamado crítico: %s',
-    COALESCE(v_agency_name, 'TravelOS'),
+    COALESCE(v_agency_name, 'Turis'),
     NEW.title
   );
 
@@ -198,7 +198,7 @@ BEGIN
     || E'Prioridade: URGENTE\n'
     || E'Cliente: %s\n\n'
     || E'Descrição:\n%s\n\n'
-    || E'Acesse o painel TravelOS imediatamente para atender este chamado.',
+    || E'Acesse o painel Turis imediatamente para atender este chamado.',
     NEW.code,
     NEW.title,
     NEW.type,
@@ -304,10 +304,10 @@ BEGIN
     || E'"%s"\n\n'
     || E'Para continuar a conversa ou acompanhar seu chamado, entre em contato com a agência.\n\n'
     || E'Atenciosamente,\n%s',
-    COALESCE(v_agency_name, 'TravelOS'),
+    COALESCE(v_agency_name, 'Turis'),
     v_ticket.code,
     LEFT(NEW.content, 500),
-    COALESCE(v_agency_name, 'Equipe TravelOS')
+    COALESCE(v_agency_name, 'Equipe Turis')
   );
 
   -- Disparar gmail-send para o CLIENTE

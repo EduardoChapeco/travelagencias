@@ -1,4 +1,4 @@
--- Migration para o Motor de Ônibus Virtual (TravelOS Fase B)
+-- Migration para o Motor de Ônibus Virtual (Turis Fase B)
 
 CREATE TABLE IF NOT EXISTS bus_layouts (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),

@@ -1,6 +1,6 @@
 # 06. Legacy to Native Migration Map (Estratégia de Migração)
 
-Este relatório descreve o plano de migração de componentes legados para o ecossistema moderno do TravelOS, com foco no Strangler Pattern.
+Este relatório descreve o plano de migração de componentes legados para o ecossistema moderno do Turis, com foco no Strangler Pattern.
 
 ---
 

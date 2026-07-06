@@ -26,7 +26,7 @@ import JSZip from "jszip";
 import { cn } from "@/lib/utils";
 
 export const Route = createFileRoute("/m/contract/$token")({
-  head: () => ({ meta: [{ title: "Assinar contrato · TravelOS" }] }),
+  head: ({ context }: any) => ({ meta: [{ title: `Assinar contrato · ${context?.brand?.platform_name || 'Turis'}` }] }),
   component: Page,
 });
 
@@ -318,7 +318,7 @@ function Page() {
       // 4. Montar manifesto de auditoria
       let manifestText = `==================================================\n`;
       manifestText += `MANIFESTO DE COMPROMISSO JURÍDICO E AUDITORIA CRIPTOGRÁFICA\n`;
-      manifestText += `TravelOS Trust Security Hub\n`;
+      manifestText += `Turis Trust Security Hub\n`;
       manifestText += `==================================================\n\n`;
       manifestText += `CONTRATO ID: ${c.id}\n`;
       manifestText += `Status: ASSINADO\n`;
@@ -625,7 +625,7 @@ function Page() {
               serial: serialNumber,
               issued_at: timestamp,
               client_hash: hash,
-              issuer: "TravelOS Assinaturas",
+              issuer: "Turis Assinaturas",
             }
           : null,
         signatures: updatedSignatures,
@@ -839,7 +839,7 @@ function Page() {
                     Certificado de Conformidade Legal
                   </h2>
                   <p className="text-[10px] md:text-xs text-muted-foreground font-sans mt-0.5 print:text-black">
-                    Assinatura eletrônica autenticada e criptografada via TravelOS Trust Hub.
+                    Assinatura eletrônica autenticada e criptografada via Turis Trust Hub.
                   </p>
                 </div>
               </div>

@@ -1,12 +1,12 @@
 # 00. Baseline e Escopo da Auditoria Forense
 
-Este documento estabelece o ponto de partida técnico, a metodologia e as premissas da auditoria forense de pré-produção de nível BigTech realizada no sistema **TravelOS** (TravelAgências).
+Este documento estabelece o ponto de partida técnico, a metodologia e as premissas da auditoria forense de pré-produção de nível BigTech realizada no sistema **Turis** (TravelAgências).
 
 ---
 
 ## 1. Escopo Técnico do Sistema
 
-O TravelOS é um ecossistema de gestão de agências de turismo (SaaS B2B2C) projetado para operar sob alta concorrência e armazenar dados altamente sensíveis. O stack tecnológico de base identificado no repositório compreende:
+O Turis é um ecossistema de gestão de agências de turismo (SaaS B2B2C) projetado para operar sob alta concorrência e armazenar dados altamente sensíveis. O stack tecnológico de base identificado no repositório compreende:
 
 - **Frontend & Routing**: React, Vite, TanStack Router, TanStack Start (SSR/Isomórfico).
 - **Banco de Dados**: Supabase PostgreSQL 15, PostgREST para consulta direta client-side.

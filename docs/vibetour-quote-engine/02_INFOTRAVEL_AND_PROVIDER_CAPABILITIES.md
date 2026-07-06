@@ -38,4 +38,4 @@ O arquivo `supabase/functions/infotravel-connector/index.ts` integra os seguinte
 ## 3. Classificação de Cobertura
 
 - **Mocks**: **0**. Toda a comunicação do conector com a Incomum Viagens / Infotravel é autêntica e conectada.
-- **Bilateralidade Contábil**: **PARCIAL**. O conector lê dados de PIX e faturamento de forma linear, mas ainda não permite a alteração/cancelamento de reservas a partir do TravelOS.
+- **Bilateralidade Contábil**: **PARCIAL**. O conector lê dados de PIX e faturamento de forma linear, mas ainda não permite a alteração/cancelamento de reservas a partir do Turis.

@@ -1,6 +1,6 @@
 # 14. Resumo Executivo Honesto
 
-Este documento resume as descobertas da auditoria técnica forense do repositório TravelAgencias/TravelOS pós-Fases 1 a 12, fornecendo uma visão clara do estado real do projeto.
+Este documento resume as descobertas da auditoria técnica forense do repositório TravelAgencias/Turis pós-Fases 1 a 12, fornecendo uma visão clara do estado real do projeto.
 
 ---
 

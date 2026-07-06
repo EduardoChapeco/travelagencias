@@ -1,6 +1,6 @@
-# Matriz de Realidade — Rodada 3 (TravelOS)
+# Matriz de Realidade — Rodada 3 (Turis)
 
-Este documento detalha o estado real constatado de cada funcionalidade planejada ou implementada no sistema TravelOS ao término da Rodada 3.
+Este documento detalha o estado real constatado de cada funcionalidade planejada ou implementada no sistema Turis ao término da Rodada 3.
 
 ---
 

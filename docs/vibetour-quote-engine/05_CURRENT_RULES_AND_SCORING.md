@@ -6,11 +6,11 @@ Este documento analisa as regras de validação logística, conformidade de cone
 
 ## 1. Análise do Estado Atual
 
-Atualmente, o TravelOS tem cobertura **NULA (0%)** para motores de pontuação explicável ou verificação automatizada de regras logísticas:
+Atualmente, o Turis tem cobertura **NULA (0%)** para motores de pontuação explicável ou verificação automatizada de regras logísticas:
 
 - **Validação de Roteiros**: Totalmente manual. O operador humano é quem deve identificar inconsistências de viagem (como voos que chegam tarde demais impossibilitando o transfer no mesmo dia).
 - **Conexões e Trocas de Aeroporto**: Não há alarmes ou restrições de parada ou layover. Se um voo exigir troca de aeroporto (ex: Congonhas para Guarulhos), o sistema grava o trecho JSON sem lançar avisos de risco.
-- **Cálculo de Custo-Benefício**: O TravelOS exibe apenas o preço final e o subtotal. Não há indicadores que comparem o valor incremental de um hotel superior ou a perda de dias úteis de viagem em virtude de voos de madrugada.
+- **Cálculo de Custo-Benefício**: O Turis exibe apenas o preço final e o subtotal. Não há indicadores que comparem o valor incremental de um hotel superior ou a perda de dias úteis de viagem em virtude de voos de madrugada.
 
 ---
 

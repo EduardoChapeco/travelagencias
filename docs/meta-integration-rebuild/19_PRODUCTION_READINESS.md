@@ -1,7 +1,7 @@
 # 19. Production Readiness (Prontidão para Produção)
 
 ## 1. Prontidão Operacional
-Para colocar a integração Meta em ambiente produtivo real, o TravelOS atende aos seguintes requisitos:
+Para colocar a integração Meta em ambiente produtivo real, o Turis atende aos seguintes requisitos:
 * **HTTPS e SSL:** Toda a comunicação, inclusive as rotas de privacidade e callback de exclusão, funciona sob criptografia TLS ativa (gerenciada via Cloudflare Pages).
 * **Tratamento de Tokens:** Tokens temporários gerados em Embedded Signup são expirados e renovados de forma segura; tokens permanentes (System User tokens) são salvos de forma protegida.
 * **Resiliência e Retries:** O envio de mensagens outbound possui tratamento contra erros de rate limits da Meta e enfilera falhas para reprocessamento manual caso necessário.

@@ -67,7 +67,7 @@ export const clientsQueryOptions = (
   });
 
 export const Route = createFileRoute("/agency/$slug/clients")({
-  head: () => ({ meta: [{ title: "Clientes · TravelOS" }] }),
+  head: ({ context }: any) => ({ meta: [{ title: `Clientes · ${context?.brand?.platform_name || 'Turis'}` }] }),
   loader: async ({ context: { queryClient }, params }) => {
     // Para pré-carregar os dados iniciais do loader (page 1, sem busca), precisamos
     // apenas garantir que a agência exista. Isso será feito via match da store ou contexto do Layout.

@@ -1,6 +1,6 @@
 # 09. Testes Ponta a Ponta e Fluxos Transacionais
 
-Este documento relata a verificação funcional das principais jornadas operacionais e de autoatendimento da plataforma TravelOS, mapeando a consistência dos dados, recarregamentos de cache, e aderência das permissões de acesso.
+Este documento relata a verificação funcional das principais jornadas operacionais e de autoatendimento da plataforma Turis, mapeando a consistência dos dados, recarregamentos de cache, e aderência das permissões de acesso.
 
 ---
 

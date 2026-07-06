@@ -1,6 +1,6 @@
 # Framework: BigTech Regression Gate
 
-**Propósito:** Garantir que nenhuma linha de código entregue quebre o que já estava funcionando antes. O TravelOS não pode sofrer de regressões bobas.
+**Propósito:** Garantir que nenhuma linha de código entregue quebre o que já estava funcionando antes. O Turis não pode sofrer de regressões bobas.
 
 ## Checklist Obrigatório (Pré-Deploy)
 

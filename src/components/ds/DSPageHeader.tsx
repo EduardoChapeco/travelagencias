@@ -21,7 +21,7 @@ interface DSPageHeaderProps {
 }
 
 /**
- * DSPageHeader — editorial page header following V2 design system.
+ * DSPageHeader — editorial page header following design system.
  * Title: 25px, weight 780, letter-spacing -0.06em.
  * Caps: small uppercase chips for status/context.
  */

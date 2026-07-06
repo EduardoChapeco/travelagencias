@@ -7,7 +7,7 @@ Este documento registra o estado exato da aplicação, infraestrutura, banco de 
 - **Branch Local:** `main`
 - **Commit HEAD Local:** `e622c6745b95565f1acd1393fdcd4cd1d76a0773`
 - **Commit Origin/Main:** `e622c6745b95565f1acd1393fdcd4cd1d76a0773`
-- **Deploy Cloudflare Pages Ativo:** `https://travelagencias.pages.dev` (IP/Link dinâmico: `https://3b34956f.travelagencias.pages.dev`)
+- **Deploy Cloudflare Pages Ativo:** `https://turis.com` (IP/Link dinâmico: `https://3b34956f.turis.com`)
 - **Commit Usado no Cloudflare:** `e622c6745b95565f1acd1393fdcd4cd1d76a0773` (ID da implantação: `3b34956f-a899-46fd-a347-48ca9ed74b75`, concluído em 20 de Junho de 2026 às 19:31 UTC-3).
 
 ## 2. Estado do Banco de Dados e Migrations

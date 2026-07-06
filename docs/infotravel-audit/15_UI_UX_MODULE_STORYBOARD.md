@@ -1,6 +1,6 @@
 # 15. Storyboard de Telas e Módulos UI/UX
 
-Este documento apresenta a especificação visual e o roteiro de telas ("Storyboard") para os **8 painéis de interface** do módulo de integração **Infotravel/Infotera** no **TravelOS**, seguindo a diretriz editorial Light SaaS do design system.
+Este documento apresenta a especificação visual e o roteiro de telas ("Storyboard") para os **8 painéis de interface** do módulo de integração **Infotravel/Infotera** no **Turis**, seguindo a diretriz editorial Light SaaS do design system.
 
 ---
 

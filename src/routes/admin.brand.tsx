@@ -12,7 +12,7 @@ import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 
 export const Route = createFileRoute("/admin/brand")({
-  head: () => ({ meta: [{ title: "Marca Global · TravelOS Admin" }] }),
+  head: () => ({ meta: [{ title: "Marca Global · Turis Admin" }] }),
   component: Page,
 });
 
@@ -33,13 +33,13 @@ const brandConfigSchema = z.object({
 type BrandConfigFormData = z.infer<typeof brandConfigSchema>;
 
 const DEFAULTS: BrandConfigFormData = {
-  product_name: "TravelOS",
+  product_name: "Turis",
   tagline: "A plataforma para agências de viagens",
   primary_color: "#18181b",
   logo_url: "",
   favicon_url: "",
   google_analytics_id: "",
-  support_email: "suporte@travelos.com.br",
+  support_email: "suporte@turis.com.br",
   terms_url: "/termos",
   privacy_url: "/privacidade",
 };
@@ -94,7 +94,7 @@ function Page() {
     <>
       <PageHeader
         title="Marca Global"
-        description="Identidade visual e configurações globais do produto TravelOS."
+        description="Identidade visual e configurações globais do produto Turis."
       />
 
       <form onSubmit={handleSubmit(onSubmit)} className="grid gap-6 lg:grid-cols-[1fr_320px]">

@@ -7,7 +7,7 @@ import { PrimaryButton, fmtDate, Textarea, GhostButton } from "@/components/ui/f
 import { toast } from "sonner";
 
 export const Route = createFileRoute("/p/corporate/approve")({
-  head: () => ({ meta: [{ title: "Aprovação Corporativa · TravelOS" }] }),
+  head: ({ context }: any) => ({ meta: [{ title: `Aprovação Corporativa · ${context?.brand?.platform_name || 'Turis'}` }] }),
   validateSearch: (search: Record<string, unknown>) => {
     return { token: search.token as string | undefined };
   },
@@ -55,7 +55,7 @@ function CorporateApprovePage() {
     <div className="min-h-screen bg-background flex flex-col font-sans">
       <header className="h-16 border-b border-border bg-surface flex items-center px-6">
         <div className="font-bold tracking-tight text-foreground">
-          {rfp.agency?.name || "TravelOS"} B2B
+          {rfp.agency?.name || "Turis"} B2B
         </div>
       </header>
 

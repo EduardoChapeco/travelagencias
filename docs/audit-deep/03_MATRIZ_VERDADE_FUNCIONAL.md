@@ -1,6 +1,6 @@
 # 03. Matriz de Verdade Funcional
 
-Este documento consolida a classificação operacional e de engenharia de cada funcionalidade do TravelOS após a varredura profunda no código-fonte, banco de dados remoto e APIs.
+Este documento consolida a classificação operacional e de engenharia de cada funcionalidade do Turis após a varredura profunda no código-fonte, banco de dados remoto e APIs.
 
 ---
 

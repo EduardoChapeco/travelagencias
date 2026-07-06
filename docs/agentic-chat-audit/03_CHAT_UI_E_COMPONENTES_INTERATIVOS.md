@@ -8,7 +8,7 @@ Este documento audita a infraestrutura de renderização dinâmica no chat, a va
 
 O chat de IA não renderiza código JSX arbitrário ou HTML não seguro. Ele utiliza uma whitelist de componentes baseada em estrutura de dados controlada:
 
-- **Componente Base**: [ChatBlockRenderer.tsx](file:///c:/Users/Excelência Tour SMO/.gemini/antigravity-ide/scratch/travelagencias/src/components/shell/ChatBlockRenderer.tsx) atua como um parser de blocos.
+- **Componente Base**: [ChatBlockRenderer.tsx](file:///c:/Users/Turis Tecnologia SMO/.gemini/antigravity-ide/scratch/travelagencias/src/components/shell/ChatBlockRenderer.tsx) atua como um parser de blocos.
 - **Leitura de Contexto**: A prop `context` das mensagens do chat é lida. Se houver um objeto `tool_call` válido contendo `code` e `payload`, o renderizador renderiza o card interativo correspondente.
 - **Cards Implementados**:
   - **LeadCard**: Exibe dados capturados do lead (Nome, Destino, Telefone, Notas) de forma limpa.
@@ -20,7 +20,7 @@ O chat de IA não renderiza código JSX arbitrário ou HTML não seguro. Ele uti
 
 Para garantir a confiabilidade e evitar execuções de ações duplicadas por reload da página ou mudança de rota:
 
-- O `ConfirmationCard` lê e salva seu estado no `localStorage` via chave `travelos.aichat.action.${messageId}`.
+- O `ConfirmationCard` lê e salva seu estado no `localStorage` via chave `turis.aichat.action.${messageId}`.
 - O estado salvo contém o status (`confirmed` ou `cancelled`) e a mensagem de resultado.
 - Se a ação for confirmada, os botões somem e um banner verde fixo exibe a mensagem de sucesso. Se for cancelada, exibe o aviso de cancelamento, blindando o card contra interações subsequentes.
 

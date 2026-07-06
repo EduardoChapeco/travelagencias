@@ -1,6 +1,6 @@
 # 20. Execution Evidence (Registro de Evidências de Teste)
 
-Este relatório apresenta os registros e evidências de execução dos testes de integridade, typecheck e publicação do TravelOS.
+Este relatório apresenta os registros e evidências de execução dos testes de integridade, typecheck e publicação do Turis.
 
 ---
 
@@ -21,6 +21,6 @@ O typecheck local foi rodado e executado com sucesso:
 
 O deploy foi gerado com sucesso e submetido aos servidores da CDN Cloudflare:
 * **Projeto:** `travelagencias`
-* **URL de Homologação/Produção:** [https://24be0004.travelagencias.pages.dev](https://24be0004.travelagencias.pages.dev)
+* **URL de Homologação/Produção:** [https://24be0004.turis.com](https://24be0004.turis.com)
 * **Status:** Concluído e propagado com sucesso.
 * **Asserção de Integridade:** As rotas do Inbox Inteligente e das tarefas contextuais carregam instantaneamente por meio da pré-busca por intenção (hover) ativa no roteador.

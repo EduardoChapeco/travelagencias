@@ -1,6 +1,6 @@
 # 13. Tasks, Calendar and Contextual Views (Tarefas e Agendas)
 
-Este relatório descreve a arquitetura canônica para gestão de atividades, tarefas e compromissos no TravelOS.
+Este relatório descreve a arquitetura canônica para gestão de atividades, tarefas e compromissos no Turis.
 
 ---
 

@@ -30,7 +30,7 @@ import {
 } from "@/components/ui/form";
 
 export const Route = createFileRoute("/agency/$slug/financial/reconciliation")({
-  head: () => ({ meta: [{ title: "Conciliação Diária · TravelOS" }] }),
+  head: ({ context }: any) => ({ meta: [{ title: `Conciliação Diária · ${context?.brand?.platform_name || 'Turis'}` }] }),
   component: ReconciliationPage,
 });
 

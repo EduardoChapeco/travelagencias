@@ -1,4 +1,4 @@
-# 01. Mapa de Regras de Negócio - TravelOS
+# 01. Mapa de Regras de Negócio - Turis
 
 Este documento descreve detalhadamente as regras de negócio de cada módulo operacional, identificando os gatilhos, validações, processamentos, persistências e tratamentos de erro.
 

@@ -26,7 +26,7 @@ import { toast } from "sonner";
 import { useConfirm } from "@/hooks/use-confirm";
 
 export const Route = createFileRoute("/agency/$slug/trips/$id/passengers")({
-  head: () => ({ meta: [{ title: "Passageiros · TravelOS" }] }),
+  head: ({ context }: any) => ({ meta: [{ title: `Passageiros · ${context?.brand?.platform_name || 'Turis'}` }] }),
   component: PassengersPage,
 });
 

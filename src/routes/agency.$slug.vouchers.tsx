@@ -31,7 +31,7 @@ import { cn } from "@/lib/utils";
 import { toast } from "sonner";
 
 export const Route = createFileRoute("/agency/$slug/vouchers")({
-  head: () => ({ meta: [{ title: "Vouchers & Conferência · TravelOS" }] }),
+  head: ({ context }: any) => ({ meta: [{ title: `Vouchers & Conferência · ${context?.brand?.platform_name || 'Turis'}` }] }),
   component: VouchersPage,
 });
 

@@ -1,6 +1,6 @@
 # Plano de Migração e Estratégia Strangler
 
-Este documento detalha o mapa de migração gradual dos módulos legados (monolíticos) para a arquitetura modular canônica do TravelAgencias/TravelOS, mitigando riscos de regressão visual ou quebra de fluxos em produção.
+Este documento detalha o mapa de migração gradual dos módulos legados (monolíticos) para a arquitetura modular canônica do TravelAgencias/Turis, mitigando riscos de regressão visual ou quebra de fluxos em produção.
 
 ---
 

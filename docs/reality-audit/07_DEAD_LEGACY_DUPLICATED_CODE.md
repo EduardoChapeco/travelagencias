@@ -1,6 +1,6 @@
 # Código Morto, Legado e Duplicações
 
-Inventário forense contendo trechos de código órfãos, lógica legada inativa e duplicações estruturais identificadas no TravelOS.
+Inventário forense contendo trechos de código órfãos, lógica legada inativa e duplicações estruturais identificadas no Turis.
 
 ---
 

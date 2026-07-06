@@ -1,6 +1,6 @@
 # 21. Production Readiness (Checklist de Prontidão de Produção)
 
-Este relatório descreve o checklist de prontidão para homologação definitiva do TravelOS em ambiente produtivo.
+Este relatório descreve o checklist de prontidão para homologação definitiva do Turis em ambiente produtivo.
 
 ---
 

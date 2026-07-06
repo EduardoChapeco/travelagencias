@@ -74,4 +74,4 @@ O Prompt Monsterizer deve **bloquear** a execução e pedir esclarecimentos se:
 
 1. O prompt do usuário introduzir alterações drásticas em fluxos financeiros sem detalhar regras de estorno/cancelamento.
 2. A solicitação exigir "pular etapas" de segurança ou sugerir desativar RLS.
-3. O escopo for excessivamente genérico e impossibilitar a identificação dos módulos afetados no código do TravelOS.
+3. O escopo for excessivamente genérico e impossibilitar a identificação dos módulos afetados no código do Turis.

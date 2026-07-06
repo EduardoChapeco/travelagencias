@@ -1,6 +1,6 @@
 # 04. Requirements and Advanced Features Recovery (Plano de Recuperação)
 
-Este relatório apresenta o planejamento de reincorporação e compatibilização de recursos complexos do TravelOS.
+Este relatório apresenta o planejamento de reincorporação e compatibilização de recursos complexos do Turis.
 
 ---
 

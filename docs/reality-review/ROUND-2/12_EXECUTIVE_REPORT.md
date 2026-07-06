@@ -1,6 +1,6 @@
-# Relatório Executivo de Auditoria (TravelOS) — Rodada 2
+# Relatório Executivo de Auditoria (Turis) — Rodada 2
 
-Este relatório apresenta um resumo das principais constatações obtidas na rodada 2 da auditoria forense do TravelOS, evidenciando avanços práticos e riscos de compliance contábil.
+Este relatório apresenta um resumo das principais constatações obtidas na rodada 2 da auditoria forense do Turis, evidenciando avanços práticos e riscos de compliance contábil.
 
 ---
 

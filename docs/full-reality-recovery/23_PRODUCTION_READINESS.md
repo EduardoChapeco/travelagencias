@@ -1,6 +1,6 @@
 # 23 Prontidão para Produção (Checklist)
 
-Este documento atesta a maturidade técnica da infraestrutura do TravelOS para deploy na Cloudflare Pages e Supabase produção.
+Este documento atesta a maturidade técnica da infraestrutura do Turis para deploy na Cloudflare Pages e Supabase produção.
 
 ---
 

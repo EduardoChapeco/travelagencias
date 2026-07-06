@@ -18,7 +18,7 @@ Este documento apresenta o inventário exaustivo e a classificação por domíni
 
 ## 2. Inventário de Endpoints por Domínio
 
-| Método     | Endpoint                                                 | Finalidade                                                    | Auth | Request Schema (Ref)   | Response Schema (Ref)         | Status no TravelOS                |
+| Método     | Endpoint                                                 | Finalidade                                                    | Auth | Request Schema (Ref)   | Response Schema (Ref)         | Status no Turis                |
 | :--------- | :------------------------------------------------------- | :------------------------------------------------------------ | :--: | :--------------------- | :---------------------------- | :-------------------------------- |
 | **POST**   | `/api/v1/user/login`                                     | Autenticação e login de operadora/usuário para obter JWT      | Não  | `UserLoginRQ`          | `UserLoginRS`                 | **MOCK** (Chama `/auth/login`)    |
 | **POST**   | `/api/v1/user/register`                                  | Registro de novo usuário na plataforma Infotravel             | Não  | `UserRegisterRQ`       | `UserRegisterRS`              | **NÃO IMPLEMENTADO**              |

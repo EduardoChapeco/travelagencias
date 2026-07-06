@@ -98,7 +98,7 @@ export function SlimSidebar({
 
   const [topHeight, setTopHeight] = useState(() => {
     if (typeof window !== "undefined") {
-      const saved = window.localStorage.getItem("travelos.sidebar.topHeight");
+      const saved = window.localStorage.getItem("turis.sidebar.topHeight");
       return saved ? parseInt(saved, 10) : 300;
     }
     return 300;
@@ -106,33 +106,33 @@ export function SlimSidebar({
 
   const [isNavCollapsed, setIsNavCollapsed] = useState(() => {
     if (typeof window !== "undefined") {
-      return window.localStorage.getItem("travelos.sidebar.nav.collapsed") === "true";
+      return window.localStorage.getItem("turis.sidebar.nav.collapsed") === "true";
     }
     return false;
   });
 
   const [isChatCollapsed, setIsChatCollapsed] = useState(() => {
     if (typeof window !== "undefined") {
-      return window.localStorage.getItem("travelos.sidebar.chat.collapsed") === "true";
+      return window.localStorage.getItem("turis.sidebar.chat.collapsed") === "true";
     }
     return false;
   });
 
   useEffect(() => {
     if (typeof window !== "undefined") {
-      window.localStorage.setItem("travelos.sidebar.nav.collapsed", String(isNavCollapsed));
+      window.localStorage.setItem("turis.sidebar.nav.collapsed", String(isNavCollapsed));
     }
   }, [isNavCollapsed]);
 
   useEffect(() => {
     if (typeof window !== "undefined") {
-      window.localStorage.setItem("travelos.sidebar.chat.collapsed", String(isChatCollapsed));
+      window.localStorage.setItem("turis.sidebar.chat.collapsed", String(isChatCollapsed));
     }
   }, [isChatCollapsed]);
 
   useEffect(() => {
     if (typeof window !== "undefined") {
-      window.localStorage.setItem("travelos.sidebar.topHeight", String(topHeight));
+      window.localStorage.setItem("turis.sidebar.topHeight", String(topHeight));
     }
   }, [topHeight]);
 
@@ -245,7 +245,7 @@ export function SlimSidebar({
         {/* Brand row */}
         <div className="flex h-[var(--header-h,58px)] items-center gap-3 border-b border-sidebar-border px-3">
           {brand}
-          <span className="text-sm font-semibold text-sidebar-foreground">TravelOS</span>
+          <span className="text-sm font-semibold text-sidebar-foreground">Turis</span>
           <button
             onClick={onMobileClose}
             className="ml-auto flex h-8 w-8 shrink-0 items-center justify-center rounded-md text-muted-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"

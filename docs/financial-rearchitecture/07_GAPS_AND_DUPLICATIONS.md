@@ -1,6 +1,6 @@
-# Gaps e Duplicações Identificadas (TravelOS)
+# Gaps e Duplicações Identificadas (Turis)
 
-Este documento elenca de forma analítica e forense todas as pontas soltas, lógicas mockadas (fakes), e inconsistências sistêmicas encontradas na implementação financeira atual do TravelOS.
+Este documento elenca de forma analítica e forense todas as pontas soltas, lógicas mockadas (fakes), e inconsistências sistêmicas encontradas na implementação financeira atual do Turis.
 
 ---
 

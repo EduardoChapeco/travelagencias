@@ -5,7 +5,7 @@ import { PageHeader, EmptyState } from "@/components/shell/PageHeader";
 import { money, fmtDate, StatusBadge } from "@/components/ui/form";
 
 export const Route = createFileRoute("/client/payments")({
-  head: () => ({ meta: [{ title: "Pagamentos · TravelOS" }] }),
+  head: ({ context }: any) => ({ meta: [{ title: `Pagamentos · ${context?.brand?.platform_name || 'Turis'}` }] }),
   component: ClientPaymentsPage,
 });
 

@@ -1,6 +1,6 @@
-# 00. Mapa de Domínios - TravelOS
+# 00. Mapa de Domínios - Turis
 
-Este documento apresenta a auditoria técnica de engenharia de todos os 22 domínios do TravelOS, detalhando as regras operacionais, os fluxos do banco de dados e as integrações.
+Este documento apresenta a auditoria técnica de engenharia de todos os 22 domínios do Turis, detalhando as regras operacionais, os fluxos do banco de dados e as integrações.
 
 ---
 
@@ -546,7 +546,7 @@ Este documento apresenta a auditoria técnica de engenharia de todos os 22 domí
 
 ## 21. Admin Global
 
-- **Evento Inicial:** Equipe de suporte do TravelOS gerencia agências, faturamento e planos em `/admin/agencies` ou `/admin/plans`.
+- **Evento Inicial:** Equipe de suporte do Turis gerencia agências, faturamento e planos em `/admin/agencies` ou `/admin/plans`.
 - **Pré-condições:** Usuário logado ser `global_admin` (papel verificado na tabela `user_roles`).
 - **Dados de Entrada:** Valores de planos, dados cadastrais de agências, limite de cotas, faturas globais, chaves de API do sistema.
 - **Validações:** Proibida auto-promoção de papel ou alteração de agências sem auditoria estrita.
@@ -594,4 +594,4 @@ Este documento apresenta a auditoria técnica de engenharia de todos os 22 domí
 - **Retentativas:** Logs em triggers falham junto com a transação principal (Rollback total), garantindo consistência transacional absoluta.
 - **Idempotência:** Logs contêm UUID do evento principal vinculados, impedindo duplicações.
 - **Rollback/Compensação:** Se a transação principal for revertida, o log também é revertido (consistência forte).
-- **Logs e Evidências:** O próprio registro do log é a evidência absoluta de toda e qualquer modificação no ecossistema TravelOS.
+- **Logs e Evidências:** O próprio registro do log é a evidência absoluta de toda e qualquer modificação no ecossistema Turis.

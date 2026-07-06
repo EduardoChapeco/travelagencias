@@ -1,4 +1,4 @@
-# Qualidade do Código e Arquitetura — Rodada 2 (TravelOS)
+# Qualidade do Código e Arquitetura — Rodada 2 (Turis)
 
 Este documento avalia o acoplamento do código, a qualidade das tipagens, imports circulares, a presença de lógicas duplicadas e a conformidade com boas práticas de engenharia de software.
 

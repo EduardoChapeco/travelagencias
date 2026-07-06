@@ -51,7 +51,7 @@ import {
 import { VoucherStudio } from "@/components/vouchers/VoucherStudio";
 
 export const Route = createFileRoute("/agency/$slug/trips/$id/vouchers")({
-  head: () => ({ meta: [{ title: "Vouchers · TravelOS" }] }),
+  head: ({ context }: any) => ({ meta: [{ title: `Vouchers · ${context?.brand?.platform_name || 'Turis'}` }] }),
   component: TripVouchers,
 });
 

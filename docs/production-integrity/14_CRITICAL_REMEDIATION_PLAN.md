@@ -1,6 +1,6 @@
 # 14. Plano de Remediação Crítica
 
-Este plano descreve as ações imediatas e de médio prazo necessárias para restaurar a integridade, segurança, confidencialidade e operabilidade de produção do TravelOS, agrupadas por severidade.
+Este plano descreve as ações imediatas e de médio prazo necessárias para restaurar a integridade, segurança, confidencialidade e operabilidade de produção do Turis, agrupadas por severidade.
 
 ---
 
@@ -29,7 +29,7 @@ Estas falhas trazem risco iminente de segurança, vazamento de PII ou quebra sev
 - **Ação:**
   1. Modificar as Edge Functions de OCR para incluir uma validação estrita de associação de agência: antes de chamar `pick_active_api_key` ou descriptografar chaves, consultar `public.user_roles` no banco de dados para confirmar se o `user.id` do JWT pertence à `agency_id` enviada no payload.
   2. Bloquear requisições para agências em que o usuário não possua vínculo operacional ativo.
-  3. Restringir o CORS de `*` para a URL oficial de domínio da agência (`travelagencias.pages.dev`).
+  3. Restringir o CORS de `*` para a URL oficial de domínio da agência (`turis.com`).
 
 ### 4. Mutabilidade de Contratos Assinados
 

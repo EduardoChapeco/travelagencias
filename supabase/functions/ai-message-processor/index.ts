@@ -483,7 +483,7 @@ Retorne EXATAMENTE e APENAS o objeto JSON.
 
             // Append proposal link to reply
             const appUrl =
-              Deno.env.get("APP_URL") || Deno.env.get("FRONTEND_URL") || "https://travelos.com";
+              Deno.env.get("APP_URL") || Deno.env.get("FRONTEND_URL") || "https://turis.com";
             const proposalLink = `${appUrl}/m/proposal/${newProposal.public_token}`;
             if (finalReply) {
               finalReply = `${finalReply} ${proposalLink}`;

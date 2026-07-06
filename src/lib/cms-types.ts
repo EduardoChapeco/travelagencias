@@ -1,5 +1,5 @@
 /**
- * CMS Block Types — Source of Truth (v2)
+ * CMS Block Types — Source of Truth
  *
  * Single canonical definition of all CMS block types.
  * Import from here in BOTH the editor (portal.pages.tsx) and the renderer (BlockRenderer.tsx).

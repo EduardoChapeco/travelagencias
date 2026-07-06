@@ -131,7 +131,7 @@ export function CardDetailPanel({
           <div style="display: flex; justify-content: space-between; align-items: flex-start; border-bottom: 2px solid #FF4F9A; padding-bottom: 20px; margin-bottom: 30px;">
             <div>
               <h1 style="font-size: 24px; font-weight: 800; margin: 0; color: #151515; letter-spacing: -0.5px; text-transform: uppercase;">GUIA DE EMBARQUE</h1>
-              <p style="font-size: 11px; color: #777168; margin: 5px 0 0 0; text-transform: uppercase; letter-spacing: 1.5px; font-weight: 600;">TravelOS Intelligence</p>
+              <p style="font-size: 11px; color: #777168; margin: 5px 0 0 0; text-transform: uppercase; letter-spacing: 1.5px; font-weight: 600;">Turis Intelligence</p>
             </div>
             <div style="text-align: right;">
               <span style="font-size: 14px; font-weight: 800; color: #FF4F9A; font-family: monospace;">PNR: ${pnr || "PENDENTE"}</span>

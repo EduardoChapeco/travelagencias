@@ -1,6 +1,6 @@
 # Orçamentos de Compilação (Build Budgets)
 
-Este documento estabelece metas numéricas rígidas para o tamanho dos chunks e consumo de recursos durante a compilação do TravelAgencias/TravelOS após o término do plano de refatoração de arquitetura.
+Este documento estabelece metas numéricas rígidas para o tamanho dos chunks e consumo de recursos durante a compilação do TravelAgencias/Turis após o término do plano de refatoração de arquitetura.
 
 ---
 

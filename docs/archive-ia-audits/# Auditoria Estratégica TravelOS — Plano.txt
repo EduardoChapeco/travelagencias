@@ -1,4 +1,4 @@
-# Auditoria Estratégica TravelOS — Plano de Reconstrução Premium
+# Auditoria Estratégica Turis — Plano de Reconstrução Premium
 
 **Modo:** Plano. Nada será implementado até sua aprovação explícita.
 **Base:** leitura direta de 90 rotas, 47 migrations, 45 tabelas, 13 buckets, 28 RPCs, 3 shells, design system, PRDs colados (4.6k linhas) e documentação interna. Nenhuma afirmação sem evidência.
@@ -7,7 +7,7 @@
 
 ## 1. RESUMO EXECUTIVO HONESTO
 
-TravelOS **não é protótipo** — tem 90 rotas reais, 45 tabelas, 28 RPCs, OCR via Edge Function, contratos com WORM trigger, magic-link público, multi-tenant funcional, design tokens sólidos e dark mode completo. **Mas também não é premium ainda.** Tem 4 falhas estruturais críticas, 10 rotas CRUD raso, 6 tabelas órfãs, 9 componentes mortos, ErrorState ausente, search global fantasma e dois módulos inteiros (Plans, Policies, Brand global) **serializados como JSON dentro da tabela `api_keys`** — um anti-padrão grave que precisa ser desfeito.
+Turis **não é protótipo** — tem 90 rotas reais, 45 tabelas, 28 RPCs, OCR via Edge Function, contratos com WORM trigger, magic-link público, multi-tenant funcional, design tokens sólidos e dark mode completo. **Mas também não é premium ainda.** Tem 4 falhas estruturais críticas, 10 rotas CRUD raso, 6 tabelas órfãs, 9 componentes mortos, ErrorState ausente, search global fantasma e dois módulos inteiros (Plans, Policies, Brand global) **serializados como JSON dentro da tabela `api_keys`** — um anti-padrão grave que precisa ser desfeito.
 
 **Classificação geral por bloco:**
 

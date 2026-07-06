@@ -16,7 +16,7 @@ import { MagicAIAssistant } from "@/components/proposals/MagicAIAssistant";
 import { calculateQuoteTotals } from "@/lib/pricing";
 
 export const Route = createFileRoute("/agency/$slug/proposals/$id")({
-  head: () => ({ meta: [{ title: "Editor de Proposta · TravelOS" }] }),
+  head: ({ context }: any) => ({ meta: [{ title: `Editor de Proposta · ${context?.brand?.platform_name || 'Turis'}` }] }),
   component: ProposalEditor,
 });
 

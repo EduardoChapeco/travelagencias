@@ -18,7 +18,7 @@ import { searchUnsplashPhoto } from "@/lib/unsplash";
 export const Route = createFileRoute("/builder/ai")({
   head: () => ({
     meta: [
-      { title: "Criador de Sites · TravelOS" },
+      { title: "Criador de Sites · Turis" },
       { name: "description", content: "Crie seu site completo de forma rápida e simples." },
     ],
   }),
@@ -41,7 +41,7 @@ function AISiteBuilder() {
     {
       role: "assistant",
       content:
-        "Olá! Sou o assistente virtual da TravelOS. Descreva como você gostaria que fosse o seu novo site de viagens (ex: 'Crie um site focado em ecoturismo na Amazônia, com pacotes e depoimentos') e eu farei toda a montagem para você!",
+        "Olá! Sou o assistente virtual da Turis. Descreva como você gostaria que fosse o seu novo site de viagens (ex: 'Crie um site focado em ecoturismo na Amazônia, com pacotes e depoimentos') e eu farei toda a montagem para você!",
     },
   ]);
   const [input, setInput] = useState("");

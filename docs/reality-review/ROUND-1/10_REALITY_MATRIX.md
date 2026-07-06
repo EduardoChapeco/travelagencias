@@ -1,6 +1,6 @@
 # Matriz de Verdade (Reality Matrix) — Rodada 1
 
-Esta matriz sintetiza a verificação técnica final de cada funcionalidade do TravelOS, auditando a coerência entre as especificações e o estado real.
+Esta matriz sintetiza a verificação técnica final de cada funcionalidade do Turis, auditando a coerência entre as especificações e o estado real.
 
 ---
 

@@ -89,7 +89,7 @@ import { HeaderPortal } from "@/components/shell/HeaderPortal";
 import { cn } from "@/lib/utils";
 
 export const Route = createFileRoute("/agency/$slug/suppliers/$id")({
-  head: () => ({ meta: [{ title: "Detalhe do Parceiro · TravelOS" }] }),
+  head: ({ context }: any) => ({ meta: [{ title: `Detalhe do Parceiro · ${context?.brand?.platform_name || 'Turis'}` }] }),
   component: SupplierDetailsPage,
 });
 

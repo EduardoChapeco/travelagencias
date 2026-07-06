@@ -10,7 +10,7 @@ import { TabsList } from "@/components/ui/tabs";
 export const Route = createFileRoute("/agency/$slug/portal")({
   head: () => ({
     meta: [
-      { title: "Portal Público · TravelOS" },
+      { title: "Portal Público · Turis" },
       { name: "description", content: "CMS do portal público" },
     ],
   }),

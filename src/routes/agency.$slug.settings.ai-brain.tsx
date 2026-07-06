@@ -11,7 +11,7 @@ import { ptBR } from "date-fns/locale";
 import { Badge } from "@/components/ui/badge";
 
 export const Route = createFileRoute("/agency/$slug/settings/ai-brain")({
-  head: () => ({ meta: [{ title: "Cérebro Vetorial IA · TravelOS" }] }),
+  head: ({ context }: any) => ({ meta: [{ title: `Cérebro Vetorial IA · ${context?.brand?.platform_name || 'Turis'}` }] }),
   component: BrainPanel,
 });
 

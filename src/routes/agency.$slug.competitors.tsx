@@ -16,7 +16,7 @@ import {
 import { PrimaryButton, Input } from "@/components/ui/form";
 
 export const Route = createFileRoute("/agency/$slug/competitors")({
-  head: () => ({ meta: [{ title: "Espião de Mercado · TravelOS" }] }),
+  head: ({ context }: any) => ({ meta: [{ title: `Espião de Mercado · ${context?.brand?.platform_name || 'Turis'}` }] }),
   component: CompetitorSpy,
 });
 

@@ -1,6 +1,6 @@
 # Framework: CMS & Page Builder Architect
 
-**Propósito:** Fornecer diretrizes operacionais para a construção, manutenção e auditoria do CMS dinâmico (Block-Based Page Builder) do portal público das agências do TravelOS. O CMS do TravelOS deve ser estruturado por dados tipados, evitando trechos gigantes de HTML solto, facilitando a edição visual sem comprometer a segurança ou o desempenho.
+**Propósito:** Fornecer diretrizes operacionais para a construção, manutenção e auditoria do CMS dinâmico (Block-Based Page Builder) do portal público das agências do Turis. O CMS do Turis deve ser estruturado por dados tipados, evitando trechos gigantes de HTML solto, facilitando a edição visual sem comprometer a segurança ou o desempenho.
 
 ---
 

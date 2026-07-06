@@ -49,7 +49,7 @@ const proposalsSearchSchema = z.object({
 
 export const Route = createFileRoute("/agency/$slug/proposals/")({
   validateSearch: proposalsSearchSchema,
-  head: () => ({ meta: [{ title: "Cotações · TravelOS" }] }),
+  head: ({ context }: any) => ({ meta: [{ title: `Cotações · ${context?.brand?.platform_name || 'Turis'}` }] }),
   component: ProposalsList,
 });
 

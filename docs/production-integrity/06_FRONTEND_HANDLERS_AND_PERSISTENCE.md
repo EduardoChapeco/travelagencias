@@ -1,6 +1,6 @@
 # 06. Frontend Handlers, Double-Clicks e Persistência
 
-Este relatório analisa os manipuladores de eventos e fluxo de dados no frontend do TravelOS, focando no risco de concorrência, cliques duplos e consistência de estado.
+Este relatório analisa os manipuladores de eventos e fluxo de dados no frontend do Turis, focando no risco de concorrência, cliques duplos e consistência de estado.
 
 ## 1. Vulnerabilidade de Duplo Clique e Concorrência no Ingestion OCR
 

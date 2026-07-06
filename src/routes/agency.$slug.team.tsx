@@ -28,7 +28,7 @@ import { HeaderPortal } from "@/components/shell/HeaderPortal";
 import { useConfirm } from "@/hooks/use-confirm";
 
 export const Route = createFileRoute("/agency/$slug/team")({
-  head: () => ({ meta: [{ title: "Equipe · TravelOS" }] }),
+  head: ({ context }: any) => ({ meta: [{ title: `Equipe · ${context?.brand?.platform_name || 'Turis'}` }] }),
   component: TeamPage,
 });
 

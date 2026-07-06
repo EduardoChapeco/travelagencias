@@ -179,7 +179,7 @@ export function PaymentReceiptModal({ isOpen, onClose, data }: PaymentReceiptMod
 
   const authCode = `TOS-REC-${receiptDetails.receiptId.slice(0, 8).toUpperCase()}-${new Date(receiptDetails.paymentDate || new Date()).getFullYear()}`;
   const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=100x100&data=${encodeURIComponent(
-    `Autenticação TravelOS: ${authCode} | Valor: ${money(receiptDetails.amount)} | Pago por: ${receiptDetails.payerName}`,
+    `Autenticação Turis: ${authCode} | Valor: ${money(receiptDetails.amount)} | Pago por: ${receiptDetails.payerName}`,
   )}`;
 
   const handlePrint = () => {
@@ -545,7 +545,7 @@ export function PaymentReceiptModal({ isOpen, onClose, data }: PaymentReceiptMod
                         {authCode}
                       </code>
                       <span className="text-[9px] text-muted-foreground block font-medium mt-0.5">
-                        Assinado digitalmente por TravelOS
+                        Assinado digitalmente por Turis
                       </span>
                     </div>
                   </div>

@@ -1,6 +1,6 @@
 # 15. Relatório Executivo de Integridade de Produção
 
-Este documento consolida as conclusões finais da auditoria de produção realizada no TravelOS sob modelo zero-trust, detalhando o estado real do ecossistema e recomendações estratégicas.
+Este documento consolida as conclusões finais da auditoria de produção realizada no Turis sob modelo zero-trust, detalhando o estado real do ecossistema e recomendações estratégicas.
 
 ---
 

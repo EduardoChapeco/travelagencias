@@ -1,6 +1,6 @@
-# Histórico de Commits e Modificações Locais — Rodada 2 (TravelOS)
+# Histórico de Commits e Modificações Locais — Rodada 2 (Turis)
 
-Este documento analisa as alterações no repositório de código do TravelOS em relação aos commits publicados e o estado atual da árvore de trabalho (Working Tree).
+Este documento analisa as alterações no repositório de código do Turis em relação aos commits publicados e o estado atual da árvore de trabalho (Working Tree).
 
 ---
 

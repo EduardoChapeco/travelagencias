@@ -15,7 +15,7 @@ import { ptBR } from "date-fns/locale";
 import { cn } from "@/lib/utils";
 
 export const Route = createFileRoute("/agency/$slug/support/$ticket_id")({
-  head: () => ({ meta: [{ title: "Atendimento Avançado · TravelOS" }] }),
+  head: ({ context }: any) => ({ meta: [{ title: `Atendimento Avançado · ${context?.brand?.platform_name || 'Turis'}` }] }),
   component: TicketAdvancedRoute,
 });
 

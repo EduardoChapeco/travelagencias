@@ -17,7 +17,7 @@ import { HeaderPortal } from "@/components/shell/HeaderPortal";
 import { Field, Input, Select, PrimaryButton } from "@/components/ui/form";
 
 export const Route = createFileRoute("/agency/$slug/brand")({
-  head: () => ({ meta: [{ title: "Identidade visual · TravelOS" }] }),
+  head: ({ context }: any) => ({ meta: [{ title: `Identidade visual · ${context?.brand?.platform_name || 'Turis'}` }] }),
   component: BrandPage,
 });
 

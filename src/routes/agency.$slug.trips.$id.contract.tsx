@@ -27,7 +27,7 @@ import { ContractSidebar } from "@/components/trips/contract/ContractSidebar";
 import { ContractSignatureControl } from "@/components/trips/contract/ContractSignatureControl";
 
 export const Route = createFileRoute("/agency/$slug/trips/$id/contract")({
-  head: () => ({ meta: [{ title: "Contrato · TravelOS" }] }),
+  head: ({ context }: any) => ({ meta: [{ title: `Contrato · ${context?.brand?.platform_name || 'Turis'}` }] }),
   component: TripContract,
 });
 
@@ -501,7 +501,7 @@ function TripContract() {
 
       let manifestText = `==================================================\n`;
       manifestText += `MANIFESTO DE VALIDAÇÃO JURÍDICA E AUDITORIA\n`;
-      manifestText += `TravelOS Digital Trust Services\n`;
+      manifestText += `Turis Digital Trust Services\n`;
       manifestText += `==================================================\n\n`;
       manifestText += `CONTRATO ID: ${contract.id}\n`;
       manifestText += `Versão: ${contract.version}\n`;

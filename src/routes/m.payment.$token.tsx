@@ -11,7 +11,7 @@ import { PrimaryButton, Sheet } from "@/components/ui/form";
 import { supabase } from "@/integrations/supabase/client";
 
 export const Route = createFileRoute("/m/payment/$token")({
-  head: () => ({ meta: [{ title: "Meu Carnê Digital · TravelOS" }] }),
+  head: ({ context }: any) => ({ meta: [{ title: `Meu Carnê Digital · ${context?.brand?.platform_name || 'Turis'}` }] }),
   component: Page,
 });
 

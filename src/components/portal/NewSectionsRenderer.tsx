@@ -176,7 +176,7 @@ export function NewSectionsRenderer({
                   <a
                     href={config.cta1_url}
                     onClick={() => handleLinkClick(config.cta1_url)}
-                    className="px-6 py-3 rounded-xl text-sm font-bold text-white transition-all transform hover:scale-105"
+                    className="px-6 py-3 rounded-3xl text-sm font-bold text-white transition-all transform hover:scale-105"
                     style={{ backgroundColor: "var(--brand-primary, #1E3A5F)" }}
                   >
                     {config.cta1_text}
@@ -186,7 +186,7 @@ export function NewSectionsRenderer({
                   <a
                     href={config.cta2_url}
                     onClick={() => handleLinkClick(config.cta2_url)}
-                    className="px-6 py-3 rounded-xl text-sm font-bold border border-border hover:bg-surface-alt/50 transition-colors"
+                    className="px-6 py-3 rounded-3xl text-sm font-bold border border-border hover:bg-surface-alt/50 transition-colors"
                   >
                     {config.cta2_text}
                   </a>
@@ -265,7 +265,7 @@ export function NewSectionsRenderer({
                       ? "w-[280px] h-[560px] rounded-[40px]"
                       : config.deviceType === "tablet"
                         ? "w-[450px] h-[600px] rounded-3xl"
-                        : "w-full aspect-video rounded-xl"
+                        : "w-full aspect-video rounded-3xl"
                   }`}
                 >
                   <img
@@ -385,7 +385,7 @@ export function NewSectionsRenderer({
                 <div className="grid grid-cols-1 md:grid-cols-4 gap-4 items-center">
                   <div className="text-left space-y-1">
                     <label className="text-xs font-bold text-muted-foreground">DESTINO</label>
-                    <div className="flex items-center gap-1.5 border border-border rounded-xl p-2.5">
+                    <div className="flex items-center gap-1.5 border border-border rounded-3xl p-2.5">
                       <MapPin className="h-4 w-4 text-brand" />
                       <input
                         type="text"
@@ -396,13 +396,13 @@ export function NewSectionsRenderer({
                   </div>
                   <div className="text-left space-y-1">
                     <label className="text-xs font-bold text-muted-foreground">IDA</label>
-                    <div className="flex items-center gap-1.5 border border-border rounded-xl p-2.5">
+                    <div className="flex items-center gap-1.5 border border-border rounded-3xl p-2.5">
                       <input type="date" className="w-full text-sm outline-none bg-transparent" />
                     </div>
                   </div>
                   <div className="text-left space-y-1">
                     <label className="text-xs font-bold text-muted-foreground">PASSAGEIROS</label>
-                    <div className="flex items-center gap-1.5 border border-border rounded-xl p-2.5">
+                    <div className="flex items-center gap-1.5 border border-border rounded-3xl p-2.5">
                       <input
                         type="number"
                         min={1}
@@ -414,7 +414,7 @@ export function NewSectionsRenderer({
                   <div className="pt-5 md:pt-0">
                     <button
                       onClick={() => handleLinkClick(config.searchButtonActionUrl || "#")}
-                      className="w-full h-11 rounded-xl text-sm font-bold text-white transition-colors"
+                      className="w-full h-11 rounded-3xl text-sm font-bold text-white transition-colors"
                       style={{ backgroundColor: "var(--brand-primary, #1E3A5F)" }}
                     >
                       {config.searchButtonText || "Pesquisar"}
@@ -447,7 +447,7 @@ export function NewSectionsRenderer({
                   <a
                     href={config.ctaUrl}
                     onClick={() => handleLinkClick(config.ctaUrl)}
-                    className="px-6 py-3 rounded-xl text-sm font-bold text-white transition-all transform hover:scale-105"
+                    className="px-6 py-3 rounded-3xl text-sm font-bold text-white transition-all transform hover:scale-105"
                     style={{ backgroundColor: "var(--brand-primary, #1E3A5F)" }}
                   >
                     {config.ctaText}
@@ -757,7 +757,7 @@ export function NewSectionsRenderer({
               {config.ctaText && (
                 <div className="pt-2">
                   <button
-                    className="px-6 py-3 rounded-xl text-sm font-bold text-white"
+                    className="px-6 py-3 rounded-3xl text-sm font-bold text-white"
                     style={{ backgroundColor: "var(--brand-primary, #1E3A5F)" }}
                   >
                     {config.ctaText}
@@ -941,7 +941,7 @@ export function NewSectionsRenderer({
                       <a
                         href={item.link}
                         onClick={() => handleLinkClick(item.link)}
-                        className="inline-flex h-10 items-center justify-center rounded-xl bg-brand px-4 text-xs font-bold text-white"
+                        className="inline-flex h-10 items-center justify-center rounded-3xl bg-brand px-4 text-xs font-bold text-white"
                         style={{ backgroundColor: "var(--brand-primary, #1E3A5F)" }}
                       >
                         Ver Pacote
@@ -994,11 +994,11 @@ export function NewSectionsRenderer({
                 <input
                   type="email"
                   placeholder="Seu melhor e-mail"
-                  className="w-full text-xs p-3 rounded-xl border border-border outline-none bg-surface"
+                  className="w-full text-xs p-3 rounded-3xl border border-border outline-none bg-surface"
                 />
                 <button
                   onClick={() => toast.success("Inscrito com sucesso!")}
-                  className="w-full py-3 rounded-xl text-xs font-bold text-white transition-colors"
+                  className="w-full py-3 rounded-3xl text-xs font-bold text-white transition-colors"
                   style={{ backgroundColor: "var(--brand-primary, #1E3A5F)" }}
                 >
                   Inscrever-se
@@ -1172,7 +1172,7 @@ export function NewSectionsRenderer({
     case "stats-strip": {
       const bgStyle =
         config.backgroundStyle === "dark"
-          ? "bg-[#0A0A0A] text-white border-transparent"
+          ? "bg-foreground text-background border-transparent"
           : config.backgroundStyle === "brand"
             ? "bg-brand text-brand-foreground border-transparent"
             : "bg-surface border-border";
@@ -1359,7 +1359,7 @@ export function NewSectionsRenderer({
                   <a
                     href={config.ctaUrl}
                     onClick={() => handleLinkClick(config.ctaUrl)}
-                    className="inline-flex h-11 items-center justify-center rounded-xl bg-brand px-6 text-xs font-bold text-white hover:opacity-95"
+                    className="inline-flex h-11 items-center justify-center rounded-3xl bg-brand px-6 text-xs font-bold text-white hover:opacity-95"
                     style={{ backgroundColor: "var(--brand-primary, #1E3A5F)" }}
                   >
                     {config.ctaText}
@@ -1438,7 +1438,7 @@ export function NewSectionsRenderer({
       const isBrand = config.theme === "colored";
 
       const bgClass = isDark
-        ? "bg-[#111111] text-white border-transparent"
+        ? "bg-foreground text-background border-transparent"
         : isBrand
           ? "bg-brand text-brand-foreground border-transparent"
           : "bg-surface border-border";
@@ -1598,7 +1598,7 @@ export function NewSectionsRenderer({
                         href={`https://wa.me/${item.whatsapp}`}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="inline-flex h-9 items-center justify-center rounded-xl bg-green-500 hover:bg-green-600 px-4 text-xs font-bold text-white gap-1.5 transition-colors"
+                        className="inline-flex h-9 items-center justify-center rounded-3xl bg-green-500 hover:bg-green-600 px-4 text-xs font-bold text-white gap-1.5 transition-colors"
                       >
                         <Phone className="h-3.5 w-3.5 fill-current" /> Falar no WhatsApp
                       </a>
@@ -1834,7 +1834,7 @@ export function NewSectionsRenderer({
                 config.items.map((item: any, i: number) => (
                   <div
                     key={i}
-                    className="bg-[#1A1A1A] p-6 rounded-3xl border border-neutral-800 space-y-4"
+                    className="bg-surface-alt dark:bg-surface-muted p-6 rounded-3xl border border-border space-y-4"
                   >
                     <div className="flex justify-between items-center">
                       <div className="flex items-center gap-1">
@@ -2098,7 +2098,7 @@ export function NewSectionsRenderer({
                 <a
                   href={config.ctaUrl}
                   onClick={() => handleLinkClick(config.ctaUrl)}
-                  className="px-6 py-3 rounded-xl text-xs font-bold transition-all transform hover:scale-105"
+                  className="px-6 py-3 rounded-3xl text-xs font-bold transition-all transform hover:scale-105"
                   style={{
                     backgroundColor: "var(--brand-primary, #1E3A5F)",
                     color: "var(--brand-foreground, #FFFFFF)",
@@ -2124,7 +2124,7 @@ export function NewSectionsRenderer({
         ? "bg-brand text-brand-foreground border-transparent"
         : isGrad
           ? "bg-gradient-to-r from-brand to-brand-light text-brand-foreground border-transparent"
-          : "bg-[#111] text-white border-transparent";
+          : "bg-foreground text-background border-transparent";
 
       return (
         <section
@@ -2156,7 +2156,7 @@ export function NewSectionsRenderer({
             <a
               href={config.ctaUrl}
               onClick={() => handleLinkClick(config.ctaUrl)}
-              className="inline-flex h-11 items-center justify-center rounded-xl bg-white text-black px-6 text-xs font-bold transition-all transform hover:scale-105"
+              className="inline-flex h-11 items-center justify-center rounded-3xl bg-white text-black px-6 text-xs font-bold transition-all transform hover:scale-105"
             >
               {config.ctaText}
             </a>
@@ -2216,11 +2216,11 @@ export function NewSectionsRenderer({
               placeholder={config.placeholder || "Digite seu e-mail"}
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className="flex-1 p-3 rounded-xl border border-border outline-none bg-surface text-sm"
+              className="flex-1 p-3 rounded-3xl border border-border outline-none bg-surface text-sm"
             />
             <button
               onClick={handleSubscribe}
-              className="px-6 py-3 rounded-xl text-sm font-bold text-white transition-colors"
+              className="px-6 py-3 rounded-3xl text-sm font-bold text-white transition-colors"
               style={{ backgroundColor: "var(--brand-primary, #1E3A5F)" }}
             >
               {config.buttonText || "Cadastrar"}
@@ -2304,7 +2304,7 @@ export function NewSectionsRenderer({
                     placeholder="Seu nome"
                     value={form.name}
                     onChange={(e) => setForm({ ...form, name: e.target.value })}
-                    className="w-full text-xs p-3 rounded-xl border border-border outline-none bg-surface"
+                    className="w-full text-xs p-3 rounded-3xl border border-border outline-none bg-surface"
                   />
                 </div>
                 <div className="space-y-1">
@@ -2314,7 +2314,7 @@ export function NewSectionsRenderer({
                     placeholder="Seu e-mail"
                     value={form.email}
                     onChange={(e) => setForm({ ...form, email: e.target.value })}
-                    className="w-full text-xs p-3 rounded-xl border border-border outline-none bg-surface"
+                    className="w-full text-xs p-3 rounded-3xl border border-border outline-none bg-surface"
                   />
                 </div>
               </div>
@@ -2329,7 +2329,7 @@ export function NewSectionsRenderer({
                     placeholder="Seu fone com DDD"
                     value={form.phone}
                     onChange={(e) => setForm({ ...form, phone: e.target.value })}
-                    className="w-full text-xs p-3 rounded-xl border border-border outline-none bg-surface"
+                    className="w-full text-xs p-3 rounded-3xl border border-border outline-none bg-surface"
                   />
                 </div>
                 <div className="space-y-1">
@@ -2341,7 +2341,7 @@ export function NewSectionsRenderer({
                     placeholder="Ex: Paris, Caribe, etc"
                     value={form.subject}
                     onChange={(e) => setForm({ ...form, subject: e.target.value })}
-                    className="w-full text-xs p-3 rounded-xl border border-border outline-none bg-surface"
+                    className="w-full text-xs p-3 rounded-3xl border border-border outline-none bg-surface"
                   />
                 </div>
               </div>
@@ -2355,7 +2355,7 @@ export function NewSectionsRenderer({
                   placeholder="Conte-nos detalhes sobre sua viagem..."
                   value={form.message}
                   onChange={(e) => setForm({ ...form, message: e.target.value })}
-                  className="w-full text-xs p-3 rounded-xl border border-border outline-none bg-surface resize-none"
+                  className="w-full text-xs p-3 rounded-3xl border border-border outline-none bg-surface resize-none"
                 />
               </div>
 
@@ -2363,7 +2363,7 @@ export function NewSectionsRenderer({
                 <button
                   onClick={handleSubmit}
                   disabled={sending}
-                  className="px-6 py-3 rounded-xl text-xs font-bold text-white transition-colors"
+                  className="px-6 py-3 rounded-3xl text-xs font-bold text-white transition-colors"
                   style={{ backgroundColor: "var(--brand-primary, #1E3A5F)" }}
                 >
                   {sending ? "Enviando..." : "Enviar Orçamento"}
@@ -2381,7 +2381,7 @@ export function NewSectionsRenderer({
       return (
         <div className="fixed bottom-6 right-6 z-[9999] group flex flex-col items-end pointer-events-auto">
           {config.tooltip && (
-            <div className="bg-surface border border-border text-foreground text-xs font-bold px-3 py-1.5 rounded-xl mb-2 scale-90 origin-bottom-right opacity-0 group-hover:opacity-100 group-hover:scale-100 transition-all duration-200">
+            <div className="bg-surface border border-border text-foreground text-xs font-bold px-3 py-1.5 rounded-3xl mb-2 scale-90 origin-bottom-right opacity-0 group-hover:opacity-100 group-hover:scale-100 transition-all duration-200">
               {config.tooltip}
             </div>
           )}
@@ -2404,7 +2404,7 @@ export function NewSectionsRenderer({
     case "nav-standard":
     case "nav-dark": {
       const isDark = block.type === "nav-dark";
-      const bgStyle = isDark ? "bg-[#0A0A0A] text-white" : "bg-surface border-b border-border/40";
+      const bgStyle = isDark ? "bg-foreground text-background" : "bg-surface border-b border-border/40";
       const linkHover = isDark ? "hover:text-brand" : "hover:text-brand";
 
       return (
@@ -2412,13 +2412,13 @@ export function NewSectionsRenderer({
           {/* Logo mockup inside section */}
           <div className="flex items-center gap-3 select-none">
             <div
-              className="w-8 h-8 rounded-lg bg-brand flex items-center justify-center text-white font-bold"
+              className="w-8 h-8 rounded-2xl bg-brand flex items-center justify-center text-white font-bold"
               style={{ backgroundColor: "var(--brand-primary, #1E3A5F)" }}
             >
               T
             </div>
             <span style={headingStyle} className="font-extrabold tracking-tight text-sm">
-              TravelOS
+              Turis
             </span>
           </div>
 
@@ -2436,7 +2436,7 @@ export function NewSectionsRenderer({
             <a
               href={config.ctaUrl}
               onClick={() => handleLinkClick(config.ctaUrl)}
-              className="px-4 py-2 rounded-xl text-xs font-bold text-white"
+              className="px-4 py-2 rounded-3xl text-xs font-bold text-white"
               style={{ backgroundColor: "var(--brand-primary, #1E3A5F)" }}
             >
               {config.ctaText}
@@ -2467,7 +2467,7 @@ export function NewSectionsRenderer({
     case "footer-dark": {
       const isDark = block.type === "footer-dark";
       const bg = isDark
-        ? "bg-[#0A0A0A] text-white border-transparent"
+        ? "bg-foreground text-background border-transparent"
         : "bg-surface border-t border-border/40";
       const mutedText = isDark ? "text-neutral-400" : "text-muted-foreground";
 
@@ -2539,11 +2539,11 @@ export function NewSectionsRenderer({
                 <input
                   type="email"
                   placeholder="Seu e-mail"
-                  className="flex-1 p-2.5 rounded-xl border-none outline-none bg-white text-black text-xs"
+                  className="flex-1 p-2.5 rounded-3xl border-none outline-none bg-white text-black text-xs"
                 />
                 <button
                   onClick={() => toast.success("Inscrito!")}
-                  className="px-5 py-2.5 bg-white text-black font-extrabold text-xs rounded-xl"
+                  className="px-5 py-2.5 bg-white text-black font-extrabold text-xs rounded-3xl"
                 >
                   {config.ctaButtonText}
                 </button>

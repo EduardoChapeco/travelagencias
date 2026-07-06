@@ -1,6 +1,6 @@
 # 18. Plano Mestre de Implementação da Integração Infotravel
 
-Este documento apresenta o planejamento estratégico e técnico detalhado de implementação para a integração completa do GDS **Infotravel** (Infotera) no ecossistema do **TravelOS**, estruturado em fases lógicas com foco em segurança, integridade e conformidade contábil.
+Este documento apresenta o planejamento estratégico e técnico detalhado de implementação para a integração completa do GDS **Infotravel** (Infotera) no ecossistema do **Turis**, estruturado em fases lógicas com foco em segurança, integridade e conformidade contábil.
 
 ---
 
@@ -21,7 +21,7 @@ Este documento apresenta o planejamento estratégico e técnico detalhado de imp
 - **Endpoints**: N/A.
 - **Ações**:
   - Geração de tipagens TypeScript estáticas baseadas no `api-doc.json` local.
-  - Criação do resolvedor de schemas e mapeadores (Mappers) para converter payloads GDS em entidades canônicas do TravelOS (NormalizedOffer).
+  - Criação do resolvedor de schemas e mapeadores (Mappers) para converter payloads GDS em entidades canônicas do Turis (NormalizedOffer).
 - **Critério de Pronto**: Zero tipos `any` nas funções de serviço e typecheck compilado com sucesso.
 
 ### Fase P2: Catálogo de Serviços e Disponibilidade Real
@@ -62,7 +62,7 @@ Este documento apresenta o planejamento estratégico e técnico detalhado de imp
 - **Tabelas**: `sync_outbox`, `sync_attempts`.
 - **Ações**:
   - Implementação da fila de mensageria local e polling incremental para atualizar status de reservas ativas no GDS.
-- **Critério de Pronto**: Mudança de status no GDS refletida na base local do TravelOS em menos de 4 horas por polling.
+- **Critério de Pronto**: Mudança de status no GDS refletida na base local do Turis em menos de 4 horas por polling.
 
 ### Fase P7: Integração de Documentos e Faturamento
 

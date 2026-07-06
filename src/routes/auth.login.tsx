@@ -12,8 +12,8 @@ import { Sparkles, ShieldCheck, TrendingUp, CheckCircle } from "lucide-react";
 export const Route = createFileRoute("/auth/login")({
   head: () => ({
     meta: [
-      { title: "Entrar · TravelOS" },
-      { name: "description", content: "Acesse sua agência ou conta no TravelOS." },
+      { title: "Entrar · Turis" },
+      { name: "description", content: "Acesse sua agência ou conta no Turis." },
     ],
   }),
   component: LoginPage,
@@ -108,7 +108,7 @@ function LoginPage() {
       }
 
       if (!agency || agency.onboarding_completed === false) {
-        toast.info("Sua conta foi criada! Configure sua agência para começar a usar o TravelOS.");
+        toast.info("Sua conta foi criada! Configure sua agência para começar a usar o Turis.");
         navigate({ to: "/auth/onboarding", replace: true });
         return;
       }
@@ -153,7 +153,7 @@ function LoginPage() {
           <div className="flex h-9 w-9 items-center justify-center rounded-sm bg-primary text-primary-foreground font-black text-xs">
             T
           </div>
-          <span className="text-base font-black tracking-tight text-foreground">TravelOS</span>
+          <span className="text-base font-black tracking-tight text-foreground">Turis</span>
         </Link>
 
         {/* Center content: Premium Editorial Typography */}
@@ -200,7 +200,7 @@ function LoginPage() {
 
         {/* Footer */}
         <p className="relative z-10 text-[10px] text-muted-foreground/60 font-bold uppercase tracking-wider">
-          © {new Date().getFullYear()} TravelOS. Desenvolvido para profissionais de turismo.
+          © {new Date().getFullYear()} Turis. Desenvolvido para profissionais de turismo.
         </p>
       </div>
 
@@ -212,7 +212,7 @@ function LoginPage() {
             <div className="flex h-9 w-9 items-center justify-center rounded-sm bg-primary text-primary-foreground font-black text-xs">
               T
             </div>
-            <span className="text-sm font-black text-foreground">TravelOS</span>
+            <span className="text-sm font-black text-foreground">Turis</span>
           </div>
 
           <div className="space-y-2.5">
@@ -281,7 +281,7 @@ function LoginPage() {
           </form>
 
           <p className="text-center text-xs text-muted-foreground font-semibold pt-4">
-            Sua agência ainda não usa o TravelOS?{" "}
+            Sua agência ainda não usa o Turis?{" "}
             <Link
               to="/auth/register"
               className="font-bold text-accent hover:text-accent/90 hover:underline transition-colors"

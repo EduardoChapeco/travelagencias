@@ -31,7 +31,7 @@ import { NewCorporateRfpWizard } from "@/components/corporate/NewCorporateRfpWiz
 import { useDebounce } from "@/hooks/use-debounce";
 
 export const Route = createFileRoute("/agency/$slug/corporate")({
-  head: () => ({ meta: [{ title: "Corporate B2B · TravelOS" }] }),
+  head: ({ context }: any) => ({ meta: [{ title: `Corporate B2B · ${context?.brand?.platform_name || 'Turis'}` }] }),
   component: CorporatePage,
 });
 

@@ -12,7 +12,7 @@ import { Field, Input, Select, PrimaryButton, GhostButton, Sheet } from "@/compo
 import { EditVehicleModal } from "./agency.$slug.bus-layouts.$id";
 
 export const Route = createFileRoute("/agency/$slug/bus-layouts")({
-  head: () => ({ meta: [{ title: "Frota & Ônibus · TravelOS" }] }),
+  head: ({ context }: any) => ({ meta: [{ title: `Frota & Ônibus · ${context?.brand?.platform_name || 'Turis'}` }] }),
   component: BusLayoutsPage,
 });
 

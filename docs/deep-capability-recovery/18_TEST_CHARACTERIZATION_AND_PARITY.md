@@ -1,6 +1,6 @@
 # 18. Test Characterization and Parity (Testes de Caracterização)
 
-Este relatório apresenta o mapeamento de testes de caracterização para assegurar a paridade funcional e a ausência de regressões operacionais no TravelOS.
+Este relatório apresenta o mapeamento de testes de caracterização para assegurar a paridade funcional e a ausência de regressões operacionais no Turis.
 
 ---
 

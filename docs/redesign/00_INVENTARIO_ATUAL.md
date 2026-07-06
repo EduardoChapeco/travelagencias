@@ -1,6 +1,6 @@
-# Inventário do Sistema Atual: TravelOS
+# Inventário do Sistema Atual: Turis
 
-Este documento serve como a **Fase 0** do PRD de Redesign global da plataforma TravelOS/VoyageOS. Ele detalha todas as rotas públicas, privadas, componentes estruturais, formulários e fluxos para garantir a compatibilidade total e evitar regressões.
+Este documento serve como a **Fase 0** do PRD de Redesign global da plataforma Turis/VoyageOS. Ele detalha todas as rotas públicas, privadas, componentes estruturais, formulários e fluxos para garantir a compatibilidade total e evitar regressões.
 
 ---
 

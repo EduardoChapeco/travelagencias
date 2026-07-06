@@ -13,7 +13,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { slugify } from "@/lib/slug";
 
 export const Route = createFileRoute("/agency/$slug/settings")({
-  head: () => ({ meta: [{ title: "Configurações · TravelOS" }] }),
+  head: ({ context }: any) => ({ meta: [{ title: `Configurações · ${context?.brand?.platform_name || 'Turis'}` }] }),
   component: Page,
 });
 

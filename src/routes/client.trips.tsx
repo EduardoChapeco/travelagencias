@@ -6,7 +6,7 @@ import { PageHeader, EmptyState } from "@/components/shell/PageHeader";
 import { fmtDate, money, StatusBadge } from "@/components/ui/form";
 
 export const Route = createFileRoute("/client/trips")({
-  head: () => ({ meta: [{ title: "Minhas viagens · TravelOS" }] }),
+  head: ({ context }: any) => ({ meta: [{ title: `Minhas viagens · ${context?.brand?.platform_name || 'Turis'}` }] }),
   component: ClientTripsPage,
 });
 

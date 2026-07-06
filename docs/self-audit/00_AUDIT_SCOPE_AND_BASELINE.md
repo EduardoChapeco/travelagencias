@@ -1,6 +1,6 @@
 # 00. Escopo da Auditoria e Baseline do Sistema
 
-Este documento estabelece o escopo físico, técnico e conceitual da autoauditoria de integridade realizada no **TravelOS / VibeTour**, definindo a linha de base (baseline) do sistema, os arquivos analisados e a metodologia de verificação.
+Este documento estabelece o escopo físico, técnico e conceitual da autoauditoria de integridade realizada no **Turis / VibeTour**, definindo a linha de base (baseline) do sistema, os arquivos analisados e a metodologia de verificação.
 
 ---
 

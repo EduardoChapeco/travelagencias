@@ -2,7 +2,7 @@
 
 ## 1. Origem do Rosa e a Relação de Cores
 
-O tom rosa choque (`#ff4f9a`) foi originalmente concebido como a cor de destaque principal (`--accent`) padrão do TravelOS e, em muitos casos, como o fallback padrão do Brand Kit de agências sem cor personalizada definida.
+O tom rosa choque (`#ff4f9a`) foi originalmente concebido como a cor de destaque principal (`--accent`) padrão do Turis e, em muitos casos, como o fallback padrão do Brand Kit de agências sem cor personalizada definida.
 
 A alteração direta de `--accent` no CSS global de `#ff4f9a` para `#151515` (charcoal/preto) removeu o rosa do painel, mas trouxe implicações arquiteturais:
 

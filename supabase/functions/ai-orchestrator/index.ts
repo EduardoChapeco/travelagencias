@@ -335,8 +335,8 @@ async function callProviderApi(
         headers: {
           Authorization: `Bearer ${key}`,
           "Content-Type": "application/json",
-          "HTTP-Referer": "https://travelos.com",
-          "X-Title": "TravelOS",
+          "HTTP-Referer": "https://turis.com",
+          "X-Title": "Turis",
         },
         body: JSON.stringify({
           model,
@@ -672,7 +672,7 @@ serve(async (req) => {
       if (feature) {
         jsonMode = true;
         if (feature === "ocr_proposal") {
-          systemPrompt = `Você é um Assistente B2B de Turismo (TravelOS AI) especialista em leitura e estruturação de orçamentos, cotações e itinerários de viagem. 
+          systemPrompt = `Você é um Assistente B2B de Turismo (Turis AI) especialista em leitura e estruturação de orçamentos, cotações e itinerários de viagem. 
 Analise a imagem ou documento fornecido e extraia todos os detalhes dos serviços em um objeto JSON estrito com a seguinte estrutura de chaves:
 {
   "destination": "Nome do destino principal da viagem ou null",

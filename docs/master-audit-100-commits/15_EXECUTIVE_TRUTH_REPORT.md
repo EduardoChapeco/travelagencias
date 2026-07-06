@@ -1,6 +1,6 @@
 # 15. Relatório Executivo da Verdade (Executive Truth Report)
 
-Este documento apresenta a síntese executiva de métricas de prontidão do sistema **TravelOS** (TravelAgências) para lançamento em produção, compilando os dados finais de funcionalidade, riscos e conformidade técnica.
+Este documento apresenta a síntese executiva de métricas de prontidão do sistema **Turis** (TravelAgências) para lançamento em produção, compilando os dados finais de funcionalidade, riscos e conformidade técnica.
 
 ---
 
@@ -83,7 +83,7 @@ Este documento apresenta a síntese executiva de métricas de prontidão do sist
 
 ## 4. Diagnóstico de Segurança e Homologação
 
-O TravelOS está **SEGURO** para abertura pública do ponto de vista de isolamento de dados entre empresas (multi-tenant) e consistência relacional do banco de dados.
+O Turis está **SEGURO** para abertura pública do ponto de vista de isolamento de dados entre empresas (multi-tenant) e consistência relacional do banco de dados.
 
 As políticas de RLS foram completamente higienizadas, o Livro-Razão Contábil está blindado contra manipulações externas por meio de políticas estritas de somente leitura (`SELECT`), e as travas de períodos fechados estão operando com sucesso diretamente no motor do PostgreSQL.
 

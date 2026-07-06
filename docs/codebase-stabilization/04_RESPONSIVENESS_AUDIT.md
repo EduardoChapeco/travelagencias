@@ -1,4 +1,4 @@
-# 04. Auditoria de Responsividade - TravelOS
+# 04. Auditoria de Responsividade - Turis
 
 Este documento apresenta a análise de quebras de layout, overflows horizontais, comportamentos de barras laterais (sidebars) e adaptabilidade em múltiplos viewports (mobile, tablet, notebook e desktop).
 
@@ -6,7 +6,7 @@ Este documento apresenta a análise de quebras de layout, overflows horizontais,
 
 ## 1. Padrões de Layout por Breakpoint
 
-O TravelOS deve se comportar de forma consistente conforme a largura da janela:
+O Turis deve se comportar de forma consistente conforme a largura da janela:
 
 - **Mobile (360px - 768px)**: Coluna única, modais expandidos em tela cheia (drawers/sheets), tabelas com scroll horizontal ou convertidas em blocos de cartões.
 - **Tablet/Notebook Compacto (768px - 1024px)**: Grid duplo, barra lateral de navegação colapsada ou ultrafina (`SlimSidebar`), filtros superiores ocultos sob painel expansível.

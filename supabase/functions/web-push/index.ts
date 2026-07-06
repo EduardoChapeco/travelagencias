@@ -19,7 +19,7 @@ serve(async (req) => {
     // VAPID keys provided via environment variables
     const vapidPublicKey = Deno.env.get("VAPID_PUBLIC_KEY");
     const vapidPrivateKey = Deno.env.get("VAPID_PRIVATE_KEY");
-    const vapidSubject = Deno.env.get("VAPID_SUBJECT") || "mailto:admin@travelos.com";
+    const vapidSubject = Deno.env.get("VAPID_SUBJECT") || "mailto:admin@turis.com";
 
     if (!supabaseUrl || !supabaseServiceKey || !vapidPublicKey || !vapidPrivateKey) {
       throw new Error("Missing critical environment variables.");
@@ -47,7 +47,7 @@ serve(async (req) => {
       };
 
       const payload = JSON.stringify({
-        title: title || "TravelOS",
+        title: title || "Turis",
         body: body || "Você tem uma nova notificação.",
         url: url || "/",
       });

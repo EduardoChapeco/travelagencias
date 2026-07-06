@@ -27,7 +27,7 @@ import { ContractClauseLibrary } from "@/components/contracts/ContractClauseLibr
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 export const Route = createFileRoute("/agency/$slug/contracts")({
-  head: () => ({ meta: [{ title: "Contratos · TravelOS" }] }),
+  head: ({ context }: any) => ({ meta: [{ title: `Contratos · ${context?.brand?.platform_name || 'Turis'}` }] }),
   component: ContractsPage,
 });
 

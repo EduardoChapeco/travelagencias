@@ -7,7 +7,7 @@ import { fmtDate, StatusBadge } from "@/components/ui/form";
 import { supabase } from "@/integrations/supabase/client";
 
 export const Route = createFileRoute("/client/documents")({
-  head: () => ({ meta: [{ title: "Documentos · TravelOS" }] }),
+  head: ({ context }: any) => ({ meta: [{ title: `Documentos · ${context?.brand?.platform_name || 'Turis'}` }] }),
   component: ClientDocumentsPage,
 });
 

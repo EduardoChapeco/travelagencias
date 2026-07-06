@@ -6,7 +6,7 @@
 
 Para que uma feature transite para o status **APPROVED**, o agente finalizador deve responder SIM com convicção e evidências em código para as seguintes perguntas:
 
-1. **Tem UI?** A interface atende aos critérios visuais do TravelOS?
+1. **Tem UI?** A interface atende aos critérios visuais do Turis?
 2. **Tem Backend e Persistência?** Salva no Supabase (não fica perdido no localStorage)?
 3. **Tem RLS?** O banco proíbe edição cruzada (cross-tenant `agency_id`)?
 4. **Faz sentido para Turismo?** O lead, roteiro ou passageiro vai chegar onde o vendedor precisa?

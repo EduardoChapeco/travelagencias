@@ -1,6 +1,6 @@
 # 05. Banco de Dados, Migrações e Políticas RLS
 
-Este documento detalha o estado real da modelagem física do banco de dados do TravelOS, analisando a integridade das migrações, consistência de chaves estrangeiras, gatilhos (triggers) e a robustez do isolamento por Row Level Security (RLS).
+Este documento detalha o estado real da modelagem física do banco de dados do Turis, analisando a integridade das migrações, consistência de chaves estrangeiras, gatilhos (triggers) e a robustez do isolamento por Row Level Security (RLS).
 
 ---
 
@@ -16,7 +16,7 @@ O banco de dados do Supabase compreende 190 migrações sequenciais que constroe
 
 ## 2. Auditoria de Tabelas Críticas e Normalização
 
-Ao contrário de estruturas legadas que dependiam de colunas de metadados JSONB genéricas para armazenar lógica relacional, as novas tabelas do TravelOS estão normalizadas:
+Ao contrário de estruturas legadas que dependiam de colunas de metadados JSONB genéricas para armazenar lógica relacional, as novas tabelas do Turis estão normalizadas:
 
 - **Livro-Razão Contábil (`financial_ledger_entries`)**:
   - _Finalidade_: Armazenar os débitos e créditos consolidados.

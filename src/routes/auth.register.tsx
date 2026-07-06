@@ -12,8 +12,8 @@ import { Sparkles, CheckCircle } from "lucide-react";
 export const Route = createFileRoute("/auth/register")({
   head: () => ({
     meta: [
-      { title: "Cadastrar conta · TravelOS" },
-      { name: "description", content: "Crie sua conta no TravelOS." },
+      { title: "Cadastrar conta · Turis" },
+      { name: "description", content: "Crie sua conta no Turis." },
     ],
   }),
   component: RegisterPage,
@@ -122,7 +122,7 @@ function RegisterPage() {
           <div className="flex h-9 w-9 items-center justify-center rounded-sm bg-primary text-primary-foreground font-black text-xs">
             T
           </div>
-          <span className="text-base font-black tracking-tight text-foreground">TravelOS</span>
+          <span className="text-base font-black tracking-tight text-foreground">Turis</span>
         </Link>
 
         {/* Center content: Premium Editorial Typography */}
@@ -169,7 +169,7 @@ function RegisterPage() {
 
         {/* Footer */}
         <p className="relative z-10 text-[10px] text-muted-foreground/60 font-bold uppercase tracking-wider">
-          © {new Date().getFullYear()} TravelOS. Desenvolvido para profissionais de turismo.
+          © {new Date().getFullYear()} Turis. Desenvolvido para profissionais de turismo.
         </p>
       </div>
 
@@ -181,7 +181,7 @@ function RegisterPage() {
             <div className="flex h-9 w-9 items-center justify-center rounded-sm bg-primary text-primary-foreground font-black text-xs">
               T
             </div>
-            <span className="text-sm font-black text-foreground">TravelOS</span>
+            <span className="text-sm font-black text-foreground">Turis</span>
           </div>
 
           <div className="space-y-2.5">

@@ -11,7 +11,7 @@ import { PrimaryButton, GhostButton, Input, Sheet, Field, Select } from "@/compo
 import { cn } from "@/lib/utils";
 
 export const Route = createFileRoute("/agency/$slug/bus-layouts/$id")({
-  head: () => ({ meta: [{ title: "Editor de Frota · TravelOS" }] }),
+  head: ({ context }: any) => ({ meta: [{ title: `Editor de Frota · ${context?.brand?.platform_name || 'Turis'}` }] }),
   component: BusLayoutEditorPage,
 });
 

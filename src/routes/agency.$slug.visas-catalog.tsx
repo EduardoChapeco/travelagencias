@@ -18,7 +18,7 @@ import {
 } from "@/components/ui/form";
 
 export const Route = createFileRoute("/agency/$slug/visas-catalog")({
-  head: () => ({ meta: [{ title: "Catálogo de Requisitos · TravelOS" }] }),
+  head: ({ context }: any) => ({ meta: [{ title: `Catálogo de Requisitos · ${context?.brand?.platform_name || 'Turis'}` }] }),
   component: VisasCatalogPage,
 });
 

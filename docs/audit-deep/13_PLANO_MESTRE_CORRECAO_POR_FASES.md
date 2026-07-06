@@ -64,7 +64,7 @@ graph TD
 - **Ações:**
   1. Ajustar o handler `sendReply` em `support.$ticket_id.tsx`.
   2. Adicionar chamadas HTTP para disparar a Edge Function `gmail-send` ou o serviço de despacho do Resend ao enviar mensagens.
-- **Critério de Pronto:** Enviar uma mensagem na central do admin do TravelOS e ver o e-mail físico chegar na caixa de entrada do cliente final.
+- **Critério de Pronto:** Enviar uma mensagem na central do admin do Turis e ver o e-mail físico chegar na caixa de entrada do cliente final.
 
 ---
 

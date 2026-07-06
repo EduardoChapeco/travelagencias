@@ -1,6 +1,6 @@
 # 13. Registro de Riscos Consolidados
 
-Este documento cataloga, classifica e propõe estratégias de mitigação para todos os riscos técnicos, de segurança, de infraestrutura e operacionais identificados na auditoria do TravelOS.
+Este documento cataloga, classifica e propõe estratégias de mitigação para todos os riscos técnicos, de segurança, de infraestrutura e operacionais identificados na auditoria do Turis.
 
 ---
 
@@ -21,7 +21,7 @@ Este documento cataloga, classifica e propõe estratégias de mitigação para t
 ### RSK-P1-01 — Ausência de Testes E2E Automatizados
 
 - _Causa Raiz_: O repositório focou estritamente na compilação, modelagem de banco de dados e layout estético.
-- _Impacto_: O TravelOS gerencia dados financeiros reais e isolamento de tenants. Sem uma barreira de testes de segurança automatizados que simulem invasões de tenants (Agência A tentando consultar a API da Agência B), novas alterações no código ou refatorações do Supabase podem desativar triggers de RLS silenciosamente, expondo dados corporativos privados.
+- _Impacto_: O Turis gerencia dados financeiros reais e isolamento de tenants. Sem uma barreira de testes de segurança automatizados que simulem invasões de tenants (Agência A tentando consultar a API da Agência B), novas alterações no código ou refatorações do Supabase podem desativar triggers de RLS silenciosamente, expondo dados corporativos privados.
 
 ### RSK-P1-02 — Instabilidade ou Falta de Credenciais de APIs Externas
 

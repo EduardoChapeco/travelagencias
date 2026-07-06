@@ -1,6 +1,6 @@
 # 21 Correções Executadas
 
-Neste documento listamos todas as alterações de código efetuadas durante a sessão de auditoria e saneamento do build do TravelOS.
+Neste documento listamos todas as alterações de código efetuadas durante a sessão de auditoria e saneamento do build do Turis.
 
 ---
 

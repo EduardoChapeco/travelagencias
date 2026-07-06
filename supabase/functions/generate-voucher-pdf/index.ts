@@ -29,7 +29,7 @@ serve(async (req) => {
     const { width, height } = page.getSize();
     const fontSize = 14;
 
-    page.drawText('Voucher Oficial - TravelOS', {
+    page.drawText('Voucher Oficial - Turis', {
       x: 50,
       y: height - 4 * fontSize,
       size: 24,

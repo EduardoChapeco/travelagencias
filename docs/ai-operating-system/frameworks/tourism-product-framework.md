@@ -1,6 +1,6 @@
-# Framework: TravelOS Tourism Product Intelligence
+# Framework: Turis Tourism Product Intelligence
 
-**Propósito:** Garantir que o desenvolvimento de funcionalidades no TravelOS atenda estritamente aos processos operacionais do mercado de turismo real. O TravelOS não é apenas um CRM genérico; ele deve gerenciar com precisão as dores dos agentes de viagens, controle de passageiros e segurança contratual de operadoras turísticas.
+**Propósito:** Garantir que o desenvolvimento de funcionalidades no Turis atenda estritamente aos processos operacionais do mercado de turismo real. O Turis não é apenas um CRM genérico; ele deve gerenciar com precisão as dores dos agentes de viagens, controle de passageiros e segurança contratual de operadoras turísticas.
 
 ---
 

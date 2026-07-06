@@ -1,5 +1,5 @@
 -- =============================================================================
--- TravelOS — Storage for Contracts and Server-Side Hash
+-- Turis — Storage for Contracts and Server-Side Hash
 -- Migration: 20260609000004_contracts_storage
 -- =============================================================================
 

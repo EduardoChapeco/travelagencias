@@ -6,7 +6,7 @@ import { Field, Input, Select, Textarea, PrimaryButton } from "@/components/ui/f
 import { ShieldCheck, Calendar, Users, MapPin, Sparkles, Heart, X, Plus } from "lucide-react";
 
 export const Route = createFileRoute("/m/lead/$lead_id")({
-  head: () => ({ meta: [{ title: "Preferências de Viagem · TravelOS" }] }),
+  head: ({ context }: any) => ({ meta: [{ title: `Preferências de Viagem · ${context?.brand?.platform_name || 'Turis'}` }] }),
   component: PublicLeadFormPage,
 });
 
@@ -633,7 +633,7 @@ function PublicLeadFormPage() {
       <footer className="py-6 text-center text-xs text-muted-foreground shrink-0 border-t border-border bg-surface mt-10">
         <div className="flex items-center justify-center gap-1 text-[10px]">
           Protegido por criptografia <Heart className="h-3 w-3 text-brand fill-brand" /> Powered by
-          TravelOS
+          Turis
         </div>
       </footer>
     </div>

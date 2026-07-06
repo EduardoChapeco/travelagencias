@@ -17,7 +17,7 @@ export const Route = createFileRoute("/p/$agency_slug/blog/$slug")({
 
     const title = `${post.title} | ${agency.name}`;
     const desc = post.excerpt || `Leia ${post.title} no blog da ${agency.name}`;
-    const url = `https://travelos.com/p/${agency.slug}/blog/${post.slug}`;
+    const url = `https://turis.com/p/${agency.slug}/blog/${post.slug}`;
     const image = post.cover_image_url || agency.logo_url;
 
     const jsonLd = {
@@ -31,7 +31,7 @@ export const Route = createFileRoute("/p/$agency_slug/blog/$slug")({
         {
           "@type": "Organization",
           name: agency.name,
-          url: `https://travelos.com/p/${agency.slug}`,
+          url: `https://turis.com/p/${agency.slug}`,
         },
       ],
       description: desc,

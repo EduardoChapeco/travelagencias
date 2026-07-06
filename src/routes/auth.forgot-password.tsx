@@ -8,7 +8,7 @@ import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 
 export const Route = createFileRoute("/auth/forgot-password")({
-  head: () => ({ meta: [{ title: "Recuperar senha · TravelOS" }] }),
+  head: ({ context }: any) => ({ meta: [{ title: `Recuperar senha · ${context?.brand?.platform_name || 'Turis'}` }] }),
   component: ForgotPage,
 });
 

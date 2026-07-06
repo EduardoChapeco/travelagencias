@@ -40,7 +40,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 
 export const Route = createFileRoute("/agency/$slug/trips/")({
-  head: () => ({ meta: [{ title: "Viagens · TravelOS" }] }),
+  head: ({ context }: any) => ({ meta: [{ title: `Viagens · ${context?.brand?.platform_name || 'Turis'}` }] }),
   component: TripsList,
 });
 

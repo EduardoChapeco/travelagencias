@@ -1,4 +1,4 @@
-# 02. Matriz de Compatibilidade UI ↔ Contratos ↔ Banco - TravelOS
+# 02. Matriz de Compatibilidade UI ↔ Contratos ↔ Banco - Turis
 
 Este documento apresenta o mapeamento de conformidade entre os formulários do frontend, esquemas de validação (Zod), definições de tipo do TypeScript e a persistência relacional correspondente no Supabase.
 

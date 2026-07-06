@@ -1,6 +1,6 @@
 # 06. APIs, Inteligência Artificial, OCR e Integrações
 
-Este documento inventaria e analisa as integrações externas da plataforma TravelOS, avaliando o fluxo de dados, tratamento de erros, autenticação, resiliência de rede e contingências aplicadas.
+Este documento inventaria e analisa as integrações externas da plataforma Turis, avaliando o fluxo de dados, tratamento de erros, autenticação, resiliência de rede e contingências aplicadas.
 
 ---
 
@@ -33,6 +33,6 @@ Este documento inventaria e analisa as integrações externas da plataforma Trav
 
 ## 2. Hardening de Segredos e Chaves
 
-- **Vazamento de Chaves**: Não existem chaves de API, credenciais ou segredos em texto claro hardcoded no frontend do TravelOS.
+- **Vazamento de Chaves**: Não existem chaves de API, credenciais ou segredos em texto claro hardcoded no frontend do Turis.
 - **Gerenciamento de Secrets**: Todas as chaves secretas (`OPENAI_API_KEY`, `RESEND_API_KEY`, tokens da Meta, etc.) são armazenadas nas variáveis de ambiente seguras do Supabase Edge Functions (`supabase secrets set`) e resolvidas em tempo de execução no backend ou criptografadas no banco via CRUD administrativo de chaves mestras.
 - **CORS e Isolamento de Chamadas**: As Edge Functions validam a assinatura do JWT enviado na requisição (`requireSupabaseAuth`), impedindo que agentes maliciosos disparem requisições de processamento ou OCR externos usando robôs fora do contexto da plataforma.

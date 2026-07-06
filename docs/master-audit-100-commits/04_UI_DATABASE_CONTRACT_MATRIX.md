@@ -1,6 +1,6 @@
 # 04. Matriz UI ↔ Contratos ↔ Banco de Dados
 
-Este documento mapeia o fluxo completo das transações críticas do TravelOS, rastreando desde o evento disparado no frontend até a persistência física no banco de dados e auditoria contábil.
+Este documento mapeia o fluxo completo das transações críticas do Turis, rastreando desde o evento disparado no frontend até a persistência física no banco de dados e auditoria contábil.
 
 ---
 

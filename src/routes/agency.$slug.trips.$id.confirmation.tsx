@@ -32,7 +32,7 @@ import { toast } from "sonner";
 import { logTripAudit } from "@/services/audit";
 
 export const Route = createFileRoute("/agency/$slug/trips/$id/confirmation")({
-  head: () => ({ meta: [{ title: "Confirmação de Reserva · TravelOS" }] }),
+  head: ({ context }: any) => ({ meta: [{ title: `Confirmação de Reserva · ${context?.brand?.platform_name || 'Turis'}` }] }),
   component: TripConfirmationPage,
 });
 

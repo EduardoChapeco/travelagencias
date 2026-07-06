@@ -1,6 +1,6 @@
 # 13. Auditoria de Integração Real (GDS Infotravel)
 
-Este documento analisa a integridade da integração do **TravelOS** com o GDS parceiro **Infotravel**, comprovando que a comunicação é real, estruturada e não depende de mocks simulados em produção.
+Este documento analisa a integridade da integração do **Turis** com o GDS parceiro **Infotravel**, comprovando que a comunicação é real, estruturada e não depende de mocks simulados em produção.
 
 ---
 

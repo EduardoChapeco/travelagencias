@@ -36,7 +36,7 @@ import {
 } from "@/components/ui/form";
 
 export const Route = createFileRoute("/agency/$slug/destination-intelligence")({
-  head: () => ({ meta: [{ title: "Informações de Destinos · TravelOS" }] }),
+  head: ({ context }: any) => ({ meta: [{ title: `Informações de Destinos · ${context?.brand?.platform_name || 'Turis'}` }] }),
   component: DestinationIntelligencePage,
 });
 

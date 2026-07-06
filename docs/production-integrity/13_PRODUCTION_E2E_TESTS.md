@@ -49,7 +49,7 @@ import { test, expect } from "@playwright/test";
 
 test("Audit Flow - Zero Trust Production Test", async ({ page }) => {
   // 1. Login
-  await page.goto("https://travelagencias.pages.dev/login");
+  await page.goto("https://turis.com/login");
   await page.fill('input[type="email"]', "audit-agent@travelagencias.com");
   await page.fill('input[type="password"]', "SenhaAudit123!");
   await page.click('button[type="submit"]');

@@ -1,12 +1,12 @@
 # 08. Auditoria de Design System e Responsividade
 
-Este documento apresenta a auditoria estética do design plano **Light Editorial SaaS** do TravelOS, verificando a conformidade com as restrições de sombras, o comportamento do Brand Kit e a responsividade em múltiplos viewports.
+Este documento apresenta a auditoria estética do design plano **Light Editorial SaaS** do Turis, verificando a conformidade com as restrições de sombras, o comportamento do Brand Kit e a responsividade em múltiplos viewports.
 
 ---
 
 ## 1. Presença de Sombras e Desvios Estéticos (Varredura Técnica)
 
-A regra de design do TravelOS exige o uso estrito de um layout editorial limpo, plano (flat), com cores harmônicas, tipografia serifada/moderna de alto contraste e **ausência completa de sombras utilitárias**.
+A regra de design do Turis exige o uso estrito de um layout editorial limpo, plano (flat), com cores harmônicas, tipografia serifada/moderna de alto contraste e **ausência completa de sombras utilitárias**.
 
 - **Fase 1 - Higienização:** Realizou a remoção sistemática de classes `shadow-sm`, `shadow-md`, `shadow-lg` e `shadow-xl` em componentes importantes.
 - **Gargalos Remanescentes (Desvios):**

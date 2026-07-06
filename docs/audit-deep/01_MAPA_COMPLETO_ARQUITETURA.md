@@ -1,6 +1,6 @@
 # 01. Mapa Completo de Arquitetura e Domínios
 
-Este documento descreve a topografia completa do sistema do TravelAgencias/TravelOS em seu estado atual, mapeando rotas, tabelas, serviços, portais e integrações.
+Este documento descreve a topografia completa do sistema do TravelAgencias/Turis em seu estado atual, mapeando rotas, tabelas, serviços, portais e integrações.
 
 ---
 

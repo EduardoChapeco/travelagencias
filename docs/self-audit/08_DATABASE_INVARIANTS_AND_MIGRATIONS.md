@@ -14,7 +14,7 @@ Realizamos uma consulta direta à tabela `supabase_migrations.schema_migrations`
 
 ## 2. Invariantes de Negócio Protegidas no Banco
 
-O banco de dados do **TravelOS** atua como a camada de defesa definitiva da integridade dos dados, protegendo as seguintes invariantes operacionais:
+O banco de dados do **Turis** atua como a camada de defesa definitiva da integridade dos dados, protegendo as seguintes invariantes operacionais:
 
 ### A. Integridade Relacional Omnichannel
 * **Invariante**: Uma mensagem não pode ser inserida sem pertencer a uma sessão ativa, e a sessão deve obrigatoriamente estar vinculada à agência proprietária.

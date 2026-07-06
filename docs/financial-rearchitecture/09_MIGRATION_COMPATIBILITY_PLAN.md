@@ -1,6 +1,6 @@
-# Plano de Compatibilidade e Migração (TravelOS)
+# Plano de Compatibilidade e Migração (Turis)
 
-Este plano descreve as diretrizes técnicas para implantação de mudanças no banco de dados e migração de dados históricos do TravelOS sem indisponibilidade (zero downtime) ou quebras de retrocompatibilidade com o frontend atual.
+Este plano descreve as diretrizes técnicas para implantação de mudanças no banco de dados e migração de dados históricos do Turis sem indisponibilidade (zero downtime) ou quebras de retrocompatibilidade com o frontend atual.
 
 ---
 

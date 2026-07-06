@@ -1,4 +1,4 @@
-# Plano Corretivo Contábil — Rodada 2 (TravelOS)
+# Plano Corretivo Contábil — Rodada 2 (Turis)
 
 Este plano corretivo estabelece as próximas etapas para resolver as vulnerabilidades de segurança (P0), plugar integrações pendentes (P1/P2) e refinamentos gerais.
 

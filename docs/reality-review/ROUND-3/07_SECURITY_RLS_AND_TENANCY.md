@@ -1,4 +1,4 @@
-# Segurança, RLS e Tenancy Hardening — Rodada 3 (TravelOS)
+# Segurança, RLS e Tenancy Hardening — Rodada 3 (Turis)
 
 Este documento certifica a integridade das políticas de Row Level Security (RLS) e as garantias contábeis contra fraudes e vazamento de dados.
 

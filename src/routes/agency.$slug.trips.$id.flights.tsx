@@ -38,7 +38,7 @@ import { toast } from "sonner";
 import { logTripAudit } from "@/services/audit";
 
 export const Route = createFileRoute("/agency/$slug/trips/$id/flights")({
-  head: () => ({ meta: [{ title: "Aéreos & Reconciliação · TravelOS" }] }),
+  head: ({ context }: any) => ({ meta: [{ title: `Aéreos & Reconciliação · ${context?.brand?.platform_name || 'Turis'}` }] }),
   component: TripFlightsPage,
 });
 

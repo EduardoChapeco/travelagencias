@@ -6,9 +6,9 @@ Este documento descreve a rota e o painel visual dedicado aos gestores para audi
 
 ## 1. Rota e Layout do Painel de Auditoria
 
-- **Arquivo**: [ai-audit.tsx](file:///c:/Users/Excelência Tour SMO/.gemini/antigravity-ide/scratch/travelagencias/src/routes/agency.$slug.settings.ai-audit.tsx)
+- **Arquivo**: [ai-audit.tsx](file:///c:/Users/Turis Tecnologia SMO/.gemini/antigravity-ide/scratch/travelagencias/src/routes/agency.$slug.settings.ai-audit.tsx)
 - **Acesso**: A rota `/agency/$slug/settings/ai-audit` foi devidamente integrada na árvore de navegação contextual do gestor:
-  - **Link Lateral**: Mapeado no [AppSidebar.tsx](file:///c:/Users/Excelência Tour SMO/.gemini/antigravity-ide/scratch/travelagencias/src/components/shell/AppSidebar.tsx) como item `"Auditoria de IA"`, associado ao ícone `Shield` de segurança.
+  - **Link Lateral**: Mapeado no [AppSidebar.tsx](file:///c:/Users/Turis Tecnologia SMO/.gemini/antigravity-ide/scratch/travelagencias/src/components/shell/AppSidebar.tsx) como item `"Auditoria de IA"`, associado ao ícone `Shield` de segurança.
   - **Permissão**: O menu de configurações e, consequentemente, o link de auditoria, são renderizados condicionalmente se a propriedade `isAdmin` for verdadeira, mantendo conformidade com as permissões de negócio da agência.
 
 ---

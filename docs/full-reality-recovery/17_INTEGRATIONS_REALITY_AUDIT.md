@@ -15,11 +15,11 @@ Este documento analisa o status real das conexões externas operacionais, defini
 ## 2. Sincronizador Gmail (OAuth2)
 * **Status:** 🟢 Edge Functions `gmail-oauth`, `gmail-sync` e `gmail-send` deployadas.
 * **Tabela Associada:** `messages` do Inbox.
-* **Funcionamento:** Sincronização em segundo plano das threads de e-mail integradas ao fluxo omnichannel, permitindo respostas no formato white-label diretamente pelo painel de inbox do TravelOS.
+* **Funcionamento:** Sincronização em segundo plano das threads de e-mail integradas ao fluxo omnichannel, permitindo respostas no formato white-label diretamente pelo painel de inbox do Turis.
 
 ---
 
 ## 3. Conector Infotravel (GDS)
 * **Status:** 🟢 Edge Function `infotravel-connector` e jobs cron de sincronização de reservas deployados.
 * **Tabelas Associadas:** `infotravel_sync_jobs`, `trips`.
-* **Mapeamento:** Importação atômica das confirmações e e-tickets das companhias aéreas e hotéis GDS diretamente para o painel de passageiros do TravelOS.
+* **Mapeamento:** Importação atômica das confirmações e e-tickets das companhias aéreas e hotéis GDS diretamente para o painel de passageiros do Turis.

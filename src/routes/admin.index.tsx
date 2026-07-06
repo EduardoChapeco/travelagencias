@@ -21,7 +21,7 @@ import { fmtDate, money, StatusBadge } from "@/components/ui/form";
 import { ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/ui/chart";
 
 export const Route = createFileRoute("/admin/")({
-  head: () => ({ meta: [{ title: "Admin · TravelOS" }] }),
+  head: ({ context }: any) => ({ meta: [{ title: `Admin · ${context?.brand?.platform_name || 'Turis'}` }] }),
   component: Page,
 });
 
@@ -44,7 +44,7 @@ function Page() {
     <>
       <PageHeader
         title="Visão Geral"
-        description="Métricas globais da plataforma TravelOS em tempo real."
+        description="Métricas globais da plataforma Turis em tempo real."
       />
 
       {/* MAIN STATS GRID */}

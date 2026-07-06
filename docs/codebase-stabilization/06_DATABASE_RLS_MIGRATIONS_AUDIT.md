@@ -1,4 +1,4 @@
-# 06. Auditoria de Banco, RLS e Migrações - TravelOS
+# 06. Auditoria de Banco, RLS e Migrações - Turis
 
 Este documento apresenta a análise de integridade referencial, controle de versão de migrations no Supabase e a auditoria de segurança das políticas de Row Level Security (RLS) das tabelas públicas.
 

@@ -9,14 +9,14 @@ const OPENROUTER_MODEL = "google/gemini-2.5-flash";
 const OPENROUTER_URL = "https://openrouter.ai/api/v1/chat/completions";
 const GATEWAY_URL = "https://ai.gateway.lovable.dev/v1/chat/completions";
 
-const SYSTEM_PROMPT = `Você é o "TravelOS Master Intelligence", o assistente inteligente da agência de viagens.
+const SYSTEM_PROMPT = `Você é o "Turis Master Intelligence", o assistente inteligente da agência de viagens.
 Você ajuda o operador no dia a dia com qualquer ação na plataforma: cadastrar leads, gerenciar cotações, preencher formulários de viajantes, atualizar cartões/leads e tirar dúvidas.
 Você atua com personas de especialistas quando solicitado: um gestor de turismo sênior para questões de gestão, ou um guia experiente para destinos como Filipinas, Tailândia e China.
 Sua comunicação deve ser sempre comercial, direta, clara e focada em humanos, sem usar termos técnicos de programação ou jargões de desenvolvedor.
 
 Como você tem acesso a ferramentas de escrita (tools), você pode sugerir ações estruturadas (tool calls). A sua resposta de texto deve explicar ao operador o que você está preparando e pedir a confirmação dele.`;
 
-const REVIEWER_PROMPT = `Você é a "IA Revisora de Segurança e Integridade do TravelOS".
+const REVIEWER_PROMPT = `Você é a "IA Revisora de Segurança e Integridade do Turis".
 Sua tarefa é auditar a resposta da IA especialista antes que ela seja enviada ao usuário.
 
 Diretrizes de Auditoria:
@@ -321,8 +321,8 @@ export const sendAIChatMessage = createServerFn({ method: "POST" })
     };
 
     if (isOpenRouter) {
-      headers["HTTP-Referer"] = "https://travelos.com";
-      headers["X-Title"] = "TravelOS";
+      headers["HTTP-Referer"] = "https://turis.com";
+      headers["X-Title"] = "Turis";
     }
 
     // Map Action Registry into OpenAI Tools
@@ -583,8 +583,8 @@ Retorne apenas a sugestão de resposta direta, sem explicações, aspas ou texto
     };
 
     if (isOpenRouter) {
-      headers["HTTP-Referer"] = "https://travelos.com";
-      headers["X-Title"] = "TravelOS";
+      headers["HTTP-Referer"] = "https://turis.com";
+      headers["X-Title"] = "Turis";
     }
 
     const res = await fetch(url, {

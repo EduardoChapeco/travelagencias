@@ -8,5 +8,5 @@ Este checklist serve para orientar o administrador da plataforma a configurar os
 * [ ] **App Domains:** Declarar o domínio canônico de produção (ex: `app.vibetour.com.br`) na seção básica de configurações.
 * [ ] **URLs Legais:** Preencher as URLs de Política de Privacidade e Termos de Serviço apontando para os caminhos correspondentes da aplicação.
 * [ ] **Oauth Redirect URIs:** Adicionar o endereço de callback na configuração de Login do Facebook.
-* [ ] **Config ID:** Copiar o ID de configuração do Embedded Signup gerado no painel e setar na interface administrativa do TravelOS.
+* [ ] **Config ID:** Copiar o ID de configuração do Embedded Signup gerado no painel e setar na interface administrativa do Turis.
 * [ ] **Webhook Subscriptions:** Inscrever o webhook nas alterações do objeto `whatsapp_business_account` (campos `messages`, `message_deliveries`) e `instagram` (campo `messages`).

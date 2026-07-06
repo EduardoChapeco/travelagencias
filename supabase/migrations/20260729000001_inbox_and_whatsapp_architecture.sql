@@ -137,7 +137,7 @@ ALTER TABLE public.omnichannel_messages
   ADD COLUMN IF NOT EXISTS failed_at timestamptz,
   ADD COLUMN IF NOT EXISTS failure_code text,
   ADD COLUMN IF NOT EXISTS failure_message text,
-  ADD COLUMN IF NOT EXISTS source text DEFAULT 'customer', -- customer, business_app, travelos_agent, automation, template
+  ADD COLUMN IF NOT EXISTS source text DEFAULT 'customer', -- customer, business_app, turis_agent, automation, template
   ADD COLUMN IF NOT EXISTS reply_to uuid REFERENCES public.omnichannel_messages(id) ON DELETE SET NULL;
 
 CREATE UNIQUE INDEX IF NOT EXISTS idx_omnichannel_messages_wamid ON public.omnichannel_messages(wamid) WHERE wamid IS NOT NULL;

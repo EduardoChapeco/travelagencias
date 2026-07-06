@@ -3,6 +3,7 @@ import { DndContext, DragOverlay, closestCorners } from "@dnd-kit/core";
 import { SortableContext, useSortable, verticalListSortingStrategy } from "@dnd-kit/sortable";
 import { type Stage, type Lead } from "@/services/crm";
 import { SortableLead, LeadCardView } from "./LeadCard";
+import { cn } from "@/lib/utils";
 
 type BoardProps = {
   stages: Stage[];
@@ -34,7 +35,7 @@ export function CrmKanbanBoard({
   return (
     <div className="flex-1 flex flex-col min-h-0">
       {/* Mobile/Tablet list view */}
-      <div className="flex-1 lg:hidden overflow-y-auto p-4 space-y-3 bg-background/30">
+      <div className="flex-1 lg:hidden overflow-y-auto p-4 space-y-3 bg-transparent">
         {stages.map((stage) => {
           const items = stagesById[stage.id] ?? [];
           return (
@@ -60,7 +61,7 @@ export function CrmKanbanBoard({
           onDragStart={onDragStart}
           onDragEnd={onDragEnd}
         >
-          <div className="flex-1 overflow-x-auto overflow-y-hidden p-3 no-scrollbar cursor-grab active:cursor-grabbing bg-background/50">
+          <div className="flex-1 overflow-x-auto overflow-y-hidden p-3 no-scrollbar cursor-grab active:cursor-grabbing bg-transparent">
             <div className="flex h-full min-w-max gap-3.5">
               {stages.map((stage) => {
                 const items = stagesById[stage.id] ?? [];
@@ -114,12 +115,14 @@ function Column({
   return (
     <div
       ref={setNodeRef}
-      className={`flex h-full w-[310px] shrink-0 flex-col rounded-xl border bg-surface/50 transition-all duration-300 ${
-        isOver ? "border-brand bg-brand/5 scale-[1.01]" : "border-border/80"
-      }`}
+      className={cn(
+        "flex h-full w-[310px] shrink-0 flex-col rounded-[28px] transition-all duration-300",
+        "glass dark:glass-dark",
+        isOver ? "border-brand bg-brand/5 scale-[1.01]" : ""
+      )}
       style={{ borderTop: `4px solid ${stage.color || "#9ca3af"}` }}
     >
-      <div className="flex flex-col justify-center border-b border-border/40 bg-surface-alt/25 px-4 py-3 rounded-t-xl">
+      <div className="flex flex-col justify-center border-b border-border/40 bg-white/5 px-5 py-4 rounded-t-3xl">
         <div className="flex items-center justify-between mb-0.5">
           <div className="flex items-center gap-2">
             <span
@@ -144,7 +147,7 @@ function Column({
         )}
       </div>
       <SortableContext items={leads.map((l) => l.id)} strategy={verticalListSortingStrategy}>
-        <div className="flex-1 space-y-3 overflow-y-auto p-3 no-scrollbar cursor-default bg-background/10">
+        <div className="flex-1 space-y-3 overflow-y-auto p-3 no-scrollbar cursor-default bg-transparent">
           {leads.map((lead) => (
             <SortableLead
               key={lead.id}

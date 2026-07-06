@@ -35,7 +35,7 @@ import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 
 export const Route = createFileRoute("/admin/plans")({
-  head: () => ({ meta: [{ title: "Planos · TravelOS Admin" }] }),
+  head: () => ({ meta: [{ title: "Planos · Turis Admin" }] }),
   component: Page,
 });
 

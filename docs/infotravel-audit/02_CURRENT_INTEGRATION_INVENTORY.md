@@ -1,6 +1,6 @@
-# 02. Inventário da Integração Atual no TravelOS
+# 02. Inventário da Integração Atual no Turis
 
-Este documento cataloga todos os arquivos, rotas, tabelas, Edge Functions e regras de segurança que fazem referência direta ou indireta à API **Infotravel/Infotera** no repositório atual do **TravelOS**.
+Este documento cataloga todos os arquivos, rotas, tabelas, Edge Functions e regras de segurança que fazem referência direta ou indireta à API **Infotravel/Infotera** no repositório atual do **Turis**.
 
 ---
 

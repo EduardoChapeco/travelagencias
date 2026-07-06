@@ -1,6 +1,6 @@
-# Qualidade do Código e Arquitetura (TravelOS)
+# Qualidade do Código e Arquitetura (Turis)
 
-Este relatório expõe problemas de qualidade de código, dependências inadequadas, acoplamento e desvios de arquitetura no TravelOS.
+Este relatório expõe problemas de qualidade de código, dependências inadequadas, acoplamento e desvios de arquitetura no Turis.
 
 ---
 

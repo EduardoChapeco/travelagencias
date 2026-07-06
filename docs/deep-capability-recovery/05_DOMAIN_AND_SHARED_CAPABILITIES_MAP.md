@@ -1,6 +1,6 @@
 # 05. Domain and Shared Capabilities Map (Domínios e Capacidades Reutilizáveis)
 
-Este relatório mapeia os domínios específicos do negócio do TravelOS e define as capacidades transversais (compartilhadas) para evitar código duplicado ou generalizações excessivas.
+Este relatório mapeia os domínios específicos do negócio do Turis e define as capacidades transversais (compartilhadas) para evitar código duplicado ou generalizações excessivas.
 
 ---
 

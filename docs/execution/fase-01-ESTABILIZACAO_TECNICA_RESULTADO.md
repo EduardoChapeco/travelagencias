@@ -7,7 +7,7 @@
 
 ## 1. Visão Geral da Fase 1
 
-Esta fase realizou a higienização estética do painel do TravelOS removendo sombras estáticas que violavam a estética _Light Editorial SaaS_. Também estabilizou a exportação tipográfica de PDFs e PNGs, garantindo o carregamento completo de fontes da Web antes do disparo do screenshot, além de prevenir o efeito flicker de Brand Kit em rotas operacionais.
+Esta fase realizou a higienização estética do painel do Turis removendo sombras estáticas que violavam a estética _Light Editorial SaaS_. Também estabilizou a exportação tipográfica de PDFs e PNGs, garantindo o carregamento completo de fontes da Web antes do disparo do screenshot, além de prevenir o efeito flicker de Brand Kit em rotas operacionais.
 
 ---
 

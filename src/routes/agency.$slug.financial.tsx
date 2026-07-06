@@ -13,7 +13,7 @@ import { ModuleAdminPanel } from "@/components/shell/ModuleAdminPanel";
 import { Tabs, TabsList } from "@/components/ui/tabs";
 
 export const Route = createFileRoute("/agency/$slug/financial")({
-  head: () => ({ meta: [{ title: "Financeiro · TravelOS" }] }),
+  head: ({ context }: any) => ({ meta: [{ title: `Financeiro · ${context?.brand?.platform_name || 'Turis'}` }] }),
   beforeLoad: ({ location, params }) => {
     const p = location.pathname.replace(/\/$/, "");
     if (p.endsWith("/financial")) {

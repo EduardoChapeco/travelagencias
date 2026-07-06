@@ -80,7 +80,7 @@ function IconPicker({ value, onChange }: { value: string; onChange: (key: string
       <button
         type="button"
         onClick={() => setOpen((p) => !p)}
-        className="flex items-center gap-2 h-9 px-3 rounded-lg border border-border bg-surface-alt text-xs font-medium hover:border-brand/60 transition-colors w-full"
+        className="flex items-center gap-2 h-9 px-3 rounded-2xl border border-border bg-surface-alt text-xs font-medium hover:border-brand/60 transition-colors w-full"
       >
         {CurrentIcon ? (
           <CurrentIcon className="w-4 h-4 text-brand shrink-0" />
@@ -93,7 +93,7 @@ function IconPicker({ value, onChange }: { value: string; onChange: (key: string
         <ChevronDown className="w-3.5 h-3.5 text-muted-foreground" />
       </button>
       {open && (
-        <div className="absolute z-50 top-10 left-0 w-64 p-3 rounded-xl border border-border bg-surface shadow-none">
+        <div className="absolute z-50 top-10 left-0 w-64 p-3 rounded-3xl border border-border bg-surface shadow-none">
           <div className="grid grid-cols-6 gap-1.5">
             {ICON_OPTIONS.map((opt) => (
               <button
@@ -104,7 +104,7 @@ function IconPicker({ value, onChange }: { value: string; onChange: (key: string
                   onChange(opt.key);
                   setOpen(false);
                 }}
-                className={`flex flex-col items-center justify-center gap-1 p-2 rounded-lg border text-[9px] font-medium transition-all hover:border-brand hover:bg-brand/10 ${
+                className={`flex flex-col items-center justify-center gap-1 p-2 rounded-2xl border text-[9px] font-medium transition-all hover:border-brand hover:bg-brand/10 ${
                   value === opt.key
                     ? "border-brand bg-brand/10 text-brand"
                     : "border-transparent bg-surface-alt text-muted-foreground"
@@ -412,7 +412,7 @@ export function BlockFormEditor({ block: blockItem, updateBlock, agencyId }: Pro
               {(block.items || []).map((item, itemIdx) => (
                 <div
                   key={itemIdx}
-                  className="border border-border rounded-xl p-4 space-y-3 bg-surface shadow-none"
+                  className="border border-border rounded-3xl p-4 space-y-3 bg-surface shadow-none"
                 >
                   <div className="flex items-center justify-between gap-2">
                     <span className="text-[10px] font-bold text-muted-foreground uppercase">
@@ -542,7 +542,7 @@ export function BlockFormEditor({ block: blockItem, updateBlock, agencyId }: Pro
               {(block.items || []).map((item, itemIdx) => (
                 <div
                   key={itemIdx}
-                  className="flex gap-2 items-start border border-border p-3 rounded-lg bg-surface"
+                  className="flex gap-2 items-start border border-border p-3 rounded-2xl bg-surface"
                 >
                   <div className="flex-1 space-y-2">
                     <Input
@@ -616,7 +616,7 @@ export function BlockFormEditor({ block: blockItem, updateBlock, agencyId }: Pro
                 Depoimentos
               </label>
               {(block.items || []).map((item: any, idx: number) => (
-                <div key={idx} className="border border-border rounded-lg p-3 space-y-2 bg-surface">
+                <div key={idx} className="border border-border rounded-2xl p-3 space-y-2 bg-surface">
                   <div className="grid grid-cols-2 gap-2">
                     <Input
                       placeholder="Nome do cliente"
@@ -774,7 +774,7 @@ export function BlockFormEditor({ block: blockItem, updateBlock, agencyId }: Pro
               {(block.items || []).map((item: any, idx: number) => (
                 <div
                   key={idx}
-                  className="grid grid-cols-[auto_1fr_2fr_auto] gap-2 items-center border border-border rounded-lg p-2 bg-surface"
+                  className="grid grid-cols-[auto_1fr_2fr_auto] gap-2 items-center border border-border rounded-2xl p-2 bg-surface"
                 >
                   <Input
                     className="w-12 text-center px-1"
@@ -1010,7 +1010,7 @@ export function BlockFormEditor({ block: blockItem, updateBlock, agencyId }: Pro
               Links do Biolink
             </label>
             {(block.items || []).map((item: any, idx: number) => (
-              <div key={idx} className="border border-border rounded-lg p-3 space-y-2 bg-surface">
+              <div key={idx} className="border border-border rounded-2xl p-3 space-y-2 bg-surface">
                 <div className="grid grid-cols-[auto_1fr_auto] gap-2 items-center">
                   <Input
                     className="w-12 text-center px-1"
@@ -1184,7 +1184,7 @@ export function BlockFormEditor({ block: blockItem, updateBlock, agencyId }: Pro
               {(block.items || []).map((item, idx) => (
                 <div
                   key={idx}
-                  className="border border-border rounded-xl p-3 space-y-3 bg-surface shadow-none"
+                  className="border border-border rounded-3xl p-3 space-y-3 bg-surface shadow-none"
                 >
                   <div className="flex justify-between items-center pb-2 border-b border-border/40">
                     <span className="text-[10px] font-bold text-muted-foreground uppercase">
@@ -1553,7 +1553,7 @@ export function BlockFormEditor({ block: blockItem, updateBlock, agencyId }: Pro
               {((block as any).departments || []).map((dept: any, idx: number) => (
                 <div
                   key={idx}
-                  className="border border-border p-3 rounded-lg bg-surface space-y-2 relative"
+                  className="border border-border p-3 rounded-2xl bg-surface space-y-2 relative"
                 >
                   <button
                     type="button"
@@ -2371,7 +2371,7 @@ export function BlockFormEditor({ block: blockItem, updateBlock, agencyId }: Pro
                   />
                 </div>
                 {/* Agency Colors Swatches */}
-                <div className="flex flex-wrap gap-1.5 mt-2 bg-surface-alt/40 p-2 rounded-lg border border-border/40">
+                <div className="flex flex-wrap gap-1.5 mt-2 bg-surface-alt/40 p-2 rounded-2xl border border-border/40">
                   <span className="text-[9px] font-bold text-muted-foreground uppercase w-full mb-1">
                     Cores da Agência:
                   </span>
@@ -2402,7 +2402,7 @@ export function BlockFormEditor({ block: blockItem, updateBlock, agencyId }: Pro
                   />
                 </Field>
                 {/* Gradient Presets */}
-                <div className="bg-surface-alt/45 p-2.5 rounded-xl border border-border/40 space-y-2">
+                <div className="bg-surface-alt/45 p-2.5 rounded-3xl border border-border/40 space-y-2">
                   <span className="text-[10px] font-bold text-muted-foreground uppercase">
                     Presets Vibrantes:
                   </span>
@@ -2437,7 +2437,7 @@ export function BlockFormEditor({ block: blockItem, updateBlock, agencyId }: Pro
                         key={p.name}
                         type="button"
                         onClick={() => updateStyle({ bg_gradient: p.value })}
-                        className="flex items-center gap-1.5 p-1 rounded-lg border border-border text-[9px] font-bold text-left hover:border-brand/40 bg-surface transition-all active:scale-[0.97]"
+                        className="flex items-center gap-1.5 p-1 rounded-2xl border border-border text-[9px] font-bold text-left hover:border-brand/40 bg-surface transition-all active:scale-[0.97]"
                       >
                         <span
                           className="w-3.5 h-3.5 rounded-full shrink-0 border border-black/10"
@@ -2583,7 +2583,7 @@ export function BlockFormEditor({ block: blockItem, updateBlock, agencyId }: Pro
                   placeholder="#000000"
                 />
               </div>
-              <div className="flex flex-wrap gap-1.5 mt-2 bg-surface-alt/40 p-2 rounded-lg border border-border/40">
+              <div className="flex flex-wrap gap-1.5 mt-2 bg-surface-alt/40 p-2 rounded-2xl border border-border/40">
                 <span className="text-[9px] font-bold text-muted-foreground uppercase w-full mb-1">
                   Presets de Contraste:
                 </span>
@@ -2931,7 +2931,7 @@ function SectionStyleEditor({ block, updateBlock, agencyId }: Props) {
             />
           </div>
           {(brandColor || brandColorLight) && (
-            <div className="flex gap-2 items-center mt-2 bg-surface-alt/40 p-2 rounded-lg border border-border/40">
+            <div className="flex gap-2 items-center mt-2 bg-surface-alt/40 p-2 rounded-2xl border border-border/40">
               <span className="text-[10px] font-bold text-muted-foreground uppercase">
                 Cores da Agência:
               </span>
@@ -2996,7 +2996,7 @@ function SectionStyleEditor({ block, updateBlock, agencyId }: Props) {
             />
           </div>
           {(brandColor || brandOriginalFg) && (
-            <div className="flex gap-2 items-center mt-2 bg-surface-alt/40 p-2 rounded-lg border border-border/40">
+            <div className="flex gap-2 items-center mt-2 bg-surface-alt/40 p-2 rounded-2xl border border-border/40">
               <span className="text-[10px] font-bold text-muted-foreground uppercase">
                 Presets de Contraste:
               </span>
@@ -3214,7 +3214,7 @@ export function RegistryBlockFormEditor({
                     type="color"
                     value={(value as string) || "#ffffff"}
                     onChange={(e) => handleFieldChange(field.key, e.target.value)}
-                    className="w-10 h-10 rounded-lg border border-border cursor-pointer"
+                    className="w-10 h-10 rounded-2xl border border-border cursor-pointer"
                   />
                   <Input
                     value={(value as string) || ""}
@@ -3352,27 +3352,27 @@ function UnsplashPicker({ value, onChange }: { value: string; onChange: (url: st
       <button
         type="button"
         onClick={() => setOpen(!open)}
-        className="px-3 h-9 rounded-lg border border-border bg-surface-alt text-xs font-semibold hover:border-brand/60 transition-colors"
+        className="px-3 h-9 rounded-2xl border border-border bg-surface-alt text-xs font-semibold hover:border-brand/60 transition-colors"
       >
         {value ? "Buscar no Unsplash" : "Buscar no Unsplash"}
       </button>
 
       {open && (
-        <div className="absolute z-50 right-4 w-72 p-4 rounded-xl border border-border bg-surface shadow-none space-y-3 mt-2">
+        <div className="absolute z-50 right-4 w-72 p-4 rounded-3xl border border-border bg-surface shadow-none space-y-3 mt-2">
           <div className="flex gap-2">
             <input
               type="text"
               placeholder="Ex: travel paradise, hotel, beach..."
               value={keyword}
               onChange={(e) => setKeyword(e.target.value)}
-              className="flex-1 px-3 py-1.5 text-xs rounded-lg border border-border outline-none bg-surface"
+              className="flex-1 px-3 py-1.5 text-xs rounded-2xl border border-border outline-none bg-surface"
               onKeyDown={(e) => e.key === "Enter" && search()}
             />
             <button
               type="button"
               onClick={search}
               disabled={loading}
-              className="px-3 py-1.5 bg-brand text-white text-xs font-bold rounded-lg"
+              className="px-3 py-1.5 bg-brand text-white text-xs font-bold rounded-2xl"
             >
               {loading ? "Buscando..." : "Buscar"}
             </button>
@@ -3386,7 +3386,7 @@ function UnsplashPicker({ value, onChange }: { value: string; onChange: (url: st
                     onChange(p.urls.regular);
                     setOpen(false);
                   }}
-                  className="aspect-video cursor-pointer overflow-hidden rounded-lg hover:ring-2 hover:ring-brand"
+                  className="aspect-video cursor-pointer overflow-hidden rounded-2xl hover:ring-2 hover:ring-brand"
                 >
                   <img
                     src={p.urls.thumb}
@@ -3474,7 +3474,7 @@ function ListFieldEditor({ items, onChange, defaultValue, agencyId }: ListFieldE
           return (
             <div
               key={idx}
-              className="border border-border rounded-xl bg-surface-alt/20 overflow-hidden"
+              className="border border-border rounded-3xl bg-surface-alt/20 overflow-hidden"
             >
               <div
                 className="flex items-center justify-between px-3 py-2 cursor-pointer bg-surface-alt/45 select-none"
@@ -3622,7 +3622,7 @@ function ListFieldEditor({ items, onChange, defaultValue, agencyId }: ListFieldE
       <button
         type="button"
         onClick={addItem}
-        className="w-full py-2 border border-dashed border-border rounded-xl text-xs font-semibold hover:border-brand/40 hover:bg-surface-alt/25 transition-colors text-center"
+        className="w-full py-2 border border-dashed border-border rounded-3xl text-xs font-semibold hover:border-brand/40 hover:bg-surface-alt/25 transition-colors text-center"
       >
         + Adicionar Item
       </button>

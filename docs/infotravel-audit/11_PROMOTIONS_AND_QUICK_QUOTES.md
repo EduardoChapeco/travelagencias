@@ -1,6 +1,6 @@
 # 11. Cotação Rápida e Motor de Promoções do Dia
 
-Este documento descreve as especificações funcionais e técnicas para o módulo de **Cotação Rápida** e o pipeline automatizado de **Promoções do Dia** no TravelOS, conectando diretamente os motores de busca e disponibilidade da API **Infotravel**.
+Este documento descreve as especificações funcionais e técnicas para o módulo de **Cotação Rápida** e o pipeline automatizado de **Promoções do Dia** no Turis, conectando diretamente os motores de busca e disponibilidade da API **Infotravel**.
 
 ---
 
@@ -30,7 +30,7 @@ Os resultados retornados na estrutura unificada `NormalizedOffer` são apresenta
 
 ## 2. Pipeline do Motor de Promoções do Dia
 
-O TravelOS contará com um job automatizado de segundo plano que varre o inventário da Infotravel para descobrir "Oportunidades de Ouro" (ofertas com preço abaixo da média histórica ou descontos agressivos) sem estourar as cotas diárias da API.
+O Turis contará com um job automatizado de segundo plano que varre o inventário da Infotravel para descobrir "Oportunidades de Ouro" (ofertas com preço abaixo da média histórica ou descontos agressivos) sem estourar as cotas diárias da API.
 
 ### 2.1. Fluxo do Pipeline de Promoções
 
@@ -53,7 +53,7 @@ Fila de Tarefas (Cron semanal/diário com execução programada em horários de 
   │
   └──> [Fase 5: Enriquecimento Inteligente (IA Opcional) e Revisão]
        IA opcional gera textos de marketing, títulos atraentes e segmentação de público.
-       Agente comercial revisa no dashboard do TravelOS e clica em "Publicar na Página" ou "Descartar".
+       Agente comercial revisa no dashboard do Turis e clica em "Publicar na Página" ou "Descartar".
 ```
 
 ### 2.2. Algoritmo do Score de Oportunidade (Determinístico)

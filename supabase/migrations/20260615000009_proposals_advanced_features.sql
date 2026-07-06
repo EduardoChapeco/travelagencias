@@ -1,5 +1,5 @@
 -- =============================================================================
--- TravelOS — Proposals Advanced Features and Tracking
+-- Turis — Proposals Advanced Features and Tracking
 -- Migration: 20260615000009_proposals_advanced_features
 -- =============================================================================
 

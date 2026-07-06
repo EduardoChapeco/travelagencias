@@ -1,4 +1,4 @@
-# 🎯 TravelOS Studio Engine — Plano Definitivo (Missão Permanente)
+# 🎯 Turis Studio Engine — Plano Definitivo (Missão Permanente)
 
 > **STATUS:** EM EXECUÇÃO — Não apagar até conclusão completa da missão.
 > **Última revisão:** 2026-06-12
@@ -10,7 +10,7 @@
 
 ### O que estamos construindo
 
-Um **Studio Engine compartilhado** que alimenta 4 ferramentas distintas no TravelOS:
+Um **Studio Engine compartilhado** que alimenta 4 ferramentas distintas no Turis:
 
 | Ferramenta          | Rota                               | Canvas Padrão         | Público-alvo                       |
 | ------------------- | ---------------------------------- | --------------------- | ---------------------------------- |
@@ -518,7 +518,7 @@ type Block =
 - Layout coluna única em mobile, 2 colunas em tablet/desktop
 - Todos os dados JSONB renderizados em componentes responsivos
 - Botões Aceitar/Recusar em destaque fixo no bottom
-- "Powered by TravelOS" discreto no rodapé
+- "Powered by Turis" discreto no rodapé
 
 ### p.$agency_slug.$page_slug.tsx (portal público)
 

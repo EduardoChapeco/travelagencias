@@ -102,6 +102,7 @@ import {
   useSensor,
   useSensors,
   DragEndEvent,
+  DragOverlay,
 } from "@dnd-kit/core";
 import {
   arrayMove,
@@ -127,7 +128,7 @@ function SortableBlock({ block, selectedBlockId, setSelectedBlockId, removeBlock
     <div
       ref={setNodeRef}
       style={style}
-      className={`rounded-sm border overflow-hidden transition-all${
+      className={`rounded-full border overflow-hidden transition-all${
         selectedBlockId === block.id
           ? "border-brand bg-surface"
           : "border-border bg-surface-alt/30 hover:border-brand/40"
@@ -171,8 +172,26 @@ function SortableBlock({ block, selectedBlockId, setSelectedBlockId, removeBlock
   );
 }
 
+function SortableBlockOverlay({ block }: any) {
+  if (!block) return null;
+  return (
+    <div className="rounded-full border border-brand bg-surface opacity-90 shadow-none ring-2 ring-brand scale-105 transition-all">
+      <div className="flex items-center justify-between px-3 py-2 select-none">
+        <div className="flex items-center gap-2">
+          <div className="cursor-grabbing p-1 -ml-1 text-foreground">
+            <GripVertical className="h-4 w-4" />
+          </div>
+          <span className="text-xs font-semibold uppercase tracking-wider text-brand">
+            {BLOCK_LABELS[block?.type as keyof typeof BLOCK_LABELS] ?? block?.type}
+          </span>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 export const Route = createFileRoute("/agency/$slug/portal/pages/$page_id")({
-  head: () => ({ meta: [{ title: "Editor de Página · TravelOS" }] }),
+  head: ({ context }: any) => ({ meta: [{ title: `Editor de Página · ${context?.brand?.platform_name || 'Turis'}` }] }),
   component: PageEditorRoute,
 });
 
@@ -209,6 +228,7 @@ function PageEditorRoute() {
   const [fbPixelId, setFbPixelId] = useState("");
   const [googleAnalyticsId, setGoogleAnalyticsId] = useState("");
   const [customScripts, setCustomScripts] = useState("");
+  const [activeId, setActiveId] = useState<string | null>(null);
 
   const {
     blocks,
@@ -550,7 +570,7 @@ function PageEditorRoute() {
 
   if (isError || (!isNew && !initialData)) {
     return (
-      <div className="flex min-h-[400px] flex-col items-center justify-center p-8 text-center m-6 rounded-xl border border-red-200 bg-red-50/50">
+      <div className="flex min-h-[400px] flex-col items-center justify-center p-8 text-center m-6 rounded-3xl border border-red-200 bg-red-50/50">
         <div className="h-10 w-10 rounded-full bg-red-100 flex items-center justify-center mb-4">
           <AlertCircle className="h-5 w-5 text-red-600" />
         </div>
@@ -560,7 +580,7 @@ function PageEditorRoute() {
         </p>
         <button
           onClick={() => navigate({ to: "/agency/$slug/portal/pages", params: { slug } })}
-          className="mt-4 h-8 px-4 rounded-lg bg-red-100 text-xs font-semibold text-red-800 hover:bg-red-200 cursor-pointer transition-colors"
+          className="mt-4 h-8 px-4 rounded-2xl bg-red-100 text-xs font-semibold text-red-800 hover:bg-red-200 cursor-pointer transition-colors"
         >
           Voltar às Páginas
         </button>
@@ -655,7 +675,7 @@ function PageEditorRoute() {
           {/* Page Dropdown Switcher */}
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <button className="flex items-center gap-1.5 h-7 px-2.5 rounded-sm border border-border bg-white text-xs font-semibold text-foreground hover:bg-surface-alt transition-colors cursor-pointer select-none">
+              <button className="flex items-center gap-1.5 h-7 px-2.5 rounded-full border border-border bg-white text-xs font-semibold text-foreground hover:bg-surface-alt transition-colors cursor-pointer select-none">
                 <span>Página: {title || "Nova Página"}</span>
                 <span className="text-muted-foreground text-[8px]">▼</span>
               </button>
@@ -701,7 +721,7 @@ function PageEditorRoute() {
           {!isNew && (
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <button className="flex h-7 w-7 items-center justify-center rounded-sm border border-border bg-white text-muted-foreground hover:bg-surface-alt hover:text-foreground transition-colors cursor-pointer">
+                <button className="flex h-7 w-7 items-center justify-center rounded-full border border-border bg-white text-muted-foreground hover:bg-surface-alt hover:text-foreground transition-colors cursor-pointer">
                   <Settings className="w-3.5 h-3.5" />
                 </button>
               </DropdownMenuTrigger>
@@ -771,7 +791,7 @@ function PageEditorRoute() {
         </div>
 
         {/* Viewport controls - compact divide group */}
-        <div className="hidden md:flex items-center bg-white border border-border p-0.5 rounded-sm divide-x divide-border">
+        <div className="hidden md:flex items-center bg-white border border-border p-0.5 rounded-full divide-x divide-border">
           <button
             onClick={() => {
               if (mode === "biolink") {
@@ -824,11 +844,11 @@ function PageEditorRoute() {
 
           {!isNew && (
             <a
-              href={`https://${agency.slug}.travelos.com/${pageSlug || slugify(title)}`}
+              href={`https://${agency.slug}.turis.com/${pageSlug || slugify(title)}`}
               target="_blank"
               rel="noopener noreferrer"
               title="Visualizar Página Ao Vivo"
-              className="p-1.5 rounded-sm border border-border bg-white text-muted-foreground hover:bg-surface-alt hover:text-foreground transition-colors cursor-pointer flex items-center justify-center h-7 w-7"
+              className="p-1.5 rounded-full border border-border bg-white text-muted-foreground hover:bg-surface-alt hover:text-foreground transition-colors cursor-pointer flex items-center justify-center h-7 w-7"
             >
               <ExternalLink className="h-3.5 h-3.5" />
             </a>
@@ -862,7 +882,7 @@ function PageEditorRoute() {
             <button
               onClick={() => navigate({ to: "/agency/$slug/portal/pages", params: { slug } })}
               title="Voltar para Lista de Páginas"
-              className="p-2 rounded-sm text-muted-foreground hover:text-foreground hover:bg-surface-alt transition-colors cursor-pointer"
+              className="p-2 rounded-full text-muted-foreground hover:text-foreground hover:bg-surface-alt transition-colors cursor-pointer"
             >
               <ArrowLeft className="h-4.5 w-4.5" />
             </button>
@@ -880,7 +900,7 @@ function PageEditorRoute() {
                 }
               }}
               title="Biblioteca de Seções"
-              className={`p-2 rounded-sm transition-colors cursor-pointer ${isLeftSidebarOpen && leftTab === "sections" ? "bg-brand/10 text-brand font-bold" : "text-muted-foreground hover:text-foreground hover:bg-surface-alt"}`}
+              className={`p-2 rounded-full transition-colors cursor-pointer ${isLeftSidebarOpen && leftTab === "sections" ? "bg-brand/10 text-brand font-bold" : "text-muted-foreground hover:text-foreground hover:bg-surface-alt"}`}
             >
               <Plus className="h-4.5 w-4.5" />
             </button>
@@ -895,7 +915,7 @@ function PageEditorRoute() {
                 }
               }}
               title="Templates Prontos"
-              className={`p-2 rounded-sm transition-colors cursor-pointer ${isLeftSidebarOpen && leftTab === "templates" ? "bg-brand/10 text-brand font-bold" : "text-muted-foreground hover:text-foreground hover:bg-surface-alt"}`}
+              className={`p-2 rounded-full transition-colors cursor-pointer ${isLeftSidebarOpen && leftTab === "templates" ? "bg-brand/10 text-brand font-bold" : "text-muted-foreground hover:text-foreground hover:bg-surface-alt"}`}
             >
               <Sparkles className="h-4.5 w-4.5" />
             </button>
@@ -910,7 +930,7 @@ function PageEditorRoute() {
                 }
               }}
               title="Camadas e Ordenação"
-              className={`p-2 rounded-sm relative transition-colors cursor-pointer ${isLeftSidebarOpen && leftTab === "layers" ? "bg-brand/10 text-brand font-bold" : "text-muted-foreground hover:text-foreground hover:bg-surface-alt"}`}
+              className={`p-2 rounded-full relative transition-colors cursor-pointer ${isLeftSidebarOpen && leftTab === "layers" ? "bg-brand/10 text-brand font-bold" : "text-muted-foreground hover:text-foreground hover:bg-surface-alt"}`}
             >
               <Layers className="h-4.5 w-4.5" />
               {blocks.length > 0 && (
@@ -926,7 +946,7 @@ function PageEditorRoute() {
             <button
               onClick={() => setPageSettingsOpen(true)}
               title="Configurações Gerais"
-              className="p-2 rounded-sm text-muted-foreground hover:text-foreground hover:bg-surface-alt transition-colors cursor-pointer"
+              className="p-2 rounded-full text-muted-foreground hover:text-foreground hover:bg-surface-alt transition-colors cursor-pointer"
             >
               <Settings className="h-4.5 w-4.5" />
             </button>
@@ -934,7 +954,7 @@ function PageEditorRoute() {
             <button
               onClick={() => setSeoSettingsOpen(true)}
               title="Configurações SEO"
-              className="p-2 rounded-sm text-muted-foreground hover:text-foreground hover:bg-surface-alt transition-colors cursor-pointer"
+              className="p-2 rounded-full text-muted-foreground hover:text-foreground hover:bg-surface-alt transition-colors cursor-pointer"
             >
               <Globe className="h-4.5 w-4.5" />
             </button>
@@ -943,7 +963,7 @@ function PageEditorRoute() {
               <button
                 onClick={() => setHistorySettingsOpen(true)}
                 title="Histórico de Versões"
-                className="p-2 rounded-sm text-muted-foreground hover:text-foreground hover:bg-surface-alt transition-colors cursor-pointer"
+                className="p-2 rounded-full text-muted-foreground hover:text-foreground hover:bg-surface-alt transition-colors cursor-pointer"
               >
                 <History className="h-4.5 w-4.5" />
               </button>
@@ -1004,7 +1024,7 @@ function PageEditorRoute() {
                 </div>
 
                 {/* ── SECTIONS TAB: Grouped categorical block library ── */}
-                <div className="flex flex-col divide-y divide-border -mx-4">
+                <div className="flex flex-col gap-6 -mx-2 px-2">
                   {BLOCK_CATEGORIES.map((cat) => {
                     // Filter types allowed by current page context
                     const visibleTypes = cat.types.filter((type) => {
@@ -1016,11 +1036,14 @@ function PageEditorRoute() {
                     return (
                       <div key={cat.label}>
                         {/* Category header */}
-                        <div className="px-4 py-1.5 bg-surface-alt/60 border-b border-border">
-                          <span className="text-[9px] font-bold uppercase tracking-widest text-muted-foreground">
+                        <div className="mb-3">
+                          <h5 className="text-[9px] font-bold uppercase tracking-widest text-muted-foreground flex items-center gap-2">
+                            <span className="w-2 h-[1px] bg-border"></span>
                             {cat.label}
-                          </span>
+                            <span className="flex-1 h-[1px] bg-border"></span>
+                          </h5>
                         </div>
+                        <div className="grid grid-cols-2 gap-2">
                         {visibleTypes.map((type) => {
                           let IconComponent: React.ComponentType<any> = LayoutTemplate;
                           if (type === "text") IconComponent = Type;
@@ -1098,26 +1121,29 @@ function PageEditorRoute() {
                               key={type}
                               type="button"
                               onClick={() => addBlock(type)}
-                              className="w-full flex items-center gap-3 px-4 py-2.5 text-left transition-colors bg-white hover:bg-surface-alt/60 group cursor-pointer border-b border-border/40 last:border-b-0"
+                              className="w-full flex flex-col items-center justify-center gap-2 p-3 text-center transition-all bg-surface-alt/20 hover:bg-surface-alt/60 hover:border-brand/40 group cursor-pointer border border-border rounded-2xl hover:shadow-none relative overflow-hidden"
                             >
-                              <IconComponent
-                                className={`h-3.5 w-3.5 shrink-0 transition-colors ${
-                                  isBiolinkType
-                                    ? "text-brand"
-                                    : "text-muted-foreground group-hover:text-foreground"
-                                }`}
-                              />
-                              <span className="flex-1 text-[11px] font-semibold text-foreground leading-tight">
+                              <div className="p-2 bg-surface-alt/50 rounded-full group-hover:bg-brand/10 transition-colors">
+                                <IconComponent
+                                  className={`h-4 w-4 shrink-0 transition-colors ${
+                                    isBiolinkType
+                                      ? "text-brand"
+                                      : "text-muted-foreground group-hover:text-brand"
+                                  }`}
+                                />
+                              </div>
+                              <span className="text-[10px] font-semibold text-foreground leading-tight">
                                 {BLOCK_LABELS[type]}
                               </span>
                               {isBiolinkType && (
-                                <span className="text-[8px] font-bold uppercase tracking-wider px-1 bg-brand/10 text-brand rounded-sm shrink-0">
+                                <span className="absolute top-1 right-1 text-[7px] font-bold uppercase tracking-wider px-1 bg-brand/10 text-brand rounded-full shrink-0">
                                   Bio
                                 </span>
                               )}
                             </button>
                           );
                         })}
+                        </div>
                       </div>
                     );
                   })}
@@ -1195,7 +1221,12 @@ function PageEditorRoute() {
                     <DndContext
                       sensors={sensors}
                       collisionDetection={closestCenter}
-                      onDragEnd={handleDragEnd}
+                      onDragStart={(e) => setActiveId(e.active.id as string)}
+                      onDragEnd={(e) => {
+                        handleDragEnd(e);
+                        setActiveId(null);
+                      }}
+                      onDragCancel={() => setActiveId(null)}
                     >
                       <SortableContext
                         items={blocks.map((b) => b.id)}
@@ -1213,6 +1244,12 @@ function PageEditorRoute() {
                           ))}
                         </div>
                       </SortableContext>
+                      
+                      <DragOverlay>
+                        {activeId ? (
+                          <SortableBlockOverlay block={blocks.find(b => b.id === activeId)} />
+                        ) : null}
+                      </DragOverlay>
                     </DndContext>
                   )}
                 </div>
@@ -1232,7 +1269,7 @@ function PageEditorRoute() {
                 (mode === "biolink" ? "Biolink Mobile · 390px" : "Mobile · 390px")}
             </span>
             {mode === "biolink" && (
-              <span className="text-[8px] font-bold uppercase tracking-wider px-1.5 py-0.5 bg-brand/10 text-brand border border-brand/20 rounded-sm">
+              <span className="text-[8px] font-bold uppercase tracking-wider px-1.5 py-0.5 bg-brand/10 text-brand border border-brand/20 rounded-full">
                 Biolink — apenas mobile
               </span>
             )}
@@ -1306,7 +1343,7 @@ function PageEditorRoute() {
                     type="button"
                     onClick={() => setSelectedBlockId(null)}
                     title="Fechar painel"
-                    className="p-1 text-muted-foreground hover:text-foreground hover:bg-surface-alt rounded-sm transition-colors mt-0.5"
+                    className="p-1 text-muted-foreground hover:text-foreground hover:bg-surface-alt rounded-full transition-colors mt-0.5"
                   >
                     <PanelLeft className="w-4 h-4" />
                   </button>
@@ -1600,7 +1637,7 @@ function PageEditorRoute() {
             {versionsQuery.data?.map((v) => (
               <div
                 key={v.id}
-                className="flex flex-col gap-2 p-3 rounded-sm border border-border bg-surface-alt/30"
+                className="flex flex-col gap-2 p-3 rounded-full border border-border bg-surface-alt/30"
               >
                 <div className="flex justify-between items-center">
                   <div>
@@ -1652,7 +1689,7 @@ function PageEditorRoute() {
 
       {showNewPageModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/55 backdrop-blur-sm">
-          <div className="bg-surface border border-border rounded-md p-6 w-full max-w-md space-y-4">
+          <div className="bg-surface border border-border rounded-2xl p-6 w-full max-w-md space-y-4">
             <h3 className="text-sm font-bold text-foreground">Criar Nova Página</h3>
             <div className="space-y-3">
               <Field label="Título da Página">
@@ -1698,7 +1735,7 @@ function PageEditorRoute() {
 
       {showRenameModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/55 backdrop-blur-sm">
-          <div className="bg-surface border border-border rounded-md p-6 w-full max-w-md space-y-4">
+          <div className="bg-surface border border-border rounded-2xl p-6 w-full max-w-md space-y-4">
             <h3 className="text-sm font-bold text-foreground">Renomear Página</h3>
             <div className="space-y-3">
               <Field label="Título da Página">
@@ -1725,7 +1762,7 @@ function PageEditorRoute() {
       )}
 
       {/* Floating Action Menu for mobile devices */}
-      <div className="sm:hidden fixed bottom-4 left-1/2 -translate-x-1/2 z-50 flex items-center gap-2 bg-white/95 backdrop-blur-md border border-border/85 p-2.5 rounded-xl shadow-none w-[calc(100vw-32px)] max-w-sm justify-between">
+      <div className="sm:hidden fixed bottom-4 left-1/2 -translate-x-1/2 z-50 flex items-center gap-2 bg-surface/90 dark:bg-zinc-950/90 backdrop-blur-3xl border border-white/20 dark:border-white/10 p-2.5 rounded-3xl shadow-none w-[calc(100vw-32px)] max-w-sm justify-between">
         <div className="flex items-center gap-1.5 min-w-0">
           {saveStatus === "saving" && (
             <span className="text-[10px] text-muted-foreground animate-pulse truncate">
@@ -1744,7 +1781,7 @@ function PageEditorRoute() {
             type="button"
             onClick={saveDraftOnly}
             disabled={submitting}
-            className="h-8 py-0 px-3 text-[9px] uppercase tracking-wider rounded-lg"
+            className="h-8 py-0 px-3 text-[9px] uppercase tracking-wider rounded-2xl"
           >
             Salvar
           </GhostButton>
@@ -1752,7 +1789,7 @@ function PageEditorRoute() {
             type="button"
             onClick={publishPage}
             disabled={submitting}
-            className="h-8 py-0 px-3 text-[9px] uppercase tracking-wider rounded-lg"
+            className="h-8 py-0 px-3 text-[9px] uppercase tracking-wider rounded-2xl"
           >
             {submitting ? "..." : "Publicar"}
           </PrimaryButton>

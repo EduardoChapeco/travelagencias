@@ -1,6 +1,6 @@
 # Estado Atual do Roadmap de Estabilização & Auditoria Forense
 
-Este documento serve como a fonte de verdade sobre o progresso das Fases Corretivas do TravelAgencias/TravelOS. Ele descreve o que já foi implantado fisicamente no banco de dados e no frontend, e o que permanece pendente.
+Este documento serve como a fonte de verdade sobre o progresso das Fases Corretivas do TravelAgencias/Turis. Ele descreve o que já foi implantado fisicamente no banco de dados e no frontend, e o que permanece pendente.
 
 ---
 

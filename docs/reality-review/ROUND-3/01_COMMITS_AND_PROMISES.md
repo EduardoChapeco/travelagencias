@@ -1,6 +1,6 @@
-# Histórico de Commits e Promessas — Rodada 3 (TravelOS)
+# Histórico de Commits e Promessas — Rodada 3 (Turis)
 
-Este documento avalia a evolução cronológica das entregas no repositório TravelOS, contrapondo o planejado com o que está efetivamente gravado em commits e migrações.
+Este documento avalia a evolução cronológica das entregas no repositório Turis, contrapondo o planejado com o que está efetivamente gravado em commits e migrações.
 
 ---
 

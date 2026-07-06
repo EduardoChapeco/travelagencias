@@ -1,6 +1,6 @@
-# 00. Inventário do Repositório - TravelOS
+# 00. Inventário do Repositório - Turis
 
-Este documento apresenta o inventário completo e mapeamento técnico de toda a base de código do **TravelOS** (TravelAgencias), dividindo os itens por rotas, componentes, hooks, services, contexts, esquemas, banco de dados (tabelas, RPCs, migrations) e storage buckets.
+Este documento apresenta o inventário completo e mapeamento técnico de toda a base de código do **Turis** (TravelAgencias), dividindo os itens por rotas, componentes, hooks, services, contexts, esquemas, banco de dados (tabelas, RPCs, migrations) e storage buckets.
 
 ---
 

@@ -1,6 +1,6 @@
 # 05. Mapa de Arquitetura: Esperada versus Encontrada
 
-Este documento descreve a discrepância estrutural entre o modelo arquitetural ideal (Arquitetura Limpa desacoplada) e o padrão físico implementado no ecossistema do **TravelOS**.
+Este documento descreve a discrepância estrutural entre o modelo arquitetural ideal (Arquitetura Limpa desacoplada) e o padrão físico implementado no ecossistema do **Turis**.
 
 ---
 

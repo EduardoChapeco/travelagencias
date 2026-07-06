@@ -1,4 +1,4 @@
-# Matriz de UI, Banco e Contratos de Dados — Rodada 2 (TravelOS)
+# Matriz de UI, Banco e Contratos de Dados — Rodada 2 (Turis)
 
 Este documento descreve o acoplamento técnico entre as interfaces visuais, os esquemas de validação do TypeScript e Zod, as mutations do TanStack Query e as tabelas correspondentes no banco de dados.
 

@@ -1,4 +1,4 @@
--- Migration para Grupos Terrestres B2C (TravelOS Fase A)
+-- Migration para Grupos Terrestres B2C (Turis Fase A)
 
 CREATE TABLE IF NOT EXISTS group_trips (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),

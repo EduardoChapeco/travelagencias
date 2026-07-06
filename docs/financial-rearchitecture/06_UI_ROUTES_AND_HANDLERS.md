@@ -1,4 +1,4 @@
-# Rotas da Interface e Handlers (TravelOS)
+# Rotas da Interface e Handlers (Turis)
 
 Este documento cataloga a estrutura de navegação do frontend, os formulários de entrada de dados, os hooks do React Query, as mutações e a integração com as funções servidoras do banco de dados (RPCs).
 

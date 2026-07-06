@@ -58,7 +58,7 @@ ALTER TABLE public.contract_clauses_template ENABLE ROW LEVEL SECURITY;
 CREATE POLICY "clauses readable by all" ON public.contract_clauses_template
   FOR SELECT TO anon, authenticated USING (true);
 
--- Seed 49 cláusulas (Excelência Tour) — texto resumido pétreo
+-- Seed 49 cláusulas (Turis Tecnologia) — texto resumido pétreo
 INSERT INTO public.contract_clauses_template (number, section, clause_text) VALUES
 (1,'Objeto','O presente contrato tem por objeto a intermediação pela AGÊNCIA da prestação de serviços turísticos descritos no pacote contratado pelo CLIENTE.'),
 (2,'Objeto','A AGÊNCIA atua como intermediária entre o CLIENTE e os fornecedores de serviços (companhias aéreas, hotéis, operadoras, seguradoras, locadoras e demais prestadores).'),
@@ -141,7 +141,7 @@ AS $$
     c.signed_at,
     c.content_hash,
     c.signed_hash,
-    'TravelOS Assinaturas' AS issuer,
+    'Turis Assinaturas' AS issuer,
     c.status
   FROM public.contracts c
   WHERE c.certificate->>'serial' = _serial

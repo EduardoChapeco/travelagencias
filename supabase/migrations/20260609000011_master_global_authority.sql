@@ -1,4 +1,4 @@
--- TravelOS — Master Global Authority & RLS Fixes
+-- Turis — Master Global Authority & RLS Fixes
 -- Migration: 20260609000009_master_global_authority
 
 -- =========================================================================

@@ -1,6 +1,6 @@
 # Estrutura do Codebase
 
-Mapeamento da organização física do código do TravelAgencias/TravelOS, detalhando as rotas, os módulos lazy loading, e a estrutura de dados.
+Mapeamento da organização física do código do TravelAgencias/Turis, detalhando as rotas, os módulos lazy loading, e a estrutura de dados.
 
 ---
 

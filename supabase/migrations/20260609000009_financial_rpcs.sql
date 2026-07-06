@@ -1,5 +1,5 @@
 -- =============================================================================
--- TravelOS — Financial Aggregation RPCs (Phase 7)
+-- Turis — Financial Aggregation RPCs (Phase 7)
 -- Migration: 20260609000007_financial_rpcs
 -- =============================================================================
 

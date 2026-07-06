@@ -44,7 +44,7 @@ import { CardDetailPanel } from "@/components/boarding/CardDetailPanel";
 import { CardView } from "@/components/boarding/CardView";
 
 export const Route = createFileRoute("/agency/$slug/boarding")({
-  head: () => ({ meta: [{ title: "Kanban Operacional de Embarque · TravelOS" }] }),
+  head: ({ context }: any) => ({ meta: [{ title: `Kanban Operacional de Embarque · ${context?.brand?.platform_name || 'Turis'}` }] }),
   component: BoardingKanbanPage,
 });
 
@@ -238,7 +238,7 @@ function BoardingKanbanPage() {
   }
 
   return (
-    <div className="flex h-full flex-col overflow-hidden bg-background">
+    <div className="flex h-full flex-col overflow-hidden bg-transparent">
       <HeaderPortal>
         <div className="flex items-center gap-4">
           <div className="flex items-center border border-border rounded-sm p-0.5 bg-surface-alt">

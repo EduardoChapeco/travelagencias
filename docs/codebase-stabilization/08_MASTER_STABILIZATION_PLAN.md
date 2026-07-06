@@ -1,6 +1,6 @@
-# 08. Plano Mestre de Estabilização - TravelOS
+# 08. Plano Mestre de Estabilização - Turis
 
-Este documento apresenta o plano estratégico para estabilizar, compatibilizar e otimizar todos os módulos e integrações do TravelOS de forma faseada e segura.
+Este documento apresenta o plano estratégico para estabilizar, compatibilizar e otimizar todos os módulos e integrações do Turis de forma faseada e segura.
 
 ---
 

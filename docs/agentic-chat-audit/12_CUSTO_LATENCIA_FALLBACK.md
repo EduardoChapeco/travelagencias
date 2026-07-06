@@ -10,7 +10,7 @@ O chat de IA consome serviços externos via requisições HTTP:
 
 - **Provedores**: O backend suporta chamadas para **OpenRouter** (`https://openrouter.ai`) ou o gateway padrão da **Lovable** (`https://ai.gateway.lovable.dev`).
 - **Modelo**: Configurado para usar o `google/gemini-2.5-flash` por sua velocidade de resposta e suporte a schemas complexos.
-- **Custo da IA Revisora**: O double-pass de segurança em [ai-chat.functions.ts](file:///c:/Users/Excelência Tour SMO/.gemini/antigravity-ide/scratch/travelagencias/src/lib/api/ai-chat.functions.ts#L369) executa um segundo processamento síncrono. Isso duplica o custo de tokens consumidos por mensagem e eleva a latência da resposta do chat em 1.5s a 2.5s adicionais. Contudo, é uma proteção importante de integridade da resposta de texto.
+- **Custo da IA Revisora**: O double-pass de segurança em [ai-chat.functions.ts](file:///c:/Users/Turis Tecnologia SMO/.gemini/antigravity-ide/scratch/travelagencias/src/lib/api/ai-chat.functions.ts#L369) executa um segundo processamento síncrono. Isso duplica o custo de tokens consumidos por mensagem e eleva a latência da resposta do chat em 1.5s a 2.5s adicionais. Contudo, é uma proteção importante de integridade da resposta de texto.
 
 ---
 

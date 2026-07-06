@@ -1,6 +1,6 @@
 # 00. Baseline e Estado Real da Integração Infotravel
 
-Este documento estabelece o estado real ("Ground Truth") da integração do **Infotravel/Infotera** no **TravelOS** (TravelAgências), confrontando o que foi documentado anteriormente com a realidade física encontrada no código, no banco de dados e nos endpoints oficiais.
+Este documento estabelece o estado real ("Ground Truth") da integração do **Infotravel/Infotera** no **Turis** (TravelAgências), confrontando o que foi documentado anteriormente com a realidade física encontrada no código, no banco de dados e nos endpoints oficiais.
 
 ---
 

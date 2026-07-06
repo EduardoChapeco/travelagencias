@@ -1,6 +1,6 @@
 # Auditoria de Segurança, Autenticação, RLS e Service Role
 
-Este documento apresenta a análise de vulnerabilidades na autenticação, isolamento de tenant e uso de chaves administrativas (service role) na infraestrutura de IA e OCR do TravelAgencias/TravelOS.
+Este documento apresenta a análise de vulnerabilidades na autenticação, isolamento de tenant e uso de chaves administrativas (service role) na infraestrutura de IA e OCR do TravelAgencias/Turis.
 
 ---
 

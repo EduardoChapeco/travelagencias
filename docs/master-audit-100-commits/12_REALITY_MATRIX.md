@@ -1,6 +1,6 @@
 # 12. Matriz de Realidade Técnica
 
-Este documento classifica formalmente cada funcionalidade da plataforma TravelOS com base em auditoria estrita do código-fonte e do banco de dados, eliminando stubs e categorizando o estado de paridade real.
+Este documento classifica formalmente cada funcionalidade da plataforma Turis com base em auditoria estrita do código-fonte e do banco de dados, eliminando stubs e categorizando o estado de paridade real.
 
 ---
 

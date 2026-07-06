@@ -1,6 +1,6 @@
 # 02. Auditoria Detalhada das Fases 01 a 12
 
-Este documento audita e analisa fisicamente cada uma das 12 Fases de Execução da Matriz de Reestruturação do TravelOS, confrontando o planejado com o código real e o banco de dados.
+Este documento audita e analisa fisicamente cada uma das 12 Fases de Execução da Matriz de Reestruturação do Turis, confrontando o planejado com o código real e o banco de dados.
 
 ---
 

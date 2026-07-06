@@ -49,7 +49,7 @@ serve(async (req) => {
       throw new Error("Proposal not found or no public token");
     }
 
-    const appUrl = Deno.env.get("FRONTEND_URL") || "https://travelos.com.br";
+    const appUrl = Deno.env.get("FRONTEND_URL") || "https://turis.com.br";
     const targetUrl = `${appUrl}/m/proposal/${proposal.public_token}?export=true`;
 
     const executablePath = await chromium.executablePath();

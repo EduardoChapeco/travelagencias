@@ -8,7 +8,7 @@ import { money, GhostButton } from "@/components/ui/form";
 import { cn } from "@/lib/utils";
 
 export const Route = createFileRoute("/agency/$slug/financial/groups")({
-  head: () => ({ meta: [{ title: "Financeiro de Grupos · TravelOS" }] }),
+  head: ({ context }: any) => ({ meta: [{ title: `Financeiro de Grupos · ${context?.brand?.platform_name || 'Turis'}` }] }),
   component: GroupFinancialsDashboard,
 });
 

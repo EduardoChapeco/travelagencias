@@ -1,6 +1,6 @@
 # 22. Master Execution Plan (Plano Mestre de Recuperação)
 
-Este plano mestre define o backlog técnico executável para recuperar, refatorar e estabilizar as capacidades avançadas do TravelOS.
+Este plano mestre define o backlog técnico executável para recuperar, refatorar e estabilizar as capacidades avançadas do Turis.
 
 ---
 

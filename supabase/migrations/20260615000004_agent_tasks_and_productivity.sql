@@ -69,7 +69,7 @@ BEGIN
   -- We rely on pg_net or Supabase webhooks natively, but since we can't easily mock net.http_post here without knowing the anon key,
   -- we will assume the Supabase Dashboard Webhooks feature is used or we can use pg_net if enabled.
   -- For now, this is a placeholder or we can just call it from the frontend when a task is created.
-  -- Actually, the best practice in TravelOS has been to call the edge function from the frontend when manually creating a task.
+  -- Actually, the best practice in Turis has been to call the edge function from the frontend when manually creating a task.
   RETURN NEW;
 END;
 $$ LANGUAGE plpgsql;

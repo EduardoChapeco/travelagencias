@@ -1,6 +1,6 @@
-# Baseline do Sistema — Rodada 2 (TravelOS)
+# Baseline do Sistema — Rodada 2 (Turis)
 
-Este documento define a linha de base tecnológica, bibliotecas principais e estado da infraestrutura de código do TravelOS para a rodada 2 da auditoria forense.
+Este documento define a linha de base tecnológica, bibliotecas principais e estado da infraestrutura de código do Turis para a rodada 2 da auditoria forense.
 
 ---
 

@@ -1,6 +1,6 @@
-# 06. Contratos Entre Camadas - TravelOS
+# 06. Contratos Entre Camadas - Turis
 
-Este documento audita o acoplamento de tipos e interfaces entre as camadas do TravelOS (UI -> Schema -> Hooks -> Services -> RPCs -> Banco de Dados -> Portais), apontando inconsistências e o uso de casts tipográficos inseguros (`as any` ou `@ts-ignore`).
+Este documento audita o acoplamento de tipos e interfaces entre as camadas do Turis (UI -> Schema -> Hooks -> Services -> RPCs -> Banco de Dados -> Portais), apontando inconsistências e o uso de casts tipográficos inseguros (`as any` ou `@ts-ignore`).
 
 ---
 

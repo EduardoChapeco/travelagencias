@@ -6,7 +6,7 @@ Este documento analisa a sobrecarga de transferência de dados (payload) entre o
 
 ## 🔍 Colunas JSONB e Modelagem de Dados Grandes
 
-No TravelAgencias/TravelOS, vários módulos fazem uso extensivo de colunas JSONB para guardar arrays de objetos complexos. Isso oferece flexibilidade, mas introduz um custo de largura de banda significativo nas consultas de lista.
+No TravelAgencias/Turis, vários módulos fazem uso extensivo de colunas JSONB para guardar arrays de objetos complexos. Isso oferece flexibilidade, mas introduz um custo de largura de banda significativo nas consultas de lista.
 
 ### Tabela de Auditoria de JSONB/Payloads:
 

@@ -1,6 +1,6 @@
-# 02. Mapa de Fluxos Início ao Fim - TravelOS
+# 02. Mapa de Fluxos Início ao Fim - Turis
 
-Este documento apresenta a análise de ciclo de vida completo de sete fluxos operacionais críticos do TravelOS, com o mapeamento técnico de tabelas, arquivos, regras e status de validação.
+Este documento apresenta a análise de ciclo de vida completo de sete fluxos operacionais críticos do Turis, com o mapeamento técnico de tabelas, arquivos, regras e status de validação.
 
 ---
 

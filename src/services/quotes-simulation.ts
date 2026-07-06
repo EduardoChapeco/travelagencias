@@ -126,7 +126,7 @@ Alertas Logísticos Detectados: ${warningsArray.join(", ") || "Nenhum"}
     const intent = candidates[0].quote_requests?.normalized_intent as unknown as TravelIntent;
     const destination = intent?.destinations?.[0]?.name || "Destino";
 
-    const systemPrompt = `Você é um motor inteligente de simulação de compra de viagens do TravelOS.
+    const systemPrompt = `Você é um motor inteligente de simulação de compra de viagens do Turis.
 Sua tarefa é avaliar um conjunto de alternativas de pacotes de viagem para o destino "${destination}" sob a perspectiva de 5 personas de consumo distintas:
 - econômico: Foco absoluto no menor preço. Aceita logísticas piores, mas rejeita hotéis simples demais ou sem avaliação.
 - conforto: Exige voos diretos ou conexões muito curtas, hotéis de boa qualidade (4 estrelas+), odeia conexões longas e voos em horários ruins.

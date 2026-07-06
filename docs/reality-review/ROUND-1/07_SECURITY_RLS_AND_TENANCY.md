@@ -1,4 +1,4 @@
-# Segurança, RLS e Multi-tenancy (TravelOS)
+# Segurança, RLS e Multi-tenancy (Turis)
 
 Este relatório audita o isolamento de dados entre diferentes agências (tenants), a robustez das políticas de Row Level Security (RLS) no Supabase e a vulnerabilidade de permissões em relação à imutabilidade financeira.
 

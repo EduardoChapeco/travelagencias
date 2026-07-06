@@ -1,6 +1,6 @@
 # Plano de Testes de Runtime e Regressão — Auditoria Forense
 
-Este documento define o roteiro de testes em runtime para garantir que a transição para carregamento lazy das três rotas principais (`agency.$slug.group-tours.$id`, `agency.$slug.crm.$lead_id`, e `agency.$slug.omnichannel`) não causou regressões visuais, de estado ou funcionais no TravelAgencias/TravelOS.
+Este documento define o roteiro de testes em runtime para garantir que a transição para carregamento lazy das três rotas principais (`agency.$slug.group-tours.$id`, `agency.$slug.crm.$lead_id`, e `agency.$slug.omnichannel`) não causou regressões visuais, de estado ou funcionais no TravelAgencias/Turis.
 
 ---
 

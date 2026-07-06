@@ -32,7 +32,7 @@ type ChatMsg = {
 
 function getOrCreateConversationId(agencyId: string, userKey: string) {
   if (typeof window === "undefined") return crypto.randomUUID();
-  const k = `travelos.aichat.conv.${agencyId}.${userKey}`;
+  const k = `turis.aichat.conv.${agencyId}.${userKey}`;
   const existing = window.localStorage.getItem(k);
   if (existing) return existing;
   const fresh = crypto.randomUUID();
@@ -43,7 +43,7 @@ function getOrCreateConversationId(agencyId: string, userKey: string) {
 function newConversationId(agencyId: string, userKey: string) {
   const id = crypto.randomUUID();
   if (typeof window !== "undefined") {
-    window.localStorage.setItem(`travelos.aichat.conv.${agencyId}.${userKey}`, id);
+    window.localStorage.setItem(`turis.aichat.conv.${agencyId}.${userKey}`, id);
   }
   return id;
 }
@@ -238,7 +238,7 @@ export function AIChatPanel({
                       : "text-muted-foreground",
                 )}
               />
-              <span className="text-sm font-semibold">Assistente TravelOS</span>
+              <span className="text-sm font-semibold">Assistente Turis</span>
               <span
                 className={cn(
                   "inline-flex items-center rounded-full px-1.5 py-0.5 text-[10px] font-medium transition-colors",

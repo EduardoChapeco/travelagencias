@@ -1,6 +1,6 @@
-# Mapa de Tabelas e RLS (TravelOS)
+# Mapa de Tabelas e RLS (Turis)
 
-Este documento descreve detalhadamente o modelo físico de dados, chaves estrangeiras, restrições (constraints) e políticas de segurança em nível de linha (Row Level Security - RLS) de todas as tabelas do subsistema financeiro no TravelOS.
+Este documento descreve detalhadamente o modelo físico de dados, chaves estrangeiras, restrições (constraints) e políticas de segurança em nível de linha (Row Level Security - RLS) de todas as tabelas do subsistema financeiro no Turis.
 
 ---
 

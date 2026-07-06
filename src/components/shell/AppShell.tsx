@@ -43,6 +43,7 @@ export function AppShell({
   const isFullPage = crumbs.length > 2;
 
   const isVisualEditor = /\/portal\/pages\/[^/]+$/.test(pathname) && !pathname.endsWith("/pages/");
+  const isHome = pathname === `/agency/${agency?.slug}` || pathname === `/agency/${agency?.slug}/`;
 
   if (isVisualEditor) {
     return (
@@ -54,10 +55,25 @@ export function AppShell({
     );
   }
 
+  if (isHome) {
+    return (
+      <div className="flex h-screen w-full relative overflow-hidden bg-background text-foreground">
+        {/* The wallpaper is handled inside the Home component, but we provide the fullscreen container */}
+        <LegalBlocker>{children ?? <Outlet />}</LegalBlocker>
+      </div>
+    );
+  }
+
   return (
-    <div className="flex h-screen w-full bg-background text-foreground">
-      <AppSidebar mobileOpen={mobileOpen} onMobileClose={() => setMobileOpen(false)} />
-      <CommandMenu />
+    <div className="flex h-screen w-full bg-background text-foreground relative overflow-hidden p-0 sm:p-2 md:p-3 lg:p-4">
+      {/* Background wallpaper for modules */}
+      <div className="absolute inset-0 bg-neutral/30 dark:bg-black/50 pointer-events-none" />
+      <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=2072&auto=format&fit=crop')] opacity-[0.03] bg-cover bg-center pointer-events-none mix-blend-overlay" />
+      
+      {/* Main Glass Container for Modules */}
+      <div className="relative w-full h-full max-w-[1600px] mx-auto bg-surface/95 dark:bg-surface/90 backdrop-blur-3xl rounded-[32px] sm:rounded-sheet border border-white/20 dark:border-white/10 flex overflow-hidden shadow-2xl">
+        <AppSidebar mobileOpen={mobileOpen} onMobileClose={() => setMobileOpen(false)} />
+        <CommandMenu />
 
       <div className="flex min-w-0 flex-1 flex-col">
         <header className="flex h-[58px] shrink-0 items-center justify-between gap-4 border-b border-border bg-surface px-4">
@@ -151,7 +167,7 @@ export function AppShell({
         </header>
 
         <div className="flex min-h-0 flex-1">
-          <main className="no-scrollbar flex min-w-0 flex-1 flex-col overflow-y-auto">
+          <main className="no-scrollbar flex min-w-0 flex-1 flex-col overflow-y-auto pb-24">
             {isPastDue && (
               <div className="bg-rose-500 text-white text-xs px-4 py-2.5 flex items-center justify-between font-bold gap-3 shrink-0">
                 <div className="flex items-center gap-2">
@@ -181,6 +197,7 @@ export function AppShell({
           </main>
           {aiOpen && <AIChatPanel onClose={() => setAiOpen(false)} />}
         </div>
+      </div>
       </div>
     </div>
   );

@@ -1,6 +1,6 @@
 # 04. Edge Functions e Uso do Service Role
 
-Este documento analisa as Edge Functions do TravelOS, focando no hardening das chamadas, na validação de permissões e no risco introduzido pelo uso de privilégios administrativos.
+Este documento analisa as Edge Functions do Turis, focando no hardening das chamadas, na validação de permissões e no risco introduzido pelo uso de privilégios administrativos.
 
 ## 1. Mapeamento de Segurança das Edge Functions de OCR
 

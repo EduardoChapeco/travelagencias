@@ -1,6 +1,6 @@
 # Responsividade e Design System
 
-Auditoria estética e funcional do comportamento responsivo do TravelOS sob múltiplas resoluções, além de conformidade com as especificações visuais do Flat Premium Design System.
+Auditoria estética e funcional do comportamento responsivo do Turis sob múltiplas resoluções, além de conformidade com as especificações visuais do Flat Premium Design System.
 
 ---
 

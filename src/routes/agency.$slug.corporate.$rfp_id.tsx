@@ -33,7 +33,7 @@ import {
 import { useConfirm } from "@/hooks/use-confirm";
 
 export const Route = createFileRoute("/agency/$slug/corporate/$rfp_id")({
-  head: () => ({ meta: [{ title: "RFP Detail · TravelOS" }] }),
+  head: ({ context }: any) => ({ meta: [{ title: `RFP Detail · ${context?.brand?.platform_name || 'Turis'}` }] }),
   component: RfpDetailPage,
 });
 

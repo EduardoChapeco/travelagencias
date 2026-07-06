@@ -10,7 +10,7 @@ import { PageHeader, EmptyState } from "@/components/shell/PageHeader";
 import { GhostButton } from "@/components/ui/form";
 
 export const Route = createFileRoute("/client/notifications")({
-  head: () => ({ meta: [{ title: "Notificações · TravelOS" }] }),
+  head: ({ context }: any) => ({ meta: [{ title: `Notificações · ${context?.brand?.platform_name || 'Turis'}` }] }),
   component: Page,
 });
 

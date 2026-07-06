@@ -1,6 +1,6 @@
 # 04. Integração de Propostas, Viagens e Fornecedores (Proposal, Trip, and Supplier Integration)
 
-Este documento detalha as dependências e o fluxo relacional entre Propostas, Viagens, Vouchers, Clientes e Fornecedores no TravelOS.
+Este documento detalha as dependências e o fluxo relacional entre Propostas, Viagens, Vouchers, Clientes e Fornecedores no Turis.
 
 ---
 

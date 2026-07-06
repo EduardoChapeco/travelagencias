@@ -46,7 +46,7 @@ As seguintes tabelas foram implementadas e mapeadas em `types.ts`:
 
 ## 3. Relações Canônicas
 
-- **proposals → leads**: Uma cotação pode nascer a partir de uma oportunidade de venda (`lead_id`) no CRM do TravelOS.
+- **proposals → leads**: Uma cotação pode nascer a partir de uma oportunidade de venda (`lead_id`) no CRM do Turis.
 - **proposals → clients**: Uma proposta aceita vincula-se ao cadastro oficial do cliente (`client_id`).
 - **proposals → trips**: Quando o status muda para `accepted`, uma trigger/RPC cria a viagem correspondente em `trips` associando todos os passageiros.
 

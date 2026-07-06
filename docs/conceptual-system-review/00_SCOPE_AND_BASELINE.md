@@ -1,6 +1,6 @@
 # 00 SCOPE AND BASELINE
 
-## Sistema Analisado: TravelOS
+## Sistema Analisado: Turis
 
 **Data da Auditoria:** 2026-06-28T18:10:14.339Z
 

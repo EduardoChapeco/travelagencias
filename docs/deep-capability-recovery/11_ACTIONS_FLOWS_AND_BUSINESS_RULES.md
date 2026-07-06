@@ -1,6 +1,6 @@
 # 11. Actions, Flows and Business Rules (Fluxos de Negócio)
 
-Este relatório mapeia as transações, ações de cliques da interface e regras de negócio operacionais no TravelOS.
+Este relatório mapeia as transações, ações de cliques da interface e regras de negócio operacionais no Turis.
 
 ---
 

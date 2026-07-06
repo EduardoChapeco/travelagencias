@@ -1,6 +1,6 @@
-# Inventário Financeiro Atual (TravelOS)
+# Inventário Financeiro Atual (Turis)
 
-Este documento apresenta o levantamento forense completo e detalhado de todos os artefatos, rotas, tabelas e arquivos relacionados ao subsistema financeiro no repositório atual do TravelOS.
+Este documento apresenta o levantamento forense completo e detalhado de todos os artefatos, rotas, tabelas e arquivos relacionados ao subsistema financeiro no repositório atual do Turis.
 
 ---
 

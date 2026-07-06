@@ -1,5 +1,5 @@
 -- =========================================================================
--- TravelOS — Modulo de Inbox, Rastreamento Inteligente e Suporte Avancado
+-- Turis — Modulo de Inbox, Rastreamento Inteligente e Suporte Avancado
 -- =========================================================================
 
 -- ─── 1. EXTENSIONS E SEQUENCES ───────────────────────────────────────────

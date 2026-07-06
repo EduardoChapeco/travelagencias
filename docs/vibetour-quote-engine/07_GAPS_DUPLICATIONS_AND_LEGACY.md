@@ -1,6 +1,6 @@
 # 07. Lacunas, Duplicações e Código Legado (Gaps, Duplications, and Legacy)
 
-Este documento identifica os desvios entre os requisitos do PRD do motor inteligente e a base de código do TravelOS, determinando o que deve ser criado e o que deve ser preservado.
+Este documento identifica os desvios entre os requisitos do PRD do motor inteligente e a base de código do Turis, determinando o que deve ser criado e o que deve ser preservado.
 
 ---
 

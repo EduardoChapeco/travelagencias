@@ -1,4 +1,4 @@
-# Segurança, RLS e Multi-tenancy — Rodada 2 (TravelOS)
+# Segurança, RLS e Multi-tenancy — Rodada 2 (Turis)
 
 Este relatório audita a segurança lógica, isolamento de inquilinos (multi-tenancy) e permissões de manipulação física de tabelas contábeis e de comissões no Supabase.
 

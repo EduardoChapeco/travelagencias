@@ -1,6 +1,6 @@
 # 09. Plano de Importação Histórica (Backfill)
 
-Este documento descreve o planejamento técnico para realizar a carga inicial e a importação retroativa de dados ("Backfill") de reservas, clientes, passageiros e faturas contábeis da base do **Infotravel** para o **TravelOS**, garantindo resiliência contra falhas de rede e respeito aos limites de cota da API.
+Este documento descreve o planejamento técnico para realizar a carga inicial e a importação retroativa de dados ("Backfill") de reservas, clientes, passageiros e faturas contábeis da base do **Infotravel** para o **Turis**, garantindo resiliência contra falhas de rede e respeito aos limites de cota da API.
 
 ---
 
@@ -47,5 +47,5 @@ Para garantir que o processo possa ser interrompido e retomado a qualquer moment
 
 A API do Infotravel impõe limites rígidos de requisições por minuto para evitar sobrecarga em seus servidores de Backoffice.
 
-- **Limite de Concorrência**: O backfill do TravelOS executa no máximo 1 thread concorrente por agência na fila de sincronização histórica.
+- **Limite de Concorrência**: O backfill do Turis executa no máximo 1 thread concorrente por agência na fila de sincronização histórica.
 - **Circuit Breaker**: Caso o servidor da Infotravel retorne código HTTP `429 Too Many Requests` ou `503 Service Unavailable`, o circuit breaker é ativado. O job entra em estado de espera ("Backoff") por 5 minutos antes de tentar processar a página novamente. Se a falha persistir por 3 tentativas consecutivas, o job é pausado e um alerta de erro de conexão é disparado para o administrador.

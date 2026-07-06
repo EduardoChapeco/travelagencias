@@ -1,5 +1,5 @@
 -- =============================================================================
--- TravelOS — Recalculo de Totais de Propostas (Segurança Comercial)
+-- Turis — Recalculo de Totais de Propostas (Segurança Comercial)
 -- Migration: 20260611000001_recalculate_proposal_totals
 -- =============================================================================
 

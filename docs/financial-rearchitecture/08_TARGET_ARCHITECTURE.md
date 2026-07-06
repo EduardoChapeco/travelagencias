@@ -1,6 +1,6 @@
 # Arquitetura Alvo (Target Architecture)
 
-Este documento projeta a nova arquitetura do subsistema financeiro do TravelOS, com foco em segurança transacional, ledger imutável, separação de base de dados e cálculos isolados no backend.
+Este documento projeta a nova arquitetura do subsistema financeiro do Turis, com foco em segurança transacional, ledger imutável, separação de base de dados e cálculos isolados no backend.
 
 ---
 

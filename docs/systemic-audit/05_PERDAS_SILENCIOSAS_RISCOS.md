@@ -1,6 +1,6 @@
-# 05. Perdas Silenciosas e Riscos de Produção - TravelOS
+# 05. Perdas Silenciosas e Riscos de Produção - Turis
 
-Este documento identifica pontos de vulnerabilidade técnica do TravelOS, detalhando locais onde podem ocorrer perdas silenciosas de dados, inconsistências de estado no frontend versus banco e os principais riscos operacionais de produção.
+Este documento identifica pontos de vulnerabilidade técnica do Turis, detalhando locais onde podem ocorrer perdas silenciosas de dados, inconsistências de estado no frontend versus banco e os principais riscos operacionais de produção.
 
 ---
 

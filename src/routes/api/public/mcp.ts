@@ -2,7 +2,7 @@ import { json } from "@tanstack/react-start";
 import { createFileRoute } from "@tanstack/react-router";
 import { supabase } from "@/integrations/supabase/client";
 
-// Model Context Protocol (MCP) Server for TravelOS
+// Model Context Protocol (MCP) Server for Turis
 // Implements JSON-RPC 2.0 for AI agent integration (OpenAI, Claude, Lovable, Google)
 
 export const Route = createFileRoute("/api/public/mcp")({
@@ -34,7 +34,7 @@ export const Route = createFileRoute("/api/public/mcp")({
               result: {
                 protocolVersion: "2024-11-05",
                 serverInfo: {
-                  name: "TravelOS-MCP",
+                  name: "Turis-MCP",
                   version: "1.0.0",
                 },
                 capabilities: {

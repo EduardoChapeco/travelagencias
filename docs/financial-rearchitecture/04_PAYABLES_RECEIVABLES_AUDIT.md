@@ -1,6 +1,6 @@
-# Contas a Pagar e Receber (TravelOS)
+# Contas a Pagar e Receber (Turis)
 
-Este relatório audita a estrutura de controles de Contas a Pagar (Payables) e Contas a Receber (Receivables) no TravelOS, focando no ciclo de vida das parcelas, validação de comprovantes e conformidade com a segurança de anexos.
+Este relatório audita a estrutura de controles de Contas a Pagar (Payables) e Contas a Receber (Receivables) no Turis, focando no ciclo de vida das parcelas, validação de comprovantes e conformidade com a segurança de anexos.
 
 ---
 

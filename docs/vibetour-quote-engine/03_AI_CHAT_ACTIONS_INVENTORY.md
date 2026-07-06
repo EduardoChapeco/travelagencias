@@ -1,6 +1,6 @@
 # 03. Inventário de Ações do Chat Agêntico (AI Chat Actions Inventory)
 
-Este documento cataloga as ações estruturadas (Tools) que a Inteligência Artificial pode executar no TravelOS, detalhando as regras de segurança e o escopo de atuação.
+Este documento cataloga as ações estruturadas (Tools) que a Inteligência Artificial pode executar no Turis, detalhando as regras de segurança e o escopo de atuação.
 
 ---
 

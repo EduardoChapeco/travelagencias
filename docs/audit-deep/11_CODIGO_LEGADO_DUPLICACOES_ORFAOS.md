@@ -1,6 +1,6 @@
 # 11. Código Legado, Duplicações e Arquivos Órfãos
 
-Este documento apresenta a análise de detritos técnicos, código duplicado e arquivos/tabelas sem uso real no projeto TravelOS.
+Este documento apresenta a análise de detritos técnicos, código duplicado e arquivos/tabelas sem uso real no projeto Turis.
 
 ---
 

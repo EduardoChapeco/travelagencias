@@ -1,6 +1,6 @@
 # 09. Plano de Compatibilidade de Banco e Schemas (Schema Compatibility Plan)
 
-Este documento estabelece a especificação relacional e as chaves estrangeiras necessárias para garantir compatibilidade estrutural com as tabelas pré-existentes do TravelOS.
+Este documento estabelece a especificação relacional e as chaves estrangeiras necessárias para garantir compatibilidade estrutural com as tabelas pré-existentes do Turis.
 
 ---
 

@@ -5,7 +5,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { Field, Input, PrimaryButton } from "@/components/ui/form";
 
 export const Route = createFileRoute("/m/passenger/$token")({
-  head: () => ({ meta: [{ title: "Dados do passageiro · TravelOS" }] }),
+  head: ({ context }: any) => ({ meta: [{ title: `Dados do passageiro · ${context?.brand?.platform_name || 'Turis'}` }] }),
   component: Page,
 });
 

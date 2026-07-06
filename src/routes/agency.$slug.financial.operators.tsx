@@ -15,7 +15,7 @@ import { useAgency } from "@/lib/agency-context";
 import { money } from "@/components/ui/form";
 
 export const Route = createFileRoute("/agency/$slug/financial/operators")({
-  head: () => ({ meta: [{ title: "Faturamento Operadoras · TravelOS" }] }),
+  head: ({ context }: any) => ({ meta: [{ title: `Faturamento Operadoras · ${context?.brand?.platform_name || 'Turis'}` }] }),
   component: OperatorsFinancial,
 });
 

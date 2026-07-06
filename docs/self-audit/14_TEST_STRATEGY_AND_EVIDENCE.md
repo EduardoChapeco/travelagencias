@@ -1,6 +1,6 @@
 # 14. Estratégia de Testes e Evidências Físicas
 
-Este documento descreve a estratégia de testes do **TravelOS**, catalogando as suítes de testes automatizados e e2e físicas do projeto e fornecendo roteiros de execução e evidências de validação.
+Este documento descreve a estratégia de testes do **Turis**, catalogando as suítes de testes automatizados e e2e físicas do projeto e fornecendo roteiros de execução e evidências de validação.
 
 ---
 

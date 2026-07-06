@@ -1,6 +1,6 @@
 # 10. Auditoria de Segurança e LGPD
 
-Este documento apresenta a análise de conformidade de segurança da informação do TravelOS, com foco nas políticas de RLS, proteção de dados pessoais (PII), rastreabilidade jurídica de aceites e armazenamento de credenciais de APIs.
+Este documento apresenta a análise de conformidade de segurança da informação do Turis, com foco nas políticas de RLS, proteção de dados pessoais (PII), rastreabilidade jurídica de aceites e armazenamento de credenciais de APIs.
 
 ---
 

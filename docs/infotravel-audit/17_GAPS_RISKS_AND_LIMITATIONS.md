@@ -1,6 +1,6 @@
 # 17. Registro de Lacunas, Riscos e Limitações da Integração
 
-Este documento detalha o mapeamento de riscos operacionais, limitações técnicas da API **Infotravel** e as barreiras de integração identificadas durante a auditoria forense do ecossistema do **TravelOS**.
+Este documento detalha o mapeamento de riscos operacionais, limitações técnicas da API **Infotravel** e as barreiras de integração identificadas durante a auditoria forense do ecossistema do **Turis**.
 
 ---
 
@@ -10,7 +10,7 @@ A especificação física da API da Infotera impõe restrições severas que imp
 
 ### 1. Ausência de Webhooks Nativos (Falta de Sincronização em Tempo Real)
 
-- _Gap_: A API não disponibiliza barramento de webhooks para notificar o TravelOS quando uma reserva for alterada, cancelada ou paga diretamente no portal web da operadora.
+- _Gap_: A API não disponibiliza barramento de webhooks para notificar o Turis quando uma reserva for alterada, cancelada ou paga diretamente no portal web da operadora.
 - _Impacto_: Risco alto de inconsistência contábil e de vouchers caso alterações ocorram fora do ecossistema local.
 - _Mitigação_: Implementação obrigatória de polling incremental agendado (Fila de Sync) que varre reservas ativas com partida nos próximos 30 dias de forma periódica (ex: a cada 4 horas).
 
@@ -39,4 +39,4 @@ A integração **não abrange**:
 
 - Processamento e liquidação direta de transações de cartão de crédito no barramento GDS.
 - Emissão física de apólices de seguro de viagem ou bilhetes aéreos consolidados sem verificação prévia de saldo/crédito da agência parceira junto à operadora.
-- Sincronização automática de dados de caixa físico de filiais externas não mapeadas em tabelas relacionais do TravelOS.
+- Sincronização automática de dados de caixa físico de filiais externas não mapeadas em tabelas relacionais do Turis.

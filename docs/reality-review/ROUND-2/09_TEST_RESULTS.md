@@ -1,6 +1,6 @@
-# Resultados de Testes e Validação — Rodada 2 (TravelOS)
+# Resultados de Testes e Validação — Rodada 2 (Turis)
 
-Este relatório compila as checagens estáticas, de build e linter executadas no repositório de códigos do TravelOS.
+Este relatório compila as checagens estáticas, de build e linter executadas no repositório de códigos do Turis.
 
 ---
 

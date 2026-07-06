@@ -1,4 +1,4 @@
-# Resultados de Testes e Verificação Estática — Rodada 3 (TravelOS)
+# Resultados de Testes e Verificação Estática — Rodada 3 (Turis)
 
 Este documento registra o resultado dos testes estáticos, typechecks e builds de produção efetuados na Rodada 3 de auditoria.
 

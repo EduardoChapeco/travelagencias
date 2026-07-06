@@ -12,7 +12,7 @@ import { EmptyState } from "@/components/shell/PageHeader";
 import { NewTicketSheet } from "@/components/support/NewTicketSheet";
 
 export const Route = createFileRoute("/agency/$slug/support")({
-  head: () => ({ meta: [{ title: "Central de Suporte · TravelOS" }] }),
+  head: ({ context }: any) => ({ meta: [{ title: `Central de Suporte · ${context?.brand?.platform_name || 'Turis'}` }] }),
   component: SupportRoute,
 });
 

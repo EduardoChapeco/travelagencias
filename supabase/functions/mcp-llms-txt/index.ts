@@ -16,7 +16,7 @@ serve(async (req) => {
     const agencySlug = url.searchParams.get("agency");
 
     if (!agencySlug) {
-      return new Response("# TravelOS MCP\nPor favor, informe ?agency=slug para ler o catálogo.", {
+      return new Response("# Turis MCP\nPor favor, informe ?agency=slug para ler o catálogo.", {
         status: 400,
         headers: { ...corsHeaders, "Content-Type": "text/markdown; charset=utf-8" },
       });
@@ -56,7 +56,7 @@ serve(async (req) => {
         markdown += `- **Destino:** ${t.destination}\n`;
         markdown += `- **Preço:** R$ ${Number(t.base_price).toFixed(2)}\n`;
         markdown += `- **Vagas Disponíveis:** ${t.available_seats}\n`;
-        markdown += `- **Link para compra:** [Link](https://${agency.slug}.travelos.com/tour/${t.id})\n\n`;
+        markdown += `- **Link para compra:** [Link](https://${agency.slug}.turis.com/tour/${t.id})\n\n`;
         markdown += `${t.description}\n\n---\n\n`;
       });
     } else {
@@ -64,7 +64,7 @@ serve(async (req) => {
     }
 
     markdown += `## Contato e Atendimento\n`;
-    markdown += `Para comprar, os usuários devem acessar https://${agency.slug}.travelos.com ou interagir com o agente de vendas da própria página.\n`;
+    markdown += `Para comprar, os usuários devem acessar https://${agency.slug}.turis.com ou interagir com o agente de vendas da própria página.\n`;
 
     return new Response(markdown, {
       headers: {

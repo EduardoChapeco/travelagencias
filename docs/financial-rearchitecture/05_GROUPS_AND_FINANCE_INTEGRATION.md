@@ -1,6 +1,6 @@
-# Integração Financeira de Grupos e Excursões (TravelOS)
+# Integração Financeira de Grupos e Excursões (Turis)
 
-Este relatório detalha a arquitetura de vinculação entre o Hub de Grupos (Excursões) e o Subsistema Financeiro no TravelOS, auditando a consolidação de custos fixos, variáveis e orçamentos.
+Este relatório detalha a arquitetura de vinculação entre o Hub de Grupos (Excursões) e o Subsistema Financeiro no Turis, auditando a consolidação de custos fixos, variáveis e orçamentos.
 
 ---
 

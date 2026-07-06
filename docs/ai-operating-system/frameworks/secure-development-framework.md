@@ -1,6 +1,6 @@
 # Framework: Secure Development Lifecycle (SDL) & Zero Trust
 
-**Propósito:** Definir os requisitos de segurança e governança que devem ser embutidos em cada fase de desenvolvimento de software no TravelOS. Nenhuma funcionalidade deve confiar na validação do lado do cliente (Frontend). O sistema é projetado sob o princípio de Privilégio Mínimo (Least Privilege) e Defesa em Profundidade.
+**Propósito:** Definir os requisitos de segurança e governança que devem ser embutidos em cada fase de desenvolvimento de software no Turis. Nenhuma funcionalidade deve confiar na validação do lado do cliente (Frontend). O sistema é projetado sob o princípio de Privilégio Mínimo (Least Privilege) e Defesa em Profundidade.
 
 ---
 

@@ -1,12 +1,12 @@
-# 03. Auditoria do Design System - TravelOS
+# 03. Auditoria do Design System - Turis
 
-Este documento apresenta a auditoria estética do design plano **Light Editorial SaaS** do TravelOS, com as regras de visual lock, injeção do Brand Kit e o status de eliminação de sombras.
+Este documento apresenta a auditoria estética do design plano **Light Editorial SaaS** do Turis, com as regras de visual lock, injeção do Brand Kit e o status de eliminação de sombras.
 
 ---
 
 ## 1. Regras Visuais e Identidade Visual (Visual Lock)
 
-A interface do TravelOS deve seguir estritamente o padrão **Light Editorial SaaS**:
+A interface do Turis deve seguir estritamente o padrão **Light Editorial SaaS**:
 
 - **Fundo Predominante**: Branco puro (`#FFFFFF` ou `bg-background`).
 - **Sombras**: Absolutamente proibidas (`shadow-none` ou override do box-shadow).

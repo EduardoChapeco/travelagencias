@@ -20,7 +20,7 @@ import {
 } from "lucide-react";
 
 export const Route = createFileRoute("/agency/$slug/trips/$id/destination")({
-  head: () => ({ meta: [{ title: "Destino & Segurança · TravelOS" }] }),
+  head: ({ context }: any) => ({ meta: [{ title: `Destino & Segurança · ${context?.brand?.platform_name || 'Turis'}` }] }),
   component: TripDestinationPage,
 });
 

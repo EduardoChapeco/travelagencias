@@ -1,6 +1,6 @@
 # 14. Shared Services and Reuse Strategy (Reutilização de Serviços)
 
-Este relatório detalha a estratégia de reuso de serviços transversais no TravelOS.
+Este relatório detalha a estratégia de reuso de serviços transversais no Turis.
 
 ---
 

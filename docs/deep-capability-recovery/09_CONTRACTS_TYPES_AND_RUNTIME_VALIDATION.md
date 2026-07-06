@@ -1,6 +1,6 @@
 # 09. Contracts, Types and Runtime Validation (Auditoria de Tipos)
 
-Este relatório descreve o mapeamento de tipagem TypeScript, schemas Zod e o saneamento de casts de dados no TravelOS.
+Este relatório descreve o mapeamento de tipagem TypeScript, schemas Zod e o saneamento de casts de dados no Turis.
 
 ---
 

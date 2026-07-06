@@ -1,5 +1,5 @@
 -- =============================================================================
--- TravelOS — Stability Refactoring (Soft Deletes)
+-- Turis — Stability Refactoring (Soft Deletes)
 -- Migration: 20260609000006_soft_deletes
 -- =============================================================================
 

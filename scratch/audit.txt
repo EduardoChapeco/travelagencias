@@ -1,5 +1,5 @@
 MIGRATIONS:\n\n--- 20260603021703_625947f9-361f-4f4b-8554-5c0135884ce7.sql ---\n-- =========================================================================
--- TravelOS — Schema inicial multi-tenant
+-- Turis — Schema inicial multi-tenant
 -- =========================================================================
 
 -- ─── Helpers ─────────────────────────────────────────────────────────────
@@ -1563,7 +1563,7 @@ ALTER TABLE public.contract_clauses_template ENABLE ROW LEVEL SECURITY;
 CREATE POLICY "clauses readable by all" ON public.contract_clauses_template
   FOR SELECT TO anon, authenticated USING (true);
 
--- Seed 49 cláusulas (Excelência Tour) — texto resumido pétreo
+-- Seed 49 cláusulas (Turis Tecnologia) — texto resumido pétreo
 INSERT INTO public.contract_clauses_template (number, section, clause_text) VALUES
 (1,'Objeto','O presente contrato tem por objeto a intermediação pela AGÊNCIA da prestação de serviços turísticos descritos no pacote contratado pelo CLIENTE.'),
 (2,'Objeto','A AGÊNCIA atua como intermediária entre o CLIENTE e os fornecedores de serviços (companhias aéreas, hotéis, operadoras, seguradoras, locadoras e demais prestadores).'),
@@ -1646,7 +1646,7 @@ AS $$
     c.signed_at,
     c.content_hash,
     c.signed_hash,
-    'TravelOS Assinaturas' AS issuer,
+    'Turis Assinaturas' AS issuer,
     c.status
   FROM public.contracts c
   WHERE c.certificate->>'serial' = _serial
@@ -1917,7 +1917,7 @@ BEGIN
       signatures = coalesce(signatures,'[]'::jsonb) || jsonb_build_array(_sig),
       certificate = jsonb_build_object(
         'serial', _serial,
-        'issuer', 'TravelOS Assinaturas',
+        'issuer', 'Turis Assinaturas',
         'issued_at', now(),
         'verification_url', '/verify/' || _serial
       )
@@ -2553,7 +2553,7 @@ TO authenticated
 USING (author_id = auth.uid())
 WITH CHECK (author_id = auth.uid());
 \n--- 20260605000001_schema_fixes_production.sql ---\n-- =============================================================================
--- TravelOS — Schema Fixes for Production
+-- Turis — Schema Fixes for Production
 -- Migration: 20260605000001_schema_fixes_production
 -- 
 -- Corrige:
@@ -3079,7 +3079,7 @@ DROP TRIGGER IF EXISTS trigger_update_trip_total_paid ON public.booking_installm
 CREATE TRIGGER trigger_update_trip_total_paid
 AFTER INSERT OR UPDATE OF status OR DELETE ON public.booking_installments
 FOR EACH ROW EXECUTE FUNCTION public.update_trip_total_paid();
-\n--- 20260609000004_grupos_terrestres.sql ---\n-- Migration para Grupos Terrestres B2C (TravelOS Fase A)
+\n--- 20260609000004_grupos_terrestres.sql ---\n-- Migration para Grupos Terrestres B2C (Turis Fase A)
 
 CREATE TABLE IF NOT EXISTS group_trips (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -3173,7 +3173,7 @@ FOR INSERT WITH CHECK (group_trip_id IN (
 -- Public can read their own bookings via token
 CREATE POLICY "Public read bookings by token" ON group_bookings
 FOR SELECT USING (true); -- Token is used as secret in RPCs or queries
-\n--- 20260609000005_bus_virtual.sql ---\n-- Migration para o Motor de Ônibus Virtual (TravelOS Fase B)
+\n--- 20260609000005_bus_virtual.sql ---\n-- Migration para o Motor de Ônibus Virtual (Turis Fase B)
 
 CREATE TABLE IF NOT EXISTS bus_layouts (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -3228,7 +3228,7 @@ FOR ALL USING (group_trip_id IN (
     SELECT id FROM group_trips WHERE is_public = true AND status = 'published'
 ));
 \n--- 20260609000006_contracts_storage.sql ---\n-- =============================================================================
--- TravelOS — Storage for Contracts and Server-Side Hash
+-- Turis — Storage for Contracts and Server-Side Hash
 -- Migration: 20260609000004_contracts_storage
 -- =============================================================================
 
@@ -3316,7 +3316,7 @@ BEGIN
 END;
 $$;
 \n--- 20260609000007_master_audit_fixes.sql ---\n-- =============================================================================
--- TravelOS — Master Security & Architecture Audit Fixes
+-- Turis — Master Security & Architecture Audit Fixes
 -- Migration: 20260609000005_master_audit_fixes
 -- =============================================================================
 
@@ -3427,7 +3427,7 @@ $$;
 REVOKE EXECUTE ON FUNCTION public.log_audit_event(uuid, text, text, uuid, jsonb) FROM PUBLIC, anon;
 GRANT EXECUTE ON FUNCTION public.log_audit_event(uuid, text, text, uuid, jsonb) TO authenticated;
 \n--- 20260609000008_soft_deletes.sql ---\n-- =============================================================================
--- TravelOS — Stability Refactoring (Soft Deletes)
+-- Turis — Stability Refactoring (Soft Deletes)
 -- Migration: 20260609000006_soft_deletes
 -- =============================================================================
 
@@ -3490,7 +3490,7 @@ DROP POLICY IF EXISTS "fin delete" ON public.financial_records;
 -- Revoke physical DELETE for Vouchers
 DROP POLICY IF EXISTS "vouchers delete" ON public.vouchers;
 \n--- 20260609000009_financial_rpcs.sql ---\n-- =============================================================================
--- TravelOS — Financial Aggregation RPCs (Phase 7)
+-- Turis — Financial Aggregation RPCs (Phase 7)
 -- Migration: 20260609000007_financial_rpcs
 -- =============================================================================
 
@@ -3597,7 +3597,7 @@ BEGIN
 END;
 $$;
 \n--- 20260609000010_crm_rpc.sql ---\n-- =============================================================================
--- TravelOS — CRM Scalability (Phase 7)
+-- Turis — CRM Scalability (Phase 7)
 -- Migration: 20260609000008_crm_rpc
 -- =============================================================================
 
@@ -3637,7 +3637,7 @@ AS $$
   ORDER BY l.created_at DESC
   LIMIT 50);
 $$;
-\n--- 20260609000011_master_global_authority.sql ---\n-- TravelOS — Master Global Authority & RLS Fixes
+\n--- 20260609000011_master_global_authority.sql ---\n-- Turis — Master Global Authority & RLS Fixes
 -- Migration: 20260609000009_master_global_authority
 
 -- =========================================================================
@@ -3737,7 +3737,7 @@ $$;
 
 GRANT EXECUTE ON FUNCTION public.get_public_agency_by_slug(text) TO public, anon, authenticated;
 GRANT EXECUTE ON FUNCTION public.get_public_agency_by_id(uuid) TO public, anon, authenticated;
-\n--- 20260609000012_lgpd_acceptances.sql ---\n-- TravelOS — LGPD & Legal Acceptances Governance
+\n--- 20260609000012_lgpd_acceptances.sql ---\n-- Turis — LGPD & Legal Acceptances Governance
 -- Migration: 20260609000010_lgpd_acceptances
 
 -- =========================================================================
@@ -3841,7 +3841,7 @@ END;
 $$;
 
 GRANT EXECUTE ON FUNCTION public.record_legal_acceptance(uuid, uuid, uuid, text) TO authenticated;
-\n--- 20260609000013_admin_create_agency.sql ---\n-- TravelOS — Master Agency Creation & Invites
+\n--- 20260609000013_admin_create_agency.sql ---\n-- Turis — Master Agency Creation & Invites
 -- Migration: 20260609000011_admin_create_agency
 
 -- =========================================================================
@@ -3903,7 +3903,7 @@ END;
 $$;
 
 GRANT EXECUTE ON FUNCTION public.admin_create_agency_and_invite(text, text, text, text, text) TO authenticated;
-\n--- 20260609000014_plans_enforcement.sql ---\n-- TravelOS — SaaS Plan Enforcement & Strict Audit
+\n--- 20260609000014_plans_enforcement.sql ---\n-- Turis — SaaS Plan Enforcement & Strict Audit
 -- Migration: 20260609000012_plans_enforcement
 
 -- =========================================================================
@@ -4099,7 +4099,7 @@ BEGIN
   );
 END;
 $$;
-\n--- 20260609000015_financial_isolation.sql ---\n-- TravelOS — Financial & Internal Roles Isolation
+\n--- 20260609000015_financial_isolation.sql ---\n-- Turis — Financial & Internal Roles Isolation
 -- Migration: 20260609000013_financial_isolation
 
 -- =========================================================================
@@ -6436,7 +6436,7 @@ ADD COLUMN IF NOT EXISTS passengers_count INTEGER;
 -- Comentário para a documentação da tabela
 COMMENT ON COLUMN public.boarding_cards.passengers_count IS 'Número opcional de passageiros manual caso não haja lista detalhada';
 \n--- 20260611000001_recalculate_proposal_totals.sql ---\n-- =============================================================================
--- TravelOS — Recalculo de Totais de Propostas (Segurança Comercial)
+-- Turis — Recalculo de Totais de Propostas (Segurança Comercial)
 -- Migration: 20260611000001_recalculate_proposal_totals
 -- =============================================================================
 
@@ -9814,7 +9814,7 @@ BEGIN
   -- We rely on pg_net or Supabase webhooks natively, but since we can't easily mock net.http_post here without knowing the anon key,
   -- we will assume the Supabase Dashboard Webhooks feature is used or we can use pg_net if enabled.
   -- For now, this is a placeholder or we can just call it from the frontend when a task is created.
-  -- Actually, the best practice in TravelOS has been to call the edge function from the frontend when manually creating a task.
+  -- Actually, the best practice in Turis has been to call the edge function from the frontend when manually creating a task.
   RETURN NEW;
 END;
 $$ LANGUAGE plpgsql;
@@ -9912,7 +9912,7 @@ CREATE POLICY "agency members update trips" ON public.trips
 CREATE INDEX IF NOT EXISTS trips_deleted_at_idx ON public.trips (deleted_at)
   WHERE deleted_at IS NULL;
 \n--- 20260615000009_proposals_advanced_features.sql ---\n-- =============================================================================
--- TravelOS — Proposals Advanced Features and Tracking
+-- Turis — Proposals Advanced Features and Tracking
 -- Migration: 20260615000009_proposals_advanced_features
 -- =============================================================================
 
@@ -10965,7 +10965,7 @@ ALTER TABLE public.omnichannel_sessions
 COMMENT ON COLUMN public.omnichannel_sessions.channel IS 'Canal de comunicação da sessão: whatsapp, instagram, email';
 COMMENT ON COLUMN public.omnichannel_sessions.contact_id IS 'Identificador do contato externo (ex: número do telefone ou username)';
 \n--- 20260615000019_strict_rbac_isolation.sql ---\n-- =========================================================================
--- TravelOS 3.0 — Strict RBAC Isolation (Agents vs Gestores)
+-- Turis 3.0 — Strict RBAC Isolation (Agents vs Gestores)
 -- =========================================================================
 
 -- ─── 1. LEADS ────────────────────────────────────────────────────────────
@@ -11625,7 +11625,7 @@ CREATE POLICY "Users can read workflow runs of their agency" ON public.workflow_
 ALTER TABLE public.agencies ADD COLUMN IF NOT EXISTS module_names jsonb DEFAULT '{}'::jsonb;
 
 COMMENT ON COLUMN public.agencies.module_names IS 'Nome personalizado dos módulos definidos pela agência (ex: {"trips": "Pacotes"})';
-\n--- 20260618000000_billing_and_proration.sql ---\n-- TravelOS — SaaS Billing, Invoices & Proration Engine
+\n--- 20260618000000_billing_and_proration.sql ---\n-- Turis — SaaS Billing, Invoices & Proration Engine
 -- Migration: 20260618000000_billing_and_proration
 
 -- =========================================================================
@@ -13912,7 +13912,7 @@ BEGIN
 
   -- Montar subject e body do email
   v_subject := format('[%s] Nova mensagem no chamado %s: %s',
-    COALESCE(v_agency_name, 'TravelOS'),
+    COALESCE(v_agency_name, 'Turis'),
     v_ticket.code,
     v_ticket.title
   );
@@ -13923,7 +13923,7 @@ BEGIN
     || E'Prioridade: %s\n'
     || E'Tipo: %s\n\n'
     || E'Mensagem:\n%s\n\n'
-    || E'Acesse o painel TravelOS para responder.',
+    || E'Acesse o painel Turis para responder.',
     v_ticket.code,
     v_ticket.title,
     v_ticket.priority,
@@ -14016,7 +14016,7 @@ BEGIN
   END IF;
 
   v_subject := format('[URGENTE] %s — Novo chamado crítico: %s',
-    COALESCE(v_agency_name, 'TravelOS'),
+    COALESCE(v_agency_name, 'Turis'),
     NEW.title
   );
 
@@ -14028,7 +14028,7 @@ BEGIN
     || E'Prioridade: URGENTE\n'
     || E'Cliente: %s\n\n'
     || E'Descrição:\n%s\n\n'
-    || E'Acesse o painel TravelOS imediatamente para atender este chamado.',
+    || E'Acesse o painel Turis imediatamente para atender este chamado.',
     NEW.code,
     NEW.title,
     NEW.type,
@@ -14134,10 +14134,10 @@ BEGIN
     || E'"%s"\n\n'
     || E'Para continuar a conversa ou acompanhar seu chamado, entre em contato com a agência.\n\n'
     || E'Atenciosamente,\n%s',
-    COALESCE(v_agency_name, 'TravelOS'),
+    COALESCE(v_agency_name, 'Turis'),
     v_ticket.code,
     LEFT(NEW.content, 500),
-    COALESCE(v_agency_name, 'Equipe TravelOS')
+    COALESCE(v_agency_name, 'Equipe Turis')
   );
 
   -- Disparar gmail-send para o CLIENTE
@@ -18767,7 +18767,7 @@ ALTER TABLE public.omnichannel_messages
   ADD COLUMN IF NOT EXISTS failed_at timestamptz,
   ADD COLUMN IF NOT EXISTS failure_code text,
   ADD COLUMN IF NOT EXISTS failure_message text,
-  ADD COLUMN IF NOT EXISTS source text DEFAULT 'customer', -- customer, business_app, travelos_agent, automation, template
+  ADD COLUMN IF NOT EXISTS source text DEFAULT 'customer', -- customer, business_app, turis_agent, automation, template
   ADD COLUMN IF NOT EXISTS reply_to uuid REFERENCES public.omnichannel_messages(id) ON DELETE SET NULL;
 
 CREATE UNIQUE INDEX IF NOT EXISTS idx_omnichannel_messages_wamid ON public.omnichannel_messages(wamid) WHERE wamid IS NOT NULL;

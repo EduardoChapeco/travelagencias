@@ -1,4 +1,4 @@
-# Comparativo: Local vs. Main vs. Produção — Rodada 2 (TravelOS)
+# Comparativo: Local vs. Main vs. Produção — Rodada 2 (Turis)
 
 Este documento compara a conformidade entre o código local do workspace (Working Tree), o repositório remoto (Main) e o ambiente de deploy de produção.
 

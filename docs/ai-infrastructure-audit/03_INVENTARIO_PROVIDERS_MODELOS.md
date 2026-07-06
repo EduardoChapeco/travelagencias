@@ -1,6 +1,6 @@
 # Inventário de Provedores e Modelos de IA
 
-Este documento lista todos os provedores de APIs de IA, OCR, automações e scraping integrados ao TravelAgencias/TravelOS, detalhando as URLs de endpoints de destino, os modelos utilizados em produção e suas respectivas finalidades.
+Este documento lista todos os provedores de APIs de IA, OCR, automações e scraping integrados ao TravelAgencias/Turis, detalhando as URLs de endpoints de destino, os modelos utilizados em produção e suas respectivas finalidades.
 
 ---
 

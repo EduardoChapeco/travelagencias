@@ -66,7 +66,7 @@ import { Switch } from "@/components/ui/switch";
 import { cn } from "@/lib/utils";
 
 export const Route = createFileRoute("/agency/$slug/trips/$id/reaccommodation")({
-  head: () => ({ meta: [{ title: "Reacomodação Aérea · TravelOS" }] }),
+  head: ({ context }: any) => ({ meta: [{ title: `Reacomodação Aérea · ${context?.brand?.platform_name || 'Turis'}` }] }),
   component: TripReaccommodationPage,
 });
 

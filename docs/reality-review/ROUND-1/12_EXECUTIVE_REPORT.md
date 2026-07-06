@@ -1,6 +1,6 @@
-# Relatório Executivo de Auditoria (TravelOS) — Rodada 1
+# Relatório Executivo de Auditoria (Turis) — Rodada 1
 
-Este relatório apresenta um resumo gerencial das constatações da auditoria forense realizada no TravelOS, apontando a evolução operacional do sistema e os gargalos de conformidade e integridade contábil.
+Este relatório apresenta um resumo gerencial das constatações da auditoria forense realizada no Turis, apontando a evolução operacional do sistema e os gargalos de conformidade e integridade contábil.
 
 ---
 

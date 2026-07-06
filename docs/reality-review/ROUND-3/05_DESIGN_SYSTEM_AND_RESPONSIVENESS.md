@@ -1,4 +1,4 @@
-# Design System e Responsividade — Rodada 3 (TravelOS)
+# Design System e Responsividade — Rodada 3 (Turis)
 
 Este documento certifica a aderência aos padrões de design "Light Editorial SaaS / Flat Premium" e a responsividade em múltiplos viewports da aplicação.
 
@@ -7,7 +7,7 @@ Este documento certifica a aderência aos padrões de design "Light Editorial Sa
 ## 1. Adesão ao Estilo Flat Premium
 
 - **Princípio Estético**: Total eliminação de sombras pesadas (`shadow-lg`, `shadow-2xl`) substituindo-as por bordas finas sutis (`border border-border`) e grids planos de alta legibilidade, preservando a coerência visual editorial.
-- **Componentes de Ações**: Todos os botões, badges de status, selects e inputs operam em estados hover suaves, utilizando a paleta de cores institucional de alta acessibilidade do TravelOS.
+- **Componentes de Ações**: Todos os botões, badges de status, selects e inputs operam em estados hover suaves, utilizando a paleta de cores institucional de alta acessibilidade do Turis.
 
 ---
 

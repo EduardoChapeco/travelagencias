@@ -27,7 +27,7 @@ import { toast } from "sonner";
 import { updateBoardingCardChecklist } from "@/services/boarding";
 
 export const Route = createFileRoute("/agency/$slug/trips/$id/boarding")({
-  head: () => ({ meta: [{ title: "Check-in & Embarque · TravelOS" }] }),
+  head: ({ context }: any) => ({ meta: [{ title: `Check-in & Embarque · ${context?.brand?.platform_name || 'Turis'}` }] }),
   component: TripBoardingPage,
 });
 

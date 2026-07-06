@@ -6,9 +6,9 @@ Este documento audita a arquitetura de personas especializadas, o roteamento de 
 
 ## 1. Roteamento de Intenções e Registro de Personas
 
-O TravelOS não emula especialistas em um prompt monolítico. O roteador seleciona a persona mais qualificada com base no conteúdo da pergunta do operador:
+O Turis não emula especialistas em um prompt monolítico. O roteador seleciona a persona mais qualificada com base no conteúdo da pergunta do operador:
 
-- **Arquivo**: [AgentRouter.ts](file:///c:/Users/Excelência Tour SMO/.gemini/antigravity-ide/scratch/travelagencias/src/lib/ai/AgentRouter.ts)
+- **Arquivo**: [AgentRouter.ts](file:///c:/Users/Turis Tecnologia SMO/.gemini/antigravity-ide/scratch/travelagencias/src/lib/ai/AgentRouter.ts)
 - **Personas Registradas**:
   - `backoffice`: Auxilia em cadastros de leads, preenchimento de formulários de viajantes e cotações básicas.
   - `manager`: Focado em análises comerciais de faturamento, margem de lucro e relatórios gerenciais da agência.
@@ -21,7 +21,7 @@ O TravelOS não emula especialistas em um prompt monolítico. O roteador selecio
 
 Para garantir integridade nas respostas da IA especialista, o sistema implementa uma segunda etapa de validação automática:
 
-- **Fórmula de Revisão**: No arquivo [ai-chat.functions.ts](file:///c:/Users/Excelência Tour SMO/.gemini/antigravity-ide/scratch/travelagencias/src/lib/api/ai-chat.functions.ts#L369-L394), o rascunho de resposta gerado pelo especialista é enviado a um segundo processamento de LLM (`REVIEWER_PROMPT`).
+- **Fórmula de Revisão**: No arquivo [ai-chat.functions.ts](file:///c:/Users/Turis Tecnologia SMO/.gemini/antigravity-ide/scratch/travelagencias/src/lib/api/ai-chat.functions.ts#L369-L394), o rascunho de resposta gerado pelo especialista é enviado a um segundo processamento de LLM (`REVIEWER_PROMPT`).
 - **Verificações do Revisor**:
   - Bloqueio contra injeções de prompt indiretas ou desvios de finalidade.
   - Ajuste do tom para tom estritamente operacional/comercial, expurgando termos técnicos de banco de dados ou depuração.

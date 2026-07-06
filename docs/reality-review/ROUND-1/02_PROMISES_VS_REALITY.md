@@ -1,4 +1,4 @@
-# Promessas vs. Realidade (TravelOS)
+# Promessas vs. Realidade (Turis)
 
 Este documento avalia individualmente cada funcionalidade prometida nos planos anteriores com o estado real do código no repositório, atribuindo classificações rígidas e baseadas em evidências técnicas.
 

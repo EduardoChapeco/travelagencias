@@ -1,6 +1,6 @@
 # 03. Raio-X Geral da Arquitetura do Sistema
 
-Este documento apresenta o mapeamento completo dos componentes lógicos, físicos e integrados do ecossistema TravelOS, detalhando as rotas, serviços, banco de dados, Edge Functions e infraestrutura de segurança.
+Este documento apresenta o mapeamento completo dos componentes lógicos, físicos e integrados do ecossistema Turis, detalhando as rotas, serviços, banco de dados, Edge Functions e infraestrutura de segurança.
 
 ---
 

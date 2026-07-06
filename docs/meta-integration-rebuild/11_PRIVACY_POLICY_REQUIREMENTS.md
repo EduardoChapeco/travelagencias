@@ -1,7 +1,7 @@
 # 11. Privacy Policy Requirements (Requisitos da Política de Privacidade)
 
 ## 1. Rota Pública `/privacy`
-Para cumprir as políticas do App Review da Meta e as exigências legais da LGPD/GDPR, o TravelOS disponibiliza uma página pública acessível em `/privacy`:
+Para cumprir as políticas do App Review da Meta e as exigências legais da LGPD/GDPR, o Turis disponibiliza uma página pública acessível em `/privacy`:
 * A rota está disponível de forma pública, sem necessidade de autenticação (login), sob protocolo HTTPS.
 * O conteúdo descreve de forma transparente o tratamento dos dados pessoais.
 

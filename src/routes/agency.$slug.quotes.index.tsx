@@ -63,7 +63,7 @@ import {
 } from "@/services/quotes-promotions";
 
 export const Route = createFileRoute("/agency/$slug/quotes/")({
-  head: () => ({ meta: [{ title: "Workspace de Cotações · TravelOS" }] }),
+  head: ({ context }: any) => ({ meta: [{ title: `Workspace de Cotações · ${context?.brand?.platform_name || 'Turis'}` }] }),
   component: QuotesIndexPage,
 });
 
@@ -269,7 +269,7 @@ Texto: "${aiText}"`;
           action: "completion",
           prompt,
           systemPrompt:
-            "Você é o assistente inteligente de viagens do TravelOS. Extraia informações de voos, hotéis, datas, viajantes e orçamento e monte exatamente o JSON solicitado.",
+            "Você é o assistente inteligente de viagens do Turis. Extraia informações de voos, hotéis, datas, viajantes e orçamento e monte exatamente o JSON solicitado.",
           modelPreference: "smart",
         },
       });

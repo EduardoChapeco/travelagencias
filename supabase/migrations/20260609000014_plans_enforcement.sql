@@ -1,4 +1,4 @@
--- TravelOS — SaaS Plan Enforcement & Strict Audit
+-- Turis — SaaS Plan Enforcement & Strict Audit
 -- Migration: 20260609000012_plans_enforcement
 
 -- =========================================================================

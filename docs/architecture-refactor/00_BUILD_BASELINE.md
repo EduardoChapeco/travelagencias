@@ -1,6 +1,6 @@
 # Build Baseline (Auditoria de Performance do Compilador)
 
-Este documento registra o estado atual e as métricas do pipeline de compilação do TravelAgencias/TravelOS antes de qualquer modificação de código, servindo como o ponto de partida (baseline) oficial para a refatoração de arquitetura.
+Este documento registra o estado atual e as métricas do pipeline de compilação do TravelAgencias/Turis antes de qualquer modificação de código, servindo como o ponto de partida (baseline) oficial para a refatoração de arquitetura.
 
 ---
 

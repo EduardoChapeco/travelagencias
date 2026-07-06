@@ -35,7 +35,7 @@ const proposalSearchSchema = z.object({
 
 export const Route = createFileRoute("/m/proposal/$token")({
   validateSearch: proposalSearchSchema,
-  head: () => ({ meta: [{ title: "Proposta de Viagem · TravelOS" }] }),
+  head: ({ context }: any) => ({ meta: [{ title: `Proposta de Viagem · ${context?.brand?.platform_name || 'Turis'}` }] }),
   component: PublicProposalView,
 });
 

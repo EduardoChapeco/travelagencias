@@ -1,6 +1,6 @@
 # 02. Segurança e Isolamento Multi-Tenant
 
-Este relatório documenta as falhas estruturais de isolamento de dados e segurança identificadas no modelo zero-trust do TravelOS, focando no risco de vazamento de informações e consumo de recursos entre agências concorrentes.
+Este relatório documenta as falhas estruturais de isolamento de dados e segurança identificadas no modelo zero-trust do Turis, focando no risco de vazamento de informações e consumo de recursos entre agências concorrentes.
 
 ## 1. Vazamento Cross-Tenant nas Edge Functions
 

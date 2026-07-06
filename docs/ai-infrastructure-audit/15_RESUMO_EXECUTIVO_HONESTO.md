@@ -1,6 +1,6 @@
 # Resumo Executivo Honesto — Auditoria de IA e OCR
 
-Este documento consolida os resultados da auditoria de infraestrutura de Inteligência Artificial, OCR e scraping no TravelAgencias/TravelOS, expondo falhas latentes e definindo o plano de ação técnico.
+Este documento consolida os resultados da auditoria de infraestrutura de Inteligência Artificial, OCR e scraping no TravelAgencias/Turis, expondo falhas latentes e definindo o plano de ação técnico.
 
 ---
 

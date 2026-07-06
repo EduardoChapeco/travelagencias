@@ -1,6 +1,6 @@
 # Fronteiras Cliente & Servidor (Client/Server Boundaries)
 
-Este documento define as regras de segregação de código cliente e servidor para a refatoração do TravelAgencias/TravelOS, auditando a distribuição isomórfica atual sob o TanStack Start.
+Este documento define as regras de segregação de código cliente e servidor para a refatoração do TravelAgencias/Turis, auditando a distribuição isomórfica atual sob o TanStack Start.
 
 ---
 

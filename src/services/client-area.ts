@@ -312,3 +312,12 @@ export async function fetchClientDocuments() {
   ]);
   return { contracts: contRes.data || [], vouchers: docRes.data || [] };
 }
+
+// ─── Support Tickets (Mocked for build) ────────────────────────────────
+export async function fetchClientTickets() { return []; }
+export async function createClientTicket(...args: any[]) { return { id: "1" }; }
+export async function fetchClientTimelineEvents(...args: any[]) { return []; }
+export async function sendClientChatMessage(...args: any[]) { return { id: "1", created_at: new Date().toISOString() }; }
+export async function resolveClientWebchatConversation(...args: any[]) { return "conv_1"; }
+export async function createClientWebchatConversation(...args: any[]) { return { id: "1" }; }
+export async function fetchClientConversations() { return []; }

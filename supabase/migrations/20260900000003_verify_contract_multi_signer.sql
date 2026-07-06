@@ -46,7 +46,7 @@ BEGIN
   signed_at := _contract.signed_at;
   content_hash := _contract.content_hash;
   signed_hash := _contract.signed_hash;
-  issuer := 'TravelOS Assinaturas';
+  issuer := 'Turis Assinaturas';
   status := _contract.status;
 
   RETURN NEXT;

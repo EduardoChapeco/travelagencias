@@ -18,7 +18,7 @@ import { toast } from "sonner";
 import { getLastName, getAirlineCheckinUrl } from "@/utils/airline-deeplinks";
 
 export const Route = createFileRoute("/m/checkin/$token")({
-  head: () => ({ meta: [{ title: "Meu Embarque · TravelOS" }] }),
+  head: ({ context }: any) => ({ meta: [{ title: `Meu Embarque · ${context?.brand?.platform_name || 'Turis'}` }] }),
   component: MobileCheckinPage,
 });
 

@@ -36,7 +36,7 @@ serve(async (req) => {
     if (type === "client") {
       toEmail = (ticket.clients as any)?.email;
     } else {
-      toEmail = "fornecedor_stub@travelos.com"; // In production, fetch supplier email
+      toEmail = "fornecedor_stub@turis.com"; // In production, fetch supplier email
     }
 
     if (!toEmail) throw new Error("Recipient email not found");

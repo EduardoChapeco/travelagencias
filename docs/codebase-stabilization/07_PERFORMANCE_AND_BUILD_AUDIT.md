@@ -1,4 +1,4 @@
-# 07. Performance e Auditoria de Build - TravelOS
+# 07. Performance e Auditoria de Build - Turis
 
 Este documento apresenta a análise de gargalos de compilação, consumo excessivo de memória no empacotamento (build), chunks gigantes e problemas de performance causados por re-renderizações desnecessárias.
 

@@ -110,7 +110,7 @@ function BlockedWrapper({ children }: { children: React.ReactNode }) {
 
           <div className="rounded-xl bg-zinc-900 border border-zinc-800 p-4 text-xs text-zinc-500 leading-relaxed">
             Se você é o proprietário desta agência, acesse a central de pagamentos ou entre em
-            contato com o suporte financeiro do TravelOS para regularizar sua assinatura.
+            contato com o suporte financeiro do Turis para regularizar sua assinatura.
           </div>
 
           <div className="flex justify-center gap-3">

@@ -1,6 +1,6 @@
-# 07. Matriz de Verdade Funcional - TravelOS
+# 07. Matriz de Verdade Funcional - Turis
 
-Este documento consolida a auditoria de verdade funcional de todas as funcionalidades de todos os domínios do TravelOS, classificando-as rigorosamente de acordo com seu estado real comprovado pelo código.
+Este documento consolida a auditoria de verdade funcional de todas as funcionalidades de todos os domínios do Turis, classificando-as rigorosamente de acordo com seu estado real comprovado pelo código.
 
 ---
 

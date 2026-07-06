@@ -16,7 +16,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { usePrompt } from "@/hooks/use-prompt";
 
 export const Route = createFileRoute("/client/profile")({
-  head: () => ({ meta: [{ title: "Perfil · TravelOS" }] }),
+  head: ({ context }: any) => ({ meta: [{ title: `Perfil · ${context?.brand?.platform_name || 'Turis'}` }] }),
   component: Page,
 });
 

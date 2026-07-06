@@ -1,6 +1,6 @@
 # 09. Mocks, Fakes e Fallbacks Sintéticos do Sistema
 
-Este documento apresenta um inventário detalhado de todos os blocos de simulação, dados fictícios e fallbacks sintéticos ativos nos módulos analisados do **TravelOS**.
+Este documento apresenta um inventário detalhado de todos os blocos de simulação, dados fictícios e fallbacks sintéticos ativos nos módulos analisados do **Turis**.
 
 ---
 

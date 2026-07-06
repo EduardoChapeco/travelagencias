@@ -42,6 +42,7 @@ import { signOut } from "@/lib/auth";
 import { supabase } from "@/integrations/supabase/client";
 import { useQuery } from "@tanstack/react-query";
 import { SlimSidebar, type SlimSidebarItem, type ContextItem, type AiAction } from "./SlimSidebar";
+import { FloatingDock } from "./FloatingDock";
 import { useUnreadConversations } from "@/hooks/inbox/useUnreadConversations";
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -486,28 +487,45 @@ export function AppSidebar({
   }));
 
   return (
-    <SlimSidebar
-      mobileOpen={mobileOpen}
-      onMobileClose={onMobileClose}
-      items={visibleHubs}
-      mobileItems={visibleMobileItems}
-      contextItems={contextItems}
-      contextTitle={contextTitle}
-      aiActions={aiActions}
-      brand={
-        <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-md bg-brand text-xs font-bold text-brand-foreground font-sans">
-          {(agency?.name ?? "T").charAt(0).toUpperCase()}
-        </div>
-      }
-      footer={
-        <button
-          onClick={() => signOut().then(() => navigate({ to: "/auth/login", replace: true }))}
-          className="flex h-8 w-8 items-center justify-center rounded-md text-muted-foreground transition-all hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
-          title="Sair da conta"
-        >
-          <LogOut className="h-[15px] w-[15px] shrink-0" strokeWidth={1.8} />
-        </button>
-      }
-    />
+    <>
+      <div className="md:hidden">
+        <SlimSidebar
+          mobileOpen={mobileOpen}
+          onMobileClose={onMobileClose}
+          items={visibleHubs}
+          mobileItems={visibleMobileItems}
+          contextItems={contextItems}
+          contextTitle={contextTitle}
+          aiActions={aiActions}
+          brand={
+            <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-md bg-brand text-xs font-bold text-brand-foreground font-sans">
+              {(agency?.name ?? "T").charAt(0).toUpperCase()}
+            </div>
+          }
+          footer={
+            <button
+              onClick={() => signOut().then(() => navigate({ to: "/auth/login", replace: true }))}
+              className="flex h-8 w-8 items-center justify-center rounded-md text-muted-foreground transition-all hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
+              title="Sair da conta"
+            >
+              <LogOut className="h-[15px] w-[15px] shrink-0" strokeWidth={1.8} />
+            </button>
+          }
+        />
+      </div>
+      <FloatingDock 
+        items={visibleHubs} 
+        contextItems={contextItems}
+        footer={
+          <button
+            onClick={() => signOut().then(() => navigate({ to: "/auth/login", replace: true }))}
+            className="flex h-10 w-10 items-center justify-center rounded-full text-muted-foreground transition-all hover:bg-surface-alt hover:text-foreground"
+            title="Sair da conta"
+          >
+            <LogOut className="h-5 w-5 shrink-0" strokeWidth={2} />
+          </button>
+        }
+      />
+    </>
   );
 }

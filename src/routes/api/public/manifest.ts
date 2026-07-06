@@ -9,9 +9,12 @@ export const Route = createFileRoute("/api/public/manifest")({
         const url = new URL(request.url);
         const slug = url.searchParams.get("agency");
 
+        const { data: pb } = await (supabase as any).from('platform_branding').select('*').single();
+        const brandName = (pb as any)?.platform_name || "Turis";
+        
         const defaultManifest = {
-          name: "TravelOS",
-          short_name: "TravelOS",
+          name: brandName,
+          short_name: (pb as any)?.platform_short_name || brandName,
           description: "Plataforma avançada para agências de turismo.",
           start_url: "/",
           display: "standalone",

@@ -1,4 +1,4 @@
-# Fluxos Operacionais e Integrações — Rodada 3 (TravelOS)
+# Fluxos Operacionais e Integrações — Rodada 3 (Turis)
 
 Este documento valida a consistência dos fluxos transacionais ponta a ponta e o correto acoplamento de APIs e motores de IA.
 

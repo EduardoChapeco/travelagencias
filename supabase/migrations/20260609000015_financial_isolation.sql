@@ -1,4 +1,4 @@
--- TravelOS — Financial & Internal Roles Isolation
+-- Turis — Financial & Internal Roles Isolation
 -- Migration: 20260609000013_financial_isolation
 
 -- =========================================================================

@@ -1,6 +1,6 @@
 # Mapa de Dependências & Grafo de Importação
 
-Este documento apresenta o mapeamento estrutural das dependências externas e internas do TravelAgencias/TravelOS, identificando gargalos e oportunidades de otimização de escopo.
+Este documento apresenta o mapeamento estrutural das dependências externas e internas do TravelAgencias/Turis, identificando gargalos e oportunidades de otimização de escopo.
 
 ---
 

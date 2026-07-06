@@ -1,6 +1,6 @@
 # Inventário de Chaves, Secrets e Variáveis de Ambiente
 
-Este documento cataloga onde e como as chaves de API, credenciais e secrets de criptografia são armazenados no TravelAgencias/TravelOS, mapeando suas fontes de configuração e o fluxo de acesso seguro.
+Este documento cataloga onde e como as chaves de API, credenciais e secrets de criptografia são armazenados no TravelAgencias/Turis, mapeando suas fontes de configuração e o fluxo de acesso seguro.
 
 ---
 

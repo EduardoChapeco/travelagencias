@@ -1,4 +1,4 @@
-# Plano Corretivo Contábil — Rodada 1 (TravelOS)
+# Plano Corretivo Contábil — Rodada 1 (Turis)
 
 Este documento estabelece as fases corretivas prioritárias para corrigir brechas de RLS, eliminar simulações (mocks) no chat e plugar de forma real o Ledger e as travas financeiras.
 

@@ -1,6 +1,6 @@
-# Matriz de Realidade — Rodada 2 (TravelOS)
+# Matriz de Realidade — Rodada 2 (Turis)
 
-Este documento detalha o estado real constatado de cada funcionalidade planejada ou implementada no sistema TravelOS.
+Este documento detalha o estado real constatado de cada funcionalidade planejada ou implementada no sistema Turis.
 
 ---
 

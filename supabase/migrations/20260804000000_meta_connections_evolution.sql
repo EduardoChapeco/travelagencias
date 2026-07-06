@@ -91,6 +91,6 @@ GRANT ALL ON public.kanban_settings TO authenticated;
 -- 4. Seed Default Policy Documents
 INSERT INTO public.policy_documents (kind, version, content_md, effective_at, is_published)
 VALUES 
-  ('privacy', '1.0', '# Política de Privacidade - TravelOS\n\nEsta é a Política de Privacidade do TravelOS. Coletamos dados para fornecer e melhorar nossos serviços.', now(), true),
-  ('terms', '1.0', '# Termos de Uso - TravelOS\n\nEstes são os Termos de Uso do TravelOS. Ao usar nossos serviços, você concorda com estes termos.', now(), true)
+  ('privacy', '1.0', '# Política de Privacidade - Turis\n\nEsta é a Política de Privacidade do Turis. Coletamos dados para fornecer e melhorar nossos serviços.', now(), true),
+  ('terms', '1.0', '# Termos de Uso - Turis\n\nEstes são os Termos de Uso do Turis. Ao usar nossos serviços, você concorda com estes termos.', now(), true)
 ON CONFLICT (kind, version) DO NOTHING;

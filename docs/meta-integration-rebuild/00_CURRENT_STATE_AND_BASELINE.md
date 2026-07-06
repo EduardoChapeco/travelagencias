@@ -1,7 +1,7 @@
 # 00. Current State and Baseline (Estado Atual e Linha de Base)
 
 ## 1. Contexto Geral da Integração Meta
-A integração do TravelOS com a Meta está atualmente dividida em dois blocos conceituais e estruturais que coexistem de forma desorganizada:
+A integração do Turis com a Meta está atualmente dividida em dois blocos conceituais e estruturais que coexistem de forma desorganizada:
 * **Estrutura Antiga (Omnichannel Legacy):** Baseada na tabela `omnichannel_sessions` e `omnichannel_messages`, que suportavam principalmente instâncias da Evolution API (VPS / WhatsApp não-oficial).
 * **Estrutura Nova (Umbler Inbox Foundation):** Introduzida em migrações recentes, baseada nas tabelas `channels`, `contacts`, `conversations` e `messages`.
 

@@ -31,7 +31,7 @@ import { Timeline360 } from "@/components/clients/Timeline360";
 import { ClientForm } from "@/components/clients/ClientForm";
 
 export const Route = createFileRoute("/agency/$slug/clients/$id")({
-  head: () => ({ meta: [{ title: "Cliente · TravelOS" }] }),
+  head: ({ context }: any) => ({ meta: [{ title: `Cliente · ${context?.brand?.platform_name || 'Turis'}` }] }),
   component: ClientDetail,
 });
 

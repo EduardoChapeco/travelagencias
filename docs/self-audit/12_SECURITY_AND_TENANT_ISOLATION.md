@@ -6,7 +6,7 @@ Este documento avalia a segurança do sistema contra acessos não autorizados (I
 
 ## 1. Isolamento Multi-Tenant no Banco de Dados (Row Level Security)
 
-O **TravelOS** utiliza o mecanismo nativo de **Row Level Security (RLS)** do PostgreSQL para isolar dados de agências diferentes:
+O **Turis** utiliza o mecanismo nativo de **Row Level Security (RLS)** do PostgreSQL para isolar dados de agências diferentes:
 * **Políticas Core**: As tabelas críticas (`quote_requests`, `omnichannel_sessions`, `cash_sessions`) usam a função `is_agency_member(auth.uid(), agency_id)` para validar a pertença do operador à agência antes de retornar ou alterar qualquer registro.
 * **RLS Omnichannel Avançado**: A migração `20260729000001` introduziu políticas de granularidade fina de acesso para agentes versus administradores na tabela `omnichannel_sessions`:
   * **Administradores da Agência**: Podem ver todos os atendimentos da agência.

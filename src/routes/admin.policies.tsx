@@ -25,7 +25,7 @@ import {
 } from "@/services/policies";
 
 export const Route = createFileRoute("/admin/policies")({
-  head: () => ({ meta: [{ title: "Politicas LGPD - TravelOS Admin" }] }),
+  head: () => ({ meta: [{ title: "Politicas LGPD - Turis Admin" }] }),
   component: Page,
 });
 

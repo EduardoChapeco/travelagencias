@@ -9,6 +9,6 @@ Para operar em produção (Live Mode), o aplicativo da Meta exige o processo de 
 
 ## 2. Conteúdo do Pacote de App Review
 O pacote de submissão no painel da Meta deve incluir:
-* **Vídeo Demonstrativo:** Roteiro do vídeo gravado provando o login com Facebook, fluxo de conexão, recebimento de uma mensagem inbound no Inbox do TravelOS e resposta outbound enviada pelo agente, e posterior desconexão.
+* **Vídeo Demonstrativo:** Roteiro do vídeo gravado provando o login com Facebook, fluxo de conexão, recebimento de uma mensagem inbound no Inbox do Turis e resposta outbound enviada pelo agente, e posterior desconexão.
 * **Usuário de Teste:** Conta de teste do Facebook e WABA Sandbox fornecidos no painel para que a equipe de engenharia da Meta possa simular o fluxo.
 * **Instruções de Reprodução:** Passo a passo detalhado em inglês ou português.

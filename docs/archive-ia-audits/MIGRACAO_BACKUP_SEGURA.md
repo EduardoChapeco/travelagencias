@@ -1,4 +1,4 @@
-# 🛡️ TravelOS — Guia de Migração / Backup Seguro (Zero-Loss)
+# 🛡️ Turis — Guia de Migração / Backup Seguro (Zero-Loss)
 
 > **Framework adotado:** **PPRR — Preserve → Prepare → Replicate → Reconcile**
 > (variação adaptada do framework de _Safe System Migration_ da Google SRE Workbook,
@@ -89,7 +89,7 @@ Conferir no Lovable: `Project Settings → Secrets` e dentro de cada Edge Functi
 ## 2. Inventário de Artefatos a Migrar
 
 ```
-TravelOS
+Turis
 ├── Código (GitHub)                  ← repositório Git
 ├── Migrations SQL (80 arquivos)     ← supabase/migrations/
 ├── Edge Functions (4)               ← supabase/functions/
@@ -140,13 +140,13 @@ Objetivo: ter uma **cópia offline** completa antes de tocar em qualquer coisa.
 Já que o repo foi desconectado, primeiro reconecte um repo **novo e vazio**:
 
 1. Lovable → `+ (Plus menu) → GitHub → Connect project → Create new repository`
-2. Nome sugerido: `travelos-backup-AAAA-MM-DD`
+2. Nome sugerido: `turis-backup-AAAA-MM-DD`
 3. Aguarde o primeiro push automático completar.
 4. Local na sua máquina:
    ```bash
-   git clone https://github.com/<seu-user>/travelos-backup-AAAA-MM-DD.git
-   cd travelos-backup-AAAA-MM-DD
-   git bundle create ../travelos-CODE-$(date +%Y%m%d).bundle --all
+   git clone https://github.com/<seu-user>/turis-backup-AAAA-MM-DD.git
+   cd turis-backup-AAAA-MM-DD
+   git bundle create ../turis-CODE-$(date +%Y%m%d).bundle --all
    ```
    O arquivo `.bundle` é um **backup atômico do Git inteiro** (todos os branches/histórico).
 
@@ -154,8 +154,8 @@ Já que o repo foi desconectado, primeiro reconecte um repo **novo e vazio**:
 
 ```bash
 # já está em supabase/migrations/ — 80 arquivos
-tar -czf travelos-MIGRATIONS-$(date +%Y%m%d).tar.gz supabase/migrations/
-sha256sum travelos-MIGRATIONS-*.tar.gz > backup.sha256
+tar -czf turis-MIGRATIONS-$(date +%Y%m%d).tar.gz supabase/migrations/
+sha256sum turis-MIGRATIONS-*.tar.gz > backup.sha256
 ```
 
 #### 1.3 Backup dos dados (CSV por tabela)
@@ -239,7 +239,7 @@ MASTER_ENCRYPTION_KEY=...
 #### 1.6 Hash final de integridade
 
 ```bash
-sha256sum travelos-CODE-*.bundle travelos-MIGRATIONS-*.tar.gz \
+sha256sum turis-CODE-*.bundle turis-MIGRATIONS-*.tar.gz \
   backup/data/*.csv backup/storage/**/* > BACKUP_MANIFEST.sha256
 ```
 
@@ -265,7 +265,7 @@ sha256sum travelos-CODE-*.bundle travelos-MIGRATIONS-*.tar.gz \
 #### 2.2 Conectar novo repo
 
 1. No novo projeto Lovable → `+ → GitHub → Create new repository`
-   Nome: `travelos-novo` (ou similar)
+   Nome: `turis-novo` (ou similar)
 2. **NÃO** apague o repo de backup.
 
 #### 2.3 Provisionar secrets no destino
@@ -288,9 +288,9 @@ Na sua máquina:
 
 ```bash
 # clone destino
-git clone https://github.com/<seu-user>/travelos-novo.git destino
+git clone https://github.com/<seu-user>/turis-novo.git destino
 # clone backup
-git clone https://github.com/<seu-user>/travelos-backup-AAAA-MM-DD.git origem
+git clone https://github.com/<seu-user>/turis-backup-AAAA-MM-DD.git origem
 
 # copia todos os arquivos do app, MENOS pastas geradas/sensíveis
 rsync -av --delete \
@@ -308,7 +308,7 @@ rsync -av --delete \
 
 cd destino
 git add -A
-git commit -m "chore: import TravelOS codebase from backup"
+git commit -m "chore: import Turis codebase from backup"
 git push
 ```
 
@@ -518,8 +518,8 @@ select id, public from storage.buckets order by id;
 ```
 backup/
 ├── BACKUP_MANIFEST.sha256
-├── travelos-CODE-20260612.bundle
-├── travelos-MIGRATIONS-20260612.tar.gz
+├── turis-CODE-20260612.bundle
+├── turis-MIGRATIONS-20260612.tar.gz
 ├── secrets-backup.txt          ← FORA do git, em cofre
 ├── data/
 │   ├── agencies.csv
@@ -535,4 +535,4 @@ backup/
 
 **Última revisão:** 12/06/2026
 **Autor do guia:** Lovable AI (framework PPRR)
-**Projeto origem:** `ezfgelkamreguhapcgfm` (TravelOS)
+**Projeto origem:** `ezfgelkamreguhapcgfm` (Turis)

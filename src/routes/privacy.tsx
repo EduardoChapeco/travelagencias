@@ -7,8 +7,8 @@ import { ShieldCheck, Mail, Calendar, Building2 } from "lucide-react";
 export const Route = (createFileRoute as any)("/privacy")({
   head: () => ({
     meta: [
-      { title: "Política de Privacidade · TravelOS" },
-      { name: "description", content: "Política de Privacidade e Termos de LGPD da plataforma TravelOS." },
+      { title: "Política de Privacidade · Turis" },
+      { name: "description", content: "Política de Privacidade e Termos de LGPD da plataforma Turis." },
     ],
   }),
   component: PrivacyPage,
@@ -39,7 +39,7 @@ function PrivacyPage() {
         <div className="max-w-4xl mx-auto flex items-center justify-between">
           <div className="flex items-center gap-2">
             <ShieldCheck className="h-5 w-5 text-brand" />
-            <span className="font-bold text-sm tracking-tight text-foreground">TravelOS Portal</span>
+            <span className="font-bold text-sm tracking-tight text-foreground">Turis Portal</span>
           </div>
           <span className="text-xs text-muted-foreground">Compliance & Privacidade</span>
         </div>
@@ -54,7 +54,7 @@ function PrivacyPage() {
             </span>
             <h1 className="text-3xl font-black text-foreground mt-3 tracking-tight">Política de Privacidade</h1>
             <p className="text-sm text-muted-foreground mt-2 leading-relaxed">
-              Esta política descreve as regras e diretrizes adotadas pelo TravelOS para a coleta, uso, armazenamento, proteção e eliminação de informações pessoais de usuários, clientes e parceiros integrados.
+              Esta política descreve as regras e diretrizes adotadas pelo Turis para a coleta, uso, armazenamento, proteção e eliminação de informações pessoais de usuários, clientes e parceiros integrados.
             </p>
           </div>
 
@@ -81,7 +81,7 @@ function PrivacyPage() {
             <div className="space-y-6 text-sm text-foreground/80 leading-relaxed">
               <h2 className="text-base font-bold text-foreground">1. Coleta de Informações via Integrações</h2>
               <p>
-                O TravelOS integra-se com a WhatsApp Business Cloud API e Instagram Professional Messaging para viabilizar o gerenciamento centralizado de mensagens. Ao conectar seus canais, coletamos e processamos o conteúdo das conversas, mídia anexada, ID de usuário da rede social e informações de perfil com o único intuito de disponibilizar a Caixa de Entrada da agência.
+                O Turis integra-se com a WhatsApp Business Cloud API e Instagram Professional Messaging para viabilizar o gerenciamento centralizado de mensagens. Ao conectar seus canais, coletamos e processamos o conteúdo das conversas, mídia anexada, ID de usuário da rede social e informações de perfil com o único intuito de disponibilizar a Caixa de Entrada da agência.
               </p>
 
               <h2 className="text-base font-bold text-foreground">2. Uso e Compartilhamento de Dados</h2>
@@ -108,7 +108,7 @@ function PrivacyPage() {
         <div className="max-w-4xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
           <div className="flex items-center gap-1.5">
             <Building2 className="h-3.5 w-3.5" />
-            <span>TravelOS © 2026</span>
+            <span>Turis © 2026</span>
           </div>
           <div className="flex gap-4">
             <a href="/terms" className="hover:underline">Termos de Uso</a>

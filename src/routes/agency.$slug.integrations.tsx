@@ -37,7 +37,7 @@ import {
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 export const Route = createFileRoute("/agency/$slug/integrations")({
-  head: () => ({ meta: [{ title: "Integrações · TravelOS" }] }),
+  head: ({ context }: any) => ({ meta: [{ title: `Integrações · ${context?.brand?.platform_name || 'Turis'}` }] }),
   component: IntegrationsPage,
 });
 

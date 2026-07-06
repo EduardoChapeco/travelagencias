@@ -14,7 +14,7 @@ import {
 } from "recharts";
 
 export const Route = createFileRoute("/agency/$slug/productivity")({
-  head: () => ({ meta: [{ title: "Painel de Produtividade · TravelOS" }] }),
+  head: ({ context }: any) => ({ meta: [{ title: `Painel de Produtividade · ${context?.brand?.platform_name || 'Turis'}` }] }),
   component: ProductivityRoute,
 });
 

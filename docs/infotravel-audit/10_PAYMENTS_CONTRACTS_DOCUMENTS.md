@@ -16,7 +16,7 @@ A API do Infotravel expõe endpoints específicos para gerenciar e validar a cad
 
 ## 2. Fluxo Contábil e Sincronização de Caixa
 
-Quando uma transação de pagamento é confirmada na API do Infotravel, o TravelOS realiza a propagação para o módulo contábil local:
+Quando uma transação de pagamento é confirmada na API do Infotravel, o Turis realiza a propagação para o módulo contábil local:
 
 ```txt
 Handshake de Pagamento (PIX / Cartão de Crédito) no Infotravel

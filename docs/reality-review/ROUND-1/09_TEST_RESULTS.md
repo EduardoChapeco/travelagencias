@@ -1,6 +1,6 @@
-# Resultados de Testes e Validação (TravelOS)
+# Resultados de Testes e Validação (Turis)
 
-Este relatório compila os resultados de testes estáticos, testes de compilação de código e checagens manuais executadas no repositório do TravelOS.
+Este relatório compila os resultados de testes estáticos, testes de compilação de código e checagens manuais executadas no repositório do Turis.
 
 ---
 

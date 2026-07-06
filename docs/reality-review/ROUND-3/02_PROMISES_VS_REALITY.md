@@ -1,4 +1,4 @@
-# Promessas vs. Realidade Técnica — Rodada 3 (TravelOS)
+# Promessas vs. Realidade Técnica — Rodada 3 (Turis)
 
 Este documento analisa as promessas de escopo funcional contra o estado real do código-fonte local e produção, focando no saneamento de mocks e fallbacks.
 

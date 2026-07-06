@@ -387,7 +387,7 @@ export default function TemplateVoucherEmbarqueA4({
         <div className="flex items-center justify-between text-[9px] text-slate-400">
           <div>
             Documento gerado por{" "}
-            <span className="font-semibold text-slate-600">TravelOS · {agency.name}</span>
+            <span className="font-semibold text-slate-600">Turis · {agency.name}</span>
           </div>
           <div className="font-mono">@{agency.slug}</div>
         </div>

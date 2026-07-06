@@ -73,7 +73,7 @@ import { TabMemorias } from "@/components/portal/TabMemorias";
 // ─────────────────────────────────────────────────────────────────────────────
 
 export const Route = createFileRoute("/client/trips/$id")({
-  head: () => ({ meta: [{ title: "Minha Viagem · TravelOS" }] }),
+  head: ({ context }: any) => ({ meta: [{ title: `Minha Viagem · ${context?.brand?.platform_name || 'Turis'}` }] }),
   component: ClientTripDetail,
 });
 

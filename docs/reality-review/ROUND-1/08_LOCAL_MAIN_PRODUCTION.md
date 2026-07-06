@@ -1,4 +1,4 @@
-# Comparativo: Local vs. Main vs. Produção (TravelOS)
+# Comparativo: Local vs. Main vs. Produção (Turis)
 
 Este relatório compara o estado atual da árvore de trabalho local (Working Tree) com os commits publicados no repositório remoto (Main) e o deploy de produção, evidenciando riscos de integração.
 

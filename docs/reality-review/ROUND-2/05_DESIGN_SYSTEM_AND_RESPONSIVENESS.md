@@ -1,4 +1,4 @@
-# Design System e Responsividade — Rodada 2 (TravelOS)
+# Design System e Responsividade — Rodada 2 (Turis)
 
 Este relatório avalia a consistência do design em conformidade com o tema "Light Editorial SaaS / Flat Premium" e documenta o comportamento responsivo em múltiplas larguras de tela.
 

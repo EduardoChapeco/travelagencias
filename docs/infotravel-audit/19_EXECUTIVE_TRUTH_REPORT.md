@@ -1,6 +1,6 @@
 # 19. Relatório Executivo da Verdade: Integração Infotravel
 
-Este documento apresenta a síntese executiva de prontidão, riscos e conformidade da integração com o GDS **Infotravel** (Infotera) no **TravelOS**, compilando as métricas de conformidade coletadas na auditoria.
+Este documento apresenta a síntese executiva de prontidão, riscos e conformidade da integração com o GDS **Infotravel** (Infotera) no **Turis**, compilando as métricas de conformidade coletadas na auditoria.
 
 ---
 
@@ -8,7 +8,7 @@ Este documento apresenta a síntese executiva de prontidão, riscos e conformida
 
 - **Quantidade Total de Endpoints na Especificação OpenAPI (api-doc.json)**: 70
 - **Quantidade de Endpoints Críticos Relevantes para a Integração**: 14 (Autenticação, busca de hotéis, busca de voos, busca de reserva, e variações contábeis/operacionais de backoffice).
-- **Quantidade Implementada no TravelOS**: 4 (Login, busca de hotéis, busca de voos, importação de reserva individual pelo ID).
+- **Quantidade Implementada no Turis**: 4 (Login, busca de hotéis, busca de voos, importação de reserva individual pelo ID).
 - **Quantidade Testada**: 0 (Toda a integração opera sem cobertura de testes unitários, integrados ou E2E de barramento).
 - **Quantidade Parcial**: 1 (Importação de reserva via ID do GDS - funcional na UI e no backend, mas sem resolvedor de conflitos no CRM).
 - **Quantidade Quebrada / Stub**: 0.
@@ -18,13 +18,13 @@ Este documento apresenta a síntese executiva de prontidão, riscos e conformida
 
 ## 2. Diagnóstico de Recursos e Divergências
 
-### Recursos disponíveis no Infotravel, mas ausentes no TravelOS:
+### Recursos disponíveis no Infotravel, mas ausentes no Turis:
 
 1. **Busca de Transfers e Seguros**: A API externa suporta busca e contratação de traslados e seguros, mas não há barramento para essas tabelas no conector local.
-2. **Criação e Confirmação de Novas Reservas (`POST /booking`)**: O TravelOS depende inteiramente da importação de reservas geradas fora do sistema, sem capacidade de emitir reservas programaticamente.
+2. **Criação e Confirmação de Novas Reservas (`POST /booking`)**: O Turis depende inteiramente da importação de reservas geradas fora do sistema, sem capacidade de emitir reservas programaticamente.
 3. **Check Rate e Validação Tarifária**: Inexistência do fluxo de verificação antes do faturamento, assumindo preços estáticos.
 
-### Recursos prometidos no TravelOS, mas não suportados pela API:
+### Recursos prometidos no Turis, mas não suportados pela API:
 
 1. **Sincronização Bilateral em Tempo Real**: A API da Infotera não possui webhooks para notificação de alterações. Qualquer sincronização depende exclusivamente de polling programado e consultas periódicas de backoffice.
 2. **Edição e Cancelamento Autônomo**: A escrita de dados de cancelamento ou alteração de leitos/assentos por API não é suportada nas permissões padrão de barramento, exigindo operação manual direta na interface web do Infotravel.
@@ -48,7 +48,7 @@ Este documento apresenta a síntese executiva de prontidão, riscos e conformida
 13. **Ausência de Monitor de Cota**: Sem alertas de estouro de limite de chamadas de API (Rate Limit).
 14. **Documentos em URLs Públicas**: Links de contratos e faturas expostos em texto puro na tabela de vouchers, sem bucket de armazenamento privado protegido por RLS.
 15. **Falta de Dry Run**: Sem visualização de preview dos dados que serão alterados ou inseridos na base do CRM antes da gravação definitiva da importação.
-16. **Acoplamento de Modelos de Domínio**: O TravelOS consome diretamente a estrutura retornada pelo Infotravel, sem conversão para um objeto unificado (`NormalizedOffer`).
+16. **Acoplamento de Modelos de Domínio**: O Turis consome diretamente a estrutura retornada pelo Infotravel, sem conversão para um objeto unificado (`NormalizedOffer`).
 17. **Sem Suíte de Testes Automatizados**: A integração não conta com testes unitários, integrados ou e2e para cobrir autenticação ou fluxos de erro.
 18. **Ausência de Circuit Breaker**: O sistema continua enviando requisições mesmo se a API externa estiver fora do ar, gerando surtos e lentidão geral na UI.
 19. **Throttling Inexistente em Carga Histórica**: Risco de bloqueio temporário do IP da agência por suspeita de ataque ao rodar importações volumosas de reservas.
@@ -58,4 +58,4 @@ Este documento apresenta a síntese executiva de prontidão, riscos e conformida
 
 ## 4. Conclusão de Prontidão
 
-A integração Infotravel **NÃO ESTÁ PRONTA** para produção. Embora o fluxo de importação individual de reservas atue de forma parcial no frontend e backend através do simulador de sandbox, a **falta de testes automatizados**, a **ausência de validação de privilégios contra IDOR** e o **armazenamento de credenciais sem criptografia** representam riscos críticos de segurança e consistência que devem ser mitigados na Fase P0 do Plano Mestre antes do lançamento público do TravelOS.
+A integração Infotravel **NÃO ESTÁ PRONTA** para produção. Embora o fluxo de importação individual de reservas atue de forma parcial no frontend e backend através do simulador de sandbox, a **falta de testes automatizados**, a **ausência de validação de privilégios contra IDOR** e o **armazenamento de credenciais sem criptografia** representam riscos críticos de segurança e consistência que devem ser mitigados na Fase P0 do Plano Mestre antes do lançamento público do Turis.

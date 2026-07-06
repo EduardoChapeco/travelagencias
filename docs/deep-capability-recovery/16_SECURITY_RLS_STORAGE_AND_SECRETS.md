@@ -6,7 +6,7 @@ Este relatório descreve as políticas de Row Level Security (RLS) no Supabase, 
 
 ## 1. RLS e Isolamento de Dados por Agência
 
-O TravelOS adota o padrão multitenant estrito.
+O Turis adota o padrão multitenant estrito.
 * **Mapeamento de Usuário:** O ID do usuário autenticado no Supabase Auth (`auth.uid()`) é cruzado com a tabela `public.profiles`. O `profile` mapeia a qual `agency_id` o consultor pertence.
 * **Escopo das Políticas:** Todas as tabelas públicas (`crm_leads`, `proposals`, `clients`, `conversations`, `messages`, `tasks`) aplicam a política de restrição:
   ```sql

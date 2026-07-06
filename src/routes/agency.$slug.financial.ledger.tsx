@@ -17,7 +17,7 @@ import { money, GhostButton } from "@/components/ui/form";
 import { cn } from "@/lib/utils";
 
 export const Route = createFileRoute("/agency/$slug/financial/ledger")({
-  head: () => ({ meta: [{ title: "Livro-Razão Contábil · TravelOS" }] }),
+  head: ({ context }: any) => ({ meta: [{ title: `Livro-Razão Contábil · ${context?.brand?.platform_name || 'Turis'}` }] }),
   component: LedgerDashboard,
 });
 

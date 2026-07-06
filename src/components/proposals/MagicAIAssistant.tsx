@@ -83,7 +83,7 @@ Não inclua crases markdown nem texto adicional.`;
       >
         <div className="space-y-4">
           <p className="text-xs text-muted-foreground">
-            Deixe o TravelOS reescrever e enriquecer os textos do seu roteiro e proposta para você.
+            Deixe o Turis reescrever e enriquecer os textos do seu roteiro e proposta para você.
           </p>
 
           <div>

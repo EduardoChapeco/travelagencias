@@ -15,7 +15,7 @@ A plataforma interage com fontes externas (como raspagem de conteúdo de links e
 
 ## 2. Lógica de Contenção e Defesas Implementadas
 
-Em [ai-chat.functions.ts](file:///c:/Users/Excelência Tour SMO/.gemini/antigravity-ide/scratch/travelagencias/src/lib/api/ai-chat.functions.ts):
+Em [ai-chat.functions.ts](file:///c:/Users/Turis Tecnologia SMO/.gemini/antigravity-ide/scratch/travelagencias/src/lib/api/ai-chat.functions.ts):
 
 - **Filtro de Tags HTML/XML**: Regex remove tags do conteúdo extraído para evitar quebras estruturais no prompt.
 - **Censura de Palavras-Chave**: Expressão regular `/system_prompt|instructions|ignore/gi` substitui termos que buscam burlar regras de sistema pelo token `[CENSORED]`.

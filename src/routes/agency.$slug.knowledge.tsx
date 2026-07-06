@@ -19,7 +19,7 @@ import {
 import { RichTextEditor } from "@/components/ui/RichTextEditor";
 
 export const Route = createFileRoute("/agency/$slug/knowledge")({
-  head: () => ({ meta: [{ title: "Base de conhecimento · TravelOS" }] }),
+  head: ({ context }: any) => ({ meta: [{ title: `Base de conhecimento · ${context?.brand?.platform_name || 'Turis'}` }] }),
   component: KnowledgePage,
 });
 

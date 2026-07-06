@@ -48,9 +48,9 @@ serve(async (req) => {
     // 3. Generate XML (RSS 2.0 with Google Base schema)
     const itemsXml = (tours || [])
       .map((t) => {
-        const link = `https://${agency.slug}.travelos.com/tour/${t.id}`;
+        const link = `https://${agency.slug}.turis.com/tour/${t.id}`;
         const imageLink =
-          t.cover_image_url || `https://${agency.slug}.travelos.com/placeholder.jpg`;
+          t.cover_image_url || `https://${agency.slug}.turis.com/placeholder.jpg`;
         // Calculate availability dynamically
         const availableSeats = (t.total_seats || 0) - (t.reserved_seats || 0);
         const availability = availableSeats > 0 ? "in stock" : "out of stock";
@@ -86,7 +86,7 @@ serve(async (req) => {
 <rss xmlns:g="http://base.google.com/ns/1.0" version="2.0">
   <channel>
     <title>Catálogo - ${agency.name}</title>
-    <link>https://${agency.slug}.travelos.com</link>
+    <link>https://${agency.slug}.turis.com</link>
     <description>Catálogo dinâmico de roteiros para anúncios Meta/Google.</description>
     ${itemsXml}
   </channel>

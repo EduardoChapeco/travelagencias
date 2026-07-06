@@ -14,7 +14,8 @@ function isStoragePath(value: string): boolean {
  *
  * Accepts:
  *  - A raw storage path (e.g. "agencyId/instId/timestamp.pdf")
- *  - A legacy full public URL (e.g. ".../storage/v1/object/public/payment-receipts/...")
+ *  - A raw storage path (e.g. "agencyId/instId/timestamp.pdf")
+ *  - A full public URL (e.g. ".../storage/v1/object/public/payment-receipts/...")
  *
  * Returns a time-limited signed URL (60 seconds) for the private bucket.
  * Falls back to the original value on error.
@@ -28,13 +29,13 @@ export async function getSignedUrlForReceipt(receiptRef: string): Promise<string
     // New format: raw path like "agencyId/installmentId/ts.pdf"
     storagePath = receiptRef;
   } else if (receiptRef.includes("/storage/v1/object/public/payment-receipts/")) {
-    // Legacy format: old public URL — extract the path after the bucket name
+    // Public URL format — extract the path after the bucket name
     storagePath = receiptRef.split("/storage/v1/object/public/payment-receipts/")[1];
   } else if (receiptRef.includes("/storage/v1/object/sign/payment-receipts/")) {
     // Already a signed URL — return as-is (may still be valid)
     return receiptRef;
   } else if (receiptRef.includes("/payment-receipts/")) {
-    // Another legacy URL pattern — extract path segment after bucket name
+    // Alternate URL pattern — extract path segment after bucket name
     const match = receiptRef.match(/\/payment-receipts\/(.+)$/);
     if (match) storagePath = match[1];
   }
@@ -61,7 +62,7 @@ export async function getSignedUrlForReceipt(receiptRef: string): Promise<string
 
 /**
  * Opens a payment receipt in a new tab using a signed URL.
- * Safe for both raw paths and legacy public URLs.
+ * Safe for both raw paths and full public URLs.
  */
 export async function handleViewReceipt(receiptRef: string) {
   if (!receiptRef) return;

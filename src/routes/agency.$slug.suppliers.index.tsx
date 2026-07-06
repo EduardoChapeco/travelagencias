@@ -36,7 +36,7 @@ import { cn } from "@/lib/utils";
 import { NewSupplierWizard } from "@/components/suppliers/NewSupplierWizard";
 
 export const Route = createFileRoute("/agency/$slug/suppliers/")({
-  head: () => ({ meta: [{ title: "Fornecedores & Parceiros · TravelOS" }] }),
+  head: ({ context }: any) => ({ meta: [{ title: `Fornecedores & Parceiros · ${context?.brand?.platform_name || 'Turis'}` }] }),
   component: SuppliersPage,
 });
 

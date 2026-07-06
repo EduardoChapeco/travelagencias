@@ -908,6 +908,38 @@ export const executeAIChatAction = createServerFn({ method: "POST" })
         entityId = validatedData.proposalId;
         entityType = "proposal";
         resultMessage = `${opText} Valor total da proposta '${proposal.title}' atualizado para R$ ${newTotal}.`;
+      } else if (actionCode === "start_ocr") {
+        const fileRes = await fetch(validatedData.fileUrl);
+        if (!fileRes.ok) throw new Error(`Falha ao obter arquivo da URL: ${fileRes.statusText}`);
+        const arrayBuf = await fileRes.arrayBuffer();
+        const buffer = Buffer.from(arrayBuf);
+        const fileBase64 = buffer.toString("base64");
+        const mime = fileRes.headers.get("content-type") || "application/pdf";
+
+        const featureMap: Record<string, string> = {
+          voucher: "ocr_voucher",
+          passport: "ocr_passenger",
+          boleto: "ocr_boleto",
+          proposal: "ocr_proposal",
+        };
+
+        const { data: aiRes, error: aiErr } = await supabase.functions.invoke("ai-orchestrator", {
+          body: {
+            action: "completion",
+            agency_id: agencyId,
+            feature: featureMap[validatedData.ocrType] || "ocr_voucher",
+            file_base64: fileBase64,
+            mime,
+          },
+        });
+
+        if (aiErr) throw aiErr;
+        const extractedData = aiRes?.result;
+        if (!extractedData) throw new Error("A extração de dados retornou vazia.");
+
+        entityId = crypto.randomUUID();
+        entityType = "ocr";
+        resultMessage = `Extração OCR do tipo '${validatedData.ocrType}' concluída com sucesso. Dados extraídos:\n${JSON.stringify(extractedData, null, 2)}`;
       } else {
         // Fallback for custom actions
         entityId = crypto.randomUUID();

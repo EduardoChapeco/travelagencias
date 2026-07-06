@@ -82,19 +82,19 @@ function ErrorComponent({ error, reset }: { error: Error; reset: () => void }) {
   );
 }
 
-export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()({
-  head: () => ({
+export const Route = createRootRouteWithContext<{ queryClient: QueryClient, brand?: any }>()({
+  head: ({ context }: any) => ({
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "TravelOS — Plataforma para Agências de Viagens" },
+      { title: `${context?.brand?.platform_name || 'Turis'} — Plataforma para Agências de Viagens` },
       {
         name: "description",
         content:
           "CRM, propostas, contratos digitais, vouchers, embarques, portal do cliente e financeiro em um único workspace para agências de viagens.",
       },
-      { name: "author", content: "TravelOS" },
-      { property: "og:title", content: "TravelOS — Plataforma para Agências de Viagens" },
+      { name: "author", content: "Turis" },
+      { property: "og:title", content: "Turis — Plataforma para Agências de Viagens" },
       {
         property: "og:description",
         content:
@@ -102,7 +102,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
-      { name: "twitter:title", content: "TravelOS — Plataforma para Agências de Viagens" },
+      { name: "twitter:title", content: "Turis — Plataforma para Agências de Viagens" },
       {
         property: "og:image",
         content:
@@ -132,6 +132,15 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
   notFoundComponent: NotFoundComponent,
   errorComponent: ErrorComponent,
   pendingComponent: PendingComponent,
+  beforeLoad: async () => {
+    try {
+      // Usar a mesma tabela do useBrand, mas injetando globalmente no TanStack
+      const { data } = await import("@/integrations/supabase/client").then(m => (m.supabase as any).from("platform_branding").select("*").single());
+      return { brand: (data as any) || undefined };
+    } catch {
+      return {};
+    }
+  },
 });
 
 function RootShell({ children }: { children: ReactNode }) {

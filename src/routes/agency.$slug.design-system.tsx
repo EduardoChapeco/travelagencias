@@ -35,7 +35,7 @@ import {
 import { cn } from "@/lib/utils";
 
 export const Route = createFileRoute("/agency/$slug/design-system")({
-  head: () => ({ meta: [{ title: "Design System · TravelOS" }] }),
+  head: ({ context }: any) => ({ meta: [{ title: `Design System · ${context?.brand?.platform_name || 'Turis'}` }] }),
   component: DesignSystemPage,
 });
 
@@ -322,7 +322,7 @@ function DesignSystemPage() {
         </nav>
 
         <div className="p-3 border-t border-border bg-surface-alt/10 text-[10px] text-muted-foreground leading-relaxed font-mono">
-          TravelOS UI v1.2.0
+          Turis OS
           <br />
           No Shadows Mode
         </div>
@@ -338,7 +338,7 @@ function DesignSystemPage() {
                 💡 Princípios Visuais Pétreos
               </h3>
               <p className="text-xs text-muted-foreground mt-1">
-                Diretrizes conceituais que orientam a engenharia e design do TravelOS.
+                Diretrizes conceituais que orientam a engenharia e design do Turis.
               </p>
             </div>
 
@@ -348,7 +348,7 @@ function DesignSystemPage() {
                   1. Design Utilitário e Profissional
                 </h4>
                 <p className="text-xs text-muted-foreground leading-relaxed">
-                  O TravelOS é um workspace operacional para agências de viagens gerirem dados
+                  O Turis é um workspace operacional para agências de viagens gerirem dados
                   críticos. A interface prioriza densidade de informação, facilidade de leitura e
                   agilidade. Evitamos decorações dispensáveis.
                 </p>
@@ -486,7 +486,7 @@ function DesignSystemPage() {
                       <td className="p-4 font-mono text-[11px]">{typo.size}</td>
                       <td className="p-4 text-muted-foreground max-w-xs">{typo.desc}</td>
                       <td className="p-4 text-right font-semibold">
-                        <span className={typo.class}>TravelOS</span>
+                        <span className={typo.class}>Turis</span>
                       </td>
                     </tr>
                   ))}

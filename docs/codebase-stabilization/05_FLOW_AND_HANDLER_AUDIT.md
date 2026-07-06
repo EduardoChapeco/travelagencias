@@ -1,4 +1,4 @@
-# 05. Auditoria de Fluxos e Handlers - TravelOS
+# 05. Auditoria de Fluxos e Handlers - Turis
 
 Este documento apresenta a análise técnica dos fluxos operacionais ponta a ponta da plataforma, identificando botões sem funções ativas, inputs sem persistência e conexões incompletas entre módulos.
 
@@ -41,6 +41,6 @@ Este documento apresenta a análise técnica dos fluxos operacionais ponta a pon
 
 ### 2.4 Editor de Contratos e Biblioteca de Cláusulas (`agency.$slug.trips.$id.contract.tsx`)
 
-- **Problema:** O TravelOS possui uma biblioteca rica de cláusulas dinâmicas (`contract_clauses`).
+- **Problema:** O Turis possui uma biblioteca rica de cláusulas dinâmicas (`contract_clauses`).
 - **Lacuna Crítica:** A tela de emissão de contratos da viagem ignora essa biblioteca e continua acionando a RPC de 49 cláusulas legadas hardcoded em texto estático no backend, impossibilitando a customização e auditoria por cláusula no frontend.
 - **Solução:** Atualizar o editor para listar as cláusulas ativas da tabela `contract_clauses` e salvar o JSONB compilado (`clause_snapshot`) no registro de contrato da viagem.

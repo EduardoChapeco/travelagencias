@@ -21,7 +21,7 @@ import { useAgency } from "@/lib/agency-context";
 import { Field, Input, Textarea, Select, PrimaryButton } from "@/components/ui/form";
 
 export const Route = createFileRoute("/agency/$slug/portal/settings")({
-  head: () => ({ meta: [{ title: "Configurações do Portal · TravelOS" }] }),
+  head: ({ context }: any) => ({ meta: [{ title: `Configurações do Portal · ${context?.brand?.platform_name || 'Turis'}` }] }),
   component: PortalSettingsPage,
 });
 
@@ -264,7 +264,7 @@ function PortalSettingsPage() {
 
               <Field
                 label="Domínio Personalizado"
-                hint="Configure um domínio próprio (ex: viagens.minhaagencia.com.br). Requer configuração de DNS apontando para os servidores do TravelOS."
+                hint="Configure um domínio próprio (ex: viagens.minhaagencia.com.br). Requer configuração de DNS apontando para os servidores do Turis."
               >
                 <div className="flex items-center gap-2">
                   <Link2 className="w-4 h-4 text-muted-foreground shrink-0" />

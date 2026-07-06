@@ -1,6 +1,6 @@
-# 04. Matriz de Transições de Estado - TravelOS
+# 04. Matriz de Transições de Estado - Turis
 
-Este documento descreve as máquinas de estado operacionais do TravelOS, detalhando os estados válidos, as transições permitidas, as regras de segurança/autorização e os bloqueios de transições inválidas.
+Este documento descreve as máquinas de estado operacionais do Turis, detalhando os estados válidos, as transições permitidas, as regras de segurança/autorização e os bloqueios de transições inválidas.
 
 ---
 

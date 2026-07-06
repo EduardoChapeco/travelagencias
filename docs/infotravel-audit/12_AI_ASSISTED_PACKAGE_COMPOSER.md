@@ -17,7 +17,7 @@ Operador digita no Chat: "Quero um pacote de lua de mel para Paris em Setembro"
   │    - Roteiriza o dia a dia de forma editorial.
   │    - Traduz o plano em uma intenção estruturada de parâmetros de busca.
   │
-  └──> [Motor Determinístico do TravelOS]
+  └──> [Motor Determinístico do Turis]
        - Recebe os parâmetros estruturados (Destino: CDG/PAR, Datas: 10/09 a 17/09, PAX: 2).
        - Executa as consultas físicas na API Infotravel (`/avail/hotel`, `/avail/flight`).
        - Valida e garante a integridade lógica (veja regras no Item 2).
@@ -30,7 +30,7 @@ Operador digita no Chat: "Quero um pacote de lua de mel para Paris em Setembro"
 
 ## 2. Regras de Validação Determinística e Integridade
 
-Nenhum pacote pode ser gerado ou exibido ao operador se falhar em qualquer uma das validações lógicas executadas diretamente pelo motor do TravelOS:
+Nenhum pacote pode ser gerado ou exibido ao operador se falhar em qualquer uma das validações lógicas executadas diretamente pelo motor do Turis:
 
 1. **Janela de Transfer (Check-in/Check-out vs. Horário do Voo)**:
    - O horário de chegada do voo deve ser de no mínimo **2 horas antes** do início do transfer agendado, permitindo tempo hábil para desembarque e coleta de bagagem.

@@ -25,7 +25,7 @@ import { PrimaryButton, GhostButton, StatusBadge } from "@/components/ui/form";
 import { SheetPage } from "@/components/ui/sheet";
 
 export const Route = createFileRoute("/agency/$slug/billing")({
-  head: () => ({ meta: [{ title: "Assinatura & Planos · TravelOS" }] }),
+  head: ({ context }: any) => ({ meta: [{ title: `Assinatura & Planos · ${context?.brand?.platform_name || 'Turis'}` }] }),
   component: BillingPage,
 });
 

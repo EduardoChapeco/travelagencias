@@ -61,7 +61,7 @@ import {
 } from "@/components/ui/alert-dialog";
 
 export const Route = createFileRoute("/agency/$slug/crm")({
-  head: () => ({ meta: [{ title: "CRM · TravelOS" }] }),
+  head: ({ context }: any) => ({ meta: [{ title: `CRM · ${context?.brand?.platform_name || 'Turis'}` }] }),
   component: CRMPage,
 });
 
@@ -180,7 +180,7 @@ function CRMPage() {
   }
 
   return (
-    <div className="flex h-full flex-col overflow-hidden bg-background">
+    <div className="flex h-full flex-col overflow-hidden bg-transparent">
       <Tabs value={activeTab} onValueChange={setActiveTab} className="flex flex-col flex-1 min-h-0">
         {/* ── Top Bar de Ações e Sub-Navegação ──────────────────────────────────────────── */}
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between px-4 py-2 bg-[var(--surface)] border-b shrink-0 gap-2">

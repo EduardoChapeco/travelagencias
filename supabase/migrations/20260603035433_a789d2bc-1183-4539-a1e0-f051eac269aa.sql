@@ -92,7 +92,7 @@ BEGIN
       signatures = coalesce(signatures,'[]'::jsonb) || jsonb_build_array(_sig),
       certificate = jsonb_build_object(
         'serial', _serial,
-        'issuer', 'TravelOS Assinaturas',
+        'issuer', 'Turis Assinaturas',
         'issued_at', now(),
         'verification_url', '/verify/' || _serial
       )

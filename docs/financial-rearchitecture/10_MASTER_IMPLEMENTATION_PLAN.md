@@ -1,6 +1,6 @@
 # Plano Mestre de Implementação (Master Implementation Plan)
 
-Este documento estabelece o cronograma de execução, etapas de homologação e critérios de aceitação para a restruturação completa do subsistema financeiro no TravelOS.
+Este documento estabelece o cronograma de execução, etapas de homologação e critérios de aceitação para a restruturação completa do subsistema financeiro no Turis.
 
 ---
 

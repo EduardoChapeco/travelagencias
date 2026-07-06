@@ -1,6 +1,6 @@
-# Auditoria de Cálculos Existentes (TravelOS)
+# Auditoria de Cálculos Existentes (Turis)
 
-Este documento analisa as fórmulas matemáticas e regras financeiras implementadas no backend e no frontend do TravelOS, identificando inconsistências, riscos operacionais e desvios em relação ao master PRD.
+Este documento analisa as fórmulas matemáticas e regras financeiras implementadas no backend e no frontend do Turis, identificando inconsistências, riscos operacionais e desvios em relação ao master PRD.
 
 ---
 

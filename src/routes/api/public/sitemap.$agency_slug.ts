@@ -17,7 +17,7 @@ export const Route = createFileRoute("/api/public/sitemap/$agency_slug")({
             return new Response("Agency not found", { status: 404 });
           }
 
-          const baseUrl = `https://travelos.com/p/${agency_slug}`;
+          const baseUrl = `https://turis.com/p/${agency_slug}`;
           const urls: { loc: string; lastmod?: string; priority?: string }[] = [];
 
           // Home

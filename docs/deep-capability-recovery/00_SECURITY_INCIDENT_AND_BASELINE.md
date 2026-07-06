@@ -1,6 +1,6 @@
 # 00. Security Incident and Baseline (Auditoria de Segurança)
 
-Este relatório apresenta a auditoria de segurança das credenciais e a definição da linha de base de segurança do TravelOS.
+Este relatório apresenta a auditoria de segurança das credenciais e a definição da linha de base de segurança do Turis.
 
 ---
 

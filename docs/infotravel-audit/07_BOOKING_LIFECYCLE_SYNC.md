@@ -1,6 +1,6 @@
 # 07. Sincronização do Ciclo de Vida da Reserva
 
-Este documento descreve o fluxo transacional do ciclo de vida da reserva, detalhando os estados físicos da API **Infotravel/Infotera**, o mapeamento para os estados internos do **TravelOS** e os procedimentos de segurança contra falhas de comunicação no handshake de emissão.
+Este documento descreve o fluxo transacional do ciclo de vida da reserva, detalhando os estados físicos da API **Infotravel/Infotera**, o mapeamento para os estados internos do **Turis** e os procedimentos de segurança contra falhas de comunicação no handshake de emissão.
 
 ---
 
@@ -8,7 +8,7 @@ Este documento descreve o fluxo transacional do ciclo de vida da reserva, detalh
 
 A reserva possui status distintos em ambos os sistemas. A sincronização deve garantir a consistência bidirecional de estados:
 
-| Estado TravelOS | Significado                                  | Estado Infotravel                  | Ação da API                          |
+| Estado Turis | Significado                                  | Estado Infotravel                  | Ação da API                          |
 | :-------------- | :------------------------------------------- | :--------------------------------- | :----------------------------------- |
 | `planning`      | Proposta sendo montada ou aguardando aceite. | N/A                                | N/A (Apenas cotações locais)         |
 | `confirmed`     | Venda fechada. Reserva enviada ao GDS.       | `PENDING` (Aguardando Confirmação) | `POST /api/v1/booking`               |
@@ -24,10 +24,10 @@ A reserva possui status distintos em ambos os sistemas. A sincronização deve g
 Para evitar o pior cenário contábil e operacional — cobrar o cliente e não emitir a reserva, ou emitir a reserva no GDS e falhar em registrar no banco local —, o processo de confirmação de reservas segue um protocolo rígido de handshake transacional:
 
 ```txt
-1. Operador clica em "Confirmar Emissão" no painel TravelOS
+1. Operador clica em "Confirmar Emissão" no painel Turis
    │
    ├──> [Fase 1: Travamento e Verificação Contábil]
-   │    Verifica se há saldo, fechamento aberto ou pagamento aprovado no TravelOS.
+   │    Verifica se há saldo, fechamento aberto ou pagamento aprovado no Turis.
    │
    ├──> [Fase 2: Check Rate da Tarifa]
    │    Chama `POST /api/v1/checkRate` para garantir que o preço não sofreu alteração.
@@ -43,7 +43,7 @@ Para evitar o pior cenário contábil e operacional — cobrar o cliente e não 
    │    Se a chamada falhar (ex: timeout de rede ou erro 500 no GDS):
    │    │  O sistema executa a compensação (Rollback):
    │    │  Chama `DELETE /api/v1/booking/{booking_id}/cancel` para liberar os assentos/bloqueios.
-   │    │  Marca a viagem no TravelOS com status 'failed_issue' para revisão manual.
+   │    │  Marca a viagem no Turis com status 'failed_issue' para revisão manual.
    │    │
    │    └──> Se a confirmação for bem-sucedida:
    │         Recebe localizadores (PNR) e bilhetes da operadora.
@@ -56,5 +56,5 @@ Para evitar o pior cenário contábil e operacional — cobrar o cliente e não 
 
 ## 3. Mecanismo de Compensação e Resiliência
 
-- **Idempotência de Criação**: Toda chamada para `POST /api/v1/booking` deve enviar um cabeçalho ou parâmetro de chave de idempotência único (`request_id` correspondente à proposta do TravelOS). Caso a API do Infotravel sofra instabilidade e o TravelOS tente reenviar a chamada, a API retornará a reserva já criada em vez de duplicar a emissão de assentos/quartos.
-- **Fila de Dead-Letter (DLQ)**: Reservas que receberam status de confirmação na API, mas cuja resposta de rede falhou em retornar para o TravelOS (deixando o sistema local sem a confirmação de sucesso), entram em uma fila de auditoria assíncrona. Um job em segundo plano consulta periodicamente `GET /api/v1/backoffice/checkBooking/{id}` para reconciliar o status real da reserva no GDS e atualizar o banco local de forma autônoma.
+- **Idempotência de Criação**: Toda chamada para `POST /api/v1/booking` deve enviar um cabeçalho ou parâmetro de chave de idempotência único (`request_id` correspondente à proposta do Turis). Caso a API do Infotravel sofra instabilidade e o Turis tente reenviar a chamada, a API retornará a reserva já criada em vez de duplicar a emissão de assentos/quartos.
+- **Fila de Dead-Letter (DLQ)**: Reservas que receberam status de confirmação na API, mas cuja resposta de rede falhou em retornar para o Turis (deixando o sistema local sem a confirmação de sucesso), entram em uma fila de auditoria assíncrona. Um job em segundo plano consulta periodicamente `GET /api/v1/backoffice/checkBooking/{id}` para reconciliar o status real da reserva no GDS e atualizar o banco local de forma autônoma.

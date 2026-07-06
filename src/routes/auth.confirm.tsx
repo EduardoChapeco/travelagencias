@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 
 export const Route = createFileRoute("/auth/confirm")({
-  head: () => ({ meta: [{ title: "Confirmação de Conta · TravelOS" }] }),
+  head: ({ context }: any) => ({ meta: [{ title: `Confirmação de Conta · ${context?.brand?.platform_name || 'Turis'}` }] }),
   component: ConfirmPage,
 });
 

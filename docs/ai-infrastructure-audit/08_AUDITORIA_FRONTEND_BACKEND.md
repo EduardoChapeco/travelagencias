@@ -1,6 +1,6 @@
 # Auditoria de Fronteira Frontend e Backend
 
-Este documento analisa as divisões de responsabilidade entre o cliente (navegador) e o servidor (Supabase Edge Functions e Banco de Dados) no processamento de IA e OCR do TravelAgencias/TravelOS.
+Este documento analisa as divisões de responsabilidade entre o cliente (navegador) e o servidor (Supabase Edge Functions e Banco de Dados) no processamento de IA e OCR do TravelAgencias/Turis.
 
 ---
 

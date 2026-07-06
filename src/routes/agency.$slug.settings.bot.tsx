@@ -2,7 +2,7 @@ import { createFileRoute } from '@tanstack/react-router';
 import { BotCanvas } from '@/components/bot/BotCanvas';
 
 export const Route = createFileRoute('/agency/$slug/settings/bot')({
-  head: () => ({ meta: [{ title: 'Construtor de Chatbot · TravelOS' }] }),
+  head: ({ context }: any) => ({ meta: [{ title: `Construtor de Chatbot · ${context?.brand?.platform_name || 'Turis'}` }] }),
   component: BotSettingsPage,
 });
 
