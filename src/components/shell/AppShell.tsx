@@ -152,10 +152,10 @@ export function AppShell({
         </div>
       </header>
 
-      {/* 3. AppSidebar — Mobile drawer only (hidden on md+) */}
+      {/* 3. AppSidebar — Mobile drawer + Dynamic Island desktop */}
       <AppSidebar mobileOpen={mobileOpen} onMobileClose={() => setMobileOpen(false)} />
 
-      {/* 4. Main Workspace — full screen, below topbar */}
+      {/* 4. Main Workspace — full screen, below status bar */}
       <div className="w-full h-full flex pt-11 z-10 relative overflow-hidden">
         {isHome ? (
           // ── HOME: FloatingDock + widgets on wallpaper ──────────────────────
@@ -164,33 +164,30 @@ export function AppShell({
           </div>
         ) : (
           // ── MODULE VIEW ───────────────────────────────────────────────────
-          // Workspace lateral direito direto, colado na sidebar e sem margens gigantes
-          <div className="flex-1 h-full pl-[72px] overflow-hidden flex flex-col min-w-0">
-            {/* Header minimalista do modulo */}
-            <header className="flex h-14 shrink-0 items-center justify-between px-6 bg-transparent">
-              <div className="flex items-center gap-3">
-                <button
-                  onClick={() => setMobileOpen(true)}
-                  className="flex h-8 w-8 items-center justify-center rounded-full text-muted-foreground hover:bg-accent hover:text-foreground transition-colors md:hidden"
-                >
-                  <Menu className="h-4 w-4" />
-                </button>
-                <h1 className="text-xl font-bold text-foreground">{title || "Painel"}</h1>
-              </div>
-              <div className="flex items-center gap-3">
-                <div id="app-header-portal" />
-                {actions}
-              </div>
-            </header>
+          // Sidebar é fixed/overlay — workspace usa largura total com padding esquerdo pequeno
+          <div className="flex-1 h-full overflow-hidden flex flex-col min-w-0">
+            {/* Mobile menu button — só aparece no mobile */}
+            <div className="md:hidden flex items-center gap-3 px-4 pt-3 pb-1">
+              <button
+                onClick={() => setMobileOpen(true)}
+                className="flex h-8 w-8 items-center justify-center rounded-full text-white/70 hover:bg-white/10 transition-colors"
+              >
+                <Menu className="h-4 w-4" />
+              </button>
+              {title && <h1 className="text-base font-semibold text-white">{title}</h1>}
+            </div>
 
-            <main className="no-scrollbar flex-1 overflow-y-auto p-6 relative">
+            {/* Portal para ações do header injetadas pelas rotas */}
+            <div id="app-header-portal" className="hidden" />
+
+            <main className="no-scrollbar flex-1 overflow-y-auto p-4 md:pl-[68px] md:pr-6 md:pt-4 md:pb-6 relative os-workspace">
               {isPastDue && (
-                <div className="bg-rose-500 text-white text-xs px-4 py-2.5 flex items-center justify-between font-bold gap-3 shrink-0 rounded-2xl mb-4">
+                <div className="glass-section text-white text-xs px-4 py-2.5 flex items-center justify-between font-bold gap-3 shrink-0 rounded-2xl mb-4 border-rose-500/40">
                   <div className="flex items-center gap-2">
-                    <AlertTriangle className="h-4 w-4 shrink-0" />
+                    <AlertTriangle className="h-4 w-4 shrink-0 text-rose-400" />
                     <span>Assinatura atrasada. Regularize o pagamento.</span>
                   </div>
-                  <a href={`/agency/${agency!.slug}/billing`} className="bg-white text-rose-600 px-3 py-1 rounded font-black hover:bg-zinc-100 transition-colors uppercase text-[10px]">
+                  <a href={`/agency/${agency!.slug}/billing`} className="bg-rose-500 text-white px-3 py-1 rounded-full font-black hover:bg-rose-400 transition-colors uppercase text-[10px]">
                     Regularizar
                   </a>
                 </div>

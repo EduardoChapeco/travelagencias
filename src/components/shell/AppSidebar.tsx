@@ -42,7 +42,7 @@ import { signOut } from "@/lib/auth";
 import { supabase } from "@/integrations/supabase/client";
 import { useQuery } from "@tanstack/react-query";
 import { SlimSidebar, type SlimSidebarItem, type ContextItem, type AiAction } from "./SlimSidebar";
-import { FloatingDock } from "./FloatingDock";
+import { DynamicIslandNav, type IslandNavItem } from "./DynamicIslandNav";
 import { useUnreadConversations } from "@/hooks/inbox/useUnreadConversations";
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -363,9 +363,6 @@ function buildContext(
     (pathname.includes("/settings") ||
       pathname.includes("/team") ||
       pathname.includes("/brand") ||
-      pathname.includes("/integrations") ||
-      pathname.includes("/billing") ||
-      pathname.includes("/company") ||
       pathname.includes("/productivity"))
   ) {
     return {
@@ -387,9 +384,9 @@ function buildContext(
   return empty;
 }
 
-// ─────────────────────────────────────────────────────────────────────────────
+// ─────────────────────────────────────────────────────────────────────────────────
 // Component
-// ─────────────────────────────────────────────────────────────────────────────
+// ─────────────────────────────────────────────────────────────────────────────────
 
 export function AppSidebar({
   mobileOpen,
@@ -413,7 +410,7 @@ export function AppSidebar({
   const isAdmin = !!isAgencyAdmin;
   const base = `/agency/${slug}`;
 
-  // ── Detect trip detail ────────────────────────────────────────────────────
+  // ── Detect trip detail ──────────────────────────────────────────────────────
   const tripMatch = pathname.match(/\/agency\/[^/]+\/trips\/([a-f0-9-]{36})/i);
   const tripId = tripMatch ? tripMatch[1] : null;
 
@@ -433,7 +430,6 @@ export function AppSidebar({
 
   if (!slug || !agency) return null;
 
-  // ── Unread conversations badge ────────────────────────────────────────────
   const { data: unreadCount = 0 } = useUnreadConversations();
 
   // ── Build contextual items ────────────────────────────────────────────────
@@ -465,6 +461,13 @@ export function AppSidebar({
 
   const isHome = pathname === base;
 
+  // ── Map hub items → items para DynamicIslandNav ──
+  const islandItems: IslandNavItem[] = HUB_ITEMS.filter((h) => !h.adminOnly || isAdmin).map((h) => ({
+    ...h,
+    label: getModuleName(h.label, agency),
+    badge: h.label === "inbox" ? (unreadCount > 0 ? unreadCount : undefined) : undefined,
+  }));
+
   return (
     <>
       {/* ── Mobile Drawer (md:hidden) ──────────────────────────────────── */}
@@ -494,18 +497,16 @@ export function AppSidebar({
         />
       </div>
 
-      {/* ── Desktop Floating Dock (hidden md:block) ────────────────────── */}
-      <FloatingDock
-        items={visibleHubs}
-        contextItems={contextItems}
-        isHome={isHome}
+      {/* ── Desktop Dynamic Island Nav (md+) ────────────────────── */}
+      <DynamicIslandNav
+        items={islandItems}
         footer={
           <button
             onClick={() => signOut().then(() => navigate({ to: "/auth/login", replace: true }))}
-            className="flex h-10 w-10 items-center justify-center rounded-full text-white/70 transition-all hover:bg-white/10 hover:text-white cursor-pointer"
+            className="flex h-8 w-full items-center justify-center rounded-full text-white/50 transition-all hover:bg-white/10 hover:text-white cursor-pointer"
             title="Sair da conta"
           >
-            <LogOut className="h-5 w-5 shrink-0" strokeWidth={2} />
+            <LogOut className="h-[14px] w-[14px] shrink-0" strokeWidth={1.8} />
           </button>
         }
       />

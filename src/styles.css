@@ -6,8 +6,8 @@
 
 /*
  * Turis OS — Design System (Ambient Glass)
- * Princípio: "Sistema operacional ambiente". Interface gordinha (raios 28-32px), 
- * sem box-shadow (apenas blur e bordas sutis).
+ * Princípio: "Sistema operacional ambiente". Interface gordinha (raios 28-32px),
+ * sem box-shadow (apenas blur e bordas sutis). Tudo sobre wallpaper.
  */
 
 @theme inline {
@@ -20,9 +20,9 @@
   --radius-md: 16px;
   --radius-lg: 20px;
   --radius-xl: 24px;
-  --radius-2xl: 28px; /* tile */
-  --radius-3xl: 32px; /* sheet */
-  --radius-full: 999px; /* chip */
+  --radius-2xl: 28px;
+  --radius-3xl: 32px;
+  --radius-full: 999px;
 
   --color-background: var(--background);
   --color-foreground: var(--foreground);
@@ -70,13 +70,11 @@
   --color-ring: var(--ring);
   --color-overlay: var(--overlay);
 
-  /* Glass Colors */
   --color-glass-light: var(--glass-light);
   --color-glass-dark: var(--glass-dark);
 }
 
 :root {
-  /* Ambient Base */
   --background: #F6F5F1;
   --foreground: #0B0B0C;
   --surface: #ffffff;
@@ -88,7 +86,6 @@
   --popover: rgba(255, 255, 255, 0.95);
   --popover-foreground: #0B0B0C;
 
-  /* Primary is now #3D6FF2 */
   --primary: #3D6FF2;
   --primary-foreground: #ffffff;
   --secondary: #F6F5F1;
@@ -97,18 +94,16 @@
   --muted: rgba(11, 11, 12, 0.05);
   --muted-foreground: rgba(11, 11, 12, 0.5);
   --muted-2: rgba(11, 11, 12, 0.4);
-  --accent: #0B0B0C; /* Ink */
+  --accent: #0B0B0C;
   --accent-foreground: #ffffff;
   --accent-soft: rgba(11, 11, 12, 0.04);
   --accent-lime: #B6F24C;
 
-  /* Brand da agência — sobrescrível em runtime, default Turis */
   --brand: var(--agency-brand, #3D6FF2);
   --brand-light: var(--agency-brand-light, rgba(61, 111, 242, 0.1));
   --brand-fg: var(--agency-brand-fg, #ffffff);
   --brand-foreground: var(--brand-fg);
 
-  /* Sidebar Tokens mapping to design system */
   --sidebar: var(--surface);
   --sidebar-foreground: var(--foreground);
   --sidebar-border: var(--border);
@@ -137,7 +132,18 @@
   --glass-light: rgba(255, 255, 255, 0.14);
   --glass-dark: rgba(10, 10, 12, 0.35);
 
-  --radius: 28px; /* tile radius as default */
+  --radius: 28px;
+
+  /* ── OS Ambient tokens ── */
+  --os-glass-bg: rgba(255, 255, 255, 0.09);
+  --os-glass-bg-strong: rgba(255, 255, 255, 0.14);
+  --os-glass-border: rgba(255, 255, 255, 0.15);
+  --os-glass-border-strong: rgba(255, 255, 255, 0.25);
+  --os-sidebar-bg: rgba(0, 0, 0, 0.30);
+  --os-sidebar-border: rgba(255, 255, 255, 0.09);
+  --os-text: rgba(255, 255, 255, 0.95);
+  --os-text-muted: rgba(255, 255, 255, 0.55);
+  --os-text-faint: rgba(255, 255, 255, 0.30);
 }
 
 .dark {
@@ -146,40 +152,46 @@
   --surface: #151515;
   --surface-alt: rgba(21, 21, 21, 0.7);
   --surface-muted: rgba(21, 21, 21, 0.5);
-  
+
   --card: rgba(21, 21, 21, 0.85);
   --card-foreground: #F6F5F1;
   --popover: rgba(21, 21, 21, 0.95);
   --popover-foreground: #F6F5F1;
-  
+
   --primary: #3D6FF2;
   --primary-foreground: #ffffff;
   --secondary: #1a1a1a;
   --secondary-foreground: #F6F5F1;
-  
+
   --muted: rgba(255, 255, 255, 0.1);
   --muted-foreground: rgba(255, 255, 255, 0.5);
   --muted-2: rgba(255, 255, 255, 0.4);
-  
-  --accent: #F6F5F1; 
+
+  --accent: #F6F5F1;
   --accent-foreground: #0B0B0C;
   --accent-soft: rgba(255, 255, 255, 0.05);
 
   --brand-foreground: var(--brand-fg);
-  
-  /* Sidebar Tokens in dark mode */
+
   --sidebar: var(--surface);
   --sidebar-foreground: var(--foreground);
   --sidebar-border: var(--border);
   --sidebar-accent: var(--muted);
   --sidebar-accent-foreground: var(--foreground);
   --sidebar-ring: var(--ring);
-  
+
   --border: rgba(255, 255, 255, 0.1);
   --border-strong: rgba(255, 255, 255, 0.2);
   --input: rgba(21, 21, 21, 0.5);
   --ring: #3D6FF2;
   --overlay: rgba(11, 11, 12, 0.7);
+
+  --os-glass-bg: rgba(15, 15, 18, 0.45);
+  --os-glass-bg-strong: rgba(15, 15, 18, 0.60);
+  --os-glass-border: rgba(255, 255, 255, 0.08);
+  --os-glass-border-strong: rgba(255, 255, 255, 0.14);
+  --os-sidebar-bg: rgba(0, 0, 0, 0.50);
+  --os-sidebar-border: rgba(255, 255, 255, 0.07);
 }
 
 @layer base {
@@ -187,21 +199,11 @@
     border-color: var(--color-border);
   }
 
-  /*
-   * ELEVATION RULE: No shadows allowed!
-   * Depth is created through blur and borders.
-   */
-  .shadow-xs,
-  .shadow-sm,
-  .shadow,
-  .shadow-md,
-  .shadow-lg,
-  .shadow-xl,
-  .shadow-2xl {
+  /* ELEVATION RULE: No shadows — depth via blur + borders */
+  .shadow-xs, .shadow-sm, .shadow, .shadow-md,
+  .shadow-lg, .shadow-xl, .shadow-2xl {
     box-shadow: none !important;
   }
-
-  /* Radix popper containers — remove shadow */
   [data-radix-popper-content-wrapper] > * {
     box-shadow: none !important;
   }
@@ -214,40 +216,163 @@
   body {
     background-color: var(--color-background);
     color: var(--color-foreground);
-    font-size: 1rem; /* Updated to body-md */
+    font-size: 1rem;
     line-height: 1.5;
   }
 
-  .no-scrollbar::-webkit-scrollbar {
-    display: none;
-  }
-  .no-scrollbar {
-    scrollbar-width: none;
-  }
+  .no-scrollbar::-webkit-scrollbar { display: none; }
+  .no-scrollbar { scrollbar-width: none; }
 
-  #lovable-badge,
-  #lovable-badge-cta {
-    display: none !important;
-  }
+  #lovable-badge, #lovable-badge-cta { display: none !important; }
 }
 
 @layer utilities {
+  /* ── Core glass primitives ─────────────────────────────────────────── */
   .glass {
-    @apply bg-glass-light backdrop-blur-[24px] border border-white/20;
-  }
-  
-  .glass-dark {
-    @apply bg-glass-dark backdrop-blur-[24px] border border-white/10;
+    background: var(--glass-light);
+    backdrop-filter: blur(24px) saturate(160%);
+    -webkit-backdrop-filter: blur(24px) saturate(160%);
+    border: 1px solid rgba(255, 255, 255, 0.20);
   }
 
+  .glass-dark {
+    background: var(--glass-dark);
+    backdrop-filter: blur(24px) saturate(160%);
+    -webkit-backdrop-filter: blur(24px) saturate(160%);
+    border: 1px solid rgba(255, 255, 255, 0.10);
+  }
+
+  /* Dynamic Island / sidebar — ultra dark, grudada na borda esquerda */
+  .glass-sidebar {
+    background: var(--os-sidebar-bg);
+    backdrop-filter: blur(48px) saturate(200%);
+    -webkit-backdrop-filter: blur(48px) saturate(200%);
+    border: 1px solid var(--os-sidebar-border);
+  }
+
+  /* Card de dados (kanban cards, tabelas, listas) */
+  .glass-card {
+    background: var(--os-glass-bg);
+    backdrop-filter: blur(24px) saturate(160%);
+    -webkit-backdrop-filter: blur(24px) saturate(160%);
+    border: 1px solid var(--os-glass-border);
+  }
+
+  /* Seção de ação (barras de filtro, search, toolbars) */
+  .glass-section {
+    background: var(--os-glass-bg-strong);
+    backdrop-filter: blur(32px) saturate(180%);
+    -webkit-backdrop-filter: blur(32px) saturate(180%);
+    border: 1px solid var(--os-glass-border-strong);
+  }
+
+  /* Status pills, tooltips, badges */
+  .glass-pill {
+    background: rgba(0, 0, 0, 0.30);
+    backdrop-filter: blur(20px) saturate(150%);
+    -webkit-backdrop-filter: blur(20px) saturate(150%);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+  }
+
+  /* ── OS Workspace Context ──────────────────────────────────────────── */
+  /*
+   * Aplicado no <main> do workspace dos módulos.
+   * Torna tudo transparente/glass sobre o wallpaper.
+   * Modais e popovers são portais no <body> e NÃO herdam isso.
+   */
+  .os-workspace {
+    background: transparent !important;
+  }
+
+  /* Redefinição dos tokens CSS para o contexto OS */
+  .os-workspace {
+    --foreground: var(--os-text);
+    --card-foreground: var(--os-text);
+    --muted-foreground: var(--os-text-muted);
+    --border: var(--os-glass-border);
+    --input: rgba(255, 255, 255, 0.10);
+    --muted: rgba(255, 255, 255, 0.07);
+    --accent: rgba(255, 255, 255, 0.12);
+    --accent-foreground: rgba(255, 255, 255, 0.95);
+    --accent-soft: rgba(255, 255, 255, 0.05);
+  }
+
+  /* bg-background e variantes → transparente */
+  .os-workspace .bg-background,
+  .os-workspace .bg-surface {
+    background: transparent !important;
+  }
+
+  /* bg-card, bg-white, bg-surface → glass */
+  .os-workspace .bg-card,
+  .os-workspace .bg-white,
+  .os-workspace .bg-secondary,
+  .os-workspace .bg-surface,
+  .os-workspace .bg-surface-alt,
+  .os-workspace [class*="bg-surface"],
+  .os-workspace [class*="bg-neutral"] {
+    background: var(--os-glass-bg) !important;
+    backdrop-filter: blur(24px) saturate(160%);
+    -webkit-backdrop-filter: blur(24px) saturate(160%);
+    border-color: var(--os-glass-border) !important;
+  }
+
+  /* bg-muted → ultra leve */
+  .os-workspace .bg-muted,
+  .os-workspace .hover\:bg-muted:hover {
+    background: rgba(255, 255, 255, 0.06) !important;
+  }
+
+  /* Inputs e textareas */
+  .os-workspace input:not([type="range"]),
+  .os-workspace textarea,
+  .os-workspace [role="combobox"],
+  .os-workspace [data-slot="input"] {
+    background: rgba(255, 255, 255, 0.08) !important;
+    border-color: rgba(255, 255, 255, 0.15) !important;
+    color: var(--os-text) !important;
+  }
+  .os-workspace input::placeholder,
+  .os-workspace textarea::placeholder {
+    color: var(--os-text-muted) !important;
+  }
+
+  /* Tabelas */
+  .os-workspace table,
+  .os-workspace [role="table"] {
+    background: transparent !important;
+  }
+  .os-workspace thead tr,
+  .os-workspace [role="row"]:first-child {
+    background: rgba(255, 255, 255, 0.06) !important;
+  }
+  .os-workspace tbody tr:hover,
+  .os-workspace [role="row"]:hover {
+    background: rgba(255, 255, 255, 0.07) !important;
+  }
+
+  /* Kanban columns */
+  .os-workspace [data-kanban-col],
+  .os-workspace .kanban-column {
+    background: rgba(255, 255, 255, 0.05) !important;
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border-color: rgba(255, 255, 255, 0.10) !important;
+  }
+
+  /* Badges de cor não devem perder seus fundos */
+  .os-workspace .badge,
+  .os-workspace [data-slot="badge"] {
+    backdrop-filter: none;
+  }
+
+  /* ── Gradients ─────────────────────────────────────────────────────── */
   .gradient-sky {
     background: linear-gradient(135deg, #BFE3FF 0%, #2F5CE0 100%);
   }
-  
   .gradient-bloom {
     background: linear-gradient(135deg, #E9D9FF 0%, #6B3FD1 100%);
   }
-  
   .gradient-meadow {
     background: linear-gradient(135deg, #EAF7C9 0%, #3E9B4F 100%);
   }
@@ -257,31 +382,23 @@
     @apply grid gap-4 md:gap-6;
     grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
   }
-  
   .bento-item {
     @apply relative overflow-hidden rounded-2xl md:rounded-3xl bg-surface border border-border p-5 md:p-6 transition-all duration-300;
   }
-  
-  /* Micro-interactions (Hover) */
+
+  /* Micro-interactions */
   .hover-lift {
     @apply transition-transform duration-300 ease-out hover:-translate-y-1;
   }
-  
   .hover-glow {
     @apply transition-all duration-300 ease-out hover:border-primary/50 hover:bg-primary/5;
   }
-  
-  /* Typography enhancements */
-  .text-balance {
-    text-wrap: balance;
-  }
-  
-  .text-pretty {
-    text-wrap: pretty;
-  }
+
+  .text-balance { text-wrap: balance; }
+  .text-pretty { text-wrap: pretty; }
 }
 
-/* Print Styles */
+/* ── Print Styles ─────────────────────────────────────────────────────── */
 @media print {
   @page {
     size: A4 portrait;
@@ -291,9 +408,7 @@
     size: A4 landscape;
     margin: 0;
   }
-  .print-landscape {
-    page: landscape-page;
-  }
+  .print-landscape { page: landscape-page; }
   .a4-page,
   .a4-landscape-page {
     page-break-inside: avoid !important;
@@ -303,7 +418,7 @@
   }
 }
 
-/* Animations */
+/* ── Animations ───────────────────────────────────────────────────────── */
 @keyframes fadeInUp {
   from { opacity: 0; transform: translateY(30px); }
   to { opacity: 1; transform: translateY(0); }
@@ -316,84 +431,31 @@
   from { opacity: 0; transform: scale(0.95); }
   to { opacity: 1; transform: scale(1); }
 }
-
-.animate-fadeInUp { animation: fadeInUp 0.4s ease-out both; }
-.animate-fadeIn { animation: fadeIn 0.3s ease-out both; }
-.animate-scaleIn { animation: scaleIn 0.3s cubic-bezier(0.16, 1, 0.3, 1) both; }
-
 @keyframes pulseSlow {
   0%, 100% { opacity: 1; }
   50% { opacity: 0.55; }
 }
+@keyframes islandSlideIn {
+  from { opacity: 0; transform: translateX(-8px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+
+.animate-fadeInUp  { animation: fadeInUp 0.4s ease-out both; }
+.animate-fadeIn    { animation: fadeIn 0.3s ease-out both; }
+.animate-scaleIn   { animation: scaleIn 0.3s cubic-bezier(0.16, 1, 0.3, 1) both; }
 .animate-pulse-slow { animation: pulseSlow 2.5s ease-in-out infinite; }
+.animate-island-in { animation: islandSlideIn 0.35s cubic-bezier(0.16, 1, 0.3, 1) both; }
 
-/* Turis OS Typography Scale */
-.ds-display {
-  font-family: var(--font-sans);
-  font-size: 2.5rem; /* 40px */
-  font-weight: 600;
-  line-height: 1.1;
-  letter-spacing: -0.02em;
-}
-
-.ds-h1 {
-  font-family: var(--font-sans);
-  font-size: 2rem;
-  font-weight: 600;
-  line-height: 1.2;
-  letter-spacing: -0.02em;
-}
-
-.ds-h2 {
-  font-family: var(--font-sans);
-  font-size: 1.5rem;
-  font-weight: 600;
-  letter-spacing: -0.01em;
-}
-
-.ds-h3 {
-  font-family: var(--font-sans);
-  font-size: 1.125rem;
-  font-weight: 600;
-}
-
-.ds-body-md {
-  font-family: var(--font-sans);
-  font-size: 1rem;
-  font-weight: 400;
-  line-height: 1.5;
-}
-
-.ds-body {
-  font-family: var(--font-sans);
-  font-size: 1rem;
-  font-weight: 400;
-  line-height: 1.5;
-}
-
-.ds-body-large {
-  font-family: var(--font-sans);
-  font-size: 1.125rem;
-  font-weight: 400;
-  line-height: 1.6;
-}
-
-.ds-meta {
-  font-family: var(--font-sans);
-  font-size: 0.75rem;
-  font-weight: 400;
-  color: var(--muted-foreground);
-}
-
-.ds-label-caps {
-  font-family: var(--font-mono);
-  font-size: 0.75rem;
-  font-weight: 500;
-  line-height: 1;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-}
+/* ── Typography Scale ─────────────────────────────────────────────────── */
+.ds-display   { font-family: var(--font-sans); font-size: 2.5rem; font-weight: 600; line-height: 1.1; letter-spacing: -0.02em; }
+.ds-h1        { font-family: var(--font-sans); font-size: 2rem;   font-weight: 600; line-height: 1.2; letter-spacing: -0.02em; }
+.ds-h2        { font-family: var(--font-sans); font-size: 1.5rem; font-weight: 600; letter-spacing: -0.01em; }
+.ds-h3        { font-family: var(--font-sans); font-size: 1.125rem; font-weight: 600; }
+.ds-body-md   { font-family: var(--font-sans); font-size: 1rem;   font-weight: 400; line-height: 1.5; }
+.ds-body      { font-family: var(--font-sans); font-size: 1rem;   font-weight: 400; line-height: 1.5; }
+.ds-body-large { font-family: var(--font-sans); font-size: 1.125rem; font-weight: 400; line-height: 1.6; }
+.ds-meta      { font-family: var(--font-sans); font-size: 0.75rem; font-weight: 400; color: var(--muted-foreground); }
+.ds-label-caps { font-family: var(--font-mono); font-size: 0.75rem; font-weight: 500; line-height: 1; letter-spacing: 0.08em; text-transform: uppercase; }
 
 * { scrollbar-width: none; }
 *::-webkit-scrollbar { display: none; }
-
