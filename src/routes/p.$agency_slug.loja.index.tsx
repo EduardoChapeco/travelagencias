@@ -1,4 +1,3 @@
-// @ts-nocheck
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
@@ -40,7 +39,7 @@ function PublicStoreIndex() {
   const { data: items, isLoading } = useQuery({
     queryKey: ["public-store-items", agencyId],
     queryFn: async () => {
-      const { data, error } = await supabase
+      const { data, error } = await (supabase as any)
         .from("public_store_items")
         .select("*")
         .eq("agency_id", agencyId!)

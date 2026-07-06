@@ -1,8 +1,8 @@
 import { Link, useRouterState } from "@tanstack/react-router";
-import { type ComponentType, type ReactNode } from "react";
+import { type ComponentType, type ReactNode, useState } from "react";
 import { cn } from "@/lib/utils";
 import { Loader2 } from "lucide-react";
-import { type SlimSidebarItem, type ContextItem } from "./SlimSidebar"; // reusing types
+import { type SlimSidebarItem, type ContextItem } from "./SlimSidebar";
 import { Tooltip, TooltipContent, TooltipTrigger, TooltipProvider } from "@/components/ui/tooltip";
 
 function isItemActive(item: SlimSidebarItem, pathname: string): boolean {
@@ -18,16 +18,105 @@ function isItemActive(item: SlimSidebarItem, pathname: string): boolean {
   return false;
 }
 
+// ─────────────────────────────────────────────────────────────────────────────
+// DockItem — renders a single icon button with hover magnification
+// ─────────────────────────────────────────────────────────────────────────────
+function DockItem({
+  item,
+  pathname,
+  pendingLocation,
+  isVertical,
+  size = "md",
+}: {
+  item: SlimSidebarItem;
+  pathname: string;
+  pendingLocation: string | null;
+  isVertical: boolean;
+  size?: "sm" | "md";
+}) {
+  const [hovered, setHovered] = useState(false);
+  const active = isItemActive(item, pathname);
+  const isPending = pendingLocation ? isItemActive(item, pendingLocation) : false;
+  const Icon = item.icon!;
+
+  const baseSize = size === "sm" ? "h-9 w-9" : "h-11 w-11";
+  const iconSize = size === "sm" ? "h-4 w-4" : "h-5 w-5";
+
+  return (
+    <Tooltip>
+      <TooltipTrigger asChild>
+        <Link
+          to={item.to!}
+          onMouseEnter={() => setHovered(true)}
+          onMouseLeave={() => setHovered(false)}
+          className={cn(
+            "relative flex shrink-0 items-center justify-center rounded-full transition-all duration-200",
+            baseSize,
+            active
+              ? "bg-white/20 text-white"
+              : "text-white/70 hover:text-white hover:bg-white/10",
+            isPending && "opacity-60 animate-pulse",
+            hovered && !active && "scale-125",
+          )}
+          style={{
+            transform: hovered && !active ? "scale(1.25)" : active ? "scale(1.05)" : "scale(1)",
+          }}
+        >
+          {isPending ? (
+            <Loader2 className={cn(iconSize, "animate-spin")} />
+          ) : (
+            <Icon
+              className={cn(iconSize, "transition-all duration-200")}
+              strokeWidth={active ? 2.5 : 2}
+            />
+          )}
+
+          {/* Unread badge */}
+          {!!item.badge && item.badge > 0 && (
+            <span className="absolute -top-0.5 -right-0.5 flex h-4 min-w-[16px] items-center justify-center rounded-full bg-red-500 px-1 text-[9px] font-bold text-white leading-none border-2 border-transparent">
+              {item.badge > 99 ? "99+" : item.badge}
+            </span>
+          )}
+
+          {/* Active indicator */}
+          {active && (
+            <span
+              className={cn(
+                "absolute rounded-full bg-white",
+                isVertical
+                  ? "-right-1.5 top-1/2 -translate-y-1/2 w-1.5 h-1.5"
+                  : "-bottom-1.5 left-1/2 -translate-x-1/2 w-1.5 h-1.5",
+              )}
+            />
+          )}
+        </Link>
+      </TooltipTrigger>
+      <TooltipContent
+        side={isVertical ? "right" : "top"}
+        sideOffset={12}
+        className="rounded-xl px-3 py-1.5 text-xs font-semibold bg-black/80 backdrop-blur-md text-white border border-white/10"
+      >
+        {item.label}
+      </TooltipContent>
+    </Tooltip>
+  );
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// FloatingDock
+// isHome=true  → horizontal pill, fixed bottom-center (macOS style)
+// isHome=false → vertical pill, fixed left-center (over wallpaper)
+// ─────────────────────────────────────────────────────────────────────────────
 export function FloatingDock({
   items,
   contextItems = [],
   footer,
-  orientation = "horizontal",
+  isHome = false,
 }: {
   items: SlimSidebarItem[];
   contextItems?: ContextItem[];
   footer?: ReactNode;
-  orientation?: "horizontal" | "vertical";
+  isHome?: boolean;
 }) {
   const { pathname, pendingLocation } = useRouterState({
     select: (s: any) => ({
@@ -38,131 +127,73 @@ export function FloatingDock({
     }),
   });
 
-  const isVertical = orientation === "vertical";
+  const dockItems = items.filter((i) => i.type !== "header");
 
-  return (
-    <div 
-      className={cn(
-        "z-50 pointer-events-none hidden md:block",
-        isVertical 
-          ? "w-20 flex justify-center items-center py-6 shrink-0" 
-          : "absolute bottom-6 left-1/2 -translate-x-1/2"
-      )}
-    >
-      <div 
-        className={cn(
-          "pointer-events-auto flex bg-surface/80 dark:bg-zinc-950/85 backdrop-blur-3xl border border-white/20 dark:border-white/10 shadow-2xl transition-all duration-300",
-          isVertical 
-            ? "flex-col items-center gap-3 px-3 py-4 rounded-[28px]" 
-            : "items-center gap-2.5 px-3.5 py-2.5 rounded-full"
-        )}
-      >
-        <TooltipProvider delayDuration={100}>
-          {items.filter(i => i.type !== "header").map((item, idx) => {
-            const active = isItemActive(item, pathname);
-            const isPending = pendingLocation && isItemActive(item, pendingLocation);
-            const Icon = item.icon!;
+  if (isHome) {
+    // ── Horizontal dock — bottom center ────────────────────────────────────
+    return (
+      <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-30 hidden md:block pointer-events-none">
+        <TooltipProvider delayDuration={80}>
+          <div className="pointer-events-auto flex items-center gap-1.5 px-4 py-3 rounded-full bg-black/30 backdrop-blur-2xl border border-white/15 shadow-[0_8px_32px_rgba(0,0,0,0.4)]">
+            {dockItems.map((item, idx) => (
+              <DockItem
+                key={`${item.to}-${idx}`}
+                item={item}
+                pathname={pathname}
+                pendingLocation={pendingLocation}
+                isVertical={false}
+              />
+            ))}
 
-            return (
-              <Tooltip key={idx}>
-                <TooltipTrigger asChild>
-                  <Link
-                    to={item.to!}
-                    className={cn(
-                      "relative flex h-11 w-11 shrink-0 items-center justify-center rounded-full transition-all duration-300 hover:bg-surface-alt",
-                      active
-                        ? "bg-brand/10 text-brand shadow-sm"
-                        : "text-muted-foreground hover:text-foreground hover:scale-110",
-                      isPending && "opacity-70 animate-pulse"
-                    )}
-                  >
-                    {isPending ? (
-                      <Loader2 className="h-5 w-5 animate-spin" />
-                    ) : (
-                      <Icon className={cn("h-5 w-5 transition-all duration-300", active && "scale-110")} strokeWidth={active ? 2.5 : 2} />
-                    )}
-                    {!!item.badge && item.badge > 0 && (
-                      <span className="absolute right-2 top-2 h-2 w-2 rounded-full bg-destructive border-2 border-surface" />
-                    )}
-                    
-                    {/* Active indicator dot */}
-                    {active && (
-                      <span 
-                        className={cn(
-                          "absolute rounded-full bg-brand",
-                          isVertical 
-                            ? "-right-1.5 top-1/2 -translate-y-1/2 w-1.5 h-1.5" 
-                            : "-bottom-1.5 left-1/2 -translate-x-1/2 w-1.5 h-1.5"
-                        )}
-                      />
-                    )}
-                  </Link>
-                </TooltipTrigger>
-                <TooltipContent 
-                  side={isVertical ? "right" : "top"} 
-                  sideOffset={12} 
-                  className="rounded-xl px-3 py-1.5 text-xs font-semibold bg-foreground text-background border-none shadow-xl"
-                >
-                  {item.label}
-                </TooltipContent>
-              </Tooltip>
-            );
-          })}
+            {/* Divider */}
+            <div className="w-[1px] h-8 bg-white/15 mx-1 shrink-0" />
+
+            {/* Footer (logout) */}
+            <div className="shrink-0">{footer}</div>
+          </div>
         </TooltipProvider>
-
-        {contextItems.length > 0 && (
-          <>
-            <div className={cn("bg-border/40 shrink-0", isVertical ? "w-8 h-[1px] my-1" : "w-[1px] h-8 mx-1")} />
-            <TooltipProvider delayDuration={100}>
-              {contextItems.map((item, idx) => {
-                const active = isItemActive(item as any, pathname);
-                const Icon = item.icon;
-
-                return (
-                  <Tooltip key={`ctx-${idx}`}>
-                    <TooltipTrigger asChild>
-                      <Link
-                        to={item.to}
-                        className={cn(
-                          "relative flex h-10 w-10 shrink-0 items-center justify-center rounded-xl transition-all duration-300 hover:bg-surface-alt",
-                          active
-                            ? "bg-brand/10 text-brand shadow-sm"
-                            : "text-muted-foreground hover:text-foreground hover:scale-105"
-                        )}
-                      >
-                        <Icon className={cn("h-4 w-4 transition-all duration-300", active && "scale-110")} strokeWidth={active ? 2.5 : 2} />
-                        {active && (
-                          <span 
-                            className={cn(
-                              "absolute rounded-full bg-brand",
-                              isVertical 
-                                ? "-right-1.5 top-1/2 -translate-y-1/2 w-1 w-1" 
-                                : "-bottom-1 left-1/2 -translate-x-1/2 w-1 h-1"
-                            )}
-                          />
-                        )}
-                      </Link>
-                    </TooltipTrigger>
-                    <TooltipContent 
-                      side={isVertical ? "right" : "top"} 
-                      sideOffset={12} 
-                      className="rounded-xl px-3 py-1.5 text-xs font-semibold bg-foreground text-background border-none shadow-xl"
-                    >
-                      {item.label}
-                    </TooltipContent>
-                  </Tooltip>
-                );
-              })}
-            </TooltipProvider>
-          </>
-        )}
-
-        <div className={cn("bg-border/40 shrink-0", isVertical ? "w-8 h-[1px] my-1" : "w-[1px] h-8 mx-1")} />
-        
-        <div className="shrink-0 flex items-center justify-center">
-          {footer}
-        </div>
       </div>
+    );
+  }
+
+  // ── Vertical dock — left center ───────────────────────────────────────────
+  return (
+    <div className="fixed left-4 top-1/2 -translate-y-1/2 z-30 hidden md:block pointer-events-none">
+      <TooltipProvider delayDuration={80}>
+        <div className="pointer-events-auto flex flex-col items-center gap-1.5 px-3 py-4 rounded-[28px] bg-black/30 backdrop-blur-2xl border border-white/15 shadow-[0_8px_32px_rgba(0,0,0,0.4)] max-h-[calc(100vh-120px)] overflow-y-auto no-scrollbar">
+          {/* Hub items */}
+          {dockItems.map((item, idx) => (
+            <DockItem
+              key={`${item.to}-${idx}`}
+              item={item}
+              pathname={pathname}
+              pendingLocation={pendingLocation}
+              isVertical={true}
+            />
+          ))}
+
+          {/* Context items (e.g. trip sub-pages) */}
+          {contextItems.length > 0 && (
+            <>
+              <div className="w-8 h-[1px] bg-white/15 my-1.5 shrink-0" />
+              {contextItems.map((item, idx) => (
+                <DockItem
+                  key={`ctx-${idx}`}
+                  item={item as any}
+                  pathname={pathname}
+                  pendingLocation={pendingLocation}
+                  isVertical={true}
+                  size="sm"
+                />
+              ))}
+            </>
+          )}
+
+          {/* Divider + Footer */}
+          <div className="w-8 h-[1px] bg-white/15 my-1.5 shrink-0" />
+          <div className="shrink-0">{footer}</div>
+        </div>
+      </TooltipProvider>
     </div>
   );
 }

@@ -313,11 +313,174 @@ export async function fetchClientDocuments() {
   return { contracts: contRes.data || [], vouchers: docRes.data || [] };
 }
 
-// ─── Support Tickets (Mocked for build) ────────────────────────────────
-export async function fetchClientTickets() { return []; }
-export async function createClientTicket(...args: any[]) { return { id: "1" }; }
-export async function fetchClientTimelineEvents(...args: any[]) { return []; }
-export async function sendClientChatMessage(...args: any[]) { return { id: "1", created_at: new Date().toISOString() }; }
-export async function resolveClientWebchatConversation(...args: any[]) { return "conv_1"; }
-export async function createClientWebchatConversation(...args: any[]) { return { id: "1" }; }
-export async function fetchClientConversations() { return []; }
+// ─── Support Tickets ────────────────────────────────────────────────────────
+
+export async function fetchClientTickets() {
+  const clients = await fetchClientAgencies();
+  if (!clients.length) return [];
+  const clientIds = clients.map((c: any) => c.id);
+  const { data, error } = await supabase
+    .from("support_tickets")
+    .select("id, title, type, priority, status, created_at, updated_at, description, resolved_at")
+    .in("client_id", clientIds)
+    .is("deleted_at", null)
+    .order("created_at", { ascending: false });
+  if (error) throw error;
+  return data || [];
+}
+
+export async function createClientTicket(payload: {
+  title: string;
+  description: string;
+  type: string;
+  priority: string;
+  agency_id: string;
+  client_id: string;
+  trip_id?: string;
+}) {
+  const { data, error } = await (supabase as any).from("support_tickets").insert({
+    title: payload.title,
+    description: payload.description,
+    type: payload.type,
+    priority: payload.priority,
+    agency_id: payload.agency_id,
+    client_id: payload.client_id,
+    trip_id: payload.trip_id || null,
+    status: "open",
+    attachments: [],
+    refund_requested: false,
+  }).select("id").single();
+  if (error) throw error;
+  return data as { id: string };
+}
+
+// ─── Webchat / Conversations ─────────────────────────────────────────────────
+
+/**
+ * Resolve or create a webchat conversation for the current client.
+ * Returns the conversation ID.
+ */
+export async function resolveClientWebchatConversation(
+  agencyId: string,
+  _clientUserId: string
+): Promise<string> {
+  // Find the client row for this agency to get the contact_id
+  const user = await getClientUser();
+  const { data: clientRow } = await supabase
+    .from("clients")
+    .select("id")
+    .eq("agency_id", agencyId)
+    .eq("user_id", user.id)
+    .maybeSingle();
+
+  if (!clientRow) return "";
+
+  // Find the contact linked to this client
+  const { data: contact } = await supabase
+    .from("contacts")
+    .select("id")
+    .eq("agency_id", agencyId)
+    .eq("client_id", clientRow.id)
+    .maybeSingle();
+
+  if (!contact) return "";
+
+  // Find the most recent conversation for this contact
+  const { data: conv } = await supabase
+    .from("conversations")
+    .select("id")
+    .eq("agency_id", agencyId)
+    .eq("contact_id", contact.id)
+    .order("created_at", { ascending: false })
+    .limit(1)
+    .maybeSingle();
+
+  if (conv) return conv.id;
+
+  // No conversation found — caller (client.chat.tsx) will render the empty state
+  return "";
+}
+
+export async function createClientWebchatConversation(_data: unknown) {
+  // Conversation creation is handled server-side via Edge Function / agent
+  return { id: "" };
+}
+
+/**
+ * Fetch real messages for a given conversation, combined into a timeline.
+ */
+export async function fetchClientTimelineEvents(
+  _agencyId: string,
+  conversationId: string
+) {
+  if (!conversationId) return [];
+
+  const { data: msgs, error } = await (supabase as any)
+    .from("messages")
+    .select("id, body, direction, sender_user_id, created_at, media_url")
+    .eq("conversation_id", conversationId)
+    .order("created_at", { ascending: true });
+
+  if (error) throw error;
+
+  return ((msgs as any[]) || []).map((m) => ({
+    id: m.id as string,
+    type: "message",
+    date: new Date(m.created_at ?? new Date().toISOString()),
+    data: m,
+  }));
+}
+
+/**
+ * Send a message in an existing conversation.
+ */
+export async function sendClientChatMessage(
+  agencyId: string,
+  conversationId: string,
+  text: string
+) {
+  if (!conversationId) throw new Error("Sem conversa ativa");
+
+  const user = await getClientUser();
+  const { data, error } = await (supabase as any)
+    .from("messages")
+    .insert({
+      conversation_id: conversationId,
+      agency_id: agencyId,
+      direction: "inbound" as const,
+      sender_user_id: user.id,
+      body: text,
+      status: "delivered" as const,
+    })
+    .select("id, created_at, body, direction, sender_user_id")
+    .single();
+
+  if (error) throw error;
+  return data as { id: string; created_at: string; body: string; direction: string; sender_user_id: string };
+}
+
+export async function fetchClientConversations() {
+  const clients = await fetchClientAgencies();
+  if (!clients.length) return [];
+  const agencyId = clients[0].agency_id;
+  const clientId = clients[0].id;
+
+  const { data: contact } = await supabase
+    .from("contacts")
+    .select("id")
+    .eq("agency_id", agencyId)
+    .eq("client_id", clientId)
+    .maybeSingle();
+
+  if (!contact) return [];
+
+  const { data, error } = await supabase
+    .from("conversations")
+    .select("id, status, last_message_at, created_at")
+    .eq("agency_id", agencyId)
+    .eq("contact_id", contact.id)
+    .order("last_message_at", { ascending: false });
+
+  if (error) throw error;
+  return data || [];
+}

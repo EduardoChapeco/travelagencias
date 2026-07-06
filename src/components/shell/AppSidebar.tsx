@@ -46,26 +46,13 @@ import { FloatingDock } from "./FloatingDock";
 import { useUnreadConversations } from "@/hooks/inbox/useUnreadConversations";
 
 // ─────────────────────────────────────────────────────────────────────────────
-// 9 Hub Icons — Desktop left column
-// Keys here use relative "to" (no base prefix). Mapped in component.
+// Hub Items — 9 main icons for the dock
 // ─────────────────────────────────────────────────────────────────────────────
 const HUB_ITEMS: SlimSidebarItem[] = [
   { label: "dashboard", to: "", icon: LayoutDashboard, exact: true },
-  {
-    label: "daily-tasks",
-    to: "daily-tasks",
-    icon: ListTodo,
-  },
-  {
-    label: "calendar",
-    to: "calendar",
-    icon: Calendar,
-  },
-  {
-    label: "inbox",
-    to: "inbox",
-    icon: MessageSquare,
-  },
+  { label: "daily-tasks", to: "daily-tasks", icon: ListTodo },
+  { label: "calendar", to: "calendar", icon: Calendar },
+  { label: "inbox", to: "inbox", icon: MessageSquare },
   { label: "crm", to: "crm", icon: Users, matchPaths: ["proposals", "contracts", "quotes"] },
   { label: "trips", to: "trips", icon: Luggage, matchPaths: ["vouchers", "boarding"] },
   {
@@ -95,7 +82,6 @@ const HUB_ITEMS: SlimSidebarItem[] = [
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Full Mobile Drawer list — with section headers
-// Keys here also use relative "to". Mapped in component.
 // ─────────────────────────────────────────────────────────────────────────────
 const MOBILE_ITEMS: SlimSidebarItem[] = [
   { label: "dashboard", to: "", icon: LayoutDashboard, exact: true },
@@ -232,20 +218,12 @@ function buildContext(
 
   // ── Agenda (calendar) ──────────────────────────────────────────────────────
   if (pathname.includes("/calendar")) {
-    return {
-      title: "Agenda",
-      items: [], // Tela cheia!
-      aiActions: [],
-    };
+    return { title: "Agenda", items: [], aiActions: [] };
   }
 
   // ── Mensagens (inbox) ──────────────────────────────────────────────────────
   if (pathname.includes("/inbox")) {
-    return {
-      title: "Mensagens",
-      items: [], // Tela cheia!
-      aiActions: [],
-    };
+    return { title: "Mensagens", items: [], aiActions: [] };
   }
 
   // ── Vendas & CRM ──────────────────────────────────────────────────────────
@@ -272,7 +250,7 @@ function buildContext(
     };
   }
 
-  // ── Viagens (individual trips list) ─────────────────────────────────────────────────
+  // ── Viagens ─────────────────────────────────────────────────────────────────
   if (
     pathname.includes("/trips") ||
     pathname.includes("/boarding") ||
@@ -289,7 +267,7 @@ function buildContext(
     };
   }
 
-  // ── Grupos & Excursões ─────────────────────────────────────────────────
+  // ── Grupos & Excursões ─────────────────────────────────────────────────────
   if (
     pathname.includes("/group-tours") ||
     pathname.includes("/bus-layouts") ||
@@ -472,7 +450,6 @@ export function AppSidebar({
       label: getModuleName(h.label, agency),
       to: `${base}${h.to ? `/${h.to}` : ""}`,
       matchPaths: h.matchPaths?.map((p) => `${base}/${p}`),
-      // Adicionar badge de não-lidas no inbox
       badge: h.label === "inbox" ? (unreadCount > 0 ? unreadCount : undefined) : undefined,
     }),
   );
@@ -490,6 +467,7 @@ export function AppSidebar({
 
   return (
     <>
+      {/* ── Mobile Drawer (md:hidden) ──────────────────────────────────── */}
       <div className="md:hidden">
         <SlimSidebar
           mobileOpen={mobileOpen}
@@ -515,14 +493,16 @@ export function AppSidebar({
           }
         />
       </div>
-      <FloatingDock 
-        items={visibleHubs} 
+
+      {/* ── Desktop Floating Dock (hidden md:block) ────────────────────── */}
+      <FloatingDock
+        items={visibleHubs}
         contextItems={contextItems}
-        orientation={isHome ? "horizontal" : "vertical"}
+        isHome={isHome}
         footer={
           <button
             onClick={() => signOut().then(() => navigate({ to: "/auth/login", replace: true }))}
-            className="flex h-10 w-10 items-center justify-center rounded-full text-muted-foreground transition-all hover:bg-surface-alt hover:text-foreground cursor-pointer"
+            className="flex h-10 w-10 items-center justify-center rounded-full text-white/70 transition-all hover:bg-white/10 hover:text-white cursor-pointer"
             title="Sair da conta"
           >
             <LogOut className="h-5 w-5 shrink-0" strokeWidth={2} />

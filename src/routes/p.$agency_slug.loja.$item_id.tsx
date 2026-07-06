@@ -1,8 +1,7 @@
-// @ts-nocheck
-import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { MapPin, ArrowLeft, Calendar, Info, CheckCircle2 } from "lucide-react";
+import { MapPin, ArrowLeft, CheckCircle2 } from "lucide-react";
 import { money } from "@/components/ui/form";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useState } from "react";
@@ -10,11 +9,20 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { toast } from "sonner";
-import DOMPurify from "dompurify";
 
 export const Route = createFileRoute("/p/$agency_slug/loja/$item_id")({
   component: PublicStoreItemDetail,
 });
+
+type StoreItem = {
+  id: string;
+  title: string;
+  description?: string | null;
+  store_cover?: string | null;
+  store_price?: number | null;
+  destination?: string | null;
+  departure_date?: string | null;
+};
 
 function PublicStoreItemDetail() {
   const { agency_slug, item_id } = Route.useParams();
@@ -41,25 +49,25 @@ function PublicStoreItemDetail() {
 
   const agencyId = agencyData?.id;
 
-  const { data: item, isLoading } = useQuery({
+  const { data: item, isLoading } = useQuery<StoreItem | null>({
     queryKey: ["public-store-item", item_id, itemType],
     queryFn: async () => {
       if (itemType === "group_tour") {
-        const { data, error } = await supabase
+        const { data, error } = await (supabase as any)
           .from("group_tours")
           .select("id, title, description, store_cover, store_price, destination, departure_date")
           .eq("id", item_id)
           .single();
         if (error) throw error;
-        return data;
+        return data as StoreItem;
       } else {
-        const { data, error } = await supabase
+        const { data, error } = await (supabase as any)
           .from("proposals")
           .select("id, title, store_cover, store_price")
           .eq("id", item_id)
           .single();
         if (error) throw error;
-        return data;
+        return data as StoreItem;
       }
     },
   });
@@ -177,8 +185,8 @@ function PublicStoreItemDetail() {
             )}
             
             <div className="prose prose-neutral dark:prose-invert max-w-none prose-p:leading-relaxed">
-              {false ? (
-                <div dangerouslySetInnerHTML={{ __html: '' }} />
+              {item.description ? (
+                <p className="text-muted-foreground leading-relaxed">{item.description}</p>
               ) : (
                 <p className="italic text-muted-foreground">Nenhuma descrição detalhada fornecida.</p>
               )}

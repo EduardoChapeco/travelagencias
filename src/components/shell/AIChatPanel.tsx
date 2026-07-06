@@ -269,7 +269,7 @@ export function AIChatPanel({
 
   if (isGenie) {
     return (
-      <div className="w-full h-full flex rounded-[28px] overflow-hidden bg-zinc-950/80 dark:bg-zinc-950/90 backdrop-blur-3xl border border-white/10 shadow-2xl">
+      <div className="w-full h-full flex rounded-[28px] overflow-hidden bg-zinc-950/80 dark:bg-zinc-950/90 backdrop-blur-3xl border border-white/10">
         <aside className="w-80 border-r border-white/10 flex flex-col p-5 bg-black/30 shrink-0">
           <div className="flex justify-between items-center mb-6">
             <h3 className="text-sm font-bold text-white uppercase tracking-wider">Histórico</h3>
@@ -483,7 +483,7 @@ export function AIChatPanel({
       className={
         isEmbedded
           ? "flex h-full w-full flex-col bg-surface"
-          : "fixed inset-y-0 right-0 z-50 flex h-full w-full flex-col border-l border-border bg-surface shadow-2xl md:relative md:w-[var(--ai-w)] md:z-20 md:shadow-none"
+          : "fixed inset-y-0 right-0 z-50 flex h-full w-full flex-col border-l border-border bg-surface md:relative md:w-[var(--ai-w)] md:z-20 md:shadow-none"
       }
     >
       {!isCollapsed && (

@@ -43,7 +43,7 @@ export function DynamicIsland() {
         }}
         transition={{ type: "spring", bounce: 0.2, duration: 0.6 }}
         className={cn(
-          "bg-surface/80 backdrop-blur-3xl border border-white/10 shadow-2xl overflow-hidden flex flex-col",
+          "bg-surface/80 backdrop-blur-3xl border border-white/10 overflow-hidden flex flex-col",
           isExpanded ? "p-4" : "p-2"
         )}
       >

@@ -37,7 +37,7 @@ export function DSModule({
   return (
     <div
       className={cn(
-        "rounded-lg border border-border overflow-hidden",
+        "rounded-2xl border border-border overflow-hidden",
         soft ? "bg-surface-alt" : "bg-surface",
         className,
       )}
@@ -53,7 +53,7 @@ export function DSModule({
             {kicker && <div className="ds-label-caps text-muted-foreground mb-1">{kicker}</div>}
             {title && <div className="ds-h2 text-foreground leading-snug">{title}</div>}
             {description && (
-              <p className="ds-body text-muted-foreground mt-1 max-w-xl">{description}</p>
+              <p className="ds-body-md text-muted-foreground mt-1 max-w-xl">{description}</p>
             )}
           </div>
           {action && <div className="shrink-0 pt-0.5">{action}</div>}

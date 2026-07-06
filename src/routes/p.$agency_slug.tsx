@@ -281,7 +281,7 @@ function Layout() {
                   return (
                     <a
                       href={resolvedCta.href!}
-                      className="rounded-md bg-brand px-3.5 py-1.5 text-xs font-semibold text-brand-foreground hover:bg-brand/90 transition-colors shadow-none"
+                      className="rounded-full bg-brand px-3.5 py-1.5 text-xs font-semibold text-brand-foreground hover:bg-brand/90 transition-colors shadow-none"
                     >
                       {settings.header_cta_label}
                     </a>
@@ -291,7 +291,7 @@ function Layout() {
                   <Link
                     to={resolvedCta.to as any}
                     params={resolvedCta.params as any}
-                    className="rounded-md bg-brand px-3.5 py-1.5 text-xs font-semibold text-brand-foreground hover:bg-brand/90 transition-colors shadow-none"
+                    className="rounded-full bg-brand px-3.5 py-1.5 text-xs font-semibold text-brand-foreground hover:bg-brand/90 transition-colors shadow-none"
                   >
                     {settings.header_cta_label}
                   </Link>

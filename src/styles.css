@@ -106,6 +106,15 @@
   --brand: var(--agency-brand, #3D6FF2);
   --brand-light: var(--agency-brand-light, rgba(61, 111, 242, 0.1));
   --brand-fg: var(--agency-brand-fg, #ffffff);
+  --brand-foreground: var(--brand-fg);
+
+  /* Sidebar Tokens mapping to design system */
+  --sidebar: var(--surface);
+  --sidebar-foreground: var(--foreground);
+  --sidebar-border: var(--border);
+  --sidebar-accent: var(--muted);
+  --sidebar-accent-foreground: var(--foreground);
+  --sidebar-ring: var(--ring);
 
   --success: #157f3d;
   --success-bg: #edf8f1;
@@ -155,6 +164,16 @@
   --accent: #F6F5F1; 
   --accent-foreground: #0B0B0C;
   --accent-soft: rgba(255, 255, 255, 0.05);
+
+  --brand-foreground: var(--brand-fg);
+  
+  /* Sidebar Tokens in dark mode */
+  --sidebar: var(--surface);
+  --sidebar-foreground: var(--foreground);
+  --sidebar-border: var(--border);
+  --sidebar-accent: var(--muted);
+  --sidebar-accent-foreground: var(--foreground);
+  --sidebar-ring: var(--ring);
   
   --border: rgba(255, 255, 255, 0.1);
   --border-strong: rgba(255, 255, 255, 0.2);
@@ -302,6 +321,12 @@
 .animate-fadeIn { animation: fadeIn 0.3s ease-out both; }
 .animate-scaleIn { animation: scaleIn 0.3s cubic-bezier(0.16, 1, 0.3, 1) both; }
 
+@keyframes pulseSlow {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.55; }
+}
+.animate-pulse-slow { animation: pulseSlow 2.5s ease-in-out infinite; }
+
 /* Turis OS Typography Scale */
 .ds-display {
   font-family: var(--font-sans);
@@ -339,6 +364,27 @@
   line-height: 1.5;
 }
 
+.ds-body {
+  font-family: var(--font-sans);
+  font-size: 1rem;
+  font-weight: 400;
+  line-height: 1.5;
+}
+
+.ds-body-large {
+  font-family: var(--font-sans);
+  font-size: 1.125rem;
+  font-weight: 400;
+  line-height: 1.6;
+}
+
+.ds-meta {
+  font-family: var(--font-sans);
+  font-size: 0.75rem;
+  font-weight: 400;
+  color: var(--muted-foreground);
+}
+
 .ds-label-caps {
   font-family: var(--font-mono);
   font-size: 0.75rem;
@@ -350,3 +396,4 @@
 
 * { scrollbar-width: none; }
 *::-webkit-scrollbar { display: none; }
+

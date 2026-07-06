@@ -111,7 +111,7 @@ export function AppShell({
 
   return (
     <div className="flex h-screen w-full relative overflow-hidden bg-black selection:bg-brand/30 select-none">
-      {/* 1. Wallpaper Global */}
+      {/* 1. Wallpaper Global — base layer */}
       <div 
         className="absolute inset-0 bg-cover bg-center transition-transform duration-[20s] ease-linear hover:scale-105 pointer-events-none"
         style={{ 
@@ -125,7 +125,7 @@ export function AppShell({
         />
       </div>
 
-      {/* 2. Top macOS-style status bar */}
+      {/* 2. Top macOS-style status bar — z-40 */}
       <header className="absolute top-0 left-0 right-0 h-11 px-6 flex justify-between items-center text-white z-40 bg-black/10 backdrop-blur-md border-b border-white/5 text-xs font-semibold tracking-wide">
         {/* Left: Platform name / brand & breadcrumbs */}
         <div className="flex items-center gap-3">
@@ -156,24 +156,26 @@ export function AppShell({
         </div>
       </header>
 
-      {/* 3. Main Workspace Layout */}
-      <div className="w-full h-full flex flex-col pt-11 z-10 relative overflow-hidden">
+      {/* 3. AppSidebar — Mobile drawer only (hidden on md+) */}
+      <AppSidebar mobileOpen={mobileOpen} onMobileClose={() => setMobileOpen(false)} />
+
+      {/* 4. Main Workspace — full screen, below topbar */}
+      <div className="w-full h-full flex pt-11 z-10 relative overflow-hidden">
         {isHome ? (
-          // Home View: Render child widgets directly on wallpaper
+          // ── HOME: FloatingDock + widgets on wallpaper ──────────────────────
           <div className="flex-1 flex flex-col relative overflow-hidden">
             <LegalBlocker>{children ?? <Outlet />}</LegalBlocker>
           </div>
         ) : (
-          // Module View: Render centered glass container (Safari-like window)
-          <div className="flex-1 flex items-center justify-center p-4 md:p-6 overflow-hidden">
-            <div className="w-full h-full max-w-[1600px] bg-surface/90 dark:bg-zinc-950/80 backdrop-blur-3xl rounded-[32px] border border-white/10 flex overflow-hidden shadow-2xl relative animate-fadeIn">
-              {/* Vertical Side Dock */}
-              <AppSidebar mobileOpen={mobileOpen} onMobileClose={() => setMobileOpen(false)} />
-              
-              {/* Module Page Content */}
-              <div className="flex flex-col flex-1 min-w-0">
-                {/* Secondary module navigation / header inside window */}
-                <header className="flex h-14 shrink-0 items-center justify-between border-b border-border bg-surface/50 px-6 backdrop-blur-md">
+          // ── MODULE VIEW ───────────────────────────────────────────────────
+          // FloatingDock (vertical) floats to the left of the glass window,
+          // both rendered as siblings in the same flex row.
+          <div className="flex-1 flex items-center gap-0 overflow-hidden">
+            {/* Module content window — glass frame, NO internal sidebar */}
+            <div className="flex-1 h-full p-4 pl-4 md:p-6 md:pl-[88px] overflow-hidden flex items-center justify-center min-w-0">
+              <div className="w-full h-full max-w-[1600px] bg-surface/90 dark:bg-zinc-950/80 backdrop-blur-3xl rounded-[32px] border border-white/10 flex flex-col overflow-hidden relative animate-fadeIn">
+                {/* Module inner header */}
+                <header className="flex h-14 shrink-0 items-center justify-between border-b border-border bg-surface/50 px-6 backdrop-blur-md rounded-t-[32px]">
                   <div className="flex items-center gap-3">
                     <button
                       onClick={() => setMobileOpen(true)}
@@ -209,12 +211,7 @@ export function AppShell({
         )}
       </div>
 
-      {/* 4. Floating Bottom Dock on Home */}
-      {isHome && (
-        <AppSidebar mobileOpen={mobileOpen} onMobileClose={() => setMobileOpen(false)} />
-      )}
-
-      {/* 5. Floating bottom-left IA chat */}
+      {/* 5. Floating bottom-left AI chat — always over wallpaper */}
       <div className="fixed bottom-6 left-6 z-50 pointer-events-none flex flex-col items-start gap-3">
         <AnimatePresence>
           {aiChatState === "input" && (
@@ -222,7 +219,7 @@ export function AppShell({
               initial={{ opacity: 0, scale: 0.9, y: 10 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.9, y: 10 }}
-              className="pointer-events-auto flex items-center gap-3 h-14 w-[420px] px-4 rounded-full glass border border-white/20 shadow-2xl text-white backdrop-blur-3xl"
+              className="pointer-events-auto flex items-center gap-3 h-14 w-[420px] px-4 rounded-full glass border border-white/20 text-white backdrop-blur-3xl"
             >
               <Sparkles className="w-5 h-5 text-brand-light shrink-0 animate-pulse-slow" />
               <input 
@@ -261,7 +258,7 @@ export function AppShell({
         {aiChatState === "collapsed" && (
           <button 
             onClick={() => setAiChatState("input")}
-            className="pointer-events-auto flex items-center gap-2.5 h-12 px-4 rounded-full glass border border-white/20 text-white hover:scale-105 transition-all shadow-xl font-semibold text-sm cursor-pointer"
+            className="pointer-events-auto flex items-center gap-2.5 h-12 px-4 rounded-full glass border border-white/20 text-white hover:scale-105 transition-all font-semibold text-sm cursor-pointer"
           >
             <Sparkles className="w-4 h-4 text-brand-light animate-pulse-slow" />
             <span>Falar com IA</span>
@@ -295,7 +292,7 @@ export function AppShell({
       {/* 7. Desktop Customizer Modal */}
       {customizerOpen && (
         <div className="fixed inset-0 bg-black/40 backdrop-blur-sm z-50 flex items-center justify-center p-6 pointer-events-auto">
-          <div className="w-full max-w-md glass dark:glass-dark rounded-[32px] border border-white/20 shadow-2xl p-6 text-white flex flex-col gap-5 relative animate-fadeIn">
+          <div className="w-full max-w-md glass dark:glass-dark rounded-[32px] border border-white/20 p-6 text-white flex flex-col gap-5 relative animate-fadeIn">
             <button 
               onClick={() => setCustomizerOpen(false)}
               className="absolute top-4 right-4 p-2 rounded-full hover:bg-white/10 text-white/80 hover:text-white transition-colors cursor-pointer"

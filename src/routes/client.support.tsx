@@ -3,7 +3,6 @@ import { useEffect, useState } from "react";
 import { LifeBuoy, Plus, ExternalLink } from "lucide-react";
 import { fetchClientTickets, createClientTicket, fetchClientAgencies } from "@/services/client-area";
 import { toast } from "sonner";
-import { supabase } from "@/integrations/supabase/client";
 
 export const Route = createFileRoute("/client/support")({
   component: ClientSupportRoute,
@@ -17,7 +16,7 @@ function ClientSupportRoute() {
   // Form states
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
-  const [type, setType] = useState("support"); // support, modification, cancellation
+  const [type, setType] = useState("general"); // general, request, cancellation, complaint, flight_change, refund
   const [priority, setPriority] = useState("low"); // low, medium, high
 
   useEffect(() => {
@@ -42,9 +41,6 @@ function ClientSupportRoute() {
     if (!title || !description) return;
 
     try {
-      const { data: userData } = await supabase.auth.getUser();
-      if (!userData.user) throw new Error("Usuário não autenticado");
-
       const agencies = await fetchClientAgencies();
       if (!agencies.length) throw new Error("Nenhuma agência vinculada");
 
@@ -53,15 +49,15 @@ function ClientSupportRoute() {
         description,
         type,
         priority,
-        agency_id: agencies[0].id,
-        client_id: userData.user.id,
+        agency_id: agencies[0].agency_id,
+        client_id: agencies[0].id,
       });
 
       toast.success("Chamado aberto com sucesso!");
       setIsCreating(false);
       setTitle("");
       setDescription("");
-      setType("support");
+      setType("general");
       setPriority("low");
       loadTickets();
     } catch (err) {
@@ -135,10 +131,12 @@ function ClientSupportRoute() {
                   onChange={(e) => setType(e.target.value)}
                   className="w-full h-10 bg-background border border-border rounded-md px-3 text-sm focus:border-primary outline-none transition-colors"
                 >
-                  <option value="support">Dúvida / Suporte Geral</option>
-                  <option value="modification">Alteração de Reserva</option>
+                  <option value="general">Dúvida / Suporte Geral</option>
+                  <option value="request">Alteração de Reserva</option>
                   <option value="cancellation">Cancelamento</option>
                   <option value="complaint">Reclamação</option>
+                  <option value="flight_change">Mudança de Voo</option>
+                  <option value="refund">Reembolso</option>
                 </select>
               </div>
             </div>
