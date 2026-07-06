@@ -310,24 +310,46 @@
   }
 
   /* bg-background e variantes → transparente */
-  .os-workspace .bg-background,
-  .os-workspace .bg-surface {
+  .os-workspace .bg-background {
     background: transparent !important;
   }
 
-  /* bg-card, bg-white, bg-surface, bg-secondary, bg-neutral → dark glass */
+  /* bg-card, bg-white, bg-secondary, bg-surface, bg-surface-alt, bg-neutral → dark glass */
   .os-workspace .bg-card,
   .os-workspace .bg-white,
   .os-workspace .bg-secondary,
+  .os-workspace .bg-surface,
   .os-workspace .bg-surface-alt,
   .os-workspace [class*="bg-surface"],
   .os-workspace [class*="bg-neutral"],
   .os-workspace [class*="bg-card"],
   .os-workspace [class*="bg-white"] {
-    background: rgba(15, 15, 22, 0.50) !important;
+    background: rgba(15, 15, 22, 0.45) !important;
     backdrop-filter: blur(28px) saturate(180%) !important;
     -webkit-backdrop-filter: blur(28px) saturate(180%) !important;
-    border: 1px solid rgba(255, 255, 255, 0.12) !important;
+    border: 1px solid rgba(255, 255, 255, 0.08) !important;
+  }
+
+  /* Remover linhas divisórias rígidas nas tabelas, cabeçalhos e painéis */
+  .os-workspace border-b,
+  .os-workspace .border-b,
+  .os-workspace .border-t,
+  .os-workspace .divide-y > * {
+    border-color: rgba(255, 255, 255, 0.05) !important;
+  }
+
+  /* Padronização horizontal e flutuante dos cabeçalhos de ações/filtros de cada módulo */
+  .os-workspace .flex-col.sm\:flex-row.gap-2.sm\:items-center.border-b,
+  .os-workspace .flex-col.sm\:flex-row.gap-2.border-b,
+  .os-workspace div[class*="border-b"][class*="px-4"][class*="py-3"] {
+    border-bottom: none !important;
+    background: rgba(15, 15, 22, 0.40) !important;
+    backdrop-filter: blur(20px) saturate(160%) !important;
+    -webkit-backdrop-filter: blur(20px) saturate(160%) !important;
+    border: 1px solid rgba(255, 255, 255, 0.08) !important;
+    border-radius: 24px !important;
+    margin-bottom: 16px !important;
+    padding: 12px 20px !important;
   }
 
   /* Interceptar cores escuras de texto do Tailwind dentro do workspace e torná-las claras e legíveis */

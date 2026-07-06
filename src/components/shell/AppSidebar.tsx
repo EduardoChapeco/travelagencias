@@ -144,7 +144,7 @@ const MOBILE_ITEMS: SlimSidebarItem[] = [
 // ─────────────────────────────────────────────────────────────────────────────
 // Helper: build context items for a given pathname
 // ─────────────────────────────────────────────────────────────────────────────
-function buildContext(
+export function buildContext(
   pathname: string,
   base: string,
   isAdmin: boolean,

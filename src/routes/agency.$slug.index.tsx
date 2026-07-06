@@ -1,17 +1,13 @@
 import { createFileRoute, useParams, Link } from "@tanstack/react-router";
-import { useQuery } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
 import { useAgency } from "@/lib/agency-context";
 import { useState, useEffect } from "react";
+import { StickyNotesCanvas } from "@/components/dashboard/StickyNotesCanvas";
 import {
-  Wallet, Users, PlaneTakeoff, TrendingUp, Bus, Globe,
-  Tv, Sparkles, Target, BadgePercent, BadgeAlert, Tag,
-  Search, Command, MessageSquare, Menu, LayoutGrid, Bell, Settings, X, Mic, Palette
+  Users, PlaneTakeoff, Sparkles, Settings, Palette, Compass, MessageSquare, Bus, Wallet, Calendar
 } from "lucide-react";
-import { money, fmtDate } from "@/components/ui/form";
 
 export const Route = createFileRoute("/agency/$slug/")({
-  head: ({ context }: any) => ({ meta: [{ title: `${context?.brand?.platform_name || 'Turis'} · Início` }] }),
+  head: ({ context }: any) => ({ meta: [{ title: `${context?.brand?.platform_name || "Turis"} · Início` }] }),
   component: HomeShell,
 } as any);
 
@@ -19,47 +15,11 @@ function HomeShell() {
   const { agency } = useAgency();
   const { slug } = useParams({ from: "/agency/$slug/" });
 
-  // Fetch recent metrics from DB instead of hardcoding
-  const { data: metrics } = useQuery({
-    queryKey: ["home-metrics", agency?.id],
-    enabled: !!agency?.id,
-    queryFn: async () => {
-      // Get all group tours for the agency
-      const { data: tours } = await supabase
-        .from("group_tours")
-        .select("id")
-        .eq("agency_id", agency!.id);
-      
-      const tourIds = (tours || []).map(t => t.id);
-      if (tourIds.length === 0) return { totalSales: 42500, nextTour: null };
-
-      // Get bookings for those tours
-      const { data: bookings } = await supabase
-        .from("group_bookings")
-        .select("total_amount")
-        .eq("status", "confirmed")
-        .in("group_trip_id", tourIds)
-        .limit(10);
-      
-      const totalSales = (bookings || []).reduce((acc, b) => acc + Number((b as any).total_amount || 0), 0);
-      
-      // Get next departure
-      const { data: nextTours } = await supabase
-        .from("group_tours")
-        .select("title, departure_date, destination")
-        .eq("agency_id", agency!.id)
-        .eq("status", "confirmed")
-        .order("departure_date", { ascending: true })
-        .limit(1);
-
-      return {
-        totalSales: totalSales || 42500, // fallback if empty
-        nextTour: nextTours?.[0] || null
-      };
-    }
+  const [contextMenu, setContextMenu] = useState<{ x: number; y: number; visible: boolean }>({
+    x: 0,
+    y: 0,
+    visible: false
   });
-
-  const [contextMenu, setContextMenu] = useState<{ x: number; y: number; visible: boolean }>({ x: 0, y: 0, visible: false });
 
   const handleContextMenu = (e: React.MouseEvent) => {
     e.preventDefault();
@@ -71,7 +31,7 @@ function HomeShell() {
   };
 
   const closeContextMenu = () => {
-    setContextMenu(prev => ({ ...prev, visible: false }));
+    setContextMenu((prev) => ({ ...prev, visible: false }));
   };
 
   useEffect(() => {
@@ -79,82 +39,91 @@ function HomeShell() {
     return () => window.removeEventListener("click", closeContextMenu);
   }, []);
 
-  return (
-    <div 
-      onContextMenu={handleContextMenu}
-      className="relative flex flex-col h-full w-full overflow-hidden p-6 md:p-10 select-none"
-    >
-      {/* Widgets Bento Grid style floating on the wallpaper */}
-      <div className="mt-12 grid grid-cols-1 md:grid-cols-2 gap-6 max-w-4xl mx-auto w-full">
-        {/* Quick Metrics Widget */}
-        <div className="glass rounded-[28px] p-6 text-white space-y-6 border border-white/10 shadow-2xl">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              <div className="p-2 rounded-full bg-brand/20 text-brand-light">
-                <TrendingUp className="w-4 h-4" />
-              </div>
-              <span className="font-semibold text-sm">Resumo de Vendas</span>
-            </div>
-          </div>
-          <div className="space-y-4">
-            <div>
-              <p className="text-xs text-white/60 font-medium mb-1 uppercase tracking-wider">Vendas Fechadas (Mês)</p>
-              <p className="text-3xl font-extrabold tracking-tight">R$ {money(metrics?.totalSales || 42500)}</p>
-            </div>
-            <div className="h-px w-full bg-white/10" />
-            <div>
-              <p className="text-xs text-white/60 font-medium mb-1 uppercase tracking-wider">Próxima Viagem Confirmada</p>
-              <p className="text-sm font-semibold">
-                {metrics?.nextTour 
-                  ? `${metrics.nextTour.title} (${fmtDate(metrics.nextTour.departure_date)})` 
-                  : "Nenhum embarque programado"
-                }
-              </p>
-            </div>
-          </div>
-        </div>
+  // Parse links inside notes content (for Phase 3 rendering integration)
+  const renderNoteLinkifiedContent = (content: string) => {
+    if (!content) return "";
+    
+    // Simple regex to match: [Label](type:UUID)
+    const regex = /\[([^\]]+)\]\(([^)]+)\)/g;
+    const parts = [];
+    let lastIndex = 0;
+    let match;
 
-        {/* AI Suggestion Widget */}
-        <div className="glass rounded-[28px] p-6 text-white space-y-4 border border-white/10 shadow-2xl flex flex-col justify-between">
-          <div className="space-y-3">
-            <div className="flex items-center gap-2 text-brand-light">
-              <Sparkles className="w-5 h-5 animate-pulse-slow" />
-              <span className="font-semibold text-sm">Turis AI</span>
-            </div>
-            <p className="text-sm leading-relaxed text-white/90 font-medium">
-              Você tem novos leads aguardando resposta na fila de atendimento. Deseja que eu rascunhe as propostas com base no histórico deles agora?
-            </p>
-          </div>
-          <button 
-            onClick={() => document.dispatchEvent(new CustomEvent("open-ai-chat"))}
-            className="w-full py-3 rounded-full bg-white/10 hover:bg-white/20 text-sm font-semibold transition-colors cursor-pointer text-center text-white"
+    while ((match = regex.exec(content)) !== null) {
+      const text = match[1];
+      const linkVal = match[2];
+      
+      // Append text before the match
+      if (match.index > lastIndex) {
+        parts.push(content.substring(lastIndex, match.index));
+      }
+
+      // Determine URL based on link type
+      let url = "";
+      if (linkVal.startsWith("lead:")) {
+        const id = linkVal.substring(5);
+        url = `/agency/${slug}/crm/${id}`;
+      } else if (linkVal.startsWith("trip:")) {
+        const id = linkVal.substring(5);
+        url = `/agency/${slug}/trips/${id}`;
+      } else if (linkVal.startsWith("contract:")) {
+        const id = linkVal.substring(9);
+        url = `/agency/${slug}/contracts`;
+      }
+
+      if (url) {
+        parts.push(
+          <Link
+            key={match.index}
+            to={url as any}
+            className="text-brand font-black hover:underline cursor-pointer bg-white/20 px-1.5 py-0.5 rounded-md inline-flex items-center gap-0.5"
           >
-            Sim, falar com Assistente
-          </button>
-        </div>
-      </div>
+            {text}
+          </Link>
+        );
+      } else {
+        parts.push(match[0]);
+      }
+
+      lastIndex = regex.lastIndex;
+    }
+
+    if (lastIndex < content.length) {
+      parts.push(content.substring(lastIndex));
+    }
+
+    return parts.length > 0 ? parts : content;
+  };
+
+  return (
+    <div
+      onContextMenu={handleContextMenu}
+      className="relative flex-1 w-full h-full flex flex-col overflow-hidden select-none"
+    >
+      {/* Draggable Sticky Notes Canvas Workspace */}
+      <StickyNotesCanvas renderNoteContent={renderNoteLinkifiedContent} />
 
       {/* macOS Finder-style context menu */}
       {contextMenu.visible && (
-        <div 
+        <div
           className="fixed z-50 w-52 glass dark:glass-dark border border-white/10 rounded-2xl shadow-2xl p-1.5 flex flex-col text-white text-xs font-semibold select-none animate-fadeIn"
           style={{ top: contextMenu.y, left: contextMenu.x }}
           onClick={(e) => e.stopPropagation()}
         >
-          <ContextMenuItem 
+          <ContextMenuItem
             label="Novo Lead (CRM)"
             icon={Users}
             onClick={closeContextMenu}
             to={`/agency/${slug}/crm`}
           />
-          <ContextMenuItem 
+          <ContextMenuItem
             label="Nova Cotação"
-            icon={PlaneTakeoff}
+            icon={Compass}
             onClick={closeContextMenu}
-            to={`/agency/${slug}/proposals`}
+            to={`/agency/${slug}/quotes`}
           />
           <div className="h-[1px] bg-white/10 my-1 mx-1 shrink-0" />
-          <ContextMenuItem 
+          <ContextMenuItem
             label="Falar com IA"
             icon={Sparkles}
             onClick={() => {
@@ -162,7 +131,7 @@ function HomeShell() {
               document.dispatchEvent(new CustomEvent("open-ai-chat"));
             }}
           />
-          <ContextMenuItem 
+          <ContextMenuItem
             label="Personalizar Desktop"
             icon={Palette}
             onClick={() => {
@@ -170,7 +139,7 @@ function HomeShell() {
               document.dispatchEvent(new CustomEvent("open-desktop-customizer"));
             }}
           />
-          <ContextMenuItem 
+          <ContextMenuItem
             label="Identidade Visual"
             icon={Settings}
             onClick={closeContextMenu}
@@ -182,16 +151,16 @@ function HomeShell() {
   );
 }
 
-function ContextMenuItem({ 
-  label, 
-  icon: Icon, 
-  onClick, 
-  to 
-}: { 
-  label: string; 
-  icon: any; 
-  onClick: () => void; 
-  to?: string 
+function ContextMenuItem({
+  label,
+  icon: Icon,
+  onClick,
+  to,
+}: {
+  label: string;
+  icon: any;
+  onClick: () => void;
+  to?: string;
 }) {
   const content = (
     <>

@@ -167,9 +167,9 @@ export function DynamicIslandNav({
       animate={{ width: hovered ? 188 : 52 }}
       transition={{ type: "spring", bounce: 0.1, duration: 0.35 }}
       className={cn(
-        "fixed top-[72px] left-0 z-40 flex flex-col",
-        "glass-sidebar rounded-r-[24px]",
-        "py-3 gap-0.5 overflow-hidden",
+        "fixed left-4 top-1/2 -translate-y-1/2 z-40 flex flex-col",
+        "glass-sidebar rounded-[28px] shadow-[0_12px_40px_rgba(0,0,0,0.35)]",
+        "py-4 gap-0.5 overflow-hidden",
         "hidden md:flex",
         "animate-island-in"
       )}

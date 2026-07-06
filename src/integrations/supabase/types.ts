@@ -39,6 +39,61 @@ export type Database = {
   }
   public: {
     Tables: {
+      desktop_notes: {
+        Row: {
+          id: string
+          profile_id: string
+          agency_id: string
+          content: string
+          color: string
+          x_pos: number
+          y_pos: number
+          w_pos: number
+          h_pos: number
+          created_at: string
+          updated_at: string
+        }
+        Insert: {
+          id?: string
+          profile_id: string
+          agency_id: string
+          content?: string
+          color?: string
+          x_pos?: number
+          y_pos?: number
+          w_pos?: number
+          h_pos?: number
+          created_at?: string
+          updated_at?: string
+        }
+        Update: {
+          id?: string
+          profile_id?: string
+          agency_id?: string
+          content?: string
+          color?: string
+          x_pos?: number
+          y_pos?: number
+          w_pos?: number
+          h_pos?: number
+          created_at?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "desktop_notes_agency_id_fkey"
+            columns: ["agency_id"]
+            referencedRelation: "agencies"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "desktop_notes_profile_id_fkey"
+            columns: ["profile_id"]
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          }
+        ]
+      }
       agencies: {
         Row: {
           brand_color: string | null
