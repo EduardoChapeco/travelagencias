@@ -15,6 +15,7 @@ import { cn } from "@/lib/utils";
 import { toast } from "sonner";
 import { useBrand } from "@/hooks/use-brand";
 import { useLayoutStore } from "@/hooks/use-layout-store";
+import { useHeaderStore } from "@/lib/header-store";
 
 export function AppShell({
   title,
@@ -26,6 +27,7 @@ export function AppShell({
   children?: ReactNode;
 }) {
   const { backgroundImage } = useLayoutStore();
+  const toolbar = useHeaderStore((s) => s.toolbar);
   const { agency } = useAgency();
   const { data: brandInfo } = useBrand();
   const subQuery = useQuery({
@@ -188,7 +190,10 @@ export function AppShell({
         </div>
 
         {/* Center: Module Contextual Toolbar Portal */}
-        <div id="app-header-portal" className="flex-1 flex justify-center pointer-events-auto px-4 z-50" />
+        <div className="flex-1 flex justify-center pointer-events-auto px-4 z-50">
+          {toolbar}
+        </div>
+
         {/* Right: Pill ultra-fina — hora, data e notificações */}
         <div className="flex items-center gap-3 glass-pill px-3 py-1 rounded-full pointer-events-auto text-[11px] font-medium tracking-wide shrink-0">
           <span className="text-white/70 capitalize hidden sm:inline">{dateStr}</span>

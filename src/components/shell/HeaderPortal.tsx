@@ -1,18 +1,13 @@
-import { createPortal } from "react-dom";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
+import { useHeaderStore } from "@/lib/header-store";
 
 export function HeaderPortal({ children }: { children: React.ReactNode }) {
-  const [mounted, setMounted] = useState(false);
+  const setToolbar = useHeaderStore((s) => s.setToolbar);
 
   useEffect(() => {
-    setMounted(true);
-    return () => setMounted(false);
-  }, []);
+    setToolbar(children);
+    return () => setToolbar(null);
+  }, [children, setToolbar]);
 
-  if (!mounted) return null;
-
-  const el = document.getElementById("app-header-portal");
-  if (!el) return <>{children}</>;
-
-  return createPortal(children, el);
+  return null;
 }

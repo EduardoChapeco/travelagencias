@@ -52,19 +52,18 @@ export function ModuleToolbar({
   return (
     <div
       className={cn(
-        "flex-1 flex items-center gap-3 shrink-0 h-full max-w-2xl px-2",
+        "flex items-center gap-2 pointer-events-auto",
         className
       )}
     >
       {/* ── Title Pill ── */}
       {title && (
-        <div className="flex items-center gap-2 glass-pill px-3 py-1 text-xs font-bold text-white shrink-0">
+        <div className="flex items-center gap-2 glass-pill px-3 py-1 text-xs font-bold text-white shrink-0 h-8">
           {title}
         </div>
       )}
 
-      <div className="flex flex-wrap items-center gap-2 w-full sm:w-auto flex-1">
-        {/* ── Search Input ── */}
+      {/* ── Search Input ── */}
       {search && (
         <div className="relative w-44 sm:w-56 shrink-0">
           <Search
@@ -132,7 +131,6 @@ export function ModuleToolbar({
           {actions}
         </div>
       )}
-      </div>
     </div>
   );
 }
