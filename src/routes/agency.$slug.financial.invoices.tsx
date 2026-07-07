@@ -3,10 +3,12 @@ import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useAgency } from "@/lib/agency-context";
+import { toast } from "sonner";
 import { EmptyState } from "@/components/shell/PageHeader";
 import { StatusBadge, money, fmtDate, GhostButton } from "@/components/ui/form";
+import { Plus } from "lucide-react";
 import { HeaderPortal } from "@/components/shell/HeaderPortal";
-import { ModuleToolbar } from "@/components/shell/ModuleToolbar";
+import { ModuleToolbar, ModuleActionButton } from "@/components/shell/ModuleToolbar";
 
 export const Route = createFileRoute("/agency/$slug/financial/invoices")({
   component: InvoicesPage,
@@ -53,6 +55,12 @@ function InvoicesPage() {
       <HeaderPortal>
         <ModuleToolbar title="Faturas" />
       </HeaderPortal>
+
+      <ModuleActionButton
+        label="Nova Fatura"
+        icon={<Plus className="h-3.5 w-3.5" />}
+        onClick={() => toast.info("Nova Fatura (Em breve)")}
+      />
 
       <div className="flex-1 overflow-y-auto px-4 md:pl-[64px] md:pr-6 py-4 min-h-0">
         {q.isLoading && <div className="text-sm text-muted-foreground">Carregando…</div>}

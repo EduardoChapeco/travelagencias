@@ -23,61 +23,42 @@ export const Route = createFileRoute("/agency/$slug/financial")({
   component: FinancialLayout,
 });
 
+import { useSidebarStore } from "@/lib/sidebar-store";
+import { DollarSign, FileText, Settings, Target, Users, BookOpen } from "lucide-react";
+import { useEffect } from "react";
+
 function FinancialLayout() {
   const { slug } = useParams({ from: "/agency/$slug/financial" });
   const { pathname } = useLocation();
   const { agency, isAgencyAdmin } = useAgency();
   const [activeSubTab, setActiveSubTab] = useState<"route" | "settings">("route");
+  const { setContext, clearContext } = useSidebarStore();
 
   const tabs = [
     { to: "/agency/$slug/financial/cash" as any, label: "Fluxo de caixa" },
-    { to: "/agency/$slug/financial/reconciliation" as any, label: "Conciliação diária" },
+    { to: "/agency/$slug/financial/reconciliation" as any, label: "Conciliação" },
     { to: "/agency/$slug/financial/dre" as any, label: "DRE" },
     { to: "/agency/$slug/financial/invoices" as any, label: "Faturas" },
     { to: "/agency/$slug/financial/groups" as any, label: "Grupos e Excursões" },
     { to: "/agency/$slug/financial/ledger" as any, label: "Livro-Razão" },
-    { to: "/agency/$slug/financial/operators" as any, label: "Faturamento Operadoras" },
+    { to: "/agency/$slug/financial/operators" as any, label: "Faturamento" },
   ] as const;
+
+  useEffect(() => {
+    const items = [
+      { label: "Caixa", to: `/agency/${slug}/financial/cash`, icon: DollarSign },
+      { label: "DRE", to: `/agency/${slug}/financial/dre`, icon: Target },
+      { label: "Faturas", to: `/agency/${slug}/financial/invoices`, icon: FileText },
+      { label: "Grupos", to: `/agency/${slug}/financial/groups`, icon: Users },
+      { label: "Livro-Razão", to: `/agency/${slug}/financial/ledger`, icon: BookOpen },
+    ];
+    setContext("Financeiro", items);
+    return () => clearContext();
+  }, [slug, setContext, clearContext]);
 
   return (
     <div className="flex h-full flex-col overflow-hidden">
-      {/* ── Top Bar de Ações e Sub-Navegação ──────────────────────────────────────────── */}
-      <div className="flex flex-col sm:flex-row gap-2 sm:items-center justify-between px-4 md:pl-[64px] md:pr-6 py-3 shrink-0 no-margin-bottom bg-transparent">
-        <Tabs defaultValue="cash" className="w-auto">
-          <TabsList className="h-8 glass-pill rounded-full p-0.5 flex-wrap gap-0 shrink-0">
-            {tabs.map((t) => {
-              const active = activeSubTab === "route" && pathname.endsWith(t.to.split("/").pop()!);
-              return (
-                <Link
-                  key={t.to}
-                  to={t.to}
-                  params={{ slug } as any}
-                  onClick={() => setActiveSubTab("route")}
-                  className={`inline-flex items-center justify-center h-7 px-2.5 text-[11px] font-semibold rounded-full transition-all cursor-pointer ${
-                    active
-                      ? "bg-white/10 text-white border border-white/5 shadow-xs"
-                      : "text-white/60 hover:text-white"
-                  }`}
-                >
-                  {t.label}
-                </Link>
-              );
-            })}
-            {isAgencyAdmin && (
-              <button
-                onClick={() => setActiveSubTab("settings")}
-                className={`inline-flex items-center justify-center h-7 px-2.5 text-[11px] font-semibold rounded-full transition-all cursor-pointer ${
-                  activeSubTab === "settings"
-                    ? "bg-white/10 text-white border border-white/5 shadow-xs"
-                    : "text-white/60 hover:text-white"
-                }`}
-              >
-                Configurações
-              </button>
-            )}
-          </TabsList>
-        </Tabs>
-      </div>
+      {/* ── Sub-Navegação movida para o Sidebar Contextual ── */}
 
       {activeSubTab === "route" ? (
         <div className="flex-1 overflow-hidden min-h-0">

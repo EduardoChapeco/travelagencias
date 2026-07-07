@@ -11,8 +11,8 @@ export function HeaderPortal({ children }: { children: React.ReactNode }) {
 
   if (!mounted) return null;
 
-  const target = document.getElementById("app-header-portal");
-  if (!target) return null;
+  const el = document.getElementById("app-header-portal");
+  if (!el) return <>{children}</>;
 
-  return createPortal(children, target);
+  return createPortal(children, el);
 }

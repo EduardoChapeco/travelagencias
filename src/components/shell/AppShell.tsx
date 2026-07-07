@@ -187,14 +187,8 @@ export function AppShell({
           </Link>
         </div>
 
-        {/* Center: Module Contextual Toolbar Portal (linha amarela) */}
-        {!isHome && (
-          <div
-            id="app-header-portal"
-            className="flex-1 max-w-xl mx-4 flex items-center justify-center gap-2 pointer-events-auto h-full"
-          />
-        )}
-
+        {/* Center: Module Contextual Toolbar Portal */}
+        <div id="app-header-portal" className="flex-1 flex justify-center pointer-events-auto px-4 z-50" />
         {/* Right: Pill ultra-fina — hora, data e notificações */}
         <div className="flex items-center gap-3 glass-pill px-3 py-1 rounded-full pointer-events-auto text-[11px] font-medium tracking-wide shrink-0">
           <span className="text-white/70 capitalize hidden sm:inline">{dateStr}</span>

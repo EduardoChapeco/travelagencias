@@ -1,6 +1,6 @@
 import { createFileRoute, Link, Outlet, useNavigate, useParams, useLocation } from "@tanstack/react-router";
 import { TabsList } from "@/components/ui/tabs";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import {
   ArrowLeft,
@@ -57,6 +57,8 @@ function getDaysToTrip(travelStart?: string | null): number | null {
   return diff;
 }
 
+import { useSidebarStore } from "@/lib/sidebar-store";
+
 function TripLayout() {
   const { slug, id } = Route.useParams();
   const { pathname } = useLocation();
@@ -70,6 +72,26 @@ function TripLayout() {
   const [importBookingId, setImportBookingId] = useState("");
   const [showEmitModal, setShowEmitModal] = useState(false);
   const [emitStep, setEmitStep] = useState(1);
+
+  const { setContext, clearContext } = useSidebarStore();
+
+  useEffect(() => {
+    const items = [
+      { label: "Visão Geral", to: `/agency/${slug}/trips/${id}`, icon: ReceiptText, exact: true },
+      { label: "Passageiros", to: `/agency/${slug}/trips/${id}/passengers`, icon: Users },
+      { label: "Financeiro", to: `/agency/${slug}/trips/${id}/financial`, icon: ReceiptText },
+      { label: "Aéreos", to: `/agency/${slug}/trips/${id}/flights`, icon: Plane },
+      { label: "Hospedagem", to: `/agency/${slug}/trips/${id}/lodging`, icon: Hotel },
+      { label: "Contrato", to: `/agency/${slug}/trips/${id}/contract`, icon: FileSignature },
+      { label: "Confirmação", to: `/agency/${slug}/trips/${id}/confirmation`, icon: CheckCircle2 },
+      { label: "Vouchers", to: `/agency/${slug}/trips/${id}/vouchers`, icon: Ticket },
+      { label: "Check-in & Embarque", to: `/agency/${slug}/trips/${id}/boarding`, icon: Navigation },
+      { label: "Destino & Segurança", to: `/agency/${slug}/trips/${id}/destination`, icon: MapPin },
+      { label: "Histórico", to: `/agency/${slug}/trips/${id}/history`, icon: Clock },
+    ];
+    setContext("Detalhes da Viagem", items);
+    return () => clearContext();
+  }, [slug, id, setContext, clearContext]);
 
   const getTabClass = (tabPath: string, exact = false) => {
     const active = exact ? pathname === tabPath : pathname.startsWith(tabPath);
@@ -322,8 +344,8 @@ function TripLayout() {
     <div className="flex h-full flex-col overflow-hidden">
       <ConfirmDialog />
 
-      {/* ── Sticky Trip Header Bar ─────────────────────────────────── */}
-      <div className="px-4 md:px-6 py-3 flex flex-col gap-3.5 bg-surface/50 border-b border-border shrink-0 no-margin-bottom">
+      {/* ── Trip Header ─────────────────────────────────── */}
+      <div className="mac-glass-panel m-4 px-4 md:px-6 py-4 flex flex-col gap-3.5 rounded-[28px] shrink-0 z-10 relative">
         {/* Nav + Ações */}
         <div className="flex items-center justify-between">
           <Link
@@ -526,107 +548,6 @@ function TripLayout() {
             )}
           </div>
         )}
-
-        {/* Tabs — pill format */}
-        <div className="flex glass-pill p-0.5 text-xs gap-0.5 shrink-0 overflow-x-auto no-scrollbar max-w-full">
-          <Link
-            to="/agency/$slug/trips/$id"
-            params={{ slug, id }}
-            activeOptions={{ exact: true }}
-            className={getTabClass(`/agency/${slug}/trips/${id}`, true)}
-          >
-            <ReceiptText className="h-3.5 w-3.5" />
-            Visão Geral
-          </Link>
-          <Link
-            to="/agency/$slug/trips/$id/passengers"
-            params={{ slug, id }}
-            className={getTabClass(`/agency/${slug}/trips/${id}/passengers`)}
-          >
-            <Users className="h-3.5 w-3.5" />
-            Passageiros ({paxQ.data?.length ?? 0})
-          </Link>
-          <Link
-            to="/agency/$slug/trips/$id/financial"
-            params={{ slug, id }}
-            className={getTabClass(`/agency/${slug}/trips/${id}/financial`)}
-          >
-            <span className="text-[11px] font-extrabold">R$</span>
-            Financeiro
-          </Link>
-          <Link
-            to="/agency/$slug/trips/$id/flights"
-            params={{ slug, id }}
-            className={getTabClass(`/agency/${slug}/trips/${id}/flights`)}
-          >
-            <Plane className="h-3.5 w-3.5" />
-            Aéreos
-          </Link>
-          <Link
-            to="/agency/$slug/trips/$id/reaccommodation"
-            params={{ slug, id }}
-            className={getTabClass(`/agency/${slug}/trips/${id}/reaccommodation`)}
-          >
-            <Clock className="h-3.5 w-3.5 text-rose-500" />
-            Reacomodação
-          </Link>
-          <Link
-            to="/agency/$slug/trips/$id/lodging"
-            params={{ slug, id }}
-            className={getTabClass(`/agency/${slug}/trips/${id}/lodging`)}
-          >
-            <Hotel className="h-3.5 w-3.5" />
-            Hospedagem
-          </Link>
-          <Link
-            to="/agency/$slug/trips/$id/contract"
-            params={{ slug, id }}
-            className={getTabClass(`/agency/${slug}/trips/${id}/contract`)}
-          >
-            <FileSignature className="h-3.5 w-3.5" />
-            Contrato
-          </Link>
-          <Link
-            to="/agency/$slug/trips/$id/confirmation"
-            params={{ slug, id }}
-            className={getTabClass(`/agency/${slug}/trips/${id}/confirmation`)}
-          >
-            <CheckCircle2 className="h-3.5 w-3.5" />
-            Confirmação
-          </Link>
-          <Link
-            to="/agency/$slug/trips/$id/vouchers"
-            params={{ slug, id }}
-            className={getTabClass(`/agency/${slug}/trips/${id}/vouchers`)}
-          >
-            <Ticket className="h-3.5 w-3.5" />
-            Voucher
-          </Link>
-          <Link
-            to="/agency/$slug/trips/$id/boarding"
-            params={{ slug, id }}
-            className={getTabClass(`/agency/${slug}/trips/${id}/boarding`)}
-          >
-            <Navigation className="h-3.5 w-3.5" />
-            Check-in & Embarque
-          </Link>
-          <Link
-            to="/agency/$slug/trips/$id/destination"
-            params={{ slug, id }}
-            className={getTabClass(`/agency/${slug}/trips/$id/destination`)}
-          >
-            <MapPin className="h-3.5 w-3.5" />
-            Destino & Segurança
-          </Link>
-          <Link
-            to="/agency/$slug/trips/$id/history"
-            params={{ slug, id }}
-            className={getTabClass(`/agency/${slug}/trips/${id}/history`)}
-          >
-            <Clock className="h-3.5 w-3.5" />
-            Histórico
-          </Link>
-        </div>
       </div>
 
       {/* ── Content Outlet ─────────────────────────────────────────── */}

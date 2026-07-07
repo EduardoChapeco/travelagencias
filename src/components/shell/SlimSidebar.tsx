@@ -3,6 +3,7 @@ import { type ComponentType, type ReactNode, useState, useRef, useEffect } from 
 import { cn } from "@/lib/utils";
 import { Loader2, X, ChevronRight, ChevronUp, ChevronDown } from "lucide-react";
 import { AIChatPanel } from "./AIChatPanel";
+import { useSidebarStore } from "@/lib/sidebar-store";
 
 type Icon = ComponentType<{ className?: string; strokeWidth?: number }>;
 
@@ -67,8 +68,6 @@ export function SlimSidebar({
   footer,
   mobileOpen,
   onMobileClose,
-  contextItems = [],
-  contextTitle,
 }: {
   brand: ReactNode;
   /** Desktop: hub icon bar (9 items). Mobile fallback if mobileItems not provided. */
@@ -80,8 +79,6 @@ export function SlimSidebar({
   onTogglePin?: () => void;
   mobileOpen?: boolean;
   onMobileClose?: () => void;
-  contextItems?: ContextItem[];
-  contextTitle?: string;
   aiActions?: AiAction[];
 }) {
   const { pathname, pendingLocation } = useRouterState({
@@ -93,6 +90,7 @@ export function SlimSidebar({
     }),
   });
 
+  const { contextItems, contextTitle } = useSidebarStore();
   const hasContext = contextItems.length > 0;
   const drawerItems = mobileItems ?? items;
 
