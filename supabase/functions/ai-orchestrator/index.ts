@@ -5,6 +5,7 @@ import { encode, decode } from "https://deno.land/std@0.168.0/encoding/base64.ts
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
+  "Access-Control-Max-Age": "86400",
 };
 
 // AES Decryption
@@ -378,128 +379,169 @@ async function executeCompletionWithOrchestration(
   const module = body.module || "unknown_module";
   const capability = body.capability || "completion";
   
-  // Ordem de fallbacks permitidos
-  const fallbackProviders = ["gemini", "groq", "openrouter"];
-  let attempt = 0;
-  let fallbackUsed = false;
-
-  for (const provider of fallbackProviders) {
-    const credentials = await fetchHealthyCredentials(supabaseAdmin, provider, agencyId);
-    if (credentials.length === 0) continue;
-
-    for (const cred of credentials) {
-      attempt++;
-      const startTime = Date.now();
-      let keyDecrypted = "";
-      
+  try {
+    // Se file_path foi enviado, faz o download do arquivo do storage interno
+    if (body.file_path) {
       try {
-        keyDecrypted = await decryptKeyIfNeeded(cred.secret_reference);
-      } catch (decErr: any) {
-        console.error(`Failed to decrypt key for credential ${cred.id}:`, decErr);
-        await updateCredentialStatus(supabaseAdmin, cred.id, {
-          status: "invalid",
-          last_error_at: new Date().toISOString(),
-          last_error_code: "DECRYPTION_ERROR",
-        });
-        continue;
+        const parts = body.file_path.split("/");
+        const bucketName = parts[0];
+        const storagePath = parts.slice(1).join("/");
+        
+        console.log(`[Orchestrator] Downloading file from storage path: ${body.file_path}`);
+        const { data, error } = await supabaseAdmin.storage
+          .from(bucketName)
+          .download(storagePath);
+          
+        if (error) {
+          console.error(`[Orchestrator] Failed to download temporary file from storage:`, error);
+        } else if (data) {
+          const arrayBuffer = await data.arrayBuffer();
+          body.file_base64 = encode(new Uint8Array(arrayBuffer));
+        }
+      } catch (storageErr) {
+        console.error(`[Orchestrator] Exception downloading file from storage:`, storageErr);
       }
+    }
 
-      try {
-        console.log(`[Orchestrator] Request ${requestId} attempting provider ${provider} (Attempt ${attempt})`);
-        const { text, inputTokens, outputTokens, modelUsed } = await callProviderApi(
-          provider,
-          keyDecrypted,
-          {
-            prompt: body.prompt,
-            systemPrompt: body.systemPrompt,
-            file_base64: body.file_base64,
-            mime: body.mime,
-            jsonMode: body.jsonMode,
-          }
-        );
+    // Ordem de fallbacks permitidos
+    const fallbackProviders = ["gemini", "groq", "openrouter"];
+    let attempt = 0;
+    let fallbackUsed = false;
 
-        const latencyMs = Date.now() - startTime;
+    for (const provider of fallbackProviders) {
+      const credentials = await fetchHealthyCredentials(supabaseAdmin, provider, agencyId);
+      if (credentials.length === 0) continue;
+
+      for (const cred of credentials) {
+        attempt++;
+        const startTime = Date.now();
+        let keyDecrypted = "";
         
-        // Log com sucesso
-        await logAiRequest(supabaseAdmin, {
-          requestId,
-          agencyId,
-          module,
-          capability,
-          provider,
-          model: modelUsed,
-          keyFingerprint: cred.fingerprint,
-          attempt,
-          fallbackUsed,
-          latencyMs,
-          inputTokens,
-          outputTokens,
-          success: true,
-        });
-
-        // Atualizar estatísticas de sucesso da chave
-        await updateCredentialStatus(supabaseAdmin, cred.id, {
-          last_success_at: new Date().toISOString(),
-          last_used_at: new Date().toISOString(),
-        });
-
-        return { result: text, provider };
-      } catch (err: any) {
-        const latencyMs = Date.now() - startTime;
-        const status = err.status || 500;
-        const errMsg = err.message || String(err);
-        
-        console.error(`[Orchestrator] Attempt ${attempt} failed with status ${status}:`, errMsg);
-        fallbackUsed = true;
-
-        // Log com erro
-        await logAiRequest(supabaseAdmin, {
-          requestId,
-          agencyId,
-          module,
-          capability,
-          provider,
-          model: provider === "gemini" ? "gemini-2.5-flash" : "unknown",
-          keyFingerprint: cred.fingerprint,
-          attempt,
-          fallbackUsed,
-          latencyMs,
-          success: false,
-          errorMessage: errMsg,
-        });
-
-        // Atualizar status da credencial conforme erro
-        if (status === 401 || status === 403) {
-          // Credencial inválida
+        try {
+          keyDecrypted = await decryptKeyIfNeeded(cred.secret_reference);
+        } catch (decErr: any) {
+          console.error(`Failed to decrypt key for credential ${cred.id}:`, decErr);
           await updateCredentialStatus(supabaseAdmin, cred.id, {
             status: "invalid",
             last_error_at: new Date().toISOString(),
-            last_error_code: "UNAUTHORIZED",
+            last_error_code: "DECRYPTION_ERROR",
           });
-        } else if (status === 429) {
-          // Rate limit / Quota. Cooldown de 1 hora.
-          const cooldownDate = new Date(Date.now() + 60 * 60 * 1000).toISOString();
+          continue;
+        }
+
+        try {
+          console.log(`[Orchestrator] Request ${requestId} attempting provider ${provider} (Attempt ${attempt})`);
+          const { text, inputTokens, outputTokens, modelUsed } = await callProviderApi(
+            provider,
+            keyDecrypted,
+            {
+              prompt: body.prompt,
+              systemPrompt: body.systemPrompt,
+              file_base64: body.file_base64,
+              mime: body.mime,
+              jsonMode: body.jsonMode,
+            }
+          );
+
+          const latencyMs = Date.now() - startTime;
+          
+          // Log com sucesso
+          await logAiRequest(supabaseAdmin, {
+            requestId,
+            agencyId,
+            module,
+            capability,
+            provider,
+            model: modelUsed,
+            keyFingerprint: cred.fingerprint,
+            attempt,
+            fallbackUsed,
+            latencyMs,
+            inputTokens,
+            outputTokens,
+            success: true,
+          });
+
+          // Atualizar estatísticas de sucesso da chave
           await updateCredentialStatus(supabaseAdmin, cred.id, {
-            status: "healthy", // Mantém healthy mas sob cooldown
-            cooldown_until: cooldownDate,
-            last_error_at: new Date().toISOString(),
-            last_error_code: "RATE_LIMIT",
+            last_success_at: new Date().toISOString(),
+            last_used_at: new Date().toISOString(),
           });
-        } else {
-          // Outro erro de servidor (5xx) ou timeout. Cooldown curto de 5 minutos.
-          const cooldownDate = new Date(Date.now() + 5 * 60 * 1000).toISOString();
-          await updateCredentialStatus(supabaseAdmin, cred.id, {
-            status: "healthy",
-            cooldown_until: cooldownDate,
-            last_error_at: new Date().toISOString(),
-            last_error_code: "SERVER_ERROR",
+
+          return { result: text, provider };
+        } catch (err: any) {
+          const latencyMs = Date.now() - startTime;
+          const status = err.status || 500;
+          const errMsg = err.message || String(err);
+          
+          console.error(`[Orchestrator] Attempt ${attempt} failed with status ${status}:`, errMsg);
+          fallbackUsed = true;
+
+          // Log com erro
+          await logAiRequest(supabaseAdmin, {
+            requestId,
+            agencyId,
+            module,
+            capability,
+            provider,
+            model: provider === "gemini" ? "gemini-2.5-flash" : "unknown",
+            keyFingerprint: cred.fingerprint,
+            attempt,
+            fallbackUsed,
+            latencyMs,
+            success: false,
+            errorMessage: errMsg,
           });
+
+          // Atualizar status da credencial conforme erro
+          if (status === 401 || status === 403) {
+            // Credencial inválida
+            await updateCredentialStatus(supabaseAdmin, cred.id, {
+              status: "invalid",
+              last_error_at: new Date().toISOString(),
+              last_error_code: "UNAUTHORIZED",
+            });
+          } else if (status === 429) {
+            // Rate limit / Quota. Cooldown de 1 hora.
+            const cooldownDate = new Date(Date.now() + 60 * 60 * 1000).toISOString();
+            await updateCredentialStatus(supabaseAdmin, cred.id, {
+              status: "healthy", // Mantém healthy mas sob cooldown
+              cooldown_until: cooldownDate,
+              last_error_at: new Date().toISOString(),
+              last_error_code: "RATE_LIMIT",
+            });
+          } else {
+            // Outro erro de servidor (5xx) ou timeout. Cooldown curto de 5 minutos.
+            const cooldownDate = new Date(Date.now() + 5 * 60 * 1000).toISOString();
+            await updateCredentialStatus(supabaseAdmin, cred.id, {
+              status: "healthy",
+              cooldown_until: cooldownDate,
+              last_error_at: new Date().toISOString(),
+              last_error_code: "SERVER_ERROR",
+            });
+          }
         }
       }
     }
-  }
 
-  throw new Error("All authorized AI providers and keys failed or are currently in cooldown.");
+    throw new Error("All authorized AI providers and keys failed or are currently in cooldown.");
+  } finally {
+    // Limpar arquivo temporário de forma não-bloqueante
+    if (body.file_path) {
+      const parts = body.file_path.split("/");
+      const bucketName = parts[0];
+      const storagePath = parts.slice(1).join("/");
+      supabaseAdmin.storage
+        .from(bucketName)
+        .remove([storagePath])
+        .then(() => {
+          console.log(`[Orchestrator] Cleaned up temporary file ${body.file_path}`);
+        })
+        .catch((cleanupErr: any) => {
+          console.warn(`[Orchestrator] Failed to remove temporary file ${body.file_path}:`, cleanupErr);
+        });
+    }
+  }
 }
 
 async function processJobInBackground(supabaseAdmin: any, jobId: string) {

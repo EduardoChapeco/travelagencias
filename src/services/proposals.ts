@@ -164,11 +164,31 @@ export async function processOcrFile(file: File, proposal_id?: string, agency_id
         const timeoutId = setTimeout(() => controller.abort(), timeoutMs);
 
         try {
-          const base64 = (reader.result as string).split(",")[1];
+          let filePathRef: string | undefined = undefined;
+          
+          try {
+            const fileExt = file.name.split(".").pop();
+            const tempPath = `ocr_temp/${crypto.randomUUID()}.${fileExt}`;
+            const { data: uploadData, error: uploadError } = await supabase.storage
+              .from("proposals_exports_bucket")
+              .upload(tempPath, file);
+              
+            if (!uploadError && uploadData) {
+              filePathRef = `proposals_exports_bucket/${tempPath}`;
+            } else {
+              console.warn("Storage upload failed, falling back to base64:", uploadError);
+            }
+          } catch (storageErr) {
+            console.warn("Storage upload exception, falling back to base64:", storageErr);
+          }
+
+          const base64 = filePathRef ? undefined : (reader.result as string).split(",")[1];
+          
           const { data, error } = await supabase.functions.invoke("ai-orchestrator", {
             body: {
               action: "completion",
               feature: "ocr_proposal",
+              file_path: filePathRef,
               file_base64: base64,
               mime: file.type,
               file_name: file.name,
@@ -354,24 +374,34 @@ export async function fetchProposalsList(
   return { data: data ?? [], count: count ?? 0 };
 }
 
-export async function fetchClientsPick(agencyId: string) {
-  const { data, error } = await supabase
+export async function fetchClientsPick(agencyId: string, search?: string) {
+  let q = supabase
     .from("clients")
     .select("id, full_name")
     .eq("agency_id", agencyId)
-    .order("full_name")
-    .limit(5000);
+    .order("full_name");
+
+  if (search) {
+    q = q.ilike("full_name", `%${search}%`);
+  }
+
+  const { data, error } = await q.limit(search ? 50 : 200);
   if (error) throw new Error(error.message);
   return data ?? [];
 }
 
-export async function fetchLeadsPick(agencyId: string) {
-  const { data, error } = await supabase
+export async function fetchLeadsPick(agencyId: string, search?: string) {
+  let q = supabase
     .from("leads")
     .select("id, name")
     .eq("agency_id", agencyId)
-    .order("created_at", { ascending: false })
-    .limit(5000);
+    .order("created_at", { ascending: false });
+
+  if (search) {
+    q = q.ilike("name", `%${search}%`);
+  }
+
+  const { data, error } = await q.limit(search ? 50 : 200);
   if (error) throw new Error(error.message);
   return data ?? [];
 }

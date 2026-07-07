@@ -236,10 +236,12 @@ function InboxModule() {
           *,
           contacts(*),
           channels(*),
-          messages(*)
+          messages(id, body, direction, status, created_at)
         `)
         .eq("agency_id", agency.id)
-        .order("last_message_at", { ascending: false, nullsFirst: false });
+        .order("last_message_at", { ascending: false, nullsFirst: false })
+        .order("created_at", { referencedTable: "messages", ascending: false })
+        .limit(1, { referencedTable: "messages" });
 
       const { data, error } = await q;
       if (error) throw error;
@@ -289,6 +291,7 @@ function InboxModule() {
         { event: "INSERT", schema: "public", table: "messages", filter: `agency_id=eq.${agency.id}` },
         (payload) => {
           queryClient.invalidateQueries({ queryKey: ["conversations", agency.id] });
+          queryClient.invalidateQueries({ queryKey: ["unread-conversations-count", agency.id] });
           if (payload.new.conversation_id === selectedId) {
             queryClient.invalidateQueries({ queryKey: ["messages", selectedId] });
             if (payload.new.direction === "inbound") {
@@ -312,6 +315,37 @@ function InboxModule() {
       supabase.removeChannel(channel);
     };
   }, [agency?.id, selectedId, queryClient]);
+
+  // Marcar conversa como lida ao selecionar ou receber novas mensagens na conversa ativa
+  useEffect(() => {
+    if (!selectedId || !agency?.id) return;
+
+    const markAsRead = async () => {
+      try {
+        // 1. Zerar o unread_count na conversa
+        await db
+          .from("conversations")
+          .update({ unread_count: 0 } as any)
+          .eq("id", selectedId);
+
+        // 2. Marcar mensagens inbound como lidas
+        await db
+          .from("messages")
+          .update({ status: "read" } as any)
+          .eq("conversation_id", selectedId)
+          .eq("direction", "inbound")
+          .neq("status", "read");
+
+        // 3. Invalida os estados de contagem e conversas
+        queryClient.invalidateQueries({ queryKey: ["conversations", agency.id] });
+        queryClient.invalidateQueries({ queryKey: ["unread-conversations-count", agency.id] });
+      } catch (err) {
+        console.error("Erro ao marcar mensagens como lidas:", err);
+      }
+    };
+
+    markAsRead();
+  }, [selectedId, agency?.id, queryClient]);
 
   const selectedConversation = conversations.find((c) => c.id === selectedId) || null;
 

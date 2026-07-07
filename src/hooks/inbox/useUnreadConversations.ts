@@ -20,7 +20,6 @@ export function useUnreadConversations() {
     queryKey: ["unread-conversations-count", agency?.id],
     enabled: !!agency?.id,
     staleTime: 30_000,
-    refetchInterval: 60_000,   // atualiza a cada 60s
     queryFn: async () => {
       if (!agency?.id) return 0;
 

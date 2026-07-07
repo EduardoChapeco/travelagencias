@@ -94,7 +94,9 @@ export async function fetchLeads(agencyId: string): Promise<Lead[]> {
     .from("leads")
     .select("*")
     .eq("agency_id", agencyId)
-    .is("deleted_at", null);
+    .is("deleted_at", null)
+    .order("updated_at", { ascending: false })
+    .limit(300);
   if (error) throw error;
   return (data as unknown as Lead[]).sort((a, b) => a.position - b.position);
 }

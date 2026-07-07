@@ -82,6 +82,8 @@ function ErrorComponent({ error, reset }: { error: Error; reset: () => void }) {
   );
 }
 
+let cachedBrandPromise: Promise<any> | null = null;
+
 export const Route = createRootRouteWithContext<{ queryClient: QueryClient, brand?: any }>()({
   head: ({ context }: any) => ({
     meta: [
@@ -134,9 +136,17 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient, bran
   pendingComponent: PendingComponent,
   beforeLoad: async () => {
     try {
-      // Usar a mesma tabela do useBrand, mas injetando globalmente no TanStack
-      const { data } = await import("@/integrations/supabase/client").then(m => (m.supabase as any).from("platform_branding").select("*").single());
-      return { brand: (data as any) || undefined };
+      if (!cachedBrandPromise) {
+        cachedBrandPromise = import("@/integrations/supabase/client").then(m =>
+          (m.supabase as any)
+            .from("platform_branding")
+            .select("*")
+            .single()
+            .then((res: any) => res.data)
+        );
+      }
+      const data = await cachedBrandPromise;
+      return { brand: data || undefined };
     } catch {
       return {};
     }
