@@ -46,14 +46,14 @@ export function SheetPage({
     >
       <div
         className={cn(
-          "absolute inset-0 bg-overlay transition-opacity duration-300",
+          "absolute inset-0 bg-overlay/40 backdrop-blur-[2px] transition-opacity duration-300",
           isOpen ? "opacity-100" : "opacity-0",
         )}
         onClick={onClose}
       />
       <div
         className={cn(
-          "relative flex h-full flex-col bg-surface border-l border-border transition-transform duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] max-w-full",
+          "relative flex h-full flex-col mac-glass-modal border-l border-white/10 transition-transform duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] max-w-full",
           isOpen ? "translate-x-0" : "translate-x-full",
         )}
         style={{ width }}
