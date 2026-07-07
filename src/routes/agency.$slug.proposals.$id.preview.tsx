@@ -207,7 +207,7 @@ function ProposalPreview() {
 
       {/* ── Preview iframe-like area ──────────────────────────────────────────── */}
       <div className="flex-1 overflow-y-auto bg-surface-alt py-8 px-4">
-        <div className="mx-auto max-w-2xl rounded-[24px] border border-border bg-surface  overflow-hidden">
+        <div className="mx-auto max-w-2xl rounded-[var(--radius-card)] border border-border bg-surface  overflow-hidden">
           {/* Agency header */}
           <div className="px-8 pt-8 pb-6 border-b border-border/50">
             <div className="flex items-center justify-between">
@@ -392,7 +392,7 @@ function ProposalPreview() {
           )}
 
           {/* Financial summary */}
-          <div className="mx-8 mb-8 rounded-[24px] p-5" style={{ background: accentColor }}>
+          <div className="mx-8 mb-8 rounded-[var(--radius-card)] p-5" style={{ background: accentColor }}>
             <div className="flex items-baseline justify-between">
               <span className="text-sm font-medium" style={{ color: `${accentFg}cc` }}>
                 Total à vista (Pix)

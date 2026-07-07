@@ -331,7 +331,7 @@ function NewProposal() {
         )}
 
         {extractedItems && (
-          <div className="mt-4 rounded-[24px] bg-success/5 border border-success/20 p-3 text-xs text-success flex items-center justify-between">
+          <div className="mt-4 rounded-[var(--radius-card)] bg-success/5 border border-success/20 p-3 text-xs text-success flex items-center justify-between">
             <div className="text-left">
               <span className="font-bold text-success">✨ Dados extraídos com sucesso!</span>
               <p className="text-[10px] text-muted-foreground mt-0.5">

@@ -143,7 +143,7 @@ function ContractsPage() {
               {q.isLoading && <div className="text-sm text-muted-foreground p-4">Carregando…</div>}
 
               {q.isError && (
-                <div className="flex flex-col items-center justify-center py-12 px-6 text-center rounded-[24px] border border-red-200 bg-red-50/60">
+                <div className="flex flex-col items-center justify-center py-12 px-6 text-center rounded-[var(--radius-card)] border border-red-200 bg-red-50/60">
                   <div className="h-9 w-9 rounded-full bg-red-100 flex items-center justify-center mb-2">
                     <AlertCircle className="h-4 w-4 text-red-600" />
                   </div>
@@ -175,13 +175,13 @@ function ContractsPage() {
                 return (
                   <div
                     key={c.id}
-                    className="group flex flex-col rounded-[24px] border border-border bg-surface p-5 transition-all hover:border-brand/40 shadow-xs"
+                    className="group flex flex-col rounded-[var(--radius-card)] border border-border bg-surface p-5 transition-all hover:border-brand/40 shadow-xs"
                   >
                     <div className="flex items-start justify-between mb-4">
                       <div className="flex items-center gap-3">
                         <div
                           className={cn(
-                            "flex h-10 w-10 items-center justify-center rounded-[24px] border border-border",
+                            "flex h-10 w-10 items-center justify-center rounded-[var(--radius-card)] border border-border",
                             c.status === "signed"
                               ? "bg-success/10 text-success"
                               : "bg-surface-alt text-muted-foreground",
@@ -211,7 +211,7 @@ function ContractsPage() {
                       </p>
                     )}
 
-                    <div className="space-y-3 mb-5 mt-auto bg-surface-alt/40 rounded-[24px] p-4 border border-border/50">
+                    <div className="space-y-3 mb-5 mt-auto bg-surface-alt/40 rounded-[var(--radius-card)] p-4 border border-border/50">
                       <div className="flex items-center justify-between text-sm">
                         <span className="flex items-center gap-2 text-muted-foreground font-medium whitespace-nowrap">
                           <User className="h-4 w-4" /> Cliente

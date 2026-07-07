@@ -45,344 +45,52 @@ import { SlimSidebar, type SlimSidebarItem, type ContextItem, type AiAction } fr
 import { DynamicIslandNav, type IslandNavItem } from "./DynamicIslandNav";
 import { useUnreadConversations } from "@/hooks/inbox/useUnreadConversations";
 
-// ─────────────────────────────────────────────────────────────────────────────
-// Hub Items — 9 main icons for the dock
-// ─────────────────────────────────────────────────────────────────────────────
-const HUB_ITEMS: SlimSidebarItem[] = [
-  { label: "dashboard", to: "", icon: LayoutDashboard, exact: true },
-  { label: "daily-tasks", to: "daily-tasks", icon: ListTodo },
-  { label: "calendar", to: "calendar", icon: Calendar },
-  { label: "inbox", to: "inbox", icon: MessageSquare },
-  { label: "crm", to: "crm", icon: Users, matchPaths: ["proposals", "contracts", "quotes"] },
-  { label: "trips", to: "trips", icon: Luggage, matchPaths: ["vouchers", "boarding"] },
-  {
-    label: "Grupos & Excursões",
-    to: "group-tours",
-    icon: Bus,
-    matchPaths: ["bus-layouts", "rooming-list", "financial/groups"],
-  },
-  { label: "clients", to: "clients", icon: UserRound, matchPaths: ["corporate", "suppliers"] },
-  { label: "financial", to: "financial", icon: Wallet },
-  { label: "support", to: "support", icon: LifeBuoy, matchPaths: ["visas"] },
-  {
-    label: "portal",
-    to: "portal",
-    icon: Globe,
-    adminOnly: true,
-    matchPaths: ["competitors", "destination-intelligence"],
-  },
-  {
-    label: "settings",
-    to: "settings",
-    icon: Settings,
-    adminOnly: true,
-    matchPaths: ["team", "brand", "integrations", "billing", "company", "productivity"],
-  },
-];
+import { NAVIGATION_MODULES, buildContext } from "@/lib/navigation.config";
 
-// ─────────────────────────────────────────────────────────────────────────────
-// Full Mobile Drawer list — with section headers
-// ─────────────────────────────────────────────────────────────────────────────
-const MOBILE_ITEMS: SlimSidebarItem[] = [
-  { label: "dashboard", to: "", icon: LayoutDashboard, exact: true },
+const HUB_ITEMS: SlimSidebarItem[] = NAVIGATION_MODULES.map((m) => ({
+  label: m.label,
+  to: m.to,
+  icon: m.icon,
+  exact: m.exact,
+  adminOnly: m.adminOnly,
+  matchPaths: m.matchPaths,
+}));
 
-  { type: "header", label: "Dia a Dia" },
-  { label: "daily-tasks", to: "daily-tasks", icon: ListTodo },
-  { label: "calendar", to: "calendar", icon: Calendar },
-  { label: "Mensagens", to: "inbox", icon: MessageSquare },
-
-  { type: "header", label: "Vendas & CRM" },
-  { label: "crm", to: "crm", icon: Users },
-  { label: "quotes", to: "quotes", icon: Radar },
-  { label: "proposals", to: "proposals", icon: FileText },
-  { label: "contracts", to: "contracts", icon: ScrollText },
-
-  { type: "header", label: "Viagens" },
-  { label: "trips", to: "trips", icon: Luggage },
-  { label: "vouchers", to: "vouchers", icon: Plane },
-  { label: "boarding", to: "boarding", icon: ClipboardCheck },
-
-  { type: "header", label: "Grupos & Excursões" },
-  { label: "group-tours", to: "group-tours", icon: Bus },
-  { label: "bus-layouts", to: "bus-layouts", icon: Bus },
-  { label: "Rooming List", to: "rooming-list", icon: BedDouble },
-  { label: "Financeiro de Grupos", to: "financial/groups", icon: Wallet },
-
-  { type: "header", label: "Clientes & Parceiros" },
-  { label: "clients", to: "clients", icon: UserRound },
-  { label: "corporate", to: "corporate", icon: Building2 },
-  { label: "suppliers", to: "suppliers", icon: Store },
-
-  { type: "header", label: "Financeiro" },
-  { label: "financial/cash", to: "financial/cash", icon: Wallet },
-  { label: "financial/dre", to: "financial/dre", icon: BarChart3 },
-  { label: "financial/reconciliation", to: "financial/reconciliation", icon: ClipboardCheck },
-
-  { type: "header", label: "Suporte & Vistos" },
-  { label: "support", to: "support", icon: LifeBuoy },
-  { label: "visas", to: "visas", icon: Globe2 },
-
-  { type: "header", label: "Site & Marketing", adminOnly: true },
-  { label: "portal", to: "portal", icon: Globe, adminOnly: true },
-  { label: "competitors", to: "competitors", icon: Radar, adminOnly: true },
-  {
-    label: "destination-intelligence",
-    to: "destination-intelligence",
-    icon: BrainCircuit,
-    adminOnly: true,
-  },
-
-  { type: "header", label: "Gestão", adminOnly: true },
-  { label: "company", to: "company", icon: Building2, adminOnly: true },
-  { label: "team", to: "team", icon: Users2, adminOnly: true },
-  { label: "brand", to: "brand", icon: Palette, adminOnly: true },
-  { label: "integrations", to: "integrations", icon: Puzzle, adminOnly: true },
-  { label: "billing", to: "billing", icon: CreditCard, adminOnly: true },
-  { label: "settings", to: "settings", icon: Settings, adminOnly: true },
-];
-
-// ─────────────────────────────────────────────────────────────────────────────
-// Helper: build context items for a given pathname
-// ─────────────────────────────────────────────────────────────────────────────
-export function buildContext(
-  pathname: string,
-  base: string,
-  isAdmin: boolean,
-  tripId: string | null,
-  trip: { title: string; number: number } | null | undefined,
-): { title: string; items: ContextItem[]; aiActions: AiAction[] } {
-  const empty = { title: "", items: [], aiActions: [] };
-
-  // ── Builders/editors hide context ─────────────────────────────────────────
-  const pathParts = pathname.split("/").filter(Boolean);
-  const isProposalEditor =
-    pathname.includes("/proposals/") && pathParts.length > 4 && !pathname.endsWith("/proposals");
-  const isSiteEditor = /\/portal\/pages\/[^/]+$/.test(pathname) && !pathname.endsWith("/pages/");
-  if (isProposalEditor || isSiteEditor) return empty;
-
-  // ── Trip detail (highest priority) ────────────────────────────────────────
-  if (tripId) {
-    const tripBase = `${base}/trips/${tripId}`;
-    return {
-      title: trip ? `#${trip.number} · ${trip.title}` : "Viagem",
-      items: [
-        { label: "Visão Geral", to: tripBase, icon: FileText, exact: true },
-        { label: "Passageiros", to: `${tripBase}/passengers`, icon: Users },
-        { label: "Financeiro", to: `${tripBase}/financial`, icon: Wallet },
-        { label: "Aéreos & Voos", to: `${tripBase}/flights`, icon: Plane },
-        { label: "Hospedagem", to: `${tripBase}/lodging`, icon: Hotel },
-        { label: "Contrato", to: `${tripBase}/contract`, icon: ScrollText },
-        { label: "Confirmação", to: `${tripBase}/confirmation`, icon: CheckCircle2 },
-        { label: "Vouchers", to: `${tripBase}/vouchers`, icon: Ticket },
-        { label: "Check-in & Embarque", to: `${tripBase}/boarding`, icon: Navigation },
-        { label: "Destino & Segurança", to: `${tripBase}/destination`, icon: MapPin },
-        { label: "Histórico", to: `${tripBase}/history`, icon: Clock },
-      ],
-      aiActions: [
-        {
-          label: "Resumir Viagem",
-          prompt: "Analise esta viagem e me dê um resumo executivo das reservas, datas e destinos.",
-        },
-        {
-          label: "Auditar Documentos",
-          prompt:
-            "Audite o status de documentos e passaportes de todos os passageiros desta viagem.",
-        },
-        {
-          label: "Mensagem Pré-Embarque",
-          prompt:
-            "Gere uma mensagem profissional para WhatsApp com orientações pré-embarque para os passageiros.",
-        },
-      ],
-    };
+const MOBILE_ITEMS: SlimSidebarItem[] = [];
+NAVIGATION_MODULES.forEach((m) => {
+  if (m.id === "dashboard") {
+    MOBILE_ITEMS.push({ label: m.label, to: m.to, icon: m.icon, exact: m.exact });
+    return;
   }
 
-  // ── Tarefas (daily-tasks) ──────────────────────────────────────────────────
-  if (pathname.includes("/daily-tasks")) {
-    return {
-      title: "Tarefas",
-      items: [
-        { label: "Meu Dia", to: `${base}/daily-tasks?view=my-day`, icon: ListTodo },
-        { label: "Quadro Kanban", to: `${base}/daily-tasks?view=kanban`, icon: CalendarClock },
-        { label: "Lista", to: `${base}/daily-tasks?view=list`, icon: FileText },
-        { label: "Timeline", to: `${base}/daily-tasks?view=timeline`, icon: Clock },
-        { label: "Calendário", to: `${base}/daily-tasks?view=calendar`, icon: Calendar },
-        ...(isAdmin ? [
-          { label: "Workload", to: `${base}/daily-tasks?view=workload`, icon: Users2 },
-          { label: "Relatórios", to: `${base}/daily-tasks?view=reports`, icon: BarChart3 }
-        ] : [])
-      ],
-      aiActions: [],
-    };
-  }
+  if (m.subModules && m.subModules.length > 0) {
+    const sectionLabel =
+      m.label === "crm"
+        ? "Vendas & CRM"
+        : m.label === "daily-tasks"
+          ? "Dia a Dia"
+          : m.label === "trips"
+            ? "Viagens"
+            : m.label;
 
-  // ── Agenda (calendar) ──────────────────────────────────────────────────────
-  if (pathname.includes("/calendar")) {
-    return { title: "Agenda", items: [], aiActions: [] };
+    MOBILE_ITEMS.push({ type: "header", label: sectionLabel, adminOnly: m.adminOnly });
+    m.subModules.forEach((sub) => {
+      MOBILE_ITEMS.push({
+        label: sub.label,
+        to: sub.to,
+        icon: sub.icon,
+        adminOnly: sub.adminOnly || m.adminOnly,
+      });
+    });
+  } else {
+    MOBILE_ITEMS.push({
+      label: m.label,
+      to: m.to,
+      icon: m.icon,
+      adminOnly: m.adminOnly,
+    });
   }
-
-  // ── Mensagens (inbox) ──────────────────────────────────────────────────────
-  if (pathname.includes("/inbox")) {
-    return { title: "Mensagens", items: [], aiActions: [] };
-  }
-
-  // ── Vendas & CRM ──────────────────────────────────────────────────────────
-  if (
-    pathname.includes("/crm") ||
-    pathname.includes("/proposals") ||
-    pathname.includes("/contracts") ||
-    pathname.includes("/quotes")
-  ) {
-    return {
-      title: "Vendas & CRM",
-      items: [
-        { label: "Negociações & Leads", to: `${base}/crm`, icon: Users },
-        { label: "Cotações VibeTour", to: `${base}/quotes`, icon: Radar },
-        { label: "Orçamentos & Propostas", to: `${base}/proposals`, icon: FileText },
-        { label: "Contratos", to: `${base}/contracts`, icon: ScrollText },
-      ],
-      aiActions: [
-        {
-          label: "Resumir Pipeline",
-          prompt: "Analise o pipeline de vendas atual e me dê um resumo das oportunidades abertas.",
-        },
-      ],
-    };
-  }
-
-  // ── Viagens ─────────────────────────────────────────────────────────────────
-  if (
-    pathname.includes("/trips") ||
-    pathname.includes("/boarding") ||
-    pathname.includes("/vouchers")
-  ) {
-    return {
-      title: "Viagens",
-      items: [
-        { label: "Todas as Viagens", to: `${base}/trips`, icon: Luggage },
-        { label: "Aéreos & Conferência", to: `${base}/vouchers`, icon: Plane },
-        { label: "Check-in & Embarques", to: `${base}/boarding`, icon: ClipboardCheck },
-      ],
-      aiActions: [],
-    };
-  }
-
-  // ── Grupos & Excursões ─────────────────────────────────────────────────────
-  if (
-    pathname.includes("/group-tours") ||
-    pathname.includes("/bus-layouts") ||
-    pathname.includes("/rooming-list")
-  ) {
-    return {
-      title: "Grupos & Excursões",
-      items: [
-        { label: "Excursões & Grupos", to: `${base}/group-tours`, icon: Bus },
-        { label: "Frota & Ônibus", to: `${base}/bus-layouts`, icon: Bus },
-        { label: "Rooming List Geral", to: `${base}/rooming-list`, icon: BedDouble },
-        { label: "Financeiro do Hub", to: `${base}/financial/groups`, icon: Wallet },
-      ],
-      aiActions: [
-        {
-          label: "Resumir Grupos",
-          prompt: "Liste os grupos de excursão ativos e me dê um resumo de ocupação e status.",
-        },
-      ],
-    };
-  }
-
-  // ── Clientes & Parceiros ──────────────────────────────────────────────────
-  if (
-    pathname.includes("/clients") ||
-    pathname.includes("/corporate") ||
-    pathname.includes("/suppliers")
-  ) {
-    return {
-      title: "Clientes & Parceiros",
-      items: [
-        { label: "Clientes", to: `${base}/clients`, icon: UserRound },
-        { label: "Corporativo", to: `${base}/corporate`, icon: Building2 },
-        { label: "Fornecedores", to: `${base}/suppliers`, icon: Store },
-      ],
-      aiActions: [],
-    };
-  }
-
-  // ── Financeiro ────────────────────────────────────────────────────────────
-  if (pathname.includes("/financial")) {
-    return {
-      title: "Financeiro",
-      items: [
-        { label: "Caixa & Movimento", to: `${base}/financial/cash`, icon: Wallet },
-        { label: "DRE", to: `${base}/financial/dre`, icon: BarChart3 },
-        { label: "Conciliação", to: `${base}/financial/reconciliation`, icon: ClipboardCheck },
-        { label: "Faturas", to: `${base}/financial/invoices`, icon: FileText },
-        { label: "Grupos & Excursões", to: `${base}/financial/groups`, icon: Bus },
-        { label: "Livro-Razão", to: `${base}/financial/ledger`, icon: FileText },
-      ],
-      aiActions: [],
-    };
-  }
-
-  // ── Suporte & Vistos ──────────────────────────────────────────────────────
-  if (pathname.includes("/support") || pathname.includes("/visas")) {
-    return {
-      title: "Suporte & Vistos",
-      items: [
-        { label: "Suporte", to: `${base}/support`, icon: LifeBuoy },
-        { label: "Vistos", to: `${base}/visas`, icon: Globe2 },
-      ],
-      aiActions: [],
-    };
-  }
-
-  // ── Site & Marketing (admin) ──────────────────────────────────────────────
-  if (
-    isAdmin &&
-    (pathname.includes("/portal") ||
-      pathname.includes("/competitors") ||
-      pathname.includes("/destination-intelligence"))
-  ) {
-    return {
-      title: "Site & Marketing",
-      items: [
-        { label: "Site da Agência", to: `${base}/portal`, icon: Globe },
-        { label: "Monitor Concorrentes", to: `${base}/competitors`, icon: Radar },
-        {
-          label: "Inteligência Destinos",
-          to: `${base}/destination-intelligence`,
-          icon: BrainCircuit,
-        },
-      ],
-      aiActions: [],
-    };
-  }
-
-  // ── Configurações (admin) ─────────────────────────────────────────────────
-  if (
-    isAdmin &&
-    (pathname.includes("/settings") ||
-      pathname.includes("/team") ||
-      pathname.includes("/brand") ||
-      pathname.includes("/productivity"))
-  ) {
-    return {
-      title: "Configurações",
-      items: [
-        { label: "Minha Empresa", to: `${base}/company`, icon: Building2 },
-        { label: "Equipe", to: `${base}/team`, icon: Users2 },
-        { label: "Identidade Visual", to: `${base}/brand`, icon: Palette },
-        { label: "Conexões & APIs", to: `${base}/integrations`, icon: Puzzle },
-        { label: "Assinatura & Planos", to: `${base}/billing`, icon: CreditCard },
-        { label: "Configurações Gerais", to: `${base}/settings`, icon: Settings },
-        { label: "Fechamentos & Comissões", to: `${base}/settings/financial`, icon: Wallet },
-        { label: "Auditoria de IA", to: `${base}/settings/ai-audit`, icon: Shield },
-      ],
-      aiActions: [],
-    };
-  }
-
-  return empty;
-}
+});
 
 // ─────────────────────────────────────────────────────────────────────────────────
 // Component
@@ -439,7 +147,7 @@ export function AppSidebar({
     title: contextTitle,
     items: contextItems,
     aiActions,
-  } = buildContext(pathname, base, isAdmin, tripId, trip);
+  } = buildContext(pathname, base, isAdmin, tripId ?? undefined, trip);
 
   // ── Map hub items → absolute URLs + matchPaths ────────────────────────────
   const visibleHubs: SlimSidebarItem[] = HUB_ITEMS.filter((h) => !h.adminOnly || isAdmin).map(

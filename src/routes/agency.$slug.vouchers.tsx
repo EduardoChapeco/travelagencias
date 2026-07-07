@@ -287,7 +287,7 @@ function VouchersPage() {
         <>
           <div className="flex-1 overflow-y-auto px-4  md:pr-6 py-4 flex flex-col gap-4 pb-24">
             {vouchersQ.isError && (
-              <div className="flex flex-col items-center justify-center py-12 px-6 text-center rounded-[24px] border border-red-200 bg-red-50/60">
+              <div className="flex flex-col items-center justify-center py-12 px-6 text-center rounded-[var(--radius-card)] border border-red-200 bg-red-50/60">
                 <div className="h-9 w-9 rounded-full bg-red-100 flex items-center justify-center mb-2">
                   <AlertCircle className="h-4 w-4 text-red-600" />
                 </div>
@@ -381,7 +381,7 @@ function VouchersPage() {
                           <Link
                             to="/agency/$slug/trips/$id/vouchers"
                             params={{ slug, id: v.trip_id }}
-                            className="flex-1 flex items-center justify-center gap-2 rounded-[24px] bg-surface-alt hover:bg-surface-alt/80 px-4 py-2.5 text-xs font-bold transition-colors"
+                            className="flex-1 flex items-center justify-center gap-2 rounded-[var(--radius-card)] bg-surface-alt hover:bg-surface-alt/80 px-4 py-2.5 text-xs font-bold transition-colors"
                           >
                             <Eye className="h-4 w-4" /> Visualizar Roteiro
                           </Link>
@@ -390,7 +390,7 @@ function VouchersPage() {
                               href={v.pdf_url}
                               target="_blank"
                               rel="noreferrer"
-                              className="flex-shrink-0 flex items-center justify-center h-9 w-9 rounded-[24px] bg-brand/10 text-brand hover:bg-brand/20 transition-colors"
+                              className="flex-shrink-0 flex items-center justify-center h-9 w-9 rounded-[var(--radius-card)] bg-brand/10 text-brand hover:bg-brand/20 transition-colors"
                               title="Baixar PDF Original"
                             >
                               <Download className="h-4 w-4" />
@@ -437,7 +437,7 @@ function VouchersPage() {
           <div className="flex-1 overflow-auto px-4  md:pr-6 py-4 min-h-0 pb-24">
             {/* KPI cards dentro do conteúdo */}
             <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-6">
-              <div className="rounded-[24px] border border-border bg-surface-alt/20 p-3 text-center">
+              <div className="rounded-[var(--radius-card)] border border-border bg-surface-alt/20 p-3 text-center">
                 <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-wide block mb-1">
                   Total de Voos
                 </span>
@@ -445,7 +445,7 @@ function VouchersPage() {
                   {flightsQ.data?.length ?? 0}
                 </strong>
               </div>
-              <div className="rounded-[24px] border border-success/20 bg-success/5 p-3 text-center">
+              <div className="rounded-[var(--radius-card)] border border-success/20 bg-success/5 p-3 text-center">
                 <span className="text-[10px] font-bold text-success uppercase tracking-wide block mb-1">
                   Conferidos
                 </span>
@@ -453,7 +453,7 @@ function VouchersPage() {
                   {(flightsQ.data || []).filter((f) => f.status === "confirmed").length}
                 </strong>
               </div>
-              <div className="rounded-[24px] border border-warning/20 bg-warning/5 p-3 text-center">
+              <div className="rounded-[var(--radius-card)] border border-warning/20 bg-warning/5 p-3 text-center">
                 <span className="text-[10px] font-bold text-warning uppercase tracking-wide block mb-1">
                   Pendentes
                 </span>
@@ -461,7 +461,7 @@ function VouchersPage() {
                   {(flightsQ.data || []).filter((f) => f.status !== "confirmed").length}
                 </strong>
               </div>
-              <div className="rounded-[24px] border border-brand/20 bg-brand/5 p-3 text-center">
+              <div className="rounded-[var(--radius-card)] border border-brand/20 bg-brand/5 p-3 text-center">
                 <span className="text-[10px] font-bold text-brand uppercase tracking-wide block mb-1">
                   Taxa de Sucesso
                 </span>
@@ -473,7 +473,7 @@ function VouchersPage() {
               </div>
             </div>
             {flightsQ.isError && (
-              <div className="flex flex-col items-center justify-center py-12 px-6 text-center rounded-[24px] border border-red-200 bg-red-50/60 mb-4 max-w-2xl mx-auto">
+              <div className="flex flex-col items-center justify-center py-12 px-6 text-center rounded-[var(--radius-card)] border border-red-200 bg-red-50/60 mb-4 max-w-2xl mx-auto">
                 <div className="h-9 w-9 rounded-full bg-red-100 flex items-center justify-center mb-2">
                   <AlertCircle className="h-4 w-4 text-red-600" />
                 </div>
@@ -510,7 +510,7 @@ function VouchersPage() {
             )}
 
             {flightsQ.data && filteredFlights.length > 0 && (
-              <div className="border border-border rounded-[24px] bg-surface overflow-x-auto">
+              <div className="border border-border rounded-[var(--radius-card)] bg-surface overflow-x-auto">
                 <table className="w-full text-xs text-left border-collapse">
                   <thead className="bg-surface-alt/40 border-b border-border text-[10px] uppercase font-bold text-muted-foreground">
                     <tr>

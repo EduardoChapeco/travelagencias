@@ -238,7 +238,7 @@ function MobileCheckinPage() {
             <select
               value={selectedPassengerId}
               onChange={(e) => setSelectedPassengerId(e.target.value)}
-              className="w-full text-sm border border-border rounded-[24px] px-3 py-2 bg-surface focus:outline-none focus:ring-1 focus:ring-brand font-medium text-foreground"
+              className="w-full text-sm border border-border rounded-[var(--radius-card)] px-3 py-2 bg-surface focus:outline-none focus:ring-1 focus:ring-brand font-medium text-foreground"
             >
               {details.passengers.map((p) => (
                 <option key={p.id} value={p.id}>
@@ -264,7 +264,7 @@ function MobileCheckinPage() {
             {details.reaccommodations.map((reac, rIdx) => (
               <div
                 key={reac.itinerary_id}
-                className="space-y-3 bg-surface border border-border/40 rounded-[24px] p-3"
+                className="space-y-3 bg-surface border border-border/40 rounded-[var(--radius-card)] p-3"
               >
                 <div className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
                   Proposta Alternativa (V{reac.version})
@@ -290,7 +290,7 @@ function MobileCheckinPage() {
                 <button
                   onClick={() => handleAcceptReaccommodation(reac.itinerary_id)}
                   disabled={acceptingReac}
-                  className="w-full text-xs bg-brand text-brand-foreground hover:bg-brand/90 py-2 rounded-[24px] font-bold flex items-center justify-center gap-1.5 transition-colors disabled:opacity-50"
+                  className="w-full text-xs bg-brand text-brand-foreground hover:bg-brand/90 py-2 rounded-[var(--radius-card)] font-bold flex items-center justify-center gap-1.5 transition-colors disabled:opacity-50"
                 >
                   {acceptingReac ? (
                     <Loader2 className="w-3.5 h-3.5 animate-spin" />
@@ -408,7 +408,7 @@ function MobileCheckinPage() {
 
                     <button
                       onClick={() => handleCheckinClick(seg, checkinUrl)}
-                      className="w-full bg-brand text-brand-foreground hover:bg-brand/90 py-2.5 rounded-[24px] font-bold text-xs flex items-center justify-center gap-1.5 transition-colors"
+                      className="w-full bg-brand text-brand-foreground hover:bg-brand/90 py-2.5 rounded-[var(--radius-card)] font-bold text-xs flex items-center justify-center gap-1.5 transition-colors"
                     >
                       Iniciar Check-in na {seg.airline_code}{" "}
                       <ExternalLink className="w-3.5 h-3.5" />
@@ -502,7 +502,7 @@ function MobileCheckinPage() {
                 setEmergencyType("delayed");
                 setEmergencyComment("");
               }}
-              className={`py-2 rounded-[24px] text-xs font-bold border transition-colors ${emergencyType === "delayed" ? "bg-amber-500 text-white border-amber-600" : "bg-surface border-border text-foreground hover:bg-surface-alt"}`}
+              className={`py-2 rounded-[var(--radius-card)] text-xs font-bold border transition-colors ${emergencyType === "delayed" ? "bg-amber-500 text-white border-amber-600" : "bg-surface border-border text-foreground hover:bg-surface-alt"}`}
             >
               Voo Atrasou
             </button>
@@ -511,7 +511,7 @@ function MobileCheckinPage() {
                 setEmergencyType("cancelled");
                 setEmergencyComment("");
               }}
-              className={`py-2 rounded-[24px] text-xs font-bold border transition-colors ${emergencyType === "cancelled" ? "bg-rose-600 text-white border-rose-700" : "bg-surface border-border text-foreground hover:bg-surface-alt"}`}
+              className={`py-2 rounded-[var(--radius-card)] text-xs font-bold border transition-colors ${emergencyType === "cancelled" ? "bg-rose-600 text-white border-rose-700" : "bg-surface border-border text-foreground hover:bg-surface-alt"}`}
             >
               Voo Cancelado
             </button>
@@ -527,19 +527,19 @@ function MobileCheckinPage() {
                 onChange={(e) => setEmergencyComment(e.target.value)}
                 placeholder="Ex: Novo portão, previsão de novo voo..."
                 rows={3}
-                className="w-full text-xs border border-border rounded-[24px] p-2.5 bg-surface focus:outline-none focus:ring-1 focus:ring-rose-500 font-medium text-foreground resize-none"
+                className="w-full text-xs border border-border rounded-[var(--radius-card)] p-2.5 bg-surface focus:outline-none focus:ring-1 focus:ring-rose-500 font-medium text-foreground resize-none"
               />
               <div className="flex gap-2">
                 <button
                   onClick={() => setEmergencyType(null)}
-                  className="flex-1 bg-surface border border-border hover:bg-surface-alt py-2 rounded-[24px] text-xs font-bold transition-colors"
+                  className="flex-1 bg-surface border border-border hover:bg-surface-alt py-2 rounded-[var(--radius-card)] text-xs font-bold transition-colors"
                 >
                   Cancelar
                 </button>
                 <button
                   onClick={handleSubmitEmergency}
                   disabled={submittingEmergency}
-                  className="flex-1 bg-rose-600 hover:bg-rose-700 text-white py-2 rounded-[24px] text-xs font-bold flex items-center justify-center gap-1.5 transition-colors disabled:opacity-50"
+                  className="flex-1 bg-rose-600 hover:bg-rose-700 text-white py-2 rounded-[var(--radius-card)] text-xs font-bold flex items-center justify-center gap-1.5 transition-colors disabled:opacity-50"
                 >
                   {submittingEmergency ? (
                     <Loader2 className="w-3.5 h-3.5 animate-spin" />

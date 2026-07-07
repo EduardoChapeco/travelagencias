@@ -142,7 +142,7 @@ function RegisterPage() {
           </div>
 
           {/* Floating Benefit Card */}
-          <div className="bg-surface border border-border rounded-[24px] p-6 space-y-4 shadow-none">
+          <div className="bg-surface border border-border rounded-[var(--radius-card)] p-6 space-y-4 shadow-none">
             <h4 className="text-xs font-bold uppercase tracking-widest text-accent">
               Módulos Inclusos na sua Conta
             </h4>

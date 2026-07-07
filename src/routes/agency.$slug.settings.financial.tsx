@@ -284,7 +284,7 @@ function FinancialSettingsPage() {
             ───────────────────────────────────────────────────────────────────── */}
         {activeTab === "closing" && (
           <div className="max-w-3xl space-y-6">
-            <div className="rounded-[24px] border border-border bg-surface p-5 space-y-4">
+            <div className="rounded-[var(--radius-card)] border border-border bg-surface p-5 space-y-4">
               <div className="flex items-center gap-2 text-sm font-semibold">
                 <Calendar className="h-4 w-4 text-brand" /> Períodos Contábeis Recentes
               </div>
@@ -299,7 +299,7 @@ function FinancialSettingsPage() {
                   Carregando períodos contábeis...
                 </div>
               ) : (
-                <div className="overflow-hidden rounded-[24px] border border-border bg-white">
+                <div className="overflow-hidden rounded-[var(--radius-card)] border border-border bg-white">
                   <table className="w-full text-xs text-left">
                     <thead className="bg-gray-50 border-b border-border text-[10px] uppercase font-bold text-gray-500">
                       <tr>
@@ -384,7 +384,7 @@ function FinancialSettingsPage() {
             ───────────────────────────────────────────────────────────────────── */}
         {activeTab === "commissions" && (
           <div className="max-w-4xl space-y-6">
-            <div className="rounded-[24px] border border-border bg-surface p-5 space-y-4">
+            <div className="rounded-[var(--radius-card)] border border-border bg-surface p-5 space-y-4">
               <div className="flex items-center gap-2 text-sm font-semibold">
                 <TrendingUp className="h-4 w-4 text-brand" /> Regras de Comissionamento de
                 Vendedores
@@ -400,7 +400,7 @@ function FinancialSettingsPage() {
                   Carregando planos de comissão...
                 </div>
               ) : (plansQ.data || []).length === 0 ? (
-                <div className="text-center py-10 border border-dashed border-border rounded-[24px] text-xs text-muted-foreground bg-white">
+                <div className="text-center py-10 border border-dashed border-border rounded-[var(--radius-card)] text-xs text-muted-foreground bg-white">
                   Nenhum plano de comissão configurado na agência. Clique em "Novo Plano" para
                   parametrizar.
                 </div>
@@ -409,7 +409,7 @@ function FinancialSettingsPage() {
                   {(plansQ.data || []).map((plan) => (
                     <div
                       key={plan.id}
-                      className="border border-border bg-white rounded-[24px] overflow-hidden shadow-xs"
+                      className="border border-border bg-white rounded-[var(--radius-card)] overflow-hidden shadow-xs"
                     >
                       {/* Card header */}
                       <div className="flex items-center justify-between px-4 py-3 bg-gray-50/50 border-b border-border">
@@ -582,7 +582,7 @@ function FinancialSettingsPage() {
                 <PrimaryButton
                   onClick={() => createPlan.mutate()}
                   disabled={createPlan.isPending || !newPlanName || !selectedSeller}
-                  className="flex-1 h-10 text-xs font-bold uppercase tracking-wider bg-brand hover:opacity-90 text-brand-foreground rounded-[24px]"
+                  className="flex-1 h-10 text-xs font-bold uppercase tracking-wider bg-brand hover:opacity-90 text-brand-foreground rounded-[var(--radius-card)]"
                 >
                   {createPlan.isPending ? "Criando..." : "Salvar Plano"}
                 </PrimaryButton>

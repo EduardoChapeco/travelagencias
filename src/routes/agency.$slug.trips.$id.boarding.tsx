@@ -247,7 +247,7 @@ function TripBoardingPage() {
   return (
     <div className="flex-1 overflow-y-auto p-4 md:p-6 space-y-6">
       {/* Header informativo */}
-      <div className="rounded-[24px] border border-border bg-surface p-4 flex items-start gap-3 justify-between">
+      <div className="rounded-[var(--radius-card)] border border-border bg-surface p-4 flex items-start gap-3 justify-between">
         <div className="flex items-start gap-3">
           <Navigation className="h-4 w-4 text-brand mt-0.5 shrink-0" />
           <div>
@@ -318,7 +318,7 @@ function TripBoardingPage() {
                 return (
                   <div
                     key={card.id}
-                    className="rounded-[24px] border border-border bg-surface overflow-hidden shadow-sm"
+                    className="rounded-[var(--radius-card)] border border-border bg-surface overflow-hidden shadow-sm"
                   >
                     {/* Header do Card */}
                     <div className="p-4 border-b border-border/60 bg-surface-alt/20 flex flex-wrap items-center justify-between gap-4">
@@ -509,7 +509,7 @@ function TripBoardingPage() {
       ) : (
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 items-start">
           {/* Panel: Check-in overrides */}
-          <div className="bg-surface rounded-[24px] border border-border p-5 space-y-4 shadow-sm">
+          <div className="bg-surface rounded-[var(--radius-card)] border border-border p-5 space-y-4 shadow-sm">
             <div className="flex items-center gap-2 text-foreground font-semibold text-sm">
               <Link2 className="h-4 w-4 text-brand" />
               <span>Link de Check-in (Overrides)</span>
@@ -574,7 +574,7 @@ function TripBoardingPage() {
           </div>
 
           {/* Panel: Boarding events timeline */}
-          <div className="bg-surface rounded-[24px] border border-border p-5 space-y-4 shadow-sm">
+          <div className="bg-surface rounded-[var(--radius-card)] border border-border p-5 space-y-4 shadow-sm">
             <div className="flex items-center gap-2 text-foreground font-semibold text-sm">
               <FileText className="h-4 w-4 text-brand" />
               <span>Eventos & Ocorrências de Embarque</span>

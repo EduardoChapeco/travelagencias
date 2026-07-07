@@ -95,7 +95,7 @@ function DataDeletionPage() {
       {/* Main Container */}
       <main className="flex-1 max-w-4xl mx-auto py-12 px-6 w-full grid grid-cols-1 md:grid-cols-2 gap-8">
         {/* Left Side: Submit Request */}
-        <div className="space-y-6 bg-surface border border-border rounded-[24px] p-6">
+        <div className="space-y-6 bg-surface border border-border rounded-[var(--radius-card)] p-6">
           <div className="flex items-center gap-2">
             <ShieldAlert className="h-5 w-5 text-brand" />
             <h2 className="text-base font-bold text-foreground">Solicitar Nova Exclusão</h2>
@@ -140,7 +140,7 @@ function DataDeletionPage() {
                   rows={3}
                   value={reason}
                   onChange={(e) => setReason(e.target.value)}
-                  className="w-full text-xs bg-surface-alt border border-border/60 rounded-[24px] px-4 py-2.5 resize-none focus:ring-0 focus:border-brand/50 font-sans text-foreground"
+                  className="w-full text-xs bg-surface-alt border border-border/60 rounded-[var(--radius-card)] px-4 py-2.5 resize-none focus:ring-0 focus:border-brand/50 font-sans text-foreground"
                 />
               </Field>
 
@@ -152,7 +152,7 @@ function DataDeletionPage() {
         </div>
 
         {/* Right Side: Track Request */}
-        <div className="space-y-6 bg-surface border border-border rounded-[24px] p-6 h-fit">
+        <div className="space-y-6 bg-surface border border-border rounded-[var(--radius-card)] p-6 h-fit">
           <div className="flex items-center gap-2">
             <Search className="h-5 w-5 text-brand" />
             <h2 className="text-base font-bold text-foreground">Acompanhar Protocolo</h2>

@@ -317,7 +317,7 @@ function RadarTVPage() {
           {/* Mapa Mundi Interativo Leaflet Real */}
           <div className="flex-1 flex items-stretch relative min-h-[350px] z-0">
             <Suspense fallback={
-              <div className="flex-1 flex items-center justify-center text-slate-500 text-xs gap-2 animate-pulse bg-[#0a0c20] rounded-[24px] border border-slate-800">
+              <div className="flex-1 flex items-center justify-center text-slate-500 text-xs gap-2 animate-pulse bg-[#0a0c20] rounded-[var(--radius-card)] border border-slate-800">
                 <Compass className="h-5 w-5 animate-spin" />
                 <span>Carregando mapa interativo global...</span>
               </div>
@@ -360,7 +360,7 @@ function RadarTVPage() {
           <div className="flex-1 overflow-y-auto space-y-2 pr-1 no-scrollbar">
             {isLoading ? (
               Array.from({ length: 4 }).map((_, i) => (
-                <div key={i} className="p-3 border border-slate-900 bg-slate-950/20 rounded-[24px] space-y-2 animate-pulse">
+                <div key={i} className="p-3 border border-slate-900 bg-slate-950/20 rounded-[var(--radius-card)] space-y-2 animate-pulse">
                   <div className="h-3.5 bg-slate-800 rounded w-2/3" />
                   <div className="h-2.5 bg-slate-800 rounded w-1/2" />
                 </div>
@@ -376,7 +376,7 @@ function RadarTVPage() {
                   key={t.id}
                   onClick={() => setSelectedPin(t)}
                   className={cn(
-                    "w-full text-left p-3 rounded-[24px] border transition-all flex flex-col justify-between gap-1 group relative overflow-hidden cursor-pointer",
+                    "w-full text-left p-3 rounded-[var(--radius-card)] border transition-all flex flex-col justify-between gap-1 group relative overflow-hidden cursor-pointer",
                     selectedPin?.id === t.id 
                       ? "bg-brand/10 border-brand/40 shadow-md" 
                       : "bg-[#0c0f24] border-slate-850/80 hover:border-slate-800 hover:bg-slate-900/60"

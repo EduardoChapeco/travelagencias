@@ -153,7 +153,7 @@ function CorporateApprovePage() {
             )}
 
             {isApproved && (
-              <div className="mt-8 p-6 bg-success/10 border border-success/20 rounded-[24px] flex items-start gap-4">
+              <div className="mt-8 p-6 bg-success/10 border border-success/20 rounded-[var(--radius-card)] flex items-start gap-4">
                 <CheckCircle2 className="h-6 w-6 text-success shrink-0" />
                 <div>
                   <h3 className="font-bold text-success-foreground">Orçamento Aprovado</h3>
@@ -167,7 +167,7 @@ function CorporateApprovePage() {
             )}
 
             {isRejected && (
-              <div className="mt-8 p-6 bg-danger/10 border border-danger/20 rounded-[24px] flex items-start gap-4">
+              <div className="mt-8 p-6 bg-danger/10 border border-danger/20 rounded-[var(--radius-card)] flex items-start gap-4">
                 <XCircle className="h-6 w-6 text-danger shrink-0" />
                 <div>
                   <h3 className="font-bold text-danger-foreground">Orçamento Recusado</h3>

@@ -1,1 +1,8 @@
-# 01_TRUTH_AUDIT_OF_PREVIOUS_CLAIMS.md
+# AUDITORIA DE VERACIDADE (MATRIZ)
+
+| AFIRMAÇÃO | ORIGEM | DATA | EVIDÊNCIA NECESSÁRIA | EVIDÊNCIA ENCONTRADA | EVIDÊNCIA CONTRÁRIA | ESTADO REAL | CORREÇÃO NECESSÁRIA |
+| :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- |
+| **"CSS consolidado"** | Onda 7 (Prev) | 2026-07-06 | `design.css` importado pelo client em Produção. | O arquivo sequer havia sido commitado no Git e o CSS root antigo manteve 30 linhas de hardcode. | `git status` mostrava o arquivo como *Untracked*. | **DIVERGENTE** | Re-executado localmente, adicionado ao Git. Aguarda deploy p/ prod. |
+| **"Erro financeiro resolvido"** | Onda 8 (Prev) | 2026-07-07 | Relação aninhada funciona e HTTP 200 não mascara nulls. | A FK direta de installments estava feita, MAS a FK das trips estava faltando. | O log do Node JS para `supabase.from('payment_installments').select('plan:payment_plans(trip:trips(title))')` gerou erro. | **PARCIAL** | A migration `add_payment_plans_foreign_keys` já foi disparada, mas ainda requer validação da UI. |
+| **"Hardcodes removidos"** | Onda 7 (Prev) | 2026-07-06 | Zero chamadas a `rounded-[24px]` etc. | O script Regex atingiu apenas uma fração de `src/routes`, deixando todo o diretório `src/components` com >300 chamadas. | `grep` reportou 700+ hardcodes de layout não semânticos. | **SIMPLIFICADO** | Criar catalogação de primitives. |
+| **"Zero vulnerabilidades (Secrets)"** | Wave 8 (Prev) | 2026-07-07 | Ausência do `.env` no Tracking local E Git history. | O `.env` foi apenas tirado da working tree. | `git log --all -- .env` aponta 4 commits com as chaves expostas. | **QUEBRADO** | Aplicar expurgo histórico via `git filter-repo` ou BFG (a rotacionar). |

@@ -201,7 +201,7 @@ function ProposalsList() {
       <div className="flex-1 overflow-hidden px-4  md:pr-6 py-4 flex flex-col min-h-0 pb-24">
         {list.isLoading && <div className="text-sm text-muted-foreground">Carregando…</div>}
         {list.isError && (
-          <div className="p-4 rounded-[24px] border border-red-200 bg-red-50/50 text-xs text-red-800 flex items-center gap-2 m-2">
+          <div className="p-4 rounded-[var(--radius-card)] border border-red-200 bg-red-50/50 text-xs text-red-800 flex items-center gap-2 m-2">
             <AlertCircle className="h-4 w-4 text-red-650 shrink-0" />
             <span>Erro ao carregar lista de propostas. Verifique sua conexão ou permissões.</span>
           </div>
@@ -214,7 +214,7 @@ function ProposalsList() {
           />
         ) : (
           <div className="flex-1 flex flex-col justify-between h-full min-h-0 space-y-4">
-            <div className="flex-1 rounded-[28px] mac-glass-panel overflow-hidden flex flex-col">
+            <div className="flex-1 rounded-[var(--radius-card)] mac-glass-panel overflow-hidden flex flex-col">
               <div className="flex-1 overflow-y-auto no-scrollbar">
                 <table className="w-full text-sm">
                   <thead className="bg-surface-alt/40 text-left text-[11px] uppercase tracking-wide text-muted-foreground sticky top-0 bg-surface backdrop-blur-md z-10">
@@ -358,7 +358,7 @@ function ProposalsList() {
               </div>
             </div>
 
-            <div className="flex items-center justify-between px-4 py-2 rounded-[28px] bg-white/5 border border-white/5 shadow-xs select-none">
+            <div className="flex items-center justify-between px-4 py-2 rounded-[var(--radius-card)] bg-white/5 border border-white/5 shadow-xs select-none">
               <div className="text-xs text-muted-foreground/80 font-medium">
                 Página <span className="font-semibold text-foreground">{page}</span> de{" "}
                 {Math.ceil((list.data?.count ?? 0) / pageSize) || 1}

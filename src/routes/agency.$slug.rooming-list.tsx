@@ -157,7 +157,7 @@ function DroppableRoom({
     <div
       ref={setNodeRef}
       className={cn(
-        "rounded-[24px] border bg-surface overflow-hidden transition-all duration-200",
+        "rounded-[var(--radius-card)] border bg-surface overflow-hidden transition-all duration-200",
         room.is_confirmed ? "border-success/40" : "border-border",
         isOver && !isFull && "ring-2 ring-brand border-brand bg-brand/5 scale-[1.01]",
         isOver && isFull && "ring-2 ring-danger border-danger bg-danger/5",
@@ -177,7 +177,7 @@ function DroppableUnallocated({ children }: { children: React.ReactNode }) {
     <div
       ref={setNodeRef}
       className={cn(
-        "rounded-[24px] border border-dashed border-border bg-surface-alt/10 p-4 transition-all duration-200",
+        "rounded-[var(--radius-card)] border border-dashed border-border bg-surface-alt/10 p-4 transition-all duration-200",
         isOver && "ring-2 ring-brand border-brand bg-brand/5",
       )}
     >
@@ -518,7 +518,7 @@ function TourPanel({ tour, slug }: TourPanelProps) {
   }
 
   return (
-    <div className="rounded-[24px] border border-border bg-card overflow-hidden shadow-xs print:break-inside-avoid">
+    <div className="rounded-[var(--radius-card)] border border-border bg-card overflow-hidden shadow-xs print:break-inside-avoid">
       {/* Header Panel Summary Row */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-4 border-b border-border bg-surface/30">
         <button
@@ -704,7 +704,7 @@ function TourPanel({ tour, slug }: TourPanelProps) {
 
             {/* Add Room Inline Form */}
             {addOpen && (
-              <div className="rounded-[24px] border border-brand/20 bg-brand/5 p-4">
+              <div className="rounded-[var(--radius-card)] border border-brand/20 bg-brand/5 p-4">
                 <h5 className="text-xs font-bold text-foreground mb-3">Novo Quarto</h5>
                 <form onSubmit={(e) => addRoomMutation.mutate(e)} className="space-y-3">
                   <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
@@ -785,7 +785,7 @@ function TourPanel({ tour, slug }: TourPanelProps) {
 
             {/* Room cards grid */}
             {rooms.length === 0 && !addOpen ? (
-              <div className="rounded-[24px] border border-dashed border-border p-8 text-center text-xs text-muted-foreground">
+              <div className="rounded-[var(--radius-card)] border border-dashed border-border p-8 text-center text-xs text-muted-foreground">
                 Nenhum quarto cadastrado para esta excursão.
               </div>
             ) : (
@@ -924,7 +924,7 @@ function TourPanel({ tour, slug }: TourPanelProps) {
 
             {/* Validation Closure checklist */}
             {rooms.length > 0 && (
-              <div className="rounded-[24px] border border-border bg-surface p-4">
+              <div className="rounded-[var(--radius-card)] border border-border bg-surface p-4">
                 <h5 className="text-xs font-bold text-foreground mb-3 flex items-center gap-1.5">
                   <CheckCircle2 className="h-4 w-4 text-success" /> Checklist de Fechamento do Grupo
                 </h5>
@@ -982,7 +982,7 @@ function TourPanel({ tour, slug }: TourPanelProps) {
           {/* Edit Room Modal */}
           {editingRoom && (
             <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
-              <div className="w-full max-w-md rounded-[24px] bg-background p-6 border border-border shadow-lg">
+              <div className="w-full max-w-md rounded-[var(--radius-card)] bg-background p-6 border border-border shadow-lg">
                 <h4 className="text-sm font-bold text-foreground mb-4">
                   Editar Quarto {editingRoom.room_number}
                 </h4>
@@ -1152,7 +1152,7 @@ function RoomingListDashboard() {
       {/* Content list */}
       <div className="flex-1 overflow-y-auto px-4  md:pr-6 py-4 space-y-4">
         {toursQ.isError && (
-          <div className="flex flex-col items-center justify-center py-12 px-6 text-center rounded-[24px] border border-red-200 bg-red-50/60 max-w-2xl mx-auto">
+          <div className="flex flex-col items-center justify-center py-12 px-6 text-center rounded-[var(--radius-card)] border border-red-200 bg-red-50/60 max-w-2xl mx-auto">
             <div className="h-9 w-9 rounded-full bg-red-100 flex items-center justify-center mb-2">
               <AlertCircle className="h-4 w-4 text-red-600" />
             </div>

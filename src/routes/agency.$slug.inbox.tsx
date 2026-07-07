@@ -753,7 +753,7 @@ function InboxModule() {
   return (
     <div className="flex h-full w-full overflow-hidden">
       {(isErrorChannels || isErrorConversations) && (
-        <div className="fixed bottom-4 left-1/2 -translate-x-1/2 z-50 flex items-center gap-3 rounded-[24px] border border-red-200 bg-red-50 px-4 py-3 shadow-lg max-w-md">
+        <div className="fixed bottom-4 left-1/2 -translate-x-1/2 z-50 flex items-center gap-3 rounded-[var(--radius-card)] border border-red-200 bg-red-50 px-4 py-3 shadow-lg max-w-md">
           <AlertCircle className="h-4 w-4 text-red-600 shrink-0" />
           <div>
             <p className="text-xs font-bold text-red-800">Erro ao Carregar Inbox</p>
@@ -815,7 +815,7 @@ function InboxModule() {
                       {channels.map((c: any) => {
                         const Icon = CHANNEL_ICONS[c.type] ?? MessageSquare;
                         return (
-                          <div key={c.id} className="flex items-center justify-between p-2.5 border border-border rounded-[24px] bg-surface-alt/40">
+                          <div key={c.id} className="flex items-center justify-between p-2.5 border border-border rounded-[var(--radius-card)] bg-surface-alt/40">
                             <div className="flex items-center gap-2.5 min-w-0">
                               <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-surface border border-border">
                                 <Icon className={cn("w-3.5 h-3.5", CHANNEL_COLORS[c.type])} />
@@ -841,7 +841,7 @@ function InboxModule() {
                       
                       <button 
                         onClick={() => setConnectType("gmail")}
-                        className="flex items-center gap-3 w-full text-left rounded-[24px] border border-border px-3 py-2.5 text-xs font-semibold text-foreground hover:bg-surface-alt transition-all cursor-pointer bg-surface"
+                        className="flex items-center gap-3 w-full text-left rounded-[var(--radius-card)] border border-border px-3 py-2.5 text-xs font-semibold text-foreground hover:bg-surface-alt transition-all cursor-pointer bg-surface"
                       >
                         <Mail className="w-4 h-4 text-blue-500 shrink-0" />
                         <div>
@@ -852,7 +852,7 @@ function InboxModule() {
 
                       <button 
                         onClick={() => setConnectType("whatsapp")}
-                        className="flex items-center gap-3 w-full text-left rounded-[24px] border border-border px-3 py-2.5 text-xs font-semibold text-foreground hover:bg-surface-alt transition-all cursor-pointer bg-surface"
+                        className="flex items-center gap-3 w-full text-left rounded-[var(--radius-card)] border border-border px-3 py-2.5 text-xs font-semibold text-foreground hover:bg-surface-alt transition-all cursor-pointer bg-surface"
                       >
                         <Phone className="w-4 h-4 text-green-500 shrink-0" />
                         <div>
@@ -863,7 +863,7 @@ function InboxModule() {
 
                       <button 
                         onClick={() => setConnectType("instagram")}
-                        className="flex items-center gap-3 w-full text-left rounded-[24px] border border-border px-3 py-2.5 text-xs font-semibold text-foreground hover:bg-surface-alt transition-all cursor-pointer bg-surface"
+                        className="flex items-center gap-3 w-full text-left rounded-[var(--radius-card)] border border-border px-3 py-2.5 text-xs font-semibold text-foreground hover:bg-surface-alt transition-all cursor-pointer bg-surface"
                       >
                         <Instagram className="w-4 h-4 text-pink-500 shrink-0" />
                         <div>
@@ -946,7 +946,7 @@ function InboxModule() {
                                     setSubmittingConfig(false);
                                   }
                                 }}
-                                className="w-full h-9 rounded-[24px] bg-brand text-white text-xs font-bold hover:bg-brand/90 cursor-pointer disabled:opacity-50 flex items-center justify-center gap-1.5"
+                                className="w-full h-9 rounded-[var(--radius-card)] bg-brand text-white text-xs font-bold hover:bg-brand/90 cursor-pointer disabled:opacity-50 flex items-center justify-center gap-1.5"
                               >
                                 {submittingConfig ? (
                                   <>
@@ -1600,7 +1600,7 @@ function InboxModule() {
               <div className="flex items-end gap-2">
                 <button
                   onClick={() => fileInputRef.current?.click()}
-                  className="flex h-10 w-10 shrink-0 items-center justify-center rounded-[24px] border border-border bg-surface hover:bg-surface-alt text-muted-foreground hover:text-foreground transition-colors cursor-pointer"
+                  className="flex h-10 w-10 shrink-0 items-center justify-center rounded-[var(--radius-card)] border border-border bg-surface hover:bg-surface-alt text-muted-foreground hover:text-foreground transition-colors cursor-pointer"
                   title="Anexar arquivo"
                 >
                   <Paperclip className="h-4 w-4" />
@@ -1610,7 +1610,7 @@ function InboxModule() {
                 <button
                   onClick={recording ? stopRecording : startRecording}
                   className={cn(
-                    "flex h-10 w-10 shrink-0 items-center justify-center rounded-[24px] border transition-all cursor-pointer",
+                    "flex h-10 w-10 shrink-0 items-center justify-center rounded-[var(--radius-card)] border transition-all cursor-pointer",
                     recording
                       ? "bg-red-500 border-red-500 text-white animate-pulse"
                       : "border-border bg-surface hover:bg-surface-alt text-muted-foreground hover:text-foreground"
@@ -1632,7 +1632,7 @@ function InboxModule() {
                   placeholder={recording ? "Gravando áudio..." : "Digite uma mensagem…"}
                   rows={2}
                   disabled={recording}
-                  className="flex-1 resize-none rounded-[24px] border border-border bg-surface-alt px-3 py-2.5 text-sm outline-none focus:border-brand text-foreground"
+                  className="flex-1 resize-none rounded-[var(--radius-card)] border border-border bg-surface-alt px-3 py-2.5 text-sm outline-none focus:border-brand text-foreground"
                 />
                 
                 <button
@@ -1640,7 +1640,7 @@ function InboxModule() {
                     if (reply.trim()) sendReplyMutation.mutate(reply);
                   }}
                   disabled={sendingReply || !reply.trim() || recording}
-                  className="flex h-10 w-10 shrink-0 items-center justify-center rounded-[24px] bg-brand text-brand-foreground hover:bg-brand/90 disabled:opacity-50 transition-colors cursor-pointer"
+                  className="flex h-10 w-10 shrink-0 items-center justify-center rounded-[var(--radius-card)] bg-brand text-brand-foreground hover:bg-brand/90 disabled:opacity-50 transition-colors cursor-pointer"
                 >
                   <Send className="h-4 w-4" />
                 </button>
@@ -1738,7 +1738,7 @@ function InboxModule() {
                 </div>
 
                 {/* CRM Sync details */}
-                <div className="bg-surface-alt/40 border border-border rounded-[24px] p-3 space-y-3">
+                <div className="bg-surface-alt/40 border border-border rounded-[var(--radius-card)] p-3 space-y-3">
                   {isLinkingOpen ? (
                     <div className="space-y-2">
                       <div className="flex items-center justify-between border-b border-border/50 pb-1.5">
@@ -1951,7 +1951,7 @@ function InboxModule() {
                 </h4>
 
                 {matchedClientId ? (
-                  <div className="p-3 border border-border rounded-[24px] bg-surface-alt/40 space-y-3">
+                  <div className="p-3 border border-border rounded-[var(--radius-card)] bg-surface-alt/40 space-y-3">
                     <div className="flex items-center justify-between gap-2">
                       <span className="text-[10px] font-bold text-foreground">Tipo de Doc:</span>
                       <select
@@ -1989,7 +1989,7 @@ function InboxModule() {
                   <div className="space-y-2">
                     {clientDocs.length > 0 ? (
                       clientDocs.map((doc: any) => (
-                        <div key={doc.id} className="p-3 border border-border rounded-[24px] bg-surface flex flex-col gap-1.5 text-xs">
+                        <div key={doc.id} className="p-3 border border-border rounded-[var(--radius-card)] bg-surface flex flex-col gap-1.5 text-xs">
                           <div className="flex items-center justify-between">
                             <span className="font-bold text-brand uppercase text-[10px]">{doc.doc_type}</span>
                             {doc.file_url && (
@@ -2027,7 +2027,7 @@ function InboxModule() {
                       onChange={(e) => setContactNotes(e.target.value)}
                       placeholder="Escreva notas importantes sobre este contato..."
                       rows={10}
-                      className="w-full text-xs p-2.5 border border-border rounded-[24px] bg-surface outline-none focus:border-brand resize-none leading-relaxed text-foreground"
+                      className="w-full text-xs p-2.5 border border-border rounded-[var(--radius-card)] bg-surface outline-none focus:border-brand resize-none leading-relaxed text-foreground"
                     />
                   </div>
                 ) : (

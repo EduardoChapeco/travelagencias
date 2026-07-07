@@ -323,7 +323,7 @@ function TourDetailPage() {
 
   if (tourQ.isError) {
     return (
-      <div className="flex min-h-[400px] flex-col items-center justify-center p-8 text-center bg-background rounded-[24px] border border-red-200 bg-red-50/50 m-6">
+      <div className="flex min-h-[400px] flex-col items-center justify-center p-8 text-center bg-background rounded-[var(--radius-card)] border border-red-200 bg-red-50/50 m-6">
         <div className="h-10 w-10 rounded-full bg-red-100 flex items-center justify-center mb-4">
           <AlertTriangle className="h-5 w-5 text-red-600" />
         </div>
@@ -345,7 +345,7 @@ function TourDetailPage() {
 
   if (!tourQ.data) {
     return (
-      <div className="flex min-h-[400px] flex-col items-center justify-center p-8 text-center bg-background rounded-[24px] border border-dashed border-border m-6">
+      <div className="flex min-h-[400px] flex-col items-center justify-center p-8 text-center bg-background rounded-[var(--radius-card)] border border-dashed border-border m-6">
         <div className="h-10 w-10 rounded-full bg-slate-100 flex items-center justify-center mb-4">
           <XCircle className="h-5 w-5 text-slate-500" />
         </div>
@@ -799,7 +799,7 @@ function TourDetailPage() {
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
             {/* ROI Metrics Card */}
             <div className="lg:col-span-2 space-y-6">
-              <div className="bg-white border border-border rounded-[24px] p-5 grid grid-cols-1 sm:grid-cols-3 gap-4">
+              <div className="bg-white border border-border rounded-[var(--radius-card)] p-5 grid grid-cols-1 sm:grid-cols-3 gap-4">
                 <div className="p-3 bg-gray-50 rounded-2xl">
                   <span className="text-[10px] text-muted-foreground uppercase font-bold">
                     Faturamento Bruto
@@ -827,7 +827,7 @@ function TourDetailPage() {
               </div>
 
               {/* Costs Breakdown */}
-              <div className="bg-white border border-border rounded-[24px] overflow-hidden">
+              <div className="bg-white border border-border rounded-[var(--radius-card)] overflow-hidden">
                 <div className="px-5 py-4 border-b border-border flex justify-between items-center bg-gray-50/50">
                   <div>
                     <h4 className="text-xs font-bold uppercase tracking-wider text-gray-700">
@@ -909,7 +909,7 @@ function TourDetailPage() {
             {/* Sidebar Budgets */}
             <div className="space-y-6">
               {/* Savings account */}
-              <div className="bg-white border border-border rounded-[24px] p-5 space-y-4">
+              <div className="bg-white border border-border rounded-[var(--radius-card)] p-5 space-y-4">
                 <div className="flex items-center justify-between">
                   <Landmark className="w-5 h-5 text-gray-400" />
                   <GhostButton
@@ -934,7 +934,7 @@ function TourDetailPage() {
               </div>
 
               {/* CAC & Ads stats */}
-              <div className="bg-white border border-border rounded-[24px] p-5 space-y-4">
+              <div className="bg-white border border-border rounded-[var(--radius-card)] p-5 space-y-4">
                 <div className="flex items-center justify-between">
                   <Target className="w-5 h-5 text-gray-400" />
                   <GhostButton
@@ -1383,7 +1383,7 @@ function FlyersTabContent({ tour, agency }: { tour: any; agency: any }) {
             </div>
 
             {/* Premium QR Code scanning card */}
-            <div className="bg-white text-slate-950 rounded-[24px] p-2 flex items-center justify-between gap-2.5 shadow-lg border border-white/10">
+            <div className="bg-white text-slate-950 rounded-[var(--radius-card)] p-2 flex items-center justify-between gap-2.5 shadow-lg border border-white/10">
               <div className="flex-1 min-w-0">
                 <span className="text-[8px] font-black uppercase tracking-wider block text-slate-900 leading-none">
                   {ctaTitle}
@@ -1411,7 +1411,7 @@ function FlyersTabContent({ tour, agency }: { tour: any; agency: any }) {
       </div>
 
       {/* Col 2: Customization Controls */}
-      <div className="bg-white border border-border rounded-[24px] p-5 space-y-4 shadow-sm self-start">
+      <div className="bg-white border border-border rounded-[var(--radius-card)] p-5 space-y-4 shadow-sm self-start">
         <h4 className="text-xs font-bold text-slate-800 uppercase tracking-wider border-b border-border pb-3">
           Personalizar Flyer
         </h4>
@@ -1478,7 +1478,7 @@ function FlyersTabContent({ tour, agency }: { tour: any; agency: any }) {
       </div>
 
       {/* Col 3: Apresentação Comercial */}
-      <div className="bg-white border border-border rounded-[24px] p-5 space-y-4 shadow-sm self-start">
+      <div className="bg-white border border-border rounded-[var(--radius-card)] p-5 space-y-4 shadow-sm self-start">
         <h4 className="text-xs font-bold text-slate-800 uppercase tracking-wider border-b border-border pb-3">
           Apresentação da Viagem
         </h4>
@@ -1724,7 +1724,7 @@ function HotelPricingTabContent({ tour, onUpdate }: { tour: any; onUpdate: () =>
   return (
     <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
       {/* Hotel & Video Column */}
-      <div className="lg:col-span-1 bg-white border border-border rounded-[24px] p-5 space-y-4 shadow-sm self-start">
+      <div className="lg:col-span-1 bg-white border border-border rounded-[var(--radius-card)] p-5 space-y-4 shadow-sm self-start">
         <div className="flex items-center gap-2 border-b border-border pb-3">
           <Hotel className="h-5 w-5 text-brand" />
           <h3 className="font-bold text-sm text-foreground">Hospedagem & Mídia</h3>
@@ -1845,7 +1845,7 @@ function HotelPricingTabContent({ tour, onUpdate }: { tour: any; onUpdate: () =>
       {/* Pricing & Extras Columns */}
       <div className="lg:col-span-2 space-y-6">
         {/* pricing card */}
-        <div className="bg-white border border-border rounded-[24px] p-5 space-y-4 shadow-sm">
+        <div className="bg-white border border-border rounded-[var(--radius-card)] p-5 space-y-4 shadow-sm">
           <div className="flex items-center justify-between border-b border-border pb-3">
             <div className="flex items-center gap-2">
               <BedDouble className="h-5 w-5 text-brand" />
@@ -1938,7 +1938,7 @@ function HotelPricingTabContent({ tour, onUpdate }: { tour: any; onUpdate: () =>
         </div>
 
         {/* Extras card */}
-        <div className="bg-white border border-border rounded-[24px] p-5 space-y-4 shadow-sm">
+        <div className="bg-white border border-border rounded-[var(--radius-card)] p-5 space-y-4 shadow-sm">
           <div className="flex items-center border-b border-border pb-3">
             <Layers className="h-5 w-5 text-brand mr-2" />
             <h3 className="font-bold text-sm text-foreground">
@@ -2417,7 +2417,7 @@ function BusSeatManager({
 
   return (
     <div className="flex flex-col md:flex-row gap-6">
-      <div className="flex-1 bg-surface border border-border rounded-[24px] p-8 overflow-x-auto">
+      <div className="flex-1 bg-surface border border-border rounded-[var(--radius-card)] p-8 overflow-x-auto">
         <div className="min-w-max mx-auto">
           <div className="h-10 mb-6 border-b-2 border-dashed border-border/50 rounded-t-[3rem] bg-surface-alt/20 flex items-end justify-center pb-2 text-[10px] font-bold uppercase tracking-widest text-muted-foreground">
             Motorista
@@ -2465,7 +2465,7 @@ function BusSeatManager({
 
       <div className="w-full md:w-80 space-y-4">
         {orphans.length > 0 && (
-          <div className="bg-amber-50 border border-amber-200 rounded-[24px] p-4 text-xs text-amber-900 space-y-2">
+          <div className="bg-amber-50 border border-amber-200 rounded-[var(--radius-card)] p-4 text-xs text-amber-900 space-y-2">
             <div className="font-bold flex items-center gap-1">
               ⚠️ Inconsistência de Assentos
             </div>
@@ -3070,7 +3070,7 @@ function DroppableRoom({
     <div
       ref={setNodeRef}
       className={cn(
-        "rounded-[24px] border bg-surface overflow-hidden transition-all duration-200",
+        "rounded-[var(--radius-card)] border bg-surface overflow-hidden transition-all duration-200",
         room.is_confirmed ? "border-success/40" : "border-border",
         isOver && !isFull && "ring-2 ring-brand border-brand bg-brand/5 scale-[1.01]",
         isOver && isFull && "ring-2 ring-danger border-danger bg-danger/5",
@@ -3090,7 +3090,7 @@ function DroppableUnallocated({ children }: { children: React.ReactNode }) {
     <div
       ref={setNodeRef}
       className={cn(
-        "rounded-[24px] border border-dashed border-border bg-surface-alt/10 p-4 transition-all duration-200",
+        "rounded-[var(--radius-card)] border border-dashed border-border bg-surface-alt/10 p-4 transition-all duration-200",
         isOver && "ring-2 ring-brand border-brand bg-brand/5",
       )}
     >
@@ -3373,7 +3373,7 @@ function RoomingListManager({
 
   if (roomsQ.isError) {
     return (
-      <div className="p-6 text-center rounded-[24px] border border-red-200 bg-red-50/50 text-sm text-red-700 m-4 flex flex-col items-center justify-center">
+      <div className="p-6 text-center rounded-[var(--radius-card)] border border-red-200 bg-red-50/50 text-sm text-red-700 m-4 flex flex-col items-center justify-center">
         <AlertTriangle className="h-6 w-6 text-red-600 mb-2 shrink-0" />
         <span className="font-semibold">Falha ao obter rooming list:</span>
         <span className="text-xs text-red-650 mt-1 max-w-sm">
@@ -3388,26 +3388,26 @@ function RoomingListManager({
       <div className="space-y-6">
         {/* Summary KPIs */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-          <div className="rounded-[24px] border border-border bg-surface p-4 text-center">
+          <div className="rounded-[var(--radius-card)] border border-border bg-surface p-4 text-center">
             <div className="text-[10px] font-bold text-muted-foreground uppercase tracking-wide mb-1">
               Quartos
             </div>
             <div className="text-2xl font-black text-foreground">{rooms.length}</div>
           </div>
-          <div className="rounded-[24px] border border-border bg-surface p-4 text-center">
+          <div className="rounded-[var(--radius-card)] border border-border bg-surface p-4 text-center">
             <div className="text-[10px] font-bold text-muted-foreground uppercase tracking-wide mb-1">
               Leitos
             </div>
             <div className="text-2xl font-black text-foreground">{totalBeds}</div>
           </div>
-          <div className="rounded-[24px] border border-border bg-surface p-4 text-center">
+          <div className="rounded-[var(--radius-card)] border border-border bg-surface p-4 text-center">
             <div className="text-[10px] font-bold text-muted-foreground uppercase tracking-wide mb-1">
               Alocados
             </div>
             <div className="text-2xl font-black text-brand">{totalOccupied}</div>
           </div>
           <div
-            className={`rounded-[24px] border p-4 text-center ${unallocated.length === 0 ? "border-success/30 bg-success/5" : "border-warning/30 bg-warning/5"}`}
+            className={`rounded-[var(--radius-card)] border p-4 text-center ${unallocated.length === 0 ? "border-success/30 bg-success/5" : "border-warning/30 bg-warning/5"}`}
           >
             <div className="text-[10px] font-bold text-muted-foreground uppercase tracking-wide mb-1">
               Sem Quarto
@@ -3486,7 +3486,7 @@ function RoomingListManager({
 
         {/* Add room form */}
         {addOpen && (
-          <div className="rounded-[24px] border border-brand/20 bg-brand/5 p-5">
+          <div className="rounded-[var(--radius-card)] border border-brand/20 bg-brand/5 p-5">
             <h4 className="text-sm font-bold text-foreground mb-4">Cadastrar Quarto</h4>
             <form onSubmit={(e) => addRoomMutation.mutate(e)} className="space-y-3">
               <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
@@ -3553,7 +3553,7 @@ function RoomingListManager({
 
         {/* Room cards grid */}
         {rooms.length === 0 && !addOpen ? (
-          <div className="rounded-[24px] border border-dashed border-border p-10 text-center text-sm text-muted-foreground">
+          <div className="rounded-[var(--radius-card)] border border-dashed border-border p-10 text-center text-sm text-muted-foreground">
             <BedDouble className="h-8 w-8 mx-auto mb-3 text-muted-foreground/30" />
             Nenhum quarto cadastrado. Clique em "Novo Quarto" para começar a montagem do rooming
             list.
@@ -3674,7 +3674,7 @@ function RoomingListManager({
 
         {/* Group Closure Checklist */}
         {rooms.length > 0 && (
-          <div className="rounded-[24px] border border-border bg-surface p-5 mt-2">
+          <div className="rounded-[var(--radius-card)] border border-border bg-surface p-5 mt-2">
             <h4 className="text-sm font-bold text-foreground mb-4 flex items-center gap-2">
               <CheckCircle2 className="h-4 w-4 text-success" /> Validação de Fechamento do Grupo
             </h4>

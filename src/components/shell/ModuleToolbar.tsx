@@ -152,26 +152,7 @@ export function ModuleActionButton({
   onClick,
   className,
 }: ModuleActionButtonProps) {
-  return (
-    <div className="fixed top-[54px] left-[12px] z-30 hidden md:block group">
-      <button
-        type="button"
-        onClick={onClick}
-        style={{ borderRadius: "9999px" }}
-        className={cn(
-          "h-9 w-9 flex items-center justify-center rounded-full p-0",
-          "glass-dock border border-white/20 text-white",
-          "cursor-pointer hover:bg-white/15 hover:border-white/35",
-          "transition-all duration-200 shadow-[0_4px_12px_rgba(0,0,0,0.25)]",
-          className
-        )}
-      >
-        {icon && <span className="shrink-0">{icon}</span>}
-      </button>
-      {/* Tooltip */}
-      <div className="absolute left-full ml-2.5 top-1/2 -translate-y-1/2 scale-90 opacity-0 pointer-events-none group-hover:scale-100 group-hover:opacity-100 transition-all duration-150 ease-out z-40 bg-neutral-900/95 backdrop-blur-md border border-white/10 text-white text-[11px] font-semibold px-2 py-1 rounded-full whitespace-nowrap shadow-md">
-        {label}
-      </div>
-    </div>
-  );
+  // DEPRECATED: Retorna null pois as ações foram consolidadas dentro da ModuleToolbar (AppShell header slot).
+  // Isso previne sobreposição com o DynamicIslandNav e limpa os hardcodes de offset.
+  return null;
 }

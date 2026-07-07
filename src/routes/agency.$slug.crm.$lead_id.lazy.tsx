@@ -450,7 +450,7 @@ function LeadDetailPage() {
         <div className="space-y-6">
           <ConfirmDialog />
           {/* Header Actions Row */}
-          <div className="flex flex-wrap items-center justify-between gap-4 bg-surface-alt/40 border border-border/60 p-4 rounded-[24px]">
+          <div className="flex flex-wrap items-center justify-between gap-4 bg-surface-alt/40 border border-border/60 p-4 rounded-[var(--radius-card)]">
             <div className="flex items-center gap-3">
               {lead.avatar_url ? (
                 <div className="relative group h-12 w-12 rounded-full overflow-hidden border border-border">
@@ -617,7 +617,7 @@ function LeadDetailPage() {
               <TabsContent value="general" className="space-y-6">
                 {/* Staleness Quiz if stale */}
                 {diffDays >= 5 && lead.staleness_status === "active" && (
-                  <div className="bg-warning/5 border border-warning/15 p-4 rounded-[24px] space-y-2.5">
+                  <div className="bg-warning/5 border border-warning/15 p-4 rounded-[var(--radius-card)] space-y-2.5">
                     <div className="flex items-center gap-2 text-warning text-xs font-bold">
                       <AlertCircle className="h-4 w-4" />
                       <span>O lead está sem contato há {diffDays} dias! O que aconteceu?</span>
@@ -662,7 +662,7 @@ function LeadDetailPage() {
 
                 {/* Stale status notification with reactivation option */}
                 {lead.staleness_status && lead.staleness_status !== "active" && (
-                  <div className="bg-muted/50 border border-border p-4 rounded-[24px] flex items-center justify-between gap-4">
+                  <div className="bg-muted/50 border border-border p-4 rounded-[var(--radius-card)] flex items-center justify-between gap-4">
                     <div>
                       <span className="text-xs font-bold text-foreground block">
                         Lead Classificado como Inativo
@@ -707,7 +707,7 @@ function LeadDetailPage() {
                 </div>
 
                 {/* Consentimento LGPD */}
-                <div className="rounded-[24px] border border-border bg-surface p-5 flex items-center justify-between gap-4">
+                <div className="rounded-[var(--radius-card)] border border-border bg-surface p-5 flex items-center justify-between gap-4">
                   <div>
                     <h4 className="font-bold text-foreground text-sm flex items-center gap-1.5">
                       Consentimento LGPD
@@ -730,14 +730,14 @@ function LeadDetailPage() {
                 </div>
 
                 {/* Stage and Owner Dropdowns Card */}
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 bg-surface p-5 rounded-[24px] border border-border">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 bg-surface p-5 rounded-[var(--radius-card)] border border-border">
                   <div>
                     <label className="block text-[10px] font-bold uppercase tracking-widest text-muted-foreground mb-1.5">
                       Estágio do Funil
                     </label>
                     <Select
                       value={lead.stage_id}
-                      className="rounded-[24px] border-border bg-white/5 h-10 w-full text-xs"
+                      className="rounded-[var(--radius-card)] border-border bg-white/5 h-10 w-full text-xs"
                       onChange={async (e) => {
                         const newStage = e.target.value;
                         if (newStage === lead.stage_id) return;
@@ -774,7 +774,7 @@ function LeadDetailPage() {
                     </label>
                     <Select
                       value={lead.owner_id || ""}
-                      className="rounded-[24px] border-border bg-white/5 h-10 w-full text-xs"
+                      className="rounded-[var(--radius-card)] border-border bg-white/5 h-10 w-full text-xs"
                       onChange={async (e) => {
                         const val = e.target.value || null;
                         try {
@@ -799,7 +799,7 @@ function LeadDetailPage() {
                 </div>
 
                 {/* Tag pill list and creator */}
-                <div className="rounded-[24px] border border-border bg-surface p-5 space-y-4">
+                <div className="rounded-[var(--radius-card)] border border-border bg-surface p-5 space-y-4">
                   <h4 className="text-xs font-bold uppercase tracking-widest text-muted-foreground border-b border-border/40 pb-2">
                     Tags do Lead
                   </h4>
@@ -868,7 +868,7 @@ function LeadDetailPage() {
 
                 {/* General notes */}
                 {lead.notes && (
-                  <div className="rounded-[24px] border border-border bg-surface p-5">
+                  <div className="rounded-[var(--radius-card)] border border-border bg-surface p-5">
                     <h4 className="text-xs font-bold uppercase tracking-widest text-muted-foreground border-b border-border/40 pb-2 mb-3">
                       Anotações de Cadastro
                     </h4>
@@ -881,7 +881,7 @@ function LeadDetailPage() {
 
               <TabsContent value="pax" className="space-y-6">
                 {/* Magic Client Link */}
-                <div className="bg-brand/[0.03] border border-brand/15 p-5 rounded-[24px] space-y-2.5">
+                <div className="bg-brand/[0.03] border border-brand/15 p-5 rounded-[var(--radius-card)] space-y-2.5">
                   <div className="flex items-center gap-2 text-brand text-xs font-bold">
                     <Sparkles className="h-4 w-4" />
                     <span>Link Mágico de Cadastro do Cliente</span>
@@ -910,7 +910,7 @@ function LeadDetailPage() {
                 </div>
 
                 {/* Travelers List */}
-                <div className="rounded-[24px] border border-border bg-surface p-5 space-y-4">
+                <div className="rounded-[var(--radius-card)] border border-border bg-surface p-5 space-y-4">
                   <div className="flex items-center justify-between border-b border-border/40 pb-2">
                     <h4 className="text-xs font-bold uppercase tracking-widest text-muted-foreground">
                       Viajantes Vinculados / Acompanhantes
@@ -929,7 +929,7 @@ function LeadDetailPage() {
                       {lead.pax_list.map((pax, index) => (
                         <div
                           key={index}
-                          className="border border-border/60 p-4 rounded-[24px] bg-surface-alt/15 relative hover:border-border transition-colors"
+                          className="border border-border/60 p-4 rounded-[var(--radius-card)] bg-surface-alt/15 relative hover:border-border transition-colors"
                         >
                           <button
                             onClick={() => {
@@ -990,7 +990,7 @@ function LeadDetailPage() {
                 </div>
 
                 {/* Add Traveler form */}
-                <div className="rounded-[24px] border border-border bg-surface p-5 space-y-4">
+                <div className="rounded-[var(--radius-card)] border border-border bg-surface p-5 space-y-4">
                   <button
                     onClick={() => setPaxFormOpen((o) => !o)}
                     className="text-xs font-bold text-brand hover:underline flex items-center gap-1 cursor-pointer"
@@ -1023,7 +1023,7 @@ function LeadDetailPage() {
                           toast.error("Falha ao salvar acompanhante");
                         }
                       }}
-                      className="border border-border p-4 rounded-[24px] bg-surface-alt/10 space-y-3"
+                      className="border border-border p-4 rounded-[var(--radius-card)] bg-surface-alt/10 space-y-3"
                     >
                       <Field label="Nome Completo *">
                         <Input
@@ -1092,7 +1092,7 @@ function LeadDetailPage() {
 
               <TabsContent value="meetings" className="space-y-6">
                 {/* Meeting Scheduler and Follow-ups */}
-                <div className="rounded-[24px] border border-border bg-surface p-5 space-y-4">
+                <div className="rounded-[var(--radius-card)] border border-border bg-surface p-5 space-y-4">
                   <div className="flex items-center justify-between border-b border-border/40 pb-2">
                     <h4 className="text-xs font-bold uppercase tracking-widest text-muted-foreground">
                       Compromissos & Reuniões Agendadas
@@ -1135,7 +1135,7 @@ function LeadDetailPage() {
                           toast.error("Falha ao criar compromisso");
                         }
                       }}
-                      className="border border-border p-4 rounded-[24px] bg-surface-alt/10 space-y-3"
+                      className="border border-border p-4 rounded-[var(--radius-card)] bg-surface-alt/10 space-y-3"
                     >
                       <Field label="Título do Compromisso *">
                         <Input
@@ -1218,7 +1218,7 @@ function LeadDetailPage() {
                       {meetingsQ.data.map((meeting: LeadMeeting) => (
                         <div
                           key={meeting.id}
-                          className="bg-surface-alt/20 border border-border/60 rounded-[24px] p-4 flex flex-col md:flex-row md:items-center justify-between gap-4"
+                          className="bg-surface-alt/20 border border-border/60 rounded-[var(--radius-card)] p-4 flex flex-col md:flex-row md:items-center justify-between gap-4"
                         >
                           <div className="space-y-1 min-w-0">
                             <span className="text-xs font-bold text-foreground block truncate">
@@ -1313,7 +1313,7 @@ function LeadDetailPage() {
 
               <TabsContent value="proposals" className="space-y-6">
                 {/* Proposals Integration */}
-                <div className="rounded-[24px] border border-border bg-surface p-5 space-y-4">
+                <div className="rounded-[var(--radius-card)] border border-border bg-surface p-5 space-y-4">
                   <div className="flex items-center justify-between border-b border-border/40 pb-2">
                     <h4 className="text-xs font-bold uppercase tracking-widest text-muted-foreground">
                       Propostas de Venda
@@ -1362,12 +1362,12 @@ function LeadDetailPage() {
                 </div>
 
                 {/* Attachments Section */}
-                <div className="rounded-[24px] border border-border bg-surface p-5 space-y-4">
+                <div className="rounded-[var(--radius-card)] border border-border bg-surface p-5 space-y-4">
                   <h4 className="text-xs font-bold uppercase tracking-widest text-muted-foreground border-b border-border/40 pb-2 flex items-center gap-1.5">
                     <Paperclip className="h-4 w-4 text-brand" /> Documentos e Anexos
                   </h4>
 
-                  <label className="border border-dashed border-border hover:border-brand/40 bg-surface-alt/10 hover:bg-surface-alt/20 rounded-[24px] p-4 flex flex-col items-center justify-center cursor-pointer transition-all">
+                  <label className="border border-dashed border-border hover:border-brand/40 bg-surface-alt/10 hover:bg-surface-alt/20 rounded-[var(--radius-card)] p-4 flex flex-col items-center justify-center cursor-pointer transition-all">
                     <Paperclip className="h-5 w-5 text-muted-foreground mb-1.5" />
                     <span className="text-xs font-bold text-foreground">
                       {uploading ? "Enviando arquivo..." : "Clique para anexar um arquivo"}
@@ -1541,7 +1541,7 @@ function LeadDetailPage() {
                 </div>
 
                 {/* Acessibilidade */}
-                <div className="border border-border p-4 rounded-[24px] space-y-3 bg-surface-alt/10">
+                <div className="border border-border p-4 rounded-[var(--radius-card)] space-y-3 bg-surface-alt/10">
                   <span className="text-xs font-bold text-foreground block">
                     Acessibilidade & Cuidados Especiais
                   </span>

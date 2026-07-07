@@ -78,7 +78,7 @@ function Page() {
           Os seus dados já estão no sistema da nossa agência.
         </p>
 
-        <div className="mt-6 bg-surface-alt/50 border border-border/50 p-4 rounded-[24px]">
+        <div className="mt-6 bg-surface-alt/50 border border-border/50 p-4 rounded-[var(--radius-card)]">
           <div className="text-[10px] uppercase tracking-widest font-bold text-muted-foreground">
             Protocolo de Atendimento
           </div>
@@ -92,7 +92,7 @@ function Page() {
             href={`https://wa.me/?text=Ol%C3%A1!%20Acabei%20de%20enviar%20uma%20solicita%C3%A7%C3%A3o%20pelo%20site%20(Protocolo:%20${doneLeadId.split("-")[0].toUpperCase()})`}
             target="_blank"
             rel="noreferrer"
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-[24px] bg-success px-4 text-sm font-bold text-white  hover:bg-success/90 transition-colors"
+            className="flex h-12 w-full items-center justify-center gap-2 rounded-[var(--radius-card)] bg-success px-4 text-sm font-bold text-white  hover:bg-success/90 transition-colors"
           >
             Chamar no WhatsApp Agora
           </a>

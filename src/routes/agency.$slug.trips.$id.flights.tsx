@@ -296,7 +296,7 @@ function TripFlightsPage() {
   return (
     <div className="flex-1 overflow-y-auto p-4 md:p-6 space-y-6 max-w-5xl">
       {/* Header */}
-      <div className="rounded-[24px] border border-border bg-surface p-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+      <div className="rounded-[var(--radius-card)] border border-border bg-surface p-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div className="flex items-start gap-3">
           <Plane className="h-4 w-4 text-brand mt-0.5 shrink-0" />
           <div>
@@ -376,7 +376,7 @@ function TripFlightsPage() {
 
           {/* Add form */}
           {showAddForm && (
-            <div className="rounded-[24px] border border-border bg-surface p-5 space-y-4 animate-in fade-in duration-300">
+            <div className="rounded-[var(--radius-card)] border border-border bg-surface p-5 space-y-4 animate-in fade-in duration-300">
               <div className="flex items-center justify-between border-b border-border pb-3">
                 <h3 className="text-xs font-bold uppercase tracking-widest text-foreground">
                   Registrar Nova Versão de Itinerário
@@ -636,7 +636,7 @@ function TripFlightsPage() {
               {itinerariesQ.data.map((it) => (
                 <div
                   key={it.id}
-                  className={`rounded-[24px] border bg-surface overflow-hidden hover:shadow-sm transition-all ${
+                  className={`rounded-[var(--radius-card)] border bg-surface overflow-hidden hover:shadow-sm transition-all ${
                     it.status === "active" ? "border-brand ring-1 ring-brand/35" : "border-border"
                   }`}
                 >
@@ -808,7 +808,7 @@ function TripFlightsPage() {
                   return (
                     <div
                       key={card.id}
-                      className="rounded-[24px] border border-border bg-surface p-4 space-y-3 hover:shadow-sm transition-all"
+                      className="rounded-[var(--radius-card)] border border-border bg-surface p-4 space-y-3 hover:shadow-sm transition-all"
                     >
                       {/* Header do cartão */}
                       <div className="flex items-start justify-between gap-2">
@@ -995,7 +995,7 @@ function TripFlightsPage() {
               ) : (
                 <div className="space-y-6">
                   {/* Summary of changes */}
-                  <div className="p-4 rounded-[24px] border border-border bg-surface-alt/40 flex items-center justify-between gap-4">
+                  <div className="p-4 rounded-[var(--radius-card)] border border-border bg-surface-alt/40 flex items-center justify-between gap-4">
                     <div className="text-xs">
                       <p className="font-semibold text-foreground">
                         Diferenças calculadas deterministicamente
@@ -1028,7 +1028,7 @@ function TripFlightsPage() {
                       return (
                         <div
                           key={index}
-                          className="rounded-[24px] border border-border bg-surface overflow-hidden"
+                          className="rounded-[var(--radius-card)] border border-border bg-surface overflow-hidden"
                         >
                           <div className="p-3 border-b border-border bg-surface-alt/20 flex items-center gap-2">
                             <span className="h-5 w-5 rounded bg-surface-alt border border-border flex items-center justify-center font-bold text-[10px] font-mono text-muted-foreground">

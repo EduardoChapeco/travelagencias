@@ -199,7 +199,7 @@ function BillingPage() {
 
       {/* MÉTRICAS DE USO DOS LIMITES */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-6">
-        <div className="rounded-[24px] border border-border bg-surface p-5 space-y-4">
+        <div className="rounded-[var(--radius-card)] border border-border bg-surface p-5 space-y-4">
           <div className="flex items-center justify-between text-xs text-muted-foreground font-bold uppercase tracking-wider">
             <span>Agentes Ativos</span>
             <Users className="h-4 w-4 text-brand" />
@@ -220,7 +220,7 @@ function BillingPage() {
           </div>
         </div>
 
-        <div className="rounded-[24px] border border-border bg-surface p-5 space-y-4">
+        <div className="rounded-[var(--radius-card)] border border-border bg-surface p-5 space-y-4">
           <div className="flex items-center justify-between text-xs text-muted-foreground font-bold uppercase tracking-wider">
             <span>Viagens Iniciadas (Este Mês)</span>
             <BarChart3 className="h-4 w-4 text-brand" />
@@ -244,7 +244,7 @@ function BillingPage() {
           </div>
         </div>
 
-        <div className="rounded-[24px] border border-border bg-surface p-5 space-y-4">
+        <div className="rounded-[var(--radius-card)] border border-border bg-surface p-5 space-y-4">
           <div className="flex items-center justify-between text-xs text-muted-foreground font-bold uppercase tracking-wider">
             <span>Armazenamento em Nuvem</span>
             <HardDrive className="h-4 w-4 text-brand" />
@@ -370,7 +370,7 @@ function BillingPage() {
                   {isCurrent ? (
                     <button
                       disabled
-                      className="w-full h-10 rounded-[24px] bg-surface-alt border border-border text-xs font-bold text-muted-foreground flex items-center justify-center gap-1.5"
+                      className="w-full h-10 rounded-[var(--radius-card)] bg-surface-alt border border-border text-xs font-bold text-muted-foreground flex items-center justify-center gap-1.5"
                     >
                       Plano Atual
                     </button>
@@ -381,7 +381,7 @@ function BillingPage() {
                         setCheckoutError(null);
                         setCheckoutPlan(plan);
                       }}
-                      className="w-full h-10 text-xs font-bold rounded-[24px]"
+                      className="w-full h-10 text-xs font-bold rounded-[var(--radius-card)]"
                     >
                       Selecionar Plano <ArrowRight className="h-3.5 w-3.5 ml-1.5" />
                     </PrimaryButton>
@@ -403,13 +403,13 @@ function BillingPage() {
         </div>
 
         {invoicesQ.isLoading ? (
-          <div className="h-24 bg-surface rounded-[24px] animate-pulse border border-border" />
+          <div className="h-24 bg-surface rounded-[var(--radius-card)] animate-pulse border border-border" />
         ) : invoicesQ.data && invoicesQ.data.length === 0 ? (
-          <div className="rounded-[24px] border border-dashed border-border p-8 text-center text-xs text-muted-foreground">
+          <div className="rounded-[var(--radius-card)] border border-dashed border-border p-8 text-center text-xs text-muted-foreground">
             Nenhuma fatura gerada até o momento.
           </div>
         ) : (
-          <div className="rounded-[24px] border border-border bg-surface overflow-hidden">
+          <div className="rounded-[var(--radius-card)] border border-border bg-surface overflow-hidden">
             <table className="w-full text-left text-xs">
               <thead className="bg-surface-alt/50 border-b border-border text-[10px] uppercase font-bold text-muted-foreground tracking-wider">
                 <tr>
@@ -487,7 +487,7 @@ function BillingPage() {
                     Sua assinatura foi atualizada com sucesso.
                   </p>
                 </div>
-                <div className="bg-surface-alt p-4 rounded-[24px] text-left text-xs font-mono border border-border">
+                <div className="bg-surface-alt p-4 rounded-[var(--radius-card)] text-left text-xs font-mono border border-border">
                   <div className="flex justify-between py-1">
                     <span>Plano Contratado:</span>
                     <span className="font-bold text-foreground">{checkoutPlan.name}</span>
@@ -505,7 +505,7 @@ function BillingPage() {
                 </div>
                 <PrimaryButton
                   onClick={() => setCheckoutPlan(null)}
-                  className="w-full h-10 text-xs font-bold rounded-[24px] mt-4"
+                  className="w-full h-10 text-xs font-bold rounded-[var(--radius-card)] mt-4"
                 >
                   Concluir e Voltar
                 </PrimaryButton>
@@ -513,7 +513,7 @@ function BillingPage() {
             ) : (
               /* Checkout Form & Proration Math */
               <div className="space-y-5">
-                <div className="bg-brand/5 border border-brand/10 p-4 rounded-[24px] space-y-3.5">
+                <div className="bg-brand/5 border border-brand/10 p-4 rounded-[var(--radius-card)] space-y-3.5">
                   <div className="flex items-center justify-between text-xs font-bold text-brand uppercase tracking-wider">
                     <span>Cálculo Inteligente Pró-rata</span>
                     <TrendingUp className="h-4 w-4" />
@@ -550,7 +550,7 @@ function BillingPage() {
                 </div>
 
                 {checkoutError && (
-                  <div className="rounded-[24px] bg-danger/5 border border-danger/20 p-3 flex gap-2 text-xs font-semibold text-danger leading-relaxed">
+                  <div className="rounded-[var(--radius-card)] bg-danger/5 border border-danger/20 p-3 flex gap-2 text-xs font-semibold text-danger leading-relaxed">
                     <XCircle className="h-4 w-4 shrink-0 text-danger" />
                     <span>{checkoutError}</span>
                   </div>
@@ -627,14 +627,14 @@ function BillingPage() {
                   <GhostButton
                     onClick={() => setCheckoutPlan(null)}
                     disabled={isProcessing}
-                    className="h-10 text-xs font-bold rounded-[24px]"
+                    className="h-10 text-xs font-bold rounded-[var(--radius-card)]"
                   >
                     Cancelar
                   </GhostButton>
                   <PrimaryButton
                     onClick={() => checkoutMut.mutate()}
                     disabled={isProcessing}
-                    className="h-10 text-xs font-bold rounded-[24px] px-6"
+                    className="h-10 text-xs font-bold rounded-[var(--radius-card)] px-6"
                   >
                     {isProcessing ? "Processando..." : "Confirmar Upgrade"}
                   </PrimaryButton>

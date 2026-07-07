@@ -146,7 +146,7 @@ function BlogPage() {
 
       <div className="flex-1 overflow-y-auto px-4  md:pr-6 py-4 min-h-0 space-y-6 pb-24">
         {q.isError && (
-          <div className="flex flex-col items-center justify-center py-12 px-6 text-center rounded-[24px] border border-red-200 bg-red-50/60 max-w-2xl mx-auto shrink-0">
+          <div className="flex flex-col items-center justify-center py-12 px-6 text-center rounded-[var(--radius-card)] border border-red-200 bg-red-50/60 max-w-2xl mx-auto shrink-0">
             <div className="h-9 w-9 rounded-full bg-red-100 flex items-center justify-center mb-2">
               <AlertCircle className="h-4 w-4 text-red-600" />
             </div>
@@ -198,7 +198,7 @@ function BlogPage() {
               <button
                 key={p.id}
                 onClick={() => setEditing(p)}
-                className="group rounded-[24px] border border-border bg-surface text-left overflow-hidden hover:border-border-strong transition-all"
+                className="group rounded-[var(--radius-card)] border border-border bg-surface text-left overflow-hidden hover:border-border-strong transition-all"
               >
                 {/* Cover */}
                 <div className="relative aspect-video overflow-hidden bg-surface-alt">
@@ -462,7 +462,7 @@ function BlogSheet({
               />
             </Field>
 
-            <div className="rounded-[24px] border border-border p-4 bg-surface-alt/50 space-y-4">
+            <div className="rounded-[var(--radius-card)] border border-border p-4 bg-surface-alt/50 space-y-4">
               <div className="flex items-center justify-between">
                 <label className="text-sm font-bold text-foreground">Conteúdo do Artigo</label>
               </div>

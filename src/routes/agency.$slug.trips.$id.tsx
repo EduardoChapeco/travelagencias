@@ -294,7 +294,7 @@ function TripLayout() {
 
   if (tripQ.isError) {
     return (
-      <div className="flex min-h-[400px] flex-col items-center justify-center p-8 text-center m-6 rounded-[24px] border border-red-200 bg-red-50/50">
+      <div className="flex min-h-[400px] flex-col items-center justify-center p-8 text-center m-6 rounded-[var(--radius-card)] border border-red-200 bg-red-50/50">
         <div className="h-10 w-10 rounded-full bg-red-100 flex items-center justify-center mb-4">
           <AlertCircle className="h-5 w-5 text-red-600" />
         </div>
@@ -345,7 +345,7 @@ function TripLayout() {
       <ConfirmDialog />
 
       {/* ── Trip Header ─────────────────────────────────── */}
-      <div className="mac-glass-panel m-4 px-4 md:px-6 py-4 flex flex-col gap-3.5 rounded-[28px] shrink-0 z-10 relative">
+      <div className="mac-glass-panel m-4 px-4 md:px-6 py-4 flex flex-col gap-3.5 rounded-[var(--radius-card)] shrink-0 z-10 relative">
         {/* Nav + Ações */}
         <div className="flex items-center justify-between">
           <Link
@@ -510,7 +510,7 @@ function TripLayout() {
         {t.status !== "cancelled" && daysToTrip !== null && (
           <div
             className={cn(
-              "flex items-center gap-3 rounded-[24px] border px-4 py-2.5 text-xs",
+              "flex items-center gap-3 rounded-[var(--radius-card)] border px-4 py-2.5 text-xs",
               isToday
                 ? "border-warning/30 bg-warning/5 text-warning-foreground"
                 : isFuture
@@ -579,7 +579,7 @@ function TripLayout() {
                 placeholder="Ex: 849372"
                 value={importBookingId}
                 onChange={(e) => setImportBookingId(e.target.value)}
-                className="h-10 w-full rounded-[24px] border border-border bg-surface px-3 text-sm outline-none focus:border-brand text-foreground font-mono font-bold"
+                className="h-10 w-full rounded-[var(--radius-card)] border border-border bg-surface px-3 text-sm outline-none focus:border-brand text-foreground font-mono font-bold"
               />
             </div>
 
@@ -590,7 +590,7 @@ function TripLayout() {
                   setShowImportModal(false);
                   setImportBookingId("");
                 }}
-                className="flex-1 h-10 rounded-[24px] border border-border bg-surface text-xs font-bold text-muted-foreground hover:bg-surface-alt transition-colors cursor-pointer"
+                className="flex-1 h-10 rounded-[var(--radius-card)] border border-border bg-surface text-xs font-bold text-muted-foreground hover:bg-surface-alt transition-colors cursor-pointer"
               >
                 Cancelar
               </button>
@@ -598,7 +598,7 @@ function TripLayout() {
                 type="button"
                 disabled={!importBookingId.trim() || importGdsMut.isPending}
                 onClick={() => importGdsMut.mutate(importBookingId)}
-                className="flex-1 h-10 rounded-[24px] bg-brand text-xs font-bold text-brand-foreground hover:bg-brand/90 transition-colors flex items-center justify-center gap-1.5 cursor-pointer disabled:opacity-50"
+                className="flex-1 h-10 rounded-[var(--radius-card)] bg-brand text-xs font-bold text-brand-foreground hover:bg-brand/90 transition-colors flex items-center justify-center gap-1.5 cursor-pointer disabled:opacity-50"
               >
                 {importGdsMut.isPending ? (
                   <Loader2 className="h-4 w-4 animate-spin" />
@@ -629,7 +629,7 @@ function TripLayout() {
                   </p>
                 </div>
 
-                <div className="max-h-40 overflow-y-auto border border-border rounded-[24px] p-3 bg-surface-alt space-y-2">
+                <div className="max-h-40 overflow-y-auto border border-border rounded-[var(--radius-card)] p-3 bg-surface-alt space-y-2">
                   <span className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground block">
                     Passageiros Vinculados
                   </span>
@@ -656,7 +656,7 @@ function TripLayout() {
                   )}
                 </div>
 
-                <div className="bg-amber-500/10 border border-amber-500/20 rounded-[24px] p-3 text-xs text-amber-700 leading-relaxed">
+                <div className="bg-amber-500/10 border border-amber-500/20 rounded-[var(--radius-card)] p-3 text-xs text-amber-700 leading-relaxed">
                   <strong>Aviso de Tarifas:</strong> Esta etapa fará a verificação em tempo real da
                   disponibilidade e tarifas vigentes junto à operadora parceira.
                 </div>
@@ -668,7 +668,7 @@ function TripLayout() {
                       setShowEmitModal(false);
                       setEmitStep(1);
                     }}
-                    className="flex-1 h-10 rounded-[24px] border border-border bg-surface text-xs font-bold text-muted-foreground hover:bg-surface-alt transition-colors cursor-pointer"
+                    className="flex-1 h-10 rounded-[var(--radius-card)] border border-border bg-surface text-xs font-bold text-muted-foreground hover:bg-surface-alt transition-colors cursor-pointer"
                   >
                     Cancelar
                   </button>
@@ -676,7 +676,7 @@ function TripLayout() {
                     type="button"
                     disabled={!paxQ.data || paxQ.data.length === 0}
                     onClick={() => setEmitStep(2)}
-                    className="flex-1 h-10 rounded-[24px] bg-brand text-xs font-bold text-brand-foreground hover:bg-brand/90 transition-colors flex items-center justify-center gap-1.5 cursor-pointer disabled:opacity-50"
+                    className="flex-1 h-10 rounded-[var(--radius-card)] bg-brand text-xs font-bold text-brand-foreground hover:bg-brand/90 transition-colors flex items-center justify-center gap-1.5 cursor-pointer disabled:opacity-50"
                   >
                     Validar e Avançar
                   </button>
@@ -695,7 +695,7 @@ function TripLayout() {
                   </p>
                 </div>
 
-                <div className="bg-rose-500/10 border border-rose-500/20 rounded-[24px] p-3 text-xs text-rose-700 leading-relaxed font-medium">
+                <div className="bg-rose-500/10 border border-rose-500/20 rounded-[var(--radius-card)] p-3 text-xs text-rose-700 leading-relaxed font-medium">
                   ⚠️ <strong>Atenção:</strong> A emissão gera cobranças reais e passará a constar no
                   faturamento junto à operadora parceira. Esta ação é definitiva e não poderá ser
                   desfeita pelo painel.
@@ -705,7 +705,7 @@ function TripLayout() {
                   <button
                     type="button"
                     onClick={() => setEmitStep(1)}
-                    className="flex-1 h-10 rounded-[24px] border border-border bg-surface text-xs font-bold text-muted-foreground hover:bg-surface-alt transition-colors cursor-pointer"
+                    className="flex-1 h-10 rounded-[var(--radius-card)] border border-border bg-surface text-xs font-bold text-muted-foreground hover:bg-surface-alt transition-colors cursor-pointer"
                   >
                     Voltar
                   </button>
@@ -717,7 +717,7 @@ function TripLayout() {
                       setShowEmitModal(false);
                       setEmitStep(1);
                     }}
-                    className="flex-1 h-10 rounded-[24px] bg-emerald-600 text-xs font-bold text-white hover:bg-emerald-700 transition-colors flex items-center justify-center gap-1.5 cursor-pointer disabled:opacity-50"
+                    className="flex-1 h-10 rounded-[var(--radius-card)] bg-emerald-600 text-xs font-bold text-white hover:bg-emerald-700 transition-colors flex items-center justify-center gap-1.5 cursor-pointer disabled:opacity-50"
                   >
                     {bookGdsMut.isPending ? (
                       <Loader2 className="h-4 w-4 animate-spin" />

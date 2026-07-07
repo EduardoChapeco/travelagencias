@@ -186,10 +186,10 @@ function PublicLeadFormPage() {
             <img
               src={lead.agency_logo}
               alt={lead.agency_name}
-              className="h-12 w-12 rounded-[24px] object-cover border border-border"
+              className="h-12 w-12 rounded-[var(--radius-card)] object-cover border border-border"
             />
           ) : (
-            <div className="h-12 w-12 rounded-[24px] bg-brand/10 border border-brand/20 flex items-center justify-center font-bold text-brand text-lg">
+            <div className="h-12 w-12 rounded-[var(--radius-card)] bg-brand/10 border border-brand/20 flex items-center justify-center font-bold text-brand text-lg">
               {lead.agency_name.substring(0, 2).toUpperCase()}
             </div>
           )}
@@ -249,7 +249,7 @@ function PublicLeadFormPage() {
                   value={form.destination ?? ""}
                   onChange={(e) => setForm({ ...form, destination: e.target.value })}
                   placeholder="Para onde você deseja ir?"
-                  className="rounded-[24px] h-10"
+                  className="rounded-[var(--radius-card)] h-10"
                 />
               </Field>
 
@@ -264,7 +264,7 @@ function PublicLeadFormPage() {
                     setForm({ ...form, custom_fields: custom });
                   }}
                   placeholder="Ex: Julho/2026, Outubro, Final do ano"
-                  className="rounded-[24px] h-10"
+                  className="rounded-[var(--radius-card)] h-10"
                 />
               </Field>
 
@@ -273,7 +273,7 @@ function PublicLeadFormPage() {
                   required
                   value={form.interest_type ?? ""}
                   onChange={(e) => setForm({ ...form, interest_type: e.target.value })}
-                  className="rounded-[24px] h-10"
+                  className="rounded-[var(--radius-card)] h-10"
                 >
                   <option value="">Selecione uma opção...</option>
                   {INTEREST_OPTIONS.map((opt) => (
@@ -296,7 +296,7 @@ function PublicLeadFormPage() {
                     type="date"
                     value={form.travel_start ?? ""}
                     onChange={(e) => setForm({ ...form, travel_start: e.target.value })}
-                    className="rounded-[24px] h-10"
+                    className="rounded-[var(--radius-card)] h-10"
                   />
                 </Field>
                 <Field label="Retorno Previsto">
@@ -304,7 +304,7 @@ function PublicLeadFormPage() {
                     type="date"
                     value={form.travel_end ?? ""}
                     onChange={(e) => setForm({ ...form, travel_end: e.target.value })}
-                    className="rounded-[24px] h-10"
+                    className="rounded-[var(--radius-card)] h-10"
                   />
                 </Field>
               </div>
@@ -325,7 +325,7 @@ function PublicLeadFormPage() {
                     onChange={(e) =>
                       setForm({ ...form, pax_adults: parseInt(e.target.value) || 1 })
                     }
-                    className="rounded-[24px] h-10"
+                    className="rounded-[var(--radius-card)] h-10"
                   />
                 </Field>
                 <Field label="Crianças">
@@ -336,7 +336,7 @@ function PublicLeadFormPage() {
                     onChange={(e) =>
                       setForm({ ...form, pax_children: parseInt(e.target.value) || 0 })
                     }
-                    className="rounded-[24px] h-10"
+                    className="rounded-[var(--radius-card)] h-10"
                   />
                 </Field>
                 <Field label="Bebês">
@@ -347,7 +347,7 @@ function PublicLeadFormPage() {
                     onChange={(e) =>
                       setForm({ ...form, pax_infants: parseInt(e.target.value) || 0 })
                     }
-                    className="rounded-[24px] h-10"
+                    className="rounded-[var(--radius-card)] h-10"
                   />
                 </Field>
               </div>
@@ -360,13 +360,13 @@ function PublicLeadFormPage() {
                     value={paxAgesStr}
                     onChange={(e) => setPaxAgesStr(e.target.value)}
                     placeholder="Separe por vírgulas"
-                    className="rounded-[24px] h-10"
+                    className="rounded-[var(--radius-card)] h-10"
                   />
                 </Field>
               )}
 
               {/* Aviation tariff guidance */}
-              <div className="text-[11px] bg-brand/5 border border-brand/10 p-3.5 rounded-[24px] text-muted-foreground space-y-1">
+              <div className="text-[11px] bg-brand/5 border border-brand/10 p-3.5 rounded-[var(--radius-card)] text-muted-foreground space-y-1">
                 <span className="font-bold text-foreground block">
                   Regras de Tarifa da Aviação:
                 </span>
@@ -405,7 +405,7 @@ function PublicLeadFormPage() {
                   {form.pax_list.map((pax, index) => (
                     <div
                       key={index}
-                      className="border border-border/60 p-3.5 rounded-[24px] bg-surface-alt/10 relative flex justify-between items-start"
+                      className="border border-border/60 p-3.5 rounded-[var(--radius-card)] bg-surface-alt/10 relative flex justify-between items-start"
                     >
                       <div className="min-w-0 flex-1">
                         <span className="text-xs font-bold text-foreground block truncate">
@@ -462,7 +462,7 @@ function PublicLeadFormPage() {
               </button>
 
               {paxFormOpen && (
-                <div className="border border-border/80 p-4 rounded-[24px] bg-surface-alt/10 space-y-3 mt-3">
+                <div className="border border-border/80 p-4 rounded-[var(--radius-card)] bg-surface-alt/10 space-y-3 mt-3">
                   <Field label="Nome Completo *">
                     <Input
                       placeholder="Nome do acompanhante"
@@ -573,7 +573,7 @@ function PublicLeadFormPage() {
                   onChange={(e) => setForm({ ...form, health_notes: e.target.value })}
                   placeholder="Ex: intolerância a glúten, asma grave, necessidade de cadeira de rodas no aeroporto, etc..."
                   rows={3}
-                  className="rounded-[24px]"
+                  className="rounded-[var(--radius-card)]"
                 />
               </Field>
             </div>
@@ -589,7 +589,7 @@ function PublicLeadFormPage() {
                   onChange={(e) => setForm({ ...form, notes: e.target.value })}
                   placeholder="Ex: preferência de companhias aéreas, tipo de quarto, interesses específicos (praia, ecoturismo, etc...)"
                   rows={4}
-                  className="rounded-[24px]"
+                  className="rounded-[var(--radius-card)]"
                 />
               </Field>
             </div>

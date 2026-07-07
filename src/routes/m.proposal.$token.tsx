@@ -523,14 +523,14 @@ function DecideActions({
     <div className="flex flex-col gap-2">
       <button
         onClick={() => setConfirm("accepted")}
-        className="h-10 w-full rounded-[24px] text-xs font-bold transition-all active:scale-[0.98] cursor-pointer"
+        className="h-10 w-full rounded-[var(--radius-card)] text-xs font-bold transition-all active:scale-[0.98] cursor-pointer"
         style={{ background: brand, color: brandFg }}
       >
         Aceitar proposta
       </button>
       <button
         onClick={() => setConfirm("rejected")}
-        className="h-10 w-full rounded-[24px] border border-border bg-surface text-xs font-medium text-muted-foreground hover:text-foreground transition-all hover:bg-slate-50 cursor-pointer"
+        className="h-10 w-full rounded-[var(--radius-card)] border border-border bg-surface text-xs font-medium text-muted-foreground hover:text-foreground transition-all hover:bg-slate-50 cursor-pointer"
       >
         Recusar proposta
       </button>

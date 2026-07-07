@@ -11,6 +11,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { Sparkles, ShieldCheck } from "lucide-react";
 
 export const Route = createFileRoute("/auth/login")({
+  ssr: false,
   head: ({ context }: any) => ({
     meta: [
       { title: `Entrar · ${context?.brand?.platform_name || 'Turis'}` },

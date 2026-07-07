@@ -294,7 +294,7 @@ function BoardingKanbanPage() {
 
       {q.isError && (
         <div className="flex flex-1 items-center justify-center p-6">
-          <div className="flex flex-col items-center max-w-md text-center space-y-3 bg-danger/10 p-6 rounded-[24px] border border-danger/20">
+          <div className="flex flex-col items-center max-w-md text-center space-y-3 bg-danger/10 p-6 rounded-[var(--radius-card)] border border-danger/20">
             <div className="h-12 w-12 rounded-full bg-danger/20 flex items-center justify-center text-danger mb-2">
               <X className="h-6 w-6" />
             </div>
@@ -343,7 +343,7 @@ function BoardingKanbanPage() {
           {viewMode === "list" && (
             <div className="flex-1 overflow-y-auto p-4 md:p-6 animate-in fade-in duration-300">
               {localCards.length === 0 ? (
-                <div className="text-center py-12 border border-dashed rounded-[24px] text-sm text-muted-foreground">
+                <div className="text-center py-12 border border-dashed rounded-[var(--radius-card)] text-sm text-muted-foreground">
                   Nenhum localizador de embarque cadastrado.
                 </div>
               ) : (

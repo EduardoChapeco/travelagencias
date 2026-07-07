@@ -249,7 +249,7 @@ function TicketAdvancedRoute() {
     || "Não atribuído";
 
   return (
-    <div className="flex h-[calc(100vh-4rem)] overflow-hidden">
+    <div className="flex flex-1 min-h-0 overflow-hidden bg-transparent">
       {/* ── Esquerda: Timeline e Interação ────────────────────────────────── */}
       <div className="flex-1 flex flex-col min-w-0 border-r border-border">
         {/* Header */}
@@ -332,7 +332,7 @@ function TicketAdvancedRoute() {
         <div className="flex-1 overflow-y-auto p-6 bg-surface-muted/30">
           <div className="max-w-3xl mx-auto space-y-6">
             {(!timeline || timeline.length === 0) ? (
-              <div className="text-center text-muted-foreground p-8 rounded-[24px] border border-dashed border-border">
+              <div className="text-center text-muted-foreground p-8 rounded-[var(--radius-card)] border border-dashed border-border">
                 <MessageSquare className="w-8 h-8 mx-auto mb-3 opacity-30" />
                 <p className="text-sm">Nenhum evento na timeline ainda.</p>
               </div>
@@ -363,7 +363,7 @@ function TicketAdvancedRoute() {
                     )}
                   </div>
                   <div className={cn(
-                    "flex-1 rounded-[24px] p-4 border shadow-xs",
+                    "flex-1 rounded-[var(--radius-card)] p-4 border shadow-xs",
                     ev.is_internal
                       ? "bg-amber-50/60 border-amber-200"
                       : "bg-card border-border"

@@ -976,7 +976,7 @@ export function VoucherStudio({
   };
 
   return (
-    <div className="flex h-[calc(100vh-var(--header-h)-110px)] flex-col">
+    <div className="flex flex-1 min-h-0 flex-col">
       {/* ── Toolbar ──────────────────────────────────────────────────────────── */}
       <div className="flex flex-wrap items-center justify-between gap-3 border-b border-border bg-surface px-4 py-2.5 shrink-0">
         <div className="flex items-center gap-3">

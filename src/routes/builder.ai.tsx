@@ -311,7 +311,7 @@ function AISiteBuilder() {
             </div>
           )}
 
-          <div className="border border-border rounded-[24px] p-4 bg-surface-alt/20 space-y-2.5">
+          <div className="border border-border rounded-[var(--radius-card)] p-4 bg-surface-alt/20 space-y-2.5">
             <h3 className="text-xs font-bold text-foreground flex items-center gap-1.5">
               <Sparkles className="w-3.5 h-3.5 text-brand" /> Sugestões de temas
             </h3>
@@ -356,7 +356,7 @@ function AISiteBuilder() {
                 </div>
 
                 {m.siteLink && (
-                  <div className="bg-surface border border-border rounded-[24px] p-4 max-w-sm space-y-3">
+                  <div className="bg-surface border border-border rounded-[var(--radius-card)] p-4 max-w-sm space-y-3">
                     <div className="flex items-center gap-2 text-xs font-bold text-green-600">
                       <CheckCircle2 className="w-4 h-4" /> Site Publicado com Sucesso!
                     </div>
@@ -432,13 +432,13 @@ function AISiteBuilder() {
             value={input}
             onChange={(e) => setInput(e.target.value)}
             disabled={loading || !selectedAgencyId}
-            className="flex-1 h-10 px-4 rounded-[24px] border border-border bg-surface text-xs focus:outline-none focus:border-brand disabled:opacity-50"
+            className="flex-1 h-10 px-4 rounded-[var(--radius-card)] border border-border bg-surface text-xs focus:outline-none focus:border-brand disabled:opacity-50"
             onKeyDown={(e) => e.key === "Enter" && handleSend()}
           />
           <button
             onClick={handleSend}
             disabled={loading || !input.trim() || !selectedAgencyId}
-            className="w-10 h-10 rounded-[24px] bg-brand text-white flex items-center justify-center hover:bg-brand-hover disabled:opacity-50 shrink-0 transition-colors"
+            className="w-10 h-10 rounded-[var(--radius-card)] bg-brand text-white flex items-center justify-center hover:bg-brand-hover disabled:opacity-50 shrink-0 transition-colors"
           >
             <Send className="w-4 h-4" />
           </button>

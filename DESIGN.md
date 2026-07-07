@@ -1,147 +1,135 @@
 ---
-version: "alpha"
-name: "Turis OS"
-description: "Visual identity specification for Turis OS B2B tourism platform. Built on frosted glassmorphic ambient styling with high contrast solid interactive cues and unified structural dimensions."
-dials:
-  DESIGN_VARIANCE: 6          # Clean, symmetrical layouts with contextual asymmetry
-  MOTION_INTENSITY: 5         # Tactile spring hover feedback & scroll reveals
-  VISUAL_DENSITY: 4           # Clear, readable grids with spacious table layouts
+name: TravelOS
 colors:
-  primary: "#3D6FF2"          # Brand active blue used for key calls to action and active accents
-  ink: "#0B0B0C"              # Dark ink for prominent text, headings, and definite actions
-  neutral: "#F6F5F1"          # Crisp, light paper fallback canvas when wallpaper is disabled
-  glass-light: "rgba(255, 255, 255, 0.14)"
-  glass-dark: "rgba(10, 10, 12, 0.35)"
-  accent-lime: "#B6F24C"      # High contrast lime pop for badges and specific data metrics
-  success: "#16a34a"          # Solid success badge green for high contrast readability
-  warning: "#d97706"          # Solid warning badge orange
-  danger: "#e11d48"           # Solid danger badge red
-  info: "#2563eb"             # Solid info badge blue
+  primary: "#2F60E6"
+  primary-light: "rgba(61, 111, 242, 0.1)"
+  primary-foreground: "#ffffff"
+  background: "#F6F5F1"
+  foreground: "#0B0B0C"
+  surface: "#ffffff"
+  surface-alt: "rgba(255, 255, 255, 0.7)"
+  muted: "rgba(11, 11, 12, 0.05)"
+  muted-foreground: "rgba(11, 11, 12, 0.5)"
+  border: "rgba(11, 11, 12, 0.08)"
+  success: "#157f3d"
+  success-bg: "#edf8f1"
+  warning: "#a85b14"
+  warning-bg: "#fff4e6"
+  danger: "#b42318"
+  danger-bg: "#fff1ef"
 typography:
   display:
-    fontFamily: "Inter"
-    fontSize: "2.5rem"
+    fontFamily: "Inter, -apple-system, sans-serif"
+    fontSize: 2.5rem
     fontWeight: 600
-    letterSpacing: "-0.02em"
-    lineHeight: "1.1"
-  body-md:
-    fontFamily: "Inter"
-    fontSize: "1rem"
+    lineHeight: 1.1
+    letterSpacing: -0.02em
+  h1:
+    fontFamily: "Inter, -apple-system, sans-serif"
+    fontSize: 2rem
+    fontWeight: 600
+    lineHeight: 1.2
+    letterSpacing: -0.02em
+  h2:
+    fontFamily: "Inter, -apple-system, sans-serif"
+    fontSize: 1.5rem
+    fontWeight: 600
+    letterSpacing: -0.01em
+  h3:
+    fontFamily: "Inter, -apple-system, sans-serif"
+    fontSize: 1.125rem
+    fontWeight: 600
+  body-large:
+    fontFamily: "Inter, -apple-system, sans-serif"
+    fontSize: 1.125rem
     fontWeight: 400
-    lineHeight: "1.5"
+    lineHeight: 1.6
+  body:
+    fontFamily: "Inter, -apple-system, sans-serif"
+    fontSize: 1rem
+    fontWeight: 400
+    lineHeight: 1.5
+  meta:
+    fontFamily: "Inter, -apple-system, sans-serif"
+    fontSize: 0.75rem
+    fontWeight: 400
   label-caps:
-    fontFamily: "JetBrains Mono"
-    fontSize: "0.75rem"
+    fontFamily: "JetBrains Mono, monospace"
+    fontSize: 0.75rem
     fontWeight: 500
-    letterSpacing: "0.08em"
+    lineHeight: 1
+    letterSpacing: 0.08em
 rounded:
   xs: 8px
   sm: 12px
   md: 16px
   lg: 20px
   xl: 24px
-  "2xl": 28px
-  "3xl": 32px
+  2xl: 28px
+  3xl: 32px
   full: 999px
-  card: 28px
-  sheet: 32px
-  button: 999px
-  input: 999px
-  badge: 8px
 spacing:
-  xs: 8px
-  sm: 12px
-  md: 20px
-  lg: 32px
-  xl: 48px
+  xs: 4px
+  sm: 8px
+  md: 16px
+  lg: 24px
+  xl: 32px
+  2xl: 48px
+  3xl: 64px
 components:
   button-primary:
     backgroundColor: "{colors.primary}"
-    textColor: "#ffffff"
-    rounded: "{rounded.button}"
-    height: "39px"
-  button-ghost:
-    backgroundColor: "transparent"
-    textColor: "{colors.ink}"
-    rounded: "{rounded.button}"
-    height: "39px"
-  input-text:
-    backgroundColor: "{colors.glass-light}"
-    textColor: "{colors.ink}"
-    rounded: "{rounded.input}"
-    height: "42px"
-  textarea:
-    backgroundColor: "{colors.glass-light}"
-    textColor: "{colors.ink}"
-    rounded: "{rounded.card}"
-    minHeight: "85px"
-  status-badge:
-    rounded: "{rounded.badge}"
-    fontSize: "10px"
-    fontWeight: "bold"
+    textColor: "{colors.primary-foreground}"
+    rounded: "{rounded.full}"
   card:
-    rounded: "{rounded.card}"
-    backgroundColor: "{colors.glass-light}"
+    backgroundColor: "{colors.surface}"
+    rounded: "{rounded.2xl}"
+    padding: "{spacing.lg}"
   sheet:
-    rounded: "{rounded.sheet}"
+    backgroundColor: "{colors.surface}"
+    rounded: "{rounded.3xl}"
+    padding: "{spacing.xl}"
+  badge:
+    rounded: "{rounded.xs}"
 ---
 
 ## Overview
 
-Turis OS is an ambient desktop-like platform interface. The canvas floats frosted glass panels over user-selected, high-resolution photography themes. There are no box shadows. Layout hierarchy is expressed cleanly using backdrop blur, border-light highlights, and subtle background opacity shifts.
+TravelOS is an ambient, operating-system-like web application. The UI evokes a premium, slightly chubby ("gordinha") materiality where all structural depth is achieved through glassmorphism (backdrop filters) and subtle borders rather than drop shadows.
+
+The workspace is a fluid, transparent canvas resting on top of a global wallpaper. The visual language is deeply inspired by modern spatial operating systems (e.g., Apple VisionOS, MacOS heavy glass), prioritizing visual immersion without sacrificing data density.
 
 ## Colors
 
-All UI elements must inherit color styling from locked palette tokens. No ad-hoc background inverting or mesh glows.
+The core palette relies heavily on alphas (transparencies) over a neutral wallpaper, with a single electric blue accent. 
 
-- **Primary Blue (#3D6FF2):** Primary active brand element. Guides active sidebar icons and main submit CTAs.
-- **Solid Badges:** Status badges must use 100% solid colors. Muted transparent-on-transparent labels are prohibited as they collapse visually against variable wallpaper backdrops.
+- **Primary (#3D6FF2):** The only driver for interaction. Used for active states and CTAs.
+- **Background & Foreground:** High-contrast neutral pairing, but largely superseded by the glass workspace in the main app.
 
 ## Typography
 
-Standardize font hierarchies to stop typographic drift.
+Strictly sans-serif (`Inter`) for the UI, with monospace (`JetBrains Mono`) for technical metadata and labels. 
 
-- **Headlines:** Must use Geist or Inter Display. High contrast, tight tracking, with a minimum display leading of `1.1` for italic descender clearance (`y g j p q`).
-- **Data Labels:** Small labels, column headers, and indicators must use JetBrains Mono wide caps (`label-caps`).
+- No serifs anywhere.
+- Headlines are tightly tracked (`-0.02em`) to maintain a structural, application-like feel.
 
-## Layout
+## Layout & Spacing
 
-Clean, mathematical layouts governed by visual density dials.
-
-- **Responsive Grid:** CSS grids are mandatory for bento metrics and multi-item rows. No complex inline flexbox equations.
-- **Full Fill Grids:** Table containers and workspaces must use `flex-1 min-h-0` to expand to 100% of the screen height, leaving no empty dead zones.
-- **Sidebar Pill Dimensions:**
-  - Width Collapsed: `52px` (plus `4px` offsets, totalling `60px` workspace padding).
-  - Width Expanded: `184px` with spring motion transitions.
+- The system relies on flexible CSS Grids and structural padding.
+- `spacing.lg` (24px) and `spacing.xl` (32px) dominate inter-component relationships.
 
 ## Elevation & Depth
 
-- **Shadow Ban:** Traditional box-shadow shadows are completely supressed.
-- **Ambient Frosted Glass:** Use the class `.mac-glass-panel` for cards and components. Depth is achieved via `backdrop-filter: blur(22px) saturate(160%)` configured globally on the `.os-workspace` parent container.
+- **NO SHADOWS.** Drop shadows are completely banned (`box-shadow: none !important`).
+- All elevation is communicated through variable blur radii and 1px semi-transparent inner borders (`rgba(255, 255, 255, 0.15)`).
 
 ## Shapes
 
-- **Interactive Inputs:** Text inputs, select dropdowns, and button containers must be pill-shaped (`rounded-full` / `rounded-input` / `rounded-button`).
-- **Cards & Textareas:** Structural tiles, kanban cards, lists, and multiline text boxes must use a radius of `28px` (`rounded-card`).
-- **Sheets & Panel Modals:** Side slides and full modal containers must use `32px` (`rounded-sheet`).
-
-## Components
-
-Primitivos de interface must remain centralized inside `src/components/ui/form.tsx` and `src/components/ui/button.tsx`.
-
-- **PrimaryButton / GhostButton:** Form buttons that reuse `Button` variants, preserving padding and sizing.
-- **Input / Select / Textarea:** Input fields styled with base input tokens to ensure input height and shape are consistent across all forms.
-- **StatusBadge:** Custom solid colored tags mapped directly to success, warning, danger, and info colors.
+- UI elements are extremely rounded. Cards are `28px` (2xl), sheets are `32px` (3xl), buttons and inputs are perfectly pill-shaped (`999px`).
+- Sharp corners are forbidden unless constrained by a screen edge.
 
 ## Do's and Don'ts
 
-### Do
-- Use `.mac-glass-panel` for clean frosted glass wrappers in the workspace.
-- Group long specification lists (N > 5) into clustered cards or snap pills.
-- Align the AI Float button precisely with the sidebar width custom property (`--ds-sidebar-total`).
-
-### Don't
-- Do not use box-shadows or glow gradients.
-- Do not let headlines wrap to more than 2 lines on desktop hero slots.
-- Do not overlay small tag labels or metadata on top of photo assets.
-- Do not use em-dashes `—` as formatting decorations; use standard typography or icons.
+- **Do:** Use the unified `Glass Panel` overlay for modals and sheets.
+- **Don't:** Stack dimmers, black backgrounds, or multiple opacity layers. The wallpaper must shine through cleanly.
+- **Don't:** Create "cards within cards". If data needs separation, use negative space, dividers, or native grid gaps.

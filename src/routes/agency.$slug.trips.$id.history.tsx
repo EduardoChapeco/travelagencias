@@ -136,7 +136,7 @@ function TripHistoryPage() {
   return (
     <div className="flex-1 overflow-y-auto p-4 md:p-6 space-y-6">
       {/* Header */}
-      <div className="rounded-[24px] border border-border bg-surface p-4 flex items-start gap-3">
+      <div className="rounded-[var(--radius-card)] border border-border bg-surface p-4 flex items-start gap-3">
         <Clock className="h-4 w-4 text-brand mt-0.5 shrink-0" />
         <div>
           <p className="text-xs font-semibold text-foreground">Histórico de Alterações</p>
@@ -167,7 +167,7 @@ function TripHistoryPage() {
       )}
 
       {!isLoading && combinedLogs.length > 0 && (
-        <div className="rounded-[24px] border border-border bg-surface p-4 max-w-3xl space-y-4">
+        <div className="rounded-[var(--radius-card)] border border-border bg-surface p-4 max-w-3xl space-y-4">
           <h3 className="text-xs font-bold uppercase tracking-widest text-muted-foreground flex items-center gap-1.5">
             <Activity className="h-3.5 w-3.5 text-brand" /> Linha do Tempo da Viagem (
             {combinedLogs.length} logs)

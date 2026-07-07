@@ -119,7 +119,7 @@ Retorne EXATAMENTE UM JSON com as seguintes chaves precisas (sem markdown em vol
 
       <form
         onSubmit={handleAnalyze}
-        className="relative flex items-center rounded-[24px] bg-surface border border-border p-2"
+        className="relative flex items-center rounded-[var(--radius-card)] bg-surface border border-border p-2"
       >
         <Search className="absolute left-5 w-5 h-5 text-muted-foreground" />
         <input

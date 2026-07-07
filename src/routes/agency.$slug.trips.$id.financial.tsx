@@ -244,7 +244,7 @@ function TripFinancial() {
   if (tripQ.isError || recordsQ.isError || planQ.isError) {
     const errQ = tripQ.isError ? tripQ : recordsQ.isError ? recordsQ : planQ;
     return (
-      <div className="flex flex-col items-center justify-center py-16 px-6 text-center rounded-[24px] border border-red-200 bg-red-50/60 m-6">
+      <div className="flex flex-col items-center justify-center py-16 px-6 text-center rounded-[var(--radius-card)] border border-red-200 bg-red-50/60 m-6">
         <div className="h-10 w-10 rounded-full bg-red-100 flex items-center justify-center mb-3">
           <AlertCircle className="h-5 w-5 text-red-600" />
         </div>
@@ -367,7 +367,7 @@ function TripFinancial() {
       </div>
 
       {showPlanForm && agency && (
-        <div className="mb-6 rounded-[24px] border border-border/60 bg-surface p-5">
+        <div className="mb-6 rounded-[var(--radius-card)] border border-border/60 bg-surface p-5">
           <h4 className="text-sm font-bold mb-4">Criar Novo Plano de Parcelamento</h4>
           <PlanForm
             agencyId={agency.id}
@@ -407,7 +407,7 @@ function TripFinancial() {
             );
           })
         : !showPlanForm && (
-            <div className="py-8 text-center text-sm text-muted-foreground bg-surface border border-border/60 rounded-[24px] mb-6">
+            <div className="py-8 text-center text-sm text-muted-foreground bg-surface border border-border/60 rounded-[var(--radius-card)] mb-6">
               Nenhum plano de parcelamento criado.
               <button
                 onClick={() => setShowPlanForm(true)}
@@ -460,7 +460,7 @@ function TripFinancial() {
               {/* File Upload */}
               {!ocrResult && (
                 <label
-                  className={`flex flex-col items-center justify-center gap-3 rounded-[24px] border-2 border-dashed p-8 cursor-pointer transition-colors${ocrLoading ? "border-brand/40 bg-brand/5" : "border-border hover:border-brand/50 hover:bg-surface-alt/20"}`}
+                  className={`flex flex-col items-center justify-center gap-3 rounded-[var(--radius-card)] border-2 border-dashed p-8 cursor-pointer transition-colors${ocrLoading ? "border-brand/40 bg-brand/5" : "border-border hover:border-brand/50 hover:bg-surface-alt/20"}`}
                 >
                   {ocrLoading ? (
                     <>
@@ -505,7 +505,7 @@ function TripFinancial() {
                     <CheckCircle className="h-5 w-5" />
                     <span className="text-sm font-bold">Boleto lido com sucesso!</span>
                   </div>
-                  <div className="rounded-[24px] border border-border bg-surface-alt/10 p-4 space-y-2 text-xs font-mono">
+                  <div className="rounded-[var(--radius-card)] border border-border bg-surface-alt/10 p-4 space-y-2 text-xs font-mono">
                     {ocrResult.amount && (
                       <div>
                         <span className="text-muted-foreground">Valor:</span>{" "}
@@ -609,7 +609,7 @@ function Section({
   children: React.ReactNode;
 }) {
   return (
-    <div className="mb-6 rounded-[24px] border border-border/60 bg-surface overflow-hidden">
+    <div className="mb-6 rounded-[var(--radius-card)] border border-border/60 bg-surface overflow-hidden">
       <div className="flex items-center justify-between px-5 py-4 hover:bg-surface-alt/50 transition-colors">
         <button
           onClick={onToggle}

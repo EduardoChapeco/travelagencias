@@ -524,7 +524,7 @@ function TripsList() {
 
       <div className="flex-1 overflow-hidden px-4  md:pr-6 py-4 flex flex-col min-h-0 pb-24">
         {list.isError && (
-          <div className="flex flex-col items-center justify-center py-16 px-6 text-center rounded-[24px] border border-red-200 bg-red-50/60 mb-4">
+          <div className="flex flex-col items-center justify-center py-16 px-6 text-center rounded-[var(--radius-card)] border border-red-200 bg-red-50/60 mb-4">
             <div className="h-10 w-10 rounded-full bg-red-100 flex items-center justify-center mb-3">
               <AlertCircle className="h-5 w-5 text-red-600" />
             </div>
@@ -540,7 +540,7 @@ function TripsList() {
               <div className="h-8 w-64 animate-pulse rounded-full bg-surface-alt" />
               <div className="h-8 w-24 animate-pulse rounded-full bg-surface-alt" />
             </div>
-            <div className="rounded-[24px] border border-border bg-surface overflow-hidden">
+            <div className="rounded-[var(--radius-card)] border border-border bg-surface overflow-hidden">
               <div className="border-b border-border bg-surface-alt/50 p-3 h-10 flex gap-4">
                 <div className="h-4 w-12 animate-pulse rounded-full bg-muted/40" />
                 <div className="h-4 w-1/3 animate-pulse rounded-full bg-muted/40" />
@@ -615,7 +615,7 @@ function TripsList() {
       {importOpen && agency && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-overlay p-4">
           <div
-            className="w-full max-w-sm rounded-2xl border border-border bg-surface p-5 flex flex-col shadow-none"
+            className="w-full max-w-sm rounded-[var(--radius-card)] border border-border bg-surface p-5 flex flex-col shadow-none"
             onClick={(e) => e.stopPropagation()}
           >
             <div className="flex items-center justify-between border-b border-border pb-3 mb-4">

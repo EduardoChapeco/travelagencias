@@ -125,7 +125,7 @@ export function LedgerDashboard() {
       <div className="flex-1 overflow-y-auto px-4  md:pr-6 py-4 min-h-0 space-y-6">
       {/* KPI Cards */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <div className="bg-surface border border-border rounded-[24px] p-4">
+        <div className="bg-surface border border-border rounded-[var(--radius-card)] p-4">
           <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest flex items-center gap-1">
             <ArrowDownCircle className="w-3.5 h-3.5 text-success" /> Total de Débitos (D)
           </span>
@@ -137,7 +137,7 @@ export function LedgerDashboard() {
           </span>
         </div>
 
-        <div className="bg-surface border border-border rounded-[24px] p-4">
+        <div className="bg-surface border border-border rounded-[var(--radius-card)] p-4">
           <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest flex items-center gap-1">
             <ArrowUpCircle className="w-3.5 h-3.5 text-danger" /> Total de Créditos (C)
           </span>
@@ -149,7 +149,7 @@ export function LedgerDashboard() {
           </span>
         </div>
 
-        <div className="bg-surface border border-border rounded-[24px] p-4">
+        <div className="bg-surface border border-border rounded-[var(--radius-card)] p-4">
           <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest flex items-center gap-1">
             <Scale className="w-3.5 h-3.5 text-brand" /> Saldo Líquido do Razão
           </span>
@@ -168,7 +168,7 @@ export function LedgerDashboard() {
       </div>
 
       {/* Filter and Table Panel */}
-      <div className="bg-surface border border-border rounded-[24px] overflow-hidden shadow-xs">
+      <div className="bg-surface border border-border rounded-[var(--radius-card)] overflow-hidden shadow-xs">
         {/* Filters bar */}
         <div className="px-5 py-4 border-b border-border flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div>

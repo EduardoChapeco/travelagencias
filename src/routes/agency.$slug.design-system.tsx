@@ -263,7 +263,7 @@ function DesignSystemPage() {
       } else if (el.type === "button") {
         elementsMarkup += `\n    <button className="inline-flex h-9 items-center justify-center rounded-full bg-brand text-xs font-semibold text-brand-foreground px-5 py-2 hover:bg-brand/90 transition-all select-none">${el.buttonText}</button>`;
       } else if (el.type === "image") {
-        elementsMarkup += `\n    <img src="${el.imageUrl}" alt="Mockup" className="rounded-[24px] border border-border w-full object-cover max-h-48" />`;
+        elementsMarkup += `\n    <img src="${el.imageUrl}" alt="Mockup" className="rounded-[var(--radius-card)] border border-border w-full object-cover max-h-48" />`;
       } else if (el.type === "features") {
         const listItems = (el.featuresList || [])
           .map(
@@ -343,7 +343,7 @@ function DesignSystemPage() {
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div className="p-5 bg-surface border border-border rounded-[24px] space-y-2">
+              <div className="p-5 bg-surface border border-border rounded-[var(--radius-card)] space-y-2">
                 <h4 className="text-xs font-bold text-foreground uppercase tracking-wider">
                   1. Design Utilitário e Profissional
                 </h4>
@@ -354,7 +354,7 @@ function DesignSystemPage() {
                 </p>
               </div>
 
-              <div className="p-5 bg-surface border border-border rounded-[24px] space-y-2">
+              <div className="p-5 bg-surface border border-border rounded-[var(--radius-card)] space-y-2">
                 <h4 className="text-xs font-bold text-foreground uppercase tracking-wider">
                   2. Sem Sombras Estáticas (Flat Design)
                 </h4>
@@ -365,7 +365,7 @@ function DesignSystemPage() {
                 </p>
               </div>
 
-              <div className="p-5 bg-surface border border-border rounded-[24px] space-y-2">
+              <div className="p-5 bg-surface border border-border rounded-[var(--radius-card)] space-y-2">
                 <h4 className="text-xs font-bold text-foreground uppercase tracking-wider">
                   3. Acessibilidade e Contraste
                 </h4>
@@ -376,7 +376,7 @@ function DesignSystemPage() {
                 </p>
               </div>
 
-              <div className="p-5 bg-surface border border-border rounded-[24px] space-y-2">
+              <div className="p-5 bg-surface border border-border rounded-[var(--radius-card)] space-y-2">
                 <h4 className="text-xs font-bold text-foreground uppercase tracking-wider">
                   4. Coesão Sincronizada
                 </h4>
@@ -388,7 +388,7 @@ function DesignSystemPage() {
               </div>
             </div>
 
-            <div className="bg-yellow-500/10 border border-yellow-500/30 rounded-[24px] p-4 flex gap-3 text-xs leading-relaxed text-yellow-700 dark:text-yellow-400">
+            <div className="bg-yellow-500/10 border border-yellow-500/30 rounded-[var(--radius-card)] p-4 flex gap-3 text-xs leading-relaxed text-yellow-700 dark:text-yellow-400">
               <AlertTriangle className="h-5 w-5 shrink-0" />
               <div>
                 <strong>Atenção Desenvolvedor:</strong> Ao criar novas seções ou módulos, NUNCA
@@ -426,7 +426,7 @@ function DesignSystemPage() {
               {COLOR_TOKENS.map((token) => (
                 <div
                   key={token.name}
-                  className="p-3 bg-surface border border-border rounded-[24px] flex flex-col justify-between gap-3"
+                  className="p-3 bg-surface border border-border rounded-[var(--radius-card)] flex flex-col justify-between gap-3"
                 >
                   <div className="space-y-1">
                     <div className="flex items-center justify-between">
@@ -469,7 +469,7 @@ function DesignSystemPage() {
               </p>
             </div>
 
-            <div className="bg-surface border border-border rounded-[24px] overflow-hidden">
+            <div className="bg-surface border border-border rounded-[var(--radius-card)] overflow-hidden">
               <table className="w-full border-collapse text-left">
                 <thead>
                   <tr className="border-b border-border bg-surface-alt/30 text-xs font-bold text-muted-foreground uppercase tracking-wider">
@@ -494,7 +494,7 @@ function DesignSystemPage() {
               </table>
             </div>
 
-            <div className="p-5 bg-surface border border-border rounded-[24px] space-y-3">
+            <div className="p-5 bg-surface border border-border rounded-[var(--radius-card)] space-y-3">
               <h4 className="text-xs font-bold text-foreground uppercase">
                 Especificação de Fontes
               </h4>
@@ -533,7 +533,7 @@ function DesignSystemPage() {
             </div>
 
             <div className="space-y-4">
-              <div className="p-5 bg-surface border border-border rounded-[24px] space-y-3">
+              <div className="p-5 bg-surface border border-border rounded-[var(--radius-card)] space-y-3">
                 <h4 className="text-xs font-bold text-foreground uppercase">
                   1. Margens e Paddings de Página
                 </h4>
@@ -546,7 +546,7 @@ function DesignSystemPage() {
                 </code>
               </div>
 
-              <div className="p-5 bg-surface border border-border rounded-[24px] space-y-3">
+              <div className="p-5 bg-surface border border-border rounded-[var(--radius-card)] space-y-3">
                 <h4 className="text-xs font-bold text-foreground uppercase">
                   2. Estrutura Bento Grid de 3 Colunas
                 </h4>
@@ -564,7 +564,7 @@ function DesignSystemPage() {
                 </pre>
               </div>
 
-              <div className="p-5 bg-surface border border-border rounded-[24px] space-y-3">
+              <div className="p-5 bg-surface border border-border rounded-[var(--radius-card)] space-y-3">
                 <h4 className="text-xs font-bold text-foreground uppercase">
                   3. Cabeçalho de Página (HeaderPortal)
                 </h4>
@@ -722,7 +722,7 @@ function DesignSystemPage() {
               </div>
 
               <div className="space-y-3 text-xs leading-relaxed">
-                <div className="bg-info-bg text-info border border-info/30 rounded-[24px] p-4 flex gap-3">
+                <div className="bg-info-bg text-info border border-info/30 rounded-[var(--radius-card)] p-4 flex gap-3">
                   <Info className="h-4.5 w-4.5 shrink-0" />
                   <div>
                     <strong>Informativo:</strong> O sistema de checkout suporta parcelamento em até
@@ -730,7 +730,7 @@ function DesignSystemPage() {
                   </div>
                 </div>
 
-                <div className="bg-success-bg text-success border border-success/30 rounded-[24px] p-4 flex gap-3">
+                <div className="bg-success-bg text-success border border-success/30 rounded-[var(--radius-card)] p-4 flex gap-3">
                   <CheckCircle2 className="h-4.5 w-4.5 shrink-0" />
                   <div>
                     <strong>Sucesso:</strong> Assinatura eletrônica concluída. O documento foi
@@ -742,7 +742,7 @@ function DesignSystemPage() {
               {showCode["alerts"] && (
                 <pre className="bg-surface-alt p-3 rounded border border-border font-mono text-[11px] text-brand overflow-x-auto">
                   {`// Alerta Azul (Info)
-<div className="bg-info-bg text-info border border-info/30 rounded-[24px] p-4 flex gap-3 text-xs leading-relaxed">
+<div className="bg-info-bg text-info border border-info/30 rounded-[var(--radius-card)] p-4 flex gap-3 text-xs leading-relaxed">
   <Info className="h-4.5 w-4.5 shrink-0" />
   <div>
     <strong>Informativo:</strong> Detalhe explicativo aqui.
@@ -750,7 +750,7 @@ function DesignSystemPage() {
 </div>
 
 // Alerta Verde (Success)
-<div className="bg-success-bg text-success border border-success/30 rounded-[24px] p-4 flex gap-3 text-xs leading-relaxed">
+<div className="bg-success-bg text-success border border-success/30 rounded-[var(--radius-card)] p-4 flex gap-3 text-xs leading-relaxed">
   <CheckCircle2 className="h-4.5 w-4.5 shrink-0" />
   <div>
     <strong>Sucesso:</strong> Sucesso da operação aqui.
@@ -784,7 +784,7 @@ function DesignSystemPage() {
                     <div
                       key={grad.name}
                       className={cn(
-                        "p-4 rounded-[24px] flex flex-col justify-end h-20 shadow-none font-bold text-xs",
+                        "p-4 rounded-[var(--radius-card)] flex flex-col justify-end h-20 shadow-none font-bold text-xs",
                         grad.css,
                       )}
                     >
@@ -953,7 +953,7 @@ function DesignSystemPage() {
                       {sandboxElements.map((el, i) => (
                         <div
                           key={el.id}
-                          className="p-3 bg-surface-alt/40 border border-border/50 rounded-[24px] space-y-2 relative group/item"
+                          className="p-3 bg-surface-alt/40 border border-border/50 rounded-[var(--radius-card)] space-y-2 relative group/item"
                         >
                           <div className="flex items-center justify-between">
                             <span className="text-[10px] font-bold uppercase tracking-wider text-brand">
@@ -1086,7 +1086,7 @@ function DesignSystemPage() {
                               key={el.id}
                               src={el.imageUrl}
                               alt="Render Preview"
-                              className="rounded-[24px] border border-border w-full object-cover max-h-48"
+                              className="rounded-[var(--radius-card)] border border-border w-full object-cover max-h-48"
                             />
                           );
                         }
@@ -1130,7 +1130,7 @@ function DesignSystemPage() {
                     </button>
                   </div>
 
-                  <pre className="bg-zinc-950 text-zinc-100 p-4 rounded-[24px] border border-zinc-800 font-mono text-[10.5px] leading-relaxed overflow-x-auto max-h-60 scrollbar-thin">
+                  <pre className="bg-zinc-950 text-zinc-100 p-4 rounded-[var(--radius-card)] border border-zinc-800 font-mono text-[10.5px] leading-relaxed overflow-x-auto max-h-60 scrollbar-thin">
                     {generateSandboxCode()}
                   </pre>
                 </div>

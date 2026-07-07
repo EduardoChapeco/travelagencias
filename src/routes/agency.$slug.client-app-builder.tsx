@@ -256,7 +256,7 @@ function ClientAppBuilderPage() {
                   return (
                     <div key={block.id} className="space-y-3">
                       <h3 className="font-bold text-lg">Próximas Viagens</h3>
-                      <div className="w-full h-24 bg-surface border border-border rounded-[24px] shadow-sm p-4 flex gap-3 items-center">
+                      <div className="w-full h-24 bg-surface border border-border rounded-[var(--radius-card)] shadow-sm p-4 flex gap-3 items-center">
                         <div className="h-16 w-16 bg-accent rounded-2xl shrink-0"></div>
                         <div>
                           <p className="font-semibold text-sm">Paris & Roma</p>
@@ -273,7 +273,7 @@ function ClientAppBuilderPage() {
                         <h3 className="font-bold text-lg">Ofertas Exclusivas</h3>
                         <span className="text-xs font-semibold" style={{ color: settings.theme_colors.primary }}>Ver tudo</span>
                       </div>
-                      <div className="w-full h-40 bg-surface border border-border rounded-[24px] shadow-sm overflow-hidden flex flex-col">
+                      <div className="w-full h-40 bg-surface border border-border rounded-[var(--radius-card)] shadow-sm overflow-hidden flex flex-col">
                         <div className="flex-1 bg-accent relative">
                           <span className="absolute top-2 right-2 bg-black/60 text-white text-[10px] px-2 py-1 rounded">R$ 2.500</span>
                         </div>
@@ -289,11 +289,11 @@ function ClientAppBuilderPage() {
                     <div key={block.id} className="space-y-3">
                       <h3 className="font-bold text-lg">Precisa de Ajuda?</h3>
                       <div className="grid grid-cols-2 gap-3">
-                        <div className="h-20 border border-border rounded-[24px] flex flex-col items-center justify-center gap-1 bg-surface">
+                        <div className="h-20 border border-border rounded-[var(--radius-card)] flex flex-col items-center justify-center gap-1 bg-surface">
                           <LifeBuoy className="h-5 w-5" style={{ color: settings.theme_colors.primary }} />
                           <span className="text-xs font-medium">Chamados</span>
                         </div>
-                        <div className="h-20 border border-border rounded-[24px] flex flex-col items-center justify-center gap-1 bg-surface">
+                        <div className="h-20 border border-border rounded-[var(--radius-card)] flex flex-col items-center justify-center gap-1 bg-surface">
                           <Smartphone className="h-5 w-5" style={{ color: settings.theme_colors.primary }} />
                           <span className="text-xs font-medium">Chat</span>
                         </div>

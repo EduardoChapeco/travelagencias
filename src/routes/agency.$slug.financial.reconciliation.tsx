@@ -264,7 +264,7 @@ function ReconciliationPage() {
           className="max-w-md h-9 text-xs"
         />
 
-        <div className="flex items-center gap-3 bg-amber-500/5 border border-amber-500/20 px-3 py-2 rounded-[24px] text-xs text-amber-800">
+        <div className="flex items-center gap-3 bg-amber-500/5 border border-amber-500/20 px-3 py-2 rounded-[var(--radius-card)] text-xs text-amber-800">
           <Clock className="w-4 h-4 text-amber-600 shrink-0" />
           <span>
             <strong>{list.length}</strong> comprovantes pendentes de validação hoje.
@@ -288,7 +288,7 @@ function ReconciliationPage() {
           <span>Tudo limpo! Nenhum comprovante aguardando conciliação.</span>
         </div>
       ) : (
-        <div className="overflow-hidden rounded-[24px] border border-border bg-surface shadow-none">
+        <div className="overflow-hidden rounded-[var(--radius-card)] border border-border bg-surface shadow-none">
           <div className="overflow-x-auto w-full">
             <table className="w-full text-xs">
               <thead className="bg-surface-alt/40 border-b border-border text-left text-[10px] uppercase font-bold tracking-wider text-muted-foreground">
@@ -401,7 +401,7 @@ function ReconciliationPage() {
             </div>
 
             <div className="p-5 space-y-4">
-              <div className="bg-gray-50 border border-border rounded-[24px] p-4 text-xs space-y-2 font-mono">
+              <div className="bg-gray-50 border border-border rounded-[var(--radius-card)] p-4 text-xs space-y-2 font-mono">
                 <div className="flex justify-between">
                   <span className="text-gray-400">Passageiro:</span>
                   <strong className="text-gray-800">
@@ -451,7 +451,7 @@ function ReconciliationPage() {
               </div>
 
               {selectedRegisterId && !selectedSessionId && (
-                <div className="text-[10px] text-amber-700 bg-amber-500/10 border border-amber-500/20 p-3 rounded-[24px] flex items-start gap-1.5">
+                <div className="text-[10px] text-amber-700 bg-amber-500/10 border border-amber-500/20 p-3 rounded-[var(--radius-card)] flex items-start gap-1.5">
                   <AlertCircle className="w-4 h-4 mt-0.5 shrink-0" />
                   <span>
                     A conta digital/banco aceita depósitos diretos sem expediente aberto, mas o
@@ -476,7 +476,7 @@ function ReconciliationPage() {
                     })
                   }
                   disabled={actionBusy || !selectedRegisterId}
-                  className="flex-1 h-10 text-xs font-bold uppercase tracking-wider bg-emerald-600 hover:bg-emerald-700 text-white rounded-[24px]"
+                  className="flex-1 h-10 text-xs font-bold uppercase tracking-wider bg-emerald-600 hover:bg-emerald-700 text-white rounded-[var(--radius-card)]"
                 >
                   {actionBusy ? "Salvando..." : "Confirmar e Lançar"}
                 </PrimaryButton>
@@ -534,7 +534,7 @@ function ReconciliationPage() {
                     })
                   }
                   disabled={actionBusy || !rejectionReason.trim()}
-                  className="flex-1 h-10 text-xs font-bold uppercase tracking-wider bg-rose-600 hover:bg-rose-700 text-white rounded-[24px]"
+                  className="flex-1 h-10 text-xs font-bold uppercase tracking-wider bg-rose-600 hover:bg-rose-700 text-white rounded-[var(--radius-card)]"
                 >
                   {actionBusy ? "Recusando..." : "Confirmar Recusa"}
                 </PrimaryButton>

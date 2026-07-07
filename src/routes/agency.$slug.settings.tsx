@@ -138,9 +138,9 @@ function Page() {
       <div className="flex-1 overflow-y-auto px-4  md:pr-6 py-4 min-h-0 pb-24">
         <div className="max-w-2xl space-y-6">
           {/* Header card com identidade */}
-          <div className="flex items-center gap-4 rounded-[24px] border border-border bg-surface px-5 py-4">
+          <div className="flex items-center gap-4 rounded-[var(--radius-card)] border border-border bg-surface px-5 py-4">
             <div
-              className="flex h-14 w-14 shrink-0 items-center justify-center rounded-[24px] text-2xl font-bold text-white"
+              className="flex h-14 w-14 shrink-0 items-center justify-center rounded-[var(--radius-card)] text-2xl font-bold text-white"
               style={{ background: agency.brand_color || "#334155" }}
             >
               {agency.name.charAt(0).toUpperCase()}
@@ -159,7 +159,7 @@ function Page() {
           {/* Form */}
           <form onSubmit={handleSubmit(onSubmit)} id="settings-form" className="space-y-6">
             {/* Identificação */}
-            <section className="rounded-[24px] border border-border bg-surface p-5 space-y-4">
+            <section className="rounded-[var(--radius-card)] border border-border bg-surface p-5 space-y-4">
               <div className="flex items-center gap-2 text-sm font-semibold">
                 <Building2 className="h-4 w-4 text-brand" /> Identificação
               </div>
@@ -195,7 +195,7 @@ function Page() {
             </section>
 
             {/* Dados Legais */}
-            <section className="rounded-[24px] border border-border bg-surface p-5 space-y-4">
+            <section className="rounded-[var(--radius-card)] border border-border bg-surface p-5 space-y-4">
               <div className="flex items-center gap-2 text-sm font-semibold">
                 <Shield className="h-4 w-4 text-brand" /> Dados Legais
               </div>
@@ -210,7 +210,7 @@ function Page() {
             </section>
 
             {/* Contato */}
-            <section className="rounded-[24px] border border-border bg-surface p-5 space-y-4">
+            <section className="rounded-[var(--radius-card)] border border-border bg-surface p-5 space-y-4">
               <div className="flex items-center gap-2 text-sm font-semibold">
                 <Mail className="h-4 w-4 text-brand" /> Contato Oficial
               </div>

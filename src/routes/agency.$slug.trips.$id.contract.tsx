@@ -581,7 +581,7 @@ function TripContract() {
       ? tripQ.error instanceof Error ? tripQ.error.message : "Erro desconhecido"
       : contractQ.error instanceof Error ? contractQ.error.message : "Erro desconhecido";
     return (
-      <div className="flex min-h-[400px] flex-col items-center justify-center p-8 text-center m-6 rounded-[24px] border border-red-200 bg-red-50/50">
+      <div className="flex min-h-[400px] flex-col items-center justify-center p-8 text-center m-6 rounded-[var(--radius-card)] border border-red-200 bg-red-50/50">
         <div className="h-10 w-10 rounded-full bg-red-100 flex items-center justify-center mb-4">
           <AlertCircle className="h-5 w-5 text-red-600" />
         </div>

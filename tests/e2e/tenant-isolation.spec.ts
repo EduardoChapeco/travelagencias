@@ -5,6 +5,9 @@ test.describe("Isolamento Multi-Tenant e Segurança RLS", () => {
   test("Deve redirecionar usuário não autenticado ao tentar acessar rotas da agência", async ({
     page,
   }) => {
+    page.on("console", (msg) => console.log("BROWSER LOG:", msg.text()));
+    page.on("pageerror", (err) => console.log("BROWSER ERROR:", err.message));
+
     // Tenta acessar a rota administrativa de uma agência sem estar logado
     await page.goto("/agency/excelencia-turismo/crm");
 

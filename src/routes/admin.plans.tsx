@@ -164,7 +164,7 @@ function Page() {
         {plans.map((plan) => (
           <div
             key={plan.id}
-            className={`relative rounded-[24px] border bg-surface p-5 flex flex-col gap-4 ${
+            className={`relative rounded-[var(--radius-card)] border bg-surface p-5 flex flex-col gap-4 ${
               plan.is_featured ? "border-brand/50 ring-1 ring-brand/20" : "border-border"
             } ${!plan.is_active ? "opacity-60" : ""}`}
           >

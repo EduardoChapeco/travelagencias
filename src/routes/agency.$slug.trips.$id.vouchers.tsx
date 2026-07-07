@@ -359,7 +359,7 @@ function TripVouchers() {
       )}
 
       {vouchersQ.data?.length === 0 && (
-        <div className="flex flex-col items-center justify-center rounded-[24px] border border-dashed border-border py-16 text-center">
+        <div className="flex flex-col items-center justify-center rounded-[var(--radius-card)] border border-dashed border-border py-16 text-center">
           <Ticket className="mb-3 h-8 w-8 text-muted-foreground" />
           <div className="text-sm font-medium">Nenhum voucher emitido</div>
           <div className="mt-1 text-xs text-muted-foreground">
@@ -491,7 +491,7 @@ function TripVouchers() {
               redes sociais.
             </p>
 
-            <div className="relative flex items-center justify-center w-full bg-neutral-100 rounded-[24px] overflow-hidden py-4">
+            <div className="relative flex items-center justify-center w-full bg-neutral-100 rounded-[var(--radius-card)] overflow-hidden py-4">
               {/* This is the invisible scaled canvas we take a snapshot of */}
               <div
                 id="story-canvas"

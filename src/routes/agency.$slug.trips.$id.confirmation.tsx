@@ -270,7 +270,7 @@ function TripConfirmationPage() {
   return (
     <div className="flex-1 overflow-y-auto p-4 md:p-6 space-y-6 max-w-4xl">
       {/* ── Header ── */}
-      <div className="rounded-[24px] border border-border bg-surface p-4 flex items-start justify-between gap-4">
+      <div className="rounded-[var(--radius-card)] border border-border bg-surface p-4 flex items-start justify-between gap-4">
         <div className="flex items-start gap-3">
           <CheckCircle2 className="h-4 w-4 text-brand mt-0.5 shrink-0" />
           <div>
@@ -331,7 +331,7 @@ function TripConfirmationPage() {
 
       {/* ── Formulário de cadastro / edição ── */}
       {showForm && (
-        <div className="rounded-[24px] border border-border bg-surface p-5 space-y-4">
+        <div className="rounded-[var(--radius-card)] border border-border bg-surface p-5 space-y-4">
           <div className="flex items-center justify-between">
             <h3 className="text-xs font-bold uppercase tracking-widest text-foreground">
               {editingId ? "Editar Localizador" : "Novo Localizador de Serviço"}
@@ -497,7 +497,7 @@ function TripConfirmationPage() {
           {items.map((item) => (
             <div
               key={item.id}
-              className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 px-4 py-3.5 rounded-[24px] border border-border bg-surface hover:bg-surface-alt/30 transition-colors group"
+              className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 px-4 py-3.5 rounded-[var(--radius-card)] border border-border bg-surface hover:bg-surface-alt/30 transition-colors group"
             >
               {/* ── Left: tipo + info ── */}
               <div className="flex items-center gap-3 min-w-0">

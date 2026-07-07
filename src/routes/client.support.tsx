@@ -109,7 +109,7 @@ function ClientSupportRoute() {
       </div>
 
       {isCreating && (
-        <div className="bg-surface border border-border p-5 rounded-[24px]">
+        <div className="bg-surface border border-border p-5 rounded-[var(--radius-card)]">
           <h2 className="text-lg font-semibold mb-4">Abrir Novo Chamado</h2>
           <form onSubmit={handleCreate} className="space-y-4">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -173,7 +173,7 @@ function ClientSupportRoute() {
       )}
 
       {!isCreating && tickets.length === 0 ? (
-        <div className="flex flex-col items-center justify-center py-20 text-center border border-dashed border-border rounded-[24px]">
+        <div className="flex flex-col items-center justify-center py-20 text-center border border-dashed border-border rounded-[var(--radius-card)]">
           <LifeBuoy className="h-12 w-12 text-muted-foreground opacity-50 mb-3" />
           <h3 className="text-lg font-medium">Nenhum chamado aberto</h3>
           <p className="text-sm text-muted-foreground mt-1 max-w-md">
@@ -183,7 +183,7 @@ function ClientSupportRoute() {
       ) : (
         <div className="grid gap-3">
           {tickets.map((ticket) => (
-            <div key={ticket.id} className="bg-surface border border-border p-4 rounded-[24px] flex flex-col md:flex-row gap-4 md:items-center justify-between hover:border-primary/50 transition-colors">
+            <div key={ticket.id} className="bg-surface border border-border p-4 rounded-[var(--radius-card)] flex flex-col md:flex-row gap-4 md:items-center justify-between hover:border-primary/50 transition-colors">
               <div className="flex-1 min-w-0">
                 <div className="flex items-center gap-2 mb-1">
                   {getStatusBadge(ticket.status)}

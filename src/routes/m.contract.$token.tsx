@@ -698,10 +698,10 @@ function Page() {
           <img
             src={c.agency_logo}
             alt={c.agency_name}
-            className="h-12 w-12 rounded-[24px] object-cover ring-1 ring-border/50 print:h-14 print:w-14 print:ring-0"
+            className="h-12 w-12 rounded-[var(--radius-card)] object-cover ring-1 ring-border/50 print:h-14 print:w-14 print:ring-0"
           />
         ) : (
-          <div className="flex h-12 w-12 items-center justify-center rounded-[24px] bg-surface-alt font-bold text-muted-foreground ring-1 ring-border/50 print:h-14 print:w-14 print:ring-0 print:bg-transparent print:border">
+          <div className="flex h-12 w-12 items-center justify-center rounded-[var(--radius-card)] bg-surface-alt font-bold text-muted-foreground ring-1 ring-border/50 print:h-14 print:w-14 print:ring-0 print:bg-transparent print:border">
             {c.agency_name.charAt(0)}
           </div>
         )}
@@ -715,7 +715,7 @@ function Page() {
         </div>
       </header>
 
-      <section className="mb-6 overflow-hidden rounded-[24px] bg-surface ring-1 ring-border/50 print:ring-0 print:border-0 print:bg-transparent print:shadow-none print:mb-8">
+      <section className="mb-6 overflow-hidden rounded-[var(--radius-card)] bg-surface ring-1 ring-border/50 print:ring-0 print:border-0 print:bg-transparent print:shadow-none print:mb-8">
         <div className="border-b border-border/50 bg-surface-alt/30 px-5 py-3 print:bg-transparent print:px-0 print:py-1 print:border-black">
           <h2 className="text-xs font-bold uppercase tracking-widest text-muted-foreground print:text-black print:text-[10px]">
             Contratante(s) / Pagante(s)
@@ -791,7 +791,7 @@ function Page() {
         </div>
       </section>
 
-      <section className="mb-8 overflow-hidden rounded-[24px] bg-surface ring-1 ring-border/50 print:ring-0 print:border-0 print:bg-transparent print:shadow-none print:mb-8 print:break-inside-avoid">
+      <section className="mb-8 overflow-hidden rounded-[var(--radius-card)] bg-surface ring-1 ring-border/50 print:ring-0 print:border-0 print:bg-transparent print:shadow-none print:mb-8 print:break-inside-avoid">
         <div className="border-b border-border/50 bg-surface-alt/30 px-5 py-3 flex items-center justify-between print:bg-transparent print:px-0 print:py-1 print:border-black">
           <h2 className="text-xs font-bold uppercase tracking-widest text-muted-foreground print:text-black print:text-[10px]">
             Termos e Cláusulas
@@ -857,7 +857,7 @@ function Page() {
                   </div>
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-6 text-xs text-foreground/80 print:gap-4 print:text-black">
                     {/* Signatory Data */}
-                    <div className="space-y-3 bg-surface-alt/30 p-4 rounded-[24px] border border-border/40 hover:border-success/20 transition-colors print:bg-transparent print:border-black print:text-black">
+                    <div className="space-y-3 bg-surface-alt/30 p-4 rounded-[var(--radius-card)] border border-border/40 hover:border-success/20 transition-colors print:bg-transparent print:border-black print:text-black">
                       <div className="font-bold text-muted-foreground uppercase tracking-widest text-[9px] print:text-black">
                         Signatário Autorizado
                       </div>
@@ -877,7 +877,7 @@ function Page() {
                     </div>
 
                     {/* Biometrics & KYC */}
-                    <div className="space-y-3 bg-surface-alt/30 p-4 rounded-[24px] border border-border/40 hover:border-success/20 transition-colors flex flex-col justify-between print:bg-transparent print:border-black print:text-black">
+                    <div className="space-y-3 bg-surface-alt/30 p-4 rounded-[var(--radius-card)] border border-border/40 hover:border-success/20 transition-colors flex flex-col justify-between print:bg-transparent print:border-black print:text-black">
                       <div>
                         <div className="font-bold text-muted-foreground uppercase tracking-widest text-[9px] mb-2.5 print:text-black">
                           Validação Biométrica (KYC)
@@ -914,7 +914,7 @@ function Page() {
                     </div>
 
                     {/* Signature Image */}
-                    <div className="flex flex-col items-center justify-center bg-white border border-border/50 rounded-[24px] p-4 hover:border-success/20 transition-colors print:border-black print:bg-transparent">
+                    <div className="flex flex-col items-center justify-center bg-white border border-border/50 rounded-[var(--radius-card)] p-4 hover:border-success/20 transition-colors print:border-black print:bg-transparent">
                       {sig.signature_image ? (
                         <img
                           src={
@@ -948,7 +948,7 @@ function Page() {
                                 .getPublicUrl(sig.video_kyc).data.publicUrl
                         }
                         controls
-                        className="h-28 rounded-[24px] border border-border bg-black max-w-[200px]"
+                        className="h-28 rounded-[var(--radius-card)] border border-border bg-black max-w-[200px]"
                       />
                     </div>
                   )}
@@ -1011,7 +1011,7 @@ function Page() {
                     download
                     target="_blank"
                     rel="noreferrer"
-                    className="flex-1 flex items-center justify-center gap-2 bg-success text-white text-xs font-bold py-3 px-4 rounded-[24px] hover:bg-success/90 transition-all active:scale-[0.98] cursor-pointer"
+                    className="flex-1 flex items-center justify-center gap-2 bg-success text-white text-xs font-bold py-3 px-4 rounded-[var(--radius-card)] hover:bg-success/90 transition-all active:scale-[0.98] cursor-pointer"
                   >
                     <FileCheck className="h-4.5 w-4.5" /> Baixar Contrato Assinado (.PDF)
                   </a>
@@ -1019,7 +1019,7 @@ function Page() {
                 <button
                   type="button"
                   onClick={downloadLegalZip}
-                  className="flex-1 flex items-center justify-center gap-2 bg-brand text-brand-foreground text-xs font-bold py-3 px-4 rounded-[24px] hover:bg-brand/90 transition-all active:scale-[0.98] cursor-pointer"
+                  className="flex-1 flex items-center justify-center gap-2 bg-brand text-brand-foreground text-xs font-bold py-3 px-4 rounded-[var(--radius-card)] hover:bg-brand/90 transition-all active:scale-[0.98] cursor-pointer"
                 >
                   <FileArchive className="h-4.5 w-4.5" /> Baixar Pacote Jurídico (.ZIP)
                 </button>
@@ -1027,7 +1027,7 @@ function Page() {
             )}
           </section>
           {addendums.length > 0 && (
-            <section className="overflow-hidden rounded-[24px] bg-surface ring-1 ring-border/50">
+            <section className="overflow-hidden rounded-[var(--radius-card)] bg-surface ring-1 ring-border/50">
               <div className="border-b border-border/50 bg-surface-alt/30 px-5 py-3">
                 <h2 className="text-xs font-bold uppercase tracking-widest text-muted-foreground">
                   Aditivos e Retificações de Contrato
@@ -1088,7 +1088,7 @@ function Page() {
       )}
       {!fullySigned && (
         <section
-          className="overflow-hidden rounded-[24px] bg-surface ring-1 ring-border/50 mt-6"
+          className="overflow-hidden rounded-[var(--radius-card)] bg-surface ring-1 ring-border/50 mt-6"
           id="interactive-signature-form"
         >
           <div className="border-b border-border/50 bg-surface-alt/30 px-5 py-3">
@@ -1098,7 +1098,7 @@ function Page() {
           </div>
           <div className="p-5 space-y-5">
             {pendingSigners.length > 1 && (
-              <div className="rounded-[24px] border border-brand/20 bg-brand/5 p-4 space-y-2">
+              <div className="rounded-[var(--radius-card)] border border-brand/20 bg-brand/5 p-4 space-y-2">
                 <label className="text-xs font-bold text-brand uppercase tracking-wider block">
                   Quem está assinando este documento agora?
                 </label>
@@ -1150,7 +1150,7 @@ function Page() {
             </div>
 
             {/* Linha do Tempo / Passos do KYC */}
-            <div className="space-y-4 rounded-[24px] border border-border bg-surface-alt/10 p-4">
+            <div className="space-y-4 rounded-[var(--radius-card)] border border-border bg-surface-alt/10 p-4">
               <div className="flex items-center gap-2 border-b border-border/50 pb-2 mb-2">
                 <Shield className="h-4 w-4 text-brand" />
                 <span className="text-xs font-bold text-foreground uppercase tracking-wider">
@@ -1312,7 +1312,7 @@ function Page() {
 
               {/* Animação / Status de Correspondência */}
               {facialMatching && (
-                <div className="p-3 bg-brand/5 border border-brand/20 rounded-[24px] flex flex-col items-center justify-center gap-2 animate-pulse pl-7 ml-7">
+                <div className="p-3 bg-brand/5 border border-brand/20 rounded-[var(--radius-card)] flex flex-col items-center justify-center gap-2 animate-pulse pl-7 ml-7">
                   <RefreshCw className="h-5 w-5 text-brand animate-spin" />
                   <span className="text-xs font-bold text-brand font-sans">
                     Análise Biométrica Facial em Andamento...
@@ -1327,7 +1327,7 @@ function Page() {
               )}
 
               {facialMatchSuccess && (
-                <div className="p-3 bg-success/5 border border-success/20 rounded-[24px] flex items-center gap-3 ml-7">
+                <div className="p-3 bg-success/5 border border-success/20 rounded-[var(--radius-card)] flex items-center gap-3 ml-7">
                   <UserCheck className="h-5 w-5 text-success shrink-0" />
                   <div>
                     <span className="text-xs font-bold text-success block font-sans">
@@ -1452,7 +1452,7 @@ function Page() {
             </div>
 
             <Field label="Assinatura Digital (Desenhe no quadro abaixo)">
-              <div className="relative overflow-hidden rounded-[24px] border border-border/60 bg-surface-alt/10">
+              <div className="relative overflow-hidden rounded-[var(--radius-card)] border border-border/60 bg-surface-alt/10">
                 <canvas
                   ref={sigRef}
                   width={600}

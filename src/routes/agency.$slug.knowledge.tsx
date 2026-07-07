@@ -484,7 +484,7 @@ function PlaybookSheet({
                 {steps.map((st, idx) => (
                   <div
                     key={idx}
-                    className="bg-surface-alt/40 border border-border rounded-[24px] p-4 relative space-y-3"
+                    className="bg-surface-alt/40 border border-border rounded-[var(--radius-card)] p-4 relative space-y-3"
                   >
                     <button
                       type="button"
@@ -660,7 +660,7 @@ function ArticleSheet({
               <Input value={tags} onChange={(e) => setTags(e.target.value)} />
             </Field>
 
-            <div className="rounded-[24px] border border-border p-4 bg-surface-alt/50 space-y-4 mt-4">
+            <div className="rounded-[var(--radius-card)] border border-border p-4 bg-surface-alt/50 space-y-4 mt-4">
               <div className="flex items-center justify-between">
                 <label className="text-sm font-bold text-foreground">Conteúdo</label>
                 <div className="flex bg-surface rounded-full p-1 border border-border">

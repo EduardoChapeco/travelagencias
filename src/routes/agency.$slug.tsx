@@ -108,7 +108,7 @@ function BlockedWrapper({ children }: { children: React.ReactNode }) {
             </p>
           </div>
 
-          <div className="rounded-[24px] bg-zinc-900 border border-zinc-800 p-4 text-xs text-zinc-500 leading-relaxed">
+          <div className="rounded-[var(--radius-card)] bg-zinc-900 border border-zinc-800 p-4 text-xs text-zinc-500 leading-relaxed">
             Se você é o proprietário desta agência, acesse a central de pagamentos ou entre em
             contato com o suporte financeiro do Turis para regularizar sua assinatura.
           </div>

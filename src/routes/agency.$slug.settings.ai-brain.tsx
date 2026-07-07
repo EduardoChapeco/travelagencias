@@ -85,28 +85,28 @@ function BrainPanel() {
 
         {/* Indicadores de Performance */}
         <div className="grid gap-4 grid-cols-2 md:grid-cols-4">
-          <div className="rounded-[24px] border border-border bg-surface p-4 flex flex-col justify-between shadow-xs">
+          <div className="rounded-[var(--radius-card)] border border-border bg-surface p-4 flex flex-col justify-between shadow-xs">
             <span className="text-[10px] text-muted-foreground uppercase font-semibold">Docs Absorvidos</span>
             <div className="flex items-baseline gap-2 mt-2">
               <span className="text-2xl font-bold text-foreground">{docs.length}</span>
               <span className="text-[10px] text-muted-foreground">PDFs/Textos</span>
             </div>
           </div>
-          <div className="rounded-[24px] border border-border bg-surface p-4 flex flex-col justify-between shadow-xs">
+          <div className="rounded-[var(--radius-card)] border border-border bg-surface p-4 flex flex-col justify-between shadow-xs">
             <span className="text-[10px] text-muted-foreground uppercase font-semibold">Base de Conhecimento</span>
             <div className="flex items-baseline gap-2 mt-2">
               <span className="text-2xl font-bold text-foreground">{totalChunks}</span>
               <span className="text-[10px] text-muted-foreground">chunks (pgvector)</span>
             </div>
           </div>
-          <div className="rounded-[24px] border border-border bg-surface p-4 flex flex-col justify-between shadow-xs">
+          <div className="rounded-[var(--radius-card)] border border-border bg-surface p-4 flex flex-col justify-between shadow-xs">
             <span className="text-[10px] text-muted-foreground uppercase font-semibold">Msgs Recebidas</span>
             <div className="flex items-baseline gap-2 mt-2">
               <span className="text-2xl font-bold text-foreground text-brand">{inboundCount}</span>
               <span className="text-[10px] text-muted-foreground">inbound (omnichannel)</span>
             </div>
           </div>
-          <div className="rounded-[24px] border border-border bg-surface p-4 flex flex-col justify-between shadow-xs">
+          <div className="rounded-[var(--radius-card)] border border-border bg-surface p-4 flex flex-col justify-between shadow-xs">
             <span className="text-[10px] text-muted-foreground uppercase font-semibold">Total no Período</span>
             <div className="flex items-baseline gap-2 mt-2">
               <span className="text-2xl font-bold text-success">{inboxMessages.length}</span>
@@ -117,7 +117,7 @@ function BrainPanel() {
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {/* RAG Documents */}
-          <div className="border border-border rounded-[24px] bg-surface overflow-hidden">
+          <div className="border border-border rounded-[var(--radius-card)] bg-surface overflow-hidden">
              <div className="p-4 border-b border-border font-semibold flex items-center gap-2">
                 <Database className="w-4 h-4 text-muted-foreground" />
                 Vetorização de Conhecimento (RAG)
@@ -148,7 +148,7 @@ function BrainPanel() {
           </div>
 
           {/* Inbox Processing */}
-          <div className="border border-border rounded-[24px] bg-surface overflow-hidden">
+          <div className="border border-border rounded-[var(--radius-card)] bg-surface overflow-hidden">
              <div className="p-4 border-b border-border font-semibold flex items-center justify-between">
                 <div className="flex items-center gap-2">
                   <Brain className="w-4 h-4 text-brand" /> 

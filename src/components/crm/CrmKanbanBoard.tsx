@@ -61,7 +61,7 @@ export function CrmKanbanBoard({
           onDragStart={onDragStart}
           onDragEnd={onDragEnd}
         >
-          <div className="flex-1 overflow-x-auto overflow-y-hidden px-4 lg:pl-[64px] lg:pr-6 py-4 no-scrollbar cursor-grab active:cursor-grabbing bg-transparent">
+          <div className="flex-1 overflow-x-auto overflow-y-hidden px-4 lg:px-6 py-4 no-scrollbar cursor-grab active:cursor-grabbing bg-transparent">
             <div className="flex h-full min-w-max gap-3.5 pb-24">
               {stages.map((stage) => {
                 const items = stagesById[stage.id] ?? [];
@@ -117,7 +117,7 @@ function Column({
       ref={setNodeRef}
       className={cn(
         "flex h-full w-[310px] shrink-0 flex-col rounded-[var(--radius-card)] transition-all duration-300",
-        "glass dark:glass-dark",
+        "kanban-column",
         isOver ? "border-brand bg-brand/5 scale-[1.01]" : ""
       )}
       style={{ borderTop: `4px solid ${stage.color || "#9ca3af"}` }}

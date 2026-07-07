@@ -612,7 +612,7 @@ function DestinationIntelligencePage() {
               </div>
 
               {/* Visa */}
-              <div className="border border-border rounded-[24px] p-4 space-y-3">
+              <div className="border border-border rounded-[var(--radius-card)] p-4 space-y-3">
                 <div className="text-xs font-bold uppercase tracking-wider text-muted-foreground flex items-center gap-1.5">
                   <Globe className="h-3.5 w-3.5" /> Visto & Entrada
                 </div>
@@ -647,7 +647,7 @@ function DestinationIntelligencePage() {
               </div>
 
               {/* Health */}
-              <div className="border border-border rounded-[24px] p-4 space-y-3">
+              <div className="border border-border rounded-[var(--radius-card)] p-4 space-y-3">
                 <div className="text-xs font-bold uppercase tracking-wider text-muted-foreground flex items-center gap-1.5">
                   <Heart className="h-3.5 w-3.5" /> Saúde
                 </div>
@@ -677,7 +677,7 @@ function DestinationIntelligencePage() {
               </div>
 
               {/* Safety */}
-              <div className="border border-border rounded-[24px] p-4 space-y-3">
+              <div className="border border-border rounded-[var(--radius-card)] p-4 space-y-3">
                 <div className="text-xs font-bold uppercase tracking-wider text-muted-foreground flex items-center gap-1.5">
                   <ShieldAlert className="h-3.5 w-3.5" /> Segurança
                 </div>
@@ -702,7 +702,7 @@ function DestinationIntelligencePage() {
               </div>
 
               {/* Practical */}
-              <div className="border border-border rounded-[24px] p-4 space-y-3">
+              <div className="border border-border rounded-[var(--radius-card)] p-4 space-y-3">
                 <div className="text-xs font-bold uppercase tracking-wider text-muted-foreground flex items-center gap-1.5">
                   <Zap className="h-3.5 w-3.5" /> Informações Práticas
                 </div>
@@ -756,7 +756,7 @@ function DestinationIntelligencePage() {
               </div>
 
               {/* Tax */}
-              <div className="border border-border rounded-[24px] p-4 space-y-3">
+              <div className="border border-border rounded-[var(--radius-card)] p-4 space-y-3">
                 <div className="text-xs font-bold uppercase tracking-wider text-muted-foreground flex items-center gap-1.5">
                   <DollarSign className="h-3.5 w-3.5" /> Taxa Turística
                 </div>
@@ -791,7 +791,7 @@ function DestinationIntelligencePage() {
               </div>
 
               {/* Curadoria e Controle */}
-              <div className="border border-border rounded-[24px] p-4 space-y-3">
+              <div className="border border-border rounded-[var(--radius-card)] p-4 space-y-3">
                 <div className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
                   Curadoria e Qualidade
                 </div>
@@ -831,7 +831,7 @@ function DestinationIntelligencePage() {
               </div>
 
               {/* Tips */}
-              <div className="border border-border rounded-[24px] p-4 space-y-3">
+              <div className="border border-border rounded-[var(--radius-card)] p-4 space-y-3">
                 <div className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
                   Dicas e Contexto
                 </div>

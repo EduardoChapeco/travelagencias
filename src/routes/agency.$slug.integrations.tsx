@@ -466,7 +466,7 @@ function WhatsAppTab({ agencyId }: { agencyId: string }) {
   return (
     <form onSubmit={save} className="mt-5 space-y-6">
       {/* Provider Selection */}
-      <div className="rounded-[24px] border border-border bg-surface p-5 space-y-4">
+      <div className="rounded-[var(--radius-card)] border border-border bg-surface p-5 space-y-4">
         <div className="flex items-center gap-2 text-foreground font-semibold">
           <MessageCircle className="h-5 w-5 text-brand" />
           Provedor de WhatsApp
@@ -488,7 +488,7 @@ function WhatsAppTab({ agencyId }: { agencyId: string }) {
           ].map((opt) => (
             <label
               key={opt.value}
-              className={`flex flex-col gap-2 p-4 rounded-[24px] border-2 cursor-pointer transition-all ${
+              className={`flex flex-col gap-2 p-4 rounded-[var(--radius-card)] border-2 cursor-pointer transition-all ${
                 config.preferred_provider === opt.value
                   ? "border-brand bg-brand/5"
                   : "border-border hover:border-brand/40"
@@ -513,7 +513,7 @@ function WhatsAppTab({ agencyId }: { agencyId: string }) {
       </div>
 
       {/* Webhook URL */}
-      <div className="rounded-[24px] border border-dashed border-border/80 bg-surface/30 p-4 space-y-2">
+      <div className="rounded-[var(--radius-card)] border border-dashed border-border/80 bg-surface/30 p-4 space-y-2">
         <div className="flex items-center gap-2 text-sm font-semibold text-muted-foreground">
           <Zap className="h-4 w-4" /> URL do Webhook
         </div>
@@ -539,7 +539,7 @@ function WhatsAppTab({ agencyId }: { agencyId: string }) {
 
       {/* Meta Official */}
       {config.preferred_provider === "meta_official" && (
-        <div className="rounded-[24px] border border-border bg-surface p-5 space-y-4">
+        <div className="rounded-[var(--radius-card)] border border-border bg-surface p-5 space-y-4">
           <div className="text-sm font-semibold text-foreground flex items-center gap-2 justify-between">
             <div className="flex items-center gap-2">
               <BarChart3 className="h-4 w-4 text-brand" /> API Oficial Meta
@@ -618,7 +618,7 @@ function WhatsAppTab({ agencyId }: { agencyId: string }) {
 
       {/* Evolution API */}
       {config.preferred_provider === "evolution_api" && (
-        <div className="rounded-[24px] border border-border bg-surface p-5 space-y-4">
+        <div className="rounded-[var(--radius-card)] border border-border bg-surface p-5 space-y-4">
           <div className="text-sm font-semibold">Evolution API (VPS)</div>
           <div className="grid gap-3 sm:grid-cols-2">
             <Field label="URL da VPS" hint="Ex: https://minhavps.com">
@@ -875,7 +875,7 @@ function AiAgentSettingsSection({ agencyId }: { agencyId: string }) {
     return <div className="text-xs text-muted-foreground">Carregando agente de IA...</div>;
 
   return (
-    <div className="mt-6 rounded-[24px] border border-border bg-surface p-5 space-y-4">
+    <div className="mt-6 rounded-[var(--radius-card)] border border-border bg-surface p-5 space-y-4">
       <div className="flex items-center gap-2 text-foreground font-semibold">
         <Cpu className="h-5 w-5 text-brand" />
         Configurações do Agente de IA (Auto-Responder)
@@ -920,7 +920,7 @@ function AiAgentSettingsSection({ agencyId }: { agencyId: string }) {
           value={context}
           onChange={(e) => setContext(e.target.value)}
           placeholder="Ex: Somos uma agência focada em ecoturismo de luxo. Sempre chame o cliente pelo primeiro nome. Destaque que nossos pacotes incluem guias bilíngues..."
-          className="w-full text-xs bg-surface-alt border border-border/60 rounded-[24px] px-4 py-2.5 resize-none focus:ring-0 focus:border-brand/50 font-sans leading-relaxed text-foreground"
+          className="w-full text-xs bg-surface-alt border border-border/60 rounded-[var(--radius-card)] px-4 py-2.5 resize-none focus:ring-0 focus:border-brand/50 font-sans leading-relaxed text-foreground"
         />
         <p className="text-[10px] text-muted-foreground mt-0.5 font-sans">
           Adicione diretrizes operacionais, regras de negócio ou ofertas exclusivas da sua agência.
@@ -1200,7 +1200,7 @@ function InfotravelTab({ agencyId }: { agencyId: string }) {
               setEditingOperatorId(null);
               setAddingNew(true);
             }}
-            className="flex items-center gap-1.5 px-3 py-2 rounded-[24px] bg-brand text-brand-foreground text-xs font-bold hover:bg-brand/90 transition-all cursor-pointer shrink-0"
+            className="flex items-center gap-1.5 px-3 py-2 rounded-[var(--radius-card)] bg-brand text-brand-foreground text-xs font-bold hover:bg-brand/90 transition-all cursor-pointer shrink-0"
           >
             <Plus className="h-3.5 w-3.5" />
             Nova Operadora
@@ -1212,7 +1212,7 @@ function InfotravelTab({ agencyId }: { agencyId: string }) {
       {showForm && (
         <form
           onSubmit={handleSaveOperator}
-          className="rounded-[24px] border border-brand/30 bg-surface p-5 space-y-4 ring-1 ring-brand/20"
+          className="rounded-[var(--radius-card)] border border-brand/30 bg-surface p-5 space-y-4 ring-1 ring-brand/20"
         >
           <div className="flex items-center justify-between">
             <h4 className="text-sm font-bold text-foreground flex items-center gap-2">
@@ -1322,7 +1322,7 @@ function InfotravelTab({ agencyId }: { agencyId: string }) {
           Carregando operadoras...
         </div>
       ) : operators.length === 0 && !showForm ? (
-        <div className="rounded-[24px] border border-dashed border-border bg-surface/50 p-10 text-center space-y-3">
+        <div className="rounded-[var(--radius-card)] border border-dashed border-border bg-surface/50 p-10 text-center space-y-3">
           <WifiOff className="h-8 w-8 text-muted-foreground/30 mx-auto" />
           <p className="text-sm font-semibold text-foreground">Nenhuma operadora configurada</p>
           <p className="text-xs text-muted-foreground max-w-sm mx-auto leading-relaxed font-sans">
@@ -1338,7 +1338,7 @@ function InfotravelTab({ agencyId }: { agencyId: string }) {
               onClick={() => {
                 if (!showForm) setSelectedOperatorId(op.operator_id);
               }}
-              className={`rounded-[24px] border bg-surface p-4 transition-all cursor-pointer ${
+              className={`rounded-[var(--radius-card)] border bg-surface p-4 transition-all cursor-pointer ${
                 selectedOperatorId === op.operator_id
                   ? "border-brand ring-1 ring-brand/30"
                   : "border-border hover:border-brand/30"
@@ -1456,7 +1456,7 @@ function InfotravelTab({ agencyId }: { agencyId: string }) {
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {/* Lado Esquerdo: Backfill */}
-          <div className="rounded-[24px] border border-border bg-surface p-5 flex flex-col justify-between">
+          <div className="rounded-[var(--radius-card)] border border-border bg-surface p-5 flex flex-col justify-between">
             <div className="space-y-3">
               <span className="text-xs font-bold text-foreground flex items-center gap-1.5">
                 <Calendar className="h-4 w-4 text-brand" /> Importar Reservas Anteriores (Lote)
@@ -1486,14 +1486,14 @@ function InfotravelTab({ agencyId }: { agencyId: string }) {
               type="button"
               disabled={syncBusy || !isConfigured}
               onClick={handleRunBackfill}
-              className="mt-4 flex h-9 items-center justify-center gap-2 rounded-[24px] bg-brand/10 text-xs font-bold text-brand hover:bg-brand/20 transition-all border border-brand/20 disabled:opacity-50 cursor-pointer"
+              className="mt-4 flex h-9 items-center justify-center gap-2 rounded-[var(--radius-card)] bg-brand/10 text-xs font-bold text-brand hover:bg-brand/20 transition-all border border-brand/20 disabled:opacity-50 cursor-pointer"
             >
               <Play className="h-3.5 w-3.5" /> Iniciar Importação de Reservas
             </button>
           </div>
 
           {/* Lado Direito: Polling Engine */}
-          <div className="rounded-[24px] border border-border bg-surface p-5 flex flex-col justify-between">
+          <div className="rounded-[var(--radius-card)] border border-border bg-surface p-5 flex flex-col justify-between">
             <div className="space-y-3">
               <span className="text-xs font-bold text-foreground flex items-center gap-1.5">
                 <RefreshCw className="h-4 w-4 text-brand" /> Sincronizador de Reservas
@@ -1511,7 +1511,7 @@ function InfotravelTab({ agencyId }: { agencyId: string }) {
               type="button"
               disabled={syncBusy || !isConfigured}
               onClick={handleRunPolling}
-              className="mt-4 flex h-9 items-center justify-center gap-2 rounded-[24px] bg-surface-alt hover:bg-surface-alt/80 text-xs font-bold text-foreground border border-border transition-all disabled:opacity-50 cursor-pointer"
+              className="mt-4 flex h-9 items-center justify-center gap-2 rounded-[var(--radius-card)] bg-surface-alt hover:bg-surface-alt/80 text-xs font-bold text-foreground border border-border transition-all disabled:opacity-50 cursor-pointer"
             >
               <RefreshCw className={`h-3.5 w-3.5 ${syncBusy ? "animate-spin" : ""}`} /> Atualizar
               Viagens Ativas
@@ -1533,7 +1533,7 @@ function InfotravelTab({ agencyId }: { agencyId: string }) {
             )}
           </div>
 
-          <div className="rounded-[24px] border border-border bg-surface overflow-x-auto">
+          <div className="rounded-[var(--radius-card)] border border-border bg-surface overflow-x-auto">
             {jobsQuery.isLoading ? (
               <div className="p-8 text-center text-xs text-muted-foreground font-sans">
                 Buscando histórico...
@@ -1650,7 +1650,7 @@ function InfotravelTab({ agencyId }: { agencyId: string }) {
                 selectedJobForError.errors_log.map((log: any, idx: number) => (
                   <div
                     key={idx}
-                    className="p-3.5 rounded-[24px] border border-danger/20 bg-danger/5 text-xs font-mono space-y-1"
+                    className="p-3.5 rounded-[var(--radius-card)] border border-danger/20 bg-danger/5 text-xs font-mono space-y-1"
                   >
                     <div className="flex justify-between items-center text-[10px] text-danger/80 border-b border-danger/10 pb-1.5 mb-1.5">
                       <span className="font-bold uppercase">
@@ -1671,7 +1671,7 @@ function InfotravelTab({ agencyId }: { agencyId: string }) {
               <button
                 type="button"
                 onClick={() => setErrorDetailsJobId(null)}
-                className="h-9 px-4 rounded-[24px] bg-brand text-xs font-bold text-brand-foreground hover:bg-brand/90 cursor-pointer transition-all"
+                className="h-9 px-4 rounded-[var(--radius-card)] bg-brand text-xs font-bold text-brand-foreground hover:bg-brand/90 cursor-pointer transition-all"
               >
                 Entendido
               </button>

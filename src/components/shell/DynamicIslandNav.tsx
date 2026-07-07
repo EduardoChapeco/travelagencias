@@ -260,7 +260,11 @@ export function DynamicIslandNav({
         onMouseEnter={handleMouseEnter}
         onMouseLeave={handleMouseLeave}
         initial={{ opacity: 0, x: -8 }}
-        animate={{ width: hovered ? 184 : 52 }}
+        animate={{ 
+          width: hovered 
+            ? "var(--shell-primary-nav-expanded-width)" 
+            : "var(--shell-primary-nav-width)" 
+        }}
         transition={{ type: "spring", bounce: 0.1, duration: 0.35 }}
         className={cn(
           "absolute left-0 top-4 bottom-4 z-50 flex flex-col",
@@ -300,7 +304,7 @@ export function DynamicIslandNav({
       </motion.aside>
 
       {/* Espaçador invisível para reservar o espaço do Hub Nav na Grid/Flex */}
-      <div className="w-[52px] shrink-0" />
+      <div className="w-[var(--shell-primary-nav-width)] shrink-0" />
 
       {/* ── MODO CONTEXTUAL (Coluna secundária, quando existir) ───── */}
       <AnimatePresence>
@@ -308,7 +312,7 @@ export function DynamicIslandNav({
           <motion.aside
             key="ctx-nav"
             initial={{ opacity: 0, x: -16, width: 0 }}
-            animate={{ opacity: 1, x: 0, width: 220 }}
+            animate={{ opacity: 1, x: 0, width: "var(--shell-context-nav-width)" }}
             exit={{ opacity: 0, x: -16, width: 0 }}
             transition={{ type: "spring", bounce: 0, duration: 0.4 }}
             className={cn(

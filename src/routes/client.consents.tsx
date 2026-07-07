@@ -88,7 +88,7 @@ function ClientConsentsPage() {
     <div className="max-w-4xl mx-auto p-4 md:p-8 space-y-8">
       <header className="flex flex-col gap-2 border-b border-border/50 pb-6">
         <div className="flex items-center gap-3">
-          <div className="flex h-12 w-12 items-center justify-center rounded-[24px] bg-brand/10 text-brand">
+          <div className="flex h-12 w-12 items-center justify-center rounded-[var(--radius-card)] bg-brand/10 text-brand">
             <Shield className="h-6 w-6" />
           </div>
           <div>
@@ -137,7 +137,7 @@ function ClientConsentsPage() {
               >
                 <div className="absolute left-0 top-0 bottom-0 w-1 bg-warning rounded-l-2xl" />
                 <div className="flex items-start gap-4">
-                  <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-[24px] bg-warning/10 text-warning">
+                  <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-[var(--radius-card)] bg-warning/10 text-warning">
                     <FileText className="h-6 w-6" />
                   </div>
                   <div>
@@ -184,7 +184,7 @@ function ClientConsentsPage() {
             {q.data.acceptances.map((a: any) => (
               <div
                 key={a.id}
-                className="flex flex-col sm:flex-row sm:items-center justify-between rounded-[24px] border border-border bg-surface p-5 gap-4 transition-colors hover:border-brand/40"
+                className="flex flex-col sm:flex-row sm:items-center justify-between rounded-[var(--radius-card)] border border-border bg-surface p-5 gap-4 transition-colors hover:border-brand/40"
               >
                 <div className="flex items-start gap-4">
                   <div className="mt-1 flex h-8 w-8 items-center justify-center rounded-full bg-success/10 text-success shrink-0">

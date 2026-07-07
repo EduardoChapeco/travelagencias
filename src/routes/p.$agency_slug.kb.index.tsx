@@ -144,7 +144,7 @@ function PublicKnowledgeBase() {
                     <Link
                       key={a.id}
                       to={`/p/${agency_slug}/kb/${a.slug}` as any}
-                      className="flex items-center justify-between p-3 rounded-[24px] hover:bg-background border border-transparent hover:border-border transition-all group"
+                      className="flex items-center justify-between p-3 rounded-[var(--radius-card)] hover:bg-background border border-transparent hover:border-border transition-all group"
                     >
                       <span className="font-semibold text-sm group-hover:text-brand transition-colors">
                         {a.title}

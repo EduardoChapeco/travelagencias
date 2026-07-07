@@ -205,7 +205,7 @@ function VisasPage() {
 
       <div className="flex-1 overflow-x-auto pt-4 px-4  md:pr-6 pb-24">
         {(stagesQ.isError || visasQ.isError) && (
-          <div className="flex flex-col items-center justify-center py-12 px-6 text-center rounded-[24px] border border-red-200 bg-red-50/60 mb-6 max-w-2xl mx-auto">
+          <div className="flex flex-col items-center justify-center py-12 px-6 text-center rounded-[var(--radius-card)] border border-red-200 bg-red-50/60 mb-6 max-w-2xl mx-auto">
             <div className="h-9 w-9 rounded-full bg-red-100 flex items-center justify-center mb-2">
               <AlertCircle className="h-4 w-4 text-red-600" />
             </div>
@@ -261,7 +261,7 @@ function StageColumn({ stage, items }: { stage: VisaStage; items: Visa[] }) {
   return (
     <div
       ref={setNodeRef}
-      className="flex h-full w-80 shrink-0 flex-col rounded-[24px] bg-surface-alt/50 border border-border"
+      className="flex h-full w-80 shrink-0 flex-col rounded-[var(--radius-card)] bg-surface-alt/50 border border-border"
     >
       <div className="flex items-center justify-between border-b border-border p-3">
         <div className="flex items-center gap-2">

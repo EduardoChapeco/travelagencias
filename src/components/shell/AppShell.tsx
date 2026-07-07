@@ -179,7 +179,7 @@ export function AppShell({
       />
 
       {/* 2. Top Status Bar — Ultra-minimalista com logo à esquerda, portal contextual no meio e hora à direita */}
-      <header className="absolute top-0 left-0 right-0 h-11 px-4 flex justify-between items-center text-white z-40 bg-transparent border-none pointer-events-none">
+      <header className="absolute top-0 left-0 right-0 h-[var(--shell-header-height)] px-4 flex justify-between items-center text-white z-40 bg-transparent border-none pointer-events-none">
         {/* Left: Logo da agência (quadrado verde) */}
         <div className="flex items-center gap-2 pointer-events-auto shrink-0">
           <Link to={`/agency/${agency?.slug}` as any} className="flex items-center gap-2 font-extrabold text-sm tracking-tight text-white/85 hover:text-white transition-colors">
@@ -215,7 +215,7 @@ export function AppShell({
 
       {/* 3. AppSidebar — Mobile drawer + Dynamic Island desktop (oculto na Home) */}
       {!isHome && !isBuilder && !isPastDue && (
-        <div className="hidden md:flex flex-col justify-center items-start h-full pt-11 relative z-40">
+        <div className="hidden md:flex flex-col justify-center items-start h-full pt-[var(--shell-header-height)] relative z-40">
           <AppSidebar mobileOpen={mobileOpen} onMobileClose={() => setMobileOpen(false)} isHome={isHome} />
         </div>
       )}
@@ -224,7 +224,7 @@ export function AppShell({
       </div>
 
       {/* 4. Main Workspace — full screen, below status bar */}
-      <div className="w-full h-full flex pt-11 z-10 relative overflow-hidden">
+      <div className="w-full h-full flex pt-[var(--shell-header-height)] z-10 relative overflow-hidden">
         {isHome ? (
           // ── HOME: FloatingDock + widgets on wallpaper ──────────────────────
           <div className="flex-1 flex flex-col relative overflow-hidden">

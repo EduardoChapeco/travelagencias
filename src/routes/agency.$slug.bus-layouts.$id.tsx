@@ -160,7 +160,7 @@ function BusLayoutEditorPage() {
         description="Selecione uma ferramenta na barra de edição e clique nas células do veículo para pintar."
       />
 
-      <div className="flex flex-col md:flex-row gap-4 items-center justify-between bg-surface border border-border p-4 rounded-[24px] shadow-xs">
+      <div className="flex flex-col md:flex-row gap-4 items-center justify-between bg-surface border border-border p-4 rounded-[var(--radius-card)] shadow-xs">
         <div className="flex flex-wrap items-center gap-2">
           <span className="text-xs font-bold text-muted-foreground mr-2">Ferramenta Ativa:</span>
           {(["seat", "aisle", "wc", "door"] as const).map((t) => (
@@ -203,7 +203,7 @@ function BusLayoutEditorPage() {
 
       <div className="flex justify-center mt-6">
         <div
-          className="bg-surface border border-border rounded-[24px] p-8 "
+          className="bg-surface border border-border rounded-[var(--radius-card)] p-8 "
           style={{
             display: "grid",
             gridTemplateColumns: `repeat(${l.cols}, minmax(0, 1fr))`,

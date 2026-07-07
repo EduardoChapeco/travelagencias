@@ -74,7 +74,7 @@ function InvoicesPage() {
 
         {!q.isLoading && q.data && q.data.data.length > 0 && (
           <>
-            <div className="overflow-hidden rounded-[24px] border border-border bg-surface">
+            <div className="overflow-hidden rounded-[var(--radius-card)] border border-border bg-surface">
               <table className="w-full text-sm">
                 <thead className="bg-surface-alt/40 text-left text-[11px] uppercase tracking-wide text-muted-foreground">
                   <tr>

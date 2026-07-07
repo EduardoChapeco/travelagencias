@@ -797,7 +797,7 @@ function ClientTripDetail() {
                       </h3>
                     </div>
                     <div className="grid grid-cols-2 gap-4 text-xs">
-                      <div className="p-3 bg-surface-alt/50 border border-border rounded-[24px]">
+                      <div className="p-3 bg-surface-alt/50 border border-border rounded-[var(--radius-card)]">
                         <span className="text-[10px] text-muted-foreground uppercase font-bold block">
                           Sua Poltrona
                         </span>
@@ -805,7 +805,7 @@ function ClientTripDetail() {
                           {enrollment?.seat_number || "A definir"}
                         </strong>
                       </div>
-                      <div className="p-3 bg-surface-alt/50 border border-border rounded-[24px]">
+                      <div className="p-3 bg-surface-alt/50 border border-border rounded-[var(--radius-card)]">
                         <span className="text-[10px] text-muted-foreground uppercase font-bold block">
                           Acomodação
                         </span>
@@ -941,7 +941,7 @@ function ClientTripDetail() {
             <div className="space-y-6 py-4">
               {/* Opções de escolha se houver mais de uma */}
               {activeCase.alternatives && activeCase.alternatives.length > 1 && (
-                <div className="space-y-2 bg-surface-alt/10 p-3 rounded-[24px] border border-border/60">
+                <div className="space-y-2 bg-surface-alt/10 p-3 rounded-[var(--radius-card)] border border-border/60">
                   <span className="text-[11px] font-bold text-muted-foreground uppercase block">
                     Selecione a opção de voo preferida:
                   </span>
@@ -952,7 +952,7 @@ function ClientTripDetail() {
                         type="button"
                         onClick={() => setSelectedAltId(alt.id)}
                         className={cn(
-                          "p-3 rounded-[24px] border text-left transition-all text-xs flex flex-col gap-1 cursor-pointer",
+                          "p-3 rounded-[var(--radius-card)] border text-left transition-all text-xs flex flex-col gap-1 cursor-pointer",
                           selectedAltId === alt.id
                             ? "border-brand bg-brand/5 text-foreground font-bold shadow-sm"
                             : "border-border bg-surface text-muted-foreground hover:text-foreground",
@@ -1177,7 +1177,7 @@ function ClientTripDetail() {
                   placeholder="Seu Nome Completo"
                   value={typedName}
                   onChange={(e) => setTypedName(e.target.value)}
-                  className="bg-surface font-serif italic text-sm border-border focus:border-brand rounded-[24px]"
+                  className="bg-surface font-serif italic text-sm border-border focus:border-brand rounded-[var(--radius-card)]"
                 />
               </div>
             </div>

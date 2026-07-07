@@ -150,7 +150,7 @@ export function GroupFinancialsDashboard() {
       <div className="flex-1 overflow-y-auto px-4  md:pr-6 py-4 min-h-0 space-y-6">
       {/* KPI Panel */}
       <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
-        <div className="bg-surface border border-border rounded-[24px] p-4">
+        <div className="bg-surface border border-border rounded-[var(--radius-card)] p-4">
           <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest flex items-center gap-1">
             <DollarSign className="w-3.5 h-3.5 text-success" /> Faturamento Total
           </span>
@@ -160,7 +160,7 @@ export function GroupFinancialsDashboard() {
           </span>
         </div>
 
-        <div className="bg-surface border border-border rounded-[24px] p-4">
+        <div className="bg-surface border border-border rounded-[var(--radius-card)] p-4">
           <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest flex items-center gap-1">
             <TrendingUp className="w-3.5 h-3.5 text-danger" /> Custos Operacionais
           </span>
@@ -170,7 +170,7 @@ export function GroupFinancialsDashboard() {
           </span>
         </div>
 
-        <div className="bg-surface border border-border rounded-[24px] p-4">
+        <div className="bg-surface border border-border rounded-[var(--radius-card)] p-4">
           <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest block">
             Resultado Líquido
           </span>
@@ -183,7 +183,7 @@ export function GroupFinancialsDashboard() {
           </span>
         </div>
 
-        <div className="bg-surface border border-border rounded-[24px] p-4">
+        <div className="bg-surface border border-border rounded-[var(--radius-card)] p-4">
           <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest flex items-center gap-1">
             <Landmark className="w-3.5 h-3.5 text-brand" /> Poupança Retida
           </span>
@@ -193,7 +193,7 @@ export function GroupFinancialsDashboard() {
           </span>
         </div>
 
-        <div className="bg-surface border border-border rounded-[24px] p-4">
+        <div className="bg-surface border border-border rounded-[var(--radius-card)] p-4">
           <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest flex items-center gap-1">
             <Target className="w-3.5 h-3.5 text-amber-600" /> Gastos Meta/Google
           </span>
@@ -205,7 +205,7 @@ export function GroupFinancialsDashboard() {
       </div>
 
       {/* Comparative Group Tours Table */}
-      <div className="bg-surface border border-border rounded-[24px] overflow-hidden shadow-xs">
+      <div className="bg-surface border border-border rounded-[var(--radius-card)] overflow-hidden shadow-xs">
         <div className="px-5 py-4 border-b border-border flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
           <div>
             <h3 className="text-sm font-bold text-foreground">
@@ -238,7 +238,7 @@ export function GroupFinancialsDashboard() {
           ) : null}
 
           {paginatedToursQ.isError ? (
-            <div className="p-8 text-center text-xs text-red-800 bg-red-50/20 flex items-center justify-center gap-2 border border-red-100 rounded-[24px] m-4">
+            <div className="p-8 text-center text-xs text-red-800 bg-red-50/20 flex items-center justify-center gap-2 border border-red-100 rounded-[var(--radius-card)] m-4">
               <AlertCircle className="w-4 h-4 text-red-650" />
               <span>Erro ao carregar a listagem comparativa de grupos. Verifique sua conexão ou permissões.</span>
             </div>
@@ -369,7 +369,7 @@ export function GroupFinancialsDashboard() {
       </div>
 
       {/* Group Transactions Ledger */}
-      <div className="bg-surface border border-border rounded-[24px] overflow-hidden shadow-xs">
+      <div className="bg-surface border border-border rounded-[var(--radius-card)] overflow-hidden shadow-xs">
         <div className="px-5 py-4 border-b border-border flex justify-between items-center">
           <div>
             <h3 className="text-sm font-bold text-foreground">

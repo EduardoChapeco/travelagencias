@@ -232,7 +232,7 @@ function Landing() {
             {stats.map((s, i) => (
               <div
                 key={i}
-                className="flex flex-col items-center justify-center rounded-[24px] border border-border bg-surface-alt p-8 transition-all hover:border-border-strong hover:bg-surface-muted group"
+                className="flex flex-col items-center justify-center rounded-[var(--radius-card)] border border-border bg-surface-alt p-8 transition-all hover:border-border-strong hover:bg-surface-muted group"
               >
                 <div className="text-4xl font-extrabold text-foreground tracking-tight group-hover:scale-105 transition-transform duration-300">
                   {s.value}
@@ -267,7 +267,7 @@ function Landing() {
 
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
             {/* O Jeito Doloroso */}
-            <div className="rounded-[24px] border border-border bg-surface p-8 space-y-6 hover:bg-surface-alt transition-colors duration-300">
+            <div className="rounded-[var(--radius-card)] border border-border bg-surface p-8 space-y-6 hover:bg-surface-alt transition-colors duration-300">
               <h3 className="text-base font-bold text-danger flex items-center gap-3">
                 <AlertTriangle className="h-5 w-5 shrink-0" />O Jeito Lento (Word, PDFs e WhatsApp
                 Solto)
@@ -312,7 +312,7 @@ function Landing() {
             </div>
 
             {/* O Jeito Turis */}
-            <div className="rounded-[24px] border-2 border-primary bg-surface p-8 space-y-6 relative hover:border-primary transition-all duration-300">
+            <div className="rounded-[var(--radius-card)] border-2 border-primary bg-surface p-8 space-y-6 relative hover:border-primary transition-all duration-300">
               <div className="absolute -top-3.5 right-6 rounded-full bg-primary px-3 py-1 text-[8px] font-bold uppercase tracking-wider text-primary-foreground">
                 Fórmula de Alto Lucro
               </div>
@@ -384,7 +384,7 @@ function Landing() {
                 <div
                   key={f.title}
                   className={cn(
-                    "group relative overflow-hidden rounded-[24px] border border-border bg-surface p-8 transition-all duration-300 hover:border-border-strong hover:bg-surface-alt",
+                    "group relative overflow-hidden rounded-[var(--radius-card)] border border-border bg-surface p-8 transition-all duration-300 hover:border-border-strong hover:bg-surface-alt",
                     (i === 0 || i === 3) &&
                       "md:col-span-2 lg:col-span-2 bg-surface-alt hover:bg-surface-muted",
                   )}
@@ -432,7 +432,7 @@ function Landing() {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div className="rounded-[24px] border border-border bg-surface p-8 space-y-6 hover:border-border-strong transition-all">
+            <div className="rounded-[var(--radius-card)] border border-border bg-surface p-8 space-y-6 hover:border-border-strong transition-all">
               <div className="flex items-center gap-0.5">
                 {[1, 2, 3, 4, 5].map((n) => (
                   <span key={n} className="text-amber-500 text-sm">
@@ -459,7 +459,7 @@ function Landing() {
               </div>
             </div>
 
-            <div className="rounded-[24px] border border-border bg-surface p-8 space-y-6 hover:border-border-strong transition-all">
+            <div className="rounded-[var(--radius-card)] border border-border bg-surface p-8 space-y-6 hover:border-border-strong transition-all">
               <div className="flex items-center gap-0.5">
                 {[1, 2, 3, 4, 5].map((n) => (
                   <span key={n} className="text-amber-500 text-sm">

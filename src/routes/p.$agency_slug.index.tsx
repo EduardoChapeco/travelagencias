@@ -501,7 +501,7 @@ function HomePage() {
                       href={`mailto:${company.email}`}
                       className="flex items-center gap-3 text-muted-foreground hover:text-foreground transition-colors group"
                     >
-                      <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-[24px] border border-border group-hover:border-brand/30 transition-colors">
+                      <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-[var(--radius-card)] border border-border group-hover:border-brand/30 transition-colors">
                         <Mail className="h-4 w-4" />
                       </div>
                       <div>
@@ -514,7 +514,7 @@ function HomePage() {
                   )}
                   {company.phone && (
                     <div className="flex items-center gap-3 text-muted-foreground">
-                      <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-[24px] border border-border">
+                      <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-[var(--radius-card)] border border-border">
                         <Phone className="h-4 w-4" />
                       </div>
                       <div>
@@ -532,7 +532,7 @@ function HomePage() {
                       rel="noreferrer"
                       className="flex items-center gap-3 text-muted-foreground hover:text-foreground transition-colors group"
                     >
-                      <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-[24px] border border-border group-hover:border-green-500/30 transition-colors">
+                      <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-[var(--radius-card)] border border-border group-hover:border-green-500/30 transition-colors">
                         <MessageCircle className="h-4 w-4 group-hover:text-green-500 transition-colors" />
                       </div>
                       <div>
@@ -550,7 +550,7 @@ function HomePage() {
                       rel="noreferrer"
                       className="flex items-center gap-3 text-muted-foreground hover:text-foreground transition-colors group"
                     >
-                      <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-[24px] border border-border group-hover:border-brand/30 transition-colors">
+                      <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-[var(--radius-card)] border border-border group-hover:border-brand/30 transition-colors">
                         <Globe className="h-4 w-4" />
                       </div>
                       <div>
@@ -565,7 +565,7 @@ function HomePage() {
                   )}
                   {(company.address as any)?.street && (
                     <div className="flex items-start gap-3 text-muted-foreground">
-                      <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-[24px] border border-border">
+                      <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-[var(--radius-card)] border border-border">
                         <MapPin className="h-4 w-4" />
                       </div>
                       <div>
@@ -614,7 +614,7 @@ function HomePage() {
                       return (
                         <div
                           key={day}
-                          className={`flex items-center justify-between rounded-[24px] px-4 py-2.5 text-sm transition-colors ${
+                          className={`flex items-center justify-between rounded-[var(--radius-card)] px-4 py-2.5 text-sm transition-colors ${
                             isToday
                               ? "border border-brand/20 bg-brand/5"
                               : "border border-transparent"

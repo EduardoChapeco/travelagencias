@@ -128,7 +128,7 @@ function Page() {
 
         {/* 1. Metrics Overview */}
         <div className="grid gap-4 grid-cols-2 md:grid-cols-4">
-          <div className="rounded-[24px] border border-border bg-surface p-4 flex flex-col justify-between shadow-xs">
+          <div className="rounded-[var(--radius-card)] border border-border bg-surface p-4 flex flex-col justify-between shadow-xs">
             <span className="text-[10px] text-muted-foreground uppercase font-semibold">
               Total de Interações
             </span>
@@ -137,7 +137,7 @@ function Page() {
               <span className="text-[10px] text-muted-foreground">mensagens/ações</span>
             </div>
           </div>
-          <div className="rounded-[24px] border border-border bg-surface p-4 flex flex-col justify-between shadow-xs">
+          <div className="rounded-[var(--radius-card)] border border-border bg-surface p-4 flex flex-col justify-between shadow-xs">
             <span className="text-[10px] text-muted-foreground uppercase font-semibold">
               Ferramentas Executadas
             </span>
@@ -148,7 +148,7 @@ function Page() {
               <span className="text-[10px] text-muted-foreground">actions</span>
             </div>
           </div>
-          <div className="rounded-[24px] border border-border bg-surface p-4 flex flex-col justify-between shadow-xs">
+          <div className="rounded-[var(--radius-card)] border border-border bg-surface p-4 flex flex-col justify-between shadow-xs">
             <span className="text-[10px] text-muted-foreground uppercase font-semibold">
               Falhas / Erros
             </span>
@@ -164,7 +164,7 @@ function Page() {
               <span className="text-[10px] text-muted-foreground">exceções</span>
             </div>
           </div>
-          <div className="rounded-[24px] border border-border bg-surface p-4 flex flex-col justify-between shadow-xs">
+          <div className="rounded-[var(--radius-card)] border border-border bg-surface p-4 flex flex-col justify-between shadow-xs">
             <span className="text-[10px] text-muted-foreground uppercase font-semibold">
               Isolamento Multi-Tenant
             </span>
@@ -176,7 +176,7 @@ function Page() {
         </div>
 
         {/* 2. Filter Controls */}
-        <div className="rounded-[24px] border border-border bg-surface p-4 flex flex-wrap gap-4 items-center">
+        <div className="rounded-[var(--radius-card)] border border-border bg-surface p-4 flex flex-wrap gap-4 items-center">
           <div className="flex flex-col gap-1 shrink-0">
             <span className="text-[10px] text-muted-foreground uppercase">Operador</span>
             <select
@@ -212,7 +212,7 @@ function Page() {
         </div>
 
         {/* 3. Log Stream */}
-        <div className="rounded-[24px] border border-border bg-surface overflow-hidden shadow-xs">
+        <div className="rounded-[var(--radius-card)] border border-border bg-surface overflow-hidden shadow-xs">
           <div className="border-b border-border bg-surface-alt px-4 py-3 flex items-center justify-between">
             <span className="text-xs font-bold text-foreground">Fluxo de Eventos</span>
             <span className="text-[10px] text-muted-foreground">

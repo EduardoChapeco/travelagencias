@@ -96,7 +96,7 @@ export function LeadCardView({
   return (
     <div
       {...(dragAttributes ?? {})}
-      className={`group relative cursor-grab rounded-3xl border border-border/60 bg-surface/80 dark:bg-surface/60 p-4 transition-all duration-200 active:cursor-grabbing backdrop-blur-md ${
+      className={`group relative cursor-grab rounded-3xl p-4 transition-all duration-200 active:cursor-grabbing glass-card ${
         dragging
           ? "border-brand ring-2 ring-brand/20 scale-105 z-50 rotate-1 opacity-95"
           : isCold

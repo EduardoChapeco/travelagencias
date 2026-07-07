@@ -2,7 +2,7 @@ import { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Sparkles, X, MessageSquare, Compass, Send } from "lucide-react";
 import { AIChatPanel } from "./AIChatPanel";
-import { buildContext } from "./AppSidebar";
+import { buildContext } from "@/lib/navigation.config";
 import { useAgency } from "@/lib/agency-context";
 import { useRouterState, useParams } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
@@ -39,7 +39,7 @@ export function AIFloatingWidget() {
     },
   });
 
-  const { aiActions } = buildContext(pathname, base, isAdmin, tripId, trip);
+  const { aiActions } = buildContext(pathname, base, isAdmin, tripId ?? undefined, trip);
 
   const [isOpen, setIsOpen] = useState(false);
   const [isHovered, setIsHovered] = useState(false);
@@ -107,7 +107,7 @@ export function AIFloatingWidget() {
                   <Compass className="w-3.5 h-3.5" /> Ações Rápidas desta página
                 </span>
                 <div className="flex flex-wrap gap-1.5 max-h-[80px] overflow-y-auto no-scrollbar">
-                  {aiActions.map((act, idx) => (
+                  {aiActions.map((act: any, idx: number) => (
                     <button
                       key={idx}
                       onClick={() => handleSuggestionClick(act.prompt)}

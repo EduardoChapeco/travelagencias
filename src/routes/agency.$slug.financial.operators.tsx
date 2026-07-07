@@ -165,7 +165,7 @@ function OperatorsFinancial() {
 
       <div className="flex-1 overflow-y-auto px-4  md:pr-6 py-4 min-h-0 space-y-6 pb-24">
         {/* ── Header descritivo ── */}
-        <div className="rounded-[24px] border border-border bg-surface p-5 space-y-2">
+        <div className="rounded-[var(--radius-card)] border border-border bg-surface p-5 space-y-2">
           <div className="flex items-center gap-2">
             <Building2 className="h-5 w-5 text-brand" />
             <h2 className="text-sm font-bold tracking-tight text-foreground uppercase">
@@ -180,7 +180,7 @@ function OperatorsFinancial() {
         </div>
 
         {/* ── Info Banner ────────────────────────────────────────────────── */}
-        <div className="flex items-start gap-3 rounded-[24px] border border-blue-200 bg-blue-50/60 p-4">
+        <div className="flex items-start gap-3 rounded-[var(--radius-card)] border border-blue-200 bg-blue-50/60 p-4">
           <Info className="h-4 w-4 text-blue-600 shrink-0 mt-0.5" />
           <div className="text-xs text-blue-800 leading-relaxed">
             <strong>Como funciona:</strong> Quando o cliente paga diretamente para a operadora ou
@@ -193,7 +193,7 @@ function OperatorsFinancial() {
 
         {/* ── Error State ──────────────────────────────────────────────────── */}
         {isError && (
-          <div className="flex flex-col items-center justify-center py-16 px-6 text-center rounded-[24px] border border-red-200 bg-red-50/60 mb-6">
+          <div className="flex flex-col items-center justify-center py-16 px-6 text-center rounded-[var(--radius-card)] border border-red-200 bg-red-50/60 mb-6">
             <div className="h-10 w-10 rounded-full bg-red-100 flex items-center justify-center mb-3">
               <AlertCircle className="h-5 w-5 text-red-600" />
             </div>
@@ -208,7 +208,7 @@ function OperatorsFinancial() {
         {!isError && (
           <>
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-              <div className="rounded-[24px] border border-border bg-surface p-4">
+              <div className="rounded-[var(--radius-card)] border border-border bg-surface p-4">
                 <div className="flex items-center gap-2 mb-2">
                   <TrendingUp className="h-4 w-4 text-brand" />
                   <span className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
@@ -221,7 +221,7 @@ function OperatorsFinancial() {
                 </p>
               </div>
 
-              <div className="rounded-[24px] border border-border bg-surface p-4">
+              <div className="rounded-[var(--radius-card)] border border-border bg-surface p-4">
                 <div className="flex items-center gap-2 mb-2">
                   <BarChart2 className="h-4 w-4 text-emerald-500" />
                   <span className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
@@ -234,7 +234,7 @@ function OperatorsFinancial() {
                 </p>
               </div>
 
-              <div className="rounded-[24px] border border-border bg-surface p-4">
+              <div className="rounded-[var(--radius-card)] border border-border bg-surface p-4">
                 <div className="flex items-center gap-2 mb-2">
                   <Building2 className="h-4 w-4 text-amber-500" />
                   <span className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
@@ -250,7 +250,7 @@ function OperatorsFinancial() {
 
           {/* ── Records Table ─────────────────────────────────────────── */}
           {activeTab === "records" && (
-            <div className="rounded-[24px] border border-border bg-surface overflow-hidden mb-6">
+            <div className="rounded-[var(--radius-card)] border border-border bg-surface overflow-hidden mb-6">
               {recordsQ.isLoading ? (
                 <div className="py-12 text-center text-sm text-muted-foreground animate-pulse">
                   Carregando lançamentos…
@@ -316,7 +316,7 @@ function OperatorsFinancial() {
 
           {/* ── Installments Table ─────────────────────────────────────── */}
           {activeTab === "installments" && (
-            <div className="rounded-[24px] border border-border bg-surface overflow-hidden mb-6">
+            <div className="rounded-[var(--radius-card)] border border-border bg-surface overflow-hidden mb-6">
               {installmentsQ.isLoading ? (
                 <div className="py-12 text-center text-sm text-muted-foreground animate-pulse">
                   Carregando parcelas…

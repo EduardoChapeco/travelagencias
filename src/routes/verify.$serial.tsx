@@ -93,7 +93,7 @@ function Page() {
                   Emitido por {row.issuer}
                 </p>
               </div>
-              <div className="mt-8 overflow-hidden rounded-[24px] border border-border/50 bg-surface-alt/20">
+              <div className="mt-8 overflow-hidden rounded-[var(--radius-card)] border border-border/50 bg-surface-alt/20">
                 <dl className="divide-y divide-border/50 text-xs">
                   <Row k="Partes Envolvidas" v={mask(row.parties_masked)} />
                   <Row

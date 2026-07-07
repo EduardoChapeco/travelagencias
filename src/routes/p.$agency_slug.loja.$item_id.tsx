@@ -120,7 +120,7 @@ function PublicStoreItemDetail() {
         <Link
           to="/p/$agency_slug/loja"
           params={{ agency_slug }}
-          className="inline-flex items-center gap-2 bg-brand text-brand-foreground px-6 py-3 rounded-[24px] font-bold hover:opacity-90 transition-opacity"
+          className="inline-flex items-center gap-2 bg-brand text-brand-foreground px-6 py-3 rounded-[var(--radius-card)] font-bold hover:opacity-90 transition-opacity"
         >
           <ArrowLeft className="h-4 w-4" />
           Voltar para a loja
@@ -209,7 +209,7 @@ function PublicStoreItemDetail() {
               <h4 className="font-bold text-foreground mb-4">Tenho interesse neste pacote</h4>
               
               {formSubmitted ? (
-                <div className="bg-success-bg border border-success/20 rounded-[24px] p-6 text-center">
+                <div className="bg-success-bg border border-success/20 rounded-[var(--radius-card)] p-6 text-center">
                   <div className="mx-auto w-12 h-12 bg-success/20 text-success rounded-full flex items-center justify-center mb-4">
                     <CheckCircle2 className="h-6 w-6" />
                   </div>

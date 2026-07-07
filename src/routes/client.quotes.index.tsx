@@ -71,11 +71,11 @@ function ClientQuotesIndex() {
 
       {q.isLoading ? (
         <div className="animate-pulse space-y-4">
-          <div className="h-24 bg-surface rounded-[24px] border border-border"></div>
-          <div className="h-24 bg-surface rounded-[24px] border border-border"></div>
+          <div className="h-24 bg-surface rounded-[var(--radius-card)] border border-border"></div>
+          <div className="h-24 bg-surface rounded-[var(--radius-card)] border border-border"></div>
         </div>
       ) : q.data?.length === 0 ? (
-        <div className="rounded-[24px] border border-dashed border-border p-12 text-center text-muted-foreground bg-surface/50">
+        <div className="rounded-[var(--radius-card)] border border-dashed border-border p-12 text-center text-muted-foreground bg-surface/50">
           <FileText className="h-10 w-10 mx-auto mb-3 opacity-50" />
           <h3 className="text-lg font-semibold text-foreground mb-1">Nenhuma cotação</h3>
           <p className="text-sm">Você ainda não possui cotações cadastradas em seu perfil.</p>
@@ -91,7 +91,7 @@ function ClientQuotesIndex() {
                 key={quote.id}
                 to="/client/quotes/$id"
                 params={{ id: quote.id }}
-                className="flex flex-col md:flex-row md:items-center justify-between p-5 rounded-[24px] border border-border bg-surface hover:border-primary/50 transition-colors gap-4"
+                className="flex flex-col md:flex-row md:items-center justify-between p-5 rounded-[var(--radius-card)] border border-border bg-surface hover:border-primary/50 transition-colors gap-4"
               >
                 <div className="flex gap-4 items-start md:items-center">
                   <div className={`h-12 w-12 rounded-full flex items-center justify-center shrink-0 bg-${statusInfo.color}-500/10 text-${statusInfo.color}-500`}>

@@ -268,7 +268,7 @@ function RfpDetailPage() {
                 </div>
               </div>
 
-              <div className="text-sm text-foreground whitespace-pre-wrap leading-relaxed p-4 bg-surface-alt/30 rounded-[24px] border border-border/50">
+              <div className="text-sm text-foreground whitespace-pre-wrap leading-relaxed p-4 bg-surface-alt/30 rounded-[var(--radius-card)] border border-border/50">
                 {typeof rfp.requirements === "string"
                   ? rfp.requirements
                   : JSON.stringify(rfp.requirements, null, 2)}
@@ -291,7 +291,7 @@ function RfpDetailPage() {
               </div>
 
               {addingOption && (
-                <div className="bg-surface-alt/50 border border-brand/30 p-4 rounded-[24px] mb-4 space-y-3">
+                <div className="bg-surface-alt/50 border border-brand/30 p-4 rounded-[var(--radius-card)] mb-4 space-y-3">
                   <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                     <div className="sm:col-span-2">
                       <label className="text-[10px] uppercase tracking-widest font-semibold text-muted-foreground mb-1 block">
@@ -338,14 +338,14 @@ function RfpDetailPage() {
 
               <div className="space-y-4">
                 {options.length === 0 && !addingOption && (
-                  <div className="text-center p-6 border-2 border-dashed border-border rounded-[24px] text-muted-foreground text-sm font-medium">
+                  <div className="text-center p-6 border-2 border-dashed border-border rounded-[var(--radius-card)] text-muted-foreground text-sm font-medium">
                     Nenhuma cotação adicionada ainda.
                   </div>
                 )}
                 {options.map((opt: any) => (
                   <div
                     key={opt.id}
-                    className={`p-4 rounded-[24px] border ${rfp.approved_option_id === opt.id ? "bg-success/5 border-success/30 ring-1 ring-success/20" : "bg-surface border-border"} relative group`}
+                    className={`p-4 rounded-[var(--radius-card)] border ${rfp.approved_option_id === opt.id ? "bg-success/5 border-success/30 ring-1 ring-success/20" : "bg-surface border-border"} relative group`}
                   >
                     {rfp.approved_option_id === opt.id && (
                       <div className="absolute top-4 right-4 text-success font-bold text-[10px] uppercase tracking-widest flex items-center gap-1">

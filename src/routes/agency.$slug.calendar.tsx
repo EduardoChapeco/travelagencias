@@ -326,7 +326,7 @@ function CalendarPage() {
 
       <div className="flex-1 overflow-auto px-4  md:pr-6 py-4 flex flex-col">
         {(meetingsQ.isError || usersQ.isError || leadsQ.isError) && (
-          <div className="flex flex-col items-center justify-center py-10 px-6 text-center rounded-[24px] border border-red-200 bg-red-50/60 mb-2 max-w-2xl mx-auto shrink-0">
+          <div className="flex flex-col items-center justify-center py-10 px-6 text-center rounded-[var(--radius-card)] border border-red-200 bg-red-50/60 mb-2 max-w-2xl mx-auto shrink-0">
             <div className="h-9 w-9 rounded-full bg-red-100 flex items-center justify-center mb-2">
               <AlertCircle className="h-4 w-4 text-red-650" />
             </div>
@@ -337,7 +337,7 @@ function CalendarPage() {
           </div>
         )}
 
-        <div className="bg-surface border border-border/70 rounded-[24px] overflow-hidden h-full flex flex-col">
+        <div className="bg-surface border border-border/70 rounded-[var(--radius-card)] overflow-hidden h-full flex flex-col">
           <div className="grid grid-cols-7 border-b border-border bg-surface-alt/10">
             {WEEKDAYS.map((day) => (
               <div
@@ -512,7 +512,7 @@ function CalendarPage() {
                 </div>
               </div>
 
-              <div className="bg-surface-alt/10 border border-border p-3.5 rounded-[24px] flex items-center justify-between gap-4">
+              <div className="bg-surface-alt/10 border border-border p-3.5 rounded-[var(--radius-card)] flex items-center justify-between gap-4">
                 <div>
                   <span className="text-[10px] uppercase font-bold text-muted-foreground block">
                     Lead Associado

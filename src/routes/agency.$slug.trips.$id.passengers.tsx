@@ -286,7 +286,7 @@ function PassengersPage() {
     <div className="flex-1 overflow-y-auto px-4 md:px-6 py-5 min-h-0">
       <ConfirmDialog />
       {(list.isError || tripQ.isError || docsQ.isError) && (
-        <div className="mb-6 flex flex-col items-center justify-center py-10 px-6 text-center rounded-[24px] border border-red-200 bg-red-50/60">
+        <div className="mb-6 flex flex-col items-center justify-center py-10 px-6 text-center rounded-[var(--radius-card)] border border-red-200 bg-red-50/60">
           <div className="h-9 w-9 rounded-full bg-red-100 flex items-center justify-center mb-2">
             <AlertCircle className="h-4 w-4 text-red-600" />
           </div>
@@ -334,7 +334,7 @@ function PassengersPage() {
             <button
               onClick={() => confirmAllImported.mutate()}
               disabled={confirmAllImported.isPending}
-              className="h-9 px-4 rounded-[24px] bg-warning/20 border border-warning/30 text-xs font-bold text-warning hover:bg-warning/30 transition-all flex items-center justify-center gap-2 cursor-pointer"
+              className="h-9 px-4 rounded-[var(--radius-card)] bg-warning/20 border border-warning/30 text-xs font-bold text-warning hover:bg-warning/30 transition-all flex items-center justify-center gap-2 cursor-pointer"
             >
               {confirmAllImported.isPending ? (
                 <Loader2 className="h-3.5 w-3.5 animate-spin" />
@@ -587,7 +587,7 @@ function PassengersPage() {
                   </div>
 
                   {/* Document upload form inside the card */}
-                  <div className="rounded-[24px] border border-dashed border-border/80 p-3 bg-surface-alt/5 flex flex-col gap-2">
+                  <div className="rounded-[var(--radius-card)] border border-dashed border-border/80 p-3 bg-surface-alt/5 flex flex-col gap-2">
                     <div className="grid grid-cols-2 gap-2">
                       <select
                         value={selectedDocType[p.id] || "passport"}
@@ -858,7 +858,7 @@ function DataConferencePanel({
             )}
           </div>
 
-          <div className="flex-1 flex items-center justify-center rounded-[24px] border border-dashed border-border/80 bg-surface p-4 overflow-hidden relative">
+          <div className="flex-1 flex items-center justify-center rounded-[var(--radius-card)] border border-dashed border-border/80 bg-surface p-4 overflow-hidden relative">
             {loadingUrl ? (
               <div className="flex flex-col items-center gap-2 text-muted-foreground text-sm">
                 <Loader2 className="h-6 w-6 animate-spin text-brand" />
@@ -882,7 +882,7 @@ function DataConferencePanel({
                   Anexe o Passaporte, RG ou Visto do passageiro para visualizar aqui durante a
                   conferência.
                 </p>
-                <label className="flex h-9 items-center justify-center gap-1.5 rounded-[24px] bg-brand/10 px-4 text-xs font-bold text-brand hover:bg-brand/20 cursor-pointer transition-all">
+                <label className="flex h-9 items-center justify-center gap-1.5 rounded-[var(--radius-card)] bg-brand/10 px-4 text-xs font-bold text-brand hover:bg-brand/20 cursor-pointer transition-all">
                   <Upload className="h-4 w-4" /> Anexar Documento
                   <input
                     type="file"
@@ -901,7 +901,7 @@ function DataConferencePanel({
           </div>
 
           {doc?.extracted_metadata && Object.keys(doc.extracted_metadata).length > 0 && (
-            <div className="mt-4 p-4 rounded-[24px] border border-border bg-surface text-xs">
+            <div className="mt-4 p-4 rounded-[var(--radius-card)] border border-border bg-surface text-xs">
               <h4 className="font-bold text-foreground mb-2 flex items-center gap-1.5">
                 <ShieldCheck className="h-4 w-4 text-emerald-600" /> Dados Identificados pela
                 Inteligência Artificial
@@ -1062,14 +1062,14 @@ function DataConferencePanel({
           <div className="border-t border-border pt-4 mt-6 flex gap-3">
             <button
               onClick={onClose}
-              className="flex-1 h-10 rounded-[24px] border border-border bg-surface text-xs font-bold text-muted-foreground hover:bg-surface-alt transition-colors cursor-pointer"
+              className="flex-1 h-10 rounded-[var(--radius-card)] border border-border bg-surface text-xs font-bold text-muted-foreground hover:bg-surface-alt transition-colors cursor-pointer"
             >
               Cancelar
             </button>
             <button
               onClick={handleSave}
               disabled={saving || uploading}
-              className="flex-1 h-10 rounded-[24px] bg-brand text-xs font-bold text-brand-foreground hover:bg-brand/90 transition-colors flex items-center justify-center gap-1.5 cursor-pointer"
+              className="flex-1 h-10 rounded-[var(--radius-card)] bg-brand text-xs font-bold text-brand-foreground hover:bg-brand/90 transition-colors flex items-center justify-center gap-1.5 cursor-pointer"
             >
               {saving ? (
                 <Loader2 className="h-4 w-4 animate-spin" />

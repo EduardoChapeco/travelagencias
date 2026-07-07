@@ -57,7 +57,7 @@ function ClientWallet() {
   });
 
   return (
-    <div className="max-w-md mx-auto space-y-6 pb-20 relative min-h-[calc(100vh-100px)]">
+    <div className="max-w-md mx-auto space-y-6 pb-20 relative h-full">
       <PageHeader
         title="Carteira Digital"
         description="Seus cartões de embarque e vouchers prontos para uso offline."
@@ -71,7 +71,7 @@ function ClientWallet() {
       )}
 
       {!q.isLoading && q.data?.length === 0 && (
-        <div className="rounded-[24px] border border-dashed border-border p-12 text-center text-muted-foreground bg-surface/50 mt-10">
+        <div className="rounded-[var(--radius-card)] border border-dashed border-border p-12 text-center text-muted-foreground bg-surface/50 mt-10">
           <WalletCards className="h-10 w-10 mx-auto mb-3 opacity-50" />
           <h3 className="text-lg font-semibold text-foreground mb-1">Carteira Vazia</h3>
           <p className="text-sm">Os documentos das suas próximas viagens aparecerão aqui magicamente.</p>
@@ -93,7 +93,7 @@ function ClientWallet() {
               key={pass.id}
               onClick={() => setSelectedPass(isSelected ? null : pass)}
               className={`
-                w-full rounded-[24px] p-6 text-white cursor-pointer shadow-xl transition-all duration-500 ease-spring
+                w-full rounded-[var(--radius-card)] p-6 text-white cursor-pointer shadow-xl transition-all duration-500 ease-spring
                 ${isSelected ? "relative z-50 h-[500px]" : "h-56 mb-[-120px] hover:-translate-y-4"}
               `}
               style={{
@@ -120,7 +120,7 @@ function ClientWallet() {
               </div>
 
               {isSelected && (
-                <div className="absolute bottom-6 left-6 right-6 bg-white text-black rounded-[24px] p-6 flex flex-col items-center shadow-inner animate-in fade-in slide-in-from-bottom-10 duration-500">
+                <div className="absolute bottom-6 left-6 right-6 bg-white text-black rounded-[var(--radius-card)] p-6 flex flex-col items-center shadow-inner animate-in fade-in slide-in-from-bottom-10 duration-500">
                   <QrCode className="h-48 w-48 text-zinc-900" strokeWidth={1} />
                   <div className="mt-4 text-center">
                     <p className="text-xs text-muted-foreground uppercase tracking-widest font-semibold mb-1">Código do Bilhete</p>

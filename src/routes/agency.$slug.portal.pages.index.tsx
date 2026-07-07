@@ -410,7 +410,7 @@ function PagesPage() {
 
       <div className="flex-1 overflow-y-auto px-4  md:pr-6 py-4 min-h-0 space-y-6 pb-24">
         {(q.isError || analyticsQ.isError) && (
-          <div className="flex flex-col items-center justify-center py-10 px-6 text-center rounded-[24px] border border-red-200 bg-red-50/60 max-w-2xl mx-auto shrink-0">
+          <div className="flex flex-col items-center justify-center py-10 px-6 text-center rounded-[var(--radius-card)] border border-red-200 bg-red-50/60 max-w-2xl mx-auto shrink-0">
             <div className="h-9 w-9 rounded-full bg-red-100 flex items-center justify-center mb-2">
               <AlertCircle className="h-4 w-4 text-red-600" />
             </div>
@@ -424,7 +424,7 @@ function PagesPage() {
         {/* Modern Analytics & Highlight Row */}
         {agency && (
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
-            <div className="rounded-[24px] border border-border/60 bg-surface p-5 flex items-center justify-between">
+            <div className="rounded-[var(--radius-card)] border border-border/60 bg-surface p-5 flex items-center justify-between">
               <div>
                 <span className="text-[11px] font-bold uppercase tracking-wider text-muted-foreground">
                   Páginas Criadas
@@ -436,7 +436,7 @@ function PagesPage() {
               </div>
             </div>
 
-            <div className="rounded-[24px] border border-border/60 bg-surface p-5 flex items-center justify-between">
+            <div className="rounded-[var(--radius-card)] border border-border/60 bg-surface p-5 flex items-center justify-between">
               <div>
                 <span className="text-[11px] font-bold uppercase tracking-wider text-muted-foreground">
                   Acessos Totais
@@ -448,7 +448,7 @@ function PagesPage() {
               </div>
             </div>
 
-            <div className="rounded-[24px] border border-border/60 bg-surface p-5 flex items-center justify-between">
+            <div className="rounded-[var(--radius-card)] border border-border/60 bg-surface p-5 flex items-center justify-between">
               <div>
                 <span className="text-[11px] font-bold uppercase tracking-wider text-muted-foreground">
                   Cliques em Links
@@ -460,7 +460,7 @@ function PagesPage() {
               </div>
             </div>
 
-            <div className="rounded-[24px] border border-border/60 bg-surface p-5 flex items-center justify-between">
+            <div className="rounded-[var(--radius-card)] border border-border/60 bg-surface p-5 flex items-center justify-between">
               <div>
                 <span className="text-[11px] font-bold uppercase tracking-wider text-muted-foreground">
                   CTR Geral
@@ -494,7 +494,7 @@ function PagesPage() {
                 return (
                   <div
                     key={tpl.id}
-                    className="group relative flex flex-col justify-between rounded-[24px] border border-border/60 bg-surface p-5 transition-all duration-300 hover:border-brand/40 hover:-translate-y-0.5"
+                    className="group relative flex flex-col justify-between rounded-[var(--radius-card)] border border-border/60 bg-surface p-5 transition-all duration-300 hover:border-brand/40 hover:-translate-y-0.5"
                   >
                     <div className="space-y-4">
                       {/* Visual Preview Block */}
@@ -589,7 +589,7 @@ function PagesPage() {
                   return (
                     <div
                       key={p.id}
-                      className="group relative flex flex-col justify-between rounded-[24px] border border-border/60 bg-surface p-5 transition-all duration-300 hover:border-brand/40 hover:-translate-y-0.5 shadow-xs"
+                      className="group relative flex flex-col justify-between rounded-[var(--radius-card)] border border-border/60 bg-surface p-5 transition-all duration-300 hover:border-brand/40 hover:-translate-y-0.5 shadow-xs"
                     >
                       <div className="space-y-4">
                         {/* Interactive Visual Preview representation */}
