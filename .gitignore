@@ -18,6 +18,12 @@ dist-ssr
 
 # Wrangler / Cloudflare
 .wrangler/
+
+# Environment Variables
+.env
+.env.*
+!.env.example
+
 .dev.vars
 
 # Editor directories and files
