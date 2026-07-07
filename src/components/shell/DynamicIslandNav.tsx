@@ -11,6 +11,7 @@ import { cn } from "@/lib/utils";
 import { Loader2 } from "lucide-react";
 import { useAgency, getModuleName } from "@/lib/agency-context";
 import { useSidebarStore } from "@/lib/sidebar-store";
+import { type ContextItem } from "./SlimSidebar";
 
 type Icon = ComponentType<{ className?: string; strokeWidth?: number }>;
 
@@ -131,11 +132,13 @@ export function DynamicIslandNav({
   footer,
   brand,
   hidden: hiddenProp = false,
+  contextItems: propContextItems,
 }: {
   items: IslandNavItem[];
   footer?: React.ReactNode;
   brand?: React.ReactNode;
   hidden?: boolean;
+  contextItems?: ContextItem[];
 }) {
   const { slug } = useParams({ strict: false }) as { slug?: string };
   const base = slug ? `/agency/${slug}` : "";
@@ -161,7 +164,8 @@ export function DynamicIslandNav({
     hoverTimeout.current = setTimeout(() => setHovered(false), 180);
   };
 
-  const { contextItems } = useSidebarStore();
+  const { contextItems: storeContextItems } = useSidebarStore();
+  const contextItems = propContextItems && propContextItems.length > 0 ? propContextItems : storeContextItems;
   const navItems = items.filter((i) => i.type !== "header" && i.to !== undefined);
 
   if (hiddenProp) return null;

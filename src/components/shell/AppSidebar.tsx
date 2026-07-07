@@ -501,6 +501,7 @@ export function AppSidebar({
       <DynamicIslandNav
         hidden={isHome}
         items={islandItems}
+        contextItems={contextItems}
         footer={
           <button
             onClick={() => signOut().then(() => navigate({ to: "/auth/login", replace: true }))}

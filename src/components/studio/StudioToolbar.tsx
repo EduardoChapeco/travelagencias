@@ -30,7 +30,7 @@ export function StudioToolbar({
   children,
 }: StudioToolbarProps) {
   return (
-    <header data-toolbar className="flex h-14 items-center justify-between border-b border-border bg-surface/50 px-4 md:px-6 shrink-0">
+    <header data-toolbar className="flex h-10 items-center justify-between border-b border-transparent bg-transparent px-4 md:px-6 shrink-0 mt-1">
       <div className="flex items-center gap-3 flex-1 min-w-0">
         <Link
           to={backTo as any}
