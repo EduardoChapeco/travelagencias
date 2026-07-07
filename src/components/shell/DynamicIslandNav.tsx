@@ -1,14 +1,18 @@
 /**
  * DynamicIslandNav — Sidebar flutuante estilo Dynamic Island
- * Grudada na borda esquerda (left-0), posição fixed, glassmorphism.
+ * Grudada na borda esquerda (left-[4px]), posição fixed, glassmorphism.
  * Colapsa em ícones (52px), expande ao hover mostrando labels (184px).
- * Ícone ativo tem indicador visual brand. Sub-menu animado no hover/clique.
+ *
+ * MODO PRINCIPAL: mostra todos os HUB_ITEMS.
+ * MODO CONTEXTUAL: quando contextItems.length > 0, substitui os hub items
+ *   pelos items contextuais do módulo atual + botão "← Voltar".
+ *   Ao colapsar, só ícones — sem submenus aninhados que quebravam o layout.
  */
 import { Link, useRouterState, useParams } from "@tanstack/react-router";
 import { type ComponentType, useState, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { cn } from "@/lib/utils";
-import { Loader2 } from "lucide-react";
+import { Loader2, ChevronLeft } from "lucide-react";
 import { useAgency, getModuleName } from "@/lib/agency-context";
 import { useSidebarStore } from "@/lib/sidebar-store";
 import { type ContextItem } from "./SlimSidebar";
@@ -43,7 +47,7 @@ function isItemActive(item: IslandNavItem, pathname: string, base: string): bool
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
-// Single Nav Item
+// Single Nav Item (hub mode)
 // ─────────────────────────────────────────────────────────────────────────────
 function IslandItem({
   item,
@@ -125,6 +129,72 @@ function IslandItem({
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
+// Contextual Item (context mode — flat, no nesting)
+// ─────────────────────────────────────────────────────────────────────────────
+function ContextualItem({
+  item,
+  expanded,
+  pathname,
+}: {
+  item: ContextItem;
+  expanded: boolean;
+  pathname: string;
+}) {
+  const isActive = item.exact
+    ? pathname === item.to || pathname === item.to.replace(/\/$/, "")
+    : pathname.startsWith(item.to);
+  const ItemIcon = item.icon;
+
+  return (
+    <Link
+      to={item.to as any}
+      title={!expanded ? item.label : undefined}
+      className={cn(
+        "relative flex h-9 w-full items-center gap-3 rounded-full px-2.5 transition-all duration-200 overflow-hidden shrink-0",
+        "hover:bg-white/10",
+        "focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-white/30",
+        isActive
+          ? "bg-white/15 text-white"
+          : "text-white/55 hover:text-white/90"
+      )}
+    >
+      {isActive && (
+        <motion.span
+          layoutId="island-ctx-active"
+          className="absolute left-0 top-1/2 -translate-y-1/2 h-4 w-[3px] rounded-r-full bg-brand"
+          transition={{ type: "spring", bounce: 0.3, duration: 0.4 }}
+        />
+      )}
+      <span className="shrink-0 flex items-center justify-center w-5 h-5">
+        {ItemIcon && (
+          <ItemIcon
+            className={cn(
+              "h-[14px] w-[14px]",
+              isActive ? "text-brand" : "text-white/55"
+            )}
+            strokeWidth={isActive ? 2.2 : 1.6}
+          />
+        )}
+      </span>
+      <AnimatePresence>
+        {expanded && (
+          <motion.span
+            key="ctx-label"
+            initial={{ opacity: 0, x: -4 }}
+            animate={{ opacity: 1, x: 0 }}
+            exit={{ opacity: 0, x: -4 }}
+            transition={{ duration: 0.13, ease: "easeOut" }}
+            className="truncate text-[11px] font-medium leading-tight whitespace-nowrap"
+          >
+            {item.label}
+          </motion.span>
+        )}
+      </AnimatePresence>
+    </Link>
+  );
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
 // Main Component
 // ─────────────────────────────────────────────────────────────────────────────
 export function DynamicIslandNav({
@@ -165,7 +235,13 @@ export function DynamicIslandNav({
   };
 
   const { contextItems: storeContextItems } = useSidebarStore();
-  const contextItems = propContextItems && propContextItems.length > 0 ? propContextItems : storeContextItems;
+  // Prop takes priority; fallback to store
+  const contextItems =
+    propContextItems && propContextItems.length > 0 ? propContextItems : storeContextItems;
+
+  // MODO CONTEXTUAL: quando há items de contexto, substitui o menu principal
+  const isContextMode = contextItems.length > 0;
+
   const navItems = items.filter((i) => i.type !== "header" && i.to !== undefined);
 
   if (hiddenProp) return null;
@@ -188,68 +264,88 @@ export function DynamicIslandNav({
       aria-label="Navegação principal"
       style={{ minHeight: 0 }}
     >
-      {/* Nav items */}
-      <nav className="no-scrollbar flex-1 flex flex-col gap-0.5 overflow-y-auto px-1.5">
-        {navItems.map((item) => {
-          const active = isItemActive(item, pathname, base);
-          const pending =
-            pendingLocation !== null && item.to
-              ? item.exact
-                ? pendingLocation === `${base}/${item.to}`.replace(/\/$/, "")
-                : pendingLocation.startsWith(`${base}/${item.to}`)
-              : false;
+      <AnimatePresence mode="wait">
+        {isContextMode ? (
+          /* ── MODO CONTEXTUAL ─────────────────────────────────────── */
+          <motion.nav
+            key="ctx-nav"
+            initial={{ opacity: 0, x: -6 }}
+            animate={{ opacity: 1, x: 0 }}
+            exit={{ opacity: 0, x: -6 }}
+            transition={{ duration: 0.2 }}
+            className="no-scrollbar flex-1 flex flex-col gap-0.5 overflow-y-auto px-1.5"
+          >
+            {/* Botão Voltar — retorna ao menu principal navegando para a base */}
+            <Link
+              to={base as any}
+              title={!hovered ? "Voltar ao menu" : undefined}
+              className="relative flex h-9 w-full items-center gap-3 rounded-full px-2.5 mb-1 transition-all duration-200 overflow-hidden shrink-0 text-white/40 hover:text-white/80 hover:bg-white/8 border border-white/10"
+            >
+              <span className="shrink-0 flex items-center justify-center w-5 h-5">
+                <ChevronLeft className="h-[14px] w-[14px]" strokeWidth={2} />
+              </span>
+              <AnimatePresence>
+                {hovered && (
+                  <motion.span
+                    key="back-label"
+                    initial={{ opacity: 0, x: -4 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    exit={{ opacity: 0, x: -4 }}
+                    transition={{ duration: 0.13 }}
+                    className="truncate text-[11px] font-semibold leading-tight whitespace-nowrap uppercase tracking-wide"
+                  >
+                    Voltar
+                  </motion.span>
+                )}
+              </AnimatePresence>
+            </Link>
 
-          return (
-            <div key={item.to} className="flex flex-col gap-0.5 shrink-0">
-              <IslandItem
-                item={item}
-                base={base}
+            {/* Divider */}
+            <div className="h-px bg-white/8 mx-2 mb-1 shrink-0" />
+
+            {/* Context Items */}
+            {contextItems.map((ctxItem) => (
+              <ContextualItem
+                key={ctxItem.to}
+                item={ctxItem}
                 expanded={hovered}
-                isActive={active}
-                isPending={pending}
+                pathname={pathname}
               />
+            ))}
+          </motion.nav>
+        ) : (
+          /* ── MODO PRINCIPAL ──────────────────────────────────────── */
+          <motion.nav
+            key="hub-nav"
+            initial={{ opacity: 0, x: -6 }}
+            animate={{ opacity: 1, x: 0 }}
+            exit={{ opacity: 0, x: -6 }}
+            transition={{ duration: 0.2 }}
+            className="no-scrollbar flex-1 flex flex-col gap-0.5 overflow-y-auto px-1.5"
+          >
+            {navItems.map((item) => {
+              const active = isItemActive(item, pathname, base);
+              const pending =
+                pendingLocation !== null && item.to
+                  ? item.exact
+                    ? pendingLocation === `${base}/${item.to}`.replace(/\/$/, "")
+                    : pendingLocation.startsWith(`${base}/${item.to}`)
+                  : false;
 
-              {/* Contextual submenus / submodules */}
-              {active && contextItems.length > 0 && (
-                <div className="flex flex-col gap-0.5 pl-3 mt-0.5 border-l border-white/5 ml-3">
-                  {contextItems.map((ctxItem) => {
-                    const ctxActive = pathname.startsWith(ctxItem.to);
-                    const CtxIcon = ctxItem.icon;
-                    return (
-                      <Link
-                        key={ctxItem.to}
-                        to={ctxItem.to}
-                        className={cn(
-                          "group/ctx relative flex h-7 items-center gap-2 rounded-full px-2 transition-all duration-200 overflow-hidden shrink-0",
-                          ctxActive
-                            ? "bg-white/10 text-white font-semibold"
-                            : "text-white/40 hover:text-white/70 hover:bg-white/5"
-                        )}
-                        title={!hovered ? ctxItem.label : undefined}
-                      >
-                        {CtxIcon && (
-                          <CtxIcon 
-                            className={cn(
-                              "h-3.5 w-3.5 shrink-0",
-                              ctxActive ? "text-brand" : "text-white/40 group-hover/ctx:text-white/70"
-                            )} 
-                            strokeWidth={ctxActive ? 2.2 : 1.8} 
-                          />
-                        )}
-                        {hovered && (
-                          <span className="text-[10px] truncate leading-none">
-                            {ctxItem.label}
-                          </span>
-                        )}
-                      </Link>
-                    );
-                  })}
-                </div>
-              )}
-            </div>
-          );
-        })}
-      </nav>
+              return (
+                <IslandItem
+                  key={item.to}
+                  item={item}
+                  base={base}
+                  expanded={hovered}
+                  isActive={active}
+                  isPending={pending}
+                />
+              );
+            })}
+          </motion.nav>
+        )}
+      </AnimatePresence>
 
       {/* Footer (logout) */}
       {footer && (

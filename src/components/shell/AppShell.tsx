@@ -216,7 +216,7 @@ export function AppShell({
         ) : (
           // ── MODULE VIEW ───────────────────────────────────────────────────
           // Sidebar é fixed/overlay — workspace usa largura total com padding esquerdo pequeno
-          <div className="flex-1 h-full overflow-hidden flex flex-col min-w-0 md:pl-[64px]">
+          <div className="flex-1 h-full overflow-hidden flex flex-col min-w-0 md:pl-[60px]">
             {/* Mobile menu button — só aparece no mobile */}
             <div className="md:hidden flex items-center gap-3 px-4 pt-3 pb-1">
               <button

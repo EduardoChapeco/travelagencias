@@ -144,6 +144,16 @@
   --os-text: rgba(255, 255, 255, 0.95);
   --os-text-muted: rgba(255, 255, 255, 0.55);
   --os-text-faint: rgba(255, 255, 255, 0.30);
+
+  /* ── Design System Component Tokens (single source of truth) ── */
+  /* Sidebar (DynamicIslandNav desktop pill) */
+  --ds-sidebar-collapsed: 52px;   /* width colapsado */
+  --ds-sidebar-offset: 4px;       /* left offset do pill (left-[4px]) */
+  --ds-sidebar-total: 60px;       /* offset total do workspace = collapsed + 2*offset + margin */
+  /* Header / Status Bar */
+  --ds-header-height: 44px;       /* h-11 = 44px */
+  /* AI Floating Widget */
+  --ds-ai-left: 8px;              /* left do botão IA quando não isHome */
 }
 
 .dark {
@@ -256,7 +266,7 @@
 
   @media (min-width: 768px) {
     .os-workspace {
-      padding-left: 68px !important;
+      padding-left: var(--ds-sidebar-total, 60px) !important;
     }
   }
 
@@ -338,13 +348,13 @@
     --info: #60a5fa !important;
   }
 
-  /* ── Apple-style Utility Classes (Frosted Glass) ── */
-  /* Aplicando o Frost Glass globalmente em painéis e cards para manter o padrão sem precisar refatorar 100 arquivos */
-  .os-workspace .bg-card,
-  .os-workspace .bg-surface,
-  .os-workspace .bg-surface-alt,
-  .os-workspace [class*="bg-surface"],
-  .os-workspace [class*="bg-card"],
+  /*
+   * DESIGN SYSTEM — Glass Panel
+   * Usar .mac-glass-panel explicitamente em componentes que precisam de glass.
+   * REMOVIDO: seletor coringa [class*="bg-surface"] que empilhava opacidade
+   * e tornava impossível customizar cores via token.
+   * Regra: use a classe semântica correta, nunca confie em seletor coringa.
+   */
   .mac-glass-panel {
     background: rgba(20, 20, 25, 0.50) !important;
     backdrop-filter: blur(64px) saturate(220%) !important;

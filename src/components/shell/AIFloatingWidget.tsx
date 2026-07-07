@@ -88,8 +88,9 @@ export function AIFloatingWidget() {
         "fixed z-50 flex flex-col items-start gap-3 font-sans select-none pointer-events-auto",
         isHome
           ? "bottom-6 left-4"
-          : "bottom-6 left-[64px]"
+          : "bottom-6"
       )}
+      style={isHome ? undefined : { left: "var(--ds-ai-left, 8px)" }}
     >
       {/* ── Chat Container — abre acima e à direita do botão ──────────── */}
       <AnimatePresence>

@@ -651,11 +651,11 @@ Texto: "${aiText}"`;
               action={<PrimaryButton onClick={() => setNewOpen(true)}>Criar Cotação</PrimaryButton>}
             />
           ) : (
-            <div className="flex-1 rounded-[28px] border border-border bg-surface overflow-hidden flex flex-col">
+            <div className="flex-1 rounded-[28px] mac-glass-panel overflow-hidden flex flex-col">
               <div className="flex-1 overflow-y-auto no-scrollbar">
                 <table className="w-full text-left border-collapse text-xs">
                 <thead>
-                  <tr className="bg-surface-alt border-b border-border text-muted-foreground font-semibold">
+                  <tr className="border-b border-white/10 text-white/50 font-semibold">
                     <th className="px-4 py-3">Cliente / Lead</th>
                     <th className="px-4 py-3">Destino</th>
                     <th className="px-4 py-3">Datas Planejadas</th>

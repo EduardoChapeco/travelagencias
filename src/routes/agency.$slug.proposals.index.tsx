@@ -214,7 +214,7 @@ function ProposalsList() {
           />
         ) : (
           <div className="flex-1 flex flex-col justify-between h-full min-h-0 space-y-4">
-            <div className="flex-1 rounded-[28px] border border-border bg-surface overflow-hidden flex flex-col">
+            <div className="flex-1 rounded-[28px] mac-glass-panel overflow-hidden flex flex-col">
               <div className="flex-1 overflow-y-auto no-scrollbar">
                 <table className="w-full text-sm">
                   <thead className="bg-surface-alt/40 text-left text-[11px] uppercase tracking-wide text-muted-foreground sticky top-0 bg-surface backdrop-blur-md z-10">
