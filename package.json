@@ -5,20 +5,24 @@
   "type": "module",
   "scripts": {
     "dev": "vite dev",
-    "build": "cross-env NODE_OPTIONS=--max-old-space-size=8192 vite build",
-    "build:safe": "cross-env NODE_OPTIONS=--max-old-space-size=8192 vite build",
+    "build": "npm run design:check && cross-env NODE_OPTIONS=--max-old-space-size=8192 vite build",
+    "build:safe": "npm run design:check && cross-env NODE_OPTIONS=--max-old-space-size=8192 vite build",
     "build:dev": "vite build --mode development",
     "preview": "vite preview",
     "lint": "eslint .",
     "typecheck": "tsc --noEmit",
     "format": "prettier --write .",
     "test:e2e": "playwright test",
-    "deploy": "cross-env NODE_OPTIONS=--max-old-space-size=8192 vite build && npx wrangler pages deploy dist --project-name travelagencias --branch main --commit-dirty=true"
+    "deploy": "cross-env NODE_OPTIONS=--max-old-space-size=8192 vite build && npx wrangler pages deploy dist --project-name travelagencias --branch main --commit-dirty=true",
+    "design:lint": "npx @google/design.md lint DESIGN.md",
+    "design:export": "npx @google/design.md export DESIGN.md src/design.css",
+    "design:check": "npm run design:lint && npm run design:export"
   },
   "dependencies": {
     "@dnd-kit/core": "^6.3.1",
     "@dnd-kit/sortable": "^10.0.0",
     "@dnd-kit/utilities": "^3.2.2",
+    "@google/design.md": "^0.3.0",
     "@hookform/resolvers": "^5.2.2",
     "@radix-ui/react-accordion": "^1.2.12",
     "@radix-ui/react-alert-dialog": "^1.1.15",

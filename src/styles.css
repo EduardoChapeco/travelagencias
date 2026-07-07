@@ -10,138 +10,17 @@
  * sem box-shadow (apenas blur e bordas sutis). Tudo sobre wallpaper.
  */
 
-@theme inline {
-  --font-sans: "Inter", -apple-system, BlinkMacSystemFont, sans-serif;
-  --font-mono: "JetBrains Mono", "Fira Code", monospace;
+@import "./design.css";
 
-  /* Turis OS Radii */
-  --radius-xs: 8px;
-  --radius-sm: 12px;
-  --radius-md: 16px;
-  --radius-lg: 20px;
-  --radius-xl: 24px;
-  --radius-2xl: 28px;
-  --radius-3xl: 32px;
-  --radius-full: 999px;
-
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --color-surface: var(--surface);
-  --color-surface-alt: var(--surface-alt);
-  --color-surface-muted: var(--surface-muted);
-
-  --color-card: var(--card);
-  --color-card-foreground: var(--card-foreground);
-  --color-popover: var(--popover);
-  --color-popover-foreground: var(--popover-foreground);
-
-  --color-primary: var(--primary);
-  --color-primary-foreground: var(--primary-foreground);
-  --color-secondary: var(--secondary);
-  --color-secondary-foreground: var(--secondary-foreground);
-
-  --color-muted: var(--muted);
-  --color-muted-foreground: var(--muted-foreground);
-  --color-muted-2: var(--muted-2);
-  --color-accent: var(--accent);
-  --color-accent-foreground: var(--accent-foreground);
-  --color-accent-soft: var(--accent-soft);
-  --color-accent-lime: var(--accent-lime);
-
-  --color-brand: var(--brand);
-  --color-brand-light: var(--brand-light);
-  --color-brand-foreground: var(--brand-foreground);
-
-  --color-success: var(--success);
-  --color-success-bg: var(--success-bg);
-  --color-warning: var(--warning);
-  --color-warning-bg: var(--warning-bg);
-  --color-danger: var(--danger);
-  --color-danger-bg: var(--danger-bg);
-  --color-info: var(--info);
-  --color-info-bg: var(--info-bg);
-
-  --color-destructive: var(--destructive);
-  --color-destructive-foreground: var(--destructive-foreground);
-
-  --color-border: var(--border);
-  --color-border-strong: var(--border-strong);
-  --color-input: var(--input);
-  --color-ring: var(--ring);
-  --color-overlay: var(--overlay);
-
-  --color-glass-light: var(--glass-light);
-  --color-glass-dark: var(--glass-dark);
-
-  /* Turis OS Design System Component Radii tokens (Single Source of Truth) */
+:root {
+  /* Component Structural Mapping */
   --radius-card: var(--radius-2xl);
   --radius-sheet: var(--radius-3xl);
   --radius-button: var(--radius-full);
   --radius-input: var(--radius-full);
   --radius-badge: var(--radius-xs);
-}
 
-:root {
-  --background: #F6F5F1;
-  --foreground: #0B0B0C;
-  --surface: #ffffff;
-  --surface-alt: rgba(255, 255, 255, 0.7);
-  --surface-muted: rgba(246, 245, 241, 0.5);
-
-  --card: rgba(255, 255, 255, 0.85);
-  --card-foreground: #0B0B0C;
-  --popover: rgba(255, 255, 255, 0.95);
-  --popover-foreground: #0B0B0C;
-
-  --primary: #3D6FF2;
-  --primary-foreground: #ffffff;
-  --secondary: #F6F5F1;
-  --secondary-foreground: #0B0B0C;
-
-  --muted: rgba(11, 11, 12, 0.05);
-  --muted-foreground: rgba(11, 11, 12, 0.5);
-  --muted-2: rgba(11, 11, 12, 0.4);
-  --accent: #0B0B0C;
-  --accent-foreground: #ffffff;
-  --accent-soft: rgba(11, 11, 12, 0.04);
-  --accent-lime: #B6F24C;
-
-  --brand: var(--agency-brand, #3D6FF2);
-  --brand-light: var(--agency-brand-light, rgba(61, 111, 242, 0.1));
-  --brand-fg: var(--agency-brand-fg, #ffffff);
-  --brand-foreground: var(--brand-fg);
-
-  --sidebar: var(--surface);
-  --sidebar-foreground: var(--foreground);
-  --sidebar-border: var(--border);
-  --sidebar-accent: var(--muted);
-  --sidebar-accent-foreground: var(--foreground);
-  --sidebar-ring: var(--ring);
-
-  --success: #157f3d;
-  --success-bg: #edf8f1;
-  --warning: #a85b14;
-  --warning-bg: #fff4e6;
-  --danger: #b42318;
-  --danger-bg: #fff1ef;
-  --info: #3D6FF2;
-  --info-bg: #eef4ff;
-
-  --destructive: #b42318;
-  --destructive-foreground: #ffffff;
-
-  --border: rgba(11, 11, 12, 0.08);
-  --border-strong: rgba(11, 11, 12, 0.15);
-  --input: rgba(255, 255, 255, 0.5);
-  --ring: #3D6FF2;
-  --overlay: rgba(11, 11, 12, 0.4);
-
-  --glass-light: rgba(255, 255, 255, 0.14);
-  --glass-dark: rgba(10, 10, 12, 0.35);
-
-  --radius: 28px;
-
-  /* ── OS Ambient tokens ── */
+  /* OS Ambient variables */
   --os-glass-bg: rgba(255, 255, 255, 0.09);
   --os-glass-bg-strong: rgba(255, 255, 255, 0.14);
   --os-glass-border: rgba(255, 255, 255, 0.15);
@@ -152,57 +31,16 @@
   --os-text-muted: rgba(255, 255, 255, 0.55);
   --os-text-faint: rgba(255, 255, 255, 0.30);
 
-  /* ── Design System Component Tokens (single source of truth) ── */
-  /* Sidebar (DynamicIslandNav desktop pill) */
-  --ds-sidebar-collapsed: 52px;   /* width colapsado */
-  --ds-sidebar-offset: 4px;       /* left offset do pill (left-[4px]) */
-  --ds-sidebar-total: 60px;       /* offset total do workspace = collapsed + 2*offset + margin */
-  /* Header / Status Bar */
-  --ds-header-height: 44px;       /* h-11 = 44px */
-  /* AI Floating Widget */
-  --ds-ai-left: 8px;              /* left do botão IA quando não isHome */
+  /* Component Layout */
+  --ds-sidebar-collapsed: 52px;
+  --ds-sidebar-offset: 4px;
+  --ds-sidebar-total: 60px;
+  --ds-header-height: 44px;
+  --ds-ai-left: 8px;
 }
 
 .dark {
-  --background: #0B0B0C;
-  --foreground: #F6F5F1;
-  --surface: #151515;
-  --surface-alt: rgba(21, 21, 21, 0.7);
-  --surface-muted: rgba(21, 21, 21, 0.5);
-
-  --card: rgba(21, 21, 21, 0.85);
-  --card-foreground: #F6F5F1;
-  --popover: rgba(21, 21, 21, 0.95);
-  --popover-foreground: #F6F5F1;
-
-  --primary: #3D6FF2;
-  --primary-foreground: #ffffff;
-  --secondary: #1a1a1a;
-  --secondary-foreground: #F6F5F1;
-
-  --muted: rgba(255, 255, 255, 0.1);
-  --muted-foreground: rgba(255, 255, 255, 0.5);
-  --muted-2: rgba(255, 255, 255, 0.4);
-
-  --accent: #F6F5F1;
-  --accent-foreground: #0B0B0C;
-  --accent-soft: rgba(255, 255, 255, 0.05);
-
-  --brand-foreground: var(--brand-fg);
-
-  --sidebar: var(--surface);
-  --sidebar-foreground: var(--foreground);
-  --sidebar-border: var(--border);
-  --sidebar-accent: var(--muted);
-  --sidebar-accent-foreground: var(--foreground);
-  --sidebar-ring: var(--ring);
-
-  --border: rgba(255, 255, 255, 0.1);
-  --border-strong: rgba(255, 255, 255, 0.2);
-  --input: rgba(21, 21, 21, 0.5);
-  --ring: #3D6FF2;
-  --overlay: rgba(11, 11, 12, 0.7);
-
+  /* In dark mode, map background/foreground inversely if needed, but DESIGN.md is SSOT */
   --os-glass-bg: rgba(15, 15, 18, 0.45);
   --os-glass-bg-strong: rgba(15, 15, 18, 0.60);
   --os-glass-border: rgba(255, 255, 255, 0.08);
@@ -331,8 +169,6 @@
    */
   .os-workspace {
     background: transparent !important;
-    backdrop-filter: blur(22px) saturate(160%) !important;
-    -webkit-backdrop-filter: blur(22px) saturate(160%) !important;
     --background: transparent !important;
     --foreground: rgba(255, 255, 255, 0.98) !important;
     --surface: rgba(10, 10, 15, 0.55);
@@ -351,7 +187,7 @@
     --accent-foreground: rgba(255, 255, 255, 0.98);
     --accent-soft: rgba(255, 255, 255, 0.05);
     color: rgba(255, 255, 255, 0.98) !important;
-    
+
     /* Custom high-contrast status variables for ambient dark workspace */
     --success-bg: rgba(74, 222, 128, 0.15) !important;
     --success: #4ade80 !important;
