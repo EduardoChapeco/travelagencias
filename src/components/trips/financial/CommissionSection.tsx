@@ -223,7 +223,7 @@ export function CommissionSection({
   }
 
   return (
-    <div className="mb-6 rounded-[24px] border border-border bg-surface overflow-hidden">
+    <div className="mb-6 rounded-[var(--radius-card)] border border-border bg-surface overflow-hidden">
       <button
         type="button"
         onClick={() => setOpen((o) => !o)}
@@ -305,7 +305,7 @@ export function CommissionSection({
                 {items.map((item, index) => (
                   <div
                     key={item.id || index}
-                    className="p-4 rounded-[24px] border border-border bg-surface-alt/20 space-y-3"
+                    className="p-4 rounded-[var(--radius-card)] border border-border bg-surface-alt/20 space-y-3"
                   >
                     <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                       <Field label="Descrição">

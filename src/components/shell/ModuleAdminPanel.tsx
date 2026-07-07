@@ -230,7 +230,7 @@ export function ModuleAdminPanel({
                     Carregando playbooks...
                   </div>
                 ) : playbooksQ.data && playbooksQ.data.length === 0 ? (
-                  <div className="text-xs text-center p-8 border border-dashed border-border rounded-[24px] text-muted-foreground">
+                  <div className="text-xs text-center p-8 border border-dashed border-border rounded-[var(--radius-card)] text-muted-foreground">
                     Nenhum playbook operacional definido para este módulo.
                   </div>
                 ) : (
@@ -238,7 +238,7 @@ export function ModuleAdminPanel({
                     {playbooksQ.data?.map((pb: any) => (
                       <div
                         key={pb.id}
-                        className="p-4 rounded-[24px] border border-border bg-surface flex flex-col justify-between hover:border-brand/45 transition-colors group"
+                        className="p-4 rounded-[var(--radius-card)] border border-border bg-surface flex flex-col justify-between hover:border-brand/45 transition-colors group"
                       >
                         <div className="flex items-start justify-between">
                           <div>
@@ -291,7 +291,7 @@ export function ModuleAdminPanel({
                       Carregando artigos...
                     </div>
                   ) : articlesQ.data && articlesQ.data.length === 0 ? (
-                    <div className="text-xs text-center p-6 border border-dashed border-border rounded-[24px] text-muted-foreground">
+                    <div className="text-xs text-center p-6 border border-dashed border-border rounded-[var(--radius-card)] text-muted-foreground">
                       Nenhum artigo da base de conhecimento encontrado nesta categoria.
                     </div>
                   ) : (
@@ -329,7 +329,7 @@ export function ModuleAdminPanel({
           <div className="flex-1 overflow-auto space-y-6">
             <form
               onSubmit={handleSaveCustomName}
-              className="space-y-4 bg-surface-alt/10 border border-border p-4 rounded-[24px]"
+              className="space-y-4 bg-surface-alt/10 border border-border p-4 rounded-[var(--radius-card)]"
             >
               <div>
                 <h4 className="text-xs font-bold text-foreground">Identificação do Módulo</h4>
@@ -374,7 +374,7 @@ export function ModuleAdminPanel({
                 {customSettingsComponent}
               </div>
             ) : (
-              <div className="p-6 border border-dashed border-border rounded-[24px] text-center text-xs text-muted-foreground">
+              <div className="p-6 border border-dashed border-border rounded-[var(--radius-card)] text-center text-xs text-muted-foreground">
                 Este módulo não possui configurações adicionais específicas além da identificação.
               </div>
             )}
@@ -540,7 +540,7 @@ function PlaybookForm({
             {steps.map((st, idx) => (
               <div
                 key={idx}
-                className="bg-surface-alt/20 border border-border/80 rounded-[24px] p-3 relative space-y-2.5"
+                className="bg-surface-alt/20 border border-border/80 rounded-[var(--radius-card)] p-3 relative space-y-2.5"
               >
                 <button
                   type="button"

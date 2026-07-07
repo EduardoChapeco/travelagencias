@@ -91,7 +91,7 @@ export function NewActivity({
   return (
     <form
       onSubmit={submit}
-      className="rounded-[24px] border border-border bg-surface p-1 flex items-start focus-within:ring-1 focus-within:ring-border transition-shadow"
+      className="rounded-[var(--radius-card)] border border-border bg-surface p-1 flex items-start focus-within:ring-1 focus-within:ring-border transition-shadow"
     >
       <Select
         value={type}
@@ -133,7 +133,7 @@ export function Timeline({
 }) {
   if (activities.length === 0) {
     return (
-      <div className="text-center text-xs text-muted-foreground py-6 bg-surface-alt/10 rounded-[24px] border border-border/50 border-dashed">
+      <div className="text-center text-xs text-muted-foreground py-6 bg-surface-alt/10 rounded-[var(--radius-card)] border border-border/50 border-dashed">
         Sem histórico ou atividades registradas.
       </div>
     );
@@ -190,7 +190,7 @@ function ActivityItem({ activity, onChanged }: { activity: Activity; onChanged: 
         <Icon className={`h-3 w-3 ${colorClass}`} />
       </div>
 
-      <div className="flex flex-col gap-1 bg-surface-alt/15 hover:bg-surface-alt/25 border border-border/30 rounded-[24px] p-3.5 transition-colors">
+      <div className="flex flex-col gap-1 bg-surface-alt/15 hover:bg-surface-alt/25 border border-border/30 rounded-[var(--radius-card)] p-3.5 transition-colors">
         <div className="flex items-center justify-between">
           <div className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
             {ACTIVITY_TYPES.find((t) => t.v === activity.type)?.label ??

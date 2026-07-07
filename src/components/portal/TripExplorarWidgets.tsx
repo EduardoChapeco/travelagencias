@@ -186,7 +186,7 @@ export function DestinationIntelligenceBlock({
           {(di.vaccinations_required ?? []).length > 0 && (
             <AppWidget title="Saúde & Vacinas" icon={<Heart className="w-5 h-5 text-danger" />}>
               <div className="space-y-3">
-                <div className="bg-danger/5 border border-danger/20 rounded-[24px] p-3">
+                <div className="bg-danger/5 border border-danger/20 rounded-[var(--radius-card)] p-3">
                   <div className="text-xs font-bold text-danger uppercase tracking-wider mb-2">
                     Obrigatórias
                   </div>
@@ -202,7 +202,7 @@ export function DestinationIntelligenceBlock({
                   </div>
                 </div>
                 {(di.vaccinations_recommended ?? []).length > 0 && (
-                  <div className="bg-warning/5 border border-warning/20 rounded-[24px] p-3">
+                  <div className="bg-warning/5 border border-warning/20 rounded-[var(--radius-card)] p-3">
                     <div className="text-xs font-bold text-warning uppercase tracking-wider mb-2">
                       Recomendadas
                     </div>
@@ -231,7 +231,7 @@ export function DestinationIntelligenceBlock({
           >
             <div className="grid grid-cols-2 gap-3 text-xs">
               {di.currency && (
-                <div className="rounded-[24px] border border-border bg-surface p-3">
+                <div className="rounded-[var(--radius-card)] border border-border bg-surface p-3">
                   <div className="text-[9px] font-bold uppercase tracking-wider text-muted-foreground mb-1">
                     💱 Moeda
                   </div>
@@ -241,7 +241,7 @@ export function DestinationIntelligenceBlock({
                 </div>
               )}
               {di.language && (
-                <div className="rounded-[24px] border border-border bg-surface p-3">
+                <div className="rounded-[var(--radius-card)] border border-border bg-surface p-3">
                   <div className="text-[9px] font-bold uppercase tracking-wider text-muted-foreground mb-1">
                     🗣️ Idioma
                   </div>
@@ -249,7 +249,7 @@ export function DestinationIntelligenceBlock({
                 </div>
               )}
               {di.plug_type && (
-                <div className="rounded-[24px] border border-border bg-surface p-3">
+                <div className="rounded-[var(--radius-card)] border border-border bg-surface p-3">
                   <div className="text-[9px] font-bold uppercase tracking-wider text-muted-foreground mb-1">
                     🔌 Tomada
                   </div>
@@ -257,7 +257,7 @@ export function DestinationIntelligenceBlock({
                 </div>
               )}
               {di.utc_offset && (
-                <div className="rounded-[24px] border border-border bg-surface p-3">
+                <div className="rounded-[var(--radius-card)] border border-border bg-surface p-3">
                   <div className="text-[9px] font-bold uppercase tracking-wider text-muted-foreground mb-1">
                     🕐 Fuso
                   </div>
@@ -265,7 +265,7 @@ export function DestinationIntelligenceBlock({
                 </div>
               )}
               {di.best_season && (
-                <div className="rounded-[24px] border border-border bg-surface p-3 col-span-2">
+                <div className="rounded-[var(--radius-card)] border border-border bg-surface p-3 col-span-2">
                   <div className="text-[9px] font-bold uppercase tracking-wider text-muted-foreground mb-1">
                     🌤️ Melhor Época
                   </div>
@@ -273,7 +273,7 @@ export function DestinationIntelligenceBlock({
                 </div>
               )}
               {di.budget_range && (
-                <div className="rounded-[24px] border border-brand/20 bg-brand/5 p-3 col-span-2">
+                <div className="rounded-[var(--radius-card)] border border-brand/20 bg-brand/5 p-3 col-span-2">
                   <div className="text-[9px] font-bold uppercase tracking-wider text-brand mb-1">
                     💰 Orçamento Estimado
                   </div>
@@ -309,7 +309,7 @@ export function DestinationIntelligenceBlock({
           )}
 
           <AppWidget title="Mapa" icon={<Map className="w-5 h-5 text-info" />}>
-            <div className="rounded-[24px] overflow-hidden border border-border h-48">
+            <div className="rounded-[var(--radius-card)] overflow-hidden border border-border h-48">
               <iframe
                 title="mapa"
                 width="100%"
@@ -364,7 +364,7 @@ export function DestinationFallbackBlock({ destination }: { destination?: string
                 key={i}
                 className="flex gap-3 items-start border-b border-border/50 pb-3 last:border-0 last:pb-0"
               >
-                <div className="w-14 h-14 rounded-[24px] bg-muted shrink-0 overflow-hidden">
+                <div className="w-14 h-14 rounded-[var(--radius-card)] bg-muted shrink-0 overflow-hidden">
                   <img
                     src={`https://source.unsplash.com/200x200/?landmark,${destination}&sig=${i}`}
                     alt="Local"

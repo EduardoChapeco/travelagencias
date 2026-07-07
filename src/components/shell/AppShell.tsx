@@ -149,24 +149,34 @@ export function AppShell({
 
   return (
     <div
-      className="flex h-screen w-full relative overflow-hidden bg-black selection:bg-brand/30 select-none"
+      className={cn(
+        "h-screen w-full relative overflow-hidden bg-black selection:bg-brand/30 select-none",
+        !isHome && !isBuilder && !isPastDue && "grid"
+      )}
       style={{
+        gridTemplateColumns: !isHome && !isBuilder && !isPastDue ? "auto minmax(0, 1fr)" : undefined,
+        gridTemplateRows: "100vh",
         "--os-glass-opacity": `${glassOpacity / 100}`,
       } as React.CSSProperties}
     >
-      {/* 1. Wallpaper Global — base layer */}
+      {/* 1. Wallpaper Global — base layer sem opacidades ou dimmers aninhados */}
       <div 
         className="absolute inset-0 bg-cover bg-center transition-transform duration-[20s] ease-linear hover:scale-105 pointer-events-none"
         style={{ 
           backgroundImage: `url('${activeWallpaper}')`,
           filter: `blur(${blurIntensity}px)`
         }}
-      >
-        <div 
-          className="absolute inset-0 bg-black transition-opacity duration-300"
-          style={{ opacity: dimOpacity / 100 }}
-        />
-      </div>
+      />
+
+      {/* 1.5. Centralized Glass Panel / Backdrop Blur */}
+      <div 
+        className="absolute inset-0 pointer-events-none"
+        style={{
+          background: `rgba(0, 0, 0, ${dimOpacity / 100})`,
+          backdropFilter: "blur(32px) saturate(180%)",
+          WebkitBackdropFilter: "blur(32px) saturate(180%)",
+        }}
+      />
 
       {/* 2. Top Status Bar — Ultra-minimalista com logo à esquerda, portal contextual no meio e hora à direita */}
       <header className="absolute top-0 left-0 right-0 h-11 px-4 flex justify-between items-center text-white z-40 bg-transparent border-none pointer-events-none">
@@ -204,7 +214,14 @@ export function AppShell({
       </header>
 
       {/* 3. AppSidebar — Mobile drawer + Dynamic Island desktop (oculto na Home) */}
-      <AppSidebar mobileOpen={mobileOpen} onMobileClose={() => setMobileOpen(false)} isHome={isHome} />
+      {!isHome && !isBuilder && !isPastDue && (
+        <div className="hidden md:flex flex-col justify-center items-start h-full pt-11 relative z-40">
+          <AppSidebar mobileOpen={mobileOpen} onMobileClose={() => setMobileOpen(false)} isHome={isHome} />
+        </div>
+      )}
+      <div className="md:hidden">
+        <AppSidebar mobileOpen={mobileOpen} onMobileClose={() => setMobileOpen(false)} isHome={isHome} />
+      </div>
 
       {/* 4. Main Workspace — full screen, below status bar */}
       <div className="w-full h-full flex pt-11 z-10 relative overflow-hidden">
@@ -215,8 +232,8 @@ export function AppShell({
           </div>
         ) : (
           // ── MODULE VIEW ───────────────────────────────────────────────────
-          // Sidebar é fixed/overlay — workspace usa largura total com padding esquerdo pequeno
-          <div className="flex-1 h-full overflow-hidden flex flex-col min-w-0 md:pl-[60px]">
+          // Sidebar is structural via CSS Grid — workspace takes the rest of the 1fr column width
+          <div className="flex-1 h-full overflow-hidden flex flex-col min-w-0">
             {/* Mobile menu button — só aparece no mobile */}
             <div className="md:hidden flex items-center gap-3 px-4 pt-3 pb-1">
               <button
@@ -303,7 +320,7 @@ export function AppShell({
                     type="button"
                     onClick={() => setWallpaper(preset.url.replace("w=200", "w=2020"))}
                     className={cn(
-                      "aspect-video rounded-[24px] bg-cover bg-center border border-white/10 hover:border-white/40 hover:scale-105 active:scale-95 transition-all cursor-pointer",
+                      "aspect-video rounded-[var(--radius-card)] bg-cover bg-center border border-white/10 hover:border-white/40 hover:scale-105 active:scale-95 transition-all cursor-pointer",
                       wallpaper.includes(preset.name.toLowerCase()) ? "ring-2 ring-white border-transparent" : ""
                     )}
                     style={{ backgroundImage: `url('${preset.url}')` }}

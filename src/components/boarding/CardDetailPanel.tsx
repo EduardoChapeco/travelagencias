@@ -636,7 +636,7 @@ export function CardDetailPanel({
             </div>
 
             {ticketsCardQ.data?.length === 0 && (
-              <div className="text-center py-8 border border-dashed rounded-[24px] text-sm text-muted-foreground">
+              <div className="text-center py-8 border border-dashed rounded-[var(--radius-card)] text-sm text-muted-foreground">
                 Nenhum bilhete. Envie bilhetes aéreos, ingressos ou vouchers de transfer.
               </div>
             )}
@@ -645,7 +645,7 @@ export function CardDetailPanel({
               {ticketsCardQ.data?.map((t: any) => (
                 <div
                   key={t.id}
-                  className="flex items-center gap-3 rounded-[24px] border border-border bg-white p-3"
+                  className="flex items-center gap-3 rounded-[var(--radius-card)] border border-border bg-white p-3"
                 >
                   <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-2xl border border-border bg-surface">
                     <Ticket className="h-4 w-4 text-muted-foreground" />
@@ -1443,7 +1443,7 @@ export function CardDetailPanel({
               </div>
 
               {showTicketForm && (
-                <div className="rounded-[24px] border border-border p-3 space-y-3 bg-surface-alt/20 text-xs">
+                <div className="rounded-[var(--radius-card)] border border-border p-3 space-y-3 bg-surface-alt/20 text-xs">
                   <div className="font-semibold text-foreground">Abrir Novo Chamado</div>
                   <div className="space-y-2">
                     <input

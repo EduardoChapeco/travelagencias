@@ -94,7 +94,7 @@ Não inclua crases markdown nem texto adicional.`;
               rows={4}
               value={prompt}
               onChange={(e) => setPrompt(e.target.value)}
-              className="w-full rounded-[24px] border border-border bg-surface-alt/50 px-3 py-2 text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-amber-500/50 resize-none"
+              className="w-full rounded-[var(--radius-card)] border border-border bg-surface-alt/50 px-3 py-2 text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-amber-500/50 resize-none"
               placeholder="Como o assistente deve reescrever esta proposta?"
             />
           </div>
@@ -102,7 +102,7 @@ Não inclua crases markdown nem texto adicional.`;
           <button
             onClick={handleMagic}
             disabled={busy}
-            className="w-full flex h-10 items-center justify-center gap-2 rounded-[24px] bg-amber-500 text-white font-bold hover:bg-amber-600 transition-all disabled:opacity-60"
+            className="w-full flex h-10 items-center justify-center gap-2 rounded-[var(--radius-card)] bg-amber-500 text-white font-bold hover:bg-amber-600 transition-all disabled:opacity-60"
           >
             {busy ? (
               <>

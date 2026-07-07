@@ -145,7 +145,7 @@ Gere um objeto JSON contendo exatamente as seguintes chaves. Não inclua nenhuma
 
           {analysis && (
             <div className="pt-4 space-y-4">
-              <div className="rounded-[24px] bg-surface border border-border p-4">
+              <div className="rounded-[var(--radius-card)] bg-surface border border-border p-4">
                 <div className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground mb-2">
                   Resumo
                 </div>
@@ -153,7 +153,7 @@ Gere um objeto JSON contendo exatamente as seguintes chaves. Não inclua nenhuma
               </div>
 
               <div
-                className={`rounded-[24px] border p-4 ${
+                className={`rounded-[var(--radius-card)] border p-4 ${
                   analysis.retentionScore === "alto"
                     ? "border-success/30 bg-success/5"
                     : analysis.retentionScore === "médio"
@@ -189,7 +189,7 @@ Gere um objeto JSON contendo exatamente as seguintes chaves. Não inclua nenhuma
                 ))}
               </div>
 
-              <div className="rounded-[24px] border border-brand/30 bg-brand/5 p-4">
+              <div className="rounded-[var(--radius-card)] border border-brand/30 bg-brand/5 p-4">
                 <div className="text-[10px] font-bold uppercase tracking-wider text-brand mb-1">
                   Próxima ação recomendada
                 </div>

@@ -321,7 +321,7 @@ export function NewVisaWizard({
           {/* STEP 2: Uploads Seguros */}
           {step === 2 && (
             <div className="space-y-6 animate-in fade-in slide-in-from-right-4 duration-300">
-              <div className="rounded-[24px] border border-warning/30 bg-warning/5 p-4 text-sm text-warning-foreground">
+              <div className="rounded-[var(--radius-card)] border border-warning/30 bg-warning/5 p-4 text-sm text-warning-foreground">
                 <strong>Aviso LGPD:</strong> O upload de passaportes e documentos sensíveis é
                 protegido. Os arquivos serão enviados para um cofre digital isolado e restrito
                 apenas a membros autorizados da agência.
@@ -338,7 +338,7 @@ export function NewVisaWizard({
                   />
                   <label
                     htmlFor="doc-upload"
-                    className="flex flex-col items-center justify-center w-full h-32 rounded-[24px] border-2 border-dashed border-border/60 bg-surface hover:border-brand/50 hover:bg-brand/5 cursor-pointer transition-colors"
+                    className="flex flex-col items-center justify-center w-full h-32 rounded-[var(--radius-card)] border-2 border-dashed border-border/60 bg-surface hover:border-brand/50 hover:bg-brand/5 cursor-pointer transition-colors"
                   >
                     <Upload className="h-6 w-6 text-brand mb-2" />
                     <span className="text-sm font-semibold text-brand">
@@ -384,7 +384,7 @@ export function NewVisaWizard({
           {/* STEP 3: Revisão */}
           {step === 3 && (
             <div className="space-y-6 animate-in fade-in slide-in-from-right-4 duration-300">
-              <div className="rounded-[24px] border border-border bg-surface-alt/20 p-6">
+              <div className="rounded-[var(--radius-card)] border border-border bg-surface-alt/20 p-6">
                 <h3 className="text-xl font-bold text-foreground flex items-center gap-2 mb-4">
                   <Globe className="h-5 w-5 text-brand" /> {country} ({category})
                 </h3>

@@ -116,7 +116,7 @@ export function LeadForm({
   return (
     <form
       onSubmit={handleSubmit(onSubmit)}
-      className="space-y-6 rounded-[24px] border border-border bg-surface p-6"
+      className="space-y-6 rounded-[var(--radius-card)] border border-border bg-surface p-6"
     >
       <h3 className="text-sm font-bold text-foreground">Editar Lead</h3>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -181,7 +181,7 @@ export function LeadForm({
           />
         </Field>
 
-        <div className="col-span-1 md:col-span-2 text-[11px] bg-brand/5 border border-brand/10 p-3.5 rounded-[24px] text-muted-foreground space-y-1">
+        <div className="col-span-1 md:col-span-2 text-[11px] bg-brand/5 border border-brand/10 p-3.5 rounded-[var(--radius-card)] text-muted-foreground space-y-1">
           <span className="font-bold text-foreground block">Regras de Tarifa da Aviação:</span>
           <ul className="list-disc list-inside space-y-0.5">
             <li>

@@ -276,7 +276,7 @@ export function AIHunterPanel({ leadId, agencyId }: { leadId: string; agencyId: 
       </div>
 
       {/* Bloco de Criação de Cotação por IA */}
-      <div className="rounded-[24px] border border-brand/20 bg-brand/[0.02] p-5 space-y-4">
+      <div className="rounded-[var(--radius-card)] border border-brand/20 bg-brand/[0.02] p-5 space-y-4">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2 text-brand text-xs font-bold uppercase tracking-widest">
             <Sparkles className="h-4 w-4" /> Sugestão de Proposta
@@ -345,7 +345,7 @@ export function AIHunterPanel({ leadId, agencyId }: { leadId: string; agencyId: 
       </div>
 
       {!insights ? (
-        <div className="rounded-[24px] border border-dashed border-border bg-surface/30 p-10 text-center space-y-3">
+        <div className="rounded-[var(--radius-card)] border border-dashed border-border bg-surface/30 p-10 text-center space-y-3">
           <Bot className="h-10 w-10 text-muted-foreground mx-auto opacity-50" />
           <p className="text-sm text-muted-foreground">Nenhum insight gerado ainda.</p>
           <p className="text-xs text-muted-foreground/70 max-w-xs mx-auto">
@@ -356,7 +356,7 @@ export function AIHunterPanel({ leadId, agencyId }: { leadId: string; agencyId: 
       ) : (
         <div className="space-y-4">
           {insights.general_profile && (
-            <div className="rounded-[24px] border border-brand/20 bg-brand/5 p-5 space-y-2">
+            <div className="rounded-[var(--radius-card)] border border-brand/20 bg-brand/5 p-5 space-y-2">
               <div className="flex items-center gap-2 text-brand text-xs font-bold uppercase tracking-widest">
                 <Bot className="h-4 w-4" /> Perfil Comportamental
               </div>
@@ -400,7 +400,7 @@ export function AIHunterPanel({ leadId, agencyId }: { leadId: string; agencyId: 
             ].map(({ title, items, icon, cls, color }) => (
               <div
                 key={title}
-                className="rounded-[24px] border border-border/80 bg-surface p-5 space-y-3"
+                className="rounded-[var(--radius-card)] border border-border/80 bg-surface p-5 space-y-3"
               >
                 <div
                   className={`flex items-center gap-2 ${color} text-xs font-bold uppercase tracking-widest`}
@@ -419,7 +419,7 @@ export function AIHunterPanel({ leadId, agencyId }: { leadId: string; agencyId: 
           </div>
 
           {insights.next_best_action && (
-            <div className="rounded-[24px] border border-success/30 bg-success/5 p-5 space-y-2">
+            <div className="rounded-[var(--radius-card)] border border-success/30 bg-success/5 p-5 space-y-2">
               <div className="flex items-center gap-2 text-success text-xs font-bold uppercase tracking-widest">
                 <Sparkles className="h-4 w-4" /> Próxima Melhor Ação (NBA)
               </div>

@@ -136,7 +136,7 @@ export function AILandingAgent({ agencySlug, blocks }: { agencySlug: string; blo
             )}
 
             {isConverted && (
-              <div className="flex flex-col items-center justify-center p-4 mt-2 text-center rounded-[24px] border border-success/30 bg-success/5 animate-in fade-in">
+              <div className="flex flex-col items-center justify-center p-4 mt-2 text-center rounded-[var(--radius-card)] border border-success/30 bg-success/5 animate-in fade-in">
                 <CheckCircle2 className="h-6 w-6 text-success mb-2" />
                 <span className="text-xs font-semibold text-foreground">
                   Pronto! Nossos especialistas assumirão pelo WhatsApp em breve.

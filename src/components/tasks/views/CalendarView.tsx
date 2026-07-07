@@ -114,7 +114,7 @@ export function CalendarView({ filters }: { filters: TaskFiltersState }) {
       <div className="grid grid-cols-7 gap-2 flex-1 min-h-0">
         {/* Espaços em branco para alinhar com o dia da semana de início */}
         {prefixDays.map((_, i) => (
-          <div key={`prefix-${i}`} className="p-2 rounded-[24px] bg-[var(--surface-alt)]/20 opacity-30 border border-transparent" />
+          <div key={`prefix-${i}`} className="p-2 rounded-[var(--radius-card)] bg-[var(--surface-alt)]/20 opacity-30 border border-transparent" />
         ))}
 
         {/* Dias reais do mês */}
@@ -125,7 +125,7 @@ export function CalendarView({ filters }: { filters: TaskFiltersState }) {
           return (
             <div 
               key={day.toString()} 
-              className={`p-2 rounded-[24px] border flex flex-col min-h-[100px] transition-all bg-[var(--surface)] ${
+              className={`p-2 rounded-[var(--radius-card)] border flex flex-col min-h-[100px] transition-all bg-[var(--surface)] ${
                 isToday 
                   ? "border-[var(--brand)] shadow-sm bg-[var(--brand)]/5" 
                   : "border-border hover:border-border-hover"

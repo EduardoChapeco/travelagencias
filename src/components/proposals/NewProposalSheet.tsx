@@ -582,7 +582,7 @@ export function NewProposalSheet({
       </p>
 
       {/* OCR Drag-and-Drop Area */}
-      <div className="mb-5 rounded-[24px] border border-dashed border-border bg-surface-alt/40 p-4 text-center transition-all hover:border-brand/40">
+      <div className="mb-5 rounded-[var(--radius-card)] border border-dashed border-border bg-surface-alt/40 p-4 text-center transition-all hover:border-brand/40">
         {ocrLoading ? (
           <div className="flex flex-col items-center justify-center py-2 space-y-2">
             <Loader2 className="h-6 w-6 animate-spin text-brand" />

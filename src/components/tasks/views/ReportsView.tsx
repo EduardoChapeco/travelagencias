@@ -41,13 +41,13 @@ export function ReportsView({ filters }: { filters: TaskFiltersState }) {
       <div className="space-y-6 bg-[var(--surface)] p-6 rounded-2xl border">
         <Skeleton className="h-6 w-1/4 mb-6" />
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <Skeleton className="h-24 w-full rounded-[24px]" />
-          <Skeleton className="h-24 w-full rounded-[24px]" />
-          <Skeleton className="h-24 w-full rounded-[24px]" />
+          <Skeleton className="h-24 w-full rounded-[var(--radius-card)]" />
+          <Skeleton className="h-24 w-full rounded-[var(--radius-card)]" />
+          <Skeleton className="h-24 w-full rounded-[var(--radius-card)]" />
         </div>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <Skeleton className="h-64 w-full rounded-[24px]" />
-          <Skeleton className="h-64 w-full rounded-[24px]" />
+          <Skeleton className="h-64 w-full rounded-[var(--radius-card)]" />
+          <Skeleton className="h-64 w-full rounded-[var(--radius-card)]" />
         </div>
       </div>
     );
@@ -214,7 +214,7 @@ export function ReportsView({ filters }: { filters: TaskFiltersState }) {
 
       {/* Cartões de Métricas Avançadas */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 shrink-0">
-        <div className="p-4 rounded-[24px] border border-border bg-surface-alt/10 space-y-1">
+        <div className="p-4 rounded-[var(--radius-card)] border border-border bg-surface-alt/10 space-y-1">
           <div className="text-[10px] text-[var(--muted-foreground)] uppercase font-bold tracking-wider flex items-center gap-1.5">
             <CheckCircle className="h-3.5 w-3.5 text-[var(--brand)]" /> Eficiência de Entrega
           </div>
@@ -223,7 +223,7 @@ export function ReportsView({ filters }: { filters: TaskFiltersState }) {
           </div>
         </div>
 
-        <div className="p-4 rounded-[24px] border border-border bg-surface-alt/10 space-y-1">
+        <div className="p-4 rounded-[var(--radius-card)] border border-border bg-surface-alt/10 space-y-1">
           <div className="text-[10px] text-[var(--muted-foreground)] uppercase font-bold tracking-wider flex items-center gap-1.5">
             <Clock className="h-3.5 w-3.5 text-blue-500" /> Tempo Médio de Entrega
           </div>
@@ -232,7 +232,7 @@ export function ReportsView({ filters }: { filters: TaskFiltersState }) {
           </div>
         </div>
 
-        <div className="p-4 rounded-[24px] border border-border bg-surface-alt/10 space-y-1">
+        <div className="p-4 rounded-[var(--radius-card)] border border-border bg-surface-alt/10 space-y-1">
           <div className="text-[10px] text-[var(--muted-foreground)] uppercase font-bold tracking-wider flex items-center gap-1.5">
             <Zap className="h-3.5 w-3.5 text-amber-500" /> Pontos de Dificuldade
           </div>
@@ -241,7 +241,7 @@ export function ReportsView({ filters }: { filters: TaskFiltersState }) {
           </div>
         </div>
 
-        <div className="p-4 rounded-[24px] border border-border bg-surface-alt/10 space-y-1">
+        <div className="p-4 rounded-[var(--radius-card)] border border-border bg-surface-alt/10 space-y-1">
           <div className="text-[10px] text-[var(--muted-foreground)] uppercase font-bold tracking-wider flex items-center gap-1.5">
             <Calendar className="h-3.5 w-3.5 text-emerald-500" /> Aderência ao Prazo
           </div>
@@ -255,7 +255,7 @@ export function ReportsView({ filters }: { filters: TaskFiltersState }) {
       {/* Gráficos de Alta Produtividade */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 min-h-[350px]">
         {/* Gráfico 1: Produtividade por Agente (Ponderada) */}
-        <div className="p-5 border border-border rounded-[24px] flex flex-col bg-surface">
+        <div className="p-5 border border-border rounded-[var(--radius-card)] flex flex-col bg-surface">
           <h3 className="text-xs uppercase font-extrabold text-[var(--muted-foreground)] tracking-wider mb-4 flex items-center gap-1.5">
             <TrendingUp className="h-3.5 w-3.5 text-[var(--brand)]" /> Pontos de Dificuldade por Agente
           </h3>
@@ -278,7 +278,7 @@ export function ReportsView({ filters }: { filters: TaskFiltersState }) {
         </div>
 
         {/* Gráfico 2: Divisão por Complexidade */}
-        <div className="p-5 border border-border rounded-[24px] flex flex-col bg-surface">
+        <div className="p-5 border border-border rounded-[var(--radius-card)] flex flex-col bg-surface">
           <h3 className="text-xs uppercase font-extrabold text-[var(--muted-foreground)] tracking-wider mb-4">
             Distribuição por Complexidade (Difficulty Score)
           </h3>
@@ -321,7 +321,7 @@ export function ReportsView({ filters }: { filters: TaskFiltersState }) {
         </div>
 
         {/* Gráfico 3: Estimado vs Real (Cálculo de Desvio) */}
-        <div className="p-5 border border-border rounded-[24px] flex flex-col bg-surface col-span-1 lg:col-span-2">
+        <div className="p-5 border border-border rounded-[var(--radius-card)] flex flex-col bg-surface col-span-1 lg:col-span-2">
           <h3 className="text-xs uppercase font-extrabold text-[var(--muted-foreground)] tracking-wider mb-4 flex items-center justify-between">
             <span>Precisão de Horas Estimadas vs Reais por Agente</span>
             {totalEstimatedMinutes > 0 && (

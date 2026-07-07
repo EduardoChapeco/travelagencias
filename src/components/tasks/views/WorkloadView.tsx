@@ -22,9 +22,9 @@ export function WorkloadView({ filters }: { filters: TaskFiltersState }) {
       <div className="space-y-4 bg-[var(--surface)] p-6 rounded-2xl border">
         <Skeleton className="h-6 w-1/4 mb-6" />
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <Skeleton className="h-40 w-full rounded-[24px]" />
-          <Skeleton className="h-40 w-full rounded-[24px]" />
-          <Skeleton className="h-40 w-full rounded-[24px]" />
+          <Skeleton className="h-40 w-full rounded-[var(--radius-card)]" />
+          <Skeleton className="h-40 w-full rounded-[var(--radius-card)]" />
+          <Skeleton className="h-40 w-full rounded-[var(--radius-card)]" />
         </div>
       </div>
     );

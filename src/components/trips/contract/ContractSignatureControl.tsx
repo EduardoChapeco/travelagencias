@@ -53,7 +53,7 @@ export function ContractSignatureControl({
         <h3 className="text-xs font-semibold uppercase tracking-wide text-muted-foreground flex items-center gap-1.5">
           <UserCheck className="h-4 w-4" /> Controle de Assinaturas
         </h3>
-        <div className="rounded-[24px] border border-border/50 bg-surface-alt/30 p-3">
+        <div className="rounded-[var(--radius-card)] border border-border/50 bg-surface-alt/30 p-3">
           <div className="flex items-center justify-between">
             <div>
               <div className="text-xs font-bold text-foreground">

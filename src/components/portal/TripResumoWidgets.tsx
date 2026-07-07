@@ -168,7 +168,7 @@ export function TripCheckinWidget({
                   e.preventDefault();
                 }
               }}
-              className={`flex items-center justify-center gap-1.5 py-1.5 px-3 rounded-[24px] text-xs font-bold transition-all shadow-none text-center ${
+              className={`flex items-center justify-center gap-1.5 py-1.5 px-3 rounded-[var(--radius-card)] text-xs font-bold transition-all shadow-none text-center ${
                 isCheckinOpen
                   ? `${color} cursor-pointer`
                   : "bg-surface-alt text-muted-foreground border border-border cursor-not-allowed opacity-60"
@@ -225,7 +225,7 @@ export function TripCheckinWidget({
                   e.preventDefault();
                 }
               }}
-              className={`flex items-center justify-center gap-1.5 py-1.5 px-3 rounded-[24px] text-xs font-bold transition-all shadow-none text-center ${
+              className={`flex items-center justify-center gap-1.5 py-1.5 px-3 rounded-[var(--radius-card)] text-xs font-bold transition-all shadow-none text-center ${
                 isCheckinOpen
                   ? `${color} cursor-pointer`
                   : "bg-surface-alt text-muted-foreground border border-border cursor-not-allowed opacity-60"
@@ -275,7 +275,7 @@ export function TripCheckinWidget({
                 onEmergencyDelay();
               }
             }}
-            className="flex-1 py-1.5 px-3 rounded-[24px] bg-rose-600 hover:bg-rose-700 text-white text-xs font-bold shadow-none transition-colors disabled:opacity-50"
+            className="flex-1 py-1.5 px-3 rounded-[var(--radius-card)] bg-rose-600 hover:bg-rose-700 text-white text-xs font-bold shadow-none transition-colors disabled:opacity-50"
           >
             Meu Voo Atrasou
           </button>
@@ -287,7 +287,7 @@ export function TripCheckinWidget({
                 onEmergencyCancellation();
               }
             }}
-            className="flex-1 py-1.5 px-3 rounded-[24px] border border-rose-600 text-rose-700 hover:bg-rose-50 text-xs font-bold shadow-none transition-colors disabled:opacity-50 bg-white"
+            className="flex-1 py-1.5 px-3 rounded-[var(--radius-card)] border border-rose-600 text-rose-700 hover:bg-rose-50 text-xs font-bold shadow-none transition-colors disabled:opacity-50 bg-white"
           >
             Voo Cancelado
           </button>
@@ -551,7 +551,7 @@ export function TripItinerary({ trip }: { trip: any }) {
           Object.values(trip.insurance).some((v) => v !== null && v !== "" && v !== undefined) && (
             <div>
               <h4 className="text-sm font-bold text-info mb-2">Seguro Viagem</h4>
-              <div className="text-sm text-muted-foreground space-y-1 rounded-[24px] bg-info/5 border border-info/20 p-3">
+              <div className="text-sm text-muted-foreground space-y-1 rounded-[var(--radius-card)] bg-info/5 border border-info/20 p-3">
                 {(trip.insurance as any).provider && (
                   <div>
                     <span className="font-semibold">Operadora:</span>{" "}
@@ -632,7 +632,7 @@ export function TripAccommodation({ hotels }: { hotels: any[] }) {
               <p className="text-xs font-medium text-muted-foreground flex items-center gap-1 mt-1">
                 <MapPin className="h-3 w-3" /> {h.city}
               </p>
-              <div className="mt-5 flex items-center justify-between text-xs font-bold text-foreground bg-background rounded-[24px] p-3 border border-border">
+              <div className="mt-5 flex items-center justify-between text-xs font-bold text-foreground bg-background rounded-[var(--radius-card)] p-3 border border-border">
                 <div className="text-center">
                   <div className="text-[10px] uppercase tracking-wider text-muted-foreground mb-1">
                     Check-in
@@ -682,7 +682,7 @@ export function TripVoucherAccommodation({ hotels }: { hotels: any[] }) {
               <p className="text-xs font-medium text-muted-foreground flex items-center gap-1 mt-1">
                 <MapPin className="h-3 w-3" /> {h.city}
               </p>
-              <div className="mt-5 flex items-center justify-between text-xs font-bold text-foreground bg-background rounded-[24px] p-3 border border-border">
+              <div className="mt-5 flex items-center justify-between text-xs font-bold text-foreground bg-background rounded-[var(--radius-card)] p-3 border border-border">
                 <div className="text-center">
                   <div className="text-[10px] uppercase tracking-wider text-muted-foreground mb-1">
                     Check-in

@@ -66,7 +66,7 @@ function KpiCard({
   }[tone];
 
   return (
-    <div className={`rounded-[24px] border border-border/60 ${bg} p-5`}>
+    <div className={`rounded-[var(--radius-card)] border border-border/60 ${bg} p-5`}>
       <div className="mb-3 flex items-center justify-between">
         <span className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
           {label}

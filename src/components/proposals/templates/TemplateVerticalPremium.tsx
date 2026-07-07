@@ -147,7 +147,7 @@ export default function TemplateVerticalPremium({ proposal: p, agency }: Templat
               return (
                 <div
                   key={day.id || idx}
-                  className="bg-white rounded-[24px] border border-[#B9D9F4] p-[36px] shadow-[0_4px_24px_rgba(23,71,132,0.04)] overflow-visible"
+                  className="bg-white rounded-[var(--radius-card)] border border-[#B9D9F4] p-[36px] shadow-[0_4px_24px_rgba(23,71,132,0.04)] overflow-visible"
                 >
                   <div className="flex items-center gap-4 mb-6">
                     <div
@@ -227,7 +227,7 @@ export default function TemplateVerticalPremium({ proposal: p, agency }: Templat
         {(vm.hasIncludes || vm.hasExcludes) && (
           <div className="mt-[76px] grid grid-cols-12 gap-[32px]">
             {vm.hasIncludes && (
-              <div className={`${vm.hasExcludes ? 'col-span-6' : 'col-span-12'} bg-white rounded-[24px] p-[40px] border border-[#B9D9F4] shadow-sm`}>
+              <div className={`${vm.hasExcludes ? 'col-span-6' : 'col-span-12'} bg-white rounded-[var(--radius-card)] p-[40px] border border-[#B9D9F4] shadow-sm`}>
                 <h2
                   className="text-[36px] mb-8"
                   style={{ fontFamily: "var(--brand-heading-font, 'Playfair Display', serif)", color: brand }}
@@ -248,7 +248,7 @@ export default function TemplateVerticalPremium({ proposal: p, agency }: Templat
             )}
 
             {vm.hasExcludes && (
-              <div className={`${vm.hasIncludes ? 'col-span-6' : 'col-span-12'} bg-slate-50 rounded-[24px] p-[40px] border border-slate-200`}>
+              <div className={`${vm.hasIncludes ? 'col-span-6' : 'col-span-12'} bg-slate-50 rounded-[var(--radius-card)] p-[40px] border border-slate-200`}>
                 <h2
                   className="text-[36px] mb-8"
                   style={{ fontFamily: "var(--brand-heading-font, 'Playfair Display', serif)", color: brand }}
@@ -288,7 +288,7 @@ export default function TemplateVerticalPremium({ proposal: p, agency }: Templat
                       <div className="text-[18px] text-slate-600 flex items-center gap-2 mb-4">
                         <MapPin className="w-5 h-5 text-slate-400" /> {h.city}
                       </div>
-                      <div className="grid grid-cols-2 gap-4 bg-slate-50 p-4 rounded-[24px] border border-slate-100">
+                      <div className="grid grid-cols-2 gap-4 bg-slate-50 p-4 rounded-[var(--radius-card)] border border-slate-100">
                         <div>
                           <span className="block text-[14px] uppercase font-bold text-slate-400">Check-in</span>
                           <span className="text-[18px] font-semibold text-slate-800">{fmtDate(h.checkin)}</span>
@@ -352,7 +352,7 @@ export default function TemplateVerticalPremium({ proposal: p, agency }: Templat
 
       {/* 13. RODAPÉ E CHAMADA FINAL */}
       <div
-        className="mt-8 mx-[60px] rounded-[24px] px-[48px] py-[36px] flex justify-between items-center"
+        className="mt-8 mx-[60px] rounded-[var(--radius-card)] px-[48px] py-[36px] flex justify-between items-center"
         style={{ backgroundColor: brand, color: brandFg }}
       >
         <div className="flex items-center gap-6">

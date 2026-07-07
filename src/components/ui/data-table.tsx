@@ -70,7 +70,7 @@ export function DataTable<TData, TValue>({
 
   return (
     <div className="flex-1 flex flex-col justify-between h-full min-h-0 space-y-4">
-      <div className="flex-1 rounded-[28px] border border-border bg-surface overflow-hidden flex flex-col">
+      <div className="flex-1 rounded-[var(--radius-card)] border border-border bg-surface overflow-hidden flex flex-col">
         <div className="flex-1 overflow-y-auto no-scrollbar">
           <Table>
             <TableHeader className="bg-surface-alt/50">
@@ -130,7 +130,7 @@ export function DataTable<TData, TValue>({
         </div>
       </div>
 
-      <div className="flex items-center justify-between px-4 py-2 rounded-[28px] bg-white/5 border border-white/5 shadow-xs select-none">
+      <div className="flex items-center justify-between px-4 py-2 rounded-[var(--radius-card)] bg-white/5 border border-white/5 shadow-xs select-none">
         <div className="text-xs text-muted-foreground/80 font-medium">
           {table.getFilteredRowModel().rows.length} linha(s) total
         </div>

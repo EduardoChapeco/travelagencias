@@ -109,7 +109,7 @@ export function NewPassengerSheet({
             </Field>
           </div>
 
-          <div className="rounded-[24px] border border-border p-4 bg-surface-alt/20 space-y-4">
+          <div className="rounded-[var(--radius-card)] border border-border p-4 bg-surface-alt/20 space-y-4">
             <div className="flex items-center gap-2 text-sm font-semibold mb-2">
               <FileText className="w-4 h-4 text-muted-foreground" />
               Documentação Primária
@@ -141,7 +141,7 @@ export function NewPassengerSheet({
             </Field>
           </div>
 
-          <label className="flex items-center gap-3 rounded-[24px] border border-brand/20 bg-brand/5 p-4 cursor-pointer hover:border-brand/40 transition-colors">
+          <label className="flex items-center gap-3 rounded-[var(--radius-card)] border border-brand/20 bg-brand/5 p-4 cursor-pointer hover:border-brand/40 transition-colors">
             <input
               type="checkbox"
               {...register("isLead")}

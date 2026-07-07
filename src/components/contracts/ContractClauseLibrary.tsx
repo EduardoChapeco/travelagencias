@@ -230,7 +230,7 @@ export function ContractClauseLibrary({
         {formOpen ? (
           <form
             onSubmit={handleSubmit}
-            className="mx-auto max-w-xl space-y-5 border border-border rounded-[24px] p-5 bg-surface animate-in fade-in slide-in-from-bottom-2 duration-300"
+            className="mx-auto max-w-xl space-y-5 border border-border rounded-[var(--radius-card)] p-5 bg-surface animate-in fade-in slide-in-from-bottom-2 duration-300"
           >
             <div className="flex items-center justify-between border-b border-border pb-3">
               <h3 className="text-sm font-bold text-foreground uppercase tracking-wider">
@@ -335,7 +335,7 @@ export function ContractClauseLibrary({
                       return (
                         <div
                           key={clause.id}
-                          className={`group border rounded-[24px] bg-surface p-4 transition-all hover:border-border-strong ${
+                          className={`group border rounded-[var(--radius-card)] bg-surface p-4 transition-all hover:border-border-strong ${
                             !clause.is_active ? "opacity-60 border-dashed" : "border-border"
                           }`}
                         >

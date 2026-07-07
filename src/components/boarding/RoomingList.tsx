@@ -224,7 +224,7 @@ export function RoomingList({
       {showForm && (
         <form
           onSubmit={handleSubmit}
-          className="rounded-[24px] border border-border bg-surface p-4 space-y-3 animate-in fade-in slide-in-from-top-2 duration-200"
+          className="rounded-[var(--radius-card)] border border-border bg-surface p-4 space-y-3 animate-in fade-in slide-in-from-top-2 duration-200"
         >
           <div className="flex items-center justify-between border-b border-border pb-2">
             <span className="text-xs font-bold uppercase tracking-wider text-foreground">

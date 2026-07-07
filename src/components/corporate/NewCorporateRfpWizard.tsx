@@ -262,7 +262,7 @@ export function NewCorporateRfpWizard({
           {/* STEP 3: Revisão */}
           {step === 3 && (
             <div className="space-y-6 animate-in fade-in slide-in-from-right-4 duration-300">
-              <div className="rounded-[24px] border border-border bg-surface-alt/20 p-6">
+              <div className="rounded-[var(--radius-card)] border border-border bg-surface-alt/20 p-6">
                 <h3 className="text-xl font-bold text-foreground flex items-center gap-2 mb-4">
                   <Briefcase className="h-5 w-5 text-brand" /> {title}
                 </h3>

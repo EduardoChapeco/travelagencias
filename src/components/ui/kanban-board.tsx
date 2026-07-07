@@ -33,7 +33,7 @@ export const KanbanColumn = React.forwardRef<HTMLDivElement, KanbanColumnProps>(
       <div
         ref={ref}
         className={cn(
-          "flex h-full w-[320px] shrink-0 flex-col rounded-[28px] border bg-black/5 dark:bg-white/5 backdrop-blur-3xl transition-all duration-300",
+          "flex h-full w-[320px] shrink-0 flex-col rounded-[var(--radius-card)] border bg-black/5 dark:bg-white/5 backdrop-blur-3xl transition-all duration-300",
           isOver ? "border-brand bg-brand/10 scale-[1.02]" : "border-white/10 dark:border-white/5",
           className
         )}
@@ -101,7 +101,7 @@ export function KanbanColumnBody({ className, ...props }: React.HTMLAttributes<H
 export function KanbanMobileAccordion({ className, ...props }: React.HTMLAttributes<HTMLDivElement>) {
   return (
     <div
-      className={cn("rounded-[28px] border border-white/10 bg-black/5 dark:bg-white/5 backdrop-blur-3xl overflow-hidden shadow-none", className)}
+      className={cn("rounded-[var(--radius-card)] border border-white/10 bg-black/5 dark:bg-white/5 backdrop-blur-3xl overflow-hidden shadow-none", className)}
       {...props}
     />
   );

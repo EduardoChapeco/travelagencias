@@ -48,7 +48,7 @@ export function ClientLeadsPanel({ clientId, agencyId }: { clientId: string; age
                 key={l.id}
                 to="/agency/$slug/crm/$lead_id"
                 params={{ slug, lead_id: l.id }}
-                className="flex items-center justify-between p-3 rounded-[24px] border border-border bg-surface hover:border-brand/40 transition-colors"
+                className="flex items-center justify-between p-3 rounded-[var(--radius-card)] border border-border bg-surface hover:border-brand/40 transition-colors"
               >
                 <div>
                   <div className="font-bold text-sm text-foreground">{l.name}</div>

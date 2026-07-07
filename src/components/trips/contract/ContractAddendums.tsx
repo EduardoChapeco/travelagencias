@@ -99,7 +99,7 @@ export function ContractAddendums({
       </div>
 
       {showAddForm && (
-        <div className="mb-4 rounded-[24px] border border-border p-4 space-y-4 bg-surface-alt/20">
+        <div className="mb-4 rounded-[var(--radius-card)] border border-border p-4 space-y-4 bg-surface-alt/20">
           <h3 className="text-xs font-bold text-foreground">Novo Aditivo ao Contrato</h3>
           <Field label="Título do Aditivo">
             <Input
@@ -151,7 +151,7 @@ export function ContractAddendums({
           {addendums.map((ad) => (
             <div
               key={ad.id}
-              className="rounded-[24px] border border-border/60 bg-surface-alt/10 p-3 space-y-2 text-xs"
+              className="rounded-[var(--radius-card)] border border-border/60 bg-surface-alt/10 p-3 space-y-2 text-xs"
             >
               <div className="flex items-center justify-between">
                 <span className="font-bold text-foreground">{ad.title}</span>

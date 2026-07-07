@@ -663,7 +663,7 @@ export function NewGroupTourWizard({
                 </div>
 
                 {/* Form to add a new pricing tier */}
-                <div className="p-4 rounded-[24px] border border-border bg-surface-alt/10 space-y-4">
+                <div className="p-4 rounded-[var(--radius-card)] border border-border bg-surface-alt/10 space-y-4">
                   <h4 className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
                     Nova Tarifa
                   </h4>
@@ -774,7 +774,7 @@ export function NewGroupTourWizard({
                 </div>
 
                 {/* Form to add a new extra option */}
-                <div className="p-4 rounded-[24px] border border-border bg-surface-alt/10 space-y-4">
+                <div className="p-4 rounded-[var(--radius-card)] border border-border bg-surface-alt/10 space-y-4">
                   <h4 className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
                     Novo Opcional
                   </h4>
@@ -1045,7 +1045,7 @@ export function NewGroupTourWizard({
               <div className="space-y-6 animate-in fade-in slide-in-from-right-4 duration-300">
                 <Field label="Imagem de Capa (Banner)" error={errors.coverUrl?.message}>
                   {watchCoverUrl ? (
-                    <div className="relative w-full h-40 rounded-[24px] border border-border overflow-hidden group">
+                    <div className="relative w-full h-40 rounded-[var(--radius-card)] border border-border overflow-hidden group">
                       <img src={watchCoverUrl} alt="Cover" className="w-full h-full object-cover" />
                       <div className="absolute inset-0 bg-background/80 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
                         <button
@@ -1069,7 +1069,7 @@ export function NewGroupTourWizard({
                       />
                       <label
                         htmlFor="cover-upload"
-                        className="flex flex-col items-center justify-center w-full h-40 rounded-[24px] border-2 border-dashed border-border/60 bg-surface hover:border-brand/50 hover:bg-surface-alt/50 cursor-pointer transition-colors"
+                        className="flex flex-col items-center justify-center w-full h-40 rounded-[var(--radius-card)] border-2 border-dashed border-border/60 bg-surface hover:border-brand/50 hover:bg-surface-alt/50 cursor-pointer transition-colors"
                       >
                         {uploading ? (
                           <div className="h-6 w-6 animate-spin rounded-full border-2 border-brand border-t-transparent mb-2" />
@@ -1112,7 +1112,7 @@ export function NewGroupTourWizard({
                     {watchItinerary.map((day, idx) => (
                       <div
                         key={idx}
-                        className="flex gap-4 p-4 rounded-[24px] border border-border/60 bg-surface-alt/20"
+                        className="flex gap-4 p-4 rounded-[var(--radius-card)] border border-border/60 bg-surface-alt/20"
                       >
                         <div className="flex flex-col items-center gap-2">
                           <div className="flex h-8 w-8 items-center justify-center rounded-full bg-brand/10 text-brand font-bold text-xs">
@@ -1168,7 +1168,7 @@ export function NewGroupTourWizard({
                       </div>
                     ))}
                     {watchItinerary.length === 0 && (
-                      <div className="text-center py-6 border border-dashed border-border/50 rounded-[24px] text-xs text-muted-foreground">
+                      <div className="text-center py-6 border border-dashed border-border/50 rounded-[var(--radius-card)] text-xs text-muted-foreground">
                         Nenhum dia adicionado ao itinerário.
                       </div>
                     )}
@@ -1180,7 +1180,7 @@ export function NewGroupTourWizard({
             {/* STEP 6: REVIEW & PUBLISH (originally Step 4) */}
             {step === 6 && (
               <div className="space-y-6 animate-in fade-in slide-in-from-right-4 duration-300">
-                <div className="rounded-[24px] border border-border bg-surface-alt/20 p-6 flex flex-col sm:flex-row gap-6">
+                <div className="rounded-[var(--radius-card)] border border-border bg-surface-alt/20 p-6 flex flex-col sm:flex-row gap-6">
                   {watchCoverUrl ? (
                     <img
                       src={watchCoverUrl}
@@ -1245,7 +1245,7 @@ export function NewGroupTourWizard({
                 </div>
 
                 {watchPricingTiers && watchPricingTiers.length > 0 && (
-                  <div className="space-y-2 rounded-[24px] border border-border bg-surface p-5">
+                  <div className="space-y-2 rounded-[var(--radius-card)] border border-border bg-surface p-5">
                     <h4 className="text-xs font-bold uppercase tracking-widest text-muted-foreground mb-2 flex items-center gap-1.5">
                       <BedDouble className="h-4 w-4" /> Tarifas de Acomodação (
                       {watchPricingTiers.length})
@@ -1265,7 +1265,7 @@ export function NewGroupTourWizard({
                 )}
 
                 {watchExtraOptions && watchExtraOptions.length > 0 && (
-                  <div className="space-y-2 rounded-[24px] border border-border bg-surface p-5">
+                  <div className="space-y-2 rounded-[var(--radius-card)] border border-border bg-surface p-5">
                     <h4 className="text-xs font-bold uppercase tracking-widest text-muted-foreground mb-2 flex items-center gap-1.5">
                       <Layers className="h-4 w-4" /> Opcionais Cadastrados (
                       {watchExtraOptions.length})
@@ -1284,7 +1284,7 @@ export function NewGroupTourWizard({
                   </div>
                 )}
 
-                <div className="space-y-4 rounded-[24px] border border-border bg-surface p-5">
+                <div className="space-y-4 rounded-[var(--radius-card)] border border-border bg-surface p-5">
                   <h4 className="text-xs font-bold uppercase tracking-widest text-muted-foreground">
                     Opções de Publicação
                   </h4>

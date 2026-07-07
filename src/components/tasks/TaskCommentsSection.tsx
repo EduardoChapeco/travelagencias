@@ -105,7 +105,7 @@ export function TaskCommentsSection({ taskId, agencyId }: TaskCommentsSectionPro
                     {format(new Date(c.created_at), "dd/MM 'às' HH:mm")}
                   </span>
                 </div>
-                <div className="text-xs text-foreground/80 leading-relaxed bg-[var(--surface-alt)]/40 border border-border/30 rounded-[24px] px-3 py-2">
+                <div className="text-xs text-foreground/80 leading-relaxed bg-[var(--surface-alt)]/40 border border-border/30 rounded-[var(--radius-card)] px-3 py-2">
                   {typeof c.content === "string" ? c.content : JSON.stringify(c.content)}
                 </div>
               </div>
@@ -120,7 +120,7 @@ export function TaskCommentsSection({ taskId, agencyId }: TaskCommentsSectionPro
           placeholder="Escreva um comentário... (Ctrl+Enter para enviar)"
           value={newComment}
           onChange={(e) => setNewComment(e.target.value)}
-          className="min-h-[56px] resize-none text-xs border-border/50 bg-[var(--surface-alt)]/20 focus:border-brand transition-colors rounded-[24px]"
+          className="min-h-[56px] resize-none text-xs border-border/50 bg-[var(--surface-alt)]/20 focus:border-brand transition-colors rounded-[var(--radius-card)]"
           onKeyDown={(e) => {
             if (e.key === "Enter" && !e.shiftKey) {
               e.preventDefault();

@@ -254,113 +254,89 @@ export function DynamicIslandNav({
   if (hiddenProp) return null;
 
   return (
-    <motion.aside
-      onMouseEnter={handleMouseEnter}
-      onMouseLeave={handleMouseLeave}
-      initial={{ opacity: 0, x: -8 }}
-      animate={{ opacity: 1, x: 0, width: hovered ? 184 : 52 }}
-      transition={{ type: "spring", bounce: 0.1, duration: 0.35 }}
-      className={cn(
-        "fixed left-[4px] top-1/2 -translate-y-1/2 z-40 flex flex-col",
-        "glass-sidebar",
-        "rounded-l-[14px] rounded-r-[28px]",
-        "shadow-[2px_4px_32px_rgba(0,0,0,0.30)]",
-        "py-4 gap-0.5 overflow-hidden",
-        "hidden md:flex",
-      )}
-      aria-label="Navegação principal"
-      style={{ minHeight: 0 }}
-    >
-      <AnimatePresence mode="wait">
-        {isContextMode ? (
-          /* ── MODO CONTEXTUAL ─────────────────────────────────────── */
-          <motion.nav
-            key="ctx-nav"
-            initial={{ opacity: 0, x: -6 }}
-            animate={{ opacity: 1, x: 0 }}
-            exit={{ opacity: 0, x: -6 }}
-            transition={{ duration: 0.2 }}
-            className="no-scrollbar flex-1 flex flex-col gap-0.5 overflow-y-auto px-1.5"
-          >
-            {/* Botão Voltar — alterna de volta ao modo principal SEM navegar */}
-            <button
-              type="button"
-              title={!hovered ? "Voltar ao menu" : undefined}
-              onClick={() => setForceMainMode(true)}
-              className="relative flex h-9 w-full items-center gap-3 rounded-full px-2.5 mb-1 transition-all duration-200 overflow-hidden shrink-0 text-white/40 hover:text-white/80 hover:bg-white/8 border border-white/10 cursor-pointer"
-            >
-              <span className="shrink-0 flex items-center justify-center w-5 h-5">
-                <ChevronLeft className="h-[14px] w-[14px]" strokeWidth={2} />
-              </span>
-              <AnimatePresence>
-                {hovered && (
-                  <motion.span
-                    key="back-label"
-                    initial={{ opacity: 0, x: -4 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    exit={{ opacity: 0, x: -4 }}
-                    transition={{ duration: 0.13 }}
-                    className="truncate text-[11px] font-semibold leading-tight whitespace-nowrap uppercase tracking-wide"
-                  >
-                    Voltar
-                  </motion.span>
-                )}
-              </AnimatePresence>
-            </button>
-
-            {/* Divider */}
-            <div className="h-px bg-white/8 mx-2 mb-1 shrink-0" />
-
-            {/* Context Items */}
-            {contextItems.map((ctxItem) => (
-              <ContextualItem
-                key={ctxItem.to}
-                item={ctxItem}
+    <div className="flex gap-2 relative z-40 hidden md:flex h-full py-4 ml-1">
+      {/* ── MODO PRINCIPAL (Sempre Visível) ──────────────────────── */}
+      <motion.aside
+        onMouseEnter={handleMouseEnter}
+        onMouseLeave={handleMouseLeave}
+        initial={{ opacity: 0, x: -8 }}
+        animate={{ width: hovered ? 184 : 52 }}
+        transition={{ type: "spring", bounce: 0.1, duration: 0.35 }}
+        className={cn(
+          "absolute left-0 top-4 bottom-4 z-50 flex flex-col",
+          "glass-sidebar",
+          "rounded-[14px]",
+          "shadow-[2px_4px_32px_rgba(0,0,0,0.30)]",
+          "py-4 gap-0.5 overflow-hidden",
+        )}
+        style={{ minHeight: 0 }}
+      >
+        <div className="no-scrollbar flex-1 flex flex-col gap-0.5 overflow-y-auto px-1.5">
+          {navItems.map((item) => {
+            const active = isItemActive(item, pathname, base);
+            const pending =
+              pendingLocation !== null && item.to
+                ? item.exact
+                  ? pendingLocation === `${base}/${item.to}`.replace(/\/$/, "")
+                  : pendingLocation.startsWith(`${base}/${item.to}`)
+                : false;
+            return (
+              <IslandItem
+                key={item.to}
+                item={item}
+                base={base}
                 expanded={hovered}
-                pathname={pathname}
+                isActive={active}
+                isPending={pending}
               />
-            ))}
-          </motion.nav>
-        ) : (
-          /* ── MODO PRINCIPAL ──────────────────────────────────────── */
-          <motion.nav
-            key="hub-nav"
-            initial={{ opacity: 0, x: -6 }}
-            animate={{ opacity: 1, x: 0 }}
-            exit={{ opacity: 0, x: -6 }}
-            transition={{ duration: 0.2 }}
-            className="no-scrollbar flex-1 flex flex-col gap-0.5 overflow-y-auto px-1.5"
-          >
-            {navItems.map((item) => {
-              const active = isItemActive(item, pathname, base);
-              const pending =
-                pendingLocation !== null && item.to
-                  ? item.exact
-                    ? pendingLocation === `${base}/${item.to}`.replace(/\/$/, "")
-                    : pendingLocation.startsWith(`${base}/${item.to}`)
-                  : false;
+            );
+          })}
+        </div>
+        {footer && (
+          <div className="shrink-0 pt-1 border-t border-white/8 px-1.5">
+            {footer}
+          </div>
+        )}
+      </motion.aside>
 
-              return (
-                <IslandItem
-                  key={item.to}
-                  item={item}
-                  base={base}
-                  expanded={hovered}
-                  isActive={active}
-                  isPending={pending}
+      {/* Espaçador invisível para reservar o espaço do Hub Nav na Grid/Flex */}
+      <div className="w-[52px] shrink-0" />
+
+      {/* ── MODO CONTEXTUAL (Coluna secundária, quando existir) ───── */}
+      <AnimatePresence>
+        {isContextMode && (
+          <motion.aside
+            key="ctx-nav"
+            initial={{ opacity: 0, x: -16, width: 0 }}
+            animate={{ opacity: 1, x: 0, width: 220 }}
+            exit={{ opacity: 0, x: -16, width: 0 }}
+            transition={{ type: "spring", bounce: 0, duration: 0.4 }}
+            className={cn(
+              "flex flex-col z-40 relative",
+              "glass-sidebar",
+              "rounded-[14px]",
+              "py-4 gap-0.5 overflow-hidden",
+            )}
+            style={{ minHeight: 0 }}
+          >
+            <div className="no-scrollbar flex-1 flex flex-col gap-0.5 overflow-y-auto px-2">
+              <div className="px-2 pb-2 mb-2 border-b border-white/10 shrink-0">
+                <span className="text-[11px] font-bold text-white/60 uppercase tracking-widest leading-tight block">
+                  Menu de Contexto
+                </span>
+              </div>
+              {contextItems.map((ctxItem) => (
+                <ContextualItem
+                  key={ctxItem.to}
+                  item={ctxItem}
+                  expanded={true}
+                  pathname={pathname}
                 />
-              );
-            })}
-          </motion.nav>
+              ))}
+            </div>
+          </motion.aside>
         )}
       </AnimatePresence>
-
-      {/* Footer (logout) */}
-      {footer && (
-        <div className="shrink-0 pt-1 border-t border-white/8 px-1.5">
-          {footer}
-        </div>
-      )}
-    </motion.aside>
+    </div>
   );
 }

@@ -21,7 +21,7 @@ export function GlassPanel({
   return (
     <div 
       className={cn(
-        "relative overflow-hidden rounded-[28px] border border-white/10",
+        "relative overflow-hidden rounded-[var(--radius-card)] border border-white/10",
         intensityClasses[intensity],
         className
       )}

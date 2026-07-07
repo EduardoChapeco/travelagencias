@@ -136,7 +136,7 @@ export function DocumentsPanel({ clientId, agencyId }: { clientId: string; agenc
             return (
               <div
                 key={doc.id}
-                className={`flex items-start justify-between gap-3 rounded-[24px] border p-3 ${
+                className={`flex items-start justify-between gap-3 rounded-[var(--radius-card)] border p-3 ${
                   status === "expired"
                     ? "border-danger/30 bg-danger/5"
                     : status === "soon"
@@ -177,7 +177,7 @@ export function DocumentsPanel({ clientId, agencyId }: { clientId: string; agenc
           })}
 
           {adding && (
-            <div className="rounded-[24px] border border-brand/30 bg-brand/5 p-4 space-y-3">
+            <div className="rounded-[var(--radius-card)] border border-brand/30 bg-brand/5 p-4 space-y-3">
               <div className="grid grid-cols-2 gap-3">
                 <div>
                   <label className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground block mb-1">

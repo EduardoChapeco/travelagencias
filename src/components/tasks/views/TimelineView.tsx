@@ -65,7 +65,7 @@ export function TimelineView({ filters }: { filters: TaskFiltersState }) {
       </div>
 
       <div className="flex-1 overflow-auto">
-        <div className="min-w-[800px] border rounded-[24px] overflow-hidden">
+        <div className="min-w-[800px] border rounded-[var(--radius-card)] overflow-hidden">
           {/* Header do Grid */}
           <div className="grid grid-cols-12 border-b bg-[var(--surface-alt)]/50 shrink-0 text-center font-bold text-[10px] uppercase tracking-wider text-[var(--muted-foreground)]">
             <div className="col-span-4 p-3 border-r text-left">Tarefa</div>

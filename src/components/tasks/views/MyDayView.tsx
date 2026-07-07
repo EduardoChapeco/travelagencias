@@ -19,14 +19,14 @@ export function MyDayView({ filters }: MyDayViewProps) {
     return (
       <div className="space-y-6">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-          <Skeleton className="h-32 w-full rounded-[24px]" />
-          <Skeleton className="h-32 w-full rounded-[24px]" />
-          <Skeleton className="h-32 w-full rounded-[24px]" />
-          <Skeleton className="h-32 w-full rounded-[24px]" />
+          <Skeleton className="h-32 w-full rounded-[var(--radius-card)]" />
+          <Skeleton className="h-32 w-full rounded-[var(--radius-card)]" />
+          <Skeleton className="h-32 w-full rounded-[var(--radius-card)]" />
+          <Skeleton className="h-32 w-full rounded-[var(--radius-card)]" />
         </div>
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          <Skeleton className="h-[400px] lg:col-span-2 rounded-[24px]" />
-          <Skeleton className="h-[400px] rounded-[24px]" />
+          <Skeleton className="h-[400px] lg:col-span-2 rounded-[var(--radius-card)]" />
+          <Skeleton className="h-[400px] rounded-[var(--radius-card)]" />
         </div>
       </div>
     );

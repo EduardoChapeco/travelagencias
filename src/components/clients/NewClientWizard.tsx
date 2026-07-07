@@ -219,7 +219,7 @@ export function NewClientWizard({
                   <button
                     type="button"
                     onClick={() => setValue("kind", "individual", { shouldValidate: true })}
-                    className={`flex-1 flex flex-col items-center justify-center p-4 rounded-[24px] border-2 cursor-pointer transition-colors ${watchKind === "individual" ? "border-brand bg-brand/5" : "border-border/50 bg-surface hover:border-brand/40"}`}
+                    className={`flex-1 flex flex-col items-center justify-center p-4 rounded-[var(--radius-card)] border-2 cursor-pointer transition-colors ${watchKind === "individual" ? "border-brand bg-brand/5" : "border-border/50 bg-surface hover:border-brand/40"}`}
                   >
                     <User
                       className={`h-8 w-8 mb-2 ${watchKind === "individual" ? "text-brand" : "text-muted-foreground"}`}
@@ -233,7 +233,7 @@ export function NewClientWizard({
                   <button
                     type="button"
                     onClick={() => setValue("kind", "company", { shouldValidate: true })}
-                    className={`flex-1 flex flex-col items-center justify-center p-4 rounded-[24px] border-2 cursor-pointer transition-colors ${watchKind === "company" ? "border-brand bg-brand/5" : "border-border/50 bg-surface hover:border-brand/40"}`}
+                    className={`flex-1 flex flex-col items-center justify-center p-4 rounded-[var(--radius-card)] border-2 cursor-pointer transition-colors ${watchKind === "company" ? "border-brand bg-brand/5" : "border-border/50 bg-surface hover:border-brand/40"}`}
                   >
                     <Building2
                       className={`h-8 w-8 mb-2 ${watchKind === "company" ? "text-brand" : "text-muted-foreground"}`}
@@ -294,7 +294,7 @@ export function NewClientWizard({
                 <Field label="Telefone / WhatsApp" error={errors.phone?.message}>
                   <Input {...register("phone")} placeholder="+55 11 99999-9999" />
                 </Field>
-                <div className="rounded-[24px] border border-border bg-surface-alt/40 p-4 mt-2">
+                <div className="rounded-[var(--radius-card)] border border-border bg-surface-alt/40 p-4 mt-2">
                   <p className="text-xs text-muted-foreground leading-relaxed">
                     Mais opções de contato e redes sociais poderão ser cadastradas na tela de
                     detalhes do cliente após a criação.
@@ -344,7 +344,7 @@ export function NewClientWizard({
             {/* STEP 3: Revisão */}
             {step === 3 && (
               <div className="space-y-6 animate-in fade-in slide-in-from-right-4 duration-300">
-                <div className="rounded-[24px] border border-border bg-surface-alt/20 p-6">
+                <div className="rounded-[var(--radius-card)] border border-border bg-surface-alt/20 p-6">
                   <div className="flex items-center gap-3 mb-5 border-b border-border/50 pb-4">
                     {watchKind === "individual" ? (
                       <div className="h-12 w-12 rounded-full bg-brand/10 flex items-center justify-center text-brand">

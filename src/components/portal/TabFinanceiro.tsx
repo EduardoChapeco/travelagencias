@@ -57,13 +57,13 @@ export function TabFinanceiro({
               {money(trip.total_sale, trip.currency)}
             </div>
             <div className="space-y-3">
-              <div className="flex justify-between items-center bg-white/10 p-3 rounded-[24px]">
+              <div className="flex justify-between items-center bg-white/10 p-3 rounded-[var(--radius-card)]">
                 <span className="text-xs font-medium">Pago</span>
                 <span className="text-sm font-bold text-success">
                   {money(trip.total_paid ?? 0, trip.currency)}
                 </span>
               </div>
-              <div className="flex justify-between items-center bg-white/10 p-3 rounded-[24px] border border-warning/30">
+              <div className="flex justify-between items-center bg-white/10 p-3 rounded-[var(--radius-card)] border border-warning/30">
                 <span className="text-xs font-medium">Pendente</span>
                 <span className="text-sm font-black text-warning">
                   {money(outstanding, trip.currency)}
@@ -186,7 +186,7 @@ export function TabFinanceiro({
                       inst.receipt_status !== "none" && (
                         <div className="border-t border-border/40 pt-3">
                           {inst.receipt_status === "pending" && (
-                            <div className="text-xs text-amber-700 bg-amber-500/10 border border-amber-500/20 rounded-[24px] px-3 py-2 flex items-center gap-2">
+                            <div className="text-xs text-amber-700 bg-amber-500/10 border border-amber-500/20 rounded-[var(--radius-card)] px-3 py-2 flex items-center gap-2">
                               <Clock className="w-4 h-4 text-amber-600 shrink-0" />
                               <div>
                                 <span className="font-bold">Comprovante enviado!</span> Aguardando
@@ -203,7 +203,7 @@ export function TabFinanceiro({
                             </div>
                           )}
                           {inst.receipt_status === "rejected" && (
-                            <div className="text-xs text-rose-700 bg-rose-500/10 border border-rose-500/20 rounded-[24px] px-3 py-2 flex items-start gap-2">
+                            <div className="text-xs text-rose-700 bg-rose-500/10 border border-rose-500/20 rounded-[var(--radius-card)] px-3 py-2 flex items-start gap-2">
                               <AlertCircle className="w-4 h-4 text-rose-600 shrink-0 mt-0.5" />
                               <div>
                                 <span className="font-bold">Comprovante Recusado:</span>{" "}

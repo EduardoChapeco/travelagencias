@@ -116,7 +116,7 @@ function Column({
     <div
       ref={setNodeRef}
       className={cn(
-        "flex h-full w-[310px] shrink-0 flex-col rounded-[28px] transition-all duration-300",
+        "flex h-full w-[310px] shrink-0 flex-col rounded-[var(--radius-card)] transition-all duration-300",
         "glass dark:glass-dark",
         isOver ? "border-brand bg-brand/5 scale-[1.01]" : ""
       )}
@@ -183,7 +183,7 @@ function MobileStageAccordion({
   const totalValue = leads.reduce((sum, l) => sum + (l.estimated_value || 0), 0);
 
   return (
-    <div className="rounded-[24px] border border-border bg-surface overflow-hidden shadow-none">
+    <div className="rounded-[var(--radius-card)] border border-border bg-surface overflow-hidden shadow-none">
       <button
         onClick={() => setExpanded(!expanded)}
         className="w-full flex items-center justify-between px-4 py-3 bg-surface-alt/10 text-left border-b border-border/40 focus:outline-none"

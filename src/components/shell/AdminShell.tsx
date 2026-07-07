@@ -74,7 +74,7 @@ export function AdminShell() {
   if (!authorized)
     return (
       <div className="flex h-screen items-center justify-center">
-        <div className="rounded-[24px] border border-border bg-surface p-6 text-center">
+        <div className="rounded-[var(--radius-card)] border border-border bg-surface p-6 text-center">
           <Plane className="mx-auto mb-2 h-5 w-5 text-muted-foreground" />
           <h2 className="text-sm font-semibold">Acesso restrito</h2>
           <p className="mt-1 text-xs text-muted-foreground">
@@ -93,7 +93,7 @@ export function AdminShell() {
         items={items as SlimSidebarItem[]}
         brand={
           <>
-            <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-[24px] bg-primary text-xs font-bold text-primary-foreground">
+            <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-[var(--radius-card)] bg-primary text-xs font-bold text-primary-foreground">
               A
             </div>
             <span className="ml-3 min-w-0 translate-x-1 truncate text-sm font-semibold opacity-0 transition group-hover/sidebar:translate-x-0 group-hover/sidebar:opacity-100 group-focus-within/sidebar:translate-x-0 group-focus-within/sidebar:opacity-100">

@@ -20,7 +20,7 @@ export function DevicePreview({
 }: DevicePreviewProps) {
   if (viewport === "desktop") {
     return (
-      <div className={`w-full max-w-6xl mx-auto rounded-[24px] shadow-xl border border-border overflow-hidden flex flex-col bg-background ${className}`}>
+      <div className={`w-full max-w-6xl mx-auto rounded-[var(--radius-card)] shadow-xl border border-border overflow-hidden flex flex-col bg-background ${className}`}>
         {/* Fake Browser Top */}
         <div className="h-10 bg-surface border-b border-border flex items-center px-4 gap-2 shrink-0">
           <div className="flex gap-1.5">
@@ -45,7 +45,7 @@ export function DevicePreview({
     return (
       <div className={`relative w-[768px] h-[1024px] max-h-full mx-auto bg-black rounded-[40px] shadow-2xl p-[16px] shrink-0 border-[4px] border-zinc-700 flex flex-col scale-[0.6] sm:scale-75 md:scale-90 lg:scale-100 origin-top ${className}`}>
          <div 
-          className="w-full h-full rounded-[24px] overflow-hidden overflow-y-auto no-scrollbar relative bg-background"
+          className="w-full h-full rounded-[var(--radius-card)] overflow-hidden overflow-y-auto no-scrollbar relative bg-background"
           style={{ backgroundColor: themeBackground }}
         >
           {children}

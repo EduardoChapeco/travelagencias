@@ -150,7 +150,7 @@ function StatusGroupSection({
       </div>
 
       {/* Table Container */}
-      <div className="border border-border/50 bg-[var(--surface)] rounded-[24px] overflow-hidden shadow-xs">
+      <div className="border border-border/50 bg-[var(--surface)] rounded-[var(--radius-card)] overflow-hidden shadow-xs">
         {tasks.length > 0 && (
           <div className="overflow-x-auto">
             <table className="w-full border-collapse text-left">

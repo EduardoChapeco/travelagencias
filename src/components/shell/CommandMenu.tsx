@@ -118,7 +118,7 @@ export function CommandMenu() {
   return (
     <div className="fixed inset-0 z-50 flex items-start justify-center pt-[15vh] bg-background/50 backdrop-blur-sm animate-in fade-in duration-200">
       <div
-        className="w-full max-w-2xl bg-surface border border-border rounded-[24px] overflow-hidden"
+        className="w-full max-w-2xl bg-surface border border-border rounded-[var(--radius-card)] overflow-hidden"
         onClick={(e) => e.stopPropagation()}
       >
         <Command

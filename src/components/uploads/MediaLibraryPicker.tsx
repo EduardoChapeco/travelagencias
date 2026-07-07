@@ -80,7 +80,7 @@ export function MediaLibraryPicker({
             </div>
           ) : (
             <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 gap-4">
-              <label className="relative flex aspect-square cursor-pointer flex-col items-center justify-center rounded-[24px] border-2 border-dashed border-border hover:border-brand/50 hover:bg-surface-alt transition-colors">
+              <label className="relative flex aspect-square cursor-pointer flex-col items-center justify-center rounded-[var(--radius-card)] border-2 border-dashed border-border hover:border-brand/50 hover:bg-surface-alt transition-colors">
                 <input
                   type="file"
                   accept="image/*"
@@ -111,7 +111,7 @@ export function MediaLibraryPicker({
                       onSelect(url);
                       onOpenChange(false);
                     }}
-                    className="group relative aspect-square overflow-hidden rounded-[24px] border border-border bg-surface cursor-pointer hover:ring-2 ring-brand transition-all"
+                    className="group relative aspect-square overflow-hidden rounded-[var(--radius-card)] border border-border bg-surface cursor-pointer hover:ring-2 ring-brand transition-all"
                   >
                     <img src={url} alt={f.name} className="w-full h-full object-cover" />
                     <div className="absolute inset-0 bg-background/0 group-hover:bg-background/20 transition-colors flex items-center justify-center opacity-0 group-hover:opacity-100">

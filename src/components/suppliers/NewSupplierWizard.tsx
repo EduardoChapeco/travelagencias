@@ -305,7 +305,7 @@ export function NewSupplierWizard({
             {/* STEP 2: Markups */}
             {step === 2 && (
               <div className="space-y-6 animate-in fade-in slide-in-from-right-4 duration-300">
-                <div className="rounded-[24px] border border-brand/20 bg-brand/5 p-6">
+                <div className="rounded-[var(--radius-card)] border border-brand/20 bg-brand/5 p-6">
                   <Field
                     label="Comissão Base ou Markup Acordado (%)"
                     error={errors.commission?.message}
@@ -361,7 +361,7 @@ export function NewSupplierWizard({
                   </Field>
                 </div>
 
-                <div className="rounded-[24px] border border-border bg-surface-alt/20 p-5 mt-6">
+                <div className="rounded-[var(--radius-card)] border border-border bg-surface-alt/20 p-5 mt-6">
                   <h4 className="text-sm font-semibold mb-3">Resumo B2B</h4>
                   <div className="grid grid-cols-2 gap-4 text-xs">
                     <div>

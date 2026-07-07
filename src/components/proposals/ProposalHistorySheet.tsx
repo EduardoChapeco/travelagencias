@@ -135,7 +135,7 @@ export function ProposalHistorySheet({
           </p>
         </div>
       ) : history.length === 0 ? (
-        <div className="flex flex-col items-center justify-center py-20 text-center border border-dashed border-border rounded-[24px] bg-surface-alt/20">
+        <div className="flex flex-col items-center justify-center py-20 text-center border border-dashed border-border rounded-[var(--radius-card)] bg-surface-alt/20">
           <History className="h-8 w-8 text-muted-foreground/60 mb-2.5" />
           <span className="text-xs font-semibold text-foreground">Sem histórico registrado</span>
           <span className="text-[11px] text-muted-foreground mt-1 max-w-[240px]">

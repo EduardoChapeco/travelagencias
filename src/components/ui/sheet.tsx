@@ -46,7 +46,7 @@ export function SheetPage({
     >
       <div
         className={cn(
-          "absolute inset-0 bg-overlay/40 backdrop-blur-[2px] transition-opacity duration-300",
+          "absolute inset-0 bg-black/60 backdrop-blur-sm transition-opacity duration-300",
           isOpen ? "opacity-100" : "opacity-0",
         )}
         onClick={onClose}
@@ -88,7 +88,7 @@ const SheetOverlay = React.forwardRef<
 >(({ className, ...props }, ref) => (
   <SheetPrimitive.Overlay
     className={cn(
-      "fixed inset-0 z-50 mac-glass-modal data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0",
+      "fixed inset-0 z-50 bg-black/60 backdrop-blur-sm data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0",
       className,
     )}
     {...props}

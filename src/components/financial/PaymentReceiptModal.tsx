@@ -456,7 +456,7 @@ export function PaymentReceiptModal({ isOpen, onClose, data }: PaymentReceiptMod
                 </div>
 
                 {/* Amount / Value showcase block */}
-                <div className="bg-slate-50 border border-slate-100 rounded-[24px] p-5 flex items-center justify-between">
+                <div className="bg-slate-50 border border-slate-100 rounded-[var(--radius-card)] p-5 flex items-center justify-between">
                   <div>
                     <span className="text-[9px] text-slate-400 font-bold uppercase tracking-wider block">
                       Valor Recebido
@@ -521,7 +521,7 @@ export function PaymentReceiptModal({ isOpen, onClose, data }: PaymentReceiptMod
                 </div>
 
                 {receiptDetails.description && (
-                  <div className="border border-slate-100 bg-slate-50/50 rounded-[24px] p-4 text-[11px] text-slate-600 leading-relaxed">
+                  <div className="border border-slate-100 bg-slate-50/50 rounded-[var(--radius-card)] p-4 text-[11px] text-slate-600 leading-relaxed">
                     <strong className="text-slate-800 block font-semibold mb-1 text-[10px] uppercase">
                       Observações do Agente
                     </strong>

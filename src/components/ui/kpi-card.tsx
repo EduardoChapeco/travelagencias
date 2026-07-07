@@ -27,7 +27,7 @@ export function KpiCard({
   return (
     <div
       className={cn(
-        "rounded-[24px] border border-border/60 p-5",
+        "rounded-[var(--radius-card)] border border-border/60 p-5",
         bgClasses[tone],
         className
       )}

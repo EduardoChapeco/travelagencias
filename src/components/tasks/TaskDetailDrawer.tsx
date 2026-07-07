@@ -398,7 +398,7 @@ export function TaskDetailDrawer({ task, open, onClose, onUpdated }: TaskDetailD
 
               {/* ── Time & Complexity Stats ────────────────────────────────── */}
               <div className="grid grid-cols-3 gap-2">
-                <div className="p-3 rounded-[24px] border border-border/40 bg-[var(--surface-alt)]/20 space-y-1 text-center">
+                <div className="p-3 rounded-[var(--radius-card)] border border-border/40 bg-[var(--surface-alt)]/20 space-y-1 text-center">
                   <div className="flex items-center justify-center gap-1 text-[9px] font-bold uppercase tracking-wider text-muted-foreground">
                     <Timer className="h-3 w-3" /> Estimado
                   </div>
@@ -408,7 +408,7 @@ export function TaskDetailDrawer({ task, open, onClose, onUpdated }: TaskDetailD
                       : `${task.estimated_minutes}m`}
                   </div>
                 </div>
-                <div className="p-3 rounded-[24px] border border-border/40 bg-[var(--surface-alt)]/20 space-y-1 text-center">
+                <div className="p-3 rounded-[var(--radius-card)] border border-border/40 bg-[var(--surface-alt)]/20 space-y-1 text-center">
                   <div className="flex items-center justify-center gap-1 text-[9px] font-bold uppercase tracking-wider text-muted-foreground">
                     <Clock className="h-3 w-3" /> Real
                   </div>
@@ -418,7 +418,7 @@ export function TaskDetailDrawer({ task, open, onClose, onUpdated }: TaskDetailD
                       : `${task.actual_minutes || 0}m`}
                   </div>
                 </div>
-                <div className="p-3 rounded-[24px] border border-border/40 bg-[var(--surface-alt)]/20 space-y-1 text-center">
+                <div className="p-3 rounded-[var(--radius-card)] border border-border/40 bg-[var(--surface-alt)]/20 space-y-1 text-center">
                   <div className="flex items-center justify-center gap-1 text-[9px] font-bold uppercase tracking-wider text-muted-foreground">
                     <BarChart3 className="h-3 w-3" /> Dif.
                   </div>
@@ -436,7 +436,7 @@ export function TaskDetailDrawer({ task, open, onClose, onUpdated }: TaskDetailD
                   value={descValue}
                   onChange={(e) => setDescValue(e.target.value)}
                   placeholder="Adicione uma descrição detalhada da tarefa..."
-                  className="min-h-[80px] text-sm resize-none border-border/50 bg-[var(--surface-alt)]/20 focus:border-brand transition-colors rounded-[24px]"
+                  className="min-h-[80px] text-sm resize-none border-border/50 bg-[var(--surface-alt)]/20 focus:border-brand transition-colors rounded-[var(--radius-card)]"
                 />
                 {descValue !== ((task.description as string) || "") && (
                   <div className="flex gap-2 pt-1.5 justify-end">

@@ -269,7 +269,7 @@ export function AIChatPanel({
 
   if (isGenie) {
     return (
-      <div className="w-full h-full flex rounded-[28px] overflow-hidden bg-zinc-950/80 dark:bg-zinc-950/90 backdrop-blur-3xl border border-white/10">
+      <div className="w-full h-full flex rounded-[var(--radius-card)] overflow-hidden bg-zinc-950/80 dark:bg-zinc-950/90 backdrop-blur-3xl border border-white/10">
         <aside className="w-80 border-r border-white/10 flex flex-col p-5 bg-black/30 shrink-0">
           <div className="flex justify-between items-center mb-6">
             <h3 className="text-sm font-bold text-white uppercase tracking-wider">Histórico</h3>
@@ -398,7 +398,7 @@ export function AIChatPanel({
                     <div 
                       key={idx} 
                       className={cn(
-                        "relative flex items-center gap-2 p-2 rounded-[24px] glass border border-white/15 text-white text-[11px] font-semibold shadow-md transition-all hover:scale-105 hover:z-10 cursor-pointer max-w-[140px] shrink-0",
+                        "relative flex items-center gap-2 p-2 rounded-[var(--radius-card)] glass border border-white/15 text-white text-[11px] font-semibold shadow-md transition-all hover:scale-105 hover:z-10 cursor-pointer max-w-[140px] shrink-0",
                         rotClass
                       )}
                     >
@@ -442,7 +442,7 @@ export function AIChatPanel({
               />
               <label 
                 htmlFor="genie-file-input"
-                className="flex h-8 w-8 items-center justify-center rounded-[24px] hover:bg-white/10 text-white/70 hover:text-white transition-colors shrink-0 cursor-pointer"
+                className="flex h-8 w-8 items-center justify-center rounded-[var(--radius-card)] hover:bg-white/10 text-white/70 hover:text-white transition-colors shrink-0 cursor-pointer"
                 title="Anexar arquivos"
               >
                 <Paperclip className="h-4 w-4" />
@@ -464,7 +464,7 @@ export function AIChatPanel({
               <button
                 type="submit"
                 id="chat-send-btn"
-                className="flex h-8 w-8 items-center justify-center rounded-[24px] bg-brand text-white hover:bg-brand/90 transition-colors shrink-0 disabled:opacity-50 cursor-pointer"
+                className="flex h-8 w-8 items-center justify-center rounded-[var(--radius-card)] bg-brand text-white hover:bg-brand/90 transition-colors shrink-0 disabled:opacity-50 cursor-pointer"
                 disabled={(!input.trim() && attachments.length === 0) || sending}
               >
                 <Send className="h-4 w-4" />

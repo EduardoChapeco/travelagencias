@@ -111,7 +111,7 @@ export function TabContatos({ trip, voucher }: TabContatosProps) {
               <div className="text-center py-4 space-y-3">
                 <button
                   onClick={handleLoadAiContacts}
-                  className="inline-flex items-center gap-2 px-4 py-2 rounded-[24px] bg-info/10 text-info text-xs font-bold border border-info/20 hover:bg-info/20 transition-colors"
+                  className="inline-flex items-center gap-2 px-4 py-2 rounded-[var(--radius-card)] bg-info/10 text-info text-xs font-bold border border-info/20 hover:bg-info/20 transition-colors"
                 >
                   <Lightbulb className="h-3.5 w-3.5" /> Carregar Informações do Destino
                 </button>

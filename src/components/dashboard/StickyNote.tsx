@@ -281,7 +281,7 @@ export function StickyNote({
     <div
       ref={noteRef}
       className={cn(
-        "absolute rounded-[24px] border shadow-md p-4 flex flex-col backdrop-blur-md select-none group transition-shadow",
+        "absolute rounded-[var(--radius-card)] border shadow-md p-4 flex flex-col backdrop-blur-md select-none group transition-shadow",
         activeColor.bg,
         isDragging ? "shadow-2xl z-40 scale-[1.02]" : "z-20 hover:shadow-lg",
         !isEditable && "pointer-events-none"

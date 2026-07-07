@@ -65,7 +65,7 @@ export function AILandingPageSheet({
       title="Assistente de Criação de Páginas"
       width="clamp(400px, 40vw, 600px)"
     >
-      <div className="mb-6 bg-surface-alt/50 p-4 rounded-[24px] border border-border">
+      <div className="mb-6 bg-surface-alt/50 p-4 rounded-[var(--radius-card)] border border-border">
         <p className="text-sm text-muted-foreground flex items-center gap-2">
           <Wand2 className="w-4 h-4 text-brand" />
           Gere páginas completas em segundos usando descrições ou clonando o layout de sites
