@@ -72,6 +72,13 @@
 
   --color-glass-light: var(--glass-light);
   --color-glass-dark: var(--glass-dark);
+
+  /* Turis OS Design System Component Radii tokens (Single Source of Truth) */
+  --radius-card: var(--radius-2xl);
+  --radius-sheet: var(--radius-3xl);
+  --radius-button: var(--radius-full);
+  --radius-input: var(--radius-full);
+  --radius-badge: var(--radius-xs);
 }
 
 :root {
@@ -506,31 +513,7 @@
     backdrop-filter: none;
   }
 
-  /* Solid status badges for high-contrast readability against wallpaper */
-  .os-workspace .status-badge {
-    border: none !important;
-    text-shadow: none !important;
-  }
-  .os-workspace .status-badge.bg-success-bg {
-    background-color: #16a34a !important; /* solid green */
-    color: #ffffff !important;
-  }
-  .os-workspace .status-badge.bg-warning-bg {
-    background-color: #ea580c !important; /* solid orange */
-    color: #ffffff !important;
-  }
-  .os-workspace .status-badge.bg-danger-bg {
-    background-color: #dc2626 !important; /* solid red */
-    color: #ffffff !important;
-  }
-  .os-workspace .status-badge.bg-info-bg {
-    background-color: #2563eb !important; /* solid blue */
-    color: #ffffff !important;
-  }
-  .os-workspace .status-badge.bg-surface-alt {
-    background-color: #4b5563 !important; /* solid gray-600 */
-    color: #ffffff !important;
-  }
+
 
   /* ── Gradients ─────────────────────────────────────────────────────── */
   .gradient-sky {

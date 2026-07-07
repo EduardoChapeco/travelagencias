@@ -4,6 +4,8 @@ import React, {
   SelectHTMLAttributes,
   TextareaHTMLAttributes,
 } from "react";
+import { Button } from "./button";
+import { cn } from "@/lib/utils";
 
 export function Field({
   label,
@@ -29,18 +31,18 @@ export function Field({
 }
 
 const baseInput =
-  "w-full h-[42px] px-3 rounded-full border border-border bg-surface text-sm outline-none transition-colors focus:border-border-strong focus:ring-2 focus:ring-ring/10 disabled:cursor-not-allowed disabled:opacity-60 text-foreground placeholder:text-muted-foreground/60";
+  "w-full h-[42px] px-3 rounded-input border border-border bg-surface text-sm outline-none transition-colors focus:border-border-strong focus:ring-2 focus:ring-ring/10 disabled:cursor-not-allowed disabled:opacity-60 text-foreground placeholder:text-muted-foreground/60";
 
 export const Input = React.forwardRef<HTMLInputElement, InputHTMLAttributes<HTMLInputElement>>(
   (props, ref) => {
-    return <input ref={ref} {...props} className={`${baseInput} ${props.className ?? ""}`} />;
+    return <input ref={ref} {...props} className={cn(baseInput, props.className)} />;
   },
 );
 Input.displayName = "Input";
 
 export const Select = React.forwardRef<HTMLSelectElement, SelectHTMLAttributes<HTMLSelectElement>>(
   (props, ref) => {
-    return <select ref={ref} {...props} className={`${baseInput} ${props.className ?? ""}`} />;
+    return <select ref={ref} {...props} className={cn(baseInput, props.className)} />;
   },
 );
 Select.displayName = "Select";
@@ -53,26 +55,37 @@ export const Textarea = React.forwardRef<
     <textarea
       ref={ref}
       {...props}
-      className={`w-full min-h-[85px] p-3 rounded-full border border-border bg-surface text-sm outline-none transition-colors focus:border-border-strong text-foreground placeholder:text-muted-foreground/60 ${props.className ?? ""}`}
+      className={cn(
+        "w-full min-h-[85px] p-3 rounded-card border border-border bg-surface text-sm outline-none transition-colors focus:border-border-strong text-foreground placeholder:text-muted-foreground/60",
+        props.className
+      )}
     />
   );
 });
 Textarea.displayName = "Textarea";
 
-export function PrimaryButton(props: React.ButtonHTMLAttributes<HTMLButtonElement>) {
+export function PrimaryButton({ className, ...props }: React.ButtonHTMLAttributes<HTMLButtonElement>) {
   return (
-    <button
+    <Button
       {...props}
-      className={`inline-flex items-center justify-center gap-2 whitespace-nowrap h-[39px] rounded-full bg-primary px-[14px] text-xs font-bold uppercase tracking-wider text-primary-foreground transition-all hover:bg-foreground/90 disabled:cursor-not-allowed disabled:opacity-60 ${props.className ?? ""}`}
+      variant="default"
+      className={cn(
+        "h-[39px] rounded-button px-[14px] text-xs font-bold uppercase tracking-wider text-primary-foreground transition-all hover:bg-foreground/90 disabled:cursor-not-allowed disabled:opacity-60",
+        className
+      )}
     />
   );
 }
 
-export function GhostButton(props: React.ButtonHTMLAttributes<HTMLButtonElement>) {
+export function GhostButton({ className, ...props }: React.ButtonHTMLAttributes<HTMLButtonElement>) {
   return (
-    <button
+    <Button
       {...props}
-      className={`inline-flex items-center justify-center gap-2 whitespace-nowrap h-[39px] rounded-full border border-border-strong px-[14px] text-xs font-bold uppercase tracking-wider text-foreground bg-surface transition-all hover:bg-surface-alt disabled:cursor-not-allowed disabled:opacity-60 ${props.className ?? ""}`}
+      variant="outline"
+      className={cn(
+        "h-[39px] rounded-button border border-border-strong px-[14px] text-xs font-bold uppercase tracking-wider text-foreground bg-surface transition-all hover:bg-surface-alt disabled:cursor-not-allowed disabled:opacity-60",
+        className
+      )}
     />
   );
 }
@@ -110,15 +123,19 @@ export function StatusBadge({
   className?: string;
 } & React.HTMLAttributes<HTMLSpanElement>) {
   const tones: Record<string, string> = {
-    neutral: "bg-surface-alt text-muted-foreground border border-border/40",
-    success: "bg-success-bg text-success border border-success/30",
-    warning: "bg-warning-bg text-warning border border-warning/30",
-    danger: "bg-danger-bg text-danger border border-danger/30",
-    info: "bg-info-bg text-info border border-info/30",
+    neutral: "bg-neutral-650 text-white",
+    success: "bg-emerald-650 text-white",
+    warning: "bg-amber-650 text-white",
+    danger: "bg-rose-650 text-white",
+    info: "bg-blue-650 text-white",
   };
   return (
     <span
-      className={`status-badge inline-flex items-center rounded-xs px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider ${tones[tone]} ${className}`}
+      className={cn(
+        "status-badge inline-flex items-center rounded-badge px-2.5 py-0.5 text-[10px] font-extrabold uppercase tracking-widest border-none text-shadow-none",
+        tones[tone],
+        className
+      )}
       {...props}
     >
       {children}
