@@ -2,13 +2,14 @@ import { useState, useEffect, useMemo } from "react";
 import { useAgency } from "@/lib/agency-context";
 import { TASK_STATUSES } from "@/lib/tasks/task.constants";
 import { TaskView, TaskFiltersState, TaskStatus } from "@/lib/tasks/task.types";
-import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Tabs } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
-import { Plus, Filter, Search } from "lucide-react";
-import { Input } from "@/components/ui/input";
+import { Plus, Filter, Settings2 } from "lucide-react";
 import { useNavigate } from "@tanstack/react-router";
 import { Route } from "@/routes/agency.$slug.daily-tasks";
 import { supabase } from "@/integrations/supabase/client";
+import { HeaderPortal } from "@/components/shell/HeaderPortal";
+import { ModuleToolbar, ModuleActionButton } from "@/components/shell/ModuleToolbar";
 
 import { MyDayView } from "./views/MyDayView";
 import { KanbanView } from "./views/KanbanView";
@@ -82,12 +83,87 @@ export function TaskShell() {
     return f;
   }, [filters, activeView, subTab, currentUserId]);
 
-  const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setFilters((prev) => ({ ...prev, search: e.target.value }));
-  };
+  const viewTitle = useMemo(() => {
+    const titles: Record<string, string> = {
+      "my-day": "Meu Dia",
+      kanban: "Quadro Kanban",
+      list: "Lista",
+      calendar: "Agenda",
+      timeline: "Cronograma",
+      workload: "Carga de Trabalho",
+      reports: "Relatórios",
+    };
+    return titles[activeView] || "Tarefas";
+  }, [activeView]);
+
+  const subFilters = useMemo(() => {
+    if (activeView === "my-day") {
+      return [
+        { label: "Resumo", value: "all" },
+        { label: "Atrasadas", value: "overdue" },
+      ];
+    }
+    if (activeView === "kanban") {
+      return [
+        { label: "Todas", value: "all" },
+        { label: "Minhas", value: "my-tasks" },
+      ];
+    }
+    if (activeView === "list") {
+      return [
+        { label: "Todas", value: "all" },
+        { label: "Pendentes", value: "pending" },
+        { label: "Concluídas", value: "done" },
+      ];
+    }
+    return [];
+  }, [activeView]);
 
   return (
-    <div className="flex flex-col h-full overflow-hidden bg-[var(--surface-alt)]">
+    <div className="flex flex-col h-full overflow-hidden bg-transparent">
+      {/* Portal para a barra de topo global */}
+      <HeaderPortal>
+        <ModuleToolbar
+          title={viewTitle}
+          search={{
+            value: filters.search || "",
+            onChange: (v) => setFilters((prev) => ({ ...prev, search: v })),
+            placeholder: "Buscar tarefas...",
+          }}
+          filters={subFilters}
+          activeFilter={subTab}
+          onFilterChange={setSubTab}
+          actions={
+            <div className="flex items-center gap-1">
+              <Button
+                variant="outline"
+                size="sm"
+                className="h-7 px-2.5 gap-1.5 text-[11px] font-bold bg-transparent hover:bg-white/5 border-none text-white/70 hover:text-white rounded-full transition-colors cursor-pointer"
+                onClick={() => setFiltersOpen(true)}
+              >
+                <Filter className="h-3 w-3" />
+                Filtros
+              </Button>
+              {isAgencyAdmin && (
+                <button
+                  className="flex h-7 w-7 items-center justify-center rounded-full hover:bg-white/5 text-white/70 hover:text-white transition-colors cursor-pointer shrink-0 animate-fadeIn"
+                  title="Administrar Módulo"
+                >
+                  <Settings2 className="h-3.5 w-3.5" />
+                </button>
+              )}
+            </div>
+          }
+        />
+      </HeaderPortal>
+
+      {/* Botão de Ação Primária no canto esquerdo superior flutuante */}
+      <ModuleActionButton
+        label="Nova Tarefa"
+        icon={<Plus className="h-3.5 w-3.5" />}
+        onClick={() => setNewTaskOpen(true)}
+      />
+
       {/* Modal de nova tarefa */}
       <NewTaskModal open={newTaskOpen} onClose={() => setNewTaskOpen(false)} />
 
@@ -104,134 +180,9 @@ export function TaskShell() {
         onValueChange={setSubTab}
         className="flex flex-col flex-1 min-h-0"
       >
-        {/* ── Top Bar Unificado ──────────────────────────────────────────── */}
-        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between px-4 py-2 bg-[var(--surface)] border-b shrink-0 gap-2">
-          {/* TabsList — Contextual sub-tabs of the active sub-module */}
-          <TabsList className="h-8 bg-[var(--surface-alt)] rounded-2xl p-0.5 flex-wrap gap-0">
-            {activeView === "my-day" && (
-              <>
-                <TabsTrigger
-                  value="all"
-                  className="h-7 px-2.5 text-[11px] font-semibold rounded-full data-[state=active]:bg-[var(--surface)] data-[state=active]:shadow-xs transition-all"
-                >
-                  Resumo
-                </TabsTrigger>
-                <TabsTrigger
-                  value="overdue"
-                  className="h-7 px-2.5 text-[11px] font-semibold rounded-full data-[state=active]:bg-[var(--surface)] data-[state=active]:shadow-xs transition-all"
-                >
-                  Atrasadas
-                </TabsTrigger>
-              </>
-            )}
-            {activeView === "kanban" && (
-              <>
-                <TabsTrigger
-                  value="all"
-                  className="h-7 px-2.5 text-[11px] font-semibold rounded-full data-[state=active]:bg-[var(--surface)] data-[state=active]:shadow-xs transition-all"
-                >
-                  Todas as Tarefas
-                </TabsTrigger>
-                <TabsTrigger
-                  value="my-tasks"
-                  className="h-7 px-2.5 text-[11px] font-semibold rounded-full data-[state=active]:bg-[var(--surface)] data-[state=active]:shadow-xs transition-all"
-                >
-                  Minhas Tarefas
-                </TabsTrigger>
-              </>
-            )}
-            {activeView === "list" && (
-              <>
-                <TabsTrigger
-                  value="all"
-                  className="h-7 px-2.5 text-[11px] font-semibold rounded-full data-[state=active]:bg-[var(--surface)] data-[state=active]:shadow-xs transition-all"
-                >
-                  Todas
-                </TabsTrigger>
-                <TabsTrigger
-                  value="pending"
-                  className="h-7 px-2.5 text-[11px] font-semibold rounded-full data-[state=active]:bg-[var(--surface)] data-[state=active]:shadow-xs transition-all"
-                >
-                  Pendentes
-                </TabsTrigger>
-                <TabsTrigger
-                  value="done"
-                  className="h-7 px-2.5 text-[11px] font-semibold rounded-full data-[state=active]:bg-[var(--surface)] data-[state=active]:shadow-xs transition-all"
-                >
-                  Concluídas
-                </TabsTrigger>
-              </>
-            )}
-            {activeView === "calendar" && (
-              <TabsTrigger
-                value="all"
-                className="h-7 px-2.5 text-[11px] font-semibold rounded-full data-[state=active]:bg-[var(--surface)] data-[state=active]:shadow-xs transition-all"
-              >
-                Visualizar Agenda
-              </TabsTrigger>
-            )}
-            {activeView === "timeline" && (
-              <TabsTrigger
-                value="all"
-                className="h-7 px-2.5 text-[11px] font-semibold rounded-full data-[state=active]:bg-[var(--surface)] data-[state=active]:shadow-xs transition-all"
-              >
-                Visualizar Cronograma
-              </TabsTrigger>
-            )}
-            {activeView === "workload" && (
-              <TabsTrigger
-                value="all"
-                className="h-7 px-2.5 text-[11px] font-semibold rounded-full data-[state=active]:bg-[var(--surface)] data-[state=active]:shadow-xs transition-all"
-              >
-                Carga de Trabalho
-              </TabsTrigger>
-            )}
-            {activeView === "reports" && (
-              <TabsTrigger
-                value="all"
-                className="h-7 px-2.5 text-[11px] font-semibold rounded-full data-[state=active]:bg-[var(--surface)] data-[state=active]:shadow-xs transition-all"
-              >
-                Relatórios e Métricas
-              </TabsTrigger>
-            )}
-          </TabsList>
-
-          {/* Ações — busca + filtros + nova tarefa */}
-          <div className="flex items-center gap-2 shrink-0">
-            <div className="relative">
-              <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-[var(--muted-2)]" />
-              <Input
-                placeholder="Buscar tarefas..."
-                className="pl-9 w-[180px] h-8 bg-[var(--surface-alt)] border-none text-xs"
-                value={filters.search}
-                onChange={handleSearch}
-              />
-            </div>
-
-            <Button
-              variant="outline"
-              size="sm"
-              className="h-8 gap-1.5 text-xs"
-              onClick={() => setFiltersOpen(true)}
-            >
-              <Filter className="h-3.5 w-3.5" />
-              Filtros
-            </Button>
-
-            <Button
-              size="sm"
-              className="h-8 gap-1.5 text-xs"
-              onClick={() => setNewTaskOpen(true)}
-            >
-              <Plus className="h-3.5 w-3.5" />
-              Nova Tarefa
-            </Button>
-          </div>
-        </div>
-
         {/* ── Content Area ──────────────────────────────────────────────── */}
         <div 
-          className="flex-1 overflow-auto p-4 md:p-6 bg-[var(--surface-alt)]/20 data-[view=kanban]:p-0"
+          className="flex-1 overflow-auto p-4 md:p-6 bg-transparent data-[view=kanban]:p-0"
           data-view={activeView}
         >
           {activeView === "my-day" && <MyDayView filters={computedFilters} />}

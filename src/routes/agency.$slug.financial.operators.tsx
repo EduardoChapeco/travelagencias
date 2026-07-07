@@ -163,7 +163,7 @@ function OperatorsFinancial() {
         />
       </HeaderPortal>
 
-      <div className="flex-1 overflow-y-auto px-4 md:pl-[64px] md:pr-6 py-4 min-h-0 space-y-6 pb-24">
+      <div className="flex-1 overflow-y-auto px-4  md:pr-6 py-4 min-h-0 space-y-6 pb-24">
         {/* ── Header descritivo ── */}
         <div className="rounded-[24px] border border-border bg-surface p-5 space-y-2">
           <div className="flex items-center gap-2">

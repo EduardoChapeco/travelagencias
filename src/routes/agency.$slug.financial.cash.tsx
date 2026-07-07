@@ -462,7 +462,7 @@ function CashPage() {
         onClick={() => setNewRegisterSheet(true)}
       />
 
-      <div className="flex-1 overflow-y-auto px-4 md:pl-[64px] md:pr-6 py-4 space-y-5 pb-24">
+      <div className="flex-1 overflow-y-auto px-4  md:pr-6 py-4 space-y-5 pb-24">
         {/* Register Selector */}
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 bg-surface border border-border rounded-[24px] p-4">
           <div>

@@ -334,7 +334,7 @@ function DestinationIntelligencePage() {
       <ConfirmDialog />
 
       {/* List */}
-      <div className="flex-1 overflow-y-auto px-4 md:pl-[64px] md:pr-6 py-4 min-h-0 pb-24">
+      <div className="flex-1 overflow-y-auto px-4  md:pr-6 py-4 min-h-0 pb-24">
         {q.isLoading ? (
           <div className="text-center py-12 text-sm text-muted-foreground animate-pulse">
             Carregando destinos…

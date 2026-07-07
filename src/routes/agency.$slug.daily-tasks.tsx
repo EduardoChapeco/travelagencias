@@ -19,26 +19,5 @@ function DailyTasksRoute() {
 
   if (!agency) return null;
 
-  return (
-    <>
-      <HeaderPortal>
-        <div className="flex items-center gap-1.5 text-xs text-muted-foreground font-semibold px-2">
-          Sistema Avançado de Trabalho
-        </div>
-        <div className="flex items-center gap-2">
-          {isAgencyAdmin && (
-            <button
-              className="flex h-8 w-8 items-center justify-center rounded-full border border-border bg-surface text-foreground hover:bg-surface-alt transition-colors cursor-pointer"
-              title="Administrar Módulo"
-            >
-              <Settings2 className="h-3.5 w-3.5" />
-            </button>
-          )}
-        </div>
-      </HeaderPortal>
-      
-      {/* O TaskShell gerencia seu próprio layout e navegação interna das views */}
-      <TaskShell />
-    </>
-  );
+  return <TaskShell />;
 }

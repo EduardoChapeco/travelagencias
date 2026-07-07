@@ -633,7 +633,7 @@ Texto: "${aiText}"`;
       )}
 
       {/* Main Content */}
-      <div className="flex-1 overflow-hidden px-4 md:pl-[64px] md:pr-6 py-4 flex flex-col min-h-0 pb-24">
+      <div className="flex-1 overflow-hidden px-4  md:pr-6 py-4 flex flex-col min-h-0 pb-24">
         {activeTab === "quotes" ? (
           isQuotesError ? (
             <div className="p-4 rounded-[24px] border border-red-200 bg-red-50/50 text-xs text-red-800 flex items-center gap-2 m-6">

@@ -122,7 +122,7 @@ export function LedgerDashboard() {
         <ModuleToolbar title="Livro-Razão" />
       </HeaderPortal>
 
-      <div className="flex-1 overflow-y-auto px-4 md:pl-[64px] md:pr-6 py-4 min-h-0 space-y-6">
+      <div className="flex-1 overflow-y-auto px-4  md:pr-6 py-4 min-h-0 space-y-6">
       {/* KPI Cards */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         <div className="bg-surface border border-border rounded-[24px] p-4">

@@ -195,7 +195,7 @@ function BillingPage() {
         <ModuleToolbar title="Assinatura & Planos" />
       </HeaderPortal>
 
-      <div className="flex-1 overflow-y-auto px-4 md:pl-[64px] md:pr-6 py-4 pb-24">
+      <div className="flex-1 overflow-y-auto px-4  md:pr-6 py-4 pb-24">
 
       {/* MÉTRICAS DE USO DOS LIMITES */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-6">

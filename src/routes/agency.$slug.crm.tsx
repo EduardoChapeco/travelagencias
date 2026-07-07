@@ -268,7 +268,7 @@ function CRMPage() {
       )}
 
       {activeTab === "archived" && leadsQ.data && (
-        <div className="flex-1 overflow-auto p-6 md:pl-[64px] md:pr-6 py-4 bg-transparent pb-24">
+        <div className="flex-1 overflow-auto p-6  md:pr-6 py-4 bg-transparent pb-24">
           <div className="rounded-[28px] border border-border bg-surface p-6">
             <h2 className="text-lg font-bold text-foreground mb-4">Leads Arquivados</h2>
             {leadsQ.data.length === 0 ? (

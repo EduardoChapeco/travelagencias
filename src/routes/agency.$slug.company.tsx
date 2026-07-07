@@ -432,7 +432,7 @@ function Page() {
         />
       </HeaderPortal>
 
-      <div className="flex-1 overflow-y-auto px-4 md:pl-[64px] md:pr-6 py-4 min-h-0 pb-24">
+      <div className="flex-1 overflow-y-auto px-4  md:pr-6 py-4 min-h-0 pb-24">
         <div className={`grid gap-6 ${previewOpen ? "lg:grid-cols-[1fr_340px]" : ""}`}>
           <div className="space-y-0">
             {/* ── COMPANY TABS (wrapped in form) ────────────────── */}

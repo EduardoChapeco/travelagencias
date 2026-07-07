@@ -66,7 +66,7 @@ function FinancialLayout() {
         </div>
       ) : (
         agency && (
-          <div className="flex-1 overflow-y-auto px-4 md:pl-[64px] md:pr-6 py-4">
+          <div className="flex-1 overflow-y-auto px-4  md:pr-6 py-4">
             <ModuleAdminPanel
               moduleKey="financial"
               moduleName="Financeiro"

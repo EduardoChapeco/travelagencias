@@ -285,7 +285,7 @@ function VouchersPage() {
         // Vouchers Tab View
         // ========================================
         <>
-          <div className="flex-1 overflow-y-auto px-4 md:pl-[64px] md:pr-6 py-4 flex flex-col gap-4 pb-24">
+          <div className="flex-1 overflow-y-auto px-4  md:pr-6 py-4 flex flex-col gap-4 pb-24">
             {vouchersQ.isError && (
               <div className="flex flex-col items-center justify-center py-12 px-6 text-center rounded-[24px] border border-red-200 bg-red-50/60">
                 <div className="h-9 w-9 rounded-full bg-red-100 flex items-center justify-center mb-2">
@@ -434,7 +434,7 @@ function VouchersPage() {
         // ========================================
         <>
           {/* Fila list table */}
-          <div className="flex-1 overflow-auto px-4 md:pl-[64px] md:pr-6 py-4 min-h-0 pb-24">
+          <div className="flex-1 overflow-auto px-4  md:pr-6 py-4 min-h-0 pb-24">
             {/* KPI cards dentro do conteúdo */}
             <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-6">
               <div className="rounded-[24px] border border-border bg-surface-alt/20 p-3 text-center">

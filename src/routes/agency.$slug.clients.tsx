@@ -244,7 +244,7 @@ function ClientsPage() {
         onClick={() => showDeleted ? setShowDeleted(false) : setNewOpen(true)}
       />
 
-      <div className="flex-1 overflow-hidden px-4 md:pl-[64px] md:pr-6 py-4 flex flex-col min-h-0 pb-24">
+      <div className="flex-1 overflow-hidden px-4  md:pr-6 py-4 flex flex-col min-h-0 pb-24">
         {list.isLoading && (
           <div className="flex flex-col gap-2">
             <Skeleton className="h-12 w-full" />

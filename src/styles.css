@@ -247,11 +247,17 @@
    * Opacidade controlada por --os-glass-opacity (padrão 0.20 = 20%).
    */
   .glass-sidebar {
-    background: rgba(0, 0, 0, var(--os-glass-opacity, 0.22));
-    backdrop-filter: blur(48px) saturate(220%);
-    -webkit-backdrop-filter: blur(48px) saturate(220%);
-    border: 1px solid rgba(255, 255, 255, 0.10);
-    border-left: none;
+    background: rgba(255, 255, 255, 0.10) !important;
+    backdrop-filter: blur(64px) saturate(220%) !important;
+    -webkit-backdrop-filter: blur(64px) saturate(220%) !important;
+    border: 1px solid rgba(255, 255, 255, 0.15) !important;
+    border-left: none !important;
+  }
+
+  @media (min-width: 768px) {
+    .os-workspace {
+      padding-left: 68px !important;
+    }
   }
 
   /* Dock horizontal inferior (macOS-style) na Home — mesma opacidade do glass */

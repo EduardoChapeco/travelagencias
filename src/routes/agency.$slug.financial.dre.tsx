@@ -57,7 +57,7 @@ function DREPage() {
         />
       </HeaderPortal>
 
-      <div className="px-4 md:pl-[64px] md:pr-6 pt-4 shrink-0">
+      <div className="px-4  md:pr-6 pt-4 shrink-0">
         <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
           <div className="rounded-[24px] border border-border bg-surface p-4">
             <div className="text-[11px] uppercase tracking-wide text-muted-foreground">Receita</div>
@@ -84,7 +84,7 @@ function DREPage() {
         </div>
       </div>
 
-      <div className="flex-1 overflow-y-auto px-4 md:pl-[64px] md:pr-6 py-4 min-h-0 pb-24">
+      <div className="flex-1 overflow-y-auto px-4  md:pr-6 py-4 min-h-0 pb-24">
         <div className="overflow-hidden rounded-[24px] border border-border bg-surface">
           <table className="w-full text-sm">
             <thead className="bg-surface-alt/40 text-left text-[11px] uppercase tracking-wide text-muted-foreground">

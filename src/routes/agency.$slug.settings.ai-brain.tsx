@@ -73,7 +73,7 @@ function BrainPanel() {
         />
       </HeaderPortal>
 
-      <div className="flex-1 overflow-y-auto px-4 md:pl-[64px] md:pr-6 py-4 min-h-0 space-y-6 pb-24">
+      <div className="flex-1 overflow-y-auto px-4  md:pr-6 py-4 min-h-0 space-y-6 pb-24">
         <div>
           <h1 className="text-xl font-bold text-foreground flex items-center gap-2">
             <Brain className="h-5 w-5 text-brand" /> Cérebro Vetorial & Inbox IA

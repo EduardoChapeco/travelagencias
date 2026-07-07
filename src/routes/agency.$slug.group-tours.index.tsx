@@ -82,7 +82,7 @@ function GroupToursPage() {
         onClick={() => setOpen(true)}
       />
 
-      <div className="flex-1 overflow-y-auto px-4 md:pl-[64px] md:pr-6 py-4 flex flex-col gap-4 pb-24">
+      <div className="flex-1 overflow-y-auto px-4  md:pr-6 py-4 flex flex-col gap-4 pb-24">
         {q.isLoading && <div className="text-sm text-muted-foreground animate-pulse p-4">Carregando excursões…</div>}
         {q.isError && (
           <div className="p-4 rounded-[24px] border border-red-200 bg-red-50/50 text-xs text-red-800 flex items-center gap-2 m-2">

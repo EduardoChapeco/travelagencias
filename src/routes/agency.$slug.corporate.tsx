@@ -170,7 +170,7 @@ function CorporatePage() {
         onClick={() => setNewOpen(true)}
       />
 
-      <div className="flex-1 overflow-y-auto px-4 md:pl-[64px] md:pr-6 py-4 min-h-0 flex flex-col gap-4 pb-24">
+      <div className="flex-1 overflow-y-auto px-4  md:pr-6 py-4 min-h-0 flex flex-col gap-4 pb-24">
         {!rfpsQ.isLoading && rfps.length === 0 && (
           <EmptyState
             title="Nenhuma requisição corporativa"

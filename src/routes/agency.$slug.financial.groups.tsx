@@ -147,7 +147,7 @@ export function GroupFinancialsDashboard() {
         <ModuleToolbar title="Financeiro de Grupos" />
       </HeaderPortal>
 
-      <div className="flex-1 overflow-y-auto px-4 md:pl-[64px] md:pr-6 py-4 min-h-0 space-y-6">
+      <div className="flex-1 overflow-y-auto px-4  md:pr-6 py-4 min-h-0 space-y-6">
       {/* KPI Panel */}
       <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
         <div className="bg-surface border border-border rounded-[24px] p-4">

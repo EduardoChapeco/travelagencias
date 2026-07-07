@@ -10,6 +10,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { cn } from "@/lib/utils";
 import { Loader2 } from "lucide-react";
 import { useAgency, getModuleName } from "@/lib/agency-context";
+import { useSidebarStore } from "@/lib/sidebar-store";
 
 type Icon = ComponentType<{ className?: string; strokeWidth?: number }>;
 
@@ -160,6 +161,7 @@ export function DynamicIslandNav({
     hoverTimeout.current = setTimeout(() => setHovered(false), 180);
   };
 
+  const { contextItems } = useSidebarStore();
   const navItems = items.filter((i) => i.type !== "header" && i.to !== undefined);
 
   if (hiddenProp) return null;
@@ -194,14 +196,53 @@ export function DynamicIslandNav({
               : false;
 
           return (
-            <IslandItem
-              key={item.to}
-              item={item}
-              base={base}
-              expanded={hovered}
-              isActive={active}
-              isPending={pending}
-            />
+            <div key={item.to} className="flex flex-col gap-0.5 shrink-0">
+              <IslandItem
+                item={item}
+                base={base}
+                expanded={hovered}
+                isActive={active}
+                isPending={pending}
+              />
+
+              {/* Contextual submenus / submodules */}
+              {active && contextItems.length > 0 && (
+                <div className="flex flex-col gap-0.5 pl-3 mt-0.5 border-l border-white/5 ml-3">
+                  {contextItems.map((ctxItem) => {
+                    const ctxActive = pathname.startsWith(ctxItem.to);
+                    const CtxIcon = ctxItem.icon;
+                    return (
+                      <Link
+                        key={ctxItem.to}
+                        to={ctxItem.to}
+                        className={cn(
+                          "group/ctx relative flex h-7 items-center gap-2 rounded-full px-2 transition-all duration-200 overflow-hidden shrink-0",
+                          ctxActive
+                            ? "bg-white/10 text-white font-semibold"
+                            : "text-white/40 hover:text-white/70 hover:bg-white/5"
+                        )}
+                        title={!hovered ? ctxItem.label : undefined}
+                      >
+                        {CtxIcon && (
+                          <CtxIcon 
+                            className={cn(
+                              "h-3.5 w-3.5 shrink-0",
+                              ctxActive ? "text-brand" : "text-white/40 group-hover/ctx:text-white/70"
+                            )} 
+                            strokeWidth={ctxActive ? 2.2 : 1.8} 
+                          />
+                        )}
+                        {hovered && (
+                          <span className="text-[10px] truncate leading-none">
+                            {ctxItem.label}
+                          </span>
+                        )}
+                      </Link>
+                    );
+                  })}
+                </div>
+              )}
+            </div>
           );
         })}
       </nav>

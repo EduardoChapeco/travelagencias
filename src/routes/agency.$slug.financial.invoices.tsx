@@ -62,7 +62,7 @@ function InvoicesPage() {
         onClick={() => toast.info("Nova Fatura (Em breve)")}
       />
 
-      <div className="flex-1 overflow-y-auto px-4 md:pl-[64px] md:pr-6 py-4 min-h-0">
+      <div className="flex-1 overflow-y-auto px-4  md:pr-6 py-4 min-h-0">
         {q.isLoading && <div className="text-sm text-muted-foreground">Carregando…</div>}
 
         {!q.isLoading && !q.data?.data.length && (

@@ -115,7 +115,7 @@ function Page() {
       </HeaderPortal>
 
       {/* Main Container */}
-      <div className="flex-1 overflow-y-auto px-4 md:pl-[64px] md:pr-6 py-4 min-h-0 font-sans space-y-6 pb-24">
+      <div className="flex-1 overflow-y-auto px-4  md:pr-6 py-4 min-h-0 font-sans space-y-6 pb-24">
         <div>
           <h1 className="text-xl font-bold text-foreground flex items-center gap-2">
             <Shield className="h-5 w-5 text-brand" /> Painel de Auditoria de IA

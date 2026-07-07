@@ -135,7 +135,7 @@ function Page() {
         />
       </HeaderPortal>
 
-      <div className="flex-1 overflow-y-auto px-4 md:pl-[64px] md:pr-6 py-4 min-h-0 pb-24">
+      <div className="flex-1 overflow-y-auto px-4  md:pr-6 py-4 min-h-0 pb-24">
         <div className="max-w-2xl space-y-6">
           {/* Header card com identidade */}
           <div className="flex items-center gap-4 rounded-[24px] border border-border bg-surface px-5 py-4">
