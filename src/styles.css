@@ -316,8 +316,16 @@
    * Torna tudo transparente/glass sobre o wallpaper.
    * Modais e popovers são portais no <body> e NÃO herdam isso.
    */
+  /*
+   * OS Workspace — Camada de blur única para todo o workspace.
+   * Princípio: UM único backdrop-filter aqui em vez de um em cada elemento filho.
+   * Isso elimina opacity stacking e garante que o efeito frost seja consistente.
+   * Elementos filhos (cards, tabelas) só precisam de background color — sem backdrop-filter próprio.
+   */
   .os-workspace {
     background: transparent !important;
+    backdrop-filter: blur(22px) saturate(160%) !important;
+    -webkit-backdrop-filter: blur(22px) saturate(160%) !important;
     --background: transparent !important;
     --foreground: rgba(255, 255, 255, 0.98) !important;
     --surface: rgba(10, 10, 15, 0.55);

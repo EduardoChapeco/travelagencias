@@ -131,5 +131,5 @@ export function LegalBlocker({ children }: { children: React.ReactNode }) {
     );
   }
 
-  return <>{children}</>;
+  return <div className="h-full flex flex-col min-h-0">{children}</div>;
 }

@@ -9,7 +9,7 @@
  *   Ao colapsar, só ícones — sem submenus aninhados que quebravam o layout.
  */
 import { Link, useRouterState, useParams } from "@tanstack/react-router";
-import { type ComponentType, useState, useRef } from "react";
+import { type ComponentType, useState, useRef, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { cn } from "@/lib/utils";
 import { Loader2, ChevronLeft } from "lucide-react";
@@ -223,6 +223,7 @@ export function DynamicIslandNav({
   });
 
   const [hovered, setHovered] = useState(false);
+  const [forceMainMode, setForceMainMode] = useState(false);
   const hoverTimeout = useRef<ReturnType<typeof setTimeout>>(null);
 
   const handleMouseEnter = () => {
@@ -239,8 +240,14 @@ export function DynamicIslandNav({
   const contextItems =
     propContextItems && propContextItems.length > 0 ? propContextItems : storeContextItems;
 
-  // MODO CONTEXTUAL: quando há items de contexto, substitui o menu principal
-  const isContextMode = contextItems.length > 0;
+  // MODO CONTEXTUAL: quando há items de contexto E o usuário não clicou em "Voltar"
+  const isContextMode = contextItems.length > 0 && !forceMainMode;
+
+  // Reseta o forceMainMode quando o pathname muda de módulo (navegação entre CRM, Viagens, etc.)
+  // Isso garante que ao entrar num módulo diferente, o contextual volta automaticamente
+  useEffect(() => {
+    setForceMainMode(false);
+  }, [pathname]);
 
   const navItems = items.filter((i) => i.type !== "header" && i.to !== undefined);
 
@@ -275,11 +282,12 @@ export function DynamicIslandNav({
             transition={{ duration: 0.2 }}
             className="no-scrollbar flex-1 flex flex-col gap-0.5 overflow-y-auto px-1.5"
           >
-            {/* Botão Voltar — retorna ao menu principal navegando para a base */}
-            <Link
-              to={base as any}
+            {/* Botão Voltar — alterna de volta ao modo principal SEM navegar */}
+            <button
+              type="button"
               title={!hovered ? "Voltar ao menu" : undefined}
-              className="relative flex h-9 w-full items-center gap-3 rounded-full px-2.5 mb-1 transition-all duration-200 overflow-hidden shrink-0 text-white/40 hover:text-white/80 hover:bg-white/8 border border-white/10"
+              onClick={() => setForceMainMode(true)}
+              className="relative flex h-9 w-full items-center gap-3 rounded-full px-2.5 mb-1 transition-all duration-200 overflow-hidden shrink-0 text-white/40 hover:text-white/80 hover:bg-white/8 border border-white/10 cursor-pointer"
             >
               <span className="shrink-0 flex items-center justify-center w-5 h-5">
                 <ChevronLeft className="h-[14px] w-[14px]" strokeWidth={2} />
@@ -298,7 +306,7 @@ export function DynamicIslandNav({
                   </motion.span>
                 )}
               </AnimatePresence>
-            </Link>
+            </button>
 
             {/* Divider */}
             <div className="h-px bg-white/8 mx-2 mb-1 shrink-0" />
