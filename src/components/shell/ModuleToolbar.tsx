@@ -14,6 +14,7 @@
 import { Search, X } from "lucide-react";
 import { cn } from "@/lib/utils";
 import type { ReactNode } from "react";
+import { Button } from "@/components/ui/button";
 
 export type ToolbarFilter = {
   label: string;
@@ -96,7 +97,7 @@ export function ModuleToolbar({
 
       {/* ── Filter Pills ── */}
       {filters && filters.length > 0 && (
-        <div className="flex items-center gap-0.5 glass-pill p-0.5 overflow-x-auto no-scrollbar max-w-[320px] sm:max-w-md shrink-0">
+        <div className="flex items-center gap-0.5 glass-pill p-0.5 overflow-x-auto no-scrollbar max-w-[320px] sm:max-w-md md:max-w-2xl shrink-0">
           {filters.map((f) => (
             <button
               key={f.value}
@@ -137,8 +138,6 @@ export function ModuleToolbar({
 
 // ─────────────────────────────────────────────────────────────────────────────
 // ModuleActionButton — botão de ação contextual circular flutuante
-// Posição: fixed left-[12px] top-[54px] z-30 (acima do menu lateral / DynamicIslandNav)
-// ─────────────────────────────────────────────────────────────────────────────
 type ModuleActionButtonProps = {
   label: string;
   icon?: ReactNode;
@@ -152,7 +151,17 @@ export function ModuleActionButton({
   onClick,
   className,
 }: ModuleActionButtonProps) {
-  // DEPRECATED: Retorna null pois as ações foram consolidadas dentro da ModuleToolbar (AppShell header slot).
-  // Isso previne sobreposição com o DynamicIslandNav e limpa os hardcodes de offset.
-  return null;
+  return (
+    <Button
+      onClick={onClick}
+      intent="primary"
+      size="toolbar"
+      shape="pill"
+      density="compact"
+      className={className}
+    >
+      {icon}
+      <span>{label}</span>
+    </Button>
+  );
 }

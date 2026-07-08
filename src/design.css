@@ -1,11 +1,11 @@
-﻿@theme {
+@theme {
   --color-primary: #2f60e6;
   --color-primary-light: #3d6ff21a;
   --color-primary-foreground: #ffffff;
   --color-background: #f6f5f1;
   --color-foreground: #0b0b0c;
-  --color-surface: #ffffff;
-  --color-surface-alt: #ffffffb3;
+  --color-surface: var(--surface);
+  --color-surface-alt: var(--surface-alt);
   --color-muted: #0b0b0c0d;
   --color-muted-foreground: #0b0b0c80;
   --color-border: #0b0b0c14;

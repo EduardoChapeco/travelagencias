@@ -20,6 +20,10 @@
   --radius-input: var(--radius-full);
   --radius-badge: var(--radius-xs);
 
+  /* Fallback surface colors for the design system */
+  --surface: #ffffff;
+  --surface-alt: rgba(255, 255, 255, 0.7);
+
   /* OS Ambient variables */
   --os-glass-bg: rgba(255, 255, 255, 0.09);
   --os-glass-bg-strong: rgba(255, 255, 255, 0.14);

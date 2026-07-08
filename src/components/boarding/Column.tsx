@@ -19,12 +19,12 @@ export function Column({
   return (
     <div
       ref={setNodeRef}
-      className={`flex h-full w-[310px] shrink-0 flex-col rounded-full border bg-surface/50 transition-all duration-300 ${
+      className={`flex h-full w-[310px] shrink-0 flex-col rounded-3xl border bg-surface/50 transition-all duration-300 ${
         isOver ? "border-brand bg-brand/5 scale-[1.01]" : "border-border/80"
       }`}
       style={{ borderTop: `4px solid ${stage.color || "#9ca3af"}` }}
     >
-      <div className="flex flex-col justify-center border-b border-border/40 bg-surface-alt/25 px-4 py-3 rounded-t-md">
+      <div className="flex flex-col justify-center border-b border-border/40 bg-surface-alt/25 px-4 py-3 rounded-t-3xl">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
             <span
@@ -46,7 +46,7 @@ export function Column({
             <SortableCard key={c.id} card={c} slug={slug} onCardClick={onCardClick} />
           ))}
           {cards.length === 0 && (
-            <div className="flex h-24 items-center justify-center rounded-full border border-dashed border-border/60 bg-surface-alt/10 text-[10px] font-bold uppercase tracking-widest text-muted-foreground transition-colors hover:border-brand/30">
+            <div className="flex h-24 items-center justify-center rounded-2xl border border-dashed border-border/60 bg-surface-alt/10 text-[10px] font-bold uppercase tracking-widest text-muted-foreground transition-colors hover:border-brand/30">
               {stage.id === "pending"
                 ? "Nenhum embarque ativo. Cadastre um Localizador para começar."
                 : "Solte um Localizador aqui"}

@@ -149,13 +149,8 @@ export function AppShell({
 
   return (
     <div
-      className={cn(
-        "h-screen w-full relative overflow-hidden bg-black selection:bg-brand/30 select-none",
-        !isHome && !isBuilder && !isPastDue && "grid"
-      )}
+      className="h-screen w-full relative overflow-hidden bg-black selection:bg-brand/30 select-none"
       style={{
-        gridTemplateColumns: !isHome && !isBuilder && !isPastDue ? "auto minmax(0, 1fr)" : undefined,
-        gridTemplateRows: "100vh",
         "--os-glass-opacity": `${glassOpacity / 100}`,
       } as React.CSSProperties}
     >
@@ -173,8 +168,8 @@ export function AppShell({
         className="absolute inset-0 pointer-events-none"
         style={{
           background: `rgba(0, 0, 0, ${dimOpacity / 100})`,
-          backdropFilter: "blur(32px) saturate(180%)",
-          WebkitBackdropFilter: "blur(32px) saturate(180%)",
+          backdropFilter: `blur(${blurIntensity}px) saturate(180%)`,
+          WebkitBackdropFilter: `blur(${blurIntensity}px) saturate(180%)`,
         }}
       />
 
@@ -215,7 +210,7 @@ export function AppShell({
 
       {/* 3. AppSidebar — Mobile drawer + Dynamic Island desktop (oculto na Home) */}
       {!isHome && !isBuilder && !isPastDue && (
-        <div className="hidden md:flex flex-col justify-center items-start h-full pt-[var(--shell-header-height)] relative z-40">
+        <div className="absolute left-4 top-[var(--shell-header-height)] bottom-4 z-40 hidden md:flex flex-col justify-center pointer-events-none">
           <AppSidebar mobileOpen={mobileOpen} onMobileClose={() => setMobileOpen(false)} isHome={isHome} />
         </div>
       )}
@@ -245,7 +240,10 @@ export function AppShell({
               {title && <h1 className="text-base font-semibold text-white">{title}</h1>}
             </div>
 
-            <main className="no-scrollbar flex-1 overflow-hidden relative os-workspace flex flex-col">
+            <main className={cn(
+              "no-scrollbar flex-1 overflow-hidden relative os-workspace flex flex-col",
+              !isHome && !isBuilder && !isPastDue && "md:pl-[84px]"
+            )}>
               {isPastDue && (
                 <div className="glass-section text-white text-xs px-4 py-2.5 flex items-center justify-between font-bold gap-3 shrink-0 rounded-2xl mb-4 border-rose-500/40">
                   <div className="flex items-center gap-2">

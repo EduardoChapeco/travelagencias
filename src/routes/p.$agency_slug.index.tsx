@@ -263,7 +263,7 @@ function HomePage() {
               <h2 className="text-3xl md:text-4xl font-extrabold tracking-tight">
                 Roteiros em grupo
               </h2>
-              <p className="mt-3 text-muted-foreground max-w-xl mx-auto">
+              <p className="mt-3 text-muted-foreground max-w-xl mx-auto ds-body leading-relaxed">
                 Viagens organizadas com tudo incluso. Junte-se ao grupo e aproveite cada detalhe sem
                 preocupações.
               </p>
@@ -361,7 +361,7 @@ function HomePage() {
                     Sobre nós
                   </div>
                   <h2 className="text-2xl font-bold tracking-tight mb-4">{agency.name}</h2>
-                  <p className="text-muted-foreground leading-relaxed">{company.description}</p>
+                  <p className="text-muted-foreground ds-body leading-relaxed">{company.description}</p>
                   {company?.whatsapp && (
                     <a
                       href={`https://wa.me/${company.whatsapp.replace(/\D/g, "")}`}

@@ -267,7 +267,7 @@ export function DynamicIslandNav({
         }}
         transition={{ type: "spring", bounce: 0.1, duration: 0.35 }}
         className={cn(
-          "absolute left-0 top-4 bottom-4 z-50 flex flex-col",
+          "flex flex-col z-50 pointer-events-auto",
           "glass-sidebar",
           "rounded-[14px]",
           "shadow-[2px_4px_32px_rgba(0,0,0,0.30)]",
@@ -303,9 +303,6 @@ export function DynamicIslandNav({
         )}
       </motion.aside>
 
-      {/* Espaçador invisível para reservar o espaço do Hub Nav na Grid/Flex */}
-      <div className="w-[var(--shell-primary-nav-width)] shrink-0" />
-
       {/* ── MODO CONTEXTUAL (Coluna secundária, quando existir) ───── */}
       <AnimatePresence>
         {isContextMode && (
@@ -316,7 +313,7 @@ export function DynamicIslandNav({
             exit={{ opacity: 0, x: -16, width: 0 }}
             transition={{ type: "spring", bounce: 0, duration: 0.4 }}
             className={cn(
-              "flex flex-col z-40 relative",
+              "flex flex-col z-40 pointer-events-auto",
               "glass-sidebar",
               "rounded-[14px]",
               "py-4 gap-0.5 overflow-hidden",

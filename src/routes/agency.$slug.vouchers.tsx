@@ -306,6 +306,15 @@ function VouchersPage() {
               <EmptyState
                 title="Nenhum voucher emitido"
                 description="Gere vouchers manualmente ou importe PDFs da operadora a partir da tela de cada roteiro de viagem."
+                action={
+                  <Link
+                    to="/agency/$slug/trips"
+                    params={{ slug }}
+                    className="inline-flex h-9 items-center justify-center rounded-full bg-brand px-4 text-xs font-bold text-white hover:bg-brand/90 transition-colors"
+                  >
+                    Ir para Roteiros de Viagem
+                  </Link>
+                }
               />
             )}
 
