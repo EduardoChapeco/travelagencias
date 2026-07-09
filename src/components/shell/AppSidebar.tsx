@@ -189,7 +189,7 @@ export function AppSidebar({
           mobileItems={visibleMobileItems}
           aiActions={aiActions}
           brand={
-            <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-brand text-xs font-bold text-brand-foreground font-sans">
+            <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-primary text-xs font-bold text-primary-foreground font-sans">
               {(agency?.name ?? "T").charAt(0).toUpperCase()}
             </div>
           }

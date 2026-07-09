@@ -244,7 +244,6 @@ export function AppShell({
 
             <main className={cn(
               "no-scrollbar flex-1 overflow-hidden relative os-workspace flex flex-col",
-              !isHome && !isBuilder && !isPastDue && (contextItems && contextItems.length > 0 ? "md:pl-[300px]" : "md:pl-[84px]")
             )}>
               {isPastDue && (
                 <div className="glass-section text-white text-xs px-4 py-2.5 flex items-center justify-between font-bold gap-3 shrink-0 rounded-2xl mb-4 border-rose-500/40">
