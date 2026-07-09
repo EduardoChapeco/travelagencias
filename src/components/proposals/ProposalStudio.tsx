@@ -31,7 +31,6 @@ export function ProposalStudio({ draft, save, agency }: ProposalStudioProps) {
   const historyQ = useQuery({
     queryKey: ["proposal-history", draft.id],
     queryFn: () => fetchProposalHistory(draft.id),
-    refetchInterval: 10000,
   });
 
   let currentTemplate = draft.template || "editorial-flat";

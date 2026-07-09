@@ -16,6 +16,7 @@ import { cn } from "@/lib/utils";
 import { toast } from "sonner";
 import { useBrand } from "@/hooks/use-brand";
 import { useLayoutStore } from "@/hooks/use-layout-store";
+import { useDesktopTheme, useDesktopThemeInitializer } from "@/hooks/use-desktop-theme";
 
 
 export function AppShell({
@@ -48,39 +49,11 @@ export function AppShell({
   const [time, setTime] = useState(new Date());
 
   const [customizerOpen, setCustomizerOpen] = useState(false);
-  const [wallpaper, setWallpaper] = useState("https://images.unsplash.com/photo-1499856871958-5b9627545d1a?q=80&w=2020&auto=format&fit=crop");
-  const [blurIntensity, setBlurIntensity] = useState(0);
-  const [dimOpacity, setDimOpacity] = useState(25);
-  // Opacidade dos elementos glass (sidebar, dock, cards) — padrão 20%
-  const [glassOpacity, setGlassOpacity] = useState(20);
+
+  const { wallpaper, blurIntensity, dimOpacity, glassOpacity } = useDesktopTheme();
+  useDesktopThemeInitializer();
 
   const activeWallpaper = backgroundImage || wallpaper;
-
-  const loadPreferences = async () => {
-    try {
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user) return;
-      const { data } = await (supabase as any)
-        .from("profiles")
-        .select("preferences")
-        .eq("id", user.id)
-        .maybeSingle();
-        
-      if (data?.preferences && typeof data.preferences === 'object') {
-        const prefs = data.preferences as any;
-        if (prefs.desktop_wallpaper) setWallpaper(prefs.desktop_wallpaper);
-        if (prefs.desktop_blur_intensity !== undefined) setBlurIntensity(Number(prefs.desktop_blur_intensity));
-        if (prefs.desktop_dim_opacity !== undefined) setDimOpacity(Number(prefs.desktop_dim_opacity));
-        if (prefs.desktop_glass_opacity !== undefined) setGlassOpacity(Number(prefs.desktop_glass_opacity));
-      }
-    } catch (err) {
-      console.warn("Failed to load user desktop preferences:", err);
-    }
-  };
-
-  useEffect(() => {
-    loadPreferences();
-  }, []);
 
   useEffect(() => {
     const timer = setInterval(() => setTime(new Date()), 1000);
@@ -249,7 +222,7 @@ export function AppShell({
               {title && <h1 className="text-base font-semibold text-white">{title}</h1>}
             </div>
 
-            <main className="no-scrollbar flex-1 overflow-hidden relative os-workspace flex flex-col rounded-[var(--radius-card)] bg-black/40 border border-white/5 md:shadow-2xl">
+            <main className="no-scrollbar flex-1 overflow-hidden relative os-workspace flex flex-col rounded-[var(--radius-card)] bg-black/10 glass-card border border-white/5 md:shadow-2xl">
               {isPastDue && (
                 <div className="glass-section text-white text-xs px-4 py-2.5 flex items-center justify-between font-bold gap-3 shrink-0 rounded-t-[var(--radius-card)] border-b border-rose-500/40">
                   <div className="flex items-center gap-2">
@@ -299,14 +272,6 @@ export function AppShell({
       <DesktopCustomizerModal
         open={customizerOpen}
         setOpen={setCustomizerOpen}
-        wallpaper={wallpaper}
-        setWallpaper={setWallpaper}
-        blurIntensity={blurIntensity}
-        setBlurIntensity={setBlurIntensity}
-        dimOpacity={dimOpacity}
-        setDimOpacity={setDimOpacity}
-        glassOpacity={glassOpacity}
-        setGlassOpacity={setGlassOpacity}
       />
 
       <CommandMenu />
