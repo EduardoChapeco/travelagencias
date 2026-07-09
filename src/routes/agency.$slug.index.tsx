@@ -106,7 +106,7 @@ function HomeShell() {
       {/* macOS Finder-style context menu */}
       {contextMenu.visible && (
         <div
-          className="fixed z-50 w-52 glass dark:glass-dark border border-white/10 rounded-2xl shadow-2xl p-1.5 flex flex-col text-white text-xs font-semibold select-none animate-fadeIn"
+          className="fixed z-50 w-52 glass dark:glass-dark border border-white/10 rounded-[var(--radius-card)] shadow-2xl p-1.5 flex flex-col text-white text-xs font-semibold select-none animate-fadeIn"
           style={{ top: contextMenu.y, left: contextMenu.x }}
           onClick={(e) => e.stopPropagation()}
         >
@@ -174,7 +174,7 @@ function ContextMenuItem({
       <Link
         to={to as any}
         onClick={onClick}
-        className="flex items-center gap-2 px-3 py-2 rounded-2xl hover:bg-white/10 hover:text-white transition-all text-white/80 group text-left"
+        className="flex items-center gap-2 px-3 py-2 rounded-[var(--radius-card)] hover:bg-white/10 hover:text-white transition-all text-white/80 group text-left"
       >
         {content}
       </Link>
@@ -184,7 +184,7 @@ function ContextMenuItem({
   return (
     <button
       onClick={onClick}
-      className="flex items-center gap-2 w-full text-left px-3 py-2 rounded-2xl hover:bg-white/10 hover:text-white transition-all text-white/80 group cursor-pointer"
+      className="flex items-center gap-2 w-full text-left px-3 py-2 rounded-[var(--radius-card)] hover:bg-white/10 hover:text-white transition-all text-white/80 group cursor-pointer"
     >
       {content}
     </button>

@@ -15,8 +15,7 @@ import { cn } from "@/lib/utils";
 import { toast } from "sonner";
 import { useBrand } from "@/hooks/use-brand";
 import { useLayoutStore } from "@/hooks/use-layout-store";
-import { useHeaderStore } from "@/lib/header-store";
-import { useSidebarStore } from "@/lib/sidebar-store";
+
 
 export function AppShell({
   title,
@@ -28,8 +27,6 @@ export function AppShell({
   children?: ReactNode;
 }) {
   const { backgroundImage } = useLayoutStore();
-  const toolbar = useHeaderStore((s) => s.toolbar);
-  const contextItems = useSidebarStore((s) => s.contextItems);
   const { agency } = useAgency();
   const { data: brandInfo } = useBrand();
   const subQuery = useQuery({
@@ -45,7 +42,6 @@ export function AppShell({
     },
   });
 
-  const [mobileOpen, setMobileOpen] = useState(false);
   const [aiChatState, setAiChatState] = useState<"collapsed" | "input" | "split">("collapsed");
   const [aiInput, setAiInput] = useState("");
   const [time, setTime] = useState(new Date());
@@ -131,7 +127,7 @@ export function AppShell({
   if (isPastDue) {
     return (
       <div className="flex h-screen w-full items-center justify-center bg-zinc-950 text-white font-sans p-6 text-center">
-        <div className="max-w-md w-full mac-glass-heavy p-8 rounded-3xl border border-red-500/30 flex flex-col items-center">
+        <div className="max-w-md w-full glass text-white bg-black/40 backdrop-blur-2xl p-8 rounded-[var(--radius-card)] border border-red-500/30 flex flex-col items-center shadow-2xl">
           <AlertTriangle className="w-16 h-16 text-red-500 mb-6" />
           <h2 className="text-2xl font-bold tracking-tight mb-3">Assinatura Pendente</h2>
           <p className="text-zinc-400 text-sm mb-8 leading-relaxed">
@@ -196,10 +192,8 @@ export function AppShell({
           </Link>
         </div>
 
-        {/* Center: Module Contextual Toolbar Portal */}
-        <div className="flex-1 flex justify-center pointer-events-auto px-4 z-50">
-          {toolbar}
-        </div>
+        {/* Center: Removed (Toolbar now rendered directly in PageHeader) */}
+        <div className="flex-1 px-4 z-50"></div>
 
         {/* Right: Pill ultra-fina — hora, data e notificações */}
         <div className="flex items-center gap-3 glass-pill px-3 py-1 rounded-full pointer-events-auto text-[11px] font-medium tracking-wide shrink-0">
@@ -210,18 +204,13 @@ export function AppShell({
         </div>
       </header>
 
-      {/* 3. AppSidebar — Mobile drawer + Dynamic Island desktop (oculto na Home) */}
-      {!isHome && !isBuilder && !isPastDue && (
-        <div className="absolute left-4 top-[var(--shell-header-height)] bottom-4 z-40 hidden md:flex flex-col justify-center pointer-events-none">
-          <AppSidebar mobileOpen={mobileOpen} onMobileClose={() => setMobileOpen(false)} isHome={isHome} />
-        </div>
-      )}
-      <div className="md:hidden">
-        <AppSidebar mobileOpen={mobileOpen} onMobileClose={() => setMobileOpen(false)} isHome={isHome} />
-      </div>
+
 
       {/* 4. Main Workspace — full screen, below status bar */}
-      <div className="w-full h-full flex pt-[var(--shell-header-height)] z-10 relative overflow-hidden">
+      <div className="w-full h-full flex pt-[var(--shell-header-height)] z-10 relative overflow-hidden flex-col-reverse md:flex-row">
+        {!isBuilder && !isPastDue && (
+          <AppSidebar isHome={isHome} />
+        )}
         {isHome ? (
           // ── HOME: FloatingDock + widgets on wallpaper ──────────────────────
           <div className="flex-1 flex flex-col relative overflow-hidden">
@@ -231,14 +220,8 @@ export function AppShell({
           // ── MODULE VIEW ───────────────────────────────────────────────────
           // Sidebar is structural via CSS Grid — workspace takes the rest of the 1fr column width
           <div className="flex-1 h-full overflow-hidden flex flex-col min-w-0">
-            {/* Mobile menu button — só aparece no mobile */}
+            {/* Mobile Title (Menu button removed since dock is at bottom) */}
             <div className="md:hidden flex items-center gap-3 px-4 pt-3 pb-1">
-              <button
-                onClick={() => setMobileOpen(true)}
-                className="flex h-8 w-8 items-center justify-center rounded-full text-white/70 hover:bg-white/10 transition-colors"
-              >
-                <Menu className="h-4 w-4" />
-              </button>
               {title && <h1 className="text-base font-semibold text-white">{title}</h1>}
             </div>
 

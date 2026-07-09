@@ -6,9 +6,8 @@ import { Plus, BookOpen, Edit2, Eye, Search, Workflow, ClipboardList, Trash2 } f
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { useAgency } from "@/lib/agency-context";
-import { HeaderPortal } from "@/components/shell/HeaderPortal";
-import { ModuleToolbar, ModuleActionButton } from "@/components/shell/ModuleToolbar";
-import { PageHeader, EmptyState } from "@/components/shell/PageHeader";
+;
+import { PageHeader, EmptyState, ModuleActionButton } from "@/components/shell/PageHeader";
 import {
   Field,
   Input,
@@ -97,8 +96,7 @@ function KnowledgePage() {
 
   return (
     <div className="flex h-full flex-col overflow-hidden">
-      <HeaderPortal>
-        <ModuleToolbar
+              <PageHeader
           title="Base de Conhecimento"
           search={{
             value: search,
@@ -112,8 +110,7 @@ function KnowledgePage() {
           activeFilter={tab}
           onFilterChange={(v) => setTab(v as any)}
         />
-      </HeaderPortal>
-
+      
       <ModuleActionButton
         label={tab === "articles" ? "Novo Artigo" : "Novo Playbook"}
         icon={<Plus className="h-3.5 w-3.5" />}
@@ -136,7 +133,7 @@ function KnowledgePage() {
               <button
                 key={a.id}
                 onClick={() => setViewing(a)}
-                className="group rounded-2xl border border-border bg-surface p-5 text-left transition-all hover:border-brand/40 cursor-pointer flex flex-col justify-between"
+                className="group rounded-[var(--radius-card)] border-none glass-card border-none p-5 text-left transition-all hover:border-brand/40 cursor-pointer flex flex-col justify-between"
               >
                 <div>
                   <div className="flex items-center justify-between mb-2">
@@ -168,7 +165,7 @@ function KnowledgePage() {
                 {a.tags?.length > 0 && (
                   <div className="mt-2 flex flex-wrap gap-1">
                     {a.tags.map((t: string) => (
-                      <span key={t} className="rounded bg-surface-alt px-1.5 py-0.5 text-[10px]">
+                      <span key={t} className="rounded glass bg-white/5 border-white/10 px-1.5 py-0.5 text-[10px]">
                         {t}
                       </span>
                     ))}
@@ -196,7 +193,7 @@ function KnowledgePage() {
               <button
                 key={pb.id}
                 onClick={() => setViewingPlaybook(pb)}
-                className="group rounded-2xl border border-border bg-surface p-5 text-left transition-all hover:border-brand/40 cursor-pointer flex flex-col justify-between"
+                className="group rounded-[var(--radius-card)] border-none glass-card border-none p-5 text-left transition-all hover:border-brand/40 cursor-pointer flex flex-col justify-between"
               >
                 <div>
                   <div className="flex items-start justify-between gap-2">
@@ -213,7 +210,7 @@ function KnowledgePage() {
                           e.stopPropagation();
                           setEditingPlaybook(pb);
                         }}
-                        className="p-1 hover:bg-surface-alt rounded text-muted-foreground cursor-pointer"
+                        className="p-1 hover:glass bg-white/5 border-white/10 rounded text-muted-foreground cursor-pointer"
                       >
                         <Edit2 className="w-3.5 h-3.5" />
                       </button>
@@ -416,7 +413,7 @@ function PlaybookSheet({
   return (
     <div className="fixed inset-0 z-50 flex justify-end bg-overlay" onClick={onClose}>
       <div
-        className="flex h-full w-full max-w-2xl flex-col border-l border-border bg-surface"
+        className="flex h-full w-full max-w-2xl flex-col border-l border-border glass-card border-none"
         onClick={(e) => e.stopPropagation()}
       >
         <div className="flex items-center justify-between border-b border-border px-6 py-4">
@@ -426,7 +423,7 @@ function PlaybookSheet({
           <button
             type="button"
             onClick={onClose}
-            className="flex h-8 w-8 items-center justify-center rounded-full border border-border hover:bg-surface-alt text-muted-foreground hover:text-foreground transition-colors cursor-pointer"
+            className="flex h-8 w-8 items-center justify-center rounded-full border-none hover:glass bg-white/5 border-white/10 text-muted-foreground hover:text-foreground transition-colors cursor-pointer"
           >
             x
           </button>
@@ -452,7 +449,7 @@ function PlaybookSheet({
                 />
               </Field>
               <div className="flex items-end pb-1">
-                <span className="text-[10px] text-muted-foreground bg-surface-alt border border-border rounded px-2 py-1 leading-normal">
+                <span className="text-[10px] text-muted-foreground glass bg-white/5 border-white/10 border-none rounded px-2 py-1 leading-normal">
                   Dica: Playbooks ajudam a IA a responder o cliente com base nos playbooks do dia a
                   dia da agência.
                 </span>
@@ -484,7 +481,7 @@ function PlaybookSheet({
                 {steps.map((st, idx) => (
                   <div
                     key={idx}
-                    className="bg-surface-alt/40 border border-border rounded-[var(--radius-card)] p-4 relative space-y-3"
+                    className="glass bg-white/5 border-white/10/40 border-none rounded-[var(--radius-card)] p-4 relative space-y-3"
                   >
                     <button
                       type="button"
@@ -505,7 +502,7 @@ function PlaybookSheet({
                         value={st.title}
                         onChange={(e) => updateStep(idx, "title", e.target.value)}
                         placeholder={`Título da Etapa ${st.step_number} (ex: Solicitar Multa)`}
-                        className="flex-1 h-8 rounded-full border border-border bg-surface px-2.5 text-xs outline-none focus:border-border-strong text-foreground"
+                        className="flex-1 h-8 rounded-full border-none glass-card border-none px-2.5 text-xs outline-none focus:border-border-strong text-foreground"
                       />
                     </div>
 
@@ -514,7 +511,7 @@ function PlaybookSheet({
                       value={st.description}
                       onChange={(e) => updateStep(idx, "description", e.target.value)}
                       placeholder="Instruções e playbooks específicos para esta etapa..."
-                      className="w-full rounded-full border border-border bg-surface px-2.5 py-1.5 text-xs outline-none focus:border-border-strong resize-none text-foreground"
+                      className="w-full rounded-full border-none glass-card border-none px-2.5 py-1.5 text-xs outline-none focus:border-border-strong resize-none text-foreground"
                     />
                   </div>
                 ))}
@@ -609,7 +606,7 @@ function ArticleSheet({
   return (
     <div className="fixed inset-0 z-50 flex justify-end bg-overlay" onClick={onClose}>
       <div
-        className="flex h-full w-full max-w-2xl flex-col border-l border-border bg-surface"
+        className="flex h-full w-full max-w-2xl flex-col border-l border-border glass-card border-none"
         onClick={(e) => e.stopPropagation()}
       >
         <div className="flex items-center justify-between border-b border-border px-6 py-4">
@@ -622,7 +619,7 @@ function ArticleSheet({
                 href={previewUrl}
                 target="_blank"
                 rel="noreferrer"
-                className="flex h-8 items-center gap-1.5 rounded-full border border-border px-2.5 text-xs font-medium hover:bg-surface-alt"
+                className="flex h-8 items-center gap-1.5 rounded-full border-none px-2.5 text-xs font-medium hover:glass bg-white/5 border-white/10"
               >
                 Ver publicado
               </a>
@@ -630,7 +627,7 @@ function ArticleSheet({
             <button
               type="button"
               onClick={onClose}
-              className="flex h-8 w-8 items-center justify-center rounded-full border border-border hover:bg-surface-alt"
+              className="flex h-8 w-8 items-center justify-center rounded-full border-none hover:glass bg-white/5 border-white/10"
             >
               x
             </button>
@@ -660,10 +657,10 @@ function ArticleSheet({
               <Input value={tags} onChange={(e) => setTags(e.target.value)} />
             </Field>
 
-            <div className="rounded-[var(--radius-card)] border border-border p-4 bg-surface-alt/50 space-y-4 mt-4">
+            <div className="rounded-[var(--radius-card)] border-none p-4 glass bg-white/5 border-white/10/50 space-y-4 mt-4">
               <div className="flex items-center justify-between">
                 <label className="text-sm font-bold text-foreground">Conteúdo</label>
-                <div className="flex bg-surface rounded-full p-1 border border-border">
+                <div className="flex glass-card border-none rounded-full p-1 border-none">
                   <button
                     type="button"
                     onClick={() => setEditorMode("simple")}

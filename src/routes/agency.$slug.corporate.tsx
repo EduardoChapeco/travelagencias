@@ -17,8 +17,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAgency } from "@/lib/agency-context";
 import { EmptyState } from "@/components/shell/PageHeader";
 import { toast } from "sonner";
-import { HeaderPortal } from "@/components/shell/HeaderPortal";
-import { ModuleToolbar, ModuleActionButton } from "@/components/shell/ModuleToolbar";
+import { PageHeader, ModuleActionButton } from "@/components/shell/PageHeader";
 import { ModuleAdminPanel } from "@/components/shell/ModuleAdminPanel";
 import {
   PrimaryButton,
@@ -120,8 +119,7 @@ function CorporatePage() {
 
   return (
     <div className="flex h-full flex-col overflow-hidden">
-      <HeaderPortal>
-        <ModuleToolbar
+              <PageHeader
           title="Corporativo B2B"
           search={{
             value: q,
@@ -162,8 +160,7 @@ function CorporatePage() {
             </div>
           }
         />
-      </HeaderPortal>
-
+      
       <ModuleActionButton
         label="Nova RFP"
         icon={<Plus className="h-3.5 w-3.5" />}
@@ -182,7 +179,7 @@ function CorporatePage() {
           {rfps.map((rfp) => (
             <div
               key={rfp.id}
-              className="rounded-full border border-border bg-surface p-5 flex flex-col gap-3 hover:border-brand/50 transition-colors"
+              className="rounded-full border-none glass-card border-none p-5 flex flex-col gap-3 hover:border-brand/50 transition-colors"
             >
               <div
                 onClick={() =>
@@ -207,7 +204,7 @@ function CorporatePage() {
                 </StatusBadge>
               </div>
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-2 p-3 bg-surface-alt rounded-2xl text-xs">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-2 p-3 glass bg-white/5 border-white/10 rounded-[var(--radius-card)] text-xs">
                 <div>
                   <div className="text-muted-foreground mb-0.5">Solicitante</div>
                   <div className="font-medium truncate" title={rfp.requester_email}>
@@ -274,14 +271,14 @@ function CorporatePage() {
               <GhostButton
                 disabled={page === 1}
                 onClick={() => setPage((p) => Math.max(1, p - 1))}
-                className="h-9 px-4 text-xs font-semibold rounded-full border border-border"
+                className="h-9 px-4 text-xs font-semibold rounded-full border-none"
               >
                 Anterior
               </GhostButton>
               <GhostButton
                 disabled={page * pageSize >= (rfpsQ.data?.count ?? 0)}
                 onClick={() => setPage((p) => p + 1)}
-                className="h-9 px-4 text-xs font-semibold rounded-full border border-border"
+                className="h-9 px-4 text-xs font-semibold rounded-full border-none"
               >
                 Próxima
               </GhostButton>

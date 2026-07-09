@@ -24,8 +24,7 @@ import { useConfirm } from "@/hooks/use-confirm";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { HeaderPortal } from "@/components/shell/HeaderPortal";
-import { ModuleToolbar, ModuleActionButton } from "@/components/shell/ModuleToolbar";
+import { PageHeader, ModuleActionButton } from "@/components/shell/PageHeader";
 import { ModuleAdminPanel } from "@/components/shell/ModuleAdminPanel";
 import {
   fetchStages,
@@ -182,8 +181,7 @@ function CRMPage() {
 
   return (
     <div className="flex h-full flex-col overflow-hidden bg-transparent">
-      <HeaderPortal>
-        <ModuleToolbar
+              <PageHeader
           title="CRM"
           search={activeTab !== "admin" ? {
             value: searchQuery,
@@ -232,8 +230,7 @@ function CRMPage() {
             ) : undefined
           }
         />
-      </HeaderPortal>
-
+      
       {activeTab !== "admin" && (
         <ModuleActionButton
           label="Novo Lead"
@@ -269,7 +266,7 @@ function CRMPage() {
 
       {activeTab === "archived" && leadsQ.data && (
         <div className="flex-1 overflow-auto p-6  md:pr-6 py-4 bg-transparent pb-24">
-          <div className="rounded-[var(--radius-card)] border border-border bg-surface p-6">
+          <div className="rounded-[var(--radius-card)] border-none glass-card border-none p-6">
             <h2 className="text-lg font-bold text-foreground mb-4">Leads Arquivados</h2>
             {leadsQ.data.length === 0 ? (
               <div className="text-center py-12 text-sm text-muted-foreground">
@@ -289,7 +286,7 @@ function CRMPage() {
                   </thead>
                   <tbody className="divide-y divide-border/40">
                     {leadsQ.data.map((l) => (
-                      <tr key={l.id} className="hover:bg-surface-alt/40 transition-colors">
+                      <tr key={l.id} className="hover:glass bg-white/5 border-white/10/40 transition-colors">
                         <td className="py-4 px-4 font-bold text-foreground">
                           <Link
                             to="/agency/$slug/crm/$lead_id"
@@ -578,7 +575,7 @@ function NewLeadSheet({
     >
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-5 pt-2 pb-20">
         {/* Seção Cliente */}
-        <div className="space-y-4 rounded-full border border-border bg-surface p-4">
+        <div className="space-y-4 rounded-full border-none glass-card border-none p-4">
           <h3 className="text-sm font-semibold text-foreground flex items-center gap-2">
             1. Perfil do Cliente
           </h3>
@@ -618,7 +615,7 @@ function NewLeadSheet({
         </div>
 
         {/* Seção Oportunidade */}
-        <div className="space-y-4 rounded-full border border-border bg-surface p-4">
+        <div className="space-y-4 rounded-full border-none glass-card border-none p-4">
           <h3 className="text-sm font-semibold text-foreground flex items-center gap-2">
             2. Detalhes do Interesse
           </h3>
@@ -710,7 +707,7 @@ function NewLeadSheet({
         </div>
 
         {/* Anotações */}
-        <div className="space-y-4 rounded-full border border-border bg-surface p-4">
+        <div className="space-y-4 rounded-full border-none glass-card border-none p-4">
           <Field label="Anotações Iniciais" error={errors.notes?.message}>
             <Textarea
               rows={4}
@@ -847,7 +844,7 @@ function StageSettingsPanel({
           {localStages.map((s, idx) => (
             <div
               key={s.id}
-              className="flex items-center gap-4 bg-background p-3 rounded-full border border-border"
+              className="flex items-center gap-4 bg-background p-3 rounded-full border-none"
             >
               <div className="flex flex-col gap-1 items-center justify-center px-1">
                 <button

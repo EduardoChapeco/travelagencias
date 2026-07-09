@@ -103,7 +103,7 @@ function PublicStoreIndex() {
         </div>
       ) : filteredItems.length === 0 ? (
         <div className="flex flex-col items-center justify-center py-24 text-center">
-          <div className="bg-surface-alt rounded-full p-4 mb-4">
+          <div className="glass bg-white/5 border-white/10 rounded-full p-4 mb-4">
             <MapPin className="h-8 w-8 text-muted-foreground" />
           </div>
           <h3 className="text-xl font-bold text-foreground">Nenhuma viagem encontrada</h3>
@@ -119,11 +119,11 @@ function PublicStoreIndex() {
               to="/p/$agency_slug/loja/$item_id"
               params={{ agency_slug, item_id: item.item_id }}
               search={{ type: item.item_type }}
-              className="group flex flex-col bg-surface border border-border/60 rounded-2xl overflow-hidden hover:border-brand/50 transition-all duration-300 relative focus:outline-none focus:ring-2 focus:ring-brand focus:ring-offset-2"
+              className="group flex flex-col glass-card border-none border-none/60 rounded-[var(--radius-card)] overflow-hidden hover:border-brand/50 transition-all duration-300 relative focus:outline-none focus:ring-2 focus:ring-brand focus:ring-offset-2"
             >
               {item.image_url ? (
-                <div className="aspect-[4/3] w-full overflow-hidden bg-surface-muted relative">
-                  <div className="absolute top-3 right-3 z-10 bg-background/90 backdrop-blur-sm px-2.5 py-1 rounded-full text-xs font-bold text-foreground uppercase tracking-widest shadow-sm">
+                <div className="aspect-[4/3] w-full overflow-hidden glass-card border-none-muted relative">
+                  <div className="absolute top-3 right-3 z-10 bg-background/90 backdrop-blur-sm px-2.5 py-1 rounded-full text-xs font-bold text-foreground uppercase tracking-widest shadow-none">
                     {item.item_type === "group_tour" ? "Grupo" : "Pacote"}
                   </div>
                   <img
@@ -133,8 +133,8 @@ function PublicStoreIndex() {
                   />
                 </div>
               ) : (
-                <div className="aspect-[4/3] w-full bg-surface-alt flex items-center justify-center text-muted-foreground/30 relative">
-                  <div className="absolute top-3 right-3 z-10 bg-background/90 backdrop-blur-sm px-2.5 py-1 rounded-full text-xs font-bold text-foreground uppercase tracking-widest shadow-sm">
+                <div className="aspect-[4/3] w-full glass bg-white/5 border-white/10 flex items-center justify-center text-muted-foreground/30 relative">
+                  <div className="absolute top-3 right-3 z-10 bg-background/90 backdrop-blur-sm px-2.5 py-1 rounded-full text-xs font-bold text-foreground uppercase tracking-widest shadow-none">
                     {item.item_type === "group_tour" ? "Grupo" : "Pacote"}
                   </div>
                   <MapPin className="h-12 w-12" />

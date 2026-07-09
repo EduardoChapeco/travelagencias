@@ -33,8 +33,7 @@ import {
 import { FileUploader } from "@/components/uploads/FileUploader";
 import { MultiFileUploader } from "@/components/uploads/MultiFileUploader";
 import { supabase } from "@/integrations/supabase/client";
-import { HeaderPortal } from "@/components/shell/HeaderPortal";
-import { ModuleToolbar } from "@/components/shell/ModuleToolbar";
+import { PageHeader } from "@/components/shell/PageHeader";
 
 export const Route = createFileRoute("/agency/$slug/company")({
   head: ({ context }: any) => ({ meta: [{ title: `Minha empresa · ${context?.brand?.platform_name || 'Turis'}` }] }),
@@ -394,8 +393,7 @@ function Page() {
 
   return (
     <div className="flex h-full flex-col overflow-hidden">
-      <HeaderPortal>
-        <ModuleToolbar
+              <PageHeader
           title="Dados da Agência"
           filters={TABS.map((t) => ({ label: t.label, value: t.id }))}
           activeFilter={tab}
@@ -430,8 +428,7 @@ function Page() {
             </div>
           }
         />
-      </HeaderPortal>
-
+      
       <div className="flex-1 overflow-y-auto px-4  md:pr-6 py-4 min-h-0 pb-24">
         <div className={`grid gap-6 ${previewOpen ? "lg:grid-cols-[1fr_340px]" : ""}`}>
           <div className="space-y-0">
@@ -440,7 +437,7 @@ function Page() {
               <form onSubmit={save} id="company-form" className="space-y-0">
                 {/* TAB: IDENTITY */}
                 {tab === "identity" && (
-                  <div className="space-y-5 rounded-2xl border border-border bg-surface p-5">
+                  <div className="space-y-5 rounded-[var(--radius-card)] border-none glass-card border-none p-5">
                     <h3 className="text-sm font-semibold">Identidade da empresa</h3>
                     <Field label="Nome comercial *">
                       <Input
@@ -488,7 +485,7 @@ function Page() {
 
                 {/* TAB: CONTACT */}
                 {tab === "contact" && (
-                  <div className="space-y-5 rounded-2xl border border-border bg-surface p-5">
+                  <div className="space-y-5 rounded-[var(--radius-card)] border-none glass-card border-none p-5">
                     <h3 className="text-sm font-semibold">Contato</h3>
                     <div className="grid gap-3 sm:grid-cols-2">
                       <Field label="E-mail comercial">
@@ -528,7 +525,7 @@ function Page() {
 
                 {/* TAB: LOCATION */}
                 {tab === "location" && (
-                  <div className="space-y-5 rounded-2xl border border-border bg-surface p-5">
+                  <div className="space-y-5 rounded-[var(--radius-card)] border-none glass-card border-none p-5">
                     <h3 className="text-sm font-semibold">Localização</h3>
                     <div className="grid gap-3 sm:grid-cols-[1fr_120px]">
                       <Field label="Rua / Avenida">
@@ -593,13 +590,13 @@ function Page() {
                           type="button"
                           onClick={syncGbp}
                           disabled={gbpSyncing}
-                          className="flex items-center gap-1.5 rounded-full border border-border px-2.5 py-1 text-xs font-medium hover:bg-surface-alt disabled:opacity-50 transition-colors"
+                          className="flex items-center gap-1.5 rounded-full border-none px-2.5 py-1 text-xs font-medium hover:glass bg-white/5 border-white/10 disabled:opacity-50 transition-colors"
                         >
                           <RefreshCw className={`h-3 w-3 ${gbpSyncing ? "animate-spin" : ""}`} />
                           {gbpSyncing ? "Sincronizando…" : "Sincronizar GBP"}
                         </button>
                       </div>
-                      <div className="mb-3 flex items-start gap-2 rounded-full border border-border/50 bg-surface-alt px-3 py-2">
+                      <div className="mb-3 flex items-start gap-2 rounded-full border-none/50 glass bg-white/5 border-white/10 px-3 py-2">
                         <Info className="mt-0.5 h-3.5 w-3.5 shrink-0 text-muted-foreground" />
                         <p className="text-[11px] text-muted-foreground">
                           Preencha o Google Business ID e o Maps URL para sincronizar dados com o
@@ -641,7 +638,7 @@ function Page() {
 
                 {/* TAB: SOCIAL */}
                 {tab === "social" && (
-                  <div className="space-y-5 rounded-2xl border border-border bg-surface p-5">
+                  <div className="space-y-5 rounded-[var(--radius-card)] border-none glass-card border-none p-5">
                     <h3 className="text-sm font-semibold">Redes sociais e canais</h3>
                     <div className="grid gap-3 sm:grid-cols-2">
                       {(
@@ -670,7 +667,7 @@ function Page() {
                         </Field>
                       ))}
                     </div>
-                    <div className="rounded-full border border-border bg-surface-alt p-3 text-xs text-muted-foreground">
+                    <div className="rounded-full border-none glass bg-white/5 border-white/10 p-3 text-xs text-muted-foreground">
                       <p className="font-medium text-foreground mb-1">Prévia no portal público</p>
                       <p>Todas as redes ativas aparecem como ícones no rodapé do portal.</p>
                       <a
@@ -687,7 +684,7 @@ function Page() {
 
                 {/* TAB: MEDIA */}
                 {tab === "media" && (
-                  <div className="space-y-6 rounded-2xl border border-border bg-surface p-5">
+                  <div className="space-y-6 rounded-[var(--radius-card)] border-none glass-card border-none p-5">
                     <h3 className="text-sm font-semibold">Mídia e identidade visual</h3>
                     <div className="space-y-4">
                       <FileUploader
@@ -723,7 +720,7 @@ function Page() {
 
                 {/* TAB: HOURS */}
                 {tab === "hours" && (
-                  <div className="space-y-4 rounded-2xl border border-border bg-surface p-5">
+                  <div className="space-y-4 rounded-[var(--radius-card)] border-none glass-card border-none p-5">
                     <h3 className="text-sm font-semibold">Horários de atendimento</h3>
                     <p className="text-xs text-muted-foreground">
                       Exibidos no portal público e sincronizados com o Google.
@@ -773,7 +770,7 @@ function Page() {
                 )}
 
                 {/* SAVE BAR (company tabs) */}
-                <div className="flex items-center justify-between rounded-b-lg border-x border-b border-border bg-surface px-5 py-3 text-[11px] text-muted-foreground">
+                <div className="flex items-center justify-between rounded-b-lg border-x border-b border-border glass-card border-none px-5 py-3 text-[11px] text-muted-foreground">
                   <span>
                     {(q.data as any)?.updated_at
                       ? `Última edição: ${new Date((q.data as any).updated_at).toLocaleString("pt-BR")}`
@@ -786,7 +783,7 @@ function Page() {
 
           {/* PORTAL PREVIEW PANEL */}
           {previewOpen && (
-            <aside className="shrink-0 rounded-2xl border border-border bg-surface overflow-hidden h-fit sticky top-4">
+            <aside className="shrink-0 rounded-[var(--radius-card)] border-none glass-card border-none overflow-hidden h-fit sticky top-4">
               <div className="border-b border-border px-4 py-2.5 flex items-center justify-between">
                 <span className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
                   Prévia do portal
@@ -802,7 +799,7 @@ function Page() {
               </div>
               <div className="overflow-hidden" style={{ maxHeight: "70vh", overflowY: "auto" }}>
                 {/* Hero preview */}
-                <div className="relative flex h-32 items-end bg-surface-alt overflow-hidden">
+                <div className="relative flex h-32 items-end glass bg-white/5 border-white/10 overflow-hidden">
                   {form.cover_image_url && (
                     <img
                       src={form.cover_image_url}
@@ -815,7 +812,7 @@ function Page() {
                       <img
                         src={form.logo_url}
                         alt=""
-                        className="mb-2 h-10 w-10 rounded-2xl object-contain border border-border bg-surface"
+                        className="mb-2 h-10 w-10 rounded-[var(--radius-card)] object-contain border-none glass-card border-none"
                       />
                     )}
                     <div className="font-bold text-sm leading-tight">
@@ -835,27 +832,27 @@ function Page() {
                   </div>
                   <div className="flex flex-wrap gap-1">
                     {form.portal_theme.show_tours && (
-                      <span className="rounded-full bg-surface-alt px-2 py-0.5 text-[10px]">
+                      <span className="rounded-full glass bg-white/5 border-white/10 px-2 py-0.5 text-[10px]">
                         Roteiros
                       </span>
                     )}
                     {form.portal_theme.show_blog && (
-                      <span className="rounded-full bg-surface-alt px-2 py-0.5 text-[10px]">
+                      <span className="rounded-full glass bg-white/5 border-white/10 px-2 py-0.5 text-[10px]">
                         Blog
                       </span>
                     )}
                     {form.portal_theme.show_gallery && (
-                      <span className="rounded-full bg-surface-alt px-2 py-0.5 text-[10px]">
+                      <span className="rounded-full glass bg-white/5 border-white/10 px-2 py-0.5 text-[10px]">
                         Galeria
                       </span>
                     )}
                     {form.portal_theme.show_hours && (
-                      <span className="rounded-full bg-surface-alt px-2 py-0.5 text-[10px]">
+                      <span className="rounded-full glass bg-white/5 border-white/10 px-2 py-0.5 text-[10px]">
                         Horários
                       </span>
                     )}
                     {form.portal_theme.show_map && (
-                      <span className="rounded-full bg-surface-alt px-2 py-0.5 text-[10px]">
+                      <span className="rounded-full glass bg-white/5 border-white/10 px-2 py-0.5 text-[10px]">
                         Mapa
                       </span>
                     )}
@@ -868,12 +865,12 @@ function Page() {
                   </div>
                   <div className="flex gap-2">
                     <div
-                      className="h-8 w-8 rounded-full border border-border"
+                      className="h-8 w-8 rounded-full border-none"
                       style={{ background: agency.brand_color || "#1E293B" }}
                       title="Primária"
                     />
                     <div
-                      className="h-8 w-8 rounded-full border border-border"
+                      className="h-8 w-8 rounded-full border-none"
                       style={{ background: agency.brand_color_light || "#F1F5F9" }}
                       title="Fundo claro"
                     />

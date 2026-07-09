@@ -109,7 +109,7 @@ function ClientSupportRoute() {
       </div>
 
       {isCreating && (
-        <div className="bg-surface border border-border p-5 rounded-[var(--radius-card)]">
+        <div className="glass-card border-none border-none p-5 rounded-[var(--radius-card)]">
           <h2 className="text-lg font-semibold mb-4">Abrir Novo Chamado</h2>
           <form onSubmit={handleCreate} className="space-y-4">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -119,7 +119,7 @@ function ClientSupportRoute() {
                   type="text"
                   value={title}
                   onChange={(e) => setTitle(e.target.value)}
-                  className="w-full h-10 bg-background border border-border rounded-full px-3 text-sm focus:border-primary outline-none transition-colors"
+                  className="w-full h-10 bg-background border-none rounded-full px-3 text-sm focus:border-primary outline-none transition-colors"
                   placeholder="Ex: Dúvida sobre o voo"
                   required
                 />
@@ -129,7 +129,7 @@ function ClientSupportRoute() {
                 <select
                   value={type}
                   onChange={(e) => setType(e.target.value)}
-                  className="w-full h-10 bg-background border border-border rounded-full px-3 text-sm focus:border-primary outline-none transition-colors"
+                  className="w-full h-10 bg-background border-none rounded-full px-3 text-sm focus:border-primary outline-none transition-colors"
                 >
                   <option value="general">Dúvida / Suporte Geral</option>
                   <option value="request">Alteração de Reserva</option>
@@ -146,7 +146,7 @@ function ClientSupportRoute() {
               <textarea
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
-                className="w-full bg-background border border-border rounded-full px-3 py-2 text-sm focus:border-primary outline-none transition-colors resize-none h-32"
+                className="w-full bg-background border-none rounded-full px-3 py-2 text-sm focus:border-primary outline-none transition-colors resize-none h-32"
                 placeholder="Descreva como podemos te ajudar..."
                 required
               />
@@ -183,7 +183,7 @@ function ClientSupportRoute() {
       ) : (
         <div className="grid gap-3">
           {tickets.map((ticket) => (
-            <div key={ticket.id} className="bg-surface border border-border p-4 rounded-[var(--radius-card)] flex flex-col md:flex-row gap-4 md:items-center justify-between hover:border-primary/50 transition-colors">
+            <div key={ticket.id} className="glass-card border-none border-none p-4 rounded-[var(--radius-card)] flex flex-col md:flex-row gap-4 md:items-center justify-between hover:border-primary/50 transition-colors">
               <div className="flex-1 min-w-0">
                 <div className="flex items-center gap-2 mb-1">
                   {getStatusBadge(ticket.status)}
@@ -198,7 +198,7 @@ function ClientSupportRoute() {
               </div>
               <div className="shrink-0">
                 {/* No futuro podemos adicionar uma página de detalhes do ticket, por enquanto mostramos resumo */}
-                <button className="h-9 px-3 rounded-full border border-border text-sm font-medium hover:bg-accent transition-colors flex items-center gap-2 text-muted-foreground">
+                <button className="h-9 px-3 rounded-full border-none text-sm font-medium hover:bg-accent transition-colors flex items-center gap-2 text-muted-foreground">
                   <ExternalLink className="h-4 w-4" /> Detalhes
                 </button>
               </div>

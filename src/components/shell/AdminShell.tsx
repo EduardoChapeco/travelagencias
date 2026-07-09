@@ -22,7 +22,7 @@ import {
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { signOut } from "@/lib/auth";
-import { SlimSidebar, type SlimSidebarItem } from "./SlimSidebar";
+import { DockNavigation, type SlimSidebarItem } from "./DockNavigation";
 
 const items = [
   { to: "/admin", label: "Visão Geral", icon: LayoutDashboard, exact: true },
@@ -89,27 +89,15 @@ export function AdminShell() {
 
   return (
     <div className="flex h-screen w-full bg-background text-foreground">
-      <SlimSidebar
+      <DockNavigation
         items={items as SlimSidebarItem[]}
-        brand={
-          <>
-            <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-[var(--radius-card)] bg-primary text-xs font-bold text-primary-foreground">
-              A
-            </div>
-            <span className="ml-3 min-w-0 translate-x-1 truncate text-sm font-semibold opacity-0 transition group-hover/sidebar:translate-x-0 group-hover/sidebar:opacity-100 group-focus-within/sidebar:translate-x-0 group-focus-within/sidebar:opacity-100">
-              Admin Global
-            </span>
-          </>
-        }
         footer={
           <button
             onClick={() => signOut().then(() => navigate({ to: "/auth/login", replace: true }))}
-            className="flex h-9 w-full items-center gap-3 overflow-hidden rounded-full px-2 text-sm text-muted-foreground transition-colors hover:bg-sidebar-accent hover:text-sidebar-accent-foreground cursor-pointer"
+            className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full text-white/50 transition-all hover:bg-white/10 hover:text-white cursor-pointer"
+            title="Sair da conta"
           >
-            <LogOut className="h-[18px] w-[18px] shrink-0" />
-            <span className="translate-x-1 opacity-0 transition group-hover/sidebar:translate-x-0 group-hover/sidebar:opacity-100 group-focus-within/sidebar:translate-x-0 group-focus-within/sidebar:opacity-100">
-              Sair
-            </span>
+            <LogOut className="h-[18px] w-[18px] shrink-0" strokeWidth={2} />
           </button>
         }
       />

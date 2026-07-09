@@ -247,7 +247,7 @@ function TripBoardingPage() {
   return (
     <div className="flex-1 overflow-y-auto p-4 md:p-6 space-y-6">
       {/* Header informativo */}
-      <div className="rounded-[var(--radius-card)] border border-border bg-surface p-4 flex items-start gap-3 justify-between">
+      <div className="rounded-[var(--radius-card)] border-none glass-card border-none p-4 flex items-start gap-3 justify-between">
         <div className="flex items-start gap-3">
           <Navigation className="h-4 w-4 text-brand mt-0.5 shrink-0" />
           <div>
@@ -260,13 +260,13 @@ function TripBoardingPage() {
         </div>
 
         {/* Tab Selector */}
-        <div className="flex bg-surface-alt p-0.5 rounded-2xl border border-border/60 text-[11px] font-semibold">
+        <div className="flex glass bg-white/5 border-white/10 p-0.5 rounded-[var(--radius-card)] border-none/60 text-[11px] font-semibold">
           <button
             onClick={() => setActiveTab("cards")}
             className={cn(
               "px-3 py-1.5 rounded-full transition-all flex items-center gap-1.5",
               activeTab === "cards"
-                ? "bg-surface shadow text-foreground"
+                ? "glass-card border-none shadow text-foreground"
                 : "text-muted-foreground hover:text-foreground",
             )}
           >
@@ -277,7 +277,7 @@ function TripBoardingPage() {
             className={cn(
               "px-3 py-1.5 rounded-full transition-all flex items-center gap-1.5",
               activeTab === "settings"
-                ? "bg-surface shadow text-foreground"
+                ? "glass-card border-none shadow text-foreground"
                 : "text-muted-foreground hover:text-foreground",
             )}
           >
@@ -295,7 +295,7 @@ function TripBoardingPage() {
           )}
 
           {!isLoadingCards && cards.length === 0 && (
-            <div className="flex flex-col items-center justify-center py-20 border-2 border-dashed border-border rounded-2xl text-center">
+            <div className="flex flex-col items-center justify-center py-20 border-2 border-dashed border-border rounded-[var(--radius-card)] text-center">
               <Navigation className="h-10 w-10 text-muted-foreground/30 mb-3" />
               <p className="text-sm font-semibold text-muted-foreground">
                 Nenhum controle de embarque para esta viagem
@@ -318,10 +318,10 @@ function TripBoardingPage() {
                 return (
                   <div
                     key={card.id}
-                    className="rounded-[var(--radius-card)] border border-border bg-surface overflow-hidden shadow-sm"
+                    className="rounded-[var(--radius-card)] border-none glass-card border-none overflow-hidden shadow-none"
                   >
                     {/* Header do Card */}
-                    <div className="p-4 border-b border-border/60 bg-surface-alt/20 flex flex-wrap items-center justify-between gap-4">
+                    <div className="p-4 border-b border-border/60 glass bg-white/5 border-white/10/20 flex flex-wrap items-center justify-between gap-4">
                       <div className="flex items-center gap-3">
                         <span className="font-mono text-xs font-bold bg-brand/10 text-brand px-2 py-0.5 rounded">
                           {card.airline || "Sem Cia"}
@@ -344,7 +344,7 @@ function TripBoardingPage() {
                           onChange={(e) =>
                             updateStatusMut.mutate({ cardId: card.id, status: e.target.value })
                           }
-                          className="text-xs border border-border rounded px-2 py-1 bg-surface cursor-pointer text-muted-foreground hover:text-foreground font-medium"
+                          className="text-xs border-none rounded px-2 py-1 glass-card border-none cursor-pointer text-muted-foreground hover:text-foreground font-medium"
                         >
                           {Object.entries(STAGE_CONFIG).map(([val, conf]) => (
                             <option key={val} value={val}>
@@ -456,10 +456,10 @@ function TripBoardingPage() {
                                     })
                                   }
                                   className={cn(
-                                    "flex items-center gap-2.5 p-2 rounded-2xl border text-left transition-colors text-xs cursor-pointer",
+                                    "flex items-center gap-2.5 p-2 rounded-[var(--radius-card)] border text-left transition-colors text-xs cursor-pointer",
                                     item.done
                                       ? "bg-emerald-500/5 border-emerald-500/20 text-emerald-950 dark:text-emerald-300"
-                                      : "bg-surface border-border hover:bg-surface-alt text-foreground",
+                                      : "glass-card border-none border-border hover:glass bg-white/5 border-white/10 text-foreground",
                                   )}
                                 >
                                   {item.done ? (
@@ -483,7 +483,7 @@ function TripBoardingPage() {
 
                         {/* Alertas operacionais */}
                         {card.alerts && card.alerts.length > 0 && (
-                          <div className="mt-3 p-2.5 rounded-2xl border border-warning/30 bg-warning/5 space-y-1">
+                          <div className="mt-3 p-2.5 rounded-[var(--radius-card)] border border-warning/30 bg-warning/5 space-y-1">
                             <p className="text-[9px] font-bold uppercase tracking-widest text-warning-foreground flex items-center gap-1">
                               <AlertCircle className="h-3 w-3" /> Atenção & Alertas
                             </p>
@@ -509,7 +509,7 @@ function TripBoardingPage() {
       ) : (
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 items-start">
           {/* Panel: Check-in overrides */}
-          <div className="bg-surface rounded-[var(--radius-card)] border border-border p-5 space-y-4 shadow-sm">
+          <div className="glass-card border-none rounded-[var(--radius-card)] border-none p-5 space-y-4 shadow-none">
             <div className="flex items-center gap-2 text-foreground font-semibold text-sm">
               <Link2 className="h-4 w-4 text-brand" />
               <span>Link de Check-in (Overrides)</span>
@@ -524,7 +524,7 @@ function TripBoardingPage() {
                 Carregando trechos...
               </div>
             ) : segments.length === 0 ? (
-              <div className="text-xs text-muted-foreground py-4 border border-dashed border-border rounded-2xl text-center">
+              <div className="text-xs text-muted-foreground py-4 border border-dashed border-border rounded-[var(--radius-card)] text-center">
                 Nenhum trecho de voo confirmado ativo para esta viagem.
               </div>
             ) : (
@@ -551,7 +551,7 @@ function TripBoardingPage() {
                         onChange={(e) =>
                           setOverrideUrls({ ...overrideUrls, [seg.id]: e.target.value })
                         }
-                        className="flex-1 text-xs border border-border rounded-2xl px-2.5 py-2 bg-background focus:outline-none focus:ring-1 focus:ring-brand font-medium text-foreground"
+                        className="flex-1 text-xs border-none rounded-[var(--radius-card)] px-2.5 py-2 bg-background focus:outline-none focus:ring-1 focus:ring-brand font-medium text-foreground"
                       />
                       <button
                         onClick={() =>
@@ -562,7 +562,7 @@ function TripBoardingPage() {
                           })
                         }
                         disabled={saveCheckinLinkMut.isPending}
-                        className="bg-brand text-brand-foreground hover:bg-brand/90 px-3 py-2 rounded-2xl text-xs font-bold transition-all disabled:opacity-50"
+                        className="bg-brand text-brand-foreground hover:bg-brand/90 px-3 py-2 rounded-[var(--radius-card)] text-xs font-bold transition-all disabled:opacity-50"
                       >
                         Salvar
                       </button>
@@ -574,7 +574,7 @@ function TripBoardingPage() {
           </div>
 
           {/* Panel: Boarding events timeline */}
-          <div className="bg-surface rounded-[var(--radius-card)] border border-border p-5 space-y-4 shadow-sm">
+          <div className="glass-card border-none rounded-[var(--radius-card)] border-none p-5 space-y-4 shadow-none">
             <div className="flex items-center gap-2 text-foreground font-semibold text-sm">
               <FileText className="h-4 w-4 text-brand" />
               <span>Eventos & Ocorrências de Embarque</span>
@@ -588,7 +588,7 @@ function TripBoardingPage() {
                 Carregando timeline...
               </div>
             ) : boardingEvents.length === 0 ? (
-              <div className="text-xs text-muted-foreground py-8 border border-dashed border-border rounded-2xl text-center">
+              <div className="text-xs text-muted-foreground py-8 border border-dashed border-border rounded-[var(--radius-card)] text-center">
                 Nenhum evento registrado até o momento.
               </div>
             ) : (
@@ -604,7 +604,7 @@ function TripBoardingPage() {
 
                   let text = "";
                   let icon = <Clock className="h-3 w-3 text-muted-foreground" />;
-                  let iconBg = "bg-surface-alt border-border";
+                  let iconBg = "glass bg-white/5 border-white/10 border-border";
 
                   if (evt.event_type === "checkin_link_clicked") {
                     text = `Check-in iniciado por ${travelerName}${segmentDesc ? ` para o voo ${segmentDesc}` : ""}.`;
@@ -637,7 +637,7 @@ function TripBoardingPage() {
                       {/* Timeline dot */}
                       <span
                         className={cn(
-                          "absolute -left-[24px] top-1.5 flex h-4.5 w-4.5 items-center justify-center rounded-full border text-xs shadow-sm",
+                          "absolute -left-[24px] top-1.5 flex h-4.5 w-4.5 items-center justify-center rounded-full border text-xs shadow-none",
                           iconBg,
                         )}
                       >

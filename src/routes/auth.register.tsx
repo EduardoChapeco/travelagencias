@@ -113,13 +113,13 @@ function RegisterPage() {
   return (
     <div className="grid min-h-screen grid-cols-1 md:grid-cols-2 bg-background text-foreground">
       {/* ── Left Column: Identical Neuromarketing Imagery / Copy ─── */}
-      <div className="relative hidden flex-col justify-between bg-surface-alt p-12 text-foreground md:flex overflow-hidden border-r border-border">
+      <div className="relative hidden flex-col justify-between glass bg-white/5 border-white/10 p-12 text-foreground md:flex overflow-hidden border-r border-border">
         {/* Editorial Dot Matrix Accent */}
         <div className="absolute inset-0 z-0 pointer-events-none opacity-[0.015] bg-[radial-gradient(#000_1px,transparent_1px)] [background-size:16px_16px]" />
 
         {/* Header */}
         <Link to="/" className="relative z-10 flex items-center gap-2.5">
-          <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-primary text-primary-foreground font-black text-xs">
+          <div className="flex h-9 w-9 items-center justify-center rounded-[var(--radius-card)] bg-primary text-primary-foreground font-black text-xs">
             T
           </div>
           <span className="text-base font-black tracking-tight text-foreground">Turis</span>
@@ -142,7 +142,7 @@ function RegisterPage() {
           </div>
 
           {/* Floating Benefit Card */}
-          <div className="bg-surface border border-border rounded-[var(--radius-card)] p-6 space-y-4 shadow-none">
+          <div className="glass-card border-none border-none rounded-[var(--radius-card)] p-6 space-y-4 shadow-none">
             <h4 className="text-xs font-bold uppercase tracking-widest text-accent">
               Módulos Inclusos na sua Conta
             </h4>
@@ -178,7 +178,7 @@ function RegisterPage() {
         <div className="w-full max-w-sm relative z-10 space-y-8">
           {/* Logo on Mobile */}
           <div className="flex items-center gap-2 md:hidden">
-            <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-primary text-primary-foreground font-black text-xs">
+            <div className="flex h-9 w-9 items-center justify-center rounded-[var(--radius-card)] bg-primary text-primary-foreground font-black text-xs">
               T
             </div>
             <span className="text-sm font-black text-foreground">Turis</span>
@@ -198,7 +198,7 @@ function RegisterPage() {
               <Input
                 placeholder="Seu nome completo"
                 {...register("fullName")}
-                className="h-11 text-xs rounded-xl bg-surface border-border focus:border-primary focus:ring-primary/10 text-foreground placeholder:text-muted-foreground/50 transition-all"
+                className="h-11 text-xs rounded-[var(--radius-card)] glass-card border-none border-border focus:border-primary focus:ring-primary/10 text-foreground placeholder:text-muted-foreground/50 transition-all"
               />
             </Field>
 
@@ -208,7 +208,7 @@ function RegisterPage() {
                 placeholder="nome@suaagencia.com.br"
                 autoComplete="email"
                 {...register("email")}
-                className="h-11 text-xs rounded-xl bg-surface border-border focus:border-primary focus:ring-primary/10 text-foreground placeholder:text-muted-foreground/50 transition-all"
+                className="h-11 text-xs rounded-[var(--radius-card)] glass-card border-none border-border focus:border-primary focus:ring-primary/10 text-foreground placeholder:text-muted-foreground/50 transition-all"
               />
             </Field>
 
@@ -218,7 +218,7 @@ function RegisterPage() {
                 autoComplete="new-password"
                 placeholder="Mínimo de 8 caracteres"
                 {...register("password")}
-                className="h-11 text-xs rounded-xl bg-surface border-border focus:border-primary focus:ring-primary/10 text-foreground placeholder:text-muted-foreground/50 transition-all"
+                className="h-11 text-xs rounded-[var(--radius-card)] glass-card border-none border-border focus:border-primary focus:ring-primary/10 text-foreground placeholder:text-muted-foreground/50 transition-all"
               />
             </Field>
 
@@ -228,7 +228,7 @@ function RegisterPage() {
                 autoComplete="new-password"
                 placeholder="Repita sua senha"
                 {...register("confirmPassword")}
-                className="h-11 text-xs rounded-xl bg-surface border-border focus:border-primary focus:ring-primary/10 text-foreground placeholder:text-muted-foreground/50 transition-all"
+                className="h-11 text-xs rounded-[var(--radius-card)] glass-card border-none border-border focus:border-primary focus:ring-primary/10 text-foreground placeholder:text-muted-foreground/50 transition-all"
               />
             </Field>
 

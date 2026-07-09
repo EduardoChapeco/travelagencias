@@ -158,7 +158,7 @@ function PublicLeadFormPage() {
   if (errorMsg) {
     return (
       <CenterContainer>
-        <div className="text-center p-6 bg-danger/5 border border-danger/20 rounded-2xl max-w-md">
+        <div className="text-center p-6 bg-danger/5 border border-danger/20 rounded-[var(--radius-card)] max-w-md">
           <h1 className="text-lg font-bold text-danger mb-2">Formulário Indisponível</h1>
           <p className="text-sm text-muted-foreground">{errorMsg}</p>
         </div>
@@ -180,13 +180,13 @@ function PublicLeadFormPage() {
   return (
     <div className="min-h-screen bg-background text-foreground flex flex-col justify-between">
       {/* Top Header Card */}
-      <header className="bg-surface border-b border-border py-6 px-4 shrink-0">
+      <header className="glass-card border-none border-b border-border py-6 px-4 shrink-0">
         <div className="max-w-xl mx-auto flex items-center gap-4">
           {lead.agency_logo ? (
             <img
               src={lead.agency_logo}
               alt={lead.agency_name}
-              className="h-12 w-12 rounded-[var(--radius-card)] object-cover border border-border"
+              className="h-12 w-12 rounded-[var(--radius-card)] object-cover border-none"
             />
           ) : (
             <div className="h-12 w-12 rounded-[var(--radius-card)] bg-brand/10 border border-brand/20 flex items-center justify-center font-bold text-brand text-lg">
@@ -210,7 +210,7 @@ function PublicLeadFormPage() {
       {/* Main Body */}
       <main className="flex-1 max-w-xl w-full mx-auto px-4 py-8">
         {submitted ? (
-          <div className="bg-surface border border-success/30 rounded-2xl p-8 text-center space-y-4 animate-in zoom-in-95 duration-200">
+          <div className="glass-card border-none border border-success/30 rounded-[var(--radius-card)] p-8 text-center space-y-4 animate-in zoom-in-95 duration-200">
             <div className="h-16 w-16 bg-success/15 border border-success/30 rounded-full flex items-center justify-center text-success mx-auto">
               <ShieldCheck className="h-8 w-8" />
             </div>
@@ -227,7 +227,7 @@ function PublicLeadFormPage() {
         ) : (
           <form onSubmit={handleSubmit} className="space-y-6">
             {/* Greeting */}
-            <div className="bg-surface-alt/10 border border-border/50 rounded-2xl p-5 space-y-2">
+            <div className="glass bg-white/5 border-white/10/10 border-none/50 rounded-[var(--radius-card)] p-5 space-y-2">
               <h2 className="text-base font-bold text-foreground flex items-center gap-1.5">
                 Olá, {lead.name}! 👋
               </h2>
@@ -238,7 +238,7 @@ function PublicLeadFormPage() {
             </div>
 
             {/* Travel Details Section */}
-            <div className="bg-surface border border-border rounded-2xl p-5 space-y-4">
+            <div className="glass-card border-none border-none rounded-[var(--radius-card)] p-5 space-y-4">
               <h3 className="text-xs font-bold uppercase tracking-widest text-muted-foreground border-b border-border/50 pb-2 flex items-center gap-1.5">
                 <MapPin className="h-4 w-4 text-brand" /> Destino & Interesse
               </h3>
@@ -286,7 +286,7 @@ function PublicLeadFormPage() {
             </div>
 
             {/* Dates Section */}
-            <div className="bg-surface border border-border rounded-2xl p-5 space-y-4">
+            <div className="glass-card border-none border-none rounded-[var(--radius-card)] p-5 space-y-4">
               <h3 className="text-xs font-bold uppercase tracking-widest text-muted-foreground border-b border-border/50 pb-2 flex items-center gap-1.5">
                 <Calendar className="h-4 w-4 text-brand" /> Datas Previstas
               </h3>
@@ -311,7 +311,7 @@ function PublicLeadFormPage() {
             </div>
 
             {/* Passengers Section */}
-            <div className="bg-surface border border-border rounded-2xl p-5 space-y-4">
+            <div className="glass-card border-none border-none rounded-[var(--radius-card)] p-5 space-y-4">
               <h3 className="text-xs font-bold uppercase tracking-widest text-muted-foreground border-b border-border/50 pb-2 flex items-center gap-1.5">
                 <Users className="h-4 w-4 text-brand" /> Passageiros & Idades
               </h3>
@@ -386,7 +386,7 @@ function PublicLeadFormPage() {
             </div>
 
             {/* Acompanhantes Section */}
-            <div className="bg-surface border border-border rounded-2xl p-5 space-y-4">
+            <div className="glass-card border-none border-none rounded-[var(--radius-card)] p-5 space-y-4">
               <div className="flex items-center justify-between border-b border-border/50 pb-2">
                 <h3 className="text-xs font-bold uppercase tracking-widest text-muted-foreground flex items-center gap-1.5">
                   <Users className="h-4 w-4 text-brand" /> Viajantes Acompanhantes
@@ -405,7 +405,7 @@ function PublicLeadFormPage() {
                   {form.pax_list.map((pax, index) => (
                     <div
                       key={index}
-                      className="border border-border/60 p-3.5 rounded-[var(--radius-card)] bg-surface-alt/10 relative flex justify-between items-start"
+                      className="border-none/60 p-3.5 rounded-[var(--radius-card)] glass bg-white/5 border-white/10/10 relative flex justify-between items-start"
                     >
                       <div className="min-w-0 flex-1">
                         <span className="text-xs font-bold text-foreground block truncate">
@@ -462,7 +462,7 @@ function PublicLeadFormPage() {
               </button>
 
               {paxFormOpen && (
-                <div className="border border-border/80 p-4 rounded-[var(--radius-card)] bg-surface-alt/10 space-y-3 mt-3">
+                <div className="border-none/80 p-4 rounded-[var(--radius-card)] glass bg-white/5 border-white/10/10 space-y-3 mt-3">
                   <Field label="Nome Completo *">
                     <Input
                       placeholder="Nome do acompanhante"
@@ -532,7 +532,7 @@ function PublicLeadFormPage() {
             </div>
 
             {/* Acessibilidade & Saúde Section */}
-            <div className="bg-surface border border-border rounded-2xl p-5 space-y-4">
+            <div className="glass-card border-none border-none rounded-[var(--radius-card)] p-5 space-y-4">
               <h3 className="text-xs font-bold uppercase tracking-widest text-muted-foreground border-b border-border/50 pb-2 flex items-center gap-1.5">
                 <Heart className="h-4 w-4 text-brand" /> Necessidades Especiais & Saúde
               </h3>
@@ -579,7 +579,7 @@ function PublicLeadFormPage() {
             </div>
 
             {/* Custom Notes Section */}
-            <div className="bg-surface border border-border rounded-2xl p-5 space-y-4">
+            <div className="glass-card border-none border-none rounded-[var(--radius-card)] p-5 space-y-4">
               <h3 className="text-xs font-bold uppercase tracking-widest text-muted-foreground border-b border-border/50 pb-2">
                 Conte-nos Mais
               </h3>
@@ -595,7 +595,7 @@ function PublicLeadFormPage() {
             </div>
 
             {/* LGPD Acceptance */}
-            <div className="bg-surface border border-border rounded-2xl p-5 space-y-3 flex items-start gap-4">
+            <div className="glass-card border-none border-none rounded-[var(--radius-card)] p-5 space-y-3 flex items-start gap-4">
               <input
                 type="checkbox"
                 required
@@ -621,7 +621,7 @@ function PublicLeadFormPage() {
             <PrimaryButton
               type="submit"
               disabled={saving}
-              className="w-full h-11 rounded-2xl font-bold uppercase tracking-wider text-xs"
+              className="w-full h-11 rounded-[var(--radius-card)] font-bold uppercase tracking-wider text-xs"
             >
               {saving ? "Salvando suas respostas..." : "Enviar Preferências"}
             </PrimaryButton>
@@ -630,7 +630,7 @@ function PublicLeadFormPage() {
       </main>
 
       {/* Footer */}
-      <footer className="py-6 text-center text-xs text-muted-foreground shrink-0 border-t border-border bg-surface mt-10">
+      <footer className="py-6 text-center text-xs text-muted-foreground shrink-0 border-t border-border glass-card border-none mt-10">
         <div className="flex items-center justify-center gap-1 text-[10px]">
           Protegido por criptografia <Heart className="h-3 w-3 text-brand fill-brand" /> Powered by
           Turis

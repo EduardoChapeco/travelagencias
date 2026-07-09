@@ -53,14 +53,14 @@ function CorporateApprovePage() {
 
   return (
     <div className="min-h-screen bg-background flex flex-col font-sans">
-      <header className="h-16 border-b border-border bg-surface flex items-center px-6">
+      <header className="h-16 border-b border-border glass-card border-none flex items-center px-6">
         <div className="font-bold tracking-tight text-foreground">
           {rfp.agency?.name || "Turis"} B2B
         </div>
       </header>
 
       <main className="flex-1 max-w-3xl mx-auto w-full p-6 md:p-12">
-        <div className="bg-surface border border-border rounded-2xl overflow-hidden">
+        <div className="glass-card border-none border-none rounded-[var(--radius-card)] overflow-hidden">
           <div className="p-8 border-b border-border">
             <div className="flex items-center gap-2 text-sm text-brand font-semibold mb-3">
               <Briefcase className="h-4 w-4" /> REQUISIÇÃO CORPORATIVA
@@ -143,7 +143,7 @@ function CorporateApprovePage() {
                     </PrimaryButton>
                     <button
                       onClick={() => setIsRejecting(true)}
-                      className="flex-1 flex items-center justify-center gap-2 py-6 text-lg font-semibold border border-border text-foreground rounded-2xl hover:bg-surface-alt transition-colors"
+                      className="flex-1 flex items-center justify-center gap-2 py-6 text-lg font-semibold border-none text-foreground rounded-[var(--radius-card)] hover:glass bg-white/5 border-white/10 transition-colors"
                     >
                       <XCircle className="h-5 w-5" /> Recusar
                     </button>

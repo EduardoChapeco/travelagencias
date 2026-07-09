@@ -16,8 +16,7 @@ import {
   AlertCircle,
 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
-import { HeaderPortal } from "@/components/shell/HeaderPortal";
-import { ModuleToolbar } from "@/components/shell/ModuleToolbar";
+import { PageHeader } from "@/components/shell/PageHeader";
 import { useAgency } from "@/lib/agency-context";
 import { Field, Input, Textarea, Select, PrimaryButton } from "@/components/ui/form";
 
@@ -151,8 +150,7 @@ function PortalSettingsPage() {
 
   return (
     <div className="flex h-full flex-col overflow-hidden">
-      <HeaderPortal>
-        <ModuleToolbar
+              <PageHeader
           title="Configurações do Portal"
           filters={TABS.map((t) => ({ label: t.label, value: t.id }))}
           activeFilter={tab}
@@ -180,8 +178,7 @@ function PortalSettingsPage() {
             </div>
           }
         />
-      </HeaderPortal>
-
+      
       <div className="flex-1 overflow-y-auto px-4  md:pr-6 py-4 min-h-0 pb-24">
         {q.isError && (
           <div className="flex flex-col items-center justify-center py-10 px-6 text-center rounded-[var(--radius-card)] border border-red-200 bg-red-50/60 mb-6 max-w-2xl mx-auto shrink-0">
@@ -198,7 +195,7 @@ function PortalSettingsPage() {
         <form onSubmit={save} id="portal-settings-form" className="space-y-0">
           {/* ── SEO GLOBAL ───────────────────────────────────────────── */}
           {tab === "seo" && (
-            <div className="space-y-5 rounded-full border border-border bg-surface p-5">
+            <div className="space-y-5 rounded-full border-none glass-card border-none p-5">
               <div>
                 <h3 className="text-sm font-semibold mb-0.5">SEO Global do Portal</h3>
                 <p className="text-xs text-muted-foreground">
@@ -247,7 +244,7 @@ function PortalSettingsPage() {
                   <img
                     src={form.seo_og_image_url}
                     alt="OG Preview"
-                    className="mt-2 h-24 rounded-full border border-border object-cover"
+                    className="mt-2 h-24 rounded-full border-none object-cover"
                   />
                 )}
               </Field>
@@ -281,7 +278,7 @@ function PortalSettingsPage() {
               </Field>
 
               {/* Preview card */}
-              <div className="rounded-full border border-border bg-surface-alt p-4">
+              <div className="rounded-full border-none glass bg-white/5 border-white/10 p-4">
                 <div className="text-[10px] font-semibold uppercase tracking-wide text-muted-foreground mb-3">
                   Preview no Google
                 </div>
@@ -302,7 +299,7 @@ function PortalSettingsPage() {
 
           {/* ── HEADER ───────────────────────────────────────────────── */}
           {tab === "header" && (
-            <div className="space-y-5 rounded-full border border-border bg-surface p-5">
+            <div className="space-y-5 rounded-full border-none glass-card border-none p-5">
               <h3 className="text-sm font-semibold">Configurações do Cabeçalho</h3>
 
               {/* Header style */}
@@ -408,7 +405,7 @@ function PortalSettingsPage() {
 
           {/* ── FOOTER ───────────────────────────────────────────────── */}
           {tab === "footer" && (
-            <div className="space-y-5 rounded-full border border-border bg-surface p-5">
+            <div className="space-y-5 rounded-full border-none glass-card border-none p-5">
               <h3 className="text-sm font-semibold">Configurações do Rodapé</h3>
 
               <Field label="Texto de copyright">
@@ -459,7 +456,7 @@ function PortalSettingsPage() {
               </div>
 
               {/* Footer preview */}
-              <div className="rounded-full border border-border bg-surface-alt p-4">
+              <div className="rounded-full border-none glass bg-white/5 border-white/10 p-4">
                 <div className="text-[10px] font-semibold uppercase tracking-wide text-muted-foreground mb-2">
                   Preview do rodapé
                 </div>
@@ -479,7 +476,7 @@ function PortalSettingsPage() {
 
           {/* ── SCRIPTS ──────────────────────────────────────────────── */}
           {tab === "scripts" && (
-            <div className="space-y-5 rounded-full border border-border bg-surface p-5">
+            <div className="space-y-5 rounded-full border-none glass-card border-none p-5">
               <div>
                 <h3 className="text-sm font-semibold mb-0.5">Scripts e Integrações</h3>
                 <p className="text-xs text-muted-foreground">
@@ -541,7 +538,7 @@ function PortalSettingsPage() {
                   onChange={(e) => set("custom_head_script", e.target.value)}
                   rows={6}
                   placeholder={'<!-- Ex: Tidio chat, Hotjar, etc. -->\n<script src="..."></script>'}
-                  className="w-full rounded-full border border-border bg-surface-alt px-3 py-2 font-mono text-xs text-foreground outline-none focus:border-brand resize-y"
+                  className="w-full rounded-full border-none glass bg-white/5 border-white/10 px-3 py-2 font-mono text-xs text-foreground outline-none focus:border-brand resize-y"
                 />
               </Field>
 

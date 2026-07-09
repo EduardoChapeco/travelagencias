@@ -55,7 +55,7 @@ function Page() {
           {q.data?.map((n) => (
             <li
               key={n.id}
-              className={`flex items-start gap-3 rounded-2xl border p-4 ${n.read_at ? "border-border bg-surface" : "border-primary/40 bg-primary/5"}`}
+              className={`flex items-start gap-3 rounded-[var(--radius-card)] border p-4 ${n.read_at ? "border-border glass-card border-none" : "border-primary/40 bg-primary/5"}`}
             >
               <div className="flex-1">
                 <div className="font-medium">{n.title}</div>
@@ -67,7 +67,7 @@ function Page() {
               {!n.read_at && (
                 <button
                   onClick={() => markRead(n.id)}
-                  className="rounded p-1 hover:bg-surface-alt"
+                  className="rounded p-1 hover:glass bg-white/5 border-white/10"
                   title="Marcar como lida"
                 >
                   <Check className="h-4 w-4" />

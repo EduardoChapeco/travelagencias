@@ -18,10 +18,9 @@ import {
   AlertCircle,
 } from "lucide-react";
 import { useAgency } from "@/lib/agency-context";
-import { HeaderPortal } from "@/components/shell/HeaderPortal";
-import { ModuleToolbar, ModuleActionButton } from "@/components/shell/ModuleToolbar";
+;
 import { ModuleAdminPanel } from "@/components/shell/ModuleAdminPanel";
-import { PageHeader, EmptyState } from "@/components/shell/PageHeader";
+import { PageHeader, EmptyState, ModuleActionButton } from "@/components/shell/PageHeader";
 import { StatusBadge, money, fmtDate, GhostButton, Input, Select } from "@/components/ui/form";
 import {
   fetchProposalsList,
@@ -148,8 +147,7 @@ function ProposalsList() {
 
   return (
     <div className="flex h-full flex-col overflow-hidden">
-      <HeaderPortal>
-        <ModuleToolbar
+              <PageHeader
           title="Cotações"
           search={{
             value: searchQuery,
@@ -190,8 +188,7 @@ function ProposalsList() {
             </div>
           }
         />
-      </HeaderPortal>
-
+      
       <ModuleActionButton
         label="Nova Cotação"
         icon={<Plus className="h-3.5 w-3.5" />}
@@ -214,10 +211,10 @@ function ProposalsList() {
           />
         ) : (
           <div className="flex-1 flex flex-col justify-between h-full min-h-0 space-y-4">
-            <div className="flex-1 rounded-[var(--radius-card)] mac-glass-panel overflow-hidden flex flex-col">
+            <div className="flex-1 rounded-[var(--radius-card)] glass text-white bg-black/40 backdrop-blur-2xl-panel overflow-hidden flex flex-col">
               <div className="flex-1 overflow-y-auto no-scrollbar">
                 <table className="w-full text-sm">
-                  <thead className="bg-surface-alt/40 text-left text-[11px] uppercase tracking-wide text-muted-foreground sticky top-0 bg-surface backdrop-blur-md z-10">
+                  <thead className="glass bg-white/5 border-white/10/40 text-left text-[11px] uppercase tracking-wide text-muted-foreground sticky top-0 glass-card border-none backdrop-blur-md z-10">
                     <tr>
                       <th className="px-3 py-2 font-medium">#</th>
                       <th className="px-3 py-2 font-medium">Título</th>
@@ -231,7 +228,7 @@ function ProposalsList() {
                   </thead>
                   <tbody>
                     {list.data?.data.map((p) => (
-                      <tr key={p.id} className="border-t border-border hover:bg-surface-alt/30">
+                      <tr key={p.id} className="border-t border-border hover:glass bg-white/5 border-white/10/30">
                         <td className="px-3 py-2.5 font-mono text-xs text-muted-foreground">
                           #{p.number}
                         </td>
@@ -266,7 +263,7 @@ function ProposalsList() {
                               🏢 Agência
                             </span>
                           ) : (
-                            <span className="inline-flex items-center gap-1 rounded-full bg-surface-alt text-muted-foreground border border-border px-2 py-0.5 text-[10px] font-semibold">
+                            <span className="inline-flex items-center gap-1 rounded-full glass bg-white/5 border-white/10 text-muted-foreground border-none px-2 py-0.5 text-[10px] font-semibold">
                               🔒 Privada
                             </span>
                           )}
@@ -277,7 +274,7 @@ function ProposalsList() {
                         <td className="px-3 py-2.5 text-right">
                           <DropdownMenu>
                             <DropdownMenuTrigger asChild>
-                              <GhostButton className="h-7 w-7 p-0 hover:bg-surface-alt">
+                              <GhostButton className="h-7 w-7 p-0 hover:glass bg-white/5 border-white/10">
                                 <MoreHorizontal className="h-4 w-4 text-muted-foreground" />
                               </GhostButton>
                             </DropdownMenuTrigger>

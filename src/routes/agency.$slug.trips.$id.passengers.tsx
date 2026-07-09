@@ -315,7 +315,7 @@ function PassengersPage() {
 
       {/* ── Banner: Passageiros importados da cotação (aguardando revisão) ─── */}
       {list.data && list.data.some((p: any) => p.notes?.includes("Importado automaticamente")) && (
-        <div className="mb-6 rounded-2xl bg-warning/10 border border-warning/30 p-5 flex flex-col md:flex-row md:items-center justify-between gap-4">
+        <div className="mb-6 rounded-[var(--radius-card)] bg-warning/10 border border-warning/30 p-5 flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div className="flex items-start gap-3">
             <AlertTriangle className="h-5 w-5 text-warning shrink-0 mt-0.5" />
             <div>
@@ -355,14 +355,14 @@ function PassengersPage() {
           {[1, 2, 3].map((i) => (
             <div
               key={i}
-              className="h-96 rounded-2xl bg-surface-alt animate-pulse border border-border"
+              className="h-96 rounded-[var(--radius-card)] glass bg-white/5 border-white/10 animate-pulse border-none"
             />
           ))}
         </div>
       )}
 
       {list.data && list.data.length === 0 && (
-        <div className="flex flex-col items-center justify-center rounded-2xl border border-dashed border-border/80 bg-surface-alt/20 py-24 text-center">
+        <div className="flex flex-col items-center justify-center rounded-[var(--radius-card)] border border-dashed border-border/80 glass bg-white/5 border-white/10/20 py-24 text-center">
           <Contact2 className="mb-4 h-12 w-12 text-muted-foreground/40" />
           <h3 className="text-lg font-bold text-foreground">Nenhum passageiro</h3>
           <p className="mt-1 text-sm text-muted-foreground max-w-sm">
@@ -377,13 +377,13 @@ function PassengersPage() {
           {list.data.map((p: any) => (
             <div
               key={p.id}
-              className={`group flex flex-col rounded-2xl border bg-surface transition-colors hover:border-brand/40 ${p.is_lead_passenger ? "border-brand/30" : "border-border"}`}
+              className={`group flex flex-col rounded-[var(--radius-card)] border glass-card border-none transition-colors hover:border-brand/40 ${p.is_lead_passenger ? "border-brand/30" : "border-border"}`}
             >
               {/* Header Card */}
               <div className="flex items-start justify-between p-5 border-b border-border/50">
                 <div className="flex items-center gap-3">
                   <div
-                    className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-full ${p.is_lead_passenger ? "bg-brand/10 text-brand" : "bg-surface-alt text-muted-foreground"}`}
+                    className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-full ${p.is_lead_passenger ? "bg-brand/10 text-brand" : "glass bg-white/5 border-white/10 text-muted-foreground"}`}
                   >
                     <User className="h-5 w-5" />
                   </div>
@@ -420,7 +420,7 @@ function PassengersPage() {
                 <div className="space-y-4">
                   {/* Documentação */}
                   <div className="flex items-center gap-2.5">
-                    <div className="flex h-6 w-6 items-center justify-center rounded-full bg-surface-alt text-muted-foreground">
+                    <div className="flex h-6 w-6 items-center justify-center rounded-full glass bg-white/5 border-white/10 text-muted-foreground">
                       <FileText className="h-3.5 w-3.5" />
                     </div>
                     <div className="flex-1 min-w-0">
@@ -438,7 +438,7 @@ function PassengersPage() {
                   {/* Nascimento e Nacionalidade */}
                   <div className="grid grid-cols-2 gap-4">
                     <div className="flex items-center gap-2.5">
-                      <div className="flex h-6 w-6 items-center justify-center rounded-full bg-surface-alt text-muted-foreground">
+                      <div className="flex h-6 w-6 items-center justify-center rounded-full glass bg-white/5 border-white/10 text-muted-foreground">
                         <Calendar className="h-3.5 w-3.5" />
                       </div>
                       <div className="min-w-0">
@@ -452,7 +452,7 @@ function PassengersPage() {
                     </div>
 
                     <div className="flex items-center gap-2.5">
-                      <div className="flex h-6 w-6 items-center justify-center rounded-full bg-surface-alt text-muted-foreground">
+                      <div className="flex h-6 w-6 items-center justify-center rounded-full glass bg-white/5 border-white/10 text-muted-foreground">
                         <ShieldCheck className="h-3.5 w-3.5" />
                       </div>
                       <div className="min-w-0">
@@ -514,7 +514,7 @@ function PassengersPage() {
                         return (
                           <div
                             key={doc.id}
-                            className="flex flex-col gap-1 rounded-2xl border border-border/60 bg-surface-alt/10 p-2.5 text-xs"
+                            className="flex flex-col gap-1 rounded-[var(--radius-card)] border-none/60 glass bg-white/5 border-white/10/10 p-2.5 text-xs"
                           >
                             <div className="flex items-center justify-between">
                               <span className="font-semibold text-foreground flex items-center gap-1">
@@ -587,14 +587,14 @@ function PassengersPage() {
                   </div>
 
                   {/* Document upload form inside the card */}
-                  <div className="rounded-[var(--radius-card)] border border-dashed border-border/80 p-3 bg-surface-alt/5 flex flex-col gap-2">
+                  <div className="rounded-[var(--radius-card)] border border-dashed border-border/80 p-3 glass bg-white/5 border-white/10/5 flex flex-col gap-2">
                     <div className="grid grid-cols-2 gap-2">
                       <select
                         value={selectedDocType[p.id] || "passport"}
                         onChange={(e) =>
                           setSelectedDocType({ ...selectedDocType, [p.id]: e.target.value as any })
                         }
-                        className="h-8 rounded-full border border-border bg-surface px-2 text-[10px] font-medium outline-none text-foreground"
+                        className="h-8 rounded-full border-none glass-card border-none px-2 text-[10px] font-medium outline-none text-foreground"
                       >
                         <option value="passport">Passaporte</option>
                         <option value="visa">Visto</option>
@@ -606,10 +606,10 @@ function PassengersPage() {
                         value={expDates[p.id] || ""}
                         onChange={(e) => setExpDates({ ...expDates, [p.id]: e.target.value })}
                         placeholder="Vencimento"
-                        className="h-8 rounded-full border border-border bg-surface px-2 text-[10px] outline-none text-foreground"
+                        className="h-8 rounded-full border-none glass-card border-none px-2 text-[10px] outline-none text-foreground"
                       />
                     </div>
-                    <label className="flex h-8 items-center justify-center gap-1.5 rounded-full border border-border bg-surface cursor-pointer text-[10px] font-bold hover:bg-surface-alt transition-colors">
+                    <label className="flex h-8 items-center justify-center gap-1.5 rounded-full border-none glass-card border-none cursor-pointer text-[10px] font-bold hover:glass bg-white/5 border-white/10 transition-colors">
                       <Upload className="h-3.5 w-3.5 text-muted-foreground" />
                       Anexar & Identificar Dados
                       <input
@@ -632,7 +632,7 @@ function PassengersPage() {
                   </div>
                   <button
                     onClick={() => setActiveReviewPassengerId(p.id)}
-                    className="w-full flex h-8 items-center justify-center gap-1.5 rounded-2xl border border-brand/30 bg-brand/5 text-brand hover:bg-brand/10 text-xs font-bold transition-all mt-2 cursor-pointer"
+                    className="w-full flex h-8 items-center justify-center gap-1.5 rounded-[var(--radius-card)] border border-brand/30 bg-brand/5 text-brand hover:bg-brand/10 text-xs font-bold transition-all mt-2 cursor-pointer"
                   >
                     <ShieldCheck className="h-4 w-4" /> Conferência de Dados
                   </button>
@@ -844,9 +844,9 @@ function DataConferencePanel({
 
   return (
     <div className="fixed inset-0 z-50 flex bg-background/90 p-4 md:p-6 overflow-hidden">
-      <div className="flex flex-col md:flex-row w-full gap-6 bg-surface rounded-2xl border border-border shadow-2xl overflow-hidden container p-0">
+      <div className="flex flex-col md:flex-row w-full gap-6 glass-card border-none rounded-[var(--radius-card)] border-none shadow-2xl overflow-hidden container p-0">
         {/* LADO ESQUERDO: Visualizador de Documentos */}
-        <div className="flex-1 flex flex-col p-6 border-r border-border/80 bg-surface-alt/10">
+        <div className="flex-1 flex flex-col p-6 border-r border-border/80 glass bg-white/5 border-white/10/10">
           <div className="flex items-center justify-between mb-4">
             <h3 className="text-lg font-bold text-foreground flex items-center gap-2">
               <FileText className="h-5 w-5 text-brand" /> Documento do Passageiro
@@ -858,7 +858,7 @@ function DataConferencePanel({
             )}
           </div>
 
-          <div className="flex-1 flex items-center justify-center rounded-[var(--radius-card)] border border-dashed border-border/80 bg-surface p-4 overflow-hidden relative">
+          <div className="flex-1 flex items-center justify-center rounded-[var(--radius-card)] border border-dashed border-border/80 glass-card border-none p-4 overflow-hidden relative">
             {loadingUrl ? (
               <div className="flex flex-col items-center gap-2 text-muted-foreground text-sm">
                 <Loader2 className="h-6 w-6 animate-spin text-brand" />
@@ -866,11 +866,11 @@ function DataConferencePanel({
               </div>
             ) : signedUrl ? (
               doc?.file_path?.toLowerCase().endsWith(".pdf") ? (
-                <iframe src={signedUrl} className="w-full h-full rounded-2xl border border-border" />
+                <iframe src={signedUrl} className="w-full h-full rounded-[var(--radius-card)] border-none" />
               ) : (
                 <img
                   src={signedUrl}
-                  className="max-w-full max-h-[60vh] object-contain rounded-2xl shadow-sm"
+                  className="max-w-full max-h-[60vh] object-contain rounded-[var(--radius-card)] shadow-none"
                   alt="Documento"
                 />
               )
@@ -901,14 +901,14 @@ function DataConferencePanel({
           </div>
 
           {doc?.extracted_metadata && Object.keys(doc.extracted_metadata).length > 0 && (
-            <div className="mt-4 p-4 rounded-[var(--radius-card)] border border-border bg-surface text-xs">
+            <div className="mt-4 p-4 rounded-[var(--radius-card)] border-none glass-card border-none text-xs">
               <h4 className="font-bold text-foreground mb-2 flex items-center gap-1.5">
                 <ShieldCheck className="h-4 w-4 text-emerald-600" /> Dados Identificados pela
                 Inteligência Artificial
               </h4>
               <div className="grid grid-cols-2 gap-3 text-[11px]">
                 {Object.entries(doc.extracted_metadata).map(([key, val]) => (
-                  <div key={key} className="bg-surface-alt/50 p-2 rounded border border-border/40">
+                  <div key={key} className="glass bg-white/5 border-white/10/50 p-2 rounded border-none/40">
                     <span className="font-semibold text-muted-foreground block uppercase text-[8px] tracking-wider">
                       {key.replace("_", " ")}
                     </span>
@@ -921,7 +921,7 @@ function DataConferencePanel({
         </div>
 
         {/* LADO DIREITO: Form de CRUD/CMS (Edição) */}
-        <div className="w-full md:w-[480px] flex flex-col p-6 bg-surface overflow-y-auto">
+        <div className="w-full md:w-[480px] flex flex-col p-6 glass-card border-none overflow-y-auto">
           <div className="flex items-center justify-between border-b border-border pb-4 mb-6">
             <div>
               <h3 className="text-lg font-bold text-foreground">Conferência de Cadastro</h3>
@@ -931,7 +931,7 @@ function DataConferencePanel({
             </div>
             <button
               onClick={onClose}
-              className="text-xs text-muted-foreground hover:text-foreground font-semibold bg-surface-alt px-3 py-1.5 rounded-2xl"
+              className="text-xs text-muted-foreground hover:text-foreground font-semibold glass bg-white/5 border-white/10 px-3 py-1.5 rounded-[var(--radius-card)]"
             >
               Fechar
             </button>
@@ -946,7 +946,7 @@ function DataConferencePanel({
                 type="text"
                 value={fullName}
                 onChange={(e) => setFullName(e.target.value)}
-                className="h-9 w-full rounded-2xl border border-border bg-surface px-3 text-xs outline-none focus:border-brand text-foreground font-medium"
+                className="h-9 w-full rounded-[var(--radius-card)] border-none glass-card border-none px-3 text-xs outline-none focus:border-brand text-foreground font-medium"
               />
             </div>
 
@@ -957,7 +957,7 @@ function DataConferencePanel({
               <select
                 value={kind}
                 onChange={(e) => setKind(e.target.value)}
-                className="h-9 w-full rounded-2xl border border-border bg-surface px-3 text-xs outline-none focus:border-brand text-foreground"
+                className="h-9 w-full rounded-[var(--radius-card)] border-none glass-card border-none px-3 text-xs outline-none focus:border-brand text-foreground"
               >
                 <option value="adult">Adulto</option>
                 <option value="child">Criança (CHD)</option>
@@ -973,7 +973,7 @@ function DataConferencePanel({
                 <select
                   value={docType}
                   onChange={(e) => setDocType(e.target.value)}
-                  className="h-9 w-full rounded-2xl border border-border bg-surface px-3 text-xs outline-none focus:border-brand text-foreground"
+                  className="h-9 w-full rounded-[var(--radius-card)] border-none glass-card border-none px-3 text-xs outline-none focus:border-brand text-foreground"
                 >
                   <option value="rg">RG</option>
                   <option value="cpf">CPF</option>
@@ -990,7 +990,7 @@ function DataConferencePanel({
                   type="text"
                   value={docNumber}
                   onChange={(e) => setDocNumber(e.target.value)}
-                  className="h-9 w-full rounded-2xl border border-border bg-surface px-3 text-xs outline-none focus:border-brand text-foreground font-mono"
+                  className="h-9 w-full rounded-[var(--radius-card)] border-none glass-card border-none px-3 text-xs outline-none focus:border-brand text-foreground font-mono"
                 />
               </div>
             </div>
@@ -1004,7 +1004,7 @@ function DataConferencePanel({
                   type="date"
                   value={birthDate}
                   onChange={(e) => setBirthDate(e.target.value)}
-                  className="h-9 w-full rounded-2xl border border-border bg-surface px-3 text-xs outline-none focus:border-brand text-foreground"
+                  className="h-9 w-full rounded-[var(--radius-card)] border-none glass-card border-none px-3 text-xs outline-none focus:border-brand text-foreground"
                 />
               </div>
               <div>
@@ -1016,7 +1016,7 @@ function DataConferencePanel({
                   value={nationality}
                   onChange={(e) => setNationality(e.target.value)}
                   placeholder="Ex: Brasileira"
-                  className="h-9 w-full rounded-2xl border border-border bg-surface px-3 text-xs outline-none focus:border-brand text-foreground"
+                  className="h-9 w-full rounded-[var(--radius-card)] border-none glass-card border-none px-3 text-xs outline-none focus:border-brand text-foreground"
                 />
               </div>
             </div>
@@ -1030,7 +1030,7 @@ function DataConferencePanel({
                   type="email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  className="h-9 w-full rounded-2xl border border-border bg-surface px-3 text-xs outline-none focus:border-brand text-foreground"
+                  className="h-9 w-full rounded-[var(--radius-card)] border-none glass-card border-none px-3 text-xs outline-none focus:border-brand text-foreground"
                 />
               </div>
               <div>
@@ -1041,7 +1041,7 @@ function DataConferencePanel({
                   type="text"
                   value={phone}
                   onChange={(e) => setPhone(e.target.value)}
-                  className="h-9 w-full rounded-2xl border border-border bg-surface px-3 text-xs outline-none focus:border-brand text-foreground"
+                  className="h-9 w-full rounded-[var(--radius-card)] border-none glass-card border-none px-3 text-xs outline-none focus:border-brand text-foreground"
                 />
               </div>
             </div>
@@ -1054,7 +1054,7 @@ function DataConferencePanel({
                 value={notes}
                 onChange={(e) => setNotes(e.target.value)}
                 placeholder="Ex: Necessita de cadeira de rodas para embarque"
-                className="h-20 w-full rounded-2xl border border-border bg-surface p-3 text-xs outline-none focus:border-brand text-foreground resize-none"
+                className="h-20 w-full rounded-[var(--radius-card)] border-none glass-card border-none p-3 text-xs outline-none focus:border-brand text-foreground resize-none"
               />
             </div>
           </div>
@@ -1062,7 +1062,7 @@ function DataConferencePanel({
           <div className="border-t border-border pt-4 mt-6 flex gap-3">
             <button
               onClick={onClose}
-              className="flex-1 h-10 rounded-[var(--radius-card)] border border-border bg-surface text-xs font-bold text-muted-foreground hover:bg-surface-alt transition-colors cursor-pointer"
+              className="flex-1 h-10 rounded-[var(--radius-card)] border-none glass-card border-none text-xs font-bold text-muted-foreground hover:glass bg-white/5 border-white/10 transition-colors cursor-pointer"
             >
               Cancelar
             </button>

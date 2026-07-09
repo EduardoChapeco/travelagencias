@@ -753,7 +753,7 @@ function InboxModule() {
   return (
     <div className="flex h-full w-full overflow-hidden">
       {(isErrorChannels || isErrorConversations) && (
-        <div className="fixed bottom-4 left-1/2 -translate-x-1/2 z-50 flex items-center gap-3 rounded-[var(--radius-card)] border border-red-200 bg-red-50 px-4 py-3 shadow-lg max-w-md">
+        <div className="fixed bottom-4 left-1/2 -translate-x-1/2 z-50 flex items-center gap-3 rounded-[var(--radius-card)] border border-red-200 bg-red-50 px-4 py-3 shadow-none max-w-md">
           <AlertCircle className="h-4 w-4 text-red-600 shrink-0" />
           <div>
             <p className="text-xs font-bold text-red-800">Erro ao Carregar Inbox</p>
@@ -767,11 +767,11 @@ function InboxModule() {
       )}
       {/* ── LEFT COLUMN: Conversations List (Width 320px) ────────────────────── */}
       <aside className={cn(
-        "flex flex-col border-r border-border shrink-0 bg-surface w-full md:w-[320px] h-full",
+        "flex flex-col border-r border-border shrink-0 glass-card border-none w-full md:w-[320px] h-full",
         selectedId ? "hidden md:flex" : "flex"
       )}>
         {/* Header & Connection button */}
-        <div className="p-4 border-b border-border flex items-center justify-between shrink-0 bg-surface">
+        <div className="p-4 border-b border-border flex items-center justify-between shrink-0 glass-card border-none">
           <h2 className="text-xs font-bold text-foreground flex items-center gap-1.5 uppercase tracking-wider">
             <Mail className="w-4 h-4 text-brand" />
             Inbox Central
@@ -780,14 +780,14 @@ function InboxModule() {
           <Sheet open={isConnectSheetOpen} onOpenChange={setIsConnectSheetOpen}>
             <SheetTrigger asChild>
               <button 
-                className="flex h-8 items-center gap-1 px-2.5 rounded border border-border bg-surface text-xs font-semibold text-muted-foreground hover:text-foreground hover:border-border-strong transition-colors cursor-pointer"
+                className="flex h-8 items-center gap-1 px-2.5 rounded border-none glass-card border-none text-xs font-semibold text-muted-foreground hover:text-foreground hover:border-border-strong transition-colors cursor-pointer"
                 title="Configurar conexões e e-mail"
               >
                 <Plug className="w-3.5 h-3.5" />
                 <span>Canais</span>
               </button>
             </SheetTrigger>
-            <SheetContent side="left" className="p-0 w-80 bg-surface border-r border-border">
+            <SheetContent side="left" className="p-0 w-80 glass-card border-none border-r border-border">
               <SheetHeader className="p-4 border-b border-border">
                 <SheetTitle className="text-sm font-bold uppercase tracking-wider flex items-center gap-1.5">
                   <Settings2 className="w-4 h-4 text-brand" />
@@ -807,7 +807,7 @@ function InboxModule() {
                       <RefreshCw className="w-5 h-5 animate-spin text-muted-foreground" />
                     </div>
                   ) : channels.length === 0 ? (
-                    <p className="text-xs text-muted-foreground p-3 border border-dashed border-border rounded-2xl text-center bg-surface-alt/20">
+                    <p className="text-xs text-muted-foreground p-3 border border-dashed border-border rounded-[var(--radius-card)] text-center glass bg-white/5 border-white/10/20">
                       Nenhum canal ou conta conectada ainda.
                     </p>
                   ) : (
@@ -815,9 +815,9 @@ function InboxModule() {
                       {channels.map((c: any) => {
                         const Icon = CHANNEL_ICONS[c.type] ?? MessageSquare;
                         return (
-                          <div key={c.id} className="flex items-center justify-between p-2.5 border border-border rounded-[var(--radius-card)] bg-surface-alt/40">
+                          <div key={c.id} className="flex items-center justify-between p-2.5 border-none rounded-[var(--radius-card)] glass bg-white/5 border-white/10/40">
                             <div className="flex items-center gap-2.5 min-w-0">
-                              <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-surface border border-border">
+                              <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full glass-card border-none border-none">
                                 <Icon className={cn("w-3.5 h-3.5", CHANNEL_COLORS[c.type])} />
                               </div>
                               <div className="min-w-0">
@@ -825,7 +825,7 @@ function InboxModule() {
                                 <span className="text-[9px] text-muted-foreground uppercase">{c.type}</span>
                               </div>
                             </div>
-                            <span className="h-2 w-2 rounded-full bg-emerald-500 shadow-sm" title="Ativo" />
+                            <span className="h-2 w-2 rounded-full bg-emerald-500 shadow-none" title="Ativo" />
                           </div>
                         );
                       })}
@@ -841,7 +841,7 @@ function InboxModule() {
                       
                       <button 
                         onClick={() => setConnectType("gmail")}
-                        className="flex items-center gap-3 w-full text-left rounded-[var(--radius-card)] border border-border px-3 py-2.5 text-xs font-semibold text-foreground hover:bg-surface-alt transition-all cursor-pointer bg-surface"
+                        className="flex items-center gap-3 w-full text-left rounded-[var(--radius-card)] border-none px-3 py-2.5 text-xs font-semibold text-foreground hover:glass bg-white/5 border-white/10 transition-all cursor-pointer glass-card border-none"
                       >
                         <Mail className="w-4 h-4 text-blue-500 shrink-0" />
                         <div>
@@ -852,7 +852,7 @@ function InboxModule() {
 
                       <button 
                         onClick={() => setConnectType("whatsapp")}
-                        className="flex items-center gap-3 w-full text-left rounded-[var(--radius-card)] border border-border px-3 py-2.5 text-xs font-semibold text-foreground hover:bg-surface-alt transition-all cursor-pointer bg-surface"
+                        className="flex items-center gap-3 w-full text-left rounded-[var(--radius-card)] border-none px-3 py-2.5 text-xs font-semibold text-foreground hover:glass bg-white/5 border-white/10 transition-all cursor-pointer glass-card border-none"
                       >
                         <Phone className="w-4 h-4 text-green-500 shrink-0" />
                         <div>
@@ -863,7 +863,7 @@ function InboxModule() {
 
                       <button 
                         onClick={() => setConnectType("instagram")}
-                        className="flex items-center gap-3 w-full text-left rounded-[var(--radius-card)] border border-border px-3 py-2.5 text-xs font-semibold text-foreground hover:bg-surface-alt transition-all cursor-pointer bg-surface"
+                        className="flex items-center gap-3 w-full text-left rounded-[var(--radius-card)] border-none px-3 py-2.5 text-xs font-semibold text-foreground hover:glass bg-white/5 border-white/10 transition-all cursor-pointer glass-card border-none"
                       >
                         <Instagram className="w-4 h-4 text-pink-500 shrink-0" />
                         <div>
@@ -888,7 +888,7 @@ function InboxModule() {
 
                       {connectType === "gmail" && (
                         <div className="space-y-4">
-                          <div className="flex gap-2 p-1 bg-surface-alt rounded-2xl border border-border">
+                          <div className="flex gap-2 p-1 glass bg-white/5 border-white/10 rounded-[var(--radius-card)] border-none">
                             <button
                               type="button"
                               onClick={() => setGmailSubTab("oauth")}
@@ -1013,7 +1013,7 @@ function InboxModule() {
                                   placeholder="exemplo@gmail.com"
                                   value={gmailAddress}
                                   onChange={(e) => setGmailAddress(e.target.value)}
-                                  className="w-full h-8 px-2.5 rounded bg-surface border border-border text-xs outline-none focus:ring-1 focus:ring-brand text-foreground"
+                                  className="w-full h-8 px-2.5 rounded glass-card border-none border-none text-xs outline-none focus:ring-1 focus:ring-brand text-foreground"
                                 />
                               </div>
                               <div className="space-y-1">
@@ -1024,7 +1024,7 @@ function InboxModule() {
                                   placeholder="re_..."
                                   value={resendApiKey}
                                   onChange={(e) => setResendApiKey(e.target.value)}
-                                  className="w-full h-8 px-2.5 rounded bg-surface border border-border text-xs outline-none focus:ring-1 focus:ring-brand text-foreground"
+                                  className="w-full h-8 px-2.5 rounded glass-card border-none border-none text-xs outline-none focus:ring-1 focus:ring-brand text-foreground"
                                 />
                               </div>
                               <button
@@ -1145,7 +1145,7 @@ function InboxModule() {
                             <select
                               value={waProvider}
                               onChange={(e) => setWaProvider(e.target.value as any)}
-                              className="w-full h-8 px-2 rounded bg-surface border border-border text-xs outline-none focus:ring-1 focus:ring-brand text-foreground"
+                              className="w-full h-8 px-2 rounded glass-card border-none border-none text-xs outline-none focus:ring-1 focus:ring-brand text-foreground"
                             >
                               <option value="meta_official">WhatsApp Cloud (Oficial)</option>
                               <option value="evolution_api">Evolution API (Instância)</option>
@@ -1162,7 +1162,7 @@ function InboxModule() {
                                   placeholder="Digite o ID da linha..."
                                   value={waPhoneId}
                                   onChange={(e) => setWaPhoneId(e.target.value)}
-                                  className="w-full h-8 px-2.5 rounded bg-surface border border-border text-xs outline-none focus:ring-1 focus:ring-brand text-foreground"
+                                  className="w-full h-8 px-2.5 rounded glass-card border-none border-none text-xs outline-none focus:ring-1 focus:ring-brand text-foreground"
                                 />
                               </div>
                               <div className="space-y-1">
@@ -1173,7 +1173,7 @@ function InboxModule() {
                                   placeholder="EAA..."
                                   value={waToken}
                                   onChange={(e) => setWaToken(e.target.value)}
-                                  className="w-full h-8 px-2.5 rounded bg-surface border border-border text-xs outline-none focus:ring-1 focus:ring-brand text-foreground"
+                                  className="w-full h-8 px-2.5 rounded glass-card border-none border-none text-xs outline-none focus:ring-1 focus:ring-brand text-foreground"
                                 />
                               </div>
                             </>
@@ -1187,7 +1187,7 @@ function InboxModule() {
                                   placeholder="https://sua-evolution.com"
                                   value={evolutionUrl}
                                   onChange={(e) => setEvolutionUrl(e.target.value)}
-                                  className="w-full h-8 px-2.5 rounded bg-surface border border-border text-xs outline-none focus:ring-1 focus:ring-brand text-foreground"
+                                  className="w-full h-8 px-2.5 rounded glass-card border-none border-none text-xs outline-none focus:ring-1 focus:ring-brand text-foreground"
                                 />
                               </div>
                               <div className="space-y-1">
@@ -1198,7 +1198,7 @@ function InboxModule() {
                                   placeholder="Chave de acesso..."
                                   value={evolutionKey}
                                   onChange={(e) => setEvolutionKey(e.target.value)}
-                                  className="w-full h-8 px-2.5 rounded bg-surface border border-border text-xs outline-none focus:ring-1 focus:ring-brand text-foreground"
+                                  className="w-full h-8 px-2.5 rounded glass-card border-none border-none text-xs outline-none focus:ring-1 focus:ring-brand text-foreground"
                                 />
                               </div>
                             </>
@@ -1260,7 +1260,7 @@ function InboxModule() {
                               placeholder="Digite o ID da conta..."
                               value={instaAccountId}
                               onChange={(e) => setInstaAccountId(e.target.value)}
-                              className="w-full h-8 px-2.5 rounded bg-surface border border-border text-xs outline-none focus:ring-1 focus:ring-brand text-foreground"
+                              className="w-full h-8 px-2.5 rounded glass-card border-none border-none text-xs outline-none focus:ring-1 focus:ring-brand text-foreground"
                             />
                           </div>
                           <div className="space-y-1">
@@ -1271,7 +1271,7 @@ function InboxModule() {
                               placeholder="EAA..."
                               value={instaToken}
                               onChange={(e) => setInstaToken(e.target.value)}
-                              className="w-full h-8 px-2.5 rounded bg-surface border border-border text-xs outline-none focus:ring-1 focus:ring-brand text-foreground"
+                              className="w-full h-8 px-2.5 rounded glass-card border-none border-none text-xs outline-none focus:ring-1 focus:ring-brand text-foreground"
                             />
                           </div>
                           <button
@@ -1292,7 +1292,7 @@ function InboxModule() {
         </div>
 
         {/* Toolbar & Search */}
-        <div className="px-4 py-2 border-b border-border/60 bg-surface/50 space-y-2 shrink-0">
+        <div className="px-4 py-2 border-b border-border/60 glass-card border-none/50 space-y-2 shrink-0">
           <div className="relative">
             <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground" />
             <input
@@ -1310,7 +1310,7 @@ function InboxModule() {
               className={`flex items-center gap-1.5 rounded-full px-2.5 py-1 text-[10px] font-bold uppercase transition-colors whitespace-nowrap border ${
                 filterChannel === null
                   ? "bg-brand/10 text-brand border-brand/25"
-                  : "bg-surface text-muted-foreground border-border hover:text-foreground"
+                  : "glass-card border-none text-muted-foreground border-border hover:text-foreground"
               }`}
             >
               <Inbox className="h-3 w-3" />
@@ -1323,7 +1323,7 @@ function InboxModule() {
                 className={`flex items-center gap-1.5 rounded-full px-2.5 py-1 text-[10px] font-bold uppercase transition-colors whitespace-nowrap border ${
                   filterChannel === "whatsapp"
                     ? "bg-green-500/10 text-green-600 border-green-500/25"
-                    : "bg-surface text-muted-foreground border-border hover:text-foreground"
+                    : "glass-card border-none text-muted-foreground border-border hover:text-foreground"
                 }`}
               >
                 <Phone className="h-3 w-3" />
@@ -1337,7 +1337,7 @@ function InboxModule() {
                 className={`flex items-center gap-1.5 rounded-full px-2.5 py-1 text-[10px] font-bold uppercase transition-colors whitespace-nowrap border ${
                   filterChannel === "email"
                     ? "bg-blue-500/10 text-blue-600 border-blue-500/25"
-                    : "bg-surface text-muted-foreground border-border hover:text-foreground"
+                    : "glass-card border-none text-muted-foreground border-border hover:text-foreground"
                 }`}
               >
                 <Mail className="h-3 w-3" />
@@ -1352,7 +1352,7 @@ function InboxModule() {
                 className={`flex items-center gap-1.5 rounded-full px-2.5 py-1 text-[10px] font-bold uppercase transition-colors whitespace-nowrap border ${
                   filterChannel === "instagram"
                     ? "bg-pink-500/10 text-pink-600 border-pink-500/25"
-                    : "bg-surface text-muted-foreground border-border hover:text-foreground"
+                    : "glass-card border-none text-muted-foreground border-border hover:text-foreground"
                 }`}
               >
                 <Instagram className="h-3 w-3" />
@@ -1365,7 +1365,7 @@ function InboxModule() {
               className={`ml-auto flex items-center gap-1 rounded-full px-2.5 py-1 text-[10px] font-bold uppercase transition-colors border ${
                 mySessionsOnly
                   ? "bg-brand/10 text-brand border-brand/25"
-                  : "bg-surface text-muted-foreground border-border hover:text-foreground"
+                  : "glass-card border-none text-muted-foreground border-border hover:text-foreground"
               }`}
             >
               Meus
@@ -1378,7 +1378,7 @@ function InboxModule() {
           {isLoadingConversations && (
             <div className="space-y-2 p-3">
               {[1, 2, 3].map((i) => (
-                <div key={i} className="h-16 rounded-2xl bg-surface-alt/50 animate-pulse" />
+                <div key={i} className="h-16 rounded-[var(--radius-card)] glass bg-white/5 border-white/10/50 animate-pulse" />
               ))}
             </div>
           )}
@@ -1403,18 +1403,18 @@ function InboxModule() {
                 onClick={() => setSelectedId(c.id)}
                 className={cn(
                   "w-full flex items-start gap-3 p-3 border-b border-border/40 text-left transition-colors relative",
-                  isSelected ? "bg-primary/5 border-l-2 border-l-primary" : "hover:bg-surface-alt/50"
+                  isSelected ? "bg-primary/5 border-l-2 border-l-primary" : "hover:glass bg-white/5 border-white/10/50"
                 )}
               >
                 <div className="relative shrink-0">
-                  <div className="flex h-9 w-9 items-center justify-center rounded-full bg-surface-alt border border-border">
+                  <div className="flex h-9 w-9 items-center justify-center rounded-full glass bg-white/5 border-white/10 border-none">
                     {contact.metadata?.avatar_url ? (
                       <img src={contact.metadata.avatar_url} alt="" className="h-9 w-9 rounded-full object-cover" />
                     ) : (
                       <UserCircle className="h-5 w-5 text-muted-foreground/60" />
                     )}
                   </div>
-                  <div className="absolute -bottom-0.5 -right-0.5 rounded-full bg-surface p-0.5">
+                  <div className="absolute -bottom-0.5 -right-0.5 rounded-full glass-card border-none p-0.5">
                     <Icon className={cn("h-3 w-3", CHANNEL_COLORS[channel.type] ?? "text-muted-foreground")} />
                   </div>
                 </div>
@@ -1455,22 +1455,22 @@ function InboxModule() {
 
       {/* ── CENTRAL COLUMN: Message Thread & Chat ───────────────────────────────── */}
       <section className={cn(
-        "flex flex-1 flex-col bg-surface border-r border-border h-full min-w-0",
+        "flex flex-1 flex-col glass-card border-none border-r border-border h-full min-w-0",
         selectedId ? "flex" : "hidden md:flex"
       )}>
         {selectedId ? (
           <div className="flex flex-1 flex-col h-full overflow-hidden">
             {/* Thread Header */}
-            <div className="flex items-center gap-3 border-b border-border px-4 py-3 bg-surface shrink-0">
+            <div className="flex items-center gap-3 border-b border-border px-4 py-3 glass-card border-none shrink-0">
               <button
                 onClick={() => setSelectedId(null)}
-                className="md:hidden flex h-8 w-8 items-center justify-center rounded-full border border-border bg-surface text-muted-foreground hover:text-foreground transition-colors cursor-pointer"
+                className="md:hidden flex h-8 w-8 items-center justify-center rounded-full border-none glass-card border-none text-muted-foreground hover:text-foreground transition-colors cursor-pointer"
                 title="Voltar para a lista"
               >
                 <ChevronLeft className="h-4 w-4" />
               </button>
 
-              <div className="flex h-9 w-9 items-center justify-center rounded-full bg-surface-alt border border-border">
+              <div className="flex h-9 w-9 items-center justify-center rounded-full glass bg-white/5 border-white/10 border-none">
                 {selectedConversation?.contacts?.metadata?.avatar_url ? (
                   <img
                     src={selectedConversation.contacts.metadata.avatar_url}
@@ -1503,7 +1503,7 @@ function InboxModule() {
                 <button
                   onClick={generateAiSuggestion}
                   disabled={generatingAi}
-                  className="flex items-center gap-1.5 rounded-full border border-border px-2.5 py-1.5 text-xs font-semibold text-brand bg-surface hover:bg-surface-alt transition-colors disabled:opacity-50 cursor-pointer"
+                  className="flex items-center gap-1.5 rounded-full border-none px-2.5 py-1.5 text-xs font-semibold text-brand glass-card border-none hover:glass bg-white/5 border-white/10 transition-colors disabled:opacity-50 cursor-pointer"
                 >
                   <Sparkles className={cn("h-3.5 w-3.5", generatingAi && "animate-pulse")} />
                   <span>{generatingAi ? "Sugerindo..." : "IA Resposta"}</span>
@@ -1512,8 +1512,8 @@ function InboxModule() {
                 <button
                   onClick={() => setShowDetails(!showDetails)}
                   className={cn(
-                    "flex h-8 w-8 items-center justify-center rounded-full border border-border transition-colors hover:bg-surface-alt cursor-pointer",
-                    showDetails ? "bg-surface-alt text-brand" : "text-muted-foreground bg-surface"
+                    "flex h-8 w-8 items-center justify-center rounded-full border-none transition-colors hover:glass bg-white/5 border-white/10 cursor-pointer",
+                    showDetails ? "glass bg-white/5 border-white/10 text-brand" : "text-muted-foreground glass-card border-none"
                   )}
                   title="Ocultar/Mostrar painel do contato"
                 >
@@ -1524,7 +1524,7 @@ function InboxModule() {
 
             {/* AI Suggestion Banner */}
             {aiSuggestion && (
-              <div className="mx-4 mt-3 rounded-2xl border border-brand/20 bg-brand/5 p-3 shrink-0">
+              <div className="mx-4 mt-3 rounded-[var(--radius-card)] border border-brand/20 bg-brand/5 p-3 shrink-0">
                 <div className="flex items-start gap-2">
                   <Sparkles className="h-4 w-4 text-brand mt-0.5 shrink-0" />
                   <div className="flex-1">
@@ -1552,7 +1552,7 @@ function InboxModule() {
             )}
 
             {/* Messages Thread list */}
-            <div className="flex-1 overflow-y-auto p-4 space-y-3 bg-surface-alt/10">
+            <div className="flex-1 overflow-y-auto p-4 space-y-3 glass bg-white/5 border-white/10/10">
               {isLoadingMessages && (
                 <div className="flex justify-center items-center h-24">
                   <RefreshCw className="w-5 h-5 animate-spin text-muted-foreground" />
@@ -1562,17 +1562,17 @@ function InboxModule() {
               {!isLoadingMessages && messages.map((m: any) => (
                 <div key={m.id} className={cn("flex w-full", m.direction === "outbound" ? "justify-end" : "justify-start")}>
                   <div className={cn(
-                    "max-w-[70%] rounded-2xl px-4 py-2.5 text-sm leading-relaxed relative group",
+                    "max-w-[70%] rounded-[var(--radius-card)] px-4 py-2.5 text-sm leading-relaxed relative group",
                     m.direction === "outbound"
                       ? "bg-brand text-brand-foreground rounded-br-sm"
-                      : "bg-surface text-foreground rounded-bl-sm border border-border"
+                      : "glass-card border-none text-foreground rounded-bl-sm border-none"
                   )}>
                     {m.media_url && (
                       <div className="mb-2 max-w-full">
                         {m.media_url.endsWith(".webm") || m.media_url.includes("audio") ? (
                           <audio src={m.media_url} controls className="max-w-full h-10" />
                         ) : (
-                          <img src={m.media_url} alt="Media" className="rounded-2xl max-w-full object-contain max-h-48" />
+                          <img src={m.media_url} alt="Media" className="rounded-[var(--radius-card)] max-w-full object-contain max-h-48" />
                         )}
                       </div>
                     )}
@@ -1596,11 +1596,11 @@ function InboxModule() {
             </div>
 
             {/* Input & Sending Actions */}
-            <div className="border-t border-border p-3 bg-surface shrink-0">
+            <div className="border-t border-border p-3 glass-card border-none shrink-0">
               <div className="flex items-end gap-2">
                 <button
                   onClick={() => fileInputRef.current?.click()}
-                  className="flex h-10 w-10 shrink-0 items-center justify-center rounded-[var(--radius-card)] border border-border bg-surface hover:bg-surface-alt text-muted-foreground hover:text-foreground transition-colors cursor-pointer"
+                  className="flex h-10 w-10 shrink-0 items-center justify-center rounded-[var(--radius-card)] border-none glass-card border-none hover:glass bg-white/5 border-white/10 text-muted-foreground hover:text-foreground transition-colors cursor-pointer"
                   title="Anexar arquivo"
                 >
                   <Paperclip className="h-4 w-4" />
@@ -1613,7 +1613,7 @@ function InboxModule() {
                     "flex h-10 w-10 shrink-0 items-center justify-center rounded-[var(--radius-card)] border transition-all cursor-pointer",
                     recording
                       ? "bg-red-500 border-red-500 text-white animate-pulse"
-                      : "border-border bg-surface hover:bg-surface-alt text-muted-foreground hover:text-foreground"
+                      : "border-border glass-card border-none hover:glass bg-white/5 border-white/10 text-muted-foreground hover:text-foreground"
                   )}
                   title={recording ? "Parar gravação" : "Gravar mensagem de voz"}
                 >
@@ -1632,7 +1632,7 @@ function InboxModule() {
                   placeholder={recording ? "Gravando áudio..." : "Digite uma mensagem…"}
                   rows={2}
                   disabled={recording}
-                  className="flex-1 resize-none rounded-[var(--radius-card)] border border-border bg-surface-alt px-3 py-2.5 text-sm outline-none focus:border-brand text-foreground"
+                  className="flex-1 resize-none rounded-[var(--radius-card)] border-none glass bg-white/5 border-white/10 px-3 py-2.5 text-sm outline-none focus:border-brand text-foreground"
                 />
                 
                 <button
@@ -1649,8 +1649,8 @@ function InboxModule() {
           </div>
         ) : (
           /* Empty Chat State */
-          <div className="flex flex-1 flex-col items-center justify-center p-10 text-center bg-surface border-r border-border h-full">
-            <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-2xl bg-surface-alt">
+          <div className="flex flex-1 flex-col items-center justify-center p-10 text-center glass-card border-none border-r border-border h-full">
+            <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-[var(--radius-card)] glass bg-white/5 border-white/10">
               <MessageSquare className="h-8 w-8 text-muted-foreground/40" />
             </div>
             <h3 className="text-base font-bold text-foreground mb-1">Selecione uma conversa</h3>
@@ -1663,7 +1663,7 @@ function InboxModule() {
 
       {/* ── RIGHT COLUMN: Collapsible Contact Info Panel (Width 320px) ───────────────── */}
       {selectedId && showDetails && (
-        <aside className="fixed inset-y-0 right-0 z-40 flex w-full flex-col border-l border-border bg-surface overflow-y-auto no-scrollbar md:relative md:w-80 md:z-0 md:flex md:shadow-none shadow-2xl h-full">
+        <aside className="fixed inset-y-0 right-0 z-40 flex w-full flex-col border-l border-border glass-card border-none overflow-y-auto no-scrollbar md:relative md:w-80 md:z-0 md:flex md:shadow-none shadow-2xl h-full">
           {/* Header */}
           <div className="flex items-center justify-between border-b border-border px-4 py-3 shrink-0">
             <h3 className="text-[10px] font-extrabold uppercase tracking-wider text-muted-foreground">
@@ -1675,7 +1675,7 @@ function InboxModule() {
           </div>
 
           {/* Sub-Tabs */}
-          <div className="flex border-b border-border text-xs font-bold shrink-0 bg-surface-alt/30">
+          <div className="flex border-b border-border text-xs font-bold shrink-0 glass bg-white/5 border-white/10/30">
             <button
               onClick={() => setDetailsTab("profile")}
               className={cn(
@@ -1720,7 +1720,7 @@ function InboxModule() {
             {detailsTab === "profile" && (
               <div className="p-4 space-y-4">
                 <div className="flex items-center gap-3">
-                  <div className="flex h-10 w-10 items-center justify-center rounded-full bg-surface-alt border border-border">
+                  <div className="flex h-10 w-10 items-center justify-center rounded-full glass bg-white/5 border-white/10 border-none">
                     {selectedConversation?.contacts?.metadata?.avatar_url ? (
                       <img src={selectedConversation.contacts.metadata.avatar_url} alt="" className="h-10 w-10 rounded-full object-cover" />
                     ) : (
@@ -1738,7 +1738,7 @@ function InboxModule() {
                 </div>
 
                 {/* CRM Sync details */}
-                <div className="bg-surface-alt/40 border border-border rounded-[var(--radius-card)] p-3 space-y-3">
+                <div className="glass bg-white/5 border-white/10/40 border-none rounded-[var(--radius-card)] p-3 space-y-3">
                   {isLinkingOpen ? (
                     <div className="space-y-2">
                       <div className="flex items-center justify-between border-b border-border/50 pb-1.5">
@@ -1764,7 +1764,7 @@ function InboxModule() {
                             "flex-1 py-1 text-[9px] font-bold rounded",
                             crmSearchType === "lead"
                               ? "bg-brand text-brand-foreground"
-                              : "bg-surface-alt text-muted-foreground hover:bg-surface-alt/80 border border-border/50"
+                              : "glass bg-white/5 border-white/10 text-muted-foreground hover:glass bg-white/5 border-white/10/80 border-none/50"
                           )}
                         >
                           Lead
@@ -1776,7 +1776,7 @@ function InboxModule() {
                             "flex-1 py-1 text-[9px] font-bold rounded",
                             crmSearchType === "client"
                               ? "bg-brand text-brand-foreground"
-                              : "bg-surface-alt text-muted-foreground hover:bg-surface-alt/80 border border-border/50"
+                              : "glass bg-white/5 border-white/10 text-muted-foreground hover:glass bg-white/5 border-white/10/80 border-none/50"
                           )}
                         >
                           Cliente
@@ -1788,7 +1788,7 @@ function InboxModule() {
                         value={crmSearchQuery}
                         onChange={(e) => setCrmSearchQuery(e.target.value)}
                         placeholder="Buscar por nome (min. 3 letras)..."
-                        className="w-full text-xs h-8 px-2.5 rounded border border-border bg-surface text-foreground outline-none focus:border-brand"
+                        className="w-full text-xs h-8 px-2.5 rounded border-none glass-card border-none text-foreground outline-none focus:border-brand"
                       />
 
                       {crmSearchQuery.length > 2 && crmSearchResults.length === 0 && (
@@ -1798,7 +1798,7 @@ function InboxModule() {
                       )}
 
                       {crmSearchResults.length > 0 && (
-                        <div className="max-h-28 overflow-y-auto border border-border/50 rounded bg-surface divide-y divide-border/30">
+                        <div className="max-h-28 overflow-y-auto border-none/50 rounded glass-card border-none divide-y divide-border/30">
                           {crmSearchResults.map((res: any) => (
                             <button
                               key={res.id}
@@ -1810,7 +1810,7 @@ function InboxModule() {
                                   linkContactToCrm(null, res.id);
                                 }
                               }}
-                              className="w-full text-left px-2.5 py-1.5 hover:bg-surface-alt/40 text-[10px] text-foreground flex flex-col cursor-pointer"
+                              className="w-full text-left px-2.5 py-1.5 hover:glass bg-white/5 border-white/10/40 text-[10px] text-foreground flex flex-col cursor-pointer"
                             >
                               <span className="font-semibold">{res.name}</span>
                               <span className="text-[8px] text-muted-foreground">
@@ -1886,13 +1886,13 @@ function InboxModule() {
                       <div className="flex flex-col gap-1.5">
                         <button
                           onClick={createLeadFromSession}
-                          className="w-full text-[10px] font-bold border border-brand/35 text-brand bg-brand/5 hover:bg-brand/10 py-1.5 rounded-2xl flex items-center justify-center gap-1 cursor-pointer"
+                          className="w-full text-[10px] font-bold border border-brand/35 text-brand bg-brand/5 hover:bg-brand/10 py-1.5 rounded-[var(--radius-card)] flex items-center justify-center gap-1 cursor-pointer"
                         >
                           <UserPlus className="w-3.5 h-3.5" /> Importar como Lead
                         </button>
                         <button
                           onClick={() => setIsLinkingOpen(true)}
-                          className="w-full text-[10px] font-bold border border-border text-muted-foreground bg-surface hover:text-foreground hover:bg-surface-alt/25 py-1.5 rounded-2xl flex items-center justify-center gap-1 cursor-pointer"
+                          className="w-full text-[10px] font-bold border-none text-muted-foreground glass-card border-none hover:text-foreground hover:glass bg-white/5 border-white/10/25 py-1.5 rounded-[var(--radius-card)] flex items-center justify-center gap-1 cursor-pointer"
                         >
                           <Link2 className="w-3.5 h-3.5" /> Vincular Lead/Cliente Existente
                         </button>
@@ -1910,7 +1910,7 @@ function InboxModule() {
                     {matchedLead && (
                       <button
                         onClick={generateAiProposalForLead}
-                        className="flex items-center gap-2 w-full text-left rounded-2xl border border-brand/20 bg-brand/5 px-3 py-1.5 text-xs font-bold text-brand hover:bg-brand/10 transition-colors cursor-pointer"
+                        className="flex items-center gap-2 w-full text-left rounded-[var(--radius-card)] border border-brand/20 bg-brand/5 px-3 py-1.5 text-xs font-bold text-brand hover:bg-brand/10 transition-colors cursor-pointer"
                       >
                         <Sparkles className="w-3.5 h-3.5" />
                         <span>Gerar Proposta IA</span>
@@ -1922,7 +1922,7 @@ function InboxModule() {
                         setReply((prev) => (prev ? prev + "\n" : "") + `Olá! Segue o link para assinatura do seu contrato: ${window.location.origin}/m/contract/assinar-aqui`);
                         toast.success("Link do contrato copiado!");
                       }}
-                      className="flex items-center gap-2 w-full text-left rounded-2xl border border-border px-3 py-1.5 text-xs font-bold text-foreground hover:bg-surface-alt/50 transition-colors cursor-pointer bg-surface"
+                      className="flex items-center gap-2 w-full text-left rounded-[var(--radius-card)] border-none px-3 py-1.5 text-xs font-bold text-foreground hover:glass bg-white/5 border-white/10/50 transition-colors cursor-pointer glass-card border-none"
                     >
                       <FileCheck className="w-3.5 h-3.5 text-muted-foreground" />
                       <span>Enviar Contrato</span>
@@ -1933,7 +1933,7 @@ function InboxModule() {
                         setReply((prev) => (prev ? prev + "\n" : "") + `Olá! Você pode acompanhar sua viagem e vouchers direto pelo nosso Portal do Cliente: ${window.location.origin}/client`);
                         toast.success("Link do portal de cliente copiado!");
                       }}
-                      className="flex items-center gap-2 w-full text-left rounded-2xl border border-border px-3 py-1.5 text-xs font-bold text-foreground hover:bg-surface-alt/50 transition-colors cursor-pointer bg-surface"
+                      className="flex items-center gap-2 w-full text-left rounded-[var(--radius-card)] border-none px-3 py-1.5 text-xs font-bold text-foreground hover:glass bg-white/5 border-white/10/50 transition-colors cursor-pointer glass-card border-none"
                     >
                       <ExternalLink className="w-3.5 h-3.5 text-muted-foreground" />
                       <span>MagicLink Portal</span>
@@ -1951,13 +1951,13 @@ function InboxModule() {
                 </h4>
 
                 {matchedClientId ? (
-                  <div className="p-3 border border-border rounded-[var(--radius-card)] bg-surface-alt/40 space-y-3">
+                  <div className="p-3 border-none rounded-[var(--radius-card)] glass bg-white/5 border-white/10/40 space-y-3">
                     <div className="flex items-center justify-between gap-2">
                       <span className="text-[10px] font-bold text-foreground">Tipo de Doc:</span>
                       <select
                         value={docTypeToUpload}
                         onChange={(e) => setDocTypeToUpload(e.target.value)}
-                        className="h-7 text-[11px] rounded border border-border bg-surface px-1 outline-none text-foreground"
+                        className="h-7 text-[11px] rounded border-none glass-card border-none px-1 outline-none text-foreground"
                       >
                         <option value="rg">RG</option>
                         <option value="cpf">CPF</option>
@@ -1972,7 +1972,7 @@ function InboxModule() {
                       <button
                         onClick={() => document.getElementById("client-doc-inbox-upload")?.click()}
                         disabled={uploadingDoc}
-                        className="w-full h-16 border border-dashed border-border hover:border-brand/50 rounded-2xl flex flex-col items-center justify-center text-[10px] font-medium text-muted-foreground bg-surface hover:text-foreground cursor-pointer transition-colors disabled:opacity-50"
+                        className="w-full h-16 border border-dashed border-border hover:border-brand/50 rounded-[var(--radius-card)] flex flex-col items-center justify-center text-[10px] font-medium text-muted-foreground glass-card border-none hover:text-foreground cursor-pointer transition-colors disabled:opacity-50"
                       >
                         <Plus className="h-4 w-4 mb-1 text-muted-foreground/60" />
                         {uploadingDoc ? "Enviando..." : "Upload Documento"}
@@ -1980,7 +1980,7 @@ function InboxModule() {
                     </div>
                   </div>
                 ) : (
-                  <p className="text-[10px] text-muted-foreground text-center py-3 bg-surface-alt/30 border border-dashed border-border rounded-2xl">
+                  <p className="text-[10px] text-muted-foreground text-center py-3 glass bg-white/5 border-white/10/30 border border-dashed border-border rounded-[var(--radius-card)]">
                     Cadastre o lead como cliente no CRM primeiro para gerenciar seus documentos.
                   </p>
                 )}
@@ -1989,7 +1989,7 @@ function InboxModule() {
                   <div className="space-y-2">
                     {clientDocs.length > 0 ? (
                       clientDocs.map((doc: any) => (
-                        <div key={doc.id} className="p-3 border border-border rounded-[var(--radius-card)] bg-surface flex flex-col gap-1.5 text-xs">
+                        <div key={doc.id} className="p-3 border-none rounded-[var(--radius-card)] glass-card border-none flex flex-col gap-1.5 text-xs">
                           <div className="flex items-center justify-between">
                             <span className="font-bold text-brand uppercase text-[10px]">{doc.doc_type}</span>
                             {doc.file_url && (
@@ -2027,7 +2027,7 @@ function InboxModule() {
                       onChange={(e) => setContactNotes(e.target.value)}
                       placeholder="Escreva notas importantes sobre este contato..."
                       rows={10}
-                      className="w-full text-xs p-2.5 border border-border rounded-[var(--radius-card)] bg-surface outline-none focus:border-brand resize-none leading-relaxed text-foreground"
+                      className="w-full text-xs p-2.5 border-none rounded-[var(--radius-card)] glass-card border-none outline-none focus:border-brand resize-none leading-relaxed text-foreground"
                     />
                   </div>
                 ) : (
@@ -2054,23 +2054,23 @@ function InboxModule() {
                     {leadInsights ? (
                       <div className="space-y-2">
                         {(leadInsights as any).general_profile && (
-                          <div className="text-[11px] bg-brand/5 border border-brand/10 p-2.5 rounded-2xl text-foreground leading-relaxed">
+                          <div className="text-[11px] bg-brand/5 border border-brand/10 p-2.5 rounded-[var(--radius-card)] text-foreground leading-relaxed">
                             <strong>Comportamento:</strong> {(leadInsights as any).general_profile}
                           </div>
                         )}
                         {(leadInsights as any).general_sentiment && (
-                          <div className="text-[11px] bg-brand/5 border border-brand/10 p-2.5 rounded-2xl text-foreground leading-relaxed">
+                          <div className="text-[11px] bg-brand/5 border border-brand/10 p-2.5 rounded-[var(--radius-card)] text-foreground leading-relaxed">
                             <strong>Sentimento:</strong> {(leadInsights as any).general_sentiment}
                           </div>
                         )}
                         {(leadInsights as any).generalized_objections && (
-                          <div className="text-[11px] bg-brand/5 border border-brand/10 p-2.5 rounded-2xl text-foreground leading-relaxed">
+                          <div className="text-[11px] bg-brand/5 border border-brand/10 p-2.5 rounded-[var(--radius-card)] text-foreground leading-relaxed">
                             <strong>Objeções:</strong> {(leadInsights as any).generalized_objections}
                           </div>
                         )}
                       </div>
                     ) : (
-                      <p className="text-[10px] text-muted-foreground text-center py-2 bg-surface-alt/30 border border-dashed border-border rounded-2xl">
+                      <p className="text-[10px] text-muted-foreground text-center py-2 glass bg-white/5 border-white/10/30 border border-dashed border-border rounded-[var(--radius-card)]">
                         Sem insights gerados. Clique em atualizar.
                       </p>
                     )}

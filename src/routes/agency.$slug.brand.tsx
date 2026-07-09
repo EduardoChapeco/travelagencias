@@ -13,7 +13,6 @@ import {
 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAgency } from "@/lib/agency-context";
-import { HeaderPortal } from "@/components/shell/HeaderPortal";
 import { Field, Input, Select, PrimaryButton } from "@/components/ui/form";
 
 export const Route = createFileRoute("/agency/$slug/brand")({
@@ -208,28 +207,26 @@ function BrandPage() {
 
   return (
     <div className="space-y-6">
-      <HeaderPortal>
-        <button
+              <button
           onClick={save}
           disabled={saving}
           className="flex h-8 items-center gap-1.5 rounded-full bg-brand px-3 text-xs font-semibold text-brand-foreground hover:bg-brand/90 transition-colors cursor-pointer disabled:opacity-50"
         >
           {saving ? "Salvando..." : "Salvar alterações"}
         </button>
-      </HeaderPortal>
-
+      
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
         {/* Left Side settings form - using div wrapper instead of form */}
         <div className="space-y-6">
           {/* Card: Logo & Assets */}
-          <div className="rounded-full border border-border bg-surface p-5 space-y-4">
+          <div className="rounded-full border-none glass-card border-none p-5 space-y-4">
             <h3 className="text-xs font-bold uppercase tracking-wider text-muted-foreground flex items-center gap-2">
               <ImageIcon className="w-4 h-4 text-brand" /> Ativos Visuais
             </h3>
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               {/* Logo Principal Dropzone */}
-              <div className="flex flex-col items-center justify-between p-4 rounded-full border border-dashed border-border bg-surface-alt/10 hover:border-brand/40 transition-colors text-center relative group min-h-[140px]">
+              <div className="flex flex-col items-center justify-between p-4 rounded-full border border-dashed border-border glass bg-white/5 border-white/10/10 hover:border-brand/40 transition-colors text-center relative group min-h-[140px]">
                 <span className="text-[10px] font-bold text-muted-foreground uppercase">
                   Logo Principal
                 </span>
@@ -307,7 +304,7 @@ function BrandPage() {
               </div>
 
               {/* Favicon Dropzone */}
-              <div className="flex flex-col items-center justify-between p-4 rounded-full border border-dashed border-border bg-surface-alt/10 hover:border-brand/40 transition-colors text-center relative group min-h-[140px]">
+              <div className="flex flex-col items-center justify-between p-4 rounded-full border border-dashed border-border glass bg-white/5 border-white/10/10 hover:border-brand/40 transition-colors text-center relative group min-h-[140px]">
                 <span className="text-[10px] font-bold text-muted-foreground uppercase">
                   Favicon
                 </span>
@@ -348,7 +345,7 @@ function BrandPage() {
           </div>
 
           {/* Card: Colors */}
-          <div className="rounded-full border border-border bg-surface p-5 space-y-4">
+          <div className="rounded-full border-none glass-card border-none p-5 space-y-4">
             <h3 className="text-xs font-bold uppercase tracking-wider text-muted-foreground flex items-center gap-2">
               <Palette className="w-4 h-4 text-brand" /> Cores da Identidade
             </h3>
@@ -388,7 +385,7 @@ function BrandPage() {
           </div>
 
           {/* Card: Typography */}
-          <div className="rounded-full border border-border bg-surface p-5 space-y-4">
+          <div className="rounded-full border-none glass-card border-none p-5 space-y-4">
             <h3 className="text-xs font-bold uppercase tracking-wider text-muted-foreground flex items-center gap-2">
               <Type className="w-4 h-4 text-brand" /> Tipografia
             </h3>
@@ -423,7 +420,7 @@ function BrandPage() {
           </div>
 
           {/* Card: Links & Channels */}
-          <div className="rounded-full border border-border bg-surface p-5 space-y-4">
+          <div className="rounded-full border-none glass-card border-none p-5 space-y-4">
             <h3 className="text-xs font-bold uppercase tracking-wider text-muted-foreground flex items-center gap-2">
               <ExternalLink className="w-4 h-4 text-brand" /> Links & Canais de Atendimento
             </h3>
@@ -456,7 +453,7 @@ function BrandPage() {
 
         {/* Right Side: Interactive Mockup Live Preview */}
         <div className="space-y-6">
-          <div className="rounded-full border border-border bg-surface p-5 flex flex-col h-full space-y-4 shadow-none">
+          <div className="rounded-full border-none glass-card border-none p-5 flex flex-col h-full space-y-4 shadow-none">
             <h3 className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
               Mockup de Pré-visualização Instantânea
             </h3>
@@ -464,7 +461,7 @@ function BrandPage() {
             {/* Live styles provider wrapper */}
             <div
               style={mockStyles}
-              className="flex-1 border border-border rounded-full overflow-hidden bg-slate-50 flex flex-col font-sans min-h-[500px]"
+              className="flex-1 border-none rounded-full overflow-hidden bg-slate-50 flex flex-col font-sans min-h-[500px]"
             >
               {/* Mock Navbar */}
               <div
@@ -546,7 +543,7 @@ function BrandPage() {
               {/* Mock Content & Cards Grid */}
               <div className="p-6 grid grid-cols-2 gap-4 shrink-0 bg-white border-t border-border">
                 <div
-                  className="p-4 rounded-full border border-border shadow-none space-y-2"
+                  className="p-4 rounded-full border-none shadow-none space-y-2"
                   style={{ backgroundColor: "var(--brand-bg)", color: "var(--brand-text)" }}
                 >
                   <h4
@@ -567,7 +564,7 @@ function BrandPage() {
                 </div>
 
                 <div
-                  className="p-4 rounded-full border border-border shadow-none space-y-2"
+                  className="p-4 rounded-full border-none shadow-none space-y-2"
                   style={{ backgroundColor: "var(--brand-bg)", color: "var(--brand-text)" }}
                 >
                   <h4
@@ -604,7 +601,7 @@ interface ColorPickerProps {
 
 function ColorPicker({ label, value, onChange }: ColorPickerProps) {
   return (
-    <div className="flex flex-col items-center p-2.5 rounded-full border border-border bg-surface-alt/10 hover:bg-surface-alt/25 transition-all text-center">
+    <div className="flex flex-col items-center p-2.5 rounded-full border-none glass bg-white/5 border-white/10/10 hover:glass bg-white/5 border-white/10/25 transition-all text-center">
       <span className="text-[10px] font-bold text-muted-foreground uppercase mb-2 block truncate w-full">
         {label}
       </span>
@@ -613,14 +610,14 @@ function ColorPicker({ label, value, onChange }: ColorPickerProps) {
           type="color"
           value={value}
           onChange={(e) => onChange(e.target.value)}
-          className="h-10 w-10 cursor-pointer rounded-full border border-border bg-transparent shrink-0 shadow-none"
+          className="h-10 w-10 cursor-pointer rounded-full border-none bg-transparent shrink-0 shadow-none"
         />
       </div>
       <input
         type="text"
         value={value}
         onChange={(e) => onChange(e.target.value)}
-        className="mt-2 h-7 w-full rounded-xs border border-border bg-surface px-1 text-center font-mono text-[10px] uppercase outline-none focus:border-brand shrink-0"
+        className="mt-2 h-7 w-full rounded-xs border-none glass-card border-none px-1 text-center font-mono text-[10px] uppercase outline-none focus:border-brand shrink-0"
       />
     </div>
   );

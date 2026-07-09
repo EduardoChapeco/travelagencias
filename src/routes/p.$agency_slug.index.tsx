@@ -181,7 +181,7 @@ function HomePage() {
                 href={`https://wa.me/${company.whatsapp.replace(/\D/g, "")}`}
                 target="_blank"
                 rel="noreferrer"
-                className="inline-flex items-center gap-2 h-9 rounded border border-border bg-surface px-3 ds-label-caps text-foreground hover:bg-surface-alt transition-colors"
+                className="inline-flex items-center gap-2 h-9 rounded border-none glass-card border-none px-3 ds-label-caps text-foreground hover:glass bg-white/5 border-white/10 transition-colors"
               >
                 <MessageCircle className="h-3.5 w-3.5 text-[#22C55E]" /> WhatsApp
               </a>
@@ -195,7 +195,7 @@ function HomePage() {
         <div className="max-w-[790px]">
           {/* Caps */}
           <div className="flex items-center flex-wrap gap-2 mb-6">
-            <span className="inline-flex items-center gap-1.5 rounded-full border border-border bg-surface-alt px-[10px] py-[5px] ds-label-caps text-muted-foreground">
+            <span className="inline-flex items-center gap-1.5 rounded-full border-none glass bg-white/5 border-white/10 px-[10px] py-[5px] ds-label-caps text-muted-foreground">
               Agência de viagens
             </span>
             {tours.length > 0 && (
@@ -228,7 +228,7 @@ function HomePage() {
             {tours.length > 0 && (
               <a
                 href="#roteiros"
-                className="inline-flex items-center gap-2 h-[39px] rounded border border-border-strong bg-surface px-[14px] ds-label-caps text-foreground hover:bg-surface-alt transition-colors"
+                className="inline-flex items-center gap-2 h-[39px] rounded border-none-strong glass-card border-none px-[14px] ds-label-caps text-foreground hover:glass bg-white/5 border-white/10 transition-colors"
               >
                 Ver roteiros <ArrowRight className="h-3.5 w-3.5" />
               </a>
@@ -240,7 +240,7 @@ function HomePage() {
       {/* ── COVER IMAGE (se existir) ─────────────────────────────── */}
       {company?.cover_image_url && (
         <section className="mx-auto max-w-[1240px] px-6 pb-16">
-          <div className="rounded-2xl overflow-hidden aspect-[21/7] border border-border">
+          <div className="rounded-[var(--radius-card)] overflow-hidden aspect-[21/7] border-none">
             <img
               src={company.cover_image_url}
               alt={agency.name}
@@ -257,7 +257,7 @@ function HomePage() {
         {tours.length > 0 && (
           <section id="roteiros" className="mx-auto max-w-6xl px-6">
             <div className="mb-10 text-center">
-              <div className="inline-flex items-center gap-1.5 rounded-full border border-border bg-surface-alt px-3 py-1 text-xs font-semibold uppercase tracking-widest text-muted-foreground mb-3">
+              <div className="inline-flex items-center gap-1.5 rounded-full border-none glass bg-white/5 border-white/10 px-3 py-1 text-xs font-semibold uppercase tracking-widest text-muted-foreground mb-3">
                 <Calendar className="h-3 w-3" /> Próximas saídas
               </div>
               <h2 className="text-3xl md:text-4xl font-extrabold tracking-tight">
@@ -275,7 +275,7 @@ function HomePage() {
                   key={t.id}
                   to="/p/$agency_slug/tour/$id"
                   params={{ agency_slug, id: t.id }}
-                  className="group flex flex-col overflow-hidden rounded-2xl border border-border/50 bg-surface transition-all duration-300 hover:-translate-y-1 hover:border-brand/30"
+                  className="group flex flex-col overflow-hidden rounded-[var(--radius-card)] border-none/50 glass-card border-none transition-all duration-300 hover:-translate-y-1 hover:border-brand/30"
                 >
                   <div className="relative aspect-[4/3] overflow-hidden">
                     {t.cover_image_url ? (
@@ -293,7 +293,7 @@ function HomePage() {
                       </div>
                     )}
                     {/* Date badge */}
-                    <div className="absolute top-3 right-3 rounded-2xl bg-background/95 backdrop-blur-sm px-2.5 py-1 text-xs font-bold">
+                    <div className="absolute top-3 right-3 rounded-[var(--radius-card)] bg-background/95 backdrop-blur-sm px-2.5 py-1 text-xs font-bold">
                       {t.departure_date
                         ? new Date(t.departure_date).toLocaleDateString("pt-BR", {
                             day: "2-digit",
@@ -342,7 +342,7 @@ function HomePage() {
               <Link
                 to="/p/$agency_slug/contact"
                 params={{ agency_slug }}
-                className="inline-flex items-center gap-2 rounded-full border border-border px-6 py-2.5 text-sm font-semibold hover:bg-surface-alt transition-colors"
+                className="inline-flex items-center gap-2 rounded-full border-none px-6 py-2.5 text-sm font-semibold hover:glass bg-white/5 border-white/10 transition-colors"
               >
                 Solicitar roteiro personalizado <ArrowRight className="h-4 w-4" />
               </Link>
@@ -353,11 +353,11 @@ function HomePage() {
         {/* ── ABOUT ────────────────────────────────────────────────── */}
         {company?.description && (
           <section className="mx-auto max-w-4xl px-6">
-            <div className="overflow-hidden rounded-3xl border border-border bg-surface">
+            <div className="overflow-hidden rounded-3xl border-none glass-card border-none">
               <div className="grid md:grid-cols-2">
                 {/* Text */}
                 <div className="p-8 md:p-12 flex flex-col justify-center">
-                  <div className="inline-flex items-center gap-1.5 rounded-full border border-border bg-surface-alt px-3 py-1 text-xs font-semibold uppercase tracking-widest text-muted-foreground mb-4 w-fit">
+                  <div className="inline-flex items-center gap-1.5 rounded-full border-none glass bg-white/5 border-white/10 px-3 py-1 text-xs font-semibold uppercase tracking-widest text-muted-foreground mb-4 w-fit">
                     Sobre nós
                   </div>
                   <h2 className="text-2xl font-bold tracking-tight mb-4">{agency.name}</h2>
@@ -418,7 +418,7 @@ function HomePage() {
               {company.gallery.slice(0, 8).map((img: string, i: number) => (
                 <div
                   key={i}
-                  className={`overflow-hidden rounded-2xl bg-surface-alt ${i === 0 ? "md:col-span-2 md:row-span-2" : ""}`}
+                  className={`overflow-hidden rounded-[var(--radius-card)] glass bg-white/5 border-white/10 ${i === 0 ? "md:col-span-2 md:row-span-2" : ""}`}
                 >
                   <img
                     src={img}
@@ -436,7 +436,7 @@ function HomePage() {
           <section className="mx-auto max-w-5xl px-6">
             <div className="mb-8 flex items-end justify-between">
               <div>
-                <div className="inline-flex items-center gap-1.5 rounded-full border border-border bg-surface-alt px-3 py-1 text-xs font-semibold uppercase tracking-widest text-muted-foreground mb-2">
+                <div className="inline-flex items-center gap-1.5 rounded-full border-none glass bg-white/5 border-white/10 px-3 py-1 text-xs font-semibold uppercase tracking-widest text-muted-foreground mb-2">
                   Blog
                 </div>
                 <h2 className="text-2xl font-bold tracking-tight">Últimas do blog</h2>
@@ -455,7 +455,7 @@ function HomePage() {
                   key={p.id}
                   to="/p/$agency_slug/blog/$slug"
                   params={{ agency_slug, slug: p.slug }}
-                  className="group overflow-hidden rounded-2xl border border-border bg-surface hover:border-brand/30 transition-all"
+                  className="group overflow-hidden rounded-[var(--radius-card)] border-none glass-card border-none hover:border-brand/30 transition-all"
                 >
                   {p.cover_image_url && (
                     <div className="aspect-video overflow-hidden">
@@ -491,7 +491,7 @@ function HomePage() {
           <section className="mx-auto max-w-5xl px-6">
             <div className="grid gap-6 md:grid-cols-2">
               {/* Contact Card */}
-              <div className="rounded-3xl border border-border bg-surface p-8">
+              <div className="rounded-3xl border-none glass-card border-none p-8">
                 <h2 className="mb-6 text-xl font-bold tracking-tight flex items-center gap-2">
                   <MapPin className="h-5 w-5" style={{ color: brandColor }} /> Contato e Localização
                 </h2>
@@ -501,7 +501,7 @@ function HomePage() {
                       href={`mailto:${company.email}`}
                       className="flex items-center gap-3 text-muted-foreground hover:text-foreground transition-colors group"
                     >
-                      <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-[var(--radius-card)] border border-border group-hover:border-brand/30 transition-colors">
+                      <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-[var(--radius-card)] border-none group-hover:border-brand/30 transition-colors">
                         <Mail className="h-4 w-4" />
                       </div>
                       <div>
@@ -514,7 +514,7 @@ function HomePage() {
                   )}
                   {company.phone && (
                     <div className="flex items-center gap-3 text-muted-foreground">
-                      <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-[var(--radius-card)] border border-border">
+                      <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-[var(--radius-card)] border-none">
                         <Phone className="h-4 w-4" />
                       </div>
                       <div>
@@ -532,7 +532,7 @@ function HomePage() {
                       rel="noreferrer"
                       className="flex items-center gap-3 text-muted-foreground hover:text-foreground transition-colors group"
                     >
-                      <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-[var(--radius-card)] border border-border group-hover:border-green-500/30 transition-colors">
+                      <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-[var(--radius-card)] border-none group-hover:border-green-500/30 transition-colors">
                         <MessageCircle className="h-4 w-4 group-hover:text-green-500 transition-colors" />
                       </div>
                       <div>
@@ -550,7 +550,7 @@ function HomePage() {
                       rel="noreferrer"
                       className="flex items-center gap-3 text-muted-foreground hover:text-foreground transition-colors group"
                     >
-                      <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-[var(--radius-card)] border border-border group-hover:border-brand/30 transition-colors">
+                      <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-[var(--radius-card)] border-none group-hover:border-brand/30 transition-colors">
                         <Globe className="h-4 w-4" />
                       </div>
                       <div>
@@ -565,7 +565,7 @@ function HomePage() {
                   )}
                   {(company.address as any)?.street && (
                     <div className="flex items-start gap-3 text-muted-foreground">
-                      <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-[var(--radius-card)] border border-border">
+                      <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-[var(--radius-card)] border-none">
                         <MapPin className="h-4 w-4" />
                       </div>
                       <div>
@@ -590,7 +590,7 @@ function HomePage() {
 
               {/* Hours Card */}
               {company.business_hours && (
-                <div className="rounded-3xl border border-border bg-surface p-8">
+                <div className="rounded-3xl border-none glass-card border-none p-8">
                   <h2 className="mb-6 text-xl font-bold tracking-tight flex items-center gap-2">
                     <Clock className="h-5 w-5" style={{ color: brandColor }} /> Horários de
                     Atendimento
@@ -663,11 +663,11 @@ function HomePage() {
                 <img
                   src={agency.logo_url}
                   alt={agency.name}
-                  className="h-8 w-8 rounded-2xl object-contain"
+                  className="h-8 w-8 rounded-[var(--radius-card)] object-contain"
                 />
               ) : (
                 <div
-                  className="flex h-8 w-8 items-center justify-center rounded-2xl text-xs font-bold text-white"
+                  className="flex h-8 w-8 items-center justify-center rounded-[var(--radius-card)] text-xs font-bold text-white"
                   style={{ background: brandColor }}
                 >
                   {agency.name.charAt(0)}

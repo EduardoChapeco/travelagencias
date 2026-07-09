@@ -98,7 +98,7 @@ function Page() {
       </div>
 
       {q.isError && (
-        <div className="mt-4 flex flex-col items-center justify-center py-8 px-4 text-center rounded-2xl border border-red-200 bg-red-50/60 max-w-xl mx-auto">
+        <div className="mt-4 flex flex-col items-center justify-center py-8 px-4 text-center rounded-[var(--radius-card)] border border-red-200 bg-red-50/60 max-w-xl mx-auto">
           <AlertCircle className="h-5 w-5 text-red-600 mb-1.5" />
           <h3 className="text-xs font-bold text-red-800">Falha ao Carregar Agências</h3>
           <p className="text-[11px] text-red-600 mt-0.5">
@@ -117,10 +117,10 @@ function Page() {
           }}
         >
           <div
-            className="flex h-full w-full max-w-md flex-col overflow-y-auto border-l border-border bg-surface animate-in slide-in-from-right duration-300"
+            className="flex h-full w-full max-w-md flex-col overflow-y-auto border-l border-border glass-card border-none animate-in slide-in-from-right duration-300"
             onClick={(e) => e.stopPropagation()}
           >
-            <div className="border-b border-border bg-surface-alt/30 p-6 shrink-0">
+            <div className="border-b border-border glass bg-white/5 border-white/10/30 p-6 shrink-0">
               <h2 className="text-xl font-bold text-foreground">Provisionar Nova Agência</h2>
             </div>
             <div className="p-6 overflow-y-auto">
@@ -132,7 +132,7 @@ function Page() {
                     </label>
                     <input
                       {...register("name")}
-                      className="mt-1 w-full rounded-full border border-border bg-background px-3 py-2 text-sm"
+                      className="mt-1 w-full rounded-full border-none bg-background px-3 py-2 text-sm"
                       placeholder="Ex: Viagens Inc."
                     />
                     {errors.name && (
@@ -145,7 +145,7 @@ function Page() {
                     </label>
                     <input
                       {...register("slug")}
-                      className="mt-1 w-full rounded-full border border-border bg-background px-3 py-2 text-sm"
+                      className="mt-1 w-full rounded-full border-none bg-background px-3 py-2 text-sm"
                       placeholder="Ex: viagens-inc"
                     />
                     {errors.slug && (
@@ -159,7 +159,7 @@ function Page() {
                     <input
                       type="email"
                       {...register("email")}
-                      className="mt-1 w-full rounded-full border border-border bg-background px-3 py-2 text-sm"
+                      className="mt-1 w-full rounded-full border-none bg-background px-3 py-2 text-sm"
                       placeholder="dono@agencia.com"
                     />
                     {errors.email && (
@@ -173,7 +173,7 @@ function Page() {
                       </label>
                       <input
                         {...register("cnpj")}
-                        className="mt-1 w-full rounded-full border border-border bg-background px-3 py-2 text-sm"
+                        className="mt-1 w-full rounded-full border-none bg-background px-3 py-2 text-sm"
                       />
                     </div>
                     <div>
@@ -182,7 +182,7 @@ function Page() {
                       </label>
                       <input
                         {...register("phone")}
-                        className="mt-1 w-full rounded-full border border-border bg-background px-3 py-2 text-sm"
+                        className="mt-1 w-full rounded-full border-none bg-background px-3 py-2 text-sm"
                       />
                     </div>
                   </div>
@@ -208,11 +208,11 @@ function Page() {
                       <input
                         readOnly
                         value={inviteUrl}
-                        className="flex-1 rounded-full border border-border bg-surface-alt px-3 py-2 font-mono text-xs text-muted-foreground"
+                        className="flex-1 rounded-full border-none glass bg-white/5 border-white/10 px-3 py-2 font-mono text-xs text-muted-foreground"
                       />
                       <button
                         onClick={handleCopy}
-                        className="rounded-full border border-border bg-background px-3 py-2 text-sm hover:bg-surface-alt"
+                        className="rounded-full border-none bg-background px-3 py-2 text-sm hover:glass bg-white/5 border-white/10"
                       >
                         Copiar
                       </button>
@@ -224,7 +224,7 @@ function Page() {
                       setOpen(false);
                       setInviteUrl(null);
                     }}
-                    className="mt-4 w-full rounded-full border border-border px-4 py-2 text-sm hover:bg-surface-alt"
+                    className="mt-4 w-full rounded-full border-none px-4 py-2 text-sm hover:glass bg-white/5 border-white/10"
                   >
                     Fechar
                   </button>
@@ -242,9 +242,9 @@ function Page() {
       )}
       {q.data && q.data.length === 0 && <EmptyState title="Sem agências" />}
       {q.data && q.data.length > 0 && (
-        <div className="mt-6 overflow-hidden rounded-2xl border border-border bg-surface">
+        <div className="mt-6 overflow-hidden rounded-[var(--radius-card)] border-none glass-card border-none">
           <table className="w-full text-sm">
-            <thead className="bg-surface-alt text-xs text-muted-foreground">
+            <thead className="glass bg-white/5 border-white/10 text-xs text-muted-foreground">
               <tr>
                 <th className="px-3 py-2 text-left">Agência</th>
                 <th className="px-3 py-2 text-left">CNPJ</th>

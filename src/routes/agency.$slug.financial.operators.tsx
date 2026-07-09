@@ -13,8 +13,7 @@ import {
 import { supabase } from "@/integrations/supabase/client";
 import { useAgency } from "@/lib/agency-context";
 import { money } from "@/components/ui/form";
-import { HeaderPortal } from "@/components/shell/HeaderPortal";
-import { ModuleToolbar } from "@/components/shell/ModuleToolbar";
+import { PageHeader } from "@/components/shell/PageHeader";
 import { useConfirm } from "@/hooks/use-confirm";
 
 export const Route = createFileRoute("/agency/$slug/financial/operators")({
@@ -146,8 +145,7 @@ function OperatorsFinancial() {
 
   return (
     <div className="flex h-full flex-col overflow-hidden">
-      <HeaderPortal>
-        <ModuleToolbar
+              <PageHeader
           title="Faturamento Operadoras"
           search={{
             value: search,
@@ -161,11 +159,10 @@ function OperatorsFinancial() {
           activeFilter={activeTab}
           onFilterChange={(v) => setActiveTab(v as any)}
         />
-      </HeaderPortal>
-
+      
       <div className="flex-1 overflow-y-auto px-4  md:pr-6 py-4 min-h-0 space-y-6 pb-24">
         {/* ── Header descritivo ── */}
-        <div className="rounded-[var(--radius-card)] border border-border bg-surface p-5 space-y-2">
+        <div className="rounded-[var(--radius-card)] border-none glass-card border-none p-5 space-y-2">
           <div className="flex items-center gap-2">
             <Building2 className="h-5 w-5 text-brand" />
             <h2 className="text-sm font-bold tracking-tight text-foreground uppercase">
@@ -208,7 +205,7 @@ function OperatorsFinancial() {
         {!isError && (
           <>
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-              <div className="rounded-[var(--radius-card)] border border-border bg-surface p-4">
+              <div className="rounded-[var(--radius-card)] border-none glass-card border-none p-4">
                 <div className="flex items-center gap-2 mb-2">
                   <TrendingUp className="h-4 w-4 text-brand" />
                   <span className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
@@ -221,7 +218,7 @@ function OperatorsFinancial() {
                 </p>
               </div>
 
-              <div className="rounded-[var(--radius-card)] border border-border bg-surface p-4">
+              <div className="rounded-[var(--radius-card)] border-none glass-card border-none p-4">
                 <div className="flex items-center gap-2 mb-2">
                   <BarChart2 className="h-4 w-4 text-emerald-500" />
                   <span className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
@@ -234,7 +231,7 @@ function OperatorsFinancial() {
                 </p>
               </div>
 
-              <div className="rounded-[var(--radius-card)] border border-border bg-surface p-4">
+              <div className="rounded-[var(--radius-card)] border-none glass-card border-none p-4">
                 <div className="flex items-center gap-2 mb-2">
                   <Building2 className="h-4 w-4 text-amber-500" />
                   <span className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
@@ -250,7 +247,7 @@ function OperatorsFinancial() {
 
           {/* ── Records Table ─────────────────────────────────────────── */}
           {activeTab === "records" && (
-            <div className="rounded-[var(--radius-card)] border border-border bg-surface overflow-hidden mb-6">
+            <div className="rounded-[var(--radius-card)] border-none glass-card border-none overflow-hidden mb-6">
               {recordsQ.isLoading ? (
                 <div className="py-12 text-center text-sm text-muted-foreground animate-pulse">
                   Carregando lançamentos…
@@ -267,7 +264,7 @@ function OperatorsFinancial() {
               ) : (
                 <table className="w-full border-collapse text-left text-xs">
                   <thead>
-                    <tr className="border-b border-border bg-surface-alt font-semibold text-muted-foreground uppercase tracking-widest text-[10px]">
+                    <tr className="border-b border-border glass bg-white/5 border-white/10 font-semibold text-muted-foreground uppercase tracking-widest text-[10px]">
                       <th className="p-4">Viagem / Destino</th>
                       <th className="p-4">Descrição</th>
                       <th className="p-4">Tipo</th>
@@ -277,7 +274,7 @@ function OperatorsFinancial() {
                   </thead>
                   <tbody className="divide-y divide-border">
                     {filteredRecords.map((r) => (
-                      <tr key={r.id} className="hover:bg-surface-alt/50 transition-colors">
+                      <tr key={r.id} className="hover:glass bg-white/5 border-white/10/50 transition-colors">
                         <td className="p-4">
                           <div className="font-semibold text-foreground">
                             {r.trip?.title ?? "Viagem não vinculada"}
@@ -316,7 +313,7 @@ function OperatorsFinancial() {
 
           {/* ── Installments Table ─────────────────────────────────────── */}
           {activeTab === "installments" && (
-            <div className="rounded-[var(--radius-card)] border border-border bg-surface overflow-hidden mb-6">
+            <div className="rounded-[var(--radius-card)] border-none glass-card border-none overflow-hidden mb-6">
               {installmentsQ.isLoading ? (
                 <div className="py-12 text-center text-sm text-muted-foreground animate-pulse">
                   Carregando parcelas…
@@ -335,7 +332,7 @@ function OperatorsFinancial() {
               ) : (
                 <table className="w-full border-collapse text-left text-xs">
                   <thead>
-                    <tr className="border-b border-border bg-surface-alt font-semibold text-muted-foreground uppercase tracking-widest text-[10px]">
+                    <tr className="border-b border-border glass bg-white/5 border-white/10 font-semibold text-muted-foreground uppercase tracking-widest text-[10px]">
                       <th className="p-4">Viagem</th>
                       <th className="p-4">Parcela</th>
                       <th className="p-4">Vencimento</th>
@@ -347,7 +344,7 @@ function OperatorsFinancial() {
                   </thead>
                   <tbody className="divide-y divide-border">
                     {filteredInstallments.map((i) => (
-                      <tr key={i.id} className="hover:bg-surface-alt/50 transition-colors">
+                      <tr key={i.id} className="hover:glass bg-white/5 border-white/10/50 transition-colors">
                         <td className="p-4">
                           <div className="font-semibold text-foreground">
                             {i.plan?.trip?.title ?? "—"}
@@ -393,7 +390,7 @@ function OperatorsFinancial() {
           )}
 
           {/* ── Disclaimer ────────────────────────────────────────────── */}
-          <div className="flex items-start gap-2 rounded-2xl border border-border bg-surface p-4 text-[11px] text-muted-foreground">
+          <div className="flex items-start gap-2 rounded-[var(--radius-card)] border-none glass-card border-none p-4 text-[11px] text-muted-foreground">
             <ExternalLink className="h-3.5 w-3.5 shrink-0 mt-0.5 text-muted-foreground" />
             <span>
               Os valores acima <strong>não entram no fluxo de caixa contábil da agência</strong>.

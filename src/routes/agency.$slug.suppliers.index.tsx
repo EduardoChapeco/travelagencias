@@ -29,8 +29,7 @@ import {
 import { supabase } from "@/integrations/supabase/client";
 import { useAgency } from "@/lib/agency-context";
 import { EmptyState } from "@/components/shell/PageHeader";
-import { HeaderPortal } from "@/components/shell/HeaderPortal";
-import { ModuleToolbar, ModuleActionButton } from "@/components/shell/ModuleToolbar";
+import { PageHeader, ModuleActionButton } from "@/components/shell/PageHeader";
 import { ModuleAdminPanel } from "@/components/shell/ModuleAdminPanel";
 import { PrimaryButton, GhostButton, StatusBadge } from "@/components/ui/form";
 import { cn } from "@/lib/utils";
@@ -118,16 +117,16 @@ function SupplierCardGrid({ s, slug }: { s: Supplier; slug: string }) {
       to="/agency/$slug/suppliers/$id"
       params={{ slug, id: s.id }}
       className={cn(
-        "group flex flex-col rounded-[var(--radius-card)] border border-border bg-surface p-5 transition-all duration-200 hover:border-brand/40 shadow-xs",
+        "group flex flex-col rounded-[var(--radius-card)] border-none glass-card border-none p-5 transition-all duration-200 hover:border-brand/40 shadow-xs",
         !s.is_active && "opacity-60",
       )}
     >
       {/* Header */}
       <div className="flex items-start justify-between mb-4">
         <div className="flex items-center gap-3">
-          <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-[var(--radius-card)] border border-border bg-surface">
+          <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-[var(--radius-card)] border-none glass-card border-none">
             {s.logo_url ? (
-              <img src={s.logo_url} alt={s.name} className="h-8 w-8 object-contain rounded-2xl" />
+              <img src={s.logo_url} alt={s.name} className="h-8 w-8 object-contain rounded-[var(--radius-card)]" />
             ) : (
               <Icon className={cn("h-5 w-5", cfg.color)} />
             )}
@@ -181,7 +180,7 @@ function SupplierCardGrid({ s, slug }: { s: Supplier; slug: string }) {
           {s.tags.slice(0, 3).map((t) => (
             <span
               key={t}
-              className="rounded-full border border-border bg-surface px-1.5 py-0.5 text-[10px] text-muted-foreground uppercase tracking-wide"
+              className="rounded-full border-none glass-card border-none px-1.5 py-0.5 text-[10px] text-muted-foreground uppercase tracking-wide"
             >
               {t}
             </span>
@@ -210,12 +209,12 @@ function SupplierRow({ s, slug }: { s: Supplier; slug: string }) {
       to="/agency/$slug/suppliers/$id"
       params={{ slug, id: s.id }}
       className={cn(
-        "group flex items-center gap-4 border-b border-border bg-surface/30 px-5 py-3 transition-colors",
-        "hover:bg-surface/60 last:border-0",
+        "group flex items-center gap-4 border-b border-border glass-card border-none/30 px-5 py-3 transition-colors",
+        "hover:glass-card border-none/60 last:border-0",
         !s.is_active && "opacity-60",
       )}
     >
-      <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-2xl border border-border bg-surface">
+      <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-[var(--radius-card)] border-none glass-card border-none">
         {s.logo_url ? (
           <img src={s.logo_url} alt={s.name} className="h-6 w-6 object-contain rounded" />
         ) : (
@@ -298,8 +297,7 @@ function SuppliersPage() {
 
   return (
     <div className="flex h-full flex-col overflow-hidden">
-      <HeaderPortal>
-        <ModuleToolbar
+              <PageHeader
           title="Fornecedores"
           search={{
             value: search,
@@ -339,8 +337,7 @@ function SuppliersPage() {
             </div>
           }
         />
-      </HeaderPortal>
-
+      
       <ModuleActionButton
         label="Novo Fornecedor"
         icon={<Plus className="h-3.5 w-3.5" />}
@@ -387,15 +384,15 @@ function SuppliersPage() {
               Visão Geral
             </div>
             <div className="grid grid-cols-2 gap-2">
-              <div className="rounded-2xl border border-white/10 bg-white/5 p-2 text-center">
+              <div className="rounded-[var(--radius-card)] border border-white/10 bg-white/5 p-2 text-center">
                 <div className="text-lg font-bold text-white">{stats.total}</div>
                 <div className="text-[10px] text-white/50">Total</div>
               </div>
-              <div className="rounded-2xl border border-white/10 bg-white/5 p-2 text-center">
+              <div className="rounded-[var(--radius-card)] border border-white/10 bg-white/5 p-2 text-center">
                 <div className="text-lg font-bold text-green-400">{stats.active}</div>
                 <div className="text-[10px] text-white/50">Ativos</div>
               </div>
-              <div className="col-span-2 rounded-2xl border border-white/10 bg-white/5 p-2 text-center">
+              <div className="col-span-2 rounded-[var(--radius-card)] border border-white/10 bg-white/5 p-2 text-center">
                 <div className="text-lg font-bold text-pink-400 font-mono">
                   {stats.avgCommission}%
                 </div>
@@ -441,9 +438,9 @@ function SuppliersPage() {
             )}
 
             {filtered.length > 0 && viewMode === "list" && (
-              <div className="rounded-[var(--radius-card)] border border-border overflow-hidden">
+              <div className="rounded-[var(--radius-card)] border-none overflow-hidden">
                 {/* List header */}
-                <div className="flex items-center gap-4 bg-surface px-5 py-2 border-b border-border">
+                <div className="flex items-center gap-4 glass-card border-none px-5 py-2 border-b border-border">
                   <div className="w-8 shrink-0" />
                   <div className="flex-1 text-[10px] font-semibold uppercase tracking-widest text-muted-foreground">
                     Parceiro

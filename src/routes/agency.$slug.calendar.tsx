@@ -27,8 +27,7 @@ import {
 import { supabase } from "@/integrations/supabase/client";
 import { useAgency } from "@/lib/agency-context";
 import { useConfirm } from "@/hooks/use-confirm";
-import { HeaderPortal } from "@/components/shell/HeaderPortal";
-import { ModuleToolbar, ModuleActionButton } from "@/components/shell/ModuleToolbar";
+import { PageHeader, ModuleActionButton } from "@/components/shell/PageHeader";
 import { ModuleAdminPanel } from "@/components/shell/ModuleAdminPanel";
 import {
   fetchAgencyMeetings,
@@ -251,8 +250,7 @@ function CalendarPage() {
         onClose={() => setSelectedTask(null)}
         onUpdated={() => tasksQ.refetch()}
       />
-      <HeaderPortal>
-        <ModuleToolbar
+              <PageHeader
           title={`${MONTHS[month]} ${year}`}
           actions={
             <div className="flex items-center gap-1.5">
@@ -316,8 +314,7 @@ function CalendarPage() {
             </div>
           }
         />
-      </HeaderPortal>
-
+      
       <ModuleActionButton
         label="Novo Evento"
         icon={<Plus className="h-3.5 w-3.5" />}
@@ -337,8 +334,8 @@ function CalendarPage() {
           </div>
         )}
 
-        <div className="bg-surface border border-border/70 rounded-[var(--radius-card)] overflow-hidden h-full flex flex-col">
-          <div className="grid grid-cols-7 border-b border-border bg-surface-alt/10">
+        <div className="glass-card border-none border-none/70 rounded-[var(--radius-card)] overflow-hidden h-full flex flex-col">
+          <div className="grid grid-cols-7 border-b border-border glass bg-white/5 border-white/10/10">
             {WEEKDAYS.map((day) => (
               <div
                 key={day}
@@ -455,7 +452,7 @@ function CalendarPage() {
           onPointerDown={() => setSelectedMeeting(null)}
         >
           <div
-            className="w-full max-w-md bg-surface border border-border rounded-2xl p-6 space-y-4"
+            className="w-full max-w-md glass-card border-none border-none rounded-[var(--radius-card)] p-6 space-y-4"
             onPointerDown={(e) => e.stopPropagation()}
           >
             <div className="flex items-start justify-between border-b border-border/40 pb-3">
@@ -482,7 +479,7 @@ function CalendarPage() {
                   <span className="text-[10px] uppercase font-bold text-muted-foreground block">
                     Notas / Descrição
                   </span>
-                  <p className="bg-surface-alt/20 p-2.5 rounded-2xl border border-border/50 text-foreground/80 leading-relaxed">
+                  <p className="glass bg-white/5 border-white/10/20 p-2.5 rounded-[var(--radius-card)] border-none/50 text-foreground/80 leading-relaxed">
                     {selectedMeeting.description}
                   </p>
                 </div>
@@ -512,7 +509,7 @@ function CalendarPage() {
                 </div>
               </div>
 
-              <div className="bg-surface-alt/10 border border-border p-3.5 rounded-[var(--radius-card)] flex items-center justify-between gap-4">
+              <div className="glass bg-white/5 border-white/10/10 border-none p-3.5 rounded-[var(--radius-card)] flex items-center justify-between gap-4">
                 <div>
                   <span className="text-[10px] uppercase font-bold text-muted-foreground block">
                     Lead Associado
@@ -525,7 +522,7 @@ function CalendarPage() {
                   <Link
                     to="/agency/$slug/crm/$lead_id"
                     params={{ slug, lead_id: selectedMeeting.lead_id }}
-                    className="inline-flex h-8 items-center gap-1 px-3 bg-brand/5 hover:bg-brand/10 text-brand text-xs font-bold rounded-2xl border border-brand/15 transition-colors"
+                    className="inline-flex h-8 items-center gap-1 px-3 bg-brand/5 hover:bg-brand/10 text-brand text-xs font-bold rounded-[var(--radius-card)] border border-brand/15 transition-colors"
                   >
                     Abrir Lead <ExternalLink className="h-3.5 w-3.5" />
                   </Link>
@@ -545,10 +542,10 @@ function CalendarPage() {
                       toast.error(err.message || "Erro na sincronização", { id: toastId });
                     }
                   }}
-                  className={`flex-1 h-9 rounded-2xl font-bold text-xs uppercase border transition-colors flex items-center justify-center gap-1.5 cursor-pointer ${
+                  className={`flex-1 h-9 rounded-[var(--radius-card)] font-bold text-xs uppercase border transition-colors flex items-center justify-center gap-1.5 cursor-pointer ${
                     selectedMeeting.google_event_id
                       ? "bg-success/5 text-success border-success/25 cursor-default"
-                      : "bg-surface border-border hover:border-brand/40 text-muted-foreground hover:text-foreground"
+                      : "glass-card border-none border-border hover:border-brand/40 text-muted-foreground hover:text-foreground"
                   }`}
                 >
                   {selectedMeeting.google_event_id ? (
@@ -578,7 +575,7 @@ function CalendarPage() {
                     onConfirm: () => delMut.mutate(),
                   });
                 }}
-                className="inline-flex h-8 items-center gap-1 px-3 bg-danger/5 hover:bg-danger/10 border border-danger/20 text-danger text-xs font-bold rounded-2xl transition-colors cursor-pointer"
+                className="inline-flex h-8 items-center gap-1 px-3 bg-danger/5 hover:bg-danger/10 border border-danger/20 text-danger text-xs font-bold rounded-[var(--radius-card)] transition-colors cursor-pointer"
               >
                 <Trash className="h-3.5 w-3.5" /> Excluir
               </button>
@@ -624,7 +621,7 @@ function CalendarPage() {
                 toast.error("Falha ao agendar compromisso.");
               }
             }}
-            className="w-full max-w-md bg-surface border border-border rounded-2xl p-6 space-y-4 max-h-[90vh] overflow-y-auto"
+            className="w-full max-w-md glass-card border-none border-none rounded-[var(--radius-card)] p-6 space-y-4 max-h-[90vh] overflow-y-auto"
             onPointerDown={(e) => e.stopPropagation()}
           >
             <div className="flex items-center justify-between border-b border-border/40 pb-3">

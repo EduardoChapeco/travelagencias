@@ -5,11 +5,10 @@ import { Plus, Users, Search, Settings2, AlertCircle } from "lucide-react";
 import { fetchGroupTours } from "@/services/tours";
 import { useAgency } from "@/lib/agency-context";
 import { EmptyState } from "@/components/shell/PageHeader";
-import { HeaderPortal } from "@/components/shell/HeaderPortal";
 import { ModuleAdminPanel } from "@/components/shell/ModuleAdminPanel";
 import { NewGroupTourWizard } from "@/components/group-tours/NewGroupTourWizard";
 import { StatusBadge, fmtDate, money } from "@/components/ui/form";
-import { ModuleToolbar, ModuleActionButton } from "@/components/shell/ModuleToolbar";
+import { PageHeader, ModuleActionButton } from "@/components/shell/PageHeader";
 
 export const Route = createFileRoute("/agency/$slug/group-tours/")({
   head: ({ context }: any) => ({ meta: [{ title: `Excursões em grupo · ${context?.brand?.platform_name || 'Turis'}` }] }),
@@ -44,8 +43,7 @@ function GroupToursPage() {
 
   return (
     <div className="flex h-full flex-col overflow-hidden bg-transparent">
-      <HeaderPortal>
-        <ModuleToolbar
+              <PageHeader
           title="Excursões"
           search={{
             value: qSearch,
@@ -74,8 +72,7 @@ function GroupToursPage() {
             )
           }
         />
-      </HeaderPortal>
-
+      
       <ModuleActionButton
         label="Nova Excursão"
         icon={<Plus className="h-3.5 w-3.5" />}
@@ -108,7 +105,7 @@ function GroupToursPage() {
                   key={t.id}
                   to="/agency/$slug/group-tours/$id"
                   params={{ slug, id: t.id }}
-                  className="rounded-2xl border border-border bg-surface p-5 hover:border-border-strong transition-all duration-200"
+                  className="rounded-[var(--radius-card)] border-none glass-card border-none p-5 hover:border-border-strong transition-all duration-200"
                 >
                   <div className="flex items-start justify-between gap-2">
                     <div>
@@ -183,7 +180,7 @@ function GroupToursPage() {
                       </div>
                     </div>
                   </div>
-                  <div className="mt-2 h-1.5 overflow-hidden rounded bg-surface-alt">
+                  <div className="mt-2 h-1.5 overflow-hidden rounded glass bg-white/5 border-white/10">
                     <div className="h-full bg-primary" style={{ width: `${occupancy}%` }} />
                   </div>
                 </Link>

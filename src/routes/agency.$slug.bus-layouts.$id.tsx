@@ -6,7 +6,6 @@ import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { useAgency } from "@/lib/agency-context";
 import { PageHeader } from "@/components/shell/PageHeader";
-import { HeaderPortal } from "@/components/shell/HeaderPortal";
 import { PrimaryButton, GhostButton, Input, Sheet, Field, Select } from "@/components/ui/form";
 import { cn } from "@/lib/utils";
 
@@ -129,19 +128,18 @@ function BusLayoutEditorPage() {
 
   return (
     <div className="p-4 md:p-6 max-w-5xl mx-auto space-y-6">
-      <HeaderPortal>
-        <div className="flex items-center gap-2">
+              <div className="flex items-center gap-2">
           <GhostButton
             onClick={() => setEditOpen(true)}
             type="button"
-            className="text-xs h-8 bg-surface border border-border text-foreground hover:bg-surface-alt"
+            className="text-xs h-8 glass-card border-none border-none text-foreground hover:glass bg-white/5 border-white/10"
           >
             <Settings2 className="h-3.5 w-3.5 mr-1.5" /> Editar Cadastro
           </GhostButton>
           <GhostButton
             onClick={() => generateDefaultMap(l.rows, l.cols)}
             type="button"
-            className="text-xs h-8 bg-surface border border-border text-foreground hover:bg-surface-alt"
+            className="text-xs h-8 glass-card border-none border-none text-foreground hover:glass bg-white/5 border-white/10"
           >
             <RefreshCcw className="h-3.5 w-3.5 mr-1.5" /> Recriar Matriz
           </GhostButton>
@@ -153,14 +151,13 @@ function BusLayoutEditorPage() {
             <Save className="h-3.5 w-3.5" /> {saving ? "Salvando..." : "Salvar Layout"}
           </PrimaryButton>
         </div>
-      </HeaderPortal>
-
+      
       <PageHeader
         title={l.name}
         description="Selecione uma ferramenta na barra de edição e clique nas células do veículo para pintar."
       />
 
-      <div className="flex flex-col md:flex-row gap-4 items-center justify-between bg-surface border border-border p-4 rounded-[var(--radius-card)] shadow-xs">
+      <div className="flex flex-col md:flex-row gap-4 items-center justify-between glass-card border-none border-none p-4 rounded-[var(--radius-card)] shadow-xs">
         <div className="flex flex-wrap items-center gap-2">
           <span className="text-xs font-bold text-muted-foreground mr-2">Ferramenta Ativa:</span>
           {(["seat", "aisle", "wc", "door"] as const).map((t) => (
@@ -169,10 +166,10 @@ function BusLayoutEditorPage() {
               type="button"
               onClick={() => setActiveTool(t)}
               className={cn(
-                "px-3 py-1.5 rounded-2xl text-xs font-bold border transition-all flex items-center gap-1.5 cursor-pointer",
+                "px-3 py-1.5 rounded-[var(--radius-card)] text-xs font-bold border transition-all flex items-center gap-1.5 cursor-pointer",
                 activeTool === t
                   ? "bg-brand text-white border-brand shadow-xs"
-                  : "bg-surface border-border text-muted-foreground hover:text-foreground hover:bg-surface-alt"
+                  : "glass-card border-none border-border text-muted-foreground hover:text-foreground hover:glass bg-white/5 border-white/10"
               )}
             >
               {t === "seat" && "💺 Poltrona"}
@@ -187,7 +184,7 @@ function BusLayoutEditorPage() {
           <GhostButton
             type="button"
             onClick={autoNumberSeats}
-            className="text-xs h-8 bg-surface border border-border text-foreground hover:bg-surface-alt flex items-center gap-1 font-bold"
+            className="text-xs h-8 glass-card border-none border-none text-foreground hover:glass bg-white/5 border-white/10 flex items-center gap-1 font-bold"
           >
             🔢 Autonumerar
           </GhostButton>
@@ -203,7 +200,7 @@ function BusLayoutEditorPage() {
 
       <div className="flex justify-center mt-6">
         <div
-          className="bg-surface border border-border rounded-[var(--radius-card)] p-8 "
+          className="glass-card border-none border-none rounded-[var(--radius-card)] p-8 "
           style={{
             display: "grid",
             gridTemplateColumns: `repeat(${l.cols}, minmax(0, 1fr))`,
@@ -216,10 +213,10 @@ function BusLayoutEditorPage() {
                 type="button"
                 onClick={() => handleCellClick(idx)}
                 className={cn(
-                  "flex h-16 w-16 items-center justify-center rounded-2xl border-2 text-xs font-semibold transition-colors focus:outline-none",
+                  "flex h-16 w-16 items-center justify-center rounded-[var(--radius-card)] border-2 text-xs font-semibold transition-colors focus:outline-none",
                   cell.type === "seat" && "border-brand bg-brand/5 text-brand hover:bg-brand/10",
                   cell.type === "aisle" &&
-                    "border-dashed border-border bg-transparent text-muted-foreground/30 hover:bg-surface-alt",
+                    "border-dashed border-border bg-transparent text-muted-foreground/30 hover:glass bg-white/5 border-white/10",
                   cell.type === "wc" && "border-info/20 bg-info-bg text-info",
                   cell.type === "door" && "border-orange-200 bg-orange-50 text-orange-600",
                 )}

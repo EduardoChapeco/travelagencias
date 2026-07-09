@@ -70,7 +70,7 @@ function TripOverview() {
     <div className="flex-1 overflow-y-auto px-4 md:px-6 py-5 min-h-0">
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-[1fr_280px]">
         <form
-          className="space-y-4 rounded-2xl border border-border bg-surface p-6 "
+          className="space-y-4 rounded-[var(--radius-card)] border-none glass-card border-none p-6 "
           onSubmit={(e) => {
             e.preventDefault();
             save.mutate({
@@ -94,14 +94,14 @@ function TripOverview() {
               <Input
                 value={t.title}
                 onChange={(e) => setForm({ ...t, title: e.target.value })}
-                className="bg-surface-alt"
+                className="glass bg-white/5 border-white/10"
               />
             </Field>
             <Field label="Código Interno (Opcional)">
               <Input
                 value={t.code ?? ""}
                 onChange={(e) => setForm({ ...t, code: e.target.value })}
-                className="bg-surface-alt"
+                className="glass bg-white/5 border-white/10"
               />
             </Field>
           </div>
@@ -110,14 +110,14 @@ function TripOverview() {
               <Input
                 value={t.destination ?? ""}
                 onChange={(e) => setForm({ ...t, destination: e.target.value })}
-                className="bg-surface-alt"
+                className="glass bg-white/5 border-white/10"
               />
             </Field>
             <Field label="Cliente Responsável">
               <Select
                 value={t.client_id ?? ""}
                 onChange={(e) => setForm({ ...t, client_id: e.target.value || null })}
-                className="bg-surface-alt"
+                className="glass bg-white/5 border-white/10"
               >
                 <option value="">— Sem cliente ainda —</option>
                 {(clientsQ.data ?? []).map((c: any) => (
@@ -134,7 +134,7 @@ function TripOverview() {
                 type="date"
                 value={t.travel_start ?? ""}
                 onChange={(e) => setForm({ ...t, travel_start: e.target.value || null })}
-                className="bg-surface-alt"
+                className="glass bg-white/5 border-white/10"
               />
             </Field>
             <Field label="Data de Volta">
@@ -142,7 +142,7 @@ function TripOverview() {
                 type="date"
                 value={t.travel_end ?? ""}
                 onChange={(e) => setForm({ ...t, travel_end: e.target.value || null })}
-                className="bg-surface-alt"
+                className="glass bg-white/5 border-white/10"
               />
             </Field>
           </div>
@@ -151,7 +151,7 @@ function TripOverview() {
               <Select
                 value={t.status}
                 onChange={(e) => setForm({ ...t, status: e.target.value })}
-                className="bg-surface-alt"
+                className="glass bg-white/5 border-white/10"
               >
                 <option value="planning">Em Planejamento</option>
                 <option value="confirmed">Confirmada</option>
@@ -167,7 +167,7 @@ function TripOverview() {
                 step="0.01"
                 value={t.total_sale}
                 onChange={(e) => setForm({ ...t, total_sale: +e.target.value || 0 })}
-                className="bg-surface-alt"
+                className="glass bg-white/5 border-white/10"
               />
             </Field>
             <Field label="Custo Líquido (R$)">
@@ -177,7 +177,7 @@ function TripOverview() {
                 step="0.01"
                 value={t.total_cost}
                 onChange={(e) => setForm({ ...t, total_cost: +e.target.value || 0 })}
-                className="bg-surface-alt"
+                className="glass bg-white/5 border-white/10"
               />
             </Field>
           </div>
@@ -185,7 +185,7 @@ function TripOverview() {
             <Textarea
               value={t.notes ?? ""}
               onChange={(e) => setForm({ ...t, notes: e.target.value })}
-              className="bg-surface-alt min-h-[100px]"
+              className="glass bg-white/5 border-white/10 min-h-[100px]"
             />
           </Field>
           <div className="pt-2 flex justify-end">
@@ -202,7 +202,7 @@ function TripOverview() {
         </form>
 
         <aside className="space-y-4">
-          <div className="rounded-2xl border border-border bg-surface p-5 ">
+          <div className="rounded-[var(--radius-card)] border-none glass-card border-none p-5 ">
             <h3 className="mb-4 text-xs font-bold uppercase tracking-widest text-muted-foreground">
               Rentabilidade (P&L)
             </h3>
@@ -231,7 +231,7 @@ function TripOverview() {
             <Link
               to="/agency/$slug/proposals/$id"
               params={{ slug, id: t.proposal_id }}
-              className="block rounded-2xl border border-border bg-surface p-4 text-sm hover:border-brand/50 hover:bg-brand/5 transition-colors "
+              className="block rounded-[var(--radius-card)] border-none glass-card border-none p-4 text-sm hover:border-brand/50 hover:bg-brand/5 transition-colors "
             >
               <div className="text-muted-foreground text-xs font-semibold uppercase tracking-wider mb-1">
                 Origem
@@ -243,7 +243,7 @@ function TripOverview() {
             <Link
               to="/agency/$slug/clients/$id"
               params={{ slug, id: t.client_id }}
-              className="block rounded-2xl border border-border bg-surface p-4 text-sm hover:border-brand/50 hover:bg-brand/5 transition-colors "
+              className="block rounded-[var(--radius-card)] border-none glass-card border-none p-4 text-sm hover:border-brand/50 hover:bg-brand/5 transition-colors "
             >
               <div className="text-muted-foreground text-xs font-semibold uppercase tracking-wider mb-1">
                 Titular

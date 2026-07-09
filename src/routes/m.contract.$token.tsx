@@ -701,7 +701,7 @@ function Page() {
             className="h-12 w-12 rounded-[var(--radius-card)] object-cover ring-1 ring-border/50 print:h-14 print:w-14 print:ring-0"
           />
         ) : (
-          <div className="flex h-12 w-12 items-center justify-center rounded-[var(--radius-card)] bg-surface-alt font-bold text-muted-foreground ring-1 ring-border/50 print:h-14 print:w-14 print:ring-0 print:bg-transparent print:border">
+          <div className="flex h-12 w-12 items-center justify-center rounded-[var(--radius-card)] glass bg-white/5 border-white/10 font-bold text-muted-foreground ring-1 ring-border/50 print:h-14 print:w-14 print:ring-0 print:bg-transparent print:border">
             {c.agency_name.charAt(0)}
           </div>
         )}
@@ -715,8 +715,8 @@ function Page() {
         </div>
       </header>
 
-      <section className="mb-6 overflow-hidden rounded-[var(--radius-card)] bg-surface ring-1 ring-border/50 print:ring-0 print:border-0 print:bg-transparent print:shadow-none print:mb-8">
-        <div className="border-b border-border/50 bg-surface-alt/30 px-5 py-3 print:bg-transparent print:px-0 print:py-1 print:border-black">
+      <section className="mb-6 overflow-hidden rounded-[var(--radius-card)] glass-card border-none ring-1 ring-border/50 print:ring-0 print:border-0 print:bg-transparent print:shadow-none print:mb-8">
+        <div className="border-b border-border/50 glass bg-white/5 border-white/10/30 px-5 py-3 print:bg-transparent print:px-0 print:py-1 print:border-black">
           <h2 className="text-xs font-bold uppercase tracking-widest text-muted-foreground print:text-black print:text-[10px]">
             Contratante(s) / Pagante(s)
           </h2>
@@ -760,7 +760,7 @@ function Page() {
           )}
         </div>
 
-        <div className="border-b border-t border-border/50 bg-surface-alt/30 px-5 py-3 print:bg-transparent print:px-0 print:py-1 print:border-black print:mt-6">
+        <div className="border-b border-t border-border/50 glass bg-white/5 border-white/10/30 px-5 py-3 print:bg-transparent print:px-0 print:py-1 print:border-black print:mt-6">
           <h2 className="text-xs font-bold uppercase tracking-widest text-muted-foreground print:text-black print:text-[10px]">
             Resumo Executivo
           </h2>
@@ -769,7 +769,7 @@ function Page() {
           <p className="whitespace-pre-line text-sm leading-relaxed text-foreground/80 print:text-black print:text-[11px]">
             {c.package_summary || "—"}
           </p>
-          <div className="mt-5 grid grid-cols-2 gap-4 rounded-2xl bg-surface-alt/30 p-4 print:bg-transparent print:border print:border-black print:p-3 print:mt-4">
+          <div className="mt-5 grid grid-cols-2 gap-4 rounded-[var(--radius-card)] glass bg-white/5 border-white/10/30 p-4 print:bg-transparent print:border print:border-black print:p-3 print:mt-4">
             <div>
               <div className="text-[10px] font-semibold uppercase tracking-widest text-muted-foreground print:text-black print:text-[9px]">
                 Valor total
@@ -791,8 +791,8 @@ function Page() {
         </div>
       </section>
 
-      <section className="mb-8 overflow-hidden rounded-[var(--radius-card)] bg-surface ring-1 ring-border/50 print:ring-0 print:border-0 print:bg-transparent print:shadow-none print:mb-8 print:break-inside-avoid">
-        <div className="border-b border-border/50 bg-surface-alt/30 px-5 py-3 flex items-center justify-between print:bg-transparent print:px-0 print:py-1 print:border-black">
+      <section className="mb-8 overflow-hidden rounded-[var(--radius-card)] glass-card border-none ring-1 ring-border/50 print:ring-0 print:border-0 print:bg-transparent print:shadow-none print:mb-8 print:break-inside-avoid">
+        <div className="border-b border-border/50 glass bg-white/5 border-white/10/30 px-5 py-3 flex items-center justify-between print:bg-transparent print:px-0 print:py-1 print:border-black">
           <h2 className="text-xs font-bold uppercase tracking-widest text-muted-foreground print:text-black print:text-[10px]">
             Termos e Cláusulas
           </h2>
@@ -825,7 +825,7 @@ function Page() {
       {c.signatures && c.signatures.length > 0 && (
         <div className="space-y-6 animate-in fade-in duration-500 mb-6 print:mt-10">
           <section
-            className="overflow-hidden rounded-2xl border border-success/35 bg-success-bg/5 p-6 md:p-8 space-y-6 md:space-y-8 print:ring-0 print:border-0 print:bg-transparent print:p-0 print:shadow-none print:break-inside-avoid print:mt-8"
+            className="overflow-hidden rounded-[var(--radius-card)] border border-success/35 bg-success-bg/5 p-6 md:p-8 space-y-6 md:space-y-8 print:ring-0 print:border-0 print:bg-transparent print:p-0 print:shadow-none print:break-inside-avoid print:mt-8"
             id="signature-chancery"
           >
             {/* Header: Certificate Title & Seal */}
@@ -857,7 +857,7 @@ function Page() {
                   </div>
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-6 text-xs text-foreground/80 print:gap-4 print:text-black">
                     {/* Signatory Data */}
-                    <div className="space-y-3 bg-surface-alt/30 p-4 rounded-[var(--radius-card)] border border-border/40 hover:border-success/20 transition-colors print:bg-transparent print:border-black print:text-black">
+                    <div className="space-y-3 glass bg-white/5 border-white/10/30 p-4 rounded-[var(--radius-card)] border-none/40 hover:border-success/20 transition-colors print:bg-transparent print:border-black print:text-black">
                       <div className="font-bold text-muted-foreground uppercase tracking-widest text-[9px] print:text-black">
                         Signatário Autorizado
                       </div>
@@ -877,7 +877,7 @@ function Page() {
                     </div>
 
                     {/* Biometrics & KYC */}
-                    <div className="space-y-3 bg-surface-alt/30 p-4 rounded-[var(--radius-card)] border border-border/40 hover:border-success/20 transition-colors flex flex-col justify-between print:bg-transparent print:border-black print:text-black">
+                    <div className="space-y-3 glass bg-white/5 border-white/10/30 p-4 rounded-[var(--radius-card)] border-none/40 hover:border-success/20 transition-colors flex flex-col justify-between print:bg-transparent print:border-black print:text-black">
                       <div>
                         <div className="font-bold text-muted-foreground uppercase tracking-widest text-[9px] mb-2.5 print:text-black">
                           Validação Biométrica (KYC)
@@ -908,13 +908,13 @@ function Page() {
                           <div className="text-muted-foreground text-[10px] print:text-black">Sem selfie arquivada</div>
                         )}
                       </div>
-                      <div className="text-[9px] font-mono leading-none break-all text-muted-foreground bg-surface/80 p-2 rounded border border-border/20 mt-2 print:bg-transparent print:border-black print:text-black">
+                      <div className="text-[9px] font-mono leading-none break-all text-muted-foreground glass-card border-none/80 p-2 rounded border-none/20 mt-2 print:bg-transparent print:border-black print:text-black">
                         Hash: {c.content_hash?.slice(0, 32)}...
                       </div>
                     </div>
 
                     {/* Signature Image */}
-                    <div className="flex flex-col items-center justify-center bg-white border border-border/50 rounded-[var(--radius-card)] p-4 hover:border-success/20 transition-colors print:border-black print:bg-transparent">
+                    <div className="flex flex-col items-center justify-center bg-white border-none/50 rounded-[var(--radius-card)] p-4 hover:border-success/20 transition-colors print:border-black print:bg-transparent">
                       {sig.signature_image ? (
                         <img
                           src={
@@ -948,7 +948,7 @@ function Page() {
                                 .getPublicUrl(sig.video_kyc).data.publicUrl
                         }
                         controls
-                        className="h-28 rounded-[var(--radius-card)] border border-border bg-black max-w-[200px]"
+                        className="h-28 rounded-[var(--radius-card)] border-none bg-black max-w-[200px]"
                       />
                     </div>
                   )}
@@ -966,7 +966,7 @@ function Page() {
                   {auditTrail.map((log) => (
                     <div
                       key={log.id}
-                      className="flex items-start justify-between text-[11px] py-2 border-b border-border/30 last:border-0 hover:bg-success-bg/5 px-2 rounded-2xl transition-colors print:border-black/10 print:py-1 print:px-0 print:text-black"
+                      className="flex items-start justify-between text-[11px] py-2 border-b border-border/30 last:border-0 hover:bg-success-bg/5 px-2 rounded-[var(--radius-card)] transition-colors print:border-black/10 print:py-1 print:px-0 print:text-black"
                     >
                       <div className="flex items-start gap-2.5">
                         <span className="inline-block mt-0.5 rounded-full bg-success/15 text-success p-0.5 print:hidden">
@@ -1027,8 +1027,8 @@ function Page() {
             )}
           </section>
           {addendums.length > 0 && (
-            <section className="overflow-hidden rounded-[var(--radius-card)] bg-surface ring-1 ring-border/50">
-              <div className="border-b border-border/50 bg-surface-alt/30 px-5 py-3">
+            <section className="overflow-hidden rounded-[var(--radius-card)] glass-card border-none ring-1 ring-border/50">
+              <div className="border-b border-border/50 glass bg-white/5 border-white/10/30 px-5 py-3">
                 <h2 className="text-xs font-bold uppercase tracking-widest text-muted-foreground">
                   Aditivos e Retificações de Contrato
                 </h2>
@@ -1039,7 +1039,7 @@ function Page() {
                   return (
                     <div
                       key={ad.id}
-                      className="rounded-2xl border border-border p-4 bg-surface-alt/10 space-y-3"
+                      className="rounded-[var(--radius-card)] border-none p-4 glass bg-white/5 border-white/10/10 space-y-3"
                     >
                       <div className="flex items-center justify-between">
                         <span className="text-xs font-bold text-foreground">{ad.title}</span>
@@ -1088,10 +1088,10 @@ function Page() {
       )}
       {!fullySigned && (
         <section
-          className="overflow-hidden rounded-[var(--radius-card)] bg-surface ring-1 ring-border/50 mt-6"
+          className="overflow-hidden rounded-[var(--radius-card)] glass-card border-none ring-1 ring-border/50 mt-6"
           id="interactive-signature-form"
         >
-          <div className="border-b border-border/50 bg-surface-alt/30 px-5 py-3">
+          <div className="border-b border-border/50 glass bg-white/5 border-white/10/30 px-5 py-3">
             <h2 className="text-xs font-bold uppercase tracking-widest text-muted-foreground">
               Verificação e Assinatura Legal
             </h2>
@@ -1118,7 +1118,7 @@ function Page() {
                       setDoc("");
                     }
                   }}
-                  className="w-full h-10 px-3 rounded-2xl border border-border bg-surface text-sm outline-none focus:border-brand text-foreground"
+                  className="w-full h-10 px-3 rounded-[var(--radius-card)] border-none glass-card border-none text-sm outline-none focus:border-brand text-foreground"
                 >
                   <option value="">Selecione seu nome da lista...</option>
                   {pendingSigners.map((cl: any, idx: number) => (
@@ -1150,7 +1150,7 @@ function Page() {
             </div>
 
             {/* Linha do Tempo / Passos do KYC */}
-            <div className="space-y-4 rounded-[var(--radius-card)] border border-border bg-surface-alt/10 p-4">
+            <div className="space-y-4 rounded-[var(--radius-card)] border-none glass bg-white/5 border-white/10/10 p-4">
               <div className="flex items-center gap-2 border-b border-border/50 pb-2 mb-2">
                 <Shield className="h-4 w-4 text-brand" />
                 <span className="text-xs font-bold text-foreground uppercase tracking-wider">
@@ -1183,7 +1183,7 @@ function Page() {
                         <img
                           src={documentFront}
                           alt="Doc Frente"
-                          className="h-24 rounded border border-border object-cover"
+                          className="h-24 rounded border-none object-cover"
                         />
                         <button
                           type="button"
@@ -1194,7 +1194,7 @@ function Page() {
                         </button>
                       </div>
                     ) : (
-                      <label className="flex flex-col items-center justify-center h-24 rounded-2xl border border-dashed border-border bg-surface cursor-pointer hover:bg-surface-alt/25 transition-colors">
+                      <label className="flex flex-col items-center justify-center h-24 rounded-[var(--radius-card)] border border-dashed border-border glass-card border-none cursor-pointer hover:glass bg-white/5 border-white/10/25 transition-colors">
                         <Upload className="h-4 w-4 text-muted-foreground mb-1" />
                         <span className="text-[10px] font-semibold text-muted-foreground">
                           Selecionar Frente
@@ -1218,7 +1218,7 @@ function Page() {
                         <img
                           src={documentBack}
                           alt="Doc Verso"
-                          className="h-24 rounded border border-border object-cover"
+                          className="h-24 rounded border-none object-cover"
                         />
                         <button
                           type="button"
@@ -1229,7 +1229,7 @@ function Page() {
                         </button>
                       </div>
                     ) : (
-                      <label className="flex flex-col items-center justify-center h-24 rounded-2xl border border-dashed border-border bg-surface cursor-pointer hover:bg-surface-alt/25 transition-colors">
+                      <label className="flex flex-col items-center justify-center h-24 rounded-[var(--radius-card)] border border-dashed border-border glass-card border-none cursor-pointer hover:glass bg-white/5 border-white/10/25 transition-colors">
                         <Upload className="h-4 w-4 text-muted-foreground mb-1" />
                         <span className="text-[10px] font-semibold text-muted-foreground">
                           Selecionar Verso
@@ -1301,7 +1301,7 @@ function Page() {
                       <GhostButton
                         type="button"
                         onClick={takeSelfie}
-                        className="rounded-full border border-border/50 bg-surface text-xs h-9"
+                        className="rounded-full border-none/50 glass-card border-none text-xs h-9"
                       >
                         📷 Tirar Selfie
                       </GhostButton>
@@ -1317,7 +1317,7 @@ function Page() {
                   <span className="text-xs font-bold text-brand font-sans">
                     Análise Biométrica Facial em Andamento...
                   </span>
-                  <div className="w-full bg-surface-alt rounded-full h-1">
+                  <div className="w-full glass bg-white/5 border-white/10 rounded-full h-1">
                     <div
                       className="bg-brand h-1 rounded-full animate-progress"
                       style={{ width: "60%" }}
@@ -1363,7 +1363,7 @@ function Page() {
                         <video
                           src={videoKyc}
                           controls
-                          className="h-24 rounded border border-border bg-black max-w-[160px]"
+                          className="h-24 rounded border-none bg-black max-w-[160px]"
                         />
                         <button
                           type="button"
@@ -1379,7 +1379,7 @@ function Page() {
                     ) : (
                       <div className="flex flex-wrap gap-2">
                         {recording ? (
-                          <div className="flex flex-col items-center justify-center border border-border rounded-2xl p-2 bg-black/5">
+                          <div className="flex flex-col items-center justify-center border-none rounded-[var(--radius-card)] p-2 bg-black/5">
                             <video
                               ref={videoRef}
                               autoPlay
@@ -1396,12 +1396,12 @@ function Page() {
                             <GhostButton
                               type="button"
                               onClick={startVideoRecording}
-                              className="h-9 text-xs font-semibold rounded-full border border-border gap-1.5 bg-surface"
+                              className="h-9 text-xs font-semibold rounded-full border-none gap-1.5 glass-card border-none"
                             >
                               <Video className="h-4 w-4" /> Gravar Vídeo
                             </GhostButton>
 
-                            <label className="flex items-center justify-center px-3 h-9 rounded-full border border-dashed border-border bg-surface cursor-pointer hover:bg-surface-alt/25 transition-colors text-xs font-semibold text-muted-foreground gap-1.5">
+                            <label className="flex items-center justify-center px-3 h-9 rounded-full border border-dashed border-border glass-card border-none cursor-pointer hover:glass bg-white/5 border-white/10/25 transition-colors text-xs font-semibold text-muted-foreground gap-1.5">
                               <Upload className="h-4 w-4" /> Enviar Vídeo
                               <input
                                 type="file"
@@ -1452,7 +1452,7 @@ function Page() {
             </div>
 
             <Field label="Assinatura Digital (Desenhe no quadro abaixo)">
-              <div className="relative overflow-hidden rounded-[var(--radius-card)] border border-border/60 bg-surface-alt/10">
+              <div className="relative overflow-hidden rounded-[var(--radius-card)] border-none/60 glass bg-white/5 border-white/10/10">
                 <canvas
                   ref={sigRef}
                   width={600}
@@ -1477,7 +1477,7 @@ function Page() {
                   !documentBack ||
                   !facialMatchSuccess ||
                   !readConfirmed) && (
-                  <div className="absolute inset-0 flex flex-col items-center justify-center bg-surface-alt/85 backdrop-blur-[1px] p-4 text-center">
+                  <div className="absolute inset-0 flex flex-col items-center justify-center glass bg-white/5 border-white/10/85 backdrop-blur-[1px] p-4 text-center">
                     <Lock className="h-6 w-6 text-muted-foreground mb-1.5 animate-pulse" />
                     <span className="text-xs font-bold text-foreground font-sans">
                       Assinatura Bloqueada
@@ -1493,7 +1493,7 @@ function Page() {
                   <button
                     type="button"
                     onClick={clearSig}
-                    className="absolute bottom-2 right-2 rounded-full bg-surface px-2.5 py-1.5 text-[10px] font-semibold text-muted-foreground hover:text-danger transition-colors border border-border/40 font-sans"
+                    className="absolute bottom-2 right-2 rounded-full glass-card border-none px-2.5 py-1.5 text-[10px] font-semibold text-muted-foreground hover:text-danger transition-colors border-none/40 font-sans"
                   >
                     Limpar Canvas
                   </button>
@@ -1532,7 +1532,7 @@ function Page() {
 function Center({ children }: { children: React.ReactNode }) {
   return (
     <div className="flex min-h-screen items-center justify-center bg-background p-6">
-      <div className="rounded-2xl border border-border bg-surface p-8 text-center">{children}</div>
+      <div className="rounded-[var(--radius-card)] border-none glass-card border-none p-8 text-center">{children}</div>
     </div>
   );
 }
@@ -1633,11 +1633,11 @@ function AdendumSignerPanel({
   }
 
   return (
-    <div className="space-y-3 bg-surface p-3 rounded-2xl border border-border/80 no-print">
+    <div className="space-y-3 glass-card border-none p-3 rounded-[var(--radius-card)] border-none/80 no-print">
       <div className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">
         Desenhe sua assinatura no quadro abaixo para assinar este aditivo
       </div>
-      <div className="relative overflow-hidden rounded border border-border/80 bg-surface-alt/5">
+      <div className="relative overflow-hidden rounded border-none/80 glass bg-white/5 border-white/10/5">
         <canvas
           ref={canvasRef}
           width={400}
@@ -1651,7 +1651,7 @@ function AdendumSignerPanel({
         <button
           type="button"
           onClick={clearSig}
-          className="absolute bottom-1 right-1 rounded bg-surface border px-2 py-0.5 text-[9px] font-semibold text-muted-foreground hover:text-danger"
+          className="absolute bottom-1 right-1 rounded glass-card border-none border px-2 py-0.5 text-[9px] font-semibold text-muted-foreground hover:text-danger"
         >
           Limpar
         </button>

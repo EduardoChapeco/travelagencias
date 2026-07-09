@@ -381,7 +381,7 @@ function TripVouchers() {
         {(vouchersQ.data ?? []).map((v) => (
           <div
             key={v.id}
-            className="group relative rounded-2xl border border-border bg-surface p-4 transition hover:border-border-strong"
+            className="group relative rounded-[var(--radius-card)] border-none glass-card border-none p-4 transition hover:border-border-strong"
           >
             {/* Template badge */}
             <div className="mb-3 flex items-center justify-between">
@@ -435,7 +435,7 @@ function TripVouchers() {
             <div className="mt-3 flex items-center gap-2 border-t border-border pt-3">
               <button
                 onClick={() => editVoucher(v)}
-                className="flex h-7 flex-1 items-center justify-center gap-1 rounded-full border border-border text-xs hover:bg-surface-alt"
+                className="flex h-7 flex-1 items-center justify-center gap-1 rounded-full border-none text-xs hover:glass bg-white/5 border-white/10"
               >
                 <Edit2 className="h-3.5 w-3.5" />
                 Editar
@@ -445,7 +445,7 @@ function TripVouchers() {
                   href={v.pdf_url}
                   target="_blank"
                   rel="noreferrer"
-                  className="flex h-7 items-center gap-1 rounded-full border border-border px-2 text-xs hover:bg-surface-alt"
+                  className="flex h-7 items-center gap-1 rounded-full border-none px-2 text-xs hover:glass bg-white/5 border-white/10"
                 >
                   <Download className="h-3.5 w-3.5" />
                   PDF
@@ -453,7 +453,7 @@ function TripVouchers() {
               )}
               <button
                 onClick={() => setStoryVoucher(v)}
-                className="flex h-7 flex-1 items-center justify-center gap-1 rounded-full border border-border text-xs bg-brand text-brand-foreground hover:opacity-90 font-semibold"
+                className="flex h-7 flex-1 items-center justify-center gap-1 rounded-full border-none text-xs bg-brand text-brand-foreground hover:opacity-90 font-semibold"
               >
                 <Instagram className="h-3.5 w-3.5" />
                 Story
@@ -467,7 +467,7 @@ function TripVouchers() {
                     onConfirm: () => deleteVoucher.mutate(v.id),
                   });
                 }}
-                className="flex h-7 items-center justify-center rounded-full border border-border px-2 text-muted-foreground hover:bg-danger-bg hover:text-danger hover:border-danger"
+                className="flex h-7 items-center justify-center rounded-full border-none px-2 text-muted-foreground hover:bg-danger-bg hover:text-danger hover:border-danger"
               >
                 <Trash2 className="h-3.5 w-3.5" />
               </button>
@@ -482,7 +482,7 @@ function TripVouchers() {
           onClick={() => setStoryVoucher(null)}
         >
           <div
-            className="relative flex h-full w-full max-w-md flex-col overflow-y-auto items-center gap-4 border-l border-border bg-surface p-6 animate-in slide-in-from-right duration-300"
+            className="relative flex h-full w-full max-w-md flex-col overflow-y-auto items-center gap-4 border-l border-border glass-card border-none p-6 animate-in slide-in-from-right duration-300"
             onClick={(e) => e.stopPropagation()}
           >
             <h3 className="text-xl font-bold tracking-tight">Gerador de Story 9:16</h3>
@@ -527,7 +527,7 @@ function TripVouchers() {
 
                   <div className="flex flex-col gap-3 mt-6">
                     {storyVoucher.flights.length > 0 && (
-                      <div className="bg-white/10 backdrop-blur-md rounded-2xl p-4 border border-white/20">
+                      <div className="bg-white/10 backdrop-blur-md rounded-[var(--radius-card)] p-4 border border-white/20">
                         <div className="flex justify-between items-center text-xs text-white/70 font-semibold mb-2">
                           <span>Voo Confirmado</span>
                           <Plane className="w-4 h-4" />
@@ -545,7 +545,7 @@ function TripVouchers() {
                     )}
 
                     {storyVoucher.accommodation.length > 0 && (
-                      <div className="bg-white/10 backdrop-blur-md rounded-2xl p-4 border border-white/20">
+                      <div className="bg-white/10 backdrop-blur-md rounded-[var(--radius-card)] p-4 border border-white/20">
                         <div className="flex justify-between items-center text-xs text-white/70 font-semibold mb-1">
                           <span>Hospedagem</span>
                           <Hotel className="w-4 h-4" />

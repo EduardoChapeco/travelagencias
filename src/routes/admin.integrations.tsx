@@ -74,7 +74,7 @@ function Page() {
 
       <form onSubmit={save} className="max-w-3xl space-y-6">
         {/* IA ORCHESTRATOR */}
-        <section className="rounded-2xl border border-border bg-surface p-5">
+        <section className="rounded-[var(--radius-card)] border-none glass-card border-none p-5">
           <div className="mb-4 flex items-center gap-2">
             <Sparkles className="h-5 w-5 text-brand" />
             <div>
@@ -128,7 +128,7 @@ function Page() {
         </section>
 
         {/* WEB PUSH */}
-        <section className="rounded-2xl border border-border bg-surface p-5">
+        <section className="rounded-[var(--radius-card)] border-none glass-card border-none p-5">
           <div className="mb-4 flex items-center gap-2">
             <BellRing className="h-5 w-5 text-info" />
             <div>

@@ -23,8 +23,7 @@ import { ptBR } from "date-fns/locale";
 import { useConfirm } from "@/hooks/use-confirm";
 import { supabase } from "@/integrations/supabase/client";
 import { useAgency } from "@/lib/agency-context";
-import { HeaderPortal } from "@/components/shell/HeaderPortal";
-import { ModuleToolbar, ModuleActionButton } from "@/components/shell/ModuleToolbar";
+import { PageHeader, ModuleActionButton } from "@/components/shell/PageHeader";
 import { ModuleAdminPanel } from "@/components/shell/ModuleAdminPanel";
 import { EmptyState } from "@/components/shell/PageHeader";
 import { StatusBadge, GhostButton, money, fmtDate } from "@/components/ui/form";
@@ -412,7 +411,7 @@ function TripsList() {
           <div className="flex justify-end">
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <GhostButton className="h-7 w-7 p-0 hover:bg-surface-alt">
+                <GhostButton className="h-7 w-7 p-0 hover:glass bg-white/5 border-white/10">
                   <MoreHorizontal className="h-4 w-4 text-muted-foreground" />
                 </GhostButton>
               </DropdownMenuTrigger>
@@ -474,8 +473,7 @@ function TripsList() {
 
   return (
     <div className="flex h-full flex-col overflow-hidden">
-      <HeaderPortal>
-        <ModuleToolbar
+              <PageHeader
           title="Viagens"
           search={{
             value: search,
@@ -514,8 +512,7 @@ function TripsList() {
             </div>
           }
         />
-      </HeaderPortal>
-
+      
       <ModuleActionButton
         label="Nova Viagem"
         icon={<Plus className="h-3.5 w-3.5" />}
@@ -537,24 +534,24 @@ function TripsList() {
         {list.isLoading && (
           <div className="space-y-4 pt-2">
             <div className="flex items-center justify-between">
-              <div className="h-8 w-64 animate-pulse rounded-full bg-surface-alt" />
-              <div className="h-8 w-24 animate-pulse rounded-full bg-surface-alt" />
+              <div className="h-8 w-64 animate-pulse rounded-full glass bg-white/5 border-white/10" />
+              <div className="h-8 w-24 animate-pulse rounded-full glass bg-white/5 border-white/10" />
             </div>
-            <div className="rounded-[var(--radius-card)] border border-border bg-surface overflow-hidden">
-              <div className="border-b border-border bg-surface-alt/50 p-3 h-10 flex gap-4">
+            <div className="rounded-[var(--radius-card)] border-none glass-card border-none overflow-hidden">
+              <div className="border-b border-border glass bg-white/5 border-white/10/50 p-3 h-10 flex gap-4">
                 <div className="h-4 w-12 animate-pulse rounded-full bg-muted/40" />
                 <div className="h-4 w-1/3 animate-pulse rounded-full bg-muted/40" />
                 <div className="h-4 w-24 animate-pulse rounded-full bg-muted/40 ml-auto" />
               </div>
               {[1, 2, 3, 4, 5].map((i) => (
                 <div key={i} className="flex items-center gap-4 border-b border-border p-4">
-                  <div className="h-4 w-12 animate-pulse rounded-full bg-surface-alt" />
+                  <div className="h-4 w-12 animate-pulse rounded-full glass bg-white/5 border-white/10" />
                   <div className="space-y-2 flex-1">
-                    <div className="h-4 w-1/4 animate-pulse rounded-full bg-surface-alt" />
-                    <div className="h-3 w-1/6 animate-pulse rounded-full bg-surface-alt/50" />
+                    <div className="h-4 w-1/4 animate-pulse rounded-full glass bg-white/5 border-white/10" />
+                    <div className="h-3 w-1/6 animate-pulse rounded-full glass bg-white/5 border-white/10/50" />
                   </div>
-                  <div className="h-6 w-24 animate-pulse rounded-full bg-surface-alt" />
-                  <div className="h-4 w-20 animate-pulse rounded-full bg-surface-alt" />
+                  <div className="h-6 w-24 animate-pulse rounded-full glass bg-white/5 border-white/10" />
+                  <div className="h-4 w-20 animate-pulse rounded-full glass bg-white/5 border-white/10" />
                 </div>
               ))}
             </div>
@@ -615,7 +612,7 @@ function TripsList() {
       {importOpen && agency && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-overlay p-4">
           <div
-            className="w-full max-w-sm rounded-[var(--radius-card)] border border-border bg-surface p-5 flex flex-col shadow-none"
+            className="w-full max-w-sm rounded-[var(--radius-card)] border-none glass-card border-none p-5 flex flex-col shadow-none"
             onClick={(e) => e.stopPropagation()}
           >
             <div className="flex items-center justify-between border-b border-border pb-3 mb-4">
@@ -641,7 +638,7 @@ function TripsList() {
                   value={bookingId}
                   onChange={(e) => setBookingId(e.target.value)}
                   placeholder="Ex: B-998877 ou localizador"
-                  className="h-9 w-full rounded-full border border-border bg-surface px-3 text-xs outline-none focus:border-brand text-foreground"
+                  className="h-9 w-full rounded-full border-none glass-card border-none px-3 text-xs outline-none focus:border-brand text-foreground"
                 />
                 <p className="text-[10px] text-muted-foreground mt-1.5 font-sans leading-relaxed">
                   Insira o ID de reserva para importar automaticamente os voos, hotéis, passageiros

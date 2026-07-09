@@ -345,7 +345,7 @@ function TripLayout() {
       <ConfirmDialog />
 
       {/* ── Trip Header ─────────────────────────────────── */}
-      <div className="mac-glass-panel m-4 px-4 md:px-6 py-4 flex flex-col gap-3.5 rounded-[var(--radius-card)] shrink-0 z-10 relative">
+      <div className="glass text-white bg-black/40 backdrop-blur-2xl-panel m-4 px-4 md:px-6 py-4 flex flex-col gap-3.5 rounded-[var(--radius-card)] shrink-0 z-10 relative">
         {/* Nav + Ações */}
         <div className="flex items-center justify-between">
           <Link
@@ -394,7 +394,7 @@ function TripLayout() {
                     onClick={() => setShowImportModal(true)}
                     disabled={bookingBusy || syncBusy}
                     title="Vincular viagem a um localizador de reserva existente"
-                    className="flex h-8 items-center justify-center gap-1.5 rounded-full border border-border bg-surface px-2 sm:px-3 text-xs font-medium text-muted-foreground hover:bg-surface-alt hover:text-foreground transition-colors disabled:opacity-50 cursor-pointer"
+                    className="flex h-8 items-center justify-center gap-1.5 rounded-full border-none glass-card border-none px-2 sm:px-3 text-xs font-medium text-muted-foreground hover:glass bg-white/5 border-white/10 hover:text-foreground transition-colors disabled:opacity-50 cursor-pointer"
                   >
                     <Download className="h-3.5 w-3.5 text-muted-foreground shrink-0" />
                     <span>Vincular Localizador</span>
@@ -407,7 +407,7 @@ function TripLayout() {
             <button
               onClick={() => window.open(`/client/trips/${id}`, "_blank")}
               title="Ver como cliente"
-              className="flex h-8 items-center justify-center gap-1.5 rounded-full border border-border bg-surface px-2 sm:px-3 text-xs font-medium text-muted-foreground hover:bg-surface-alt hover:text-foreground transition-colors cursor-pointer"
+              className="flex h-8 items-center justify-center gap-1.5 rounded-full border-none glass-card border-none px-2 sm:px-3 text-xs font-medium text-muted-foreground hover:glass bg-white/5 border-white/10 hover:text-foreground transition-colors cursor-pointer"
             >
               <Eye className="h-3.5 w-3.5" />
               <span className="hidden sm:inline">Ver como Cliente</span>
@@ -426,7 +426,7 @@ function TripLayout() {
             {/* Menu de ações */}
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <button className="flex h-8 w-8 items-center justify-center rounded-full border border-border bg-surface text-muted-foreground hover:bg-surface-alt hover:text-foreground transition-colors">
+                <button className="flex h-8 w-8 items-center justify-center rounded-full border-none glass-card border-none text-muted-foreground hover:glass bg-white/5 border-white/10 hover:text-foreground transition-colors">
                   <MoreHorizontal className="h-4 w-4" />
                 </button>
               </DropdownMenuTrigger>
@@ -517,7 +517,7 @@ function TripLayout() {
                   ? "border-brand/20 bg-brand/5 text-foreground"
                   : t.status === "completed"
                     ? "border-success/20 bg-success/5 text-success-foreground"
-                    : "border-border bg-surface-alt/50 text-muted-foreground",
+                    : "border-border glass bg-white/5 border-white/10/50 text-muted-foreground",
             )}
           >
             {isToday ? (
@@ -558,7 +558,7 @@ function TripLayout() {
       {/* Modal de Importação de Reserva GDS */}
       {showImportModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4 backdrop-blur-sm">
-          <div className="w-full max-w-md rounded-2xl border border-border bg-surface shadow-2xl p-6 flex flex-col space-y-4">
+          <div className="w-full max-w-md rounded-[var(--radius-card)] border-none glass-card border-none shadow-2xl p-6 flex flex-col space-y-4">
             <div>
               <h3 className="text-base font-bold text-foreground flex items-center gap-2">
                 <Download className="h-5 w-5 text-brand" /> Vincular Localizador de Reserva
@@ -579,7 +579,7 @@ function TripLayout() {
                 placeholder="Ex: 849372"
                 value={importBookingId}
                 onChange={(e) => setImportBookingId(e.target.value)}
-                className="h-10 w-full rounded-[var(--radius-card)] border border-border bg-surface px-3 text-sm outline-none focus:border-brand text-foreground font-mono font-bold"
+                className="h-10 w-full rounded-[var(--radius-card)] border-none glass-card border-none px-3 text-sm outline-none focus:border-brand text-foreground font-mono font-bold"
               />
             </div>
 
@@ -590,7 +590,7 @@ function TripLayout() {
                   setShowImportModal(false);
                   setImportBookingId("");
                 }}
-                className="flex-1 h-10 rounded-[var(--radius-card)] border border-border bg-surface text-xs font-bold text-muted-foreground hover:bg-surface-alt transition-colors cursor-pointer"
+                className="flex-1 h-10 rounded-[var(--radius-card)] border-none glass-card border-none text-xs font-bold text-muted-foreground hover:glass bg-white/5 border-white/10 transition-colors cursor-pointer"
               >
                 Cancelar
               </button>
@@ -615,7 +615,7 @@ function TripLayout() {
       {/* Modal de Emissão na Operadora (Duas Etapas) */}
       {showEmitModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4 backdrop-blur-sm">
-          <div className="w-full max-w-md rounded-2xl border border-border bg-surface shadow-2xl p-6 flex flex-col space-y-4">
+          <div className="w-full max-w-md rounded-[var(--radius-card)] border-none glass-card border-none shadow-2xl p-6 flex flex-col space-y-4">
             {emitStep === 1 ? (
               <>
                 <div>
@@ -629,7 +629,7 @@ function TripLayout() {
                   </p>
                 </div>
 
-                <div className="max-h-40 overflow-y-auto border border-border rounded-[var(--radius-card)] p-3 bg-surface-alt space-y-2">
+                <div className="max-h-40 overflow-y-auto border-none rounded-[var(--radius-card)] p-3 glass bg-white/5 border-white/10 space-y-2">
                   <span className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground block">
                     Passageiros Vinculados
                   </span>
@@ -668,7 +668,7 @@ function TripLayout() {
                       setShowEmitModal(false);
                       setEmitStep(1);
                     }}
-                    className="flex-1 h-10 rounded-[var(--radius-card)] border border-border bg-surface text-xs font-bold text-muted-foreground hover:bg-surface-alt transition-colors cursor-pointer"
+                    className="flex-1 h-10 rounded-[var(--radius-card)] border-none glass-card border-none text-xs font-bold text-muted-foreground hover:glass bg-white/5 border-white/10 transition-colors cursor-pointer"
                   >
                     Cancelar
                   </button>
@@ -705,7 +705,7 @@ function TripLayout() {
                   <button
                     type="button"
                     onClick={() => setEmitStep(1)}
-                    className="flex-1 h-10 rounded-[var(--radius-card)] border border-border bg-surface text-xs font-bold text-muted-foreground hover:bg-surface-alt transition-colors cursor-pointer"
+                    className="flex-1 h-10 rounded-[var(--radius-card)] border-none glass-card border-none text-xs font-bold text-muted-foreground hover:glass bg-white/5 border-white/10 transition-colors cursor-pointer"
                   >
                     Voltar
                   </button>

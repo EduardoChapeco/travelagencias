@@ -224,7 +224,7 @@ function ProposalEditor() {
       : "";
 
   return (
-    <div className="flex h-full flex-col bg-surface-alt/10">
+    <div className="flex h-full flex-col glass bg-white/5 border-white/10/10">
       <StudioToolbar
         title={draft.title}
         subtitle={`Cotação #${draft.number}`}
@@ -250,7 +250,7 @@ function ProposalEditor() {
             navigator.clipboard.writeText(publicUrl);
             toast.success("Link público copiado");
           }}
-          className="flex h-9 items-center gap-1.5 rounded-full border border-border px-3 text-xs font-medium hover:bg-surface-alt transition-colors"
+          className="flex h-9 items-center gap-1.5 rounded-full border-none px-3 text-xs font-medium hover:glass bg-white/5 border-white/10 transition-colors"
         >
           <Link2 className="h-3.5 w-3.5" /> Copiar link
         </button>

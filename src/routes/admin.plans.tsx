@@ -137,7 +137,7 @@ function Page() {
       />
 
       {q.isError && (
-        <div className="mt-4 flex flex-col items-center justify-center py-8 px-4 text-center rounded-2xl border border-red-200 bg-red-50/60 max-w-xl mx-auto">
+        <div className="mt-4 flex flex-col items-center justify-center py-8 px-4 text-center rounded-[var(--radius-card)] border border-red-200 bg-red-50/60 max-w-xl mx-auto">
           <AlertCircle className="h-5 w-5 text-red-600 mb-1.5" />
           <h3 className="text-xs font-bold text-red-800">Falha ao Carregar Planos</h3>
           <p className="text-[11px] text-red-600 mt-0.5">
@@ -164,7 +164,7 @@ function Page() {
         {plans.map((plan) => (
           <div
             key={plan.id}
-            className={`relative rounded-[var(--radius-card)] border bg-surface p-5 flex flex-col gap-4 ${
+            className={`relative rounded-[var(--radius-card)] border glass-card border-none p-5 flex flex-col gap-4 ${
               plan.is_featured ? "border-brand/50 ring-1 ring-brand/20" : "border-border"
             } ${!plan.is_active ? "opacity-60" : ""}`}
           >
@@ -195,7 +195,7 @@ function Page() {
               )}
             </div>
 
-            <div className="grid grid-cols-3 gap-2 rounded-2xl bg-surface-alt p-3">
+            <div className="grid grid-cols-3 gap-2 rounded-[var(--radius-card)] glass bg-white/5 border-white/10 p-3">
               <LimitBadge icon={Users} label="Agentes" value={plan.max_agents} />
               <LimitBadge icon={BarChart3} label="Viagens/mês" value={plan.max_trips_per_month} />
               <LimitBadge icon={HardDrive} label="Storage GB" value={plan.max_storage_gb} />
@@ -225,7 +225,7 @@ function Page() {
               <button
                 type="button"
                 onClick={() => handleToggleActive(plan)}
-                className="flex h-9 items-center gap-1.5 rounded-full border border-border px-3 text-xs hover:bg-surface-alt"
+                className="flex h-9 items-center gap-1.5 rounded-full border-none px-3 text-xs hover:glass bg-white/5 border-white/10"
               >
                 {plan.is_active ? "Desativar" : "Ativar"}
               </button>
@@ -349,7 +349,7 @@ function PlanEditor({
   return (
     <div className="fixed inset-0 z-50 flex justify-end bg-overlay" onClick={onClose}>
       <div
-        className="h-full w-full max-w-lg overflow-y-auto border-l border-border bg-surface p-6"
+        className="h-full w-full max-w-lg overflow-y-auto border-l border-border glass-card border-none p-6"
         onClick={(e) => e.stopPropagation()}
       >
         <h2 className="mb-5 text-base font-semibold tracking-tight">

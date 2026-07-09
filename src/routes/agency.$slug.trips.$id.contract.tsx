@@ -644,7 +644,7 @@ function TripContract() {
                   navigator.clipboard.writeText(publicUrl);
                   toast.success("Link copiado");
                 }}
-                className="flex h-8 items-center gap-1.5 rounded-full border border-border px-3 text-xs font-semibold hover:bg-surface-alt text-foreground bg-surface"
+                className="flex h-8 items-center gap-1.5 rounded-full border-none px-3 text-xs font-semibold hover:glass bg-white/5 border-white/10 text-foreground glass-card border-none"
               >
                 <Copy className="h-3.5 w-3.5" />
                 Copiar link de assinatura
@@ -653,7 +653,7 @@ function TripContract() {
                 href={publicUrl}
                 target="_blank"
                 rel="noreferrer"
-                className="flex h-8 items-center gap-1.5 rounded-full border border-border px-3 text-xs font-semibold hover:bg-surface-alt text-foreground bg-surface animate-pulse"
+                className="flex h-8 items-center gap-1.5 rounded-full border-none px-3 text-xs font-semibold hover:glass bg-white/5 border-white/10 text-foreground glass-card border-none animate-pulse"
               >
                 <ExternalLink className="h-3.5 w-3.5" />
                 Visualizar Link
@@ -720,7 +720,7 @@ function TripContract() {
 
       {/* ── Signed badge ─────────────────────────────────────────────────────── */}
       {isSigned && contract && (
-        <div className="mb-6 flex items-center gap-3 rounded-2xl border border-success bg-success-bg px-4 py-3">
+        <div className="mb-6 flex items-center gap-3 rounded-[var(--radius-card)] border border-success bg-success-bg px-4 py-3">
           <CheckCircle className="h-5 w-5 text-success shrink-0" />
           <div className="flex-1">
             <div className="text-sm font-bold text-success">Contrato assinado digitalmente</div>

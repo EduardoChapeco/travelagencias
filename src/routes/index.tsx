@@ -163,7 +163,7 @@ function Landing() {
           <div className="flex items-center gap-3">
             <Link
               to="/auth/login"
-              className="h-9 rounded-full px-4 text-xs font-bold text-muted-foreground hover:text-foreground transition-all hover:bg-surface-alt inline-flex items-center ds-label-caps"
+              className="h-9 rounded-full px-4 text-xs font-bold text-muted-foreground hover:text-foreground transition-all hover:glass bg-white/5 border-white/10 inline-flex items-center ds-label-caps"
             >
               Entrar
             </Link>
@@ -179,7 +179,7 @@ function Landing() {
 
       {/* ── Hero BENTO PREMIUM ─────────────────────────────────────────────── */}
       <section className="relative z-10 mx-auto max-w-6xl px-6 pt-20 pb-24 text-center lg:pt-24">
-        <div className="mx-auto mb-6 inline-flex items-center gap-2 rounded-full border border-border bg-surface-alt px-4 py-1.5 text-[10px] font-bold uppercase tracking-widest text-muted-foreground animate-fadeIn">
+        <div className="mx-auto mb-6 inline-flex items-center gap-2 rounded-full border-none glass bg-white/5 border-white/10 px-4 py-1.5 text-[10px] font-bold uppercase tracking-widest text-muted-foreground animate-fadeIn">
           <span className="relative flex h-1.5 w-1.5">
             <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-75"></span>
             <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-primary"></span>
@@ -208,7 +208,7 @@ function Landing() {
           </Link>
           <a
             href="#features"
-            className="inline-flex h-12 w-full sm:w-auto items-center justify-center rounded-full border border-border-strong bg-surface px-8 text-xs font-bold uppercase tracking-wider text-foreground transition-all hover:bg-surface-alt"
+            className="inline-flex h-12 w-full sm:w-auto items-center justify-center rounded-full border-none-strong glass-card border-none px-8 text-xs font-bold uppercase tracking-wider text-foreground transition-all hover:glass bg-white/5 border-white/10"
           >
             Ver Recursos
           </a>
@@ -232,7 +232,7 @@ function Landing() {
             {stats.map((s, i) => (
               <div
                 key={i}
-                className="flex flex-col items-center justify-center rounded-[var(--radius-card)] border border-border bg-surface-alt p-8 transition-all hover:border-border-strong hover:bg-surface-muted group"
+                className="flex flex-col items-center justify-center rounded-[var(--radius-card)] border-none glass bg-white/5 border-white/10 p-8 transition-all hover:border-border-strong hover:glass-card border-none-muted group"
               >
                 <div className="text-4xl font-extrabold text-foreground tracking-tight group-hover:scale-105 transition-transform duration-300">
                   {s.value}
@@ -249,7 +249,7 @@ function Landing() {
       {/* ── Antes vs Depois (Neuromarketing Contrast) ─────────────────────────────────── */}
       <section
         id="comparison"
-        className="relative z-10 border-y border-border bg-surface-alt py-24"
+        className="relative z-10 border-y border-border glass bg-white/5 border-white/10 py-24"
       >
         <div className="mx-auto max-w-6xl px-6">
           <div className="mb-16 text-center max-w-3xl mx-auto">
@@ -267,7 +267,7 @@ function Landing() {
 
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
             {/* O Jeito Doloroso */}
-            <div className="rounded-[var(--radius-card)] border border-border bg-surface p-8 space-y-6 hover:bg-surface-alt transition-colors duration-300">
+            <div className="rounded-[var(--radius-card)] border-none glass-card border-none p-8 space-y-6 hover:glass bg-white/5 border-white/10 transition-colors duration-300">
               <h3 className="text-base font-bold text-danger flex items-center gap-3">
                 <AlertTriangle className="h-5 w-5 shrink-0" />O Jeito Lento (Word, PDFs e WhatsApp
                 Solto)
@@ -312,7 +312,7 @@ function Landing() {
             </div>
 
             {/* O Jeito Turis */}
-            <div className="rounded-[var(--radius-card)] border-2 border-primary bg-surface p-8 space-y-6 relative hover:border-primary transition-all duration-300">
+            <div className="rounded-[var(--radius-card)] border-2 border-primary glass-card border-none p-8 space-y-6 relative hover:border-primary transition-all duration-300">
               <div className="absolute -top-3.5 right-6 rounded-full bg-primary px-3 py-1 text-[8px] font-bold uppercase tracking-wider text-primary-foreground">
                 Fórmula de Alto Lucro
               </div>
@@ -384,13 +384,13 @@ function Landing() {
                 <div
                   key={f.title}
                   className={cn(
-                    "group relative overflow-hidden rounded-[var(--radius-card)] border border-border bg-surface p-8 transition-all duration-300 hover:border-border-strong hover:bg-surface-alt",
+                    "group relative overflow-hidden rounded-[var(--radius-card)] border-none glass-card border-none p-8 transition-all duration-300 hover:border-border-strong hover:glass bg-white/5 border-white/10",
                     (i === 0 || i === 3) &&
-                      "md:col-span-2 lg:col-span-2 bg-surface-alt hover:bg-surface-muted",
+                      "md:col-span-2 lg:col-span-2 glass bg-white/5 border-white/10 hover:glass-card border-none-muted",
                   )}
                 >
                   <div className="relative z-10 flex flex-col h-full">
-                    <div className="mb-6 flex h-10 w-10 items-center justify-center rounded-2xl bg-surface-muted border border-border text-foreground group-hover:bg-primary group-hover:text-primary-foreground transition-all duration-300">
+                    <div className="mb-6 flex h-10 w-10 items-center justify-center rounded-[var(--radius-card)] glass-card border-none-muted border-none text-foreground group-hover:bg-primary group-hover:text-primary-foreground transition-all duration-300">
                       <Icon className="h-5 w-5" strokeWidth={2} />
                     </div>
 
@@ -399,7 +399,7 @@ function Landing() {
                         {f.title}
                       </h3>
                       {f.badge && (
-                        <span className="rounded-full bg-surface-muted border border-border px-2.5 py-0.5 text-[8px] font-bold text-muted-foreground uppercase tracking-widest">
+                        <span className="rounded-full glass-card border-none-muted border-none px-2.5 py-0.5 text-[8px] font-bold text-muted-foreground uppercase tracking-widest">
                           {f.badge}
                         </span>
                       )}
@@ -419,7 +419,7 @@ function Landing() {
       {/* ── Testimonials Section ────────────────────────────────────────── */}
       <section
         id="testimonials"
-        className="relative z-10 border-t border-border bg-surface-alt py-24"
+        className="relative z-10 border-t border-border glass bg-white/5 border-white/10 py-24"
       >
         <div className="mx-auto max-w-6xl px-6">
           <div className="mb-16 text-center max-w-2xl mx-auto">
@@ -432,7 +432,7 @@ function Landing() {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div className="rounded-[var(--radius-card)] border border-border bg-surface p-8 space-y-6 hover:border-border-strong transition-all">
+            <div className="rounded-[var(--radius-card)] border-none glass-card border-none p-8 space-y-6 hover:border-border-strong transition-all">
               <div className="flex items-center gap-0.5">
                 {[1, 2, 3, 4, 5].map((n) => (
                   <span key={n} className="text-amber-500 text-sm">
@@ -447,7 +447,7 @@ function Landing() {
                 para minutos."
               </p>
               <div className="flex items-center gap-3 pt-4 border-t border-border">
-                <div className="h-8 w-8 rounded-full bg-surface-muted border border-border flex items-center justify-center font-bold text-foreground text-xs">
+                <div className="h-8 w-8 rounded-full glass-card border-none-muted border-none flex items-center justify-center font-bold text-foreground text-xs">
                   AP
                 </div>
                 <div>
@@ -459,7 +459,7 @@ function Landing() {
               </div>
             </div>
 
-            <div className="rounded-[var(--radius-card)] border border-border bg-surface p-8 space-y-6 hover:border-border-strong transition-all">
+            <div className="rounded-[var(--radius-card)] border-none glass-card border-none p-8 space-y-6 hover:border-border-strong transition-all">
               <div className="flex items-center gap-0.5">
                 {[1, 2, 3, 4, 5].map((n) => (
                   <span key={n} className="text-amber-500 text-sm">
@@ -474,7 +474,7 @@ function Landing() {
                 também é fantástico."
               </p>
               <div className="flex items-center gap-3 pt-4 border-t border-border">
-                <div className="h-8 w-8 rounded-full bg-surface-muted border border-border flex items-center justify-center font-bold text-foreground text-xs">
+                <div className="h-8 w-8 rounded-full glass-card border-none-muted border-none flex items-center justify-center font-bold text-foreground text-xs">
                   RC
                 </div>
                 <div>
@@ -490,7 +490,7 @@ function Landing() {
       </section>
 
       {/* ── CTA Final Premium ────────────────────────────────────────── */}
-      <section className="relative overflow-hidden bg-surface-alt py-24 text-center border-t border-border">
+      <section className="relative overflow-hidden glass bg-white/5 border-white/10 py-24 text-center border-t border-border">
         {/* Editorial Dot Matrix Accent */}
         <div className="absolute inset-0 z-0 pointer-events-none opacity-[0.015] bg-[radial-gradient(#000_1px,transparent_1px)] [background-size:16px_16px]" />
 
@@ -513,7 +513,7 @@ function Landing() {
             </Link>
             <Link
               to="/auth/login"
-              className="inline-flex h-12 w-full sm:w-auto items-center justify-center rounded-full border border-border bg-surface px-8 text-xs font-bold uppercase tracking-wider text-foreground transition-colors hover:bg-surface-alt"
+              className="inline-flex h-12 w-full sm:w-auto items-center justify-center rounded-full border-none glass-card border-none px-8 text-xs font-bold uppercase tracking-wider text-foreground transition-colors hover:glass bg-white/5 border-white/10"
             >
               Acessar Minha Agência
             </Link>
@@ -522,7 +522,7 @@ function Landing() {
       </section>
 
       {/* ── Footer ───────────────────────────────────────────── */}
-      <footer className="border-t border-border bg-surface-alt py-10 relative z-10">
+      <footer className="border-t border-border glass bg-white/5 border-white/10 py-10 relative z-10">
         <div className="mx-auto flex max-w-6xl flex-col items-center justify-between gap-6 px-6 sm:flex-row">
           <div className="flex items-center gap-3">
             <div className="flex h-7 w-7 items-center justify-center rounded-full bg-primary text-primary-foreground text-[10px] font-bold">

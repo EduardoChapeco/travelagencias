@@ -82,7 +82,7 @@ function DataDeletionPage() {
   return (
     <div className="min-h-screen bg-background text-foreground flex flex-col justify-between">
       {/* Header */}
-      <header className="border-b border-border bg-surface py-4 px-6 sticky top-0 z-50">
+      <header className="border-b border-border glass-card border-none py-4 px-6 sticky top-0 z-50">
         <div className="max-w-4xl mx-auto flex items-center justify-between">
           <div className="flex items-center gap-2">
             <Trash2 className="h-5 w-5 text-destructive" />
@@ -95,7 +95,7 @@ function DataDeletionPage() {
       {/* Main Container */}
       <main className="flex-1 max-w-4xl mx-auto py-12 px-6 w-full grid grid-cols-1 md:grid-cols-2 gap-8">
         {/* Left Side: Submit Request */}
-        <div className="space-y-6 bg-surface border border-border rounded-[var(--radius-card)] p-6">
+        <div className="space-y-6 glass-card border-none border-none rounded-[var(--radius-card)] p-6">
           <div className="flex items-center gap-2">
             <ShieldAlert className="h-5 w-5 text-brand" />
             <h2 className="text-base font-bold text-foreground">Solicitar Nova Exclusão</h2>
@@ -106,11 +106,11 @@ function DataDeletionPage() {
           </p>
 
           {protocolCode ? (
-            <div className="bg-success/5 border border-success/30 rounded-2xl p-5 text-center space-y-3">
+            <div className="bg-success/5 border border-success/30 rounded-[var(--radius-card)] p-5 text-center space-y-3">
               <CheckCircle2 className="h-8 w-8 text-success mx-auto" />
               <h3 className="text-sm font-bold text-success">Solicitação Registrada!</h3>
               <p className="text-xs text-muted-foreground">Guarde o código de protocolo abaixo para acompanhar sua solicitação:</p>
-              <div className="text-base font-mono font-bold bg-surface border border-border px-3 py-2 rounded text-foreground inline-block select-all">
+              <div className="text-base font-mono font-bold glass-card border-none border-none px-3 py-2 rounded text-foreground inline-block select-all">
                 {protocolCode}
               </div>
             </div>
@@ -140,7 +140,7 @@ function DataDeletionPage() {
                   rows={3}
                   value={reason}
                   onChange={(e) => setReason(e.target.value)}
-                  className="w-full text-xs bg-surface-alt border border-border/60 rounded-[var(--radius-card)] px-4 py-2.5 resize-none focus:ring-0 focus:border-brand/50 font-sans text-foreground"
+                  className="w-full text-xs glass bg-white/5 border-white/10 border-none/60 rounded-[var(--radius-card)] px-4 py-2.5 resize-none focus:ring-0 focus:border-brand/50 font-sans text-foreground"
                 />
               </Field>
 
@@ -152,7 +152,7 @@ function DataDeletionPage() {
         </div>
 
         {/* Right Side: Track Request */}
-        <div className="space-y-6 bg-surface border border-border rounded-[var(--radius-card)] p-6 h-fit">
+        <div className="space-y-6 glass-card border-none border-none rounded-[var(--radius-card)] p-6 h-fit">
           <div className="flex items-center gap-2">
             <Search className="h-5 w-5 text-brand" />
             <h2 className="text-base font-bold text-foreground">Acompanhar Protocolo</h2>
@@ -168,7 +168,7 @@ function DataDeletionPage() {
               placeholder="Digite o código DEL-XXXX..."
               value={searchProtocol}
               onChange={(e) => setSearchProtocol(e.target.value)}
-              className="flex-1 h-9 px-3 rounded-2xl border border-border text-xs focus:outline-none focus:ring-1 focus:ring-brand bg-surface text-foreground placeholder-muted-foreground font-mono"
+              className="flex-1 h-9 px-3 rounded-[var(--radius-card)] border-none text-xs focus:outline-none focus:ring-1 focus:ring-brand glass-card border-none text-foreground placeholder-muted-foreground font-mono"
             />
             <PrimaryButton disabled={searching} className="h-9 px-4 shrink-0">
               {searching ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <ArrowRight className="h-4 w-4" />}
@@ -176,7 +176,7 @@ function DataDeletionPage() {
           </form>
 
           {searchResult && (
-            <div className="border border-border bg-surface-alt/20 rounded-2xl p-4 space-y-3">
+            <div className="border-none glass bg-white/5 border-white/10/20 rounded-[var(--radius-card)] p-4 space-y-3">
               <div className="flex items-center justify-between text-xs pb-2 border-b border-border/60">
                 <span className="font-semibold text-muted-foreground">Protocolo:</span>
                 <span className="font-mono font-bold text-foreground">{searchResult.protocol_code}</span>
@@ -197,7 +197,7 @@ function DataDeletionPage() {
       </main>
 
       {/* Footer */}
-      <footer className="border-t border-border bg-surface-alt/20 py-6 px-6 text-center text-xs text-muted-foreground shrink-0">
+      <footer className="border-t border-border glass bg-white/5 border-white/10/20 py-6 px-6 text-center text-xs text-muted-foreground shrink-0">
         <div className="max-w-4xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
           <div className="flex items-center gap-1.5">
             <span>Turis © 2026</span>

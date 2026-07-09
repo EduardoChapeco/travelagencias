@@ -7,8 +7,7 @@ import { Search, AlertTriangle, Clock, CheckCircle2, Ticket, User, Star, Plus, A
 import { Input, Select, StatusBadge, PrimaryButton } from "@/components/ui/form";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
-import { HeaderPortal } from "@/components/shell/HeaderPortal";
-import { ModuleToolbar, ModuleActionButton } from "@/components/shell/ModuleToolbar";
+import { PageHeader, ModuleActionButton } from "@/components/shell/PageHeader";
 import { EmptyState } from "@/components/shell/PageHeader";
 import { NewTicketSheet } from "@/components/support/NewTicketSheet";
 
@@ -82,8 +81,7 @@ function SupportRoute() {
 
   return (
     <div className="flex flex-col h-full overflow-hidden">
-      <HeaderPortal>
-        <ModuleToolbar
+              <PageHeader
           title="Suporte"
           search={{
             value: searchTerm,
@@ -102,8 +100,7 @@ function SupportRoute() {
           activeFilter={stageFilter}
           onFilterChange={setStageFilter}
         />
-      </HeaderPortal>
-
+      
       <ModuleActionButton
         label="Novo Ticket"
         icon={<Plus className="h-3.5 w-3.5" />}
@@ -124,7 +121,7 @@ function SupportRoute() {
         )}
         {/* KPI Dashboards */}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4 shrink-0">
-          <div className="bg-surface-alt/50 border border-border rounded-[var(--radius-card)] p-4 flex items-center gap-4">
+          <div className="glass bg-white/5 border-white/10/50 border-none rounded-[var(--radius-card)] p-4 flex items-center gap-4">
             <div className="w-10 h-10 rounded-full bg-destructive/10 text-destructive flex items-center justify-center">
               <AlertTriangle className="w-5 h-5" />
             </div>
@@ -135,7 +132,7 @@ function SupportRoute() {
               </p>
             </div>
           </div>
-          <div className="bg-surface-alt/50 border border-border rounded-[var(--radius-card)] p-4 flex items-center gap-4">
+          <div className="glass bg-white/5 border-white/10/50 border-none rounded-[var(--radius-card)] p-4 flex items-center gap-4">
             <div className="w-10 h-10 rounded-full bg-warning/10 text-warning flex items-center justify-center">
               <Clock className="w-5 h-5" />
             </div>
@@ -146,7 +143,7 @@ function SupportRoute() {
               </p>
             </div>
           </div>
-          <div className="bg-surface-alt/50 border border-border rounded-[var(--radius-card)] p-4 flex items-center gap-4">
+          <div className="glass bg-white/5 border-white/10/50 border-none rounded-[var(--radius-card)] p-4 flex items-center gap-4">
             <div className="w-10 h-10 rounded-full bg-success/10 text-success flex items-center justify-center">
               <CheckCircle2 className="w-5 h-5" />
             </div>
@@ -157,7 +154,7 @@ function SupportRoute() {
               </p>
             </div>
           </div>
-          <div className="bg-surface-alt/50 border border-border rounded-[var(--radius-card)] p-4 flex items-center gap-4">
+          <div className="glass bg-white/5 border-white/10/50 border-none rounded-[var(--radius-card)] p-4 flex items-center gap-4">
             <div className="w-10 h-10 rounded-full bg-brand/10 text-brand flex items-center justify-center">
               <Star className="w-5 h-5" />
             </div>
@@ -173,10 +170,10 @@ function SupportRoute() {
           </div>
         </div>
 
-        <div className="bg-surface border border-border rounded-[var(--radius-card)] flex-1 overflow-hidden flex flex-col">
+        <div className="glass-card border-none border-none rounded-[var(--radius-card)] flex-1 overflow-hidden flex flex-col">
           <div className="overflow-x-auto flex-1">
             <table className="w-full text-sm text-left">
-              <thead className="text-xs text-muted-foreground uppercase bg-surface-alt/50 sticky top-0 z-10 border-b border-border">
+              <thead className="text-xs text-muted-foreground uppercase glass bg-white/5 border-white/10/50 sticky top-0 z-10 border-b border-border">
                 <tr>
                   <th className="px-4 py-3 font-semibold">Código</th>
                   <th className="px-4 py-3 font-semibold">Assunto / Cliente</th>
@@ -207,7 +204,7 @@ function SupportRoute() {
                 {filteredTickets.map((t: any) => (
                   <tr
                     key={t.id}
-                    className="hover:bg-surface-alt/30 cursor-pointer transition-colors"
+                    className="hover:glass bg-white/5 border-white/10/30 cursor-pointer transition-colors"
                     onClick={() =>
                       navigate({
                         to: "/agency/$slug/support/$ticket_id",

@@ -157,7 +157,7 @@ function LoginPage() {
         
         {/* Header Logo */}
         <div className="flex flex-col items-center text-center gap-2 mb-8">
-          <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-white/10 border border-white/20 font-black text-lg text-white shadow-inner">
+          <div className="flex h-12 w-12 items-center justify-center rounded-[var(--radius-card)] bg-white/10 border border-white/20 font-black text-lg text-white shadow-inner">
             {brand?.logo_url ? (
               <img src={brand.logo_url} alt={brandName} className="h-7 w-7 object-contain" />
             ) : (
@@ -171,7 +171,7 @@ function LoginPage() {
         {errorMsg && (
           <div
             role="alert"
-            className="mb-5 rounded-2xl border border-rose-500/30 bg-rose-500/10 px-4 py-3 text-xs font-bold text-rose-200 leading-relaxed text-center animate-shake"
+            className="mb-5 rounded-[var(--radius-card)] border border-rose-500/30 bg-rose-500/10 px-4 py-3 text-xs font-bold text-rose-200 leading-relaxed text-center animate-shake"
           >
             {errorMsg}
           </div>
@@ -185,7 +185,7 @@ function LoginPage() {
               placeholder="nome@suaagencia.com.br"
               autoComplete="email"
               {...register("email")}
-              className="h-11 text-xs rounded-xl bg-white/5 border-white/10 focus:border-white/30 text-white placeholder:text-white/30 transition-all font-medium"
+              className="h-11 text-xs rounded-[var(--radius-card)] bg-white/5 border-white/10 focus:border-white/30 text-white placeholder:text-white/30 transition-all font-medium"
             />
           </Field>
 
@@ -207,7 +207,7 @@ function LoginPage() {
               placeholder="••••••••"
               autoComplete="current-password"
               {...register("password")}
-              className="h-11 text-xs rounded-xl bg-white/5 border-white/10 focus:border-white/30 text-white placeholder:text-white/30 transition-all font-medium"
+              className="h-11 text-xs rounded-[var(--radius-card)] bg-white/5 border-white/10 focus:border-white/30 text-white placeholder:text-white/30 transition-all font-medium"
             />
             {errors.password?.message && (
               <p className="text-[10px] font-bold text-rose-300 mt-1">{errors.password.message}</p>

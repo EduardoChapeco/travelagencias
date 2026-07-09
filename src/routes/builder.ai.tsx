@@ -254,22 +254,22 @@ function AISiteBuilder() {
   }
 
   return (
-    <div className="flex h-screen bg-surface-alt/25 select-none overflow-hidden">
+    <div className="flex h-screen glass bg-white/5 border-white/10/25 select-none overflow-hidden">
       {/* Sidebar options */}
-      <div className="w-80 bg-surface border-r border-border flex flex-col shrink-0">
+      <div className="w-80 glass-card border-none border-r border-border flex flex-col shrink-0">
         <div className="p-4 border-b border-border flex items-center gap-3">
           {activeAgency ? (
             <Link
               to="/agency/$slug"
               params={{ slug: activeAgency.slug || "" }}
-              className="p-1.5 hover:bg-surface-alt rounded-2xl border border-border text-muted-foreground hover:text-foreground"
+              className="p-1.5 hover:glass bg-white/5 border-white/10 rounded-[var(--radius-card)] border-none text-muted-foreground hover:text-foreground"
             >
               <ArrowLeft className="w-4 h-4" />
             </Link>
           ) : (
             <Link
               to="/"
-              className="p-1.5 hover:bg-surface-alt rounded-2xl border border-border text-muted-foreground hover:text-foreground"
+              className="p-1.5 hover:glass bg-white/5 border-white/10 rounded-[var(--radius-card)] border-none text-muted-foreground hover:text-foreground"
             >
               <ArrowLeft className="w-4 h-4" />
             </Link>
@@ -295,7 +295,7 @@ function AISiteBuilder() {
               <select
                 value={selectedAgencyId}
                 onChange={(e) => setSelectedAgencyId(e.target.value)}
-                className="w-full h-9 px-3 rounded-2xl border border-border bg-surface text-xs font-medium focus:border-brand"
+                className="w-full h-9 px-3 rounded-[var(--radius-card)] border-none glass-card border-none text-xs font-medium focus:border-brand"
               >
                 {userAgencies.map((ua: any) => (
                   <option key={ua.agency_id} value={ua.agency_id}>
@@ -305,13 +305,13 @@ function AISiteBuilder() {
               </select>
             </div>
           ) : (
-            <div className="p-3 bg-destructive/5 border border-destructive/20 rounded-2xl text-xs text-destructive flex gap-2">
+            <div className="p-3 bg-destructive/5 border border-destructive/20 rounded-[var(--radius-card)] text-xs text-destructive flex gap-2">
               <AlertCircle className="w-4 h-4 shrink-0" />
               <span>Você precisa possuir uma agência associada para usar o construtor.</span>
             </div>
           )}
 
-          <div className="border border-border rounded-[var(--radius-card)] p-4 bg-surface-alt/20 space-y-2.5">
+          <div className="border-none rounded-[var(--radius-card)] p-4 glass bg-white/5 border-white/10/20 space-y-2.5">
             <h3 className="text-xs font-bold text-foreground flex items-center gap-1.5">
               <Sparkles className="w-3.5 h-3.5 text-brand" /> Sugestões de temas
             </h3>
@@ -327,7 +327,7 @@ function AISiteBuilder() {
       </div>
 
       {/* Main chat window */}
-      <div className="flex-1 flex flex-col bg-surface overflow-hidden">
+      <div className="flex-1 flex flex-col glass-card border-none overflow-hidden">
         {/* Chat Messages */}
         <div className="flex-1 overflow-y-auto p-6 space-y-6 scrollbar-thin">
           {messages.map((m, idx) => (
@@ -339,24 +339,24 @@ function AISiteBuilder() {
                 className={`w-8 h-8 rounded-full flex items-center justify-center shrink-0 border ${
                   m.role === "user"
                     ? "bg-brand/10 border-brand text-brand"
-                    : "bg-surface-alt border-border text-muted-foreground"
+                    : "glass bg-white/5 border-white/10 border-border text-muted-foreground"
                 }`}
               >
                 {m.role === "user" ? <User className="w-4 h-4" /> : <Bot className="w-4 h-4" />}
               </div>
               <div className="space-y-2">
                 <div
-                  className={`p-4 rounded-2xl text-xs leading-relaxed ${
+                  className={`p-4 rounded-[var(--radius-card)] text-xs leading-relaxed ${
                     m.role === "user"
                       ? "bg-brand text-white"
-                      : "bg-surface-alt/55 text-foreground border border-border/60"
+                      : "glass bg-white/5 border-white/10/55 text-foreground border-none/60"
                   }`}
                 >
                   {m.content}
                 </div>
 
                 {m.siteLink && (
-                  <div className="bg-surface border border-border rounded-[var(--radius-card)] p-4 max-w-sm space-y-3">
+                  <div className="glass-card border-none border-none rounded-[var(--radius-card)] p-4 max-w-sm space-y-3">
                     <div className="flex items-center gap-2 text-xs font-bold text-green-600">
                       <CheckCircle2 className="w-4 h-4" /> Site Publicado com Sucesso!
                     </div>
@@ -369,7 +369,7 @@ function AISiteBuilder() {
                         href={m.siteLink}
                         target="_blank"
                         rel="noreferrer"
-                        className="flex-1 h-8 rounded-2xl bg-surface border border-border hover:bg-surface-alt text-[10px] font-bold text-center flex items-center justify-center transition-colors"
+                        className="flex-1 h-8 rounded-[var(--radius-card)] glass-card border-none border-none hover:glass bg-white/5 border-white/10 text-[10px] font-bold text-center flex items-center justify-center transition-colors"
                       >
                         Visualizar Site
                       </a>
@@ -380,7 +380,7 @@ function AISiteBuilder() {
                             params: { slug: m.agencySlug!, page_id: m.siteId! },
                           })
                         }
-                        className="flex-1 h-8 rounded-2xl bg-brand hover:bg-brand-hover text-white text-[10px] font-bold transition-colors"
+                        className="flex-1 h-8 rounded-[var(--radius-card)] bg-brand hover:bg-brand-hover text-white text-[10px] font-bold transition-colors"
                       >
                         Editar Seções
                       </button>
@@ -393,10 +393,10 @@ function AISiteBuilder() {
 
           {loading && (
             <div className="flex gap-3 max-w-xl mr-auto">
-              <div className="w-8 h-8 rounded-full bg-surface-alt border border-border flex items-center justify-center shrink-0 text-muted-foreground">
+              <div className="w-8 h-8 rounded-full glass bg-white/5 border-white/10 border-none flex items-center justify-center shrink-0 text-muted-foreground">
                 <Bot className="w-4 h-4" />
               </div>
-              <div className="space-y-2 bg-surface-alt/45 border border-border/50 p-4 rounded-2xl text-xs max-w-sm">
+              <div className="space-y-2 glass bg-white/5 border-white/10/45 border-none/50 p-4 rounded-[var(--radius-card)] text-xs max-w-sm">
                 <div className="flex items-center gap-2">
                   <div className="flex space-x-1">
                     <div
@@ -425,14 +425,14 @@ function AISiteBuilder() {
         </div>
 
         {/* Input Bar */}
-        <div className="p-4 border-t border-border bg-surface shrink-0 flex gap-2">
+        <div className="p-4 border-t border-border glass-card border-none shrink-0 flex gap-2">
           <input
             type="text"
             placeholder="Descreva o site de viagens que você deseja criar..."
             value={input}
             onChange={(e) => setInput(e.target.value)}
             disabled={loading || !selectedAgencyId}
-            className="flex-1 h-10 px-4 rounded-[var(--radius-card)] border border-border bg-surface text-xs focus:outline-none focus:border-brand disabled:opacity-50"
+            className="flex-1 h-10 px-4 rounded-[var(--radius-card)] border-none glass-card border-none text-xs focus:outline-none focus:border-brand disabled:opacity-50"
             onKeyDown={(e) => e.key === "Enter" && handleSend()}
           />
           <button

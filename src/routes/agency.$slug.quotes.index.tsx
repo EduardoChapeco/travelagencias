@@ -27,9 +27,8 @@ import {
   Eye,
 } from "lucide-react";
 import { useAgency } from "@/lib/agency-context";
-import { HeaderPortal } from "@/components/shell/HeaderPortal";
-import { ModuleToolbar, ModuleActionButton } from "@/components/shell/ModuleToolbar";
-import { PageHeader, EmptyState } from "@/components/shell/PageHeader";
+;
+import { PageHeader, EmptyState, ModuleActionButton } from "@/components/shell/PageHeader";
 import {
   StatusBadge,
   fmtDate,
@@ -569,8 +568,7 @@ Texto: "${aiText}"`;
 
   return (
     <div className="flex h-full flex-col overflow-hidden">
-      <HeaderPortal>
-        <ModuleToolbar
+              <PageHeader
           title="Cotações"
           search={{
             value: searchQuery,
@@ -614,8 +612,7 @@ Texto: "${aiText}"`;
             ) : undefined
           }
         />
-      </HeaderPortal>
-
+      
       {activeTab === "quotes" && (
         <ModuleActionButton
           label="Nova Cotação"
@@ -651,7 +648,7 @@ Texto: "${aiText}"`;
               action={<PrimaryButton onClick={() => setNewOpen(true)}>Criar Cotação</PrimaryButton>}
             />
           ) : (
-            <div className="flex-1 rounded-[var(--radius-card)] mac-glass-panel overflow-hidden flex flex-col">
+            <div className="flex-1 rounded-[var(--radius-card)] glass text-white bg-black/40 backdrop-blur-2xl-panel overflow-hidden flex flex-col">
               <div className="flex-1 overflow-y-auto no-scrollbar">
                 <table className="w-full text-left border-collapse text-xs">
                 <thead>
@@ -665,7 +662,7 @@ Texto: "${aiText}"`;
                     <th className="px-4 py-3 text-right">Ações</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-border bg-surface">
+                <tbody className="divide-y divide-border glass-card border-none">
                   {filteredQuotes.map((q) => {
                     const intent = q.normalized_intent as any;
                     const destName = intent?.destinations?.[0]?.name || "Não informado";
@@ -675,7 +672,7 @@ Texto: "${aiText}"`;
                     const budgetVal = intent?.budget?.amount || 0;
 
                     return (
-                      <tr key={q.id} className="hover:bg-surface-alt/50 transition-colors">
+                      <tr key={q.id} className="hover:glass bg-white/5 border-white/10/50 transition-colors">
                         <td className="px-4 py-3.5">
                           <div className="font-semibold text-foreground">
                             {q.client?.full_name || q.lead?.name || "Sem contato vinculado"}
@@ -719,7 +716,7 @@ Texto: "${aiText}"`;
                             <Link
                               to="/agency/$slug/quotes/$id"
                               params={{ slug, id: q.id }}
-                              className="inline-flex h-7 items-center justify-center rounded border border-border bg-surface px-2.5 text-[11px] font-bold text-foreground hover:bg-surface-alt"
+                              className="inline-flex h-7 items-center justify-center rounded border-none glass-card border-none px-2.5 text-[11px] font-bold text-foreground hover:glass bg-white/5 border-white/10"
                             >
                               Central de Decisão
                             </Link>
@@ -733,7 +730,7 @@ Texto: "${aiText}"`;
                                   deleteMut.mutate(q.id);
                                 }
                               }}
-                              className="inline-flex h-7 w-7 items-center justify-center rounded border border-border text-danger hover:bg-danger-bg hover:border-danger/30 transition-colors"
+                              className="inline-flex h-7 w-7 items-center justify-center rounded border-none text-danger hover:bg-danger-bg hover:border-danger/30 transition-colors"
                             >
                               <Trash2 className="h-3.5 w-3.5" />
                             </button>
@@ -766,7 +763,7 @@ Texto: "${aiText}"`;
                 <GhostButton
                   onClick={handleFeedDefaultGuidelines}
                   disabled={feedingDefaults}
-                  className="border border-border"
+                  className="border-none"
                 >
                   {feedingDefaults ? (
                     <Loader2 className="mr-2 h-4 w-4 animate-spin" />
@@ -786,7 +783,7 @@ Texto: "${aiText}"`;
             {filteredDocs.map((doc: any) => (
               <div
                 key={doc.id}
-                className="rounded border border-border bg-surface p-4 flex flex-col justify-between shadow-xs hover:border-brand/40 transition-colors"
+                className="rounded border-none glass-card border-none p-4 flex flex-col justify-between shadow-xs hover:border-brand/40 transition-colors"
               >
                 <div>
                   <div className="flex items-center justify-between gap-2 mb-2">
@@ -861,7 +858,7 @@ Texto: "${aiText}"`;
               </div>
 
               {ruleCandidates.filter((c: any) => c.status === "pending").length === 0 ? (
-                <div className="rounded border border-border bg-surface p-6 text-center">
+                <div className="rounded border-none glass-card border-none p-6 text-center">
                   <CheckCircle2 className="h-8 w-8 text-success mx-auto mb-2 opacity-60" />
                   <p className="text-xs text-muted-foreground">Nenhuma sugestão pendente de revisão.</p>
                   <p className="text-[10px] text-muted-foreground mt-1">O motor de aprendizado irá sugerir novas regras conforme as cotações forem processadas.</p>
@@ -888,7 +885,7 @@ Texto: "${aiText}"`;
                           </div>
 
                           {proposed?.effect && (
-                            <div className="bg-surface rounded border border-border p-2">
+                            <div className="glass-card border-none rounded border-none p-2">
                               <div className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground mb-1">Efeito Proposto</div>
                               <pre className="text-[10px] text-foreground whitespace-pre-wrap break-all font-mono">
                                 {JSON.stringify(proposed.effect, null, 2)}
@@ -937,16 +934,16 @@ Texto: "${aiText}"`;
               </div>
 
               {agencyRules.length === 0 ? (
-                <div className="rounded border border-border bg-surface p-6 text-center">
+                <div className="rounded border-none glass-card border-none p-6 text-center">
                   <Zap className="h-8 w-8 text-muted-foreground mx-auto mb-2 opacity-40" />
                   <p className="text-xs text-muted-foreground">Nenhuma regra ativa ainda.</p>
                   <p className="text-[10px] text-muted-foreground mt-1">Aprove sugestões da IA acima para ativar regras no motor de decisão.</p>
                 </div>
               ) : (
-                <div className="rounded border border-border overflow-hidden">
+                <div className="rounded border-none overflow-hidden">
                   <table className="w-full text-xs">
                     <thead>
-                      <tr className="bg-surface-alt border-b border-border text-muted-foreground font-semibold">
+                      <tr className="glass bg-white/5 border-white/10 border-b border-border text-muted-foreground font-semibold">
                         <th className="px-4 py-3 text-left">Código</th>
                         <th className="px-4 py-3 text-left">Escopo</th>
                         <th className="px-4 py-3 text-left">Versão</th>
@@ -955,11 +952,11 @@ Texto: "${aiText}"`;
                         <th className="px-4 py-3 text-right">Ações</th>
                       </tr>
                     </thead>
-                    <tbody className="divide-y divide-border bg-surface">
+                    <tbody className="divide-y divide-border glass-card border-none">
                       {agencyRules.map((rule: any) => {
                         const ver = rule.current_version;
                         return (
-                          <tr key={rule.id} className="hover:bg-surface-alt/50 transition-colors">
+                          <tr key={rule.id} className="hover:glass bg-white/5 border-white/10/50 transition-colors">
                             <td className="px-4 py-3.5 font-mono text-[11px] text-foreground">{rule.code}</td>
                             <td className="px-4 py-3.5">
                               <StatusBadge tone={rule.scope === "global" ? "success" : "info"}>
@@ -986,7 +983,7 @@ Texto: "${aiText}"`;
                                       status: rule.status === "active" ? "paused" : "active",
                                     })
                                   }
-                                  className="inline-flex h-7 items-center gap-1 px-2 rounded border border-border text-[10px] font-semibold text-muted-foreground hover:text-foreground hover:bg-surface-alt transition-colors"
+                                  className="inline-flex h-7 items-center gap-1 px-2 rounded border-none text-[10px] font-semibold text-muted-foreground hover:text-foreground hover:glass bg-white/5 border-white/10 transition-colors"
                                   title={rule.status === "active" ? "Pausar regra" : "Ativar regra"}
                                 >
                                   {rule.status === "active" ? (
@@ -1003,7 +1000,7 @@ Texto: "${aiText}"`;
                                         deleteRuleMut.mutate(rule.id);
                                       }
                                     }}
-                                    className="inline-flex h-7 w-7 items-center justify-center rounded border border-border text-danger hover:bg-danger-bg transition-colors"
+                                    className="inline-flex h-7 w-7 items-center justify-center rounded border-none text-danger hover:bg-danger-bg transition-colors"
                                   >
                                     <Trash2 className="h-3.5 w-3.5" />
                                   </button>
@@ -1040,7 +1037,7 @@ Texto: "${aiText}"`;
               </div>
 
               {watchProfiles.length === 0 ? (
-                <div className="rounded border border-border bg-surface p-6 text-center">
+                <div className="rounded border-none glass-card border-none p-6 text-center">
                   <Bell className="h-8 w-8 text-muted-foreground mx-auto mb-2 opacity-40" />
                   <p className="text-xs text-muted-foreground">Nenhum alerta configurado.</p>
                   <p className="text-[10px] text-muted-foreground mt-1 mb-4">Configure alertas para monitorar tarifas e oportunidades automáticas.</p>
@@ -1059,7 +1056,7 @@ Texto: "${aiText}"`;
                         className={`rounded border p-4 flex flex-col justify-between gap-3 transition-colors ${
                           w.status === "active"
                             ? "border-brand/30 bg-brand/5"
-                            : "border-border bg-surface opacity-60"
+                            : "border-border glass-card border-none opacity-60"
                         }`}
                       >
                         <div>
@@ -1104,7 +1101,7 @@ Texto: "${aiText}"`;
                                 status: w.status === "active" ? "paused" : "active",
                               })
                             }
-                            className="flex-1 inline-flex items-center justify-center gap-1 h-7 rounded border border-border text-[10px] font-semibold text-muted-foreground hover:text-foreground hover:bg-surface-alt transition-colors"
+                            className="flex-1 inline-flex items-center justify-center gap-1 h-7 rounded border-none text-[10px] font-semibold text-muted-foreground hover:text-foreground hover:glass bg-white/5 border-white/10 transition-colors"
                           >
                             {w.status === "active" ? (
                               <><BellOff className="h-3 w-3" /> Pausar</>
@@ -1118,7 +1115,7 @@ Texto: "${aiText}"`;
                                 deleteWatcherMut.mutate(w.id);
                               }
                             }}
-                            className="inline-flex h-7 w-7 items-center justify-center rounded border border-border text-danger hover:bg-danger-bg transition-colors"
+                            className="inline-flex h-7 w-7 items-center justify-center rounded border-none text-danger hover:bg-danger-bg transition-colors"
                           >
                             <Trash2 className="h-3.5 w-3.5" />
                           </button>
@@ -1139,7 +1136,7 @@ Texto: "${aiText}"`;
               </div>
 
               {promotionCandidates.length === 0 ? (
-                <div className="rounded border border-border bg-surface p-6 text-center">
+                <div className="rounded border-none glass-card border-none p-6 text-center">
                   <TrendingDown className="h-8 w-8 text-muted-foreground mx-auto mb-2 opacity-40" />
                   <p className="text-xs text-muted-foreground">Nenhuma oportunidade detectada ainda.</p>
                   <p className="text-[10px] text-muted-foreground mt-1">
@@ -1158,8 +1155,8 @@ Texto: "${aiText}"`;
                           promo.status === "new"
                             ? "border-success/30 bg-success/5"
                             : promo.status === "approved"
-                            ? "border-brand/20 bg-surface"
-                            : "border-border bg-surface opacity-50"
+                            ? "border-brand/20 glass-card border-none"
+                            : "border-border glass-card border-none opacity-50"
                         }`}
                       >
                         <div>
@@ -1186,7 +1183,7 @@ Texto: "${aiText}"`;
                           </div>
 
                           <div className="flex items-center gap-2 mb-2">
-                            <div className="flex-1 bg-surface rounded-full h-1.5 overflow-hidden">
+                            <div className="flex-1 glass-card border-none rounded-full h-1.5 overflow-hidden">
                               <div
                                 className="h-full bg-success rounded-full"
                                 style={{ width: `${Math.min(100, promo.score)}%` }}
@@ -1213,7 +1210,7 @@ Texto: "${aiText}"`;
                             </button>
                             <button
                               onClick={() => updatePromotionMut.mutate({ id: promo.id, status: "dismissed" })}
-                              className="inline-flex items-center justify-center gap-1 h-7 px-2 rounded border border-border text-[10px] font-semibold text-muted-foreground hover:bg-surface-alt transition-colors"
+                              className="inline-flex items-center justify-center gap-1 h-7 px-2 rounded border-none text-[10px] font-semibold text-muted-foreground hover:glass bg-white/5 border-white/10 transition-colors"
                             >
                               <XCircle className="h-3 w-3" />
                               Ignorar
@@ -1237,7 +1234,7 @@ Texto: "${aiText}"`;
           onClick={() => setNewOpen(false)}
         >
           <div
-            className="h-full w-full max-w-2xl overflow-y-auto border-l border-border bg-surface p-6 shadow-xl flex flex-col justify-between"
+            className="h-full w-full max-w-2xl overflow-y-auto border-l border-border glass-card border-none p-6 shadow-xl flex flex-col justify-between"
             onClick={(e) => e.stopPropagation()}
           >
             <div>
@@ -1254,14 +1251,14 @@ Texto: "${aiText}"`;
                 </div>
                 <button
                   onClick={() => setNewOpen(false)}
-                  className="rounded-full p-1.5 text-muted-foreground hover:bg-surface-alt hover:text-foreground transition-colors"
+                  className="rounded-full p-1.5 text-muted-foreground hover:glass bg-white/5 border-white/10 hover:text-foreground transition-colors"
                 >
                   <Plus className="h-5 w-5 rotate-45" />
                 </button>
               </div>
 
               {/* AI Conversation Parser Section */}
-              <div className="bg-surface-alt/40 border border-border/80 rounded p-4 mb-6">
+              <div className="glass bg-white/5 border-white/10/40 border-none/80 rounded p-4 mb-6">
                 <div className="flex items-center gap-1.5 text-[11px] font-bold uppercase tracking-wider text-muted-foreground mb-3">
                   <Sparkles className="h-3.5 w-3.5 text-brand" />
                   Interpretar com IA (Opcional)
@@ -1401,7 +1398,7 @@ Texto: "${aiText}"`;
           onClick={() => setNewKnowledgeOpen(false)}
         >
           <div
-            className="h-full w-full max-w-2xl overflow-y-auto border-l border-border bg-surface p-6 shadow-xl flex flex-col justify-between"
+            className="h-full w-full max-w-2xl overflow-y-auto border-l border-border glass-card border-none p-6 shadow-xl flex flex-col justify-between"
             onClick={(e) => e.stopPropagation()}
           >
             <div>
@@ -1418,7 +1415,7 @@ Texto: "${aiText}"`;
                 </div>
                 <button
                   onClick={() => setNewKnowledgeOpen(false)}
-                  className="rounded-full p-1.5 text-muted-foreground hover:bg-surface-alt hover:text-foreground transition-colors"
+                  className="rounded-full p-1.5 text-muted-foreground hover:glass bg-white/5 border-white/10 hover:text-foreground transition-colors"
                 >
                   <Plus className="h-5 w-5 rotate-45" />
                 </button>
@@ -1502,7 +1499,7 @@ Texto: "${aiText}"`;
           onClick={() => setWatcherOpen(false)}
         >
           <div
-            className="h-full w-full max-w-lg overflow-y-auto border-l border-border bg-surface p-6 shadow-xl flex flex-col justify-between"
+            className="h-full w-full max-w-lg overflow-y-auto border-l border-border glass-card border-none p-6 shadow-xl flex flex-col justify-between"
             onClick={(e) => e.stopPropagation()}
           >
             <div>
@@ -1518,7 +1515,7 @@ Texto: "${aiText}"`;
                 </div>
                 <button
                   onClick={() => setWatcherOpen(false)}
-                  className="rounded-full p-1.5 text-muted-foreground hover:bg-surface-alt hover:text-foreground transition-colors"
+                  className="rounded-full p-1.5 text-muted-foreground hover:glass bg-white/5 border-white/10 hover:text-foreground transition-colors"
                 >
                   <Plus className="h-5 w-5 rotate-45" />
                 </button>

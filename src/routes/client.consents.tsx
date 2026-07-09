@@ -113,8 +113,8 @@ function ClientConsentsPage() {
         )}
 
         {q.data?.missing.length === 0 && (
-          <div className="relative overflow-hidden rounded-2xl border border-success/30 bg-success/5 p-8 text-center transition-all hover:border-success/50">
-            <div className="absolute inset-0 bg-surface-alt/10 pointer-events-none" />
+          <div className="relative overflow-hidden rounded-[var(--radius-card)] border border-success/30 bg-success/5 p-8 text-center transition-all hover:border-success/50">
+            <div className="absolute inset-0 glass bg-white/5 border-white/10/10 pointer-events-none" />
             <div className="relative z-10 flex flex-col items-center">
               <div className="flex h-16 w-16 items-center justify-center rounded-full bg-success/10 text-success mb-4">
                 <CheckCircle2 className="h-8 w-8" />
@@ -133,7 +133,7 @@ function ClientConsentsPage() {
             {q.data.missing.map((m: any) => (
               <div
                 key={m.id}
-                className="group relative flex flex-col md:flex-row md:items-center justify-between gap-6 rounded-2xl border border-warning/40 bg-surface p-6 transition-all hover:border-warning"
+                className="group relative flex flex-col md:flex-row md:items-center justify-between gap-6 rounded-[var(--radius-card)] border border-warning/40 glass-card border-none p-6 transition-all hover:border-warning"
               >
                 <div className="absolute left-0 top-0 bottom-0 w-1 bg-warning rounded-l-2xl" />
                 <div className="flex items-start gap-4">
@@ -143,7 +143,7 @@ function ClientConsentsPage() {
                   <div>
                     <h4 className="text-base font-bold text-foreground flex items-center gap-2">
                       {KIND_LABELS[m.kind] || m.kind}
-                      <span className="inline-flex items-center rounded-full bg-surface-alt px-2 py-0.5 text-[10px] font-semibold text-muted-foreground border border-border">
+                      <span className="inline-flex items-center rounded-full glass bg-white/5 border-white/10 px-2 py-0.5 text-[10px] font-semibold text-muted-foreground border-none">
                         v{m.version}
                       </span>
                     </h4>
@@ -184,7 +184,7 @@ function ClientConsentsPage() {
             {q.data.acceptances.map((a: any) => (
               <div
                 key={a.id}
-                className="flex flex-col sm:flex-row sm:items-center justify-between rounded-[var(--radius-card)] border border-border bg-surface p-5 gap-4 transition-colors hover:border-brand/40"
+                className="flex flex-col sm:flex-row sm:items-center justify-between rounded-[var(--radius-card)] border-none glass-card border-none p-5 gap-4 transition-colors hover:border-brand/40"
               >
                 <div className="flex items-start gap-4">
                   <div className="mt-1 flex h-8 w-8 items-center justify-center rounded-full bg-success/10 text-success shrink-0">
@@ -202,7 +202,7 @@ function ClientConsentsPage() {
                         <Clock className="h-3.5 w-3.5" /> {fmtDate(a.accepted_at)}
                       </span>
                       {a.ip_address && (
-                        <span className="font-mono text-[10px] bg-surface-alt px-2 py-0.5 rounded border border-border">
+                        <span className="font-mono text-[10px] glass bg-white/5 border-white/10 px-2 py-0.5 rounded border-none">
                           IP: {a.ip_address}
                         </span>
                       )}

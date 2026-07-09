@@ -18,8 +18,7 @@ import {
 import { supabase } from "@/integrations/supabase/client";
 import { useAgency } from "@/lib/agency-context";
 import { EmptyState } from "@/components/shell/PageHeader";
-import { HeaderPortal } from "@/components/shell/HeaderPortal";
-import { ModuleToolbar, ModuleActionButton } from "@/components/shell/ModuleToolbar";
+import { PageHeader, ModuleActionButton } from "@/components/shell/PageHeader";
 import { ModuleAdminPanel } from "@/components/shell/ModuleAdminPanel";
 import { StatusBadge, money, fmtDate, GhostButton, Input, Select } from "@/components/ui/form";
 import { cn } from "@/lib/utils";
@@ -93,8 +92,7 @@ function ContractsPage() {
 
   return (
     <div className="flex h-full flex-col overflow-hidden">
-      <HeaderPortal>
-        <ModuleToolbar
+              <PageHeader
           title="Contratos"
           search={activeTab === "list" ? {
             value: search,
@@ -133,8 +131,7 @@ function ContractsPage() {
             ) : undefined
           }
         />
-      </HeaderPortal>
-
+      
       <Tabs value={activeTab} onValueChange={setActiveTab} className="flex flex-col flex-1 min-h-0">
         {/* ── Visualização de Lista de Contratos (Pesquisa e Filtros) ──────────────────── */}
         {activeTab === "list" && (
@@ -175,16 +172,16 @@ function ContractsPage() {
                 return (
                   <div
                     key={c.id}
-                    className="group flex flex-col rounded-[var(--radius-card)] border border-border bg-surface p-5 transition-all hover:border-brand/40 shadow-xs"
+                    className="group flex flex-col rounded-[var(--radius-card)] border-none glass-card border-none p-5 transition-all hover:border-brand/40 shadow-xs"
                   >
                     <div className="flex items-start justify-between mb-4">
                       <div className="flex items-center gap-3">
                         <div
                           className={cn(
-                            "flex h-10 w-10 items-center justify-center rounded-[var(--radius-card)] border border-border",
+                            "flex h-10 w-10 items-center justify-center rounded-[var(--radius-card)] border-none",
                             c.status === "signed"
                               ? "bg-success/10 text-success"
-                              : "bg-surface-alt text-muted-foreground",
+                              : "glass bg-white/5 border-white/10 text-muted-foreground",
                           )}
                         >
                           {c.status === "signed" ? (
@@ -211,7 +208,7 @@ function ContractsPage() {
                       </p>
                     )}
 
-                    <div className="space-y-3 mb-5 mt-auto bg-surface-alt/40 rounded-[var(--radius-card)] p-4 border border-border/50">
+                    <div className="space-y-3 mb-5 mt-auto glass bg-white/5 border-white/10/40 rounded-[var(--radius-card)] p-4 border-none/50">
                       <div className="flex items-center justify-between text-sm">
                         <span className="flex items-center gap-2 text-muted-foreground font-medium whitespace-nowrap">
                           <User className="h-4 w-4" /> Cliente
@@ -278,14 +275,14 @@ function ContractsPage() {
                 <GhostButton
                   disabled={page === 1}
                   onClick={() => setPage((p) => Math.max(1, p - 1))}
-                  className="h-9 px-4 text-xs font-semibold rounded-full border border-border"
+                  className="h-9 px-4 text-xs font-semibold rounded-full border-none"
                 >
                   Anterior
                 </GhostButton>
                 <GhostButton
                   disabled={page * pageSize >= q.data.count}
                   onClick={() => setPage((p) => p + 1)}
-                  className="h-9 px-4 text-xs font-semibold rounded-full border border-border"
+                  className="h-9 px-4 text-xs font-semibold rounded-full border-none"
                 >
                   Próxima
                 </GhostButton>

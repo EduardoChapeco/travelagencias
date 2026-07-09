@@ -46,7 +46,7 @@ function PublicKnowledgeBase() {
       }, {});
 
   return (
-    <div className="min-h-screen bg-surface">
+    <div className="min-h-screen glass-card border-none">
       <header className="border-b border-border bg-background sticky top-0 z-50">
         <div className="max-w-4xl mx-auto px-6 h-14 flex items-center justify-between">
           <Link
@@ -98,10 +98,10 @@ function PublicKnowledgeBase() {
                 <Link
                   key={a.id}
                   to={`/p/${agency_slug}/kb/${a.slug}` as any}
-                  className="flex items-center justify-between p-5 rounded-2xl bg-background border border-border hover:border-brand/50 transition-all group"
+                  className="flex items-center justify-between p-5 rounded-[var(--radius-card)] bg-background border-none hover:border-brand/50 transition-all group"
                 >
                   <div className="flex items-center gap-4">
-                    <div className="w-10 h-10 rounded-full bg-surface-alt flex items-center justify-center group-hover:bg-brand/10 group-hover:text-brand transition-colors">
+                    <div className="w-10 h-10 rounded-full glass bg-white/5 border-white/10 flex items-center justify-center group-hover:bg-brand/10 group-hover:text-brand transition-colors">
                       <BookOpen className="w-5 h-5" />
                     </div>
                     <div>
@@ -119,7 +119,7 @@ function PublicKnowledgeBase() {
                 </Link>
               ))}
               {articles.length === 0 && (
-                <div className="text-center py-10 bg-background rounded-2xl border border-border">
+                <div className="text-center py-10 bg-background rounded-[var(--radius-card)] border-none">
                   <HelpCircle className="w-10 h-10 text-muted-foreground mx-auto mb-3" />
                   <p className="text-foreground font-semibold">Nenhum artigo encontrado</p>
                   <p className="text-muted-foreground text-sm">
@@ -135,7 +135,7 @@ function PublicKnowledgeBase() {
               <div key={cat} className="space-y-4">
                 <h3 className="text-lg font-black tracking-tight border-b border-border pb-2 flex items-center justify-between">
                   {cat}
-                  <span className="text-xs font-semibold text-muted-foreground bg-surface-alt px-2 py-0.5 rounded-full">
+                  <span className="text-xs font-semibold text-muted-foreground glass bg-white/5 border-white/10 px-2 py-0.5 rounded-full">
                     {byCategory[cat].length}
                   </span>
                 </h3>

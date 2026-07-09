@@ -34,8 +34,7 @@ import {
   GhostButton,
   StatusBadge,
 } from "@/components/ui/form";
-import { HeaderPortal } from "@/components/shell/HeaderPortal";
-import { ModuleToolbar, ModuleActionButton } from "@/components/shell/ModuleToolbar";
+import { PageHeader, ModuleActionButton } from "@/components/shell/PageHeader";
 
 export const Route = createFileRoute("/agency/$slug/destination-intelligence")({
   head: ({ context }: any) => ({ meta: [{ title: `Informações de Destinos · ${context?.brand?.platform_name || 'Turis'}` }] }),
@@ -307,8 +306,7 @@ function DestinationIntelligencePage() {
 
   return (
     <div className="flex h-full flex-col overflow-hidden">
-      <HeaderPortal>
-        <ModuleToolbar
+              <PageHeader
           title="Inteligência de Destinos"
           search={{
             value: searchQuery,
@@ -323,8 +321,7 @@ function DestinationIntelligencePage() {
             </div>
           }
         />
-      </HeaderPortal>
-
+      
       <ModuleActionButton
         label="Novo Destino"
         icon={<Plus className="h-3.5 w-3.5" />}
@@ -340,7 +337,7 @@ function DestinationIntelligencePage() {
             Carregando destinos…
           </div>
         ) : filtered.length === 0 ? (
-          <div className="flex flex-col items-center justify-center py-24 border-2 border-dashed border-border rounded-2xl text-center">
+          <div className="flex flex-col items-center justify-center py-24 border-2 border-dashed border-border rounded-[var(--radius-card)] text-center">
             <Globe className="h-12 w-12 text-muted-foreground/30 mb-4" />
             <p className="text-sm font-semibold text-muted-foreground">
               {searchQuery ? "Nenhum destino encontrado" : "Nenhum destino cadastrado ainda"}
@@ -361,7 +358,7 @@ function DestinationIntelligencePage() {
               return (
                 <div
                   key={dest.id}
-                  className="rounded-2xl border border-border bg-surface p-5 flex flex-col gap-3 hover:border-border-strong transition-colors"
+                  className="rounded-[var(--radius-card)] border-none glass-card border-none p-5 flex flex-col gap-3 hover:border-border-strong transition-colors"
                 >
                   {/* Header */}
                   <div className="flex items-start justify-between gap-2">
@@ -454,7 +451,7 @@ function DestinationIntelligencePage() {
                       <button
                         onClick={() => generateWithAI(dest.destination)}
                         disabled={generating === dest.destination}
-                        className="h-6 w-6 rounded border border-border flex items-center justify-center text-muted-foreground hover:text-brand hover:border-brand transition-colors"
+                        className="h-6 w-6 rounded border-none flex items-center justify-center text-muted-foreground hover:text-brand hover:border-brand transition-colors"
                         title="Atualizar dados automaticamente"
                       >
                         <RefreshCw
@@ -463,7 +460,7 @@ function DestinationIntelligencePage() {
                       </button>
                       <button
                         onClick={() => openEdit(dest)}
-                        className="h-6 w-6 rounded border border-border flex items-center justify-center text-muted-foreground hover:text-foreground transition-colors"
+                        className="h-6 w-6 rounded border-none flex items-center justify-center text-muted-foreground hover:text-foreground transition-colors"
                         title="Editar"
                       >
                         <Edit2 className="h-3 w-3" />
@@ -477,7 +474,7 @@ function DestinationIntelligencePage() {
                             onConfirm: () => deleteMut.mutate(dest.id),
                           })
                         }
-                        className="h-6 w-6 rounded border border-border flex items-center justify-center text-muted-foreground hover:text-danger hover:border-danger transition-colors"
+                        className="h-6 w-6 rounded border-none flex items-center justify-center text-muted-foreground hover:text-danger hover:border-danger transition-colors"
                         title="Excluir"
                       >
                         <Trash2 className="h-3 w-3" />
@@ -531,7 +528,7 @@ function DestinationIntelligencePage() {
 
                   {/* Vaccinations */}
                   {(dest.vaccinations_required ?? []).length > 0 && (
-                    <div className="bg-danger/5 border border-danger/20 rounded-2xl px-3 py-2 text-[10px]">
+                    <div className="bg-danger/5 border border-danger/20 rounded-[var(--radius-card)] px-3 py-2 text-[10px]">
                       <span className="font-bold text-danger uppercase tracking-wide block mb-0.5">
                         Vacinas Obrigatórias
                       </span>
@@ -574,16 +571,16 @@ function DestinationIntelligencePage() {
       {showForm && (
         <div className="fixed inset-0 z-50 flex justify-end bg-overlay" onClick={closeForm}>
           <div
-            className="h-full w-full max-w-xl overflow-y-auto border-l border-border bg-surface"
+            className="h-full w-full max-w-xl overflow-y-auto border-l border-border glass-card border-none"
             onClick={(e) => e.stopPropagation()}
           >
-            <div className="flex items-center justify-between p-5 border-b border-border sticky top-0 bg-surface z-10">
+            <div className="flex items-center justify-between p-5 border-b border-border sticky top-0 glass-card border-none z-10">
               <h2 className="text-sm font-bold text-foreground">
                 {editing ? `Editar: ${editing.destination}` : "Novo Destino"}
               </h2>
               <button
                 onClick={closeForm}
-                className="rounded border border-border p-1 hover:bg-surface-alt"
+                className="rounded border-none p-1 hover:glass bg-white/5 border-white/10"
               >
                 <X className="h-4 w-4" />
               </button>
@@ -612,7 +609,7 @@ function DestinationIntelligencePage() {
               </div>
 
               {/* Visa */}
-              <div className="border border-border rounded-[var(--radius-card)] p-4 space-y-3">
+              <div className="border-none rounded-[var(--radius-card)] p-4 space-y-3">
                 <div className="text-xs font-bold uppercase tracking-wider text-muted-foreground flex items-center gap-1.5">
                   <Globe className="h-3.5 w-3.5" /> Visto & Entrada
                 </div>
@@ -647,7 +644,7 @@ function DestinationIntelligencePage() {
               </div>
 
               {/* Health */}
-              <div className="border border-border rounded-[var(--radius-card)] p-4 space-y-3">
+              <div className="border-none rounded-[var(--radius-card)] p-4 space-y-3">
                 <div className="text-xs font-bold uppercase tracking-wider text-muted-foreground flex items-center gap-1.5">
                   <Heart className="h-3.5 w-3.5" /> Saúde
                 </div>
@@ -677,7 +674,7 @@ function DestinationIntelligencePage() {
               </div>
 
               {/* Safety */}
-              <div className="border border-border rounded-[var(--radius-card)] p-4 space-y-3">
+              <div className="border-none rounded-[var(--radius-card)] p-4 space-y-3">
                 <div className="text-xs font-bold uppercase tracking-wider text-muted-foreground flex items-center gap-1.5">
                   <ShieldAlert className="h-3.5 w-3.5" /> Segurança
                 </div>
@@ -702,7 +699,7 @@ function DestinationIntelligencePage() {
               </div>
 
               {/* Practical */}
-              <div className="border border-border rounded-[var(--radius-card)] p-4 space-y-3">
+              <div className="border-none rounded-[var(--radius-card)] p-4 space-y-3">
                 <div className="text-xs font-bold uppercase tracking-wider text-muted-foreground flex items-center gap-1.5">
                   <Zap className="h-3.5 w-3.5" /> Informações Práticas
                 </div>
@@ -756,7 +753,7 @@ function DestinationIntelligencePage() {
               </div>
 
               {/* Tax */}
-              <div className="border border-border rounded-[var(--radius-card)] p-4 space-y-3">
+              <div className="border-none rounded-[var(--radius-card)] p-4 space-y-3">
                 <div className="text-xs font-bold uppercase tracking-wider text-muted-foreground flex items-center gap-1.5">
                   <DollarSign className="h-3.5 w-3.5" /> Taxa Turística
                 </div>
@@ -791,7 +788,7 @@ function DestinationIntelligencePage() {
               </div>
 
               {/* Curadoria e Controle */}
-              <div className="border border-border rounded-[var(--radius-card)] p-4 space-y-3">
+              <div className="border-none rounded-[var(--radius-card)] p-4 space-y-3">
                 <div className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
                   Curadoria e Qualidade
                 </div>
@@ -831,7 +828,7 @@ function DestinationIntelligencePage() {
               </div>
 
               {/* Tips */}
-              <div className="border border-border rounded-[var(--radius-card)] p-4 space-y-3">
+              <div className="border-none rounded-[var(--radius-card)] p-4 space-y-3">
                 <div className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
                   Dicas e Contexto
                 </div>

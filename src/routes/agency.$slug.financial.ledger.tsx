@@ -15,8 +15,7 @@ import {
 } from "lucide-react";
 import { money, GhostButton } from "@/components/ui/form";
 import { cn } from "@/lib/utils";
-import { HeaderPortal } from "@/components/shell/HeaderPortal";
-import { ModuleToolbar } from "@/components/shell/ModuleToolbar";
+import { PageHeader } from "@/components/shell/PageHeader";
 
 export const Route = createFileRoute("/agency/$slug/financial/ledger")({
   head: ({ context }: any) => ({ meta: [{ title: `Livro-Razão Contábil · ${context?.brand?.platform_name || 'Turis'}` }] }),
@@ -118,14 +117,12 @@ export function LedgerDashboard() {
 
   return (
     <div className="flex h-full flex-col overflow-hidden">
-      <HeaderPortal>
-        <ModuleToolbar title="Livro-Razão" />
-      </HeaderPortal>
-
+              <PageHeader title="Livro-Razão" />
+      
       <div className="flex-1 overflow-y-auto px-4  md:pr-6 py-4 min-h-0 space-y-6">
       {/* KPI Cards */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <div className="bg-surface border border-border rounded-[var(--radius-card)] p-4">
+        <div className="glass-card border-none border-none rounded-[var(--radius-card)] p-4">
           <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest flex items-center gap-1">
             <ArrowDownCircle className="w-3.5 h-3.5 text-success" /> Total de Débitos (D)
           </span>
@@ -137,7 +134,7 @@ export function LedgerDashboard() {
           </span>
         </div>
 
-        <div className="bg-surface border border-border rounded-[var(--radius-card)] p-4">
+        <div className="glass-card border-none border-none rounded-[var(--radius-card)] p-4">
           <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest flex items-center gap-1">
             <ArrowUpCircle className="w-3.5 h-3.5 text-danger" /> Total de Créditos (C)
           </span>
@@ -149,7 +146,7 @@ export function LedgerDashboard() {
           </span>
         </div>
 
-        <div className="bg-surface border border-border rounded-[var(--radius-card)] p-4">
+        <div className="glass-card border-none border-none rounded-[var(--radius-card)] p-4">
           <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest flex items-center gap-1">
             <Scale className="w-3.5 h-3.5 text-brand" /> Saldo Líquido do Razão
           </span>
@@ -168,7 +165,7 @@ export function LedgerDashboard() {
       </div>
 
       {/* Filter and Table Panel */}
-      <div className="bg-surface border border-border rounded-[var(--radius-card)] overflow-hidden shadow-xs">
+      <div className="glass-card border-none border-none rounded-[var(--radius-card)] overflow-hidden shadow-xs">
         {/* Filters bar */}
         <div className="px-5 py-4 border-b border-border flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div>
@@ -188,7 +185,7 @@ export function LedgerDashboard() {
                   setAccountCode(e.target.value);
                   setPage(1);
                 }}
-                className="h-8 rounded-full border border-border bg-surface pl-8 pr-3 text-xs text-foreground placeholder:text-muted-foreground focus:outline-hidden focus:ring-1 focus:ring-ring w-[160px]"
+                className="h-8 rounded-full border-none glass-card border-none pl-8 pr-3 text-xs text-foreground placeholder:text-muted-foreground focus:outline-hidden focus:ring-1 focus:ring-ring w-[160px]"
               />
               <Search className="w-3.5 h-3.5 text-muted-foreground absolute left-2.5 top-1/2 -translate-y-1/2" />
             </div>
@@ -203,7 +200,7 @@ export function LedgerDashboard() {
                   setSearch(e.target.value);
                   setPage(1);
                 }}
-                className="h-8 rounded-full border border-border bg-surface pl-8 pr-3 text-xs text-foreground placeholder:text-muted-foreground focus:outline-hidden focus:ring-1 focus:ring-ring w-[200px]"
+                className="h-8 rounded-full border-none glass-card border-none pl-8 pr-3 text-xs text-foreground placeholder:text-muted-foreground focus:outline-hidden focus:ring-1 focus:ring-ring w-[200px]"
               />
               <Search className="w-3.5 h-3.5 text-muted-foreground absolute left-2.5 top-1/2 -translate-y-1/2" />
             </div>
@@ -212,7 +209,7 @@ export function LedgerDashboard() {
             {(search || accountCode) && (
               <GhostButton
                 onClick={resetFilters}
-                className="h-8 !px-2.5 hover:bg-surface-alt transition cursor-pointer"
+                className="h-8 !px-2.5 hover:glass bg-white/5 border-white/10 transition cursor-pointer"
                 title="Limpar filtros"
               >
                 <RefreshCw className="w-3.5 h-3.5" />
@@ -224,13 +221,13 @@ export function LedgerDashboard() {
         {/* Entries Table */}
         <div className="overflow-x-auto relative min-h-[150px]">
           {ledgerQ.isLoading ? (
-            <div className="absolute inset-0 flex items-center justify-center bg-surface/50">
+            <div className="absolute inset-0 flex items-center justify-center glass-card border-none/50">
               <Loader2 className="w-6 h-6 animate-spin text-brand" />
             </div>
           ) : null}
 
           <table className="w-full text-sm">
-            <thead className="bg-surface-alt/40 text-left text-[10px] font-bold uppercase tracking-wider text-muted-foreground border-b border-border">
+            <thead className="glass bg-white/5 border-white/10/40 text-left text-[10px] font-bold uppercase tracking-wider text-muted-foreground border-b border-border">
               <tr>
                 <th className="px-5 py-3">Data/Hora</th>
                 <th className="px-5 py-3">Código da Conta</th>
@@ -258,7 +255,7 @@ export function LedgerDashboard() {
                 </tr>
               ) : (
                 entries.map((entry) => (
-                  <tr key={entry.id} className="hover:bg-surface-alt/40 transition-colors">
+                  <tr key={entry.id} className="hover:glass bg-white/5 border-white/10/40 transition-colors">
                     <td className="px-5 py-3.5 text-xs text-muted-foreground font-mono whitespace-nowrap">
                       {new Date(entry.entry_date).toLocaleString("pt-BR")}
                     </td>
@@ -269,7 +266,7 @@ export function LedgerDashboard() {
                       {entry.description}
                     </td>
                     <td className="px-5 py-3.5 whitespace-nowrap">
-                      <span className="inline-block rounded-full bg-surface-alt border border-border px-1.5 py-0.5 text-[9px] font-semibold text-muted-foreground capitalize">
+                      <span className="inline-block rounded-full glass bg-white/5 border-white/10 border-none px-1.5 py-0.5 text-[9px] font-semibold text-muted-foreground capitalize">
                         {entry.source_event.replace(/_/g, " ")}
                       </span>
                     </td>
@@ -292,7 +289,7 @@ export function LedgerDashboard() {
 
         {/* Pagination Footer */}
         {totalPages > 1 && (
-          <div className="flex items-center justify-between border-t border-border bg-surface-alt px-5 py-3">
+          <div className="flex items-center justify-between border-t border-border glass bg-white/5 border-white/10 px-5 py-3">
             <span className="text-xs text-muted-foreground font-medium">
               Mostrando {entries.length} de {totalCount} resultados
             </span>

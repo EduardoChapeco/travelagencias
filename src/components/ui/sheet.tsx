@@ -53,7 +53,7 @@ export function SheetPage({
       />
       <div
         className={cn(
-          "relative flex h-full flex-col mac-glass-modal border-l border-white/10 transition-transform duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] max-w-full",
+          "relative flex h-full flex-col glass text-white bg-black/40 backdrop-blur-2xl border-l border-white/10 transition-transform duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] max-w-full",
           isOpen ? "translate-x-0" : "translate-x-full",
         )}
         style={{ width }}
@@ -98,7 +98,7 @@ const SheetOverlay = React.forwardRef<
 SheetOverlay.displayName = SheetPrimitive.Overlay.displayName;
 
 const sheetVariants = cva(
-  "fixed z-50 gap-4 mac-glass-modal p-6 shadow-lg transition ease-in-out data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:duration-300 data-[state=open]:duration-500",
+  "fixed z-50 gap-4 glass text-white bg-black/40 backdrop-blur-2xl p-6 shadow-lg transition ease-in-out data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:duration-300 data-[state=open]:duration-500",
   {
     variants: {
       side: {

@@ -147,7 +147,7 @@ function ConfirmPage() {
             <div className="mt-8 space-y-3">
               <Link
                 to="/auth/login"
-                className="block w-full rounded-full border border-border px-4 py-2 text-sm font-medium hover:bg-surface-alt"
+                className="block w-full rounded-full border-none px-4 py-2 text-sm font-medium hover:glass bg-white/5 border-white/10"
               >
                 Voltar para o Login
               </Link>

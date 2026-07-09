@@ -111,7 +111,7 @@ function Page() {
       <form onSubmit={handleSubmit(onSubmit)} className="grid gap-6 lg:grid-cols-[1fr_320px]">
         <div className="space-y-5">
           {/* PRODUCT */}
-          <section className="rounded-2xl border border-border bg-surface p-5">
+          <section className="rounded-[var(--radius-card)] border-none glass-card border-none p-5">
             <div className="mb-4 flex items-center gap-2">
               <Palette className="h-4 w-4 text-muted-foreground" />
               <h3 className="text-sm font-semibold">Identidade do produto</h3>
@@ -129,7 +129,7 @@ function Page() {
                     type="color"
                     value={primaryColor || "#18181b"}
                     onChange={(e) => setValue("primary_color", e.target.value)}
-                    className="h-9 w-12 cursor-pointer rounded border border-border bg-transparent"
+                    className="h-9 w-12 cursor-pointer rounded border-none bg-transparent"
                   />
                   <Input
                     {...register("primary_color")}
@@ -145,7 +145,7 @@ function Page() {
           </section>
 
           {/* ASSETS */}
-          <section className="rounded-2xl border border-border bg-surface p-5">
+          <section className="rounded-[var(--radius-card)] border-none glass-card border-none p-5">
             <div className="mb-4 flex items-center gap-2">
               <Globe className="h-4 w-4 text-muted-foreground" />
               <h3 className="text-sm font-semibold">Ativos e links</h3>
@@ -189,7 +189,7 @@ function Page() {
           </section>
 
           {/* ANALYTICS */}
-          <section className="rounded-2xl border border-border bg-surface p-5">
+          <section className="rounded-[var(--radius-card)] border-none glass-card border-none p-5">
             <div className="mb-4 flex items-center gap-2">
               <BarChart3 className="h-4 w-4 text-muted-foreground" />
               <h3 className="text-sm font-semibold">Analytics e rastreamento</h3>
@@ -208,7 +208,7 @@ function Page() {
         </div>
 
         {/* PREVIEW */}
-        <aside className="h-fit rounded-2xl border border-border bg-surface overflow-hidden sticky top-4">
+        <aside className="h-fit rounded-[var(--radius-card)] border-none glass-card border-none overflow-hidden sticky top-4">
           <div className="border-b border-border px-4 py-3">
             <div className="text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">
               Prévia do produto
@@ -216,7 +216,7 @@ function Page() {
           </div>
           <div className="p-4 space-y-3">
             <div
-              className="rounded-2xl p-4 text-sm font-semibold"
+              className="rounded-[var(--radius-card)] p-4 text-sm font-semibold"
               style={{ background: primaryColor || "#18181b", color: "#ffffff" }}
             >
               {productName}

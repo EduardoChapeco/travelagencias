@@ -6,8 +6,7 @@ import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { useAgency } from "@/lib/agency-context";
 import { EmptyState } from "@/components/shell/PageHeader";
-import { HeaderPortal } from "@/components/shell/HeaderPortal";
-import { ModuleToolbar, ModuleActionButton } from "@/components/shell/ModuleToolbar";
+import { PageHeader, ModuleActionButton } from "@/components/shell/PageHeader";
 import { ModuleAdminPanel } from "@/components/shell/ModuleAdminPanel";
 import {
   Field,
@@ -211,8 +210,7 @@ function ClientsPage() {
 
   return (
     <div className="flex h-full flex-col overflow-hidden">
-      <HeaderPortal>
-        <ModuleToolbar
+              <PageHeader
           title="Clientes"
           search={{
             value: q,
@@ -236,8 +234,7 @@ function ClientsPage() {
             ) : undefined
           }
         />
-      </HeaderPortal>
-
+      
       <ModuleActionButton
         label={showDeleted ? "Sair da Lixeira" : "Novo Cliente"}
         icon={showDeleted ? <ArrowLeft className="h-3.5 w-3.5" /> : <Plus className="h-3.5 w-3.5" />}

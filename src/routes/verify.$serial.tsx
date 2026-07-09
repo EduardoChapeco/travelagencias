@@ -48,8 +48,8 @@ function Page() {
 
   return (
     <div className="mx-auto min-h-screen max-w-xl px-4 py-12 md:py-20">
-      <div className="overflow-hidden rounded-2xl bg-surface  ring-1 ring-border/50">
-        <div className="border-b border-border/50 bg-surface-alt/30 px-6 py-4 text-center">
+      <div className="overflow-hidden rounded-[var(--radius-card)] glass-card border-none  ring-1 ring-border/50">
+        <div className="border-b border-border/50 glass bg-white/5 border-white/10/30 px-6 py-4 text-center">
           <h2 className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">
             Sistema de Autenticidade Turis
           </h2>
@@ -93,7 +93,7 @@ function Page() {
                   Emitido por {row.issuer}
                 </p>
               </div>
-              <div className="mt-8 overflow-hidden rounded-[var(--radius-card)] border border-border/50 bg-surface-alt/20">
+              <div className="mt-8 overflow-hidden rounded-[var(--radius-card)] border-none/50 glass bg-white/5 border-white/10/20">
                 <dl className="divide-y divide-border/50 text-xs">
                   <Row k="Partes Envolvidas" v={mask(row.parties_masked)} />
                   <Row
@@ -126,7 +126,7 @@ function Page() {
                   />
                 </dl>
               </div>
-              <div className="mt-6 rounded-2xl bg-warning-bg/50 px-4 py-3 text-center">
+              <div className="mt-6 rounded-[var(--radius-card)] bg-warning-bg/50 px-4 py-3 text-center">
                 <p className="text-[10px] font-medium leading-relaxed text-warning-text/80">
                   Este documento foi assinado digitalmente e possui validade jurídica garantida por
                   geolocalização, biometria e IP. O conteúdo completo do contrato está selado por

@@ -242,7 +242,7 @@ function PublicProposalView() {
 
   if (q.isLoading) {
     return (
-      <div className="flex min-h-screen flex-col items-center justify-center gap-3 bg-surface-alt/30 text-sm text-muted-foreground">
+      <div className="flex min-h-screen flex-col items-center justify-center gap-3 glass bg-white/5 border-white/10/30 text-sm text-muted-foreground">
         <div className="h-6 w-6 animate-spin rounded-full border-2 border-primary border-t-transparent" />
         Carregando proposta premium…
       </div>
@@ -251,8 +251,8 @@ function PublicProposalView() {
 
   if (q.isError) {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-surface-alt/30 px-6 text-center">
-        <div className="max-w-md rounded-2xl border border-red-200 bg-red-50/50 p-8 flex flex-col items-center">
+      <div className="flex min-h-screen items-center justify-center glass bg-white/5 border-white/10/30 px-6 text-center">
+        <div className="max-w-md rounded-[var(--radius-card)] border border-red-200 bg-red-50/50 p-8 flex flex-col items-center">
           <AlertCircle className="mx-auto h-12 w-12 text-red-650 mb-4" />
           <h1 className="text-xl font-bold tracking-tight text-red-800">Falha na Conexão</h1>
           <p className="mt-2 text-sm text-red-650 leading-relaxed">
@@ -265,8 +265,8 @@ function PublicProposalView() {
 
   if (!q.data) {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-surface-alt/30 px-6 text-center">
-        <div className="max-w-md rounded-2xl border border-border bg-surface p-8">
+      <div className="flex min-h-screen items-center justify-center glass bg-white/5 border-white/10/30 px-6 text-center">
+        <div className="max-w-md rounded-[var(--radius-card)] border-none glass-card border-none p-8">
           <ShieldAlert className="mx-auto h-12 w-12 text-muted-foreground/60 mb-4" />
           <h1 className="text-xl font-bold tracking-tight">Proposta não encontrada</h1>
           <p className="mt-2 text-sm text-muted-foreground leading-relaxed">
@@ -352,18 +352,18 @@ function PublicProposalView() {
       style={brandStyles}
     >
       {/* Sticky Header */}
-      <header className="sticky top-0 z-40 border-b border-border bg-surface/80 backdrop-blur-md">
+      <header className="sticky top-0 z-40 border-b border-border glass-card border-none/80 backdrop-blur-md">
         <div className="mx-auto flex max-w-7xl items-center justify-between gap-4 px-6 py-3.5">
           <div className="flex items-center gap-3">
             {p.agency?.logo_url ? (
               <img
                 src={p.agency.logo_url}
                 alt={p.agency.name}
-                className="h-9 w-9 rounded-2xl object-cover border border-border/40"
+                className="h-9 w-9 rounded-[var(--radius-card)] object-cover border-none/40"
               />
             ) : (
               <div
-                className="flex h-9 w-9 items-center justify-center rounded-2xl font-bold text-sm"
+                className="flex h-9 w-9 items-center justify-center rounded-[var(--radius-card)] font-bold text-sm"
                 style={{ background: brand, color: brandFg }}
               >
                 {p.agency?.name?.charAt(0).toUpperCase()}
@@ -397,7 +397,7 @@ function PublicProposalView() {
       <main className="mx-auto max-w-7xl px-4 mt-6 grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
         {/* Left Column: Template Canvas with responsive wrapper */}
         <div className="lg:col-span-8 flex flex-col items-center w-full min-w-0">
-          <div className="w-full overflow-hidden border border-border rounded-2xl bg-surface">
+          <div className="w-full overflow-hidden border-none rounded-[var(--radius-card)] glass-card border-none">
             <ClientCanvasFrame format={currentFormat}>
               <TemplateComponent proposal={p as any} agency={p.agency} />
             </ClientCanvasFrame>
@@ -407,7 +407,7 @@ function PublicProposalView() {
         {/* Right Column: Actions and Decision Panel */}
         <div className="lg:col-span-4 space-y-6 w-full">
           {/* Decision Box */}
-          <div className="rounded-2xl border border-border bg-surface p-5">
+          <div className="rounded-[var(--radius-card)] border-none glass-card border-none p-5">
             {decided ? (
               <div className="text-center text-xs space-y-2">
                 {p.status === "accepted" && (
@@ -454,7 +454,7 @@ function PublicProposalView() {
           </div>
 
           {/* Quick Info Box / Action Box */}
-          <div className="rounded-2xl border border-border bg-surface p-5 space-y-3">
+          <div className="rounded-[var(--radius-card)] border-none glass-card border-none p-5 space-y-3">
             <h4 className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
               Resumo da Viagem
             </h4>
@@ -471,7 +471,7 @@ function PublicProposalView() {
               </div>
             </div>
             {p.valid_until && (
-              <div className="rounded-2xl bg-amber-500/15 p-2.5 text-[10px] text-amber-700 dark:text-amber-500 font-medium">
+              <div className="rounded-[var(--radius-card)] bg-amber-500/15 p-2.5 text-[10px] text-amber-700 dark:text-amber-500 font-medium">
                 Condições de tarifas garantidas até {fmtDate(p.valid_until)}.
               </div>
             )}
@@ -530,7 +530,7 @@ function DecideActions({
       </button>
       <button
         onClick={() => setConfirm("rejected")}
-        className="h-10 w-full rounded-[var(--radius-card)] border border-border bg-surface text-xs font-medium text-muted-foreground hover:text-foreground transition-all hover:bg-slate-50 cursor-pointer"
+        className="h-10 w-full rounded-[var(--radius-card)] border-none glass-card border-none text-xs font-medium text-muted-foreground hover:text-foreground transition-all hover:bg-slate-50 cursor-pointer"
       >
         Recusar proposta
       </button>

@@ -18,7 +18,7 @@ function BotSettingsPage() {
         </div>
       </div>
       
-      <div className="flex-1 w-full border rounded-[var(--radius-card)] overflow-hidden shadow-sm">
+      <div className="flex-1 w-full border rounded-[var(--radius-card)] overflow-hidden shadow-none">
         <BotCanvas />
       </div>
     </div>

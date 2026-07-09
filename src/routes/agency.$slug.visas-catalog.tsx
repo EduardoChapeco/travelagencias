@@ -6,8 +6,7 @@ import { ArrowLeft, Plus, Save, Trash2, Calendar, DollarSign, Globe } from "luci
 import { supabase } from "@/integrations/supabase/client";
 import { useAgency } from "@/lib/agency-context";
 import { toast } from "sonner";
-import { HeaderPortal } from "@/components/shell/HeaderPortal";
-import { ModuleToolbar, ModuleActionButton } from "@/components/shell/ModuleToolbar";
+import { PageHeader, ModuleActionButton } from "@/components/shell/PageHeader";
 import { useConfirm } from "@/hooks/use-confirm";
 import {
   Field,
@@ -66,8 +65,7 @@ function VisasCatalogPage() {
     <div className="flex h-full flex-col overflow-hidden">
       <ConfirmDialog />
 
-      <HeaderPortal>
-        <ModuleToolbar
+              <PageHeader
           title="Requisitos de Viagem"
           filters={[
             { label: "Todos", value: "all" },
@@ -89,8 +87,7 @@ function VisasCatalogPage() {
             </Link>
           }
         />
-      </HeaderPortal>
-
+      
       <ModuleActionButton
         label="Novo Catálogo"
         icon={<Plus className="h-3.5 w-3.5" />}
@@ -102,8 +99,8 @@ function VisasCatalogPage() {
           {filteredData?.map((req) => (
             <div
               key={req.id}
-              className={`rounded-2xl border bg-surface p-5 flex flex-col justify-between ${
-                req.agency_id === null ? "border-border/60 bg-surface-alt/10" : "border-border"
+              className={`rounded-[var(--radius-card)] border glass-card border-none p-5 flex flex-col justify-between ${
+                req.agency_id === null ? "border-border/60 glass bg-white/5 border-white/10/10" : "border-border"
               }`}
             >
               <div>
@@ -118,7 +115,7 @@ function VisasCatalogPage() {
                             ? "bg-warning/15 text-warning"
                             : req.category === "insurance"
                               ? "bg-info/15 text-info"
-                              : "bg-surface-alt text-muted-foreground"
+                              : "glass bg-white/5 border-white/10 text-muted-foreground"
                     }`}
                   >
                     {req.category === "visa"
@@ -170,7 +167,7 @@ function VisasCatalogPage() {
                 </div>
 
                 {req.notes && (
-                  <div className="text-[11px] italic text-muted-foreground/80 bg-surface-alt/30 rounded p-2.5 mt-3 border border-border/30">
+                  <div className="text-[11px] italic text-muted-foreground/80 glass bg-white/5 border-white/10/30 rounded p-2.5 mt-3 border-none/30">
                     {req.notes}
                   </div>
                 )}
@@ -202,7 +199,7 @@ function VisasCatalogPage() {
           ))}
 
           {filteredData?.length === 0 && (
-            <div className="col-span-full py-24 text-center border-2 border-dashed border-border rounded-2xl text-muted-foreground">
+            <div className="col-span-full py-24 text-center border-2 border-dashed border-border rounded-[var(--radius-card)] text-muted-foreground">
               Nenhum requisito nesta categoria.
             </div>
           )}

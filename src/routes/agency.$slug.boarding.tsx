@@ -13,8 +13,7 @@ import {
   Download,
 } from "lucide-react";
 import { toast } from "sonner";
-import { HeaderPortal } from "@/components/shell/HeaderPortal";
-import { ModuleToolbar, ModuleActionButton } from "@/components/shell/ModuleToolbar";
+import { PageHeader, ModuleActionButton } from "@/components/shell/PageHeader";
 import { ModuleAdminPanel } from "@/components/shell/ModuleAdminPanel";
 import { exportBoardingListXlsx } from "@/lib/exportRoomingList";
 import {
@@ -240,8 +239,7 @@ function BoardingKanbanPage() {
 
   return (
     <div className="flex h-full flex-col overflow-hidden">
-      <HeaderPortal>
-        <ModuleToolbar
+              <PageHeader
           title="Embarques"
           filters={[
             { label: "Kanban", value: "kanban" },
@@ -275,8 +273,7 @@ function BoardingKanbanPage() {
             </div>
           }
         />
-      </HeaderPortal>
-
+      
       <ModuleActionButton
         label="Cadastrar Localizador"
         icon={<Plus className="h-3.5 w-3.5" />}
@@ -347,10 +344,10 @@ function BoardingKanbanPage() {
                   Nenhum localizador de embarque cadastrado.
                 </div>
               ) : (
-                <div className="overflow-x-auto border border-border rounded-full bg-surface">
+                <div className="overflow-x-auto border-none rounded-full glass-card border-none">
                   <table className="w-full border-collapse text-left text-xs">
                     <thead>
-                      <tr className="border-b border-border bg-surface-alt font-semibold text-muted-foreground uppercase tracking-widest text-[10px]">
+                      <tr className="border-b border-border glass bg-white/5 border-white/10 font-semibold text-muted-foreground uppercase tracking-widest text-[10px]">
                         <th className="p-4">Localizador (PNR)</th>
                         <th className="p-4">Viagem / Destino</th>
                         <th className="p-4">Cia Aérea</th>
@@ -370,7 +367,7 @@ function BoardingKanbanPage() {
                           <tr
                             key={card.id}
                             onClick={() => setDetail(card)}
-                            className="hover:bg-surface-alt/50 transition-colors cursor-pointer group"
+                            className="hover:glass bg-white/5 border-white/10/50 transition-colors cursor-pointer group"
                           >
                             <td className="p-4 font-mono font-bold text-foreground">
                               {card.pnr || "—"}
@@ -428,26 +425,26 @@ function BoardingKanbanPage() {
                 <div className="flex items-center gap-1.5">
                   <button
                     onClick={handlePrevMonth}
-                    className="flex h-8 w-8 items-center justify-center rounded-full border border-border bg-surface text-foreground hover:bg-surface-alt transition-colors cursor-pointer"
+                    className="flex h-8 w-8 items-center justify-center rounded-full border-none glass-card border-none text-foreground hover:glass bg-white/5 border-white/10 transition-colors cursor-pointer"
                   >
                     <ChevronLeft className="h-4 w-4" />
                   </button>
                   <button
                     onClick={() => setCurrentMonth(new Date())}
-                    className="h-8 px-3 text-xs font-semibold rounded-full border border-border bg-surface text-foreground hover:bg-surface-alt transition-colors cursor-pointer"
+                    className="h-8 px-3 text-xs font-semibold rounded-full border-none glass-card border-none text-foreground hover:glass bg-white/5 border-white/10 transition-colors cursor-pointer"
                   >
                     Hoje
                   </button>
                   <button
                     onClick={handleNextMonth}
-                    className="flex h-8 w-8 items-center justify-center rounded-full border border-border bg-surface text-foreground hover:bg-surface-alt transition-colors cursor-pointer"
+                    className="flex h-8 w-8 items-center justify-center rounded-full border-none glass-card border-none text-foreground hover:glass bg-white/5 border-white/10 transition-colors cursor-pointer"
                   >
                     <ChevronRight className="h-4 w-4" />
                   </button>
                 </div>
               </div>
 
-              <div className="grid grid-cols-7 border border-b-0 border-border bg-surface-alt">
+              <div className="grid grid-cols-7 border border-b-0 border-border glass bg-white/5 border-white/10">
                 {["Dom", "Seg", "Ter", "Qua", "Qui", "Sex", "Sáb"].map((d) => (
                   <div
                     key={d}
@@ -458,7 +455,7 @@ function BoardingKanbanPage() {
                 ))}
               </div>
 
-              <div className="grid grid-cols-7 grid-rows-6 flex-1 border border-border divide-x divide-y divide-border bg-surface overflow-hidden">
+              <div className="grid grid-cols-7 grid-rows-6 flex-1 border-none divide-x divide-y divide-border glass-card border-none overflow-hidden">
                 {calendarDays.map(({ date, isCurrentMonth }, i) => {
                   const dateStr = date.toISOString().split("T")[0];
                   const dayCards = cardsByDay[dateStr] ?? [];
@@ -468,7 +465,7 @@ function BoardingKanbanPage() {
                     <div
                       key={i}
                       className={`min-h-0 flex flex-col p-1.5 transition-colors overflow-hidden ${
-                        isCurrentMonth ? "bg-surface" : "bg-surface-alt/30 text-muted-foreground/60"
+                        isCurrentMonth ? "glass-card border-none" : "glass bg-white/5 border-white/10/30 text-muted-foreground/60"
                       } ${isToday ? "bg-primary/5" : ""}`}
                     >
                       <span
@@ -486,7 +483,7 @@ function BoardingKanbanPage() {
                             <button
                               key={card.id}
                               onClick={() => setDetail(card)}
-                              className="w-full text-left p-1 text-[10px] rounded-xs border border-border bg-surface hover:bg-surface-alt transition-colors truncate font-semibold block group"
+                              className="w-full text-left p-1 text-[10px] rounded-xs border-none glass-card border-none hover:glass bg-white/5 border-white/10 transition-colors truncate font-semibold block group"
                             >
                               <span className="flex items-center gap-1">
                                 <span

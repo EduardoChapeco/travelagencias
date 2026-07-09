@@ -20,8 +20,7 @@ import {
   AlertTriangle,
 } from "lucide-react";
 import { useAgency } from "@/lib/agency-context";
-import { HeaderPortal } from "@/components/shell/HeaderPortal";
-import { ModuleToolbar } from "@/components/shell/ModuleToolbar";
+import { PageHeader } from "@/components/shell/PageHeader";
 import { PrimaryButton, GhostButton, StatusBadge } from "@/components/ui/form";
 import { SheetPage } from "@/components/ui/sheet";
 
@@ -191,15 +190,13 @@ function BillingPage() {
 
   return (
     <div className="flex h-full flex-col overflow-hidden">
-      <HeaderPortal>
-        <ModuleToolbar title="Assinatura & Planos" />
-      </HeaderPortal>
-
+              <PageHeader title="Assinatura & Planos" />
+      
       <div className="flex-1 overflow-y-auto px-4  md:pr-6 py-4 pb-24">
 
       {/* MÉTRICAS DE USO DOS LIMITES */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-6">
-        <div className="rounded-[var(--radius-card)] border border-border bg-surface p-5 space-y-4">
+        <div className="rounded-[var(--radius-card)] border-none glass-card border-none p-5 space-y-4">
           <div className="flex items-center justify-between text-xs text-muted-foreground font-bold uppercase tracking-wider">
             <span>Agentes Ativos</span>
             <Users className="h-4 w-4 text-brand" />
@@ -210,7 +207,7 @@ function BillingPage() {
               / {currentPlan?.max_agents ?? "∞"}
             </span>
           </div>
-          <div className="h-2 w-full bg-surface-alt rounded-full overflow-hidden">
+          <div className="h-2 w-full glass bg-white/5 border-white/10 rounded-full overflow-hidden">
             <div
               className="h-full bg-brand rounded-full transition-all"
               style={{
@@ -220,7 +217,7 @@ function BillingPage() {
           </div>
         </div>
 
-        <div className="rounded-[var(--radius-card)] border border-border bg-surface p-5 space-y-4">
+        <div className="rounded-[var(--radius-card)] border-none glass-card border-none p-5 space-y-4">
           <div className="flex items-center justify-between text-xs text-muted-foreground font-bold uppercase tracking-wider">
             <span>Viagens Iniciadas (Este Mês)</span>
             <BarChart3 className="h-4 w-4 text-brand" />
@@ -234,7 +231,7 @@ function BillingPage() {
                 : (currentPlan?.max_trips_per_month ?? 50)}
             </span>
           </div>
-          <div className="h-2 w-full bg-surface-alt rounded-full overflow-hidden">
+          <div className="h-2 w-full glass bg-white/5 border-white/10 rounded-full overflow-hidden">
             <div
               className="h-full bg-brand rounded-full transition-all"
               style={{
@@ -244,7 +241,7 @@ function BillingPage() {
           </div>
         </div>
 
-        <div className="rounded-[var(--radius-card)] border border-border bg-surface p-5 space-y-4">
+        <div className="rounded-[var(--radius-card)] border-none glass-card border-none p-5 space-y-4">
           <div className="flex items-center justify-between text-xs text-muted-foreground font-bold uppercase tracking-wider">
             <span>Armazenamento em Nuvem</span>
             <HardDrive className="h-4 w-4 text-brand" />
@@ -255,7 +252,7 @@ function BillingPage() {
               / {currentPlan?.max_storage_gb ?? 5} GB
             </span>
           </div>
-          <div className="h-2 w-full bg-surface-alt rounded-full overflow-hidden">
+          <div className="h-2 w-full glass bg-white/5 border-white/10 rounded-full overflow-hidden">
             <div
               className="h-full bg-brand rounded-full transition-all"
               style={{
@@ -267,7 +264,7 @@ function BillingPage() {
       </div>
 
       {/* PLANO ATUAL */}
-      <div className="mt-8 rounded-2xl border border-border bg-surface/50 p-6 flex flex-col md:flex-row md:items-center justify-between gap-6">
+      <div className="mt-8 rounded-[var(--radius-card)] border-none glass-card border-none/50 p-6 flex flex-col md:flex-row md:items-center justify-between gap-6">
         <div className="space-y-2">
           <div className="flex items-center gap-2">
             <span className="text-xs font-bold uppercase tracking-widest text-brand">
@@ -314,7 +311,7 @@ function BillingPage() {
             return (
               <div
                 key={plan.id}
-                className={`rounded-2xl border bg-surface p-6 flex flex-col justify-between transition-all hover:border-brand/40 ${
+                className={`rounded-[var(--radius-card)] border glass-card border-none p-6 flex flex-col justify-between transition-all hover:border-brand/40 ${
                   plan.is_featured
                     ? "border-brand border-2 ring-1 ring-brand/20 relative scale-105"
                     : "border-border"
@@ -370,7 +367,7 @@ function BillingPage() {
                   {isCurrent ? (
                     <button
                       disabled
-                      className="w-full h-10 rounded-[var(--radius-card)] bg-surface-alt border border-border text-xs font-bold text-muted-foreground flex items-center justify-center gap-1.5"
+                      className="w-full h-10 rounded-[var(--radius-card)] glass bg-white/5 border-white/10 border-none text-xs font-bold text-muted-foreground flex items-center justify-center gap-1.5"
                     >
                       Plano Atual
                     </button>
@@ -403,15 +400,15 @@ function BillingPage() {
         </div>
 
         {invoicesQ.isLoading ? (
-          <div className="h-24 bg-surface rounded-[var(--radius-card)] animate-pulse border border-border" />
+          <div className="h-24 glass-card border-none rounded-[var(--radius-card)] animate-pulse border-none" />
         ) : invoicesQ.data && invoicesQ.data.length === 0 ? (
           <div className="rounded-[var(--radius-card)] border border-dashed border-border p-8 text-center text-xs text-muted-foreground">
             Nenhuma fatura gerada até o momento.
           </div>
         ) : (
-          <div className="rounded-[var(--radius-card)] border border-border bg-surface overflow-hidden">
+          <div className="rounded-[var(--radius-card)] border-none glass-card border-none overflow-hidden">
             <table className="w-full text-left text-xs">
-              <thead className="bg-surface-alt/50 border-b border-border text-[10px] uppercase font-bold text-muted-foreground tracking-wider">
+              <thead className="glass bg-white/5 border-white/10/50 border-b border-border text-[10px] uppercase font-bold text-muted-foreground tracking-wider">
                 <tr>
                   <th className="px-5 py-3.5">Fatura</th>
                   <th className="px-5 py-3.5">Valor</th>
@@ -423,7 +420,7 @@ function BillingPage() {
               </thead>
               <tbody className="divide-y divide-border">
                 {invoicesQ.data?.map((inv: any) => (
-                  <tr key={inv.id} className="hover:bg-surface-alt/20 transition-colors">
+                  <tr key={inv.id} className="hover:glass bg-white/5 border-white/10/20 transition-colors">
                     <td className="px-5 py-3.5 font-mono text-muted-foreground">
                       FT-{inv.id.split("-")[0].toUpperCase()}
                     </td>
@@ -487,7 +484,7 @@ function BillingPage() {
                     Sua assinatura foi atualizada com sucesso.
                   </p>
                 </div>
-                <div className="bg-surface-alt p-4 rounded-[var(--radius-card)] text-left text-xs font-mono border border-border">
+                <div className="glass bg-white/5 border-white/10 p-4 rounded-[var(--radius-card)] text-left text-xs font-mono border-none">
                   <div className="flex justify-between py-1">
                     <span>Plano Contratado:</span>
                     <span className="font-bold text-foreground">{checkoutPlan.name}</span>
@@ -519,7 +516,7 @@ function BillingPage() {
                     <TrendingUp className="h-4 w-4" />
                   </div>
                   {prorationQ.isLoading ? (
-                    <div className="h-10 animate-pulse bg-surface-alt rounded" />
+                    <div className="h-10 animate-pulse glass bg-white/5 border-white/10 rounded" />
                   ) : (
                     <div className="text-xs space-y-2 text-muted-foreground">
                       <div className="flex justify-between">
@@ -572,7 +569,7 @@ function BillingPage() {
                           value={cardNumber}
                           onChange={(e) => setCardNumber(e.target.value)}
                           placeholder="4000 1234 5678 9010"
-                          className="h-9 w-full rounded-2xl border border-border bg-surface pl-9 pr-3 text-xs outline-none focus:border-brand text-foreground font-mono"
+                          className="h-9 w-full rounded-[var(--radius-card)] border-none glass-card border-none pl-9 pr-3 text-xs outline-none focus:border-brand text-foreground font-mono"
                         />
                         <CreditCard className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                       </div>
@@ -591,7 +588,7 @@ function BillingPage() {
                         value={cardHolder}
                         onChange={(e) => setCardHolder(e.target.value)}
                         placeholder="AGENCIA DE TURISMO LTDA"
-                        className="h-9 w-full rounded-2xl border border-border bg-surface px-3 text-xs outline-none focus:border-brand text-foreground font-mono"
+                        className="h-9 w-full rounded-[var(--radius-card)] border-none glass-card border-none px-3 text-xs outline-none focus:border-brand text-foreground font-mono"
                       />
                     </div>
                     <div className="grid grid-cols-2 gap-3">
@@ -604,7 +601,7 @@ function BillingPage() {
                           value={cardExpiry}
                           onChange={(e) => setCardExpiry(e.target.value)}
                           placeholder="MM/AA"
-                          className="h-9 w-full rounded-2xl border border-border bg-surface px-3 text-xs text-center outline-none focus:border-brand text-foreground font-mono"
+                          className="h-9 w-full rounded-[var(--radius-card)] border-none glass-card border-none px-3 text-xs text-center outline-none focus:border-brand text-foreground font-mono"
                         />
                       </div>
                       <div>
@@ -616,7 +613,7 @@ function BillingPage() {
                           value={cardCvc}
                           onChange={(e) => setCardCvc(e.target.value)}
                           placeholder="123"
-                          className="h-9 w-full rounded-2xl border border-border bg-surface px-3 text-xs text-center outline-none focus:border-brand text-foreground font-mono"
+                          className="h-9 w-full rounded-[var(--radius-card)] border-none glass-card border-none px-3 text-xs text-center outline-none focus:border-brand text-foreground font-mono"
                         />
                       </div>
                     </div>

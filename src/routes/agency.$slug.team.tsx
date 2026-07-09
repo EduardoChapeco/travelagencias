@@ -13,8 +13,7 @@ import {
 } from "@/services/settings";
 import { useAgency } from "@/lib/agency-context";
 import { EmptyState } from "@/components/shell/PageHeader";
-import { HeaderPortal } from "@/components/shell/HeaderPortal";
-import { ModuleToolbar, ModuleActionButton } from "@/components/shell/ModuleToolbar";
+import { PageHeader, ModuleActionButton } from "@/components/shell/PageHeader";
 import {
   Field,
   Input,
@@ -137,8 +136,7 @@ function TeamPage() {
 
   return (
     <div className="flex h-full flex-col overflow-hidden">
-      <HeaderPortal>
-        <ModuleToolbar
+              <PageHeader
           title="Equipe"
           search={{
             value: searchQuery,
@@ -146,8 +144,7 @@ function TeamPage() {
             placeholder: "Buscar por nome ou email...",
           }}
         />
-      </HeaderPortal>
-
+      
       <ModuleActionButton
         label="Convidar Membro"
         icon={<Plus className="h-3.5 w-3.5" />}
@@ -173,9 +170,9 @@ function TeamPage() {
         {filteredMembers.length === 0 ? (
           <EmptyState title="Sem membros" description="Nenhum membro encontrado ou cadastrado." />
         ) : (
-          <div className="overflow-hidden rounded-[var(--radius-card)] border border-border mb-6 bg-surface">
+          <div className="overflow-hidden rounded-[var(--radius-card)] border-none mb-6 glass-card border-none">
             <table className="w-full text-sm">
-              <thead className="bg-surface-alt/40 text-left text-[11px] uppercase text-muted-foreground">
+              <thead className="glass bg-white/5 border-white/10/40 text-left text-[11px] uppercase text-muted-foreground">
                 <tr>
                   <th className="px-3 py-2">Nome</th>
                   <th className="px-3 py-2">Papel</th>
@@ -239,13 +236,13 @@ function TeamPage() {
           Convites
         </h3>
         {filteredInvites.length === 0 ? (
-          <div className="rounded-2xl border border-dashed border-border p-6 text-center text-sm text-muted-foreground">
+          <div className="rounded-[var(--radius-card)] border border-dashed border-border p-6 text-center text-sm text-muted-foreground">
             Nenhum convite pendente.
           </div>
         ) : (
-          <div className="overflow-hidden rounded-2xl border border-border">
+          <div className="overflow-hidden rounded-[var(--radius-card)] border-none">
             <table className="w-full text-sm">
-              <thead className="bg-surface-alt/40 text-left text-[11px] uppercase text-muted-foreground">
+              <thead className="glass bg-white/5 border-white/10/40 text-left text-[11px] uppercase text-muted-foreground">
                 <tr>
                   <th className="px-3 py-2">Email</th>
                   <th className="px-3 py-2">Papel</th>
@@ -453,7 +450,7 @@ function AgentCommissionSheet({
                 {scaleRanges.map((range, index) => (
                   <div
                     key={index}
-                    className="flex items-center gap-2 rounded-2xl border border-border bg-surface p-2.5"
+                    className="flex items-center gap-2 rounded-[var(--radius-card)] border-none glass-card border-none p-2.5"
                   >
                     <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 flex-1">
                       <div>

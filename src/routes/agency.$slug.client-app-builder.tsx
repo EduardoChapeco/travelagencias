@@ -14,8 +14,7 @@ import {
 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAgency } from "@/lib/agency-context";
-import { HeaderPortal } from "@/components/shell/HeaderPortal";
-import { ModuleToolbar } from "@/components/shell/ModuleToolbar";
+import { PageHeader } from "@/components/shell/PageHeader";
 import { PrimaryButton } from "@/components/ui/form";
 
 import { DraggableList, DraggableItem } from "@/components/ui/DraggableList";
@@ -128,8 +127,7 @@ function ClientAppBuilderPage() {
 
   return (
     <div className="flex flex-1 overflow-hidden h-full  pb-24">
-      <HeaderPortal>
-        <ModuleToolbar
+              <PageHeader
           title="App Builder"
           actions={
             <PrimaryButton
@@ -142,10 +140,9 @@ function ClientAppBuilderPage() {
             </PrimaryButton>
           }
         />
-      </HeaderPortal>
-
+      
       {/* Esquerda: Painel de Controle */}
-      <div className="w-1/2 max-w-md border-r border-border bg-surface/50 p-6 flex flex-col overflow-y-auto">
+      <div className="w-1/2 max-w-md border-r border-border glass-card border-none/50 p-6 flex flex-col overflow-y-auto">
 
         <div className="space-y-8">
           {/* Editor de Cores */}
@@ -177,7 +174,7 @@ function ClientAppBuilderPage() {
                         theme_colors: { ...settings.theme_colors, primary: e.target.value },
                       })
                     }
-                    className="flex-1 h-10 px-3 rounded-full border border-border bg-background text-sm uppercase"
+                    className="flex-1 h-10 px-3 rounded-full border-none bg-background text-sm uppercase"
                   />
                 </div>
               </div>
@@ -202,8 +199,8 @@ function ClientAppBuilderPage() {
                     <DraggableItem 
                       key={block.id} 
                       id={block.id} 
-                      className={`mb-2 rounded-2xl border transition-colors ${
-                        block.hidden ? "bg-accent/50 border-transparent opacity-60" : "bg-surface border-border shadow-sm"
+                      className={`mb-2 rounded-[var(--radius-card)] border transition-colors ${
+                        block.hidden ? "bg-accent/50 border-transparent opacity-60" : "glass-card border-none border-border shadow-none"
                       }`}
                     >
                       <div className="flex items-center gap-3 p-3">
@@ -233,7 +230,7 @@ function ClientAppBuilderPage() {
       {/* Direita: Mockup do App */}
       <div className="flex-1 bg-accent/20 flex flex-col items-center p-8 overflow-y-auto">
         <div className="flex items-center justify-between w-full max-w-[375px] md:max-w-md lg:max-w-xl mb-6">
-          <div className="flex items-center gap-2 px-4 py-2 bg-background border border-border rounded-full shadow-sm text-sm font-medium">
+          <div className="flex items-center gap-2 px-4 py-2 bg-background border-none rounded-full shadow-none text-sm font-medium">
             <Eye className="h-4 w-4 text-primary" /> Preview
           </div>
           <DeviceSelector viewport={viewport} onChange={setViewport} />
@@ -247,7 +244,7 @@ function ClientAppBuilderPage() {
               .map((block) => {
                 if (block.type === "hero") {
                   return (
-                    <div key={block.id} className="w-full h-32 rounded-2xl flex items-end p-4 text-white" style={{ backgroundColor: settings.theme_colors.primary }}>
+                    <div key={block.id} className="w-full h-32 rounded-[var(--radius-card)] flex items-end p-4 text-white" style={{ backgroundColor: settings.theme_colors.primary }}>
                       <h2 className="text-xl font-bold">Olá, João!</h2>
                     </div>
                   );
@@ -256,8 +253,8 @@ function ClientAppBuilderPage() {
                   return (
                     <div key={block.id} className="space-y-3">
                       <h3 className="font-bold text-lg">Próximas Viagens</h3>
-                      <div className="w-full h-24 bg-surface border border-border rounded-[var(--radius-card)] shadow-sm p-4 flex gap-3 items-center">
-                        <div className="h-16 w-16 bg-accent rounded-2xl shrink-0"></div>
+                      <div className="w-full h-24 glass-card border-none border-none rounded-[var(--radius-card)] shadow-none p-4 flex gap-3 items-center">
+                        <div className="h-16 w-16 bg-accent rounded-[var(--radius-card)] shrink-0"></div>
                         <div>
                           <p className="font-semibold text-sm">Paris & Roma</p>
                           <p className="text-xs text-muted-foreground">Em 15 dias</p>
@@ -273,7 +270,7 @@ function ClientAppBuilderPage() {
                         <h3 className="font-bold text-lg">Ofertas Exclusivas</h3>
                         <span className="text-xs font-semibold" style={{ color: settings.theme_colors.primary }}>Ver tudo</span>
                       </div>
-                      <div className="w-full h-40 bg-surface border border-border rounded-[var(--radius-card)] shadow-sm overflow-hidden flex flex-col">
+                      <div className="w-full h-40 glass-card border-none border-none rounded-[var(--radius-card)] shadow-none overflow-hidden flex flex-col">
                         <div className="flex-1 bg-accent relative">
                           <span className="absolute top-2 right-2 bg-black/60 text-white text-[10px] px-2 py-1 rounded">R$ 2.500</span>
                         </div>
@@ -289,11 +286,11 @@ function ClientAppBuilderPage() {
                     <div key={block.id} className="space-y-3">
                       <h3 className="font-bold text-lg">Precisa de Ajuda?</h3>
                       <div className="grid grid-cols-2 gap-3">
-                        <div className="h-20 border border-border rounded-[var(--radius-card)] flex flex-col items-center justify-center gap-1 bg-surface">
+                        <div className="h-20 border-none rounded-[var(--radius-card)] flex flex-col items-center justify-center gap-1 glass-card border-none">
                           <LifeBuoy className="h-5 w-5" style={{ color: settings.theme_colors.primary }} />
                           <span className="text-xs font-medium">Chamados</span>
                         </div>
-                        <div className="h-20 border border-border rounded-[var(--radius-card)] flex flex-col items-center justify-center gap-1 bg-surface">
+                        <div className="h-20 border-none rounded-[var(--radius-card)] flex flex-col items-center justify-center gap-1 glass-card border-none">
                           <Smartphone className="h-5 w-5" style={{ color: settings.theme_colors.primary }} />
                           <span className="text-xs font-medium">Chat</span>
                         </div>

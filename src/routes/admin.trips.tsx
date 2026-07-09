@@ -54,7 +54,7 @@ function Page() {
       />
 
       {q.isError && (
-        <div className="mt-4 flex flex-col items-center justify-center py-8 px-4 text-center rounded-2xl border border-red-200 bg-red-50/60 max-w-xl mx-auto">
+        <div className="mt-4 flex flex-col items-center justify-center py-8 px-4 text-center rounded-[var(--radius-card)] border border-red-200 bg-red-50/60 max-w-xl mx-auto">
           <AlertCircle className="h-5 w-5 text-red-600 mb-1.5" />
           <h3 className="text-xs font-bold text-red-800">Falha ao Carregar Viagens</h3>
           <p className="text-[11px] text-red-600 mt-0.5">
@@ -71,9 +71,9 @@ function Page() {
         <EmptyState title={search ? "Nenhuma viagem encontrada" : "Sem viagens"} />
       )}
       {q.data && totalCount > 0 && (
-        <div className="overflow-hidden rounded-2xl border border-border bg-surface">
+        <div className="overflow-hidden rounded-[var(--radius-card)] border-none glass-card border-none">
           <table className="w-full text-sm">
-            <thead className="bg-surface-alt text-xs text-muted-foreground">
+            <thead className="glass bg-white/5 border-white/10 text-xs text-muted-foreground">
               <tr>
                 <th className="px-3 py-2 text-left">Código</th>
                 <th className="px-3 py-2 text-left">Título</th>
@@ -107,7 +107,7 @@ function Page() {
               ))}
             </tbody>
           </table>
-          <div className="flex items-center justify-between border-t border-border px-4 py-3 bg-surface-alt/30">
+          <div className="flex items-center justify-between border-t border-border px-4 py-3 glass bg-white/5 border-white/10/30">
             <div className="text-xs text-muted-foreground">
               Mostrando{" "}
               <span className="font-medium text-foreground">{(page - 1) * PAGE_SIZE + 1}</span> a{" "}

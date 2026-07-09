@@ -136,7 +136,7 @@ function TripHistoryPage() {
   return (
     <div className="flex-1 overflow-y-auto p-4 md:p-6 space-y-6">
       {/* Header */}
-      <div className="rounded-[var(--radius-card)] border border-border bg-surface p-4 flex items-start gap-3">
+      <div className="rounded-[var(--radius-card)] border-none glass-card border-none p-4 flex items-start gap-3">
         <Clock className="h-4 w-4 text-brand mt-0.5 shrink-0" />
         <div>
           <p className="text-xs font-semibold text-foreground">Histórico de Alterações</p>
@@ -155,7 +155,7 @@ function TripHistoryPage() {
 
       {/* Timeline */}
       {!isLoading && combinedLogs.length === 0 && (
-        <div className="flex flex-col items-center justify-center py-20 border-2 border-dashed border-border rounded-2xl text-center max-w-3xl">
+        <div className="flex flex-col items-center justify-center py-20 border-2 border-dashed border-border rounded-[var(--radius-card)] text-center max-w-3xl">
           <Clock className="h-10 w-10 text-muted-foreground/30 mb-3" />
           <p className="text-sm font-semibold text-muted-foreground">
             Nenhuma atividade registrada
@@ -167,7 +167,7 @@ function TripHistoryPage() {
       )}
 
       {!isLoading && combinedLogs.length > 0 && (
-        <div className="rounded-[var(--radius-card)] border border-border bg-surface p-4 max-w-3xl space-y-4">
+        <div className="rounded-[var(--radius-card)] border-none glass-card border-none p-4 max-w-3xl space-y-4">
           <h3 className="text-xs font-bold uppercase tracking-widest text-muted-foreground flex items-center gap-1.5">
             <Activity className="h-3.5 w-3.5 text-brand" /> Linha do Tempo da Viagem (
             {combinedLogs.length} logs)

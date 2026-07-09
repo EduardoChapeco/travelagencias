@@ -2,8 +2,7 @@ import { createFileRoute, Link, useParams } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
 import { useQuery, useQueryClient, useMutation } from "@tanstack/react-query";
 import { Plus, GripVertical, Search, Globe, FileText, Check, Clock, Settings2, AlertCircle } from "lucide-react";
-import { HeaderPortal } from "@/components/shell/HeaderPortal";
-import { ModuleToolbar, ModuleActionButton } from "@/components/shell/ModuleToolbar";
+import { PageHeader, ModuleActionButton } from "@/components/shell/PageHeader";
 import { ModuleAdminPanel } from "@/components/shell/ModuleAdminPanel";
 import {
   DndContext,
@@ -171,8 +170,7 @@ function VisasPage() {
 
   return (
     <div className="flex h-full flex-col overflow-hidden">
-      <HeaderPortal>
-        <ModuleToolbar
+              <PageHeader
           title="Vistos"
           actions={
             <div className="flex items-center gap-1.5">
@@ -195,8 +193,7 @@ function VisasPage() {
             </div>
           }
         />
-      </HeaderPortal>
-
+      
       <ModuleActionButton
         label="Novo Processo"
         icon={<Plus className="h-3.5 w-3.5" />}
@@ -261,13 +258,13 @@ function StageColumn({ stage, items }: { stage: VisaStage; items: Visa[] }) {
   return (
     <div
       ref={setNodeRef}
-      className="flex h-full w-80 shrink-0 flex-col rounded-[var(--radius-card)] bg-surface-alt/50 border border-border"
+      className="flex h-full w-80 shrink-0 flex-col rounded-[var(--radius-card)] glass bg-white/5 border-white/10/50 border-none"
     >
       <div className="flex items-center justify-between border-b border-border p-3">
         <div className="flex items-center gap-2">
           <div className="h-3 w-3 rounded-full" style={{ backgroundColor: stage.color }} />
           <h3 className="font-semibold text-sm">{stage.name}</h3>
-          <span className="flex h-5 w-5 items-center justify-center rounded-full bg-surface text-[10px] font-medium text-muted-foreground border border-border">
+          <span className="flex h-5 w-5 items-center justify-center rounded-full glass-card border-none text-[10px] font-medium text-muted-foreground border-none">
             {items.length}
           </span>
         </div>
@@ -307,7 +304,7 @@ function SortableVisa({ visa }: { visa: Visa }) {
 function VisaCard({ visa, isOverlay }: { visa: Visa; isOverlay?: boolean }) {
   return (
     <div
-      className={`group relative flex cursor-grab flex-col gap-2.5 rounded-2xl border bg-surface p-3 text-left active:cursor-grabbing hover:border-border-strong ${
+      className={`group relative flex cursor-grab flex-col gap-2.5 rounded-[var(--radius-card)] border glass-card border-none p-3 text-left active:cursor-grabbing hover:border-border-strong ${
         isOverlay ? "rotate-2 scale-105 border-brand/50 " : "border-border"
       }`}
     >

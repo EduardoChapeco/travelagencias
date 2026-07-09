@@ -130,8 +130,8 @@ function SortableBlock({ block, selectedBlockId, setSelectedBlockId, removeBlock
       style={style}
       className={`rounded-full border overflow-hidden transition-all${
         selectedBlockId === block.id
-          ? "border-brand bg-surface"
-          : "border-border bg-surface-alt/30 hover:border-brand/40"
+          ? "border-brand glass-card border-none"
+          : "border-border glass bg-white/5 border-white/10/30 hover:border-brand/40"
       }${isDragging ? "opacity-50 ring-2 ring-brand" : ""}`}
     >
       <div
@@ -175,7 +175,7 @@ function SortableBlock({ block, selectedBlockId, setSelectedBlockId, removeBlock
 function SortableBlockOverlay({ block }: any) {
   if (!block) return null;
   return (
-    <div className="rounded-full border border-brand bg-surface opacity-90 shadow-none ring-2 ring-brand scale-105 transition-all">
+    <div className="rounded-full border border-brand glass-card border-none opacity-90 shadow-none ring-2 ring-brand scale-105 transition-all">
       <div className="flex items-center justify-between px-3 py-2 select-none">
         <div className="flex items-center gap-2">
           <div className="cursor-grabbing p-1 -ml-1 text-foreground">
@@ -580,7 +580,7 @@ function PageEditorRoute() {
         </p>
         <button
           onClick={() => navigate({ to: "/agency/$slug/portal/pages", params: { slug } })}
-          className="mt-4 h-8 px-4 rounded-2xl bg-red-100 text-xs font-semibold text-red-800 hover:bg-red-200 cursor-pointer transition-colors"
+          className="mt-4 h-8 px-4 rounded-[var(--radius-card)] bg-red-100 text-xs font-semibold text-red-800 hover:bg-red-200 cursor-pointer transition-colors"
         >
           Voltar às Páginas
         </button>
@@ -675,7 +675,7 @@ function PageEditorRoute() {
           {/* Page Dropdown Switcher */}
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <button className="flex items-center gap-1.5 h-7 px-2.5 rounded-full border border-border bg-white text-xs font-semibold text-foreground hover:bg-surface-alt transition-colors cursor-pointer select-none">
+              <button className="flex items-center gap-1.5 h-7 px-2.5 rounded-full border-none bg-white text-xs font-semibold text-foreground hover:glass bg-white/5 border-white/10 transition-colors cursor-pointer select-none">
                 <span>Página: {title || "Nova Página"}</span>
                 <span className="text-muted-foreground text-[8px]">▼</span>
               </button>
@@ -721,7 +721,7 @@ function PageEditorRoute() {
           {!isNew && (
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <button className="flex h-7 w-7 items-center justify-center rounded-full border border-border bg-white text-muted-foreground hover:bg-surface-alt hover:text-foreground transition-colors cursor-pointer">
+                <button className="flex h-7 w-7 items-center justify-center rounded-full border-none bg-white text-muted-foreground hover:glass bg-white/5 border-white/10 hover:text-foreground transition-colors cursor-pointer">
                   <Settings className="w-3.5 h-3.5" />
                 </button>
               </DropdownMenuTrigger>
@@ -791,7 +791,7 @@ function PageEditorRoute() {
         </div>
 
         {/* Viewport controls - compact divide group */}
-        <div className="hidden md:flex items-center bg-white border border-border p-0.5 rounded-full divide-x divide-border">
+        <div className="hidden md:flex items-center bg-white border-none p-0.5 rounded-full divide-x divide-border">
           <button
             onClick={() => {
               if (mode === "biolink") {
@@ -802,7 +802,7 @@ function PageEditorRoute() {
             }}
             disabled={mode === "biolink"}
             title="Modo Desktop"
-            className={`h-6 px-2 flex items-center justify-center transition-colors cursor-pointer ${mode === "biolink" ? "opacity-30 cursor-not-allowed" : ""}${viewport === "desktop" ? "bg-surface-alt text-foreground font-semibold" : "text-muted-foreground hover:text-foreground"}`}
+            className={`h-6 px-2 flex items-center justify-center transition-colors cursor-pointer ${mode === "biolink" ? "opacity-30 cursor-not-allowed" : ""}${viewport === "desktop" ? "glass bg-white/5 border-white/10 text-foreground font-semibold" : "text-muted-foreground hover:text-foreground"}`}
           >
             <Monitor className="h-3.5 w-3.5" />
           </button>
@@ -816,14 +816,14 @@ function PageEditorRoute() {
             }}
             disabled={mode === "biolink"}
             title="Modo Tablet"
-            className={`h-6 px-2 flex items-center justify-center transition-colors cursor-pointer ${mode === "biolink" ? "opacity-30 cursor-not-allowed" : ""}${viewport === "tablet" ? "bg-surface-alt text-foreground font-semibold" : "text-muted-foreground hover:text-foreground"}`}
+            className={`h-6 px-2 flex items-center justify-center transition-colors cursor-pointer ${mode === "biolink" ? "opacity-30 cursor-not-allowed" : ""}${viewport === "tablet" ? "glass bg-white/5 border-white/10 text-foreground font-semibold" : "text-muted-foreground hover:text-foreground"}`}
           >
             <Tablet className="h-3.5 w-3.5" />
           </button>
           <button
             onClick={() => setViewport("mobile")}
             title="Modo Celular"
-            className={`h-6 px-2 flex items-center justify-center transition-colors cursor-pointer${viewport === "mobile" ? "bg-surface-alt text-foreground font-semibold" : "text-muted-foreground hover:text-foreground"}`}
+            className={`h-6 px-2 flex items-center justify-center transition-colors cursor-pointer${viewport === "mobile" ? "glass bg-white/5 border-white/10 text-foreground font-semibold" : "text-muted-foreground hover:text-foreground"}`}
           >
             <Smartphone className="h-3.5 w-3.5" />
           </button>
@@ -848,7 +848,7 @@ function PageEditorRoute() {
               target="_blank"
               rel="noopener noreferrer"
               title="Visualizar Página Ao Vivo"
-              className="p-1.5 rounded-full border border-border bg-white text-muted-foreground hover:bg-surface-alt hover:text-foreground transition-colors cursor-pointer flex items-center justify-center h-7 w-7"
+              className="p-1.5 rounded-full border-none bg-white text-muted-foreground hover:glass bg-white/5 border-white/10 hover:text-foreground transition-colors cursor-pointer flex items-center justify-center h-7 w-7"
             >
               <ExternalLink className="h-3.5 h-3.5" />
             </a>
@@ -882,7 +882,7 @@ function PageEditorRoute() {
             <button
               onClick={() => navigate({ to: "/agency/$slug/portal/pages", params: { slug } })}
               title="Voltar para Lista de Páginas"
-              className="p-2 rounded-full text-muted-foreground hover:text-foreground hover:bg-surface-alt transition-colors cursor-pointer"
+              className="p-2 rounded-full text-muted-foreground hover:text-foreground hover:glass bg-white/5 border-white/10 transition-colors cursor-pointer"
             >
               <ArrowLeft className="h-4.5 w-4.5" />
             </button>
@@ -900,7 +900,7 @@ function PageEditorRoute() {
                 }
               }}
               title="Biblioteca de Seções"
-              className={`p-2 rounded-full transition-colors cursor-pointer ${isLeftSidebarOpen && leftTab === "sections" ? "bg-brand/10 text-brand font-bold" : "text-muted-foreground hover:text-foreground hover:bg-surface-alt"}`}
+              className={`p-2 rounded-full transition-colors cursor-pointer ${isLeftSidebarOpen && leftTab === "sections" ? "bg-brand/10 text-brand font-bold" : "text-muted-foreground hover:text-foreground hover:glass bg-white/5 border-white/10"}`}
             >
               <Plus className="h-4.5 w-4.5" />
             </button>
@@ -915,7 +915,7 @@ function PageEditorRoute() {
                 }
               }}
               title="Templates Prontos"
-              className={`p-2 rounded-full transition-colors cursor-pointer ${isLeftSidebarOpen && leftTab === "templates" ? "bg-brand/10 text-brand font-bold" : "text-muted-foreground hover:text-foreground hover:bg-surface-alt"}`}
+              className={`p-2 rounded-full transition-colors cursor-pointer ${isLeftSidebarOpen && leftTab === "templates" ? "bg-brand/10 text-brand font-bold" : "text-muted-foreground hover:text-foreground hover:glass bg-white/5 border-white/10"}`}
             >
               <Sparkles className="h-4.5 w-4.5" />
             </button>
@@ -930,7 +930,7 @@ function PageEditorRoute() {
                 }
               }}
               title="Camadas e Ordenação"
-              className={`p-2 rounded-full relative transition-colors cursor-pointer ${isLeftSidebarOpen && leftTab === "layers" ? "bg-brand/10 text-brand font-bold" : "text-muted-foreground hover:text-foreground hover:bg-surface-alt"}`}
+              className={`p-2 rounded-full relative transition-colors cursor-pointer ${isLeftSidebarOpen && leftTab === "layers" ? "bg-brand/10 text-brand font-bold" : "text-muted-foreground hover:text-foreground hover:glass bg-white/5 border-white/10"}`}
             >
               <Layers className="h-4.5 w-4.5" />
               {blocks.length > 0 && (
@@ -946,7 +946,7 @@ function PageEditorRoute() {
             <button
               onClick={() => setPageSettingsOpen(true)}
               title="Configurações Gerais"
-              className="p-2 rounded-full text-muted-foreground hover:text-foreground hover:bg-surface-alt transition-colors cursor-pointer"
+              className="p-2 rounded-full text-muted-foreground hover:text-foreground hover:glass bg-white/5 border-white/10 transition-colors cursor-pointer"
             >
               <Settings className="h-4.5 w-4.5" />
             </button>
@@ -954,7 +954,7 @@ function PageEditorRoute() {
             <button
               onClick={() => setSeoSettingsOpen(true)}
               title="Configurações SEO"
-              className="p-2 rounded-full text-muted-foreground hover:text-foreground hover:bg-surface-alt transition-colors cursor-pointer"
+              className="p-2 rounded-full text-muted-foreground hover:text-foreground hover:glass bg-white/5 border-white/10 transition-colors cursor-pointer"
             >
               <Globe className="h-4.5 w-4.5" />
             </button>
@@ -963,7 +963,7 @@ function PageEditorRoute() {
               <button
                 onClick={() => setHistorySettingsOpen(true)}
                 title="Histórico de Versões"
-                className="p-2 rounded-full text-muted-foreground hover:text-foreground hover:bg-surface-alt transition-colors cursor-pointer"
+                className="p-2 rounded-full text-muted-foreground hover:text-foreground hover:glass bg-white/5 border-white/10 transition-colors cursor-pointer"
               >
                 <History className="h-4.5 w-4.5" />
               </button>
@@ -1121,9 +1121,9 @@ function PageEditorRoute() {
                               key={type}
                               type="button"
                               onClick={() => addBlock(type)}
-                              className="w-full flex flex-col items-center justify-center gap-2 p-3 text-center transition-all bg-surface-alt/20 hover:bg-surface-alt/60 hover:border-brand/40 group cursor-pointer border border-border rounded-2xl hover:shadow-none relative overflow-hidden"
+                              className="w-full flex flex-col items-center justify-center gap-2 p-3 text-center transition-all glass bg-white/5 border-white/10/20 hover:glass bg-white/5 border-white/10/60 hover:border-brand/40 group cursor-pointer border-none rounded-[var(--radius-card)] hover:shadow-none relative overflow-hidden"
                             >
-                              <div className="p-2 bg-surface-alt/50 rounded-full group-hover:bg-brand/10 transition-colors">
+                              <div className="p-2 glass bg-white/5 border-white/10/50 rounded-full group-hover:bg-brand/10 transition-colors">
                                 <IconComponent
                                   className={`h-4 w-4 shrink-0 transition-colors ${
                                     isBiolinkType
@@ -1177,7 +1177,7 @@ function PageEditorRoute() {
                       key={tpl.id}
                       type="button"
                       onClick={() => handleApplyTemplate(tpl.id)}
-                      className={`w-full text-left p-3 border hover:border-brand/40 transition-all flex flex-col gap-1.5 group cursor-pointer ${template === tpl.id ? "bg-brand/5 border-brand/40" : "bg-white border-border hover:bg-surface-alt"}`}
+                      className={`w-full text-left p-3 border hover:border-brand/40 transition-all flex flex-col gap-1.5 group cursor-pointer ${template === tpl.id ? "bg-brand/5 border-brand/40" : "bg-white border-border hover:glass bg-white/5 border-white/10"}`}
                     >
                       <div className="flex justify-between items-center w-full">
                         <span
@@ -1185,7 +1185,7 @@ function PageEditorRoute() {
                         >
                           {tpl.name}
                         </span>
-                        <span className="text-[8px] uppercase font-bold tracking-wider px-1 py-0.5 bg-surface border text-muted-foreground font-mono">
+                        <span className="text-[8px] uppercase font-bold tracking-wider px-1 py-0.5 glass-card border-none border text-muted-foreground font-mono">
                           {tpl.category}
                         </span>
                       </div>
@@ -1211,7 +1211,7 @@ function PageEditorRoute() {
                 </div>
                 <div className="flex-1 overflow-y-auto p-4 scrollbar-thin bg-white">
                   {blocks.length === 0 ? (
-                    <div className="border border-dashed border-border p-8 text-center bg-surface-alt/10">
+                    <div className="border border-dashed border-border p-8 text-center glass bg-white/5 border-white/10/10">
                       <p className="text-xs text-muted-foreground font-medium">Página vazia</p>
                       <p className="text-[10px] text-muted-foreground/70 mt-1">
                         Adicione seções pela aba "Seções".
@@ -1259,7 +1259,7 @@ function PageEditorRoute() {
         )}
 
         {/* ── 2. CENTER CANVAS: Live page preview simulation (flex-1) ── */}
-        <div className="flex-1 bg-surface-alt/30 relative overflow-hidden flex flex-col items-center justify-start min-h-0 h-full">
+        <div className="flex-1 glass bg-white/5 border-white/10/30 relative overflow-hidden flex flex-col items-center justify-start min-h-0 h-full">
           {/* ── Canvas Ruler: device indicator ── */}
           <div className="w-full flex items-center justify-center gap-2 py-2 shrink-0 border-b border-border bg-white/70">
             <span className="text-[9px] uppercase tracking-widest font-bold text-muted-foreground">
@@ -1279,7 +1279,7 @@ function PageEditorRoute() {
           <div className="flex-1 min-h-0 w-full overflow-auto flex flex-col items-center py-4 px-4">
             {/* Browser / Device Mockup Frame */}
             <div
-              className={`flex-1 min-h-0 bg-white border border-border overflow-hidden shadow-none relative transition-all duration-300 ease-[cubic-bezier(0.2,0.8,0.2,1)] flex flex-col${
+              className={`flex-1 min-h-0 bg-white border-none overflow-hidden shadow-none relative transition-all duration-300 ease-[cubic-bezier(0.2,0.8,0.2,1)] flex flex-col${
                 viewport === "desktop"
                   ? " w-full max-w-5xl"
                   : viewport === "tablet"
@@ -1343,7 +1343,7 @@ function PageEditorRoute() {
                     type="button"
                     onClick={() => setSelectedBlockId(null)}
                     title="Fechar painel"
-                    className="p-1 text-muted-foreground hover:text-foreground hover:bg-surface-alt rounded-full transition-colors mt-0.5"
+                    className="p-1 text-muted-foreground hover:text-foreground hover:glass bg-white/5 border-white/10 rounded-full transition-colors mt-0.5"
                   >
                     <PanelLeft className="w-4 h-4" />
                   </button>
@@ -1637,7 +1637,7 @@ function PageEditorRoute() {
             {versionsQuery.data?.map((v) => (
               <div
                 key={v.id}
-                className="flex flex-col gap-2 p-3 rounded-full border border-border bg-surface-alt/30"
+                className="flex flex-col gap-2 p-3 rounded-full border-none glass bg-white/5 border-white/10/30"
               >
                 <div className="flex justify-between items-center">
                   <div>
@@ -1689,7 +1689,7 @@ function PageEditorRoute() {
 
       {showNewPageModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/55 backdrop-blur-sm">
-          <div className="bg-surface border border-border rounded-2xl p-6 w-full max-w-md space-y-4">
+          <div className="glass-card border-none border-none rounded-[var(--radius-card)] p-6 w-full max-w-md space-y-4">
             <h3 className="text-sm font-bold text-foreground">Criar Nova Página</h3>
             <div className="space-y-3">
               <Field label="Título da Página">
@@ -1735,7 +1735,7 @@ function PageEditorRoute() {
 
       {showRenameModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/55 backdrop-blur-sm">
-          <div className="bg-surface border border-border rounded-2xl p-6 w-full max-w-md space-y-4">
+          <div className="glass-card border-none border-none rounded-[var(--radius-card)] p-6 w-full max-w-md space-y-4">
             <h3 className="text-sm font-bold text-foreground">Renomear Página</h3>
             <div className="space-y-3">
               <Field label="Título da Página">
@@ -1762,7 +1762,7 @@ function PageEditorRoute() {
       )}
 
       {/* Floating Action Menu for mobile devices */}
-      <div className="sm:hidden fixed bottom-4 left-1/2 -translate-x-1/2 z-50 flex items-center gap-2 bg-surface/90 dark:bg-zinc-950/90 backdrop-blur-3xl border border-white/20 dark:border-white/10 p-2.5 rounded-3xl shadow-none w-[calc(100vw-32px)] max-w-sm justify-between">
+      <div className="sm:hidden fixed bottom-4 left-1/2 -translate-x-1/2 z-50 flex items-center gap-2 glass-card border-none/90 dark:bg-zinc-950/90 backdrop-blur-3xl border border-white/20 dark:border-white/10 p-2.5 rounded-3xl shadow-none w-[calc(100vw-32px)] max-w-sm justify-between">
         <div className="flex items-center gap-1.5 min-w-0">
           {saveStatus === "saving" && (
             <span className="text-[10px] text-muted-foreground animate-pulse truncate">
@@ -1781,7 +1781,7 @@ function PageEditorRoute() {
             type="button"
             onClick={saveDraftOnly}
             disabled={submitting}
-            className="h-8 py-0 px-3 text-[9px] uppercase tracking-wider rounded-2xl"
+            className="h-8 py-0 px-3 text-[9px] uppercase tracking-wider rounded-[var(--radius-card)]"
           >
             Salvar
           </GhostButton>
@@ -1789,7 +1789,7 @@ function PageEditorRoute() {
             type="button"
             onClick={publishPage}
             disabled={submitting}
-            className="h-8 py-0 px-3 text-[9px] uppercase tracking-wider rounded-2xl"
+            className="h-8 py-0 px-3 text-[9px] uppercase tracking-wider rounded-[var(--radius-card)]"
           >
             {submitting ? "..." : "Publicar"}
           </PrimaryButton>

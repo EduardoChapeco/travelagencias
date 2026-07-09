@@ -126,8 +126,8 @@ export function SearchableSelect({
         disabled={disabled}
         onClick={() => !disabled && setOpen((o) => !o)}
         className={cn(
-          "flex w-full h-9 items-center justify-between gap-2 rounded-full border border-input bg-surface px-2.5 text-sm outline-none transition-colors",
-          "hover:border-border-strong focus:border-border-strong focus:ring-2 focus:ring-ring/20",
+          "flex w-full h-9 items-center justify-between gap-2 rounded-[var(--radius-input)] border border-input bg-transparent px-3 text-sm outline-none transition-colors shadow-xs",
+          "hover:border-white/20 focus:border-white/30 focus:ring-1 focus:ring-white/20",
           "disabled:cursor-not-allowed disabled:opacity-60",
           open && "border-border-strong ring-2 ring-ring/20",
           !value && "text-muted-foreground",
@@ -171,7 +171,7 @@ export function SearchableSelect({
 
       {/* Dropdown */}
       {open && (
-        <div className="absolute left-0 right-0 top-full z-50 mt-1 overflow-hidden rounded-full border border-border bg-surface shadow-none animate-in fade-in-0 zoom-in-95 slide-in-from-top-2 duration-100">
+        <div className="absolute left-0 right-0 top-full z-50 mt-1 overflow-hidden rounded-[var(--radius-card)] border border-white/10 glass text-white bg-black/40 backdrop-blur-2xl shadow-lg animate-in fade-in-0 zoom-in-95 slide-in-from-top-2 duration-100">
           {/* Search input */}
           <div className="flex items-center gap-2 border-b border-border px-3 py-2">
             <Search className="h-3.5 w-3.5 shrink-0 text-muted-foreground" />
@@ -212,8 +212,8 @@ export function SearchableSelect({
                   type="button"
                   onClick={() => handleSelect(opt)}
                   className={cn(
-                    "flex w-full items-center gap-2 px-3 py-2 text-left text-sm transition-colors hover:bg-surface-alt",
-                    opt.value === value && "bg-primary/5 font-semibold text-primary",
+                    "flex w-full items-center gap-2 px-3 py-2 text-left text-sm transition-colors hover:bg-white/10",
+                    opt.value === value && "bg-primary/20 font-semibold text-primary",
                   )}
                 >
                   <span className="flex-1 truncate">{opt.label}</span>

@@ -65,13 +65,13 @@ function ClientWallet() {
 
       {q.isLoading && (
         <div className="animate-pulse space-y-[-40px]">
-          <div className="h-48 bg-surface rounded-2xl border border-border"></div>
-          <div className="h-48 bg-surface rounded-2xl border border-border scale-95 origin-bottom"></div>
+          <div className="h-48 glass-card border-none rounded-[var(--radius-card)] border-none"></div>
+          <div className="h-48 glass-card border-none rounded-[var(--radius-card)] border-none scale-95 origin-bottom"></div>
         </div>
       )}
 
       {!q.isLoading && q.data?.length === 0 && (
-        <div className="rounded-[var(--radius-card)] border border-dashed border-border p-12 text-center text-muted-foreground bg-surface/50 mt-10">
+        <div className="rounded-[var(--radius-card)] border border-dashed border-border p-12 text-center text-muted-foreground glass-card border-none/50 mt-10">
           <WalletCards className="h-10 w-10 mx-auto mb-3 opacity-50" />
           <h3 className="text-lg font-semibold text-foreground mb-1">Carteira Vazia</h3>
           <p className="text-sm">Os documentos das suas próximas viagens aparecerão aqui magicamente.</p>

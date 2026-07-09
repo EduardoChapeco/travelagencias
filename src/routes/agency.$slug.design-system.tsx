@@ -22,7 +22,6 @@ import {
   Sparkles,
   ArrowRight,
 } from "lucide-react";
-import { HeaderPortal } from "@/components/shell/HeaderPortal";
 import {
   Field,
   Input,
@@ -160,7 +159,7 @@ const BLOCK_PRESETS = {
     },
   ],
   borders: [
-    { name: "Fina Padrão", class: "border border-border" },
+    { name: "Fina Padrão", class: "border-none" },
     { name: "Vidro (Glassmorphic)", class: "border border-white/20 bg-white/5 backdrop-blur-md" },
     {
       name: "Glow Iluminada",
@@ -200,8 +199,8 @@ function DesignSystemPage() {
   };
 
   // State for Sandbox
-  const [sandboxBg, setSandboxBg] = useState<string>("bg-surface");
-  const [sandboxBorder, setSandboxBorder] = useState<string>("border border-border");
+  const [sandboxBg, setSandboxBg] = useState<string>("glass-card border-none");
+  const [sandboxBorder, setSandboxBorder] = useState<string>("border-none");
   const [sandboxPadding, setSandboxPadding] = useState<string>("p-8");
   const [sandboxAlign, setSandboxAlign] = useState<string>("text-left");
   const [sandboxElements, setSandboxElements] = useState<SandboxElement[]>([
@@ -263,7 +262,7 @@ function DesignSystemPage() {
       } else if (el.type === "button") {
         elementsMarkup += `\n    <button className="inline-flex h-9 items-center justify-center rounded-full bg-brand text-xs font-semibold text-brand-foreground px-5 py-2 hover:bg-brand/90 transition-all select-none">${el.buttonText}</button>`;
       } else if (el.type === "image") {
-        elementsMarkup += `\n    <img src="${el.imageUrl}" alt="Mockup" className="rounded-[var(--radius-card)] border border-border w-full object-cover max-h-48" />`;
+        elementsMarkup += `\n    <img src="${el.imageUrl}" alt="Mockup" className="rounded-[var(--radius-card)] border-none w-full object-cover max-h-48" />`;
       } else if (el.type === "features") {
         const listItems = (el.featuresList || [])
           .map(
@@ -275,20 +274,18 @@ function DesignSystemPage() {
       }
     });
 
-    return `<div className={cn(\n  "rounded-2xl flex flex-col gap-4 ${bgClass} ${borderClass} ${padClass} ${alignClass}"\n)}>${elementsMarkup}\n</div>`;
+    return `<div className={cn(\n  "rounded-[var(--radius-card)] flex flex-col gap-4 ${bgClass} ${borderClass} ${padClass} ${alignClass}"\n)}>${elementsMarkup}\n</div>`;
   };
 
   return (
     <div className="flex h-full overflow-hidden bg-background">
-      <HeaderPortal>
-        <div className="flex items-center gap-3">
+              <div className="flex items-center gap-3">
           <StatusBadge tone="info">Documento Pétreo</StatusBadge>
         </div>
-      </HeaderPortal>
-
+      
       {/* Internal Sidebar */}
-      <aside className="w-56 flex-shrink-0 border-r border-border bg-surface flex flex-col justify-between select-none">
-        <div className="p-4 border-b border-border/80 bg-surface-alt/25">
+      <aside className="w-56 flex-shrink-0 border-r border-border glass-card border-none flex flex-col justify-between select-none">
+        <div className="p-4 border-b border-border/80 glass bg-white/5 border-white/10/25">
           <h2 className="text-xs font-extrabold tracking-wider text-foreground uppercase flex items-center gap-2">
             <Settings className="w-3.5 h-3.5 text-brand" /> Design System Hub
           </h2>
@@ -309,10 +306,10 @@ function DesignSystemPage() {
               key={tab.id}
               onClick={() => setActiveTab(tab.id as any)}
               className={cn(
-                "w-full flex items-center justify-between text-left px-3 py-2 rounded-2xl text-xs font-medium transition-colors cursor-pointer",
+                "w-full flex items-center justify-between text-left px-3 py-2 rounded-[var(--radius-card)] text-xs font-medium transition-colors cursor-pointer",
                 activeTab === tab.id
                   ? "bg-brand/10 text-brand font-bold"
-                  : "text-muted-foreground hover:text-foreground hover:bg-surface-alt/55",
+                  : "text-muted-foreground hover:text-foreground hover:glass bg-white/5 border-white/10/55",
               )}
             >
               <span>{tab.label}</span>
@@ -321,7 +318,7 @@ function DesignSystemPage() {
           ))}
         </nav>
 
-        <div className="p-3 border-t border-border bg-surface-alt/10 text-[10px] text-muted-foreground leading-relaxed font-mono">
+        <div className="p-3 border-t border-border glass bg-white/5 border-white/10/10 text-[10px] text-muted-foreground leading-relaxed font-mono">
           Turis OS
           <br />
           No Shadows Mode
@@ -343,7 +340,7 @@ function DesignSystemPage() {
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div className="p-5 bg-surface border border-border rounded-[var(--radius-card)] space-y-2">
+              <div className="p-5 glass-card border-none border-none rounded-[var(--radius-card)] space-y-2">
                 <h4 className="text-xs font-bold text-foreground uppercase tracking-wider">
                   1. Design Utilitário e Profissional
                 </h4>
@@ -354,18 +351,18 @@ function DesignSystemPage() {
                 </p>
               </div>
 
-              <div className="p-5 bg-surface border border-border rounded-[var(--radius-card)] space-y-2">
+              <div className="p-5 glass-card border-none border-none rounded-[var(--radius-card)] space-y-2">
                 <h4 className="text-xs font-bold text-foreground uppercase tracking-wider">
                   2. Sem Sombras Estáticas (Flat Design)
                 </h4>
                 <p className="text-xs text-muted-foreground leading-relaxed">
                   Para conferir uma estética limpa, lisa e premium, removemos todas as sombras de
                   cards e tabelas. Usamos bordas finas e realces de cores de fundo
-                  (`bg-surface-alt`) para criar relevo visual.
+                  (`glass bg-white/5 border-white/10`) para criar relevo visual.
                 </p>
               </div>
 
-              <div className="p-5 bg-surface border border-border rounded-[var(--radius-card)] space-y-2">
+              <div className="p-5 glass-card border-none border-none rounded-[var(--radius-card)] space-y-2">
                 <h4 className="text-xs font-bold text-foreground uppercase tracking-wider">
                   3. Acessibilidade e Contraste
                 </h4>
@@ -376,7 +373,7 @@ function DesignSystemPage() {
                 </p>
               </div>
 
-              <div className="p-5 bg-surface border border-border rounded-[var(--radius-card)] space-y-2">
+              <div className="p-5 glass-card border-none border-none rounded-[var(--radius-card)] space-y-2">
                 <h4 className="text-xs font-bold text-foreground uppercase tracking-wider">
                   4. Coesão Sincronizada
                 </h4>
@@ -392,7 +389,7 @@ function DesignSystemPage() {
               <AlertTriangle className="h-5 w-5 shrink-0" />
               <div>
                 <strong>Atenção Desenvolvedor:</strong> Ao criar novas seções ou módulos, NUNCA
-                utilize classes utilitárias de sombras como `shadow-sm`, `shadow-md`, `shadow-lg` de
+                utilize classes utilitárias de sombras como `shadow-none`, `shadow-none`, `shadow-none` de
                 forma estática. Caso precise de relevo, prefira bordas finas (`border
                 border-border`) ou cores de superfície diferenciadas.
               </div>
@@ -426,7 +423,7 @@ function DesignSystemPage() {
               {COLOR_TOKENS.map((token) => (
                 <div
                   key={token.name}
-                  className="p-3 bg-surface border border-border rounded-[var(--radius-card)] flex flex-col justify-between gap-3"
+                  className="p-3 glass-card border-none border-none rounded-[var(--radius-card)] flex flex-col justify-between gap-3"
                 >
                   <div className="space-y-1">
                     <div className="flex items-center justify-between">
@@ -441,7 +438,7 @@ function DesignSystemPage() {
                   <div className="flex items-center gap-3">
                     {/* Visual color swatch representing current live style */}
                     <div
-                      className="w-10 h-6 rounded border border-border/60 shrink-0"
+                      className="w-10 h-6 rounded border-none/60 shrink-0"
                       style={{ backgroundColor: `var(${token.name})` }}
                     />
                     <button
@@ -469,10 +466,10 @@ function DesignSystemPage() {
               </p>
             </div>
 
-            <div className="bg-surface border border-border rounded-[var(--radius-card)] overflow-hidden">
+            <div className="glass-card border-none border-none rounded-[var(--radius-card)] overflow-hidden">
               <table className="w-full border-collapse text-left">
                 <thead>
-                  <tr className="border-b border-border bg-surface-alt/30 text-xs font-bold text-muted-foreground uppercase tracking-wider">
+                  <tr className="border-b border-border glass bg-white/5 border-white/10/30 text-xs font-bold text-muted-foreground uppercase tracking-wider">
                     <th className="p-4">Classe Tailwind</th>
                     <th className="p-4">Tamanho</th>
                     <th className="p-4">Descrição</th>
@@ -481,7 +478,7 @@ function DesignSystemPage() {
                 </thead>
                 <tbody className="divide-y divide-border text-xs text-foreground/80 font-sans">
                   {TYPO_TOKENS.map((typo) => (
-                    <tr key={typo.class} className="hover:bg-surface-alt/10 transition-colors">
+                    <tr key={typo.class} className="hover:glass bg-white/5 border-white/10/10 transition-colors">
                       <td className="p-4 font-mono font-bold text-brand">{typo.class}</td>
                       <td className="p-4 font-mono text-[11px]">{typo.size}</td>
                       <td className="p-4 text-muted-foreground max-w-xs">{typo.desc}</td>
@@ -494,7 +491,7 @@ function DesignSystemPage() {
               </table>
             </div>
 
-            <div className="p-5 bg-surface border border-border rounded-[var(--radius-card)] space-y-3">
+            <div className="p-5 glass-card border-none border-none rounded-[var(--radius-card)] space-y-3">
               <h4 className="text-xs font-bold text-foreground uppercase">
                 Especificação de Fontes
               </h4>
@@ -503,7 +500,7 @@ function DesignSystemPage() {
                   <span className="font-semibold block text-muted-foreground">
                     Fonte Sans-Serif (Textos e Inputs)
                   </span>
-                  <code className="block bg-surface-alt p-2 rounded border border-border/80 font-mono text-[11px]">
+                  <code className="block glass bg-white/5 border-white/10 p-2 rounded border-none/80 font-mono text-[11px]">
                     font-family: var(--font-sans) ("Inter", -apple-system, sans-serif)
                   </code>
                 </div>
@@ -511,7 +508,7 @@ function DesignSystemPage() {
                   <span className="font-semibold block text-muted-foreground">
                     Fonte Monoespaçada (Códigos e Logs)
                   </span>
-                  <code className="block bg-surface-alt p-2 rounded border border-border/80 font-mono text-[11px]">
+                  <code className="block glass bg-white/5 border-white/10 p-2 rounded border-none/80 font-mono text-[11px]">
                     font-family: var(--font-mono) ("JetBrains Mono", monospace)
                   </code>
                 </div>
@@ -533,7 +530,7 @@ function DesignSystemPage() {
             </div>
 
             <div className="space-y-4">
-              <div className="p-5 bg-surface border border-border rounded-[var(--radius-card)] space-y-3">
+              <div className="p-5 glass-card border-none border-none rounded-[var(--radius-card)] space-y-3">
                 <h4 className="text-xs font-bold text-foreground uppercase">
                   1. Margens e Paddings de Página
                 </h4>
@@ -541,12 +538,12 @@ function DesignSystemPage() {
                   Páginas administrativas comuns de formulário ou listagem utilizam paddings de
                   container responsivos para manter a harmonia em todas as telas:
                 </p>
-                <code className="block bg-surface-alt p-2.5 rounded border border-border/80 font-mono text-[11px] text-brand">
+                <code className="block glass bg-white/5 border-white/10 p-2.5 rounded border-none/80 font-mono text-[11px] text-brand">
                   &lt;div className="px-4 md:px-6 py-4 md:py-6"&gt; ... &lt;/div&gt;
                 </code>
               </div>
 
-              <div className="p-5 bg-surface border border-border rounded-[var(--radius-card)] space-y-3">
+              <div className="p-5 glass-card border-none border-none rounded-[var(--radius-card)] space-y-3">
                 <h4 className="text-xs font-bold text-foreground uppercase">
                   2. Estrutura Bento Grid de 3 Colunas
                 </h4>
@@ -554,17 +551,17 @@ function DesignSystemPage() {
                   Para painéis descritivos e cards de recursos, utilizamos o grid de 3 colunas
                   padrão com spans definidos no Tailwind:
                 </p>
-                <pre className="bg-surface-alt p-3 rounded border border-border/80 font-mono text-[10.5px] leading-relaxed text-brand overflow-x-auto">
+                <pre className="glass bg-white/5 border-white/10 p-3 rounded border-none/80 font-mono text-[10.5px] leading-relaxed text-brand overflow-x-auto">
                   {`<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
   {/* Card Comum */}
-  <div className="bg-surface border border-border rounded-2xl p-5">...</div>
+  <div className="glass-card border-none border-none rounded-[var(--radius-card)] p-5">...</div>
   {/* Card Estendido (Largura Dupla no Desktop) */}
-  <div className="lg:col-span-2 bg-surface border border-border rounded-2xl p-5">...</div>
+  <div className="lg:col-span-2 glass-card border-none border-none rounded-[var(--radius-card)] p-5">...</div>
 </div>`}
                 </pre>
               </div>
 
-              <div className="p-5 bg-surface border border-border rounded-[var(--radius-card)] space-y-3">
+              <div className="p-5 glass-card border-none border-none rounded-[var(--radius-card)] space-y-3">
                 <h4 className="text-xs font-bold text-foreground uppercase">
                   3. Cabeçalho de Página (HeaderPortal)
                 </h4>
@@ -572,13 +569,12 @@ function DesignSystemPage() {
                   Para manter os botões de ação e status no topo da barra de navegação global,
                   utilize o portal nativo:
                 </p>
-                <pre className="bg-surface-alt p-3 rounded border border-border/80 font-mono text-[10.5px] leading-relaxed text-brand overflow-x-auto">
-                  {`<HeaderPortal>
-  <div className="flex items-center gap-2">
+                <pre className="glass bg-white/5 border-white/10 p-3 rounded border-none/80 font-mono text-[10.5px] leading-relaxed text-brand overflow-x-auto">
+                  {`  <div className="flex items-center gap-2">
     <GhostButton>Voltar</GhostButton>
     <PrimaryButton>Salvar Dados</PrimaryButton>
   </div>
-</HeaderPortal>`}
+`}
                 </pre>
               </div>
             </div>
@@ -599,7 +595,7 @@ function DesignSystemPage() {
             </div>
 
             {/* Sub-component: Buttons */}
-            <div className="p-6 bg-surface border border-border rounded-2xl space-y-4">
+            <div className="p-6 glass-card border-none border-none rounded-[var(--radius-card)] space-y-4">
               <div className="flex items-center justify-between">
                 <h4 className="text-xs font-bold text-foreground uppercase tracking-wider">
                   Botões Interativos
@@ -621,7 +617,7 @@ function DesignSystemPage() {
               </div>
 
               {showCode["buttons"] && (
-                <pre className="bg-surface-alt p-3 rounded border border-border font-mono text-[11px] text-brand overflow-x-auto">
+                <pre className="glass bg-white/5 border-white/10 p-3 rounded border-none font-mono text-[11px] text-brand overflow-x-auto">
                   {`import { PrimaryButton, GhostButton } from "@/components/ui/form";
 
 // Uso dos botões padrão:
@@ -635,7 +631,7 @@ function DesignSystemPage() {
             </div>
 
             {/* Sub-component: Form Fields */}
-            <div className="p-6 bg-surface border border-border rounded-2xl space-y-4">
+            <div className="p-6 glass-card border-none border-none rounded-[var(--radius-card)] space-y-4">
               <div className="flex items-center justify-between">
                 <h4 className="text-xs font-bold text-foreground uppercase tracking-wider">
                   Campos de Formulário e Validação
@@ -660,7 +656,7 @@ function DesignSystemPage() {
               </div>
 
               {showCode["forms"] && (
-                <pre className="bg-surface-alt p-3 rounded border border-border font-mono text-[11px] text-brand overflow-x-auto">
+                <pre className="glass bg-white/5 border-white/10 p-3 rounded border-none font-mono text-[11px] text-brand overflow-x-auto">
                   {`import { Field, Input, Select } from "@/components/ui/form";
 
 <Field label="Nome Completo" hint="Insira seu nome igual ao do passaporte.">
@@ -677,7 +673,7 @@ function DesignSystemPage() {
             </div>
 
             {/* Sub-component: Status Badges */}
-            <div className="p-6 bg-surface border border-border rounded-2xl space-y-4">
+            <div className="p-6 glass-card border-none border-none rounded-[var(--radius-card)] space-y-4">
               <div className="flex items-center justify-between">
                 <h4 className="text-xs font-bold text-foreground uppercase tracking-wider">
                   Status Badges
@@ -697,7 +693,7 @@ function DesignSystemPage() {
               </div>
 
               {showCode["badges"] && (
-                <pre className="bg-surface-alt p-3 rounded border border-border font-mono text-[11px] text-brand overflow-x-auto">
+                <pre className="glass bg-white/5 border-white/10 p-3 rounded border-none font-mono text-[11px] text-brand overflow-x-auto">
                   {`import { StatusBadge } from "@/components/ui/form";
 
 <StatusBadge tone="neutral">Rascunho</StatusBadge>
@@ -710,7 +706,7 @@ function DesignSystemPage() {
             </div>
 
             {/* Sub-component: Alerts */}
-            <div className="p-6 bg-surface border border-border rounded-2xl space-y-4">
+            <div className="p-6 glass-card border-none border-none rounded-[var(--radius-card)] space-y-4">
               <div className="flex items-center justify-between">
                 <h4 className="text-xs font-bold text-foreground uppercase tracking-wider">
                   Alertas Planos (Sem Sombras)
@@ -740,7 +736,7 @@ function DesignSystemPage() {
               </div>
 
               {showCode["alerts"] && (
-                <pre className="bg-surface-alt p-3 rounded border border-border font-mono text-[11px] text-brand overflow-x-auto">
+                <pre className="glass bg-white/5 border-white/10 p-3 rounded border-none font-mono text-[11px] text-brand overflow-x-auto">
                   {`// Alerta Azul (Info)
 <div className="bg-info-bg text-info border border-info/30 rounded-[var(--radius-card)] p-4 flex gap-3 text-xs leading-relaxed">
   <Info className="h-4.5 w-4.5 shrink-0" />
@@ -803,7 +799,7 @@ function DesignSystemPage() {
                     <div
                       key={bor.name}
                       className={cn(
-                        "bg-surface p-5 rounded-2xl flex flex-col justify-center text-center text-xs h-24 font-semibold text-foreground",
+                        "glass-card border-none p-5 rounded-[var(--radius-card)] flex flex-col justify-center text-center text-xs h-24 font-semibold text-foreground",
                         bor.class,
                       )}
                     >
@@ -830,7 +826,7 @@ function DesignSystemPage() {
 
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
               {/* Left Sandbox Control Panel */}
-              <div className="lg:col-span-5 bg-surface border border-border rounded-2xl p-5 space-y-5">
+              <div className="lg:col-span-5 glass-card border-none border-none rounded-[var(--radius-card)] p-5 space-y-5">
                 <h4 className="text-xs font-extrabold text-foreground uppercase tracking-wider flex items-center gap-1.5">
                   <Sliders className="w-3.5 h-3.5 text-brand" /> Parâmetros da Seção
                 </h4>
@@ -838,8 +834,8 @@ function DesignSystemPage() {
                 <div className="space-y-3">
                   <Field label="Cor de Fundo">
                     <Select value={sandboxBg} onChange={(e) => setSandboxBg(e.target.value)}>
-                      <option value="bg-surface">Sólida: Surface (Branco/Cinza Escuro)</option>
-                      <option value="bg-surface-alt/45">Sólida: Surface Alt (Cinza Suave)</option>
+                      <option value="glass-card border-none">Sólida: Surface (Branco/Cinza Escuro)</option>
+                      <option value="glass bg-white/5 border-white/10/45">Sólida: Surface Alt (Cinza Suave)</option>
                       <option value="bg-brand text-brand-foreground">
                         Sólida: Brand Primary (Cor da Agência)
                       </option>
@@ -866,8 +862,8 @@ function DesignSystemPage() {
                       value={sandboxBorder}
                       onChange={(e) => setSandboxBorder(e.target.value)}
                     >
-                      <option value="border border-border">
-                        Fina Padrão (border border-border)
+                      <option value="border-none">
+                        Fina Padrão (border-none)
                       </option>
                       <option value="border border-white/20 bg-white/5 backdrop-blur-md">
                         Vidro (Glassmorphic)
@@ -912,31 +908,31 @@ function DesignSystemPage() {
                   <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
                     <button
                       onClick={() => addSandboxElement("header")}
-                      className="h-8 rounded-2xl bg-surface border border-border hover:border-brand/40 text-[10px] font-semibold text-foreground flex items-center justify-center gap-1 cursor-pointer"
+                      className="h-8 rounded-[var(--radius-card)] glass-card border-none border-none hover:border-brand/40 text-[10px] font-semibold text-foreground flex items-center justify-center gap-1 cursor-pointer"
                     >
                       <Plus className="w-3 h-3" /> Título
                     </button>
                     <button
                       onClick={() => addSandboxElement("paragraph")}
-                      className="h-8 rounded-2xl bg-surface border border-border hover:border-brand/40 text-[10px] font-semibold text-foreground flex items-center justify-center gap-1 cursor-pointer"
+                      className="h-8 rounded-[var(--radius-card)] glass-card border-none border-none hover:border-brand/40 text-[10px] font-semibold text-foreground flex items-center justify-center gap-1 cursor-pointer"
                     >
                       <Plus className="w-3 h-3" /> Parágrafo
                     </button>
                     <button
                       onClick={() => addSandboxElement("button")}
-                      className="h-8 rounded-2xl bg-surface border border-border hover:border-brand/40 text-[10px] font-semibold text-foreground flex items-center justify-center gap-1 cursor-pointer"
+                      className="h-8 rounded-[var(--radius-card)] glass-card border-none border-none hover:border-brand/40 text-[10px] font-semibold text-foreground flex items-center justify-center gap-1 cursor-pointer"
                     >
                       <Plus className="w-3 h-3" /> Botão CTA
                     </button>
                     <button
                       onClick={() => addSandboxElement("image")}
-                      className="h-8 rounded-2xl bg-surface border border-border hover:border-brand/40 text-[10px] font-semibold text-foreground flex items-center justify-center gap-1 cursor-pointer"
+                      className="h-8 rounded-[var(--radius-card)] glass-card border-none border-none hover:border-brand/40 text-[10px] font-semibold text-foreground flex items-center justify-center gap-1 cursor-pointer"
                     >
                       <Plus className="w-3 h-3" /> Imagem
                     </button>
                     <button
                       onClick={() => addSandboxElement("features")}
-                      className="h-8 rounded-2xl bg-surface border border-border hover:border-brand/40 text-[10px] font-semibold text-foreground flex items-center justify-center gap-1 cursor-pointer"
+                      className="h-8 rounded-[var(--radius-card)] glass-card border-none border-none hover:border-brand/40 text-[10px] font-semibold text-foreground flex items-center justify-center gap-1 cursor-pointer"
                     >
                       <Plus className="w-3 h-3" /> Recursos
                     </button>
@@ -953,7 +949,7 @@ function DesignSystemPage() {
                       {sandboxElements.map((el, i) => (
                         <div
                           key={el.id}
-                          className="p-3 bg-surface-alt/40 border border-border/50 rounded-[var(--radius-card)] space-y-2 relative group/item"
+                          className="p-3 glass bg-white/5 border-white/10/40 border-none/50 rounded-[var(--radius-card)] space-y-2 relative group/item"
                         >
                           <div className="flex items-center justify-between">
                             <span className="text-[10px] font-bold uppercase tracking-wider text-brand">
@@ -1040,10 +1036,10 @@ function DesignSystemPage() {
                     <Eye className="w-3.5 h-3.5 text-brand" /> Preview em Tempo Real
                   </span>
 
-                  <div className="rounded-2xl border border-dashed border-border p-6 bg-surface-alt/30 flex items-center justify-center min-h-[300px]">
+                  <div className="rounded-[var(--radius-card)] border border-dashed border-border p-6 glass bg-white/5 border-white/10/30 flex items-center justify-center min-h-[300px]">
                     <div
                       className={cn(
-                        "w-full rounded-2xl flex flex-col gap-4 transition-all duration-300",
+                        "w-full rounded-[var(--radius-card)] flex flex-col gap-4 transition-all duration-300",
                         sandboxBg,
                         sandboxBorder,
                         sandboxPadding,
@@ -1086,7 +1082,7 @@ function DesignSystemPage() {
                               key={el.id}
                               src={el.imageUrl}
                               alt="Render Preview"
-                              className="rounded-[var(--radius-card)] border border-border w-full object-cover max-h-48"
+                              className="rounded-[var(--radius-card)] border-none w-full object-cover max-h-48"
                             />
                           );
                         }

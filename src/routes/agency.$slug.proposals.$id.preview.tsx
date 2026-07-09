@@ -160,7 +160,7 @@ function ProposalPreview() {
   return (
     <div className="flex h-screen flex-col overflow-hidden">
       {/* ── Toolbar interno ──────────────────────────────────────────────────── */}
-      <div className="flex h-11 shrink-0 items-center justify-between border-b border-border bg-surface px-4 sm:px-6">
+      <div className="flex h-11 shrink-0 items-center justify-between border-b border-border glass-card border-none px-4 sm:px-6">
         <div className="flex items-center gap-2 sm:gap-3">
           <Link
             to="/agency/$slug/proposals/$id"
@@ -186,7 +186,7 @@ function ProposalPreview() {
               navigator.clipboard.writeText(publicUrl);
               toast.success("Link copiado");
             }}
-            className="flex h-7 items-center justify-center gap-1.5 rounded-full border border-border px-2 sm:px-3 text-xs hover:bg-surface-alt cursor-pointer"
+            className="flex h-7 items-center justify-center gap-1.5 rounded-full border-none px-2 sm:px-3 text-xs hover:glass bg-white/5 border-white/10 cursor-pointer"
             title="Copiar link público"
           >
             <Copy className="h-3.5 w-3.5" />
@@ -196,7 +196,7 @@ function ProposalPreview() {
             href={publicUrl}
             target="_blank"
             rel="noreferrer"
-            className="flex h-7 items-center justify-center gap-1.5 rounded-full border border-border px-2 sm:px-3 text-xs hover:bg-surface-alt"
+            className="flex h-7 items-center justify-center gap-1.5 rounded-full border-none px-2 sm:px-3 text-xs hover:glass bg-white/5 border-white/10"
             title="Abrir como cliente"
           >
             <ExternalLink className="h-3.5 w-3.5" />
@@ -206,8 +206,8 @@ function ProposalPreview() {
       </div>
 
       {/* ── Preview iframe-like area ──────────────────────────────────────────── */}
-      <div className="flex-1 overflow-y-auto bg-surface-alt py-8 px-4">
-        <div className="mx-auto max-w-2xl rounded-[var(--radius-card)] border border-border bg-surface  overflow-hidden">
+      <div className="flex-1 overflow-y-auto glass bg-white/5 border-white/10 py-8 px-4">
+        <div className="mx-auto max-w-2xl rounded-[var(--radius-card)] border-none glass-card border-none  overflow-hidden">
           {/* Agency header */}
           <div className="px-8 pt-8 pb-6 border-b border-border/50">
             <div className="flex items-center justify-between">
@@ -306,7 +306,7 @@ function ProposalPreview() {
             <Section title="Hospedagem" color={accentColor}>
               <div className="space-y-3">
                 {p.hotels.map((h) => (
-                  <div key={h.id} className="rounded-2xl border border-border/50 overflow-hidden">
+                  <div key={h.id} className="rounded-[var(--radius-card)] border-none/50 overflow-hidden">
                     {h.images[0] && (
                       <img src={h.images[0]} alt={h.name} className="h-32 w-full object-cover" />
                     )}

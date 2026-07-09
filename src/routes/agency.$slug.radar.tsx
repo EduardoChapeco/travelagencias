@@ -242,7 +242,7 @@ function RadarTVPage() {
             <Link 
               to="/agency/$slug"
               params={{ slug }}
-              className="p-2 rounded-2xl bg-slate-900/80 border border-slate-800 text-slate-400 hover:text-slate-100 hover:bg-slate-800 transition-all cursor-pointer"
+              className="p-2 rounded-[var(--radius-card)] bg-slate-900/80 border border-slate-800 text-slate-400 hover:text-slate-100 hover:bg-slate-800 transition-all cursor-pointer"
             >
               <ArrowLeft className="h-4 w-4" />
             </Link>
@@ -260,16 +260,16 @@ function RadarTVPage() {
 
         {/* TV Mode Controls */}
         <div className="flex items-center gap-3 self-stretch sm:self-auto justify-between sm:justify-start">
-          <div className="text-right font-mono text-sm tracking-widest text-slate-400 font-bold bg-slate-900/40 border border-slate-850 px-3 py-1.5 rounded-2xl shrink-0">
+          <div className="text-right font-mono text-sm tracking-widest text-slate-400 font-bold bg-slate-900/40 border border-slate-850 px-3 py-1.5 rounded-[var(--radius-card)] shrink-0">
             {currentTime.toLocaleTimeString("pt-BR")}
           </div>
 
-          <div className="flex items-center gap-1 bg-slate-900/80 border border-slate-800 p-0.5 rounded-2xl">
+          <div className="flex items-center gap-1 bg-slate-900/80 border border-slate-800 p-0.5 rounded-[var(--radius-card)]">
             <button
               onClick={() => setActiveTab("all")}
               className={cn(
                 "px-3 py-1.5 text-[10px] font-bold uppercase rounded-full tracking-wider transition-all cursor-pointer",
-                activeTab === "all" ? "bg-brand text-white shadow-md" : "text-slate-400 hover:text-slate-200"
+                activeTab === "all" ? "bg-brand text-white shadow-none" : "text-slate-400 hover:text-slate-200"
               )}
             >
               Todos ({travelers.length})
@@ -278,7 +278,7 @@ function RadarTVPage() {
               onClick={() => setActiveTab("in_transit")}
               className={cn(
                 "px-3 py-1.5 text-[10px] font-bold uppercase rounded-full tracking-wider transition-all cursor-pointer",
-                activeTab === "in_transit" ? "bg-emerald-600 text-white shadow-md" : "text-slate-400 hover:text-slate-200"
+                activeTab === "in_transit" ? "bg-emerald-600 text-white shadow-none" : "text-slate-400 hover:text-slate-200"
               )}
             >
               Viajando Agora ({travelers.filter(t => {
@@ -293,7 +293,7 @@ function RadarTVPage() {
 
           <button
             onClick={toggleFullscreen}
-            className="p-2.5 rounded-2xl bg-slate-900/80 border border-slate-800 text-slate-300 hover:text-white hover:bg-slate-800 transition-all cursor-pointer"
+            className="p-2.5 rounded-[var(--radius-card)] bg-slate-900/80 border border-slate-800 text-slate-300 hover:text-white hover:bg-slate-800 transition-all cursor-pointer"
             title="Alternar Tela Cheia (Modo TV)"
           >
             {isFullscreen ? <Minimize2 className="h-4 w-4" /> : <Maximize2 className="h-4 w-4" />}
@@ -305,7 +305,7 @@ function RadarTVPage() {
       <div className="flex-1 min-h-0 grid grid-cols-1 xl:grid-cols-4 gap-6 relative z-10">
         
         {/* Painel Central do Mapa (Radar Sweep) */}
-        <div className="xl:col-span-3 rounded-2xl border border-slate-800/60 bg-[#090b1c]/80 backdrop-blur-md p-6 flex flex-col justify-between relative overflow-hidden group">
+        <div className="xl:col-span-3 rounded-[var(--radius-card)] border border-slate-800/60 bg-[#090b1c]/80 backdrop-blur-md p-6 flex flex-col justify-between relative overflow-hidden group">
           {/* Radar Sweep Effect overlay */}
           <div className="absolute inset-0 pointer-events-none bg-[radial-gradient(circle_at_center,transparent_40%,rgba(6,8,20,0.4)_100%)] z-10" />
           <div className="absolute inset-0 pointer-events-none border border-slate-800/20 rounded-full w-[600px] h-[600px] top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 border-dashed z-10" />
@@ -346,7 +346,7 @@ function RadarTVPage() {
         </div>
 
         {/* Lista Lateral de Passageiros */}
-        <div className="rounded-2xl border border-slate-800/60 bg-[#090b1c]/80 backdrop-blur-md p-5 flex flex-col min-h-0 relative">
+        <div className="rounded-[var(--radius-card)] border border-slate-800/60 bg-[#090b1c]/80 backdrop-blur-md p-5 flex flex-col min-h-0 relative">
           <div className="flex items-center justify-between mb-4 shrink-0">
             <h3 className="text-xs font-black uppercase tracking-wider text-slate-300 flex items-center gap-1.5">
               <Users className="h-4 w-4 text-brand" /> Lista de Trânsito
@@ -378,7 +378,7 @@ function RadarTVPage() {
                   className={cn(
                     "w-full text-left p-3 rounded-[var(--radius-card)] border transition-all flex flex-col justify-between gap-1 group relative overflow-hidden cursor-pointer",
                     selectedPin?.id === t.id 
-                      ? "bg-brand/10 border-brand/40 shadow-md" 
+                      ? "bg-brand/10 border-brand/40 shadow-none" 
                       : "bg-[#0c0f24] border-slate-850/80 hover:border-slate-800 hover:bg-slate-900/60"
                   )}
                 >

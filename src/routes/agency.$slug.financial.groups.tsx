@@ -6,8 +6,7 @@ import { useState } from "react";
 import { TrendingUp, DollarSign, Landmark, Target, Eye, Search, Loader2, AlertCircle } from "lucide-react";
 import { money, GhostButton } from "@/components/ui/form";
 import { cn } from "@/lib/utils";
-import { HeaderPortal } from "@/components/shell/HeaderPortal";
-import { ModuleToolbar } from "@/components/shell/ModuleToolbar";
+import { PageHeader } from "@/components/shell/PageHeader";
 
 export const Route = createFileRoute("/agency/$slug/financial/groups")({
   head: ({ context }: any) => ({ meta: [{ title: `Financeiro de Grupos · ${context?.brand?.platform_name || 'Turis'}` }] }),
@@ -143,14 +142,12 @@ export function GroupFinancialsDashboard() {
 
   return (
     <div className="flex h-full flex-col overflow-hidden">
-      <HeaderPortal>
-        <ModuleToolbar title="Financeiro de Grupos" />
-      </HeaderPortal>
-
+              <PageHeader title="Financeiro de Grupos" />
+      
       <div className="flex-1 overflow-y-auto px-4  md:pr-6 py-4 min-h-0 space-y-6">
       {/* KPI Panel */}
       <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
-        <div className="bg-surface border border-border rounded-[var(--radius-card)] p-4">
+        <div className="glass-card border-none border-none rounded-[var(--radius-card)] p-4">
           <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest flex items-center gap-1">
             <DollarSign className="w-3.5 h-3.5 text-success" /> Faturamento Total
           </span>
@@ -160,7 +157,7 @@ export function GroupFinancialsDashboard() {
           </span>
         </div>
 
-        <div className="bg-surface border border-border rounded-[var(--radius-card)] p-4">
+        <div className="glass-card border-none border-none rounded-[var(--radius-card)] p-4">
           <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest flex items-center gap-1">
             <TrendingUp className="w-3.5 h-3.5 text-danger" /> Custos Operacionais
           </span>
@@ -170,7 +167,7 @@ export function GroupFinancialsDashboard() {
           </span>
         </div>
 
-        <div className="bg-surface border border-border rounded-[var(--radius-card)] p-4">
+        <div className="glass-card border-none border-none rounded-[var(--radius-card)] p-4">
           <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest block">
             Resultado Líquido
           </span>
@@ -183,7 +180,7 @@ export function GroupFinancialsDashboard() {
           </span>
         </div>
 
-        <div className="bg-surface border border-border rounded-[var(--radius-card)] p-4">
+        <div className="glass-card border-none border-none rounded-[var(--radius-card)] p-4">
           <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest flex items-center gap-1">
             <Landmark className="w-3.5 h-3.5 text-brand" /> Poupança Retida
           </span>
@@ -193,7 +190,7 @@ export function GroupFinancialsDashboard() {
           </span>
         </div>
 
-        <div className="bg-surface border border-border rounded-[var(--radius-card)] p-4">
+        <div className="glass-card border-none border-none rounded-[var(--radius-card)] p-4">
           <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest flex items-center gap-1">
             <Target className="w-3.5 h-3.5 text-amber-600" /> Gastos Meta/Google
           </span>
@@ -205,7 +202,7 @@ export function GroupFinancialsDashboard() {
       </div>
 
       {/* Comparative Group Tours Table */}
-      <div className="bg-surface border border-border rounded-[var(--radius-card)] overflow-hidden shadow-xs">
+      <div className="glass-card border-none border-none rounded-[var(--radius-card)] overflow-hidden shadow-xs">
         <div className="px-5 py-4 border-b border-border flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
           <div>
             <h3 className="text-sm font-bold text-foreground">
@@ -224,7 +221,7 @@ export function GroupFinancialsDashboard() {
                 setSearch(e.target.value);
                 setPage(1);
               }}
-              className="h-8 rounded-full border border-border bg-surface pl-8 pr-3 text-xs text-foreground placeholder:text-muted-foreground focus:outline-hidden focus:ring-1 focus:ring-ring min-w-[200px]"
+              className="h-8 rounded-full border-none glass-card border-none pl-8 pr-3 text-xs text-foreground placeholder:text-muted-foreground focus:outline-hidden focus:ring-1 focus:ring-ring min-w-[200px]"
             />
             <Search className="w-3.5 h-3.5 text-muted-foreground absolute left-2.5 top-1/2 -translate-y-1/2" />
           </div>
@@ -232,7 +229,7 @@ export function GroupFinancialsDashboard() {
 
         <div className="overflow-x-auto relative min-h-[150px]">
           {paginatedToursQ.isLoading ? (
-            <div className="absolute inset-0 flex items-center justify-center bg-surface/50">
+            <div className="absolute inset-0 flex items-center justify-center glass-card border-none/50">
               <Loader2 className="w-6 h-6 animate-spin text-brand" />
             </div>
           ) : null}
@@ -244,7 +241,7 @@ export function GroupFinancialsDashboard() {
             </div>
           ) : (
             <table className="w-full text-sm">
-              <thead className="bg-surface-alt/40 text-left text-[10px] font-bold uppercase tracking-wider text-muted-foreground border-b border-border">
+              <thead className="glass bg-white/5 border-white/10/40 text-left text-[10px] font-bold uppercase tracking-wider text-muted-foreground border-b border-border">
               <tr>
                 <th className="px-5 py-3">Excursão</th>
                 <th className="px-5 py-3">Período</th>
@@ -267,7 +264,7 @@ export function GroupFinancialsDashboard() {
                 </tr>
               ) : (
                 toursDataMap.map((t) => (
-                  <tr key={t.id} className="hover:bg-surface-alt/40 transition-colors">
+                  <tr key={t.id} className="hover:glass bg-white/5 border-white/10/40 transition-colors">
                     <td className="px-5 py-3.5 font-semibold text-foreground">
                       <Link
                         to="/agency/$slug/group-tours/$id"
@@ -325,7 +322,7 @@ export function GroupFinancialsDashboard() {
                       <Link
                         to="/agency/$slug/group-tours/$id"
                         params={{ slug, id: t.id || "" }}
-                        className="inline-flex h-7 w-7 items-center justify-center rounded-full border border-border bg-surface text-muted-foreground hover:text-foreground hover:bg-surface-alt transition-colors"
+                        className="inline-flex h-7 w-7 items-center justify-center rounded-full border-none glass-card border-none text-muted-foreground hover:text-foreground hover:glass bg-white/5 border-white/10 transition-colors"
                         title="Ver Painel do Grupo"
                       >
                         <Eye className="w-3.5 h-3.5" />
@@ -341,7 +338,7 @@ export function GroupFinancialsDashboard() {
 
         {/* Pagination Footer */}
         {totalPages > 1 && (
-          <div className="flex items-center justify-between border-t border-border bg-surface-alt px-5 py-3">
+          <div className="flex items-center justify-between border-t border-border glass bg-white/5 border-white/10 px-5 py-3">
             <span className="text-xs text-muted-foreground font-medium">
               Mostrando {toursDataMap.length} de {totalCount} resultados
             </span>
@@ -369,7 +366,7 @@ export function GroupFinancialsDashboard() {
       </div>
 
       {/* Group Transactions Ledger */}
-      <div className="bg-surface border border-border rounded-[var(--radius-card)] overflow-hidden shadow-xs">
+      <div className="glass-card border-none border-none rounded-[var(--radius-card)] overflow-hidden shadow-xs">
         <div className="px-5 py-4 border-b border-border flex justify-between items-center">
           <div>
             <h3 className="text-sm font-bold text-foreground">
@@ -383,7 +380,7 @@ export function GroupFinancialsDashboard() {
 
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
-            <thead className="bg-surface-alt text-left text-[10px] font-bold uppercase tracking-wider text-muted-foreground border-b border-border">
+            <thead className="glass bg-white/5 border-white/10 text-left text-[10px] font-bold uppercase tracking-wider text-muted-foreground border-b border-border">
               <tr>
                 <th className="px-5 py-3">Data/Hora</th>
                 <th className="px-5 py-3">Excursão Vinculada</th>
@@ -410,7 +407,7 @@ export function GroupFinancialsDashboard() {
                 </tr>
               ) : (
                 ledger.map((tx) => (
-                  <tr key={tx.id} className="hover:bg-surface-alt/40 transition-colors">
+                  <tr key={tx.id} className="hover:glass bg-white/5 border-white/10/40 transition-colors">
                     <td className="px-5 py-3.5 whitespace-nowrap text-xs text-muted-foreground font-mono">
                       {new Date(tx.created_at).toLocaleString("pt-BR")}
                     </td>

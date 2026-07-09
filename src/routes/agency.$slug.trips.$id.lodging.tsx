@@ -177,7 +177,7 @@ function TripLodgingPage() {
   return (
     <div className="flex-1 overflow-y-auto p-4 md:p-6 space-y-6">
       {/* Header */}
-      <div className="rounded-[var(--radius-card)] border border-border bg-surface p-4 flex items-start justify-between gap-4">
+      <div className="rounded-[var(--radius-card)] border-none glass-card border-none p-4 flex items-start justify-between gap-4">
         <div className="flex items-start gap-3">
           <Bed className="h-4 w-4 text-brand mt-0.5 shrink-0" />
           <div>
@@ -211,7 +211,7 @@ function TripLodgingPage() {
 
       {/* Form de Cadastro / Edição */}
       {(showAddForm || editingCardId) && (
-        <div className="rounded-[var(--radius-card)] border border-border bg-surface p-4 space-y-4 max-w-3xl">
+        <div className="rounded-[var(--radius-card)] border-none glass-card border-none p-4 space-y-4 max-w-3xl">
           <h3 className="text-xs font-bold uppercase tracking-widest text-foreground">
             {editingCardId ? "Editar Hospedagem" : "Nova Hospedagem"}
           </h3>
@@ -225,7 +225,7 @@ function TripLodgingPage() {
                 placeholder="Ex: Copacabana Palace"
                 value={hotelName}
                 onChange={(e) => setHotelName(e.target.value)}
-                className="w-full text-xs border border-border rounded p-2 bg-surface"
+                className="w-full text-xs border-none rounded p-2 glass-card border-none"
               />
             </div>
 
@@ -238,7 +238,7 @@ function TripLodgingPage() {
                 placeholder="+55 (21) 2548-7070"
                 value={hotelPhone}
                 onChange={(e) => setHotelPhone(e.target.value)}
-                className="w-full text-xs border border-border rounded p-2 bg-surface"
+                className="w-full text-xs border-none rounded p-2 glass-card border-none"
               />
             </div>
 
@@ -251,7 +251,7 @@ function TripLodgingPage() {
                 placeholder="Av. Atlântica, 1702 - Copacabana"
                 value={hotelAddress}
                 onChange={(e) => setHotelAddress(e.target.value)}
-                className="w-full text-xs border border-border rounded p-2 bg-surface"
+                className="w-full text-xs border-none rounded p-2 glass-card border-none"
               />
             </div>
 
@@ -263,7 +263,7 @@ function TripLodgingPage() {
                 type="date"
                 value={hotelCheckin}
                 onChange={(e) => setHotelCheckin(e.target.value)}
-                className="w-full text-xs border border-border rounded p-2 bg-surface"
+                className="w-full text-xs border-none rounded p-2 glass-card border-none"
               />
             </div>
 
@@ -275,7 +275,7 @@ function TripLodgingPage() {
                 type="date"
                 value={hotelCheckout}
                 onChange={(e) => setHotelCheckout(e.target.value)}
-                className="w-full text-xs border border-border rounded p-2 bg-surface"
+                className="w-full text-xs border-none rounded p-2 glass-card border-none"
               />
             </div>
 
@@ -288,7 +288,7 @@ function TripLodgingPage() {
                 placeholder="Ex: Quarto Duplo Standard Vista Mar, Café incluso"
                 value={roomType}
                 onChange={(e) => setRoomType(e.target.value)}
-                className="w-full text-xs border border-border rounded p-2 bg-surface"
+                className="w-full text-xs border-none rounded p-2 glass-card border-none"
               />
             </div>
 
@@ -299,7 +299,7 @@ function TripLodgingPage() {
               <select
                 value={stars}
                 onChange={(e) => setStars(Number(e.target.value))}
-                className="w-full text-xs border border-border rounded p-2 bg-surface"
+                className="w-full text-xs border-none rounded p-2 glass-card border-none"
               >
                 <option value="1">1 Estrela</option>
                 <option value="2">2 Estrelas</option>
@@ -317,7 +317,7 @@ function TripLodgingPage() {
                 setEditingCardId(null);
                 resetForm();
               }}
-              className="px-3 py-1.5 border border-border text-xs rounded hover:bg-surface-alt cursor-pointer"
+              className="px-3 py-1.5 border-none text-xs rounded hover:glass bg-white/5 border-white/10 cursor-pointer"
             >
               Cancelar
             </button>
@@ -339,7 +339,7 @@ function TripLodgingPage() {
 
       {/* Lista de Hospedagens */}
       {!isLoading && cards.length === 0 && !showAddForm && (
-        <div className="flex flex-col items-center justify-center py-20 border-2 border-dashed border-border rounded-2xl text-center max-w-3xl">
+        <div className="flex flex-col items-center justify-center py-20 border-2 border-dashed border-border rounded-[var(--radius-card)] text-center max-w-3xl">
           <Bed className="h-10 w-10 text-muted-foreground/30 mb-3" />
           <p className="text-sm font-semibold text-muted-foreground">
             Nenhuma hospedagem vinculada
@@ -355,9 +355,9 @@ function TripLodgingPage() {
           {cards.map((card) => (
             <div
               key={card.id}
-              className="rounded-[var(--radius-card)] border border-border bg-surface overflow-hidden hover:shadow-sm transition-all"
+              className="rounded-[var(--radius-card)] border-none glass-card border-none overflow-hidden hover:shadow-none transition-all"
             >
-              <div className="p-4 border-b border-border/60 bg-surface-alt/20 flex items-center justify-between">
+              <div className="p-4 border-b border-border/60 glass bg-white/5 border-white/10/20 flex items-center justify-between">
                 <div className="flex items-center gap-2">
                   <span className="font-mono text-xs font-bold bg-brand/10 text-brand px-2 py-0.5 rounded">
                     Hotel
@@ -374,7 +374,7 @@ function TripLodgingPage() {
                 <div className="flex items-center gap-3">
                   <button
                     onClick={() => startEdit(card)}
-                    className="h-7 w-7 inline-flex items-center justify-center border border-border hover:bg-surface-alt rounded transition-colors text-muted-foreground cursor-pointer"
+                    className="h-7 w-7 inline-flex items-center justify-center border-none hover:glass bg-white/5 border-white/10 rounded transition-colors text-muted-foreground cursor-pointer"
                     title="Editar"
                   >
                     <Pencil className="h-3.5 w-3.5" />

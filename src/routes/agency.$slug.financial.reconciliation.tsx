@@ -278,20 +278,20 @@ function ReconciliationPage() {
           Carregando comprovantes...
         </div>
       ) : receiptsQ.isError ? (
-        <div className="border border-red-200 bg-red-50 text-red-800 rounded-2xl p-6 text-center text-xs flex items-center justify-center gap-2">
+        <div className="border border-red-200 bg-red-50 text-red-800 rounded-[var(--radius-card)] p-6 text-center text-xs flex items-center justify-center gap-2">
           <AlertCircle className="w-4 h-4 text-red-600" />
           <span>Erro ao carregar os comprovantes pendentes. Por favor, recarregue a página ou verifique suas permissões.</span>
         </div>
       ) : filtered.length === 0 ? (
-        <div className="border border-dashed border-border rounded-2xl py-12 text-center text-xs text-muted-foreground bg-surface">
+        <div className="border border-dashed border-border rounded-[var(--radius-card)] py-12 text-center text-xs text-muted-foreground glass-card border-none">
           <CheckCircle className="w-8 h-8 mx-auto text-emerald-600 mb-2.5 opacity-60" />
           <span>Tudo limpo! Nenhum comprovante aguardando conciliação.</span>
         </div>
       ) : (
-        <div className="overflow-hidden rounded-[var(--radius-card)] border border-border bg-surface shadow-none">
+        <div className="overflow-hidden rounded-[var(--radius-card)] border-none glass-card border-none shadow-none">
           <div className="overflow-x-auto w-full">
             <table className="w-full text-xs">
-              <thead className="bg-surface-alt/40 border-b border-border text-left text-[10px] uppercase font-bold tracking-wider text-muted-foreground">
+              <thead className="glass bg-white/5 border-white/10/40 border-b border-border text-left text-[10px] uppercase font-bold tracking-wider text-muted-foreground">
                 <tr>
                   <th className="px-4 py-3">Código/Viagem</th>
                   <th className="px-4 py-3">Passageiro</th>
@@ -345,7 +345,7 @@ function ReconciliationPage() {
                       <div className="inline-flex items-center gap-1.5">
                         <button
                           onClick={() => handleViewReceipt(rec.receipt_url)}
-                          className="h-7 w-7 rounded-2xl border border-border flex items-center justify-center text-gray-400 hover:text-gray-900 hover:bg-gray-100 transition-colors bg-transparent cursor-pointer"
+                          className="h-7 w-7 rounded-[var(--radius-card)] border-none flex items-center justify-center text-gray-400 hover:text-gray-900 hover:bg-gray-100 transition-colors bg-transparent cursor-pointer"
                           title="Ver Comprovante"
                         >
                           <Eye className="w-4 h-4" />
@@ -361,13 +361,13 @@ function ReconciliationPage() {
                               setSelectedRegisterId(matchingSession.cash_register_id);
                             }
                           }}
-                          className="h-7 px-2.5 rounded-2xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-[10px] uppercase tracking-wide flex items-center gap-1 cursor-pointer transition-colors"
+                          className="h-7 px-2.5 rounded-[var(--radius-card)] bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-[10px] uppercase tracking-wide flex items-center gap-1 cursor-pointer transition-colors"
                         >
                           <Check className="w-3.5 h-3.5" /> Conciliar
                         </button>
                         <button
                           onClick={() => setRejectReceipt(rec)}
-                          className="h-7 px-2.5 rounded-2xl border border-border hover:bg-rose-50 text-rose-600 font-bold text-[10px] uppercase tracking-wide flex items-center gap-1 cursor-pointer transition-colors"
+                          className="h-7 px-2.5 rounded-[var(--radius-card)] border-none hover:bg-rose-50 text-rose-600 font-bold text-[10px] uppercase tracking-wide flex items-center gap-1 cursor-pointer transition-colors"
                         >
                           <X className="w-3.5 h-3.5" /> Recusar
                         </button>
@@ -384,7 +384,7 @@ function ReconciliationPage() {
       {/* Approve / Conciliation Drawer Modal */}
       {selectedReceipt && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4 animate-in fade-in duration-200">
-          <div className="w-full max-w-md bg-white border border-border rounded-2xl overflow-hidden shadow-none">
+          <div className="w-full max-w-md bg-white border-none rounded-[var(--radius-card)] overflow-hidden shadow-none">
             <div className="flex items-center justify-between px-5 py-4 border-b border-border bg-gray-50/50">
               <div className="flex items-center gap-2">
                 <CheckCircle className="w-5 h-5 text-emerald-600" />
@@ -401,7 +401,7 @@ function ReconciliationPage() {
             </div>
 
             <div className="p-5 space-y-4">
-              <div className="bg-gray-50 border border-border rounded-[var(--radius-card)] p-4 text-xs space-y-2 font-mono">
+              <div className="bg-gray-50 border-none rounded-[var(--radius-card)] p-4 text-xs space-y-2 font-mono">
                 <div className="flex justify-between">
                   <span className="text-gray-400">Passageiro:</span>
                   <strong className="text-gray-800">
@@ -438,7 +438,7 @@ function ReconciliationPage() {
                     );
                     setSelectedSessionId(sess ? String(sess.id) : "");
                   }}
-                  className="w-full h-10 rounded-2xl border border-border bg-background px-3 text-xs text-foreground outline-none"
+                  className="w-full h-10 rounded-[var(--radius-card)] border-none bg-background px-3 text-xs text-foreground outline-none"
                   required
                 >
                   <option value="">Selecione a conta de depósito...</option>
@@ -489,7 +489,7 @@ function ReconciliationPage() {
       {/* Reject Drawer Modal */}
       {rejectReceipt && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4 animate-in fade-in duration-200">
-          <div className="w-full max-w-md bg-white border border-border rounded-2xl overflow-hidden shadow-none">
+          <div className="w-full max-w-md bg-white border-none rounded-[var(--radius-card)] overflow-hidden shadow-none">
             <div className="flex items-center justify-between px-5 py-4 border-b border-border bg-gray-50/50">
               <div className="flex items-center gap-2">
                 <XCircle className="w-5 h-5 text-rose-600" />
@@ -517,7 +517,7 @@ function ReconciliationPage() {
                   value={rejectionReason}
                   onChange={(e) => setRejectionReason(e.target.value)}
                   placeholder="Ex: Valor do Pix divergente, comprovante cortado, ou de outra data..."
-                  className="w-full rounded-2xl border border-border bg-background p-3 text-xs outline-none focus:border-brand h-20 resize-none text-foreground"
+                  className="w-full rounded-[var(--radius-card)] border-none bg-background p-3 text-xs outline-none focus:border-brand h-20 resize-none text-foreground"
                   required
                 />
               </Field>

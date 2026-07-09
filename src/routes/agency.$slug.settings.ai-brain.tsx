@@ -2,8 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useAgency } from "@/lib/agency-context";
-import { HeaderPortal } from "@/components/shell/HeaderPortal";
-import { ModuleToolbar } from "@/components/shell/ModuleToolbar";
+import { PageHeader } from "@/components/shell/PageHeader";
 import {
   Brain, FileText, Database, ShieldAlert, Cpu, CheckCircle2, Zap
 } from "lucide-react";
@@ -62,8 +61,7 @@ function BrainPanel() {
 
   return (
     <div className="flex h-full flex-col overflow-hidden">
-      <HeaderPortal>
-        <ModuleToolbar
+              <PageHeader
           title="Cérebro Vetorial IA"
           actions={
             <Badge variant="outline" className="bg-brand/10 text-brand border-none">
@@ -71,8 +69,7 @@ function BrainPanel() {
             </Badge>
           }
         />
-      </HeaderPortal>
-
+      
       <div className="flex-1 overflow-y-auto px-4  md:pr-6 py-4 min-h-0 space-y-6 pb-24">
         <div>
           <h1 className="text-xl font-bold text-foreground flex items-center gap-2">
@@ -85,28 +82,28 @@ function BrainPanel() {
 
         {/* Indicadores de Performance */}
         <div className="grid gap-4 grid-cols-2 md:grid-cols-4">
-          <div className="rounded-[var(--radius-card)] border border-border bg-surface p-4 flex flex-col justify-between shadow-xs">
+          <div className="rounded-[var(--radius-card)] border-none glass-card border-none p-4 flex flex-col justify-between shadow-xs">
             <span className="text-[10px] text-muted-foreground uppercase font-semibold">Docs Absorvidos</span>
             <div className="flex items-baseline gap-2 mt-2">
               <span className="text-2xl font-bold text-foreground">{docs.length}</span>
               <span className="text-[10px] text-muted-foreground">PDFs/Textos</span>
             </div>
           </div>
-          <div className="rounded-[var(--radius-card)] border border-border bg-surface p-4 flex flex-col justify-between shadow-xs">
+          <div className="rounded-[var(--radius-card)] border-none glass-card border-none p-4 flex flex-col justify-between shadow-xs">
             <span className="text-[10px] text-muted-foreground uppercase font-semibold">Base de Conhecimento</span>
             <div className="flex items-baseline gap-2 mt-2">
               <span className="text-2xl font-bold text-foreground">{totalChunks}</span>
               <span className="text-[10px] text-muted-foreground">chunks (pgvector)</span>
             </div>
           </div>
-          <div className="rounded-[var(--radius-card)] border border-border bg-surface p-4 flex flex-col justify-between shadow-xs">
+          <div className="rounded-[var(--radius-card)] border-none glass-card border-none p-4 flex flex-col justify-between shadow-xs">
             <span className="text-[10px] text-muted-foreground uppercase font-semibold">Msgs Recebidas</span>
             <div className="flex items-baseline gap-2 mt-2">
               <span className="text-2xl font-bold text-foreground text-brand">{inboundCount}</span>
               <span className="text-[10px] text-muted-foreground">inbound (omnichannel)</span>
             </div>
           </div>
-          <div className="rounded-[var(--radius-card)] border border-border bg-surface p-4 flex flex-col justify-between shadow-xs">
+          <div className="rounded-[var(--radius-card)] border-none glass-card border-none p-4 flex flex-col justify-between shadow-xs">
             <span className="text-[10px] text-muted-foreground uppercase font-semibold">Total no Período</span>
             <div className="flex items-baseline gap-2 mt-2">
               <span className="text-2xl font-bold text-success">{inboxMessages.length}</span>
@@ -117,7 +114,7 @@ function BrainPanel() {
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {/* RAG Documents */}
-          <div className="border border-border rounded-[var(--radius-card)] bg-surface overflow-hidden">
+          <div className="border-none rounded-[var(--radius-card)] glass-card border-none overflow-hidden">
              <div className="p-4 border-b border-border font-semibold flex items-center gap-2">
                 <Database className="w-4 h-4 text-muted-foreground" />
                 Vetorização de Conhecimento (RAG)
@@ -148,7 +145,7 @@ function BrainPanel() {
           </div>
 
           {/* Inbox Processing */}
-          <div className="border border-border rounded-[var(--radius-card)] bg-surface overflow-hidden">
+          <div className="border-none rounded-[var(--radius-card)] glass-card border-none overflow-hidden">
              <div className="p-4 border-b border-border font-semibold flex items-center justify-between">
                 <div className="flex items-center gap-2">
                   <Brain className="w-4 h-4 text-brand" /> 
@@ -167,7 +164,7 @@ function BrainPanel() {
                      <Badge
                        variant="outline"
                        className={`text-[10px] h-5 ml-2 shrink-0 ${
-                         msg.direction === 'inbound' ? 'bg-blue-50 text-blue-700' : 'bg-surface'
+                         msg.direction === 'inbound' ? 'bg-blue-50 text-blue-700' : 'glass-card border-none'
                        }`}
                      >
                        {msg.direction === 'inbound' ? '↓ recebida' : '↑ enviada'}

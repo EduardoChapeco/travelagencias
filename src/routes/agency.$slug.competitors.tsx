@@ -14,8 +14,7 @@ import {
   Sparkles,
 } from "lucide-react";
 import { PrimaryButton, Input } from "@/components/ui/form";
-import { HeaderPortal } from "@/components/shell/HeaderPortal";
-import { ModuleToolbar } from "@/components/shell/ModuleToolbar";
+import { PageHeader } from "@/components/shell/PageHeader";
 
 export const Route = createFileRoute("/agency/$slug/competitors")({
   head: ({ context }: any) => ({ meta: [{ title: `Espião de Mercado · ${context?.brand?.platform_name || 'Turis'}` }] }),
@@ -111,15 +110,13 @@ Retorne EXATAMENTE UM JSON com as seguintes chaves precisas (sem markdown em vol
 
   return (
     <div className="flex h-full flex-col overflow-hidden">
-      <HeaderPortal>
-        <ModuleToolbar title="Espião de Mercado" />
-      </HeaderPortal>
-
+              <PageHeader title="Espião de Mercado" />
+      
       <div className="flex-1 overflow-y-auto px-4  md:pr-6 py-4 min-h-0 space-y-6 pb-24">
 
       <form
         onSubmit={handleAnalyze}
-        className="relative flex items-center rounded-[var(--radius-card)] bg-surface border border-border p-2"
+        className="relative flex items-center rounded-[var(--radius-card)] glass-card border-none border-none p-2"
       >
         <Search className="absolute left-5 w-5 h-5 text-muted-foreground" />
         <input
@@ -130,7 +127,7 @@ Retorne EXATAMENTE UM JSON com as seguintes chaves precisas (sem markdown em vol
           type="url"
           required
         />
-        <PrimaryButton type="submit" disabled={loading} className="gap-2 shrink-0 rounded-2xl px-6">
+        <PrimaryButton type="submit" disabled={loading} className="gap-2 shrink-0 rounded-[var(--radius-card)] px-6">
           {loading ? <RefreshCw className="w-4 h-4 animate-spin" /> : <Radar className="w-4 h-4" />}
           {loading ? "Espiando..." : "Analisar Concorrente"}
         </PrimaryButton>
@@ -139,7 +136,7 @@ Retorne EXATAMENTE UM JSON com as seguintes chaves precisas (sem markdown em vol
       {analysis && (
         <div className="grid grid-cols-1 md:grid-cols-12 gap-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
           {/* Header Card */}
-          <div className="md:col-span-12 rounded-2xl border border-border bg-surface overflow-hidden">
+          <div className="md:col-span-12 rounded-[var(--radius-card)] border-none glass-card border-none overflow-hidden">
             <div className="bg-brand/5 p-6 border-b border-border/50 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
               <div>
                 <h2 className="text-2xl font-bold text-foreground">{analysis.name}</h2>
@@ -182,7 +179,7 @@ Retorne EXATAMENTE UM JSON com as seguintes chaves precisas (sem markdown em vol
                   {analysis.mental_triggers.map((t) => (
                     <span
                       key={t}
-                      className="px-2 py-1 text-[10px] font-semibold bg-surface-alt border border-border rounded-full"
+                      className="px-2 py-1 text-[10px] font-semibold glass bg-white/5 border-white/10 border-none rounded-full"
                     >
                       {t}
                     </span>
@@ -202,7 +199,7 @@ Retorne EXATAMENTE UM JSON com as seguintes chaves precisas (sem markdown em vol
 
           {/* SWOT-ish Analysis */}
           <div className="md:col-span-6 space-y-6">
-            <div className="rounded-2xl border border-border bg-surface p-6">
+            <div className="rounded-[var(--radius-card)] border-none glass-card border-none p-6">
               <h3 className="text-sm font-bold uppercase tracking-wider text-muted-foreground mb-4 flex items-center gap-2">
                 <div className="w-2 h-2 rounded-full bg-success"></div>O que eles fazem bem
               </h3>
@@ -215,7 +212,7 @@ Retorne EXATAMENTE UM JSON com as seguintes chaves precisas (sem markdown em vol
               </ul>
             </div>
 
-            <div className="rounded-2xl border border-border bg-surface p-6">
+            <div className="rounded-[var(--radius-card)] border-none glass-card border-none p-6">
               <h3 className="text-sm font-bold uppercase tracking-wider text-muted-foreground mb-4 flex items-center gap-2">
                 <div className="w-2 h-2 rounded-full bg-danger"></div>
                 Onde eles deixam a desejar
@@ -232,7 +229,7 @@ Retorne EXATAMENTE UM JSON com as seguintes chaves precisas (sem markdown em vol
 
           {/* Opportunities */}
           <div className="md:col-span-6">
-            <div className="rounded-2xl border border-brand/30 bg-brand/5 p-6 h-full">
+            <div className="rounded-[var(--radius-card)] border border-brand/30 bg-brand/5 p-6 h-full">
               <h3 className="text-sm font-bold uppercase tracking-wider text-brand mb-4 flex items-center gap-2">
                 <Sparkles className="w-4 h-4" />
                 Como Superá-los (Oportunidades)

@@ -102,7 +102,7 @@ export function Sheet({
   return (
     <div className="fixed inset-0 z-50 flex justify-end bg-overlay/40 backdrop-blur-[2px]" onClick={onClose}>
       <div
-        className="h-full w-full max-w-md md:max-w-lg overflow-y-auto border-l border-white/10 mac-glass-modal p-6"
+        className="h-full w-full max-w-md md:max-w-lg overflow-y-auto border-l border-white/10 glass text-white bg-black/40 backdrop-blur-2xl p-6"
         onClick={(e) => e.stopPropagation()}
       >
         <h2 className="mb-6 ds-h3 border-b border-white/10 pb-3">{title}</h2>

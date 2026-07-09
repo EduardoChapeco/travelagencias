@@ -28,8 +28,7 @@ import { StatusBadge, Input, Select, PrimaryButton, GhostButton } from "@/compon
 import { CMS_TEMPLATES, getTemplateById } from "@/lib/cms-templates";
 import { savePortalPageDraft } from "@/services/portal";
 import { SheetPage } from "@/components/ui/sheet";
-import { HeaderPortal } from "@/components/shell/HeaderPortal";
-import { ModuleToolbar, ModuleActionButton } from "@/components/shell/ModuleToolbar";
+import { PageHeader, ModuleActionButton } from "@/components/shell/PageHeader";
 
 export const Route = createFileRoute("/agency/$slug/portal/pages/")({
   head: ({ context }: any) => ({ meta: [{ title: `Painel de Páginas do Portal · ${context?.brand?.platform_name || 'Turis'}` }] }),
@@ -89,7 +88,7 @@ function PageMiniPreview({ template }: { template: string | null }) {
 
     return (
       <div
-        className={`w-full h-28 rounded-full flex flex-col items-center justify-center p-3 gap-1.5 overflow-hidden transition-all duration-300 border border-border/40 relative group-hover:scale-[1.02] select-none${
+        className={`w-full h-28 rounded-full flex flex-col items-center justify-center p-3 gap-1.5 overflow-hidden transition-all duration-300 border-none/40 relative group-hover:scale-[1.02] select-none${
           isDark
             ? "bg-slate-900 border-slate-800"
             : isVibrant
@@ -377,8 +376,7 @@ function PagesPage() {
 
   return (
     <div className="flex-1 flex flex-col overflow-hidden min-h-0">
-      <HeaderPortal>
-        <ModuleToolbar
+              <PageHeader
           title="Páginas do Portal"
           search={activeTab !== "templates" ? {
             value: searchQuery,
@@ -395,8 +393,7 @@ function PagesPage() {
           activeFilter={activeTab}
           onFilterChange={(v) => setActiveTab(v as any)}
         />
-      </HeaderPortal>
-
+      
       <ModuleActionButton
         label="Nova Página"
         icon={<Plus className="h-3.5 w-3.5" />}
@@ -424,7 +421,7 @@ function PagesPage() {
         {/* Modern Analytics & Highlight Row */}
         {agency && (
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
-            <div className="rounded-[var(--radius-card)] border border-border/60 bg-surface p-5 flex items-center justify-between">
+            <div className="rounded-[var(--radius-card)] border-none/60 glass-card border-none p-5 flex items-center justify-between">
               <div>
                 <span className="text-[11px] font-bold uppercase tracking-wider text-muted-foreground">
                   Páginas Criadas
@@ -436,7 +433,7 @@ function PagesPage() {
               </div>
             </div>
 
-            <div className="rounded-[var(--radius-card)] border border-border/60 bg-surface p-5 flex items-center justify-between">
+            <div className="rounded-[var(--radius-card)] border-none/60 glass-card border-none p-5 flex items-center justify-between">
               <div>
                 <span className="text-[11px] font-bold uppercase tracking-wider text-muted-foreground">
                   Acessos Totais
@@ -448,7 +445,7 @@ function PagesPage() {
               </div>
             </div>
 
-            <div className="rounded-[var(--radius-card)] border border-border/60 bg-surface p-5 flex items-center justify-between">
+            <div className="rounded-[var(--radius-card)] border-none/60 glass-card border-none p-5 flex items-center justify-between">
               <div>
                 <span className="text-[11px] font-bold uppercase tracking-wider text-muted-foreground">
                   Cliques em Links
@@ -460,7 +457,7 @@ function PagesPage() {
               </div>
             </div>
 
-            <div className="rounded-[var(--radius-card)] border border-border/60 bg-surface p-5 flex items-center justify-between">
+            <div className="rounded-[var(--radius-card)] border-none/60 glass-card border-none p-5 flex items-center justify-between">
               <div>
                 <span className="text-[11px] font-bold uppercase tracking-wider text-muted-foreground">
                   CTR Geral
@@ -494,7 +491,7 @@ function PagesPage() {
                 return (
                   <div
                     key={tpl.id}
-                    className="group relative flex flex-col justify-between rounded-[var(--radius-card)] border border-border/60 bg-surface p-5 transition-all duration-300 hover:border-brand/40 hover:-translate-y-0.5"
+                    className="group relative flex flex-col justify-between rounded-[var(--radius-card)] border-none/60 glass-card border-none p-5 transition-all duration-300 hover:border-brand/40 hover:-translate-y-0.5"
                   >
                     <div className="space-y-4">
                       {/* Visual Preview Block */}
@@ -539,7 +536,7 @@ function PagesPage() {
         {activeTab !== "templates" && (
           <>
             {filteredPages.length === 0 && !q.isLoading && (
-              <div className="rounded-full border border-dashed border-border/80 bg-surface-alt/10 p-12 text-center flex flex-col items-center justify-center max-w-lg mx-auto mt-6 animate-in fade-in duration-300">
+              <div className="rounded-full border border-dashed border-border/80 glass bg-white/5 border-white/10/10 p-12 text-center flex flex-col items-center justify-center max-w-lg mx-auto mt-6 animate-in fade-in duration-300">
                 <LayoutTemplate className="h-12 w-12 text-muted-foreground/30 mb-4" />
                 <h4 className="font-bold text-sm text-foreground">Nenhuma página encontrada</h4>
                 <p className="text-xs text-muted-foreground max-w-xs mt-1">
@@ -551,7 +548,7 @@ function PagesPage() {
                   <div className="flex gap-2 mt-5">
                     <button
                       onClick={() => setActiveTab("templates")}
-                      className="flex h-9 items-center gap-1.5 rounded-full border border-border bg-surface hover:bg-surface-hover px-4 text-xs font-semibold text-foreground transition-all"
+                      className="flex h-9 items-center gap-1.5 rounded-full border-none glass-card border-none hover:glass-card border-none-hover px-4 text-xs font-semibold text-foreground transition-all"
                     >
                       <LayoutTemplate className="h-3.5 w-3.5" /> Escolher Template
                     </button>
@@ -589,7 +586,7 @@ function PagesPage() {
                   return (
                     <div
                       key={p.id}
-                      className="group relative flex flex-col justify-between rounded-[var(--radius-card)] border border-border/60 bg-surface p-5 transition-all duration-300 hover:border-brand/40 hover:-translate-y-0.5 shadow-xs"
+                      className="group relative flex flex-col justify-between rounded-[var(--radius-card)] border-none/60 glass-card border-none p-5 transition-all duration-300 hover:border-brand/40 hover:-translate-y-0.5 shadow-xs"
                     >
                       <div className="space-y-4">
                         {/* Interactive Visual Preview representation */}
@@ -605,7 +602,7 @@ function PagesPage() {
                             }
                             className="absolute inset-0 bg-slate-900/40 backdrop-blur-[1px] opacity-0 group-hover:opacity-100 flex items-center justify-center cursor-pointer transition-all duration-200"
                           >
-                            <span className="rounded-2xl bg-white px-3 py-1.5 text-xs font-bold text-slate-900 flex items-center gap-1">
+                            <span className="rounded-[var(--radius-card)] bg-white px-3 py-1.5 text-xs font-bold text-slate-900 flex items-center gap-1">
                               Abrir Construtor <ChevronRight className="h-3 w-3" />
                             </span>
                           </div>
@@ -642,7 +639,7 @@ function PagesPage() {
                         </div>
 
                         {/* Micro analytics counts */}
-                        <div className="flex items-center gap-3 py-2 px-3 rounded-xs bg-surface-alt/30 border border-border/40 text-[11px] font-semibold text-muted-foreground w-max select-none">
+                        <div className="flex items-center gap-3 py-2 px-3 rounded-xs glass bg-white/5 border-white/10/30 border-none/40 text-[11px] font-semibold text-muted-foreground w-max select-none">
                           <span className="flex items-center gap-1">
                             <Eye className="w-3.5 h-3.5" /> {pageStats.views} views
                           </span>
@@ -661,7 +658,7 @@ function PagesPage() {
                               href={`${window.location.origin}/p/${agency.slug}/${p.slug}`}
                               target="_blank"
                               rel="noreferrer"
-                              className="flex items-center justify-center p-1.5 rounded-full border border-border hover:bg-surface-hover text-muted-foreground hover:text-foreground transition-colors"
+                              className="flex items-center justify-center p-1.5 rounded-full border-none hover:glass-card border-none-hover text-muted-foreground hover:text-foreground transition-colors"
                               title="Ver página online"
                             >
                               <ExternalLink className="h-3.5 w-3.5" />
@@ -669,14 +666,14 @@ function PagesPage() {
                           )}
                           <button
                             onClick={() => handleDuplicate(p)}
-                            className="flex items-center justify-center p-1.5 rounded-full border border-border hover:bg-surface-hover text-muted-foreground hover:text-foreground transition-colors"
+                            className="flex items-center justify-center p-1.5 rounded-full border-none hover:glass-card border-none-hover text-muted-foreground hover:text-foreground transition-colors"
                             title="Duplicar Página"
                           >
                             <Copy className="h-3.5 w-3.5" />
                           </button>
                           <button
                             onClick={() => deletePage(p)}
-                            className="flex items-center justify-center p-1.5 rounded-full border border-border hover:bg-destructive/5 text-muted-foreground hover:text-destructive transition-colors"
+                            className="flex items-center justify-center p-1.5 rounded-full border-none hover:bg-destructive/5 text-muted-foreground hover:text-destructive transition-colors"
                             title="Excluir Página"
                           >
                             <Trash2 className="h-3.5 w-3.5" />
@@ -723,8 +720,8 @@ function PagesPage() {
               <label className="text-xs font-bold text-muted-foreground">
                 Endereço da Página (URL Slug)
               </label>
-              <div className="flex h-10 w-full items-center rounded-full border border-border bg-surface overflow-hidden">
-                <span className="bg-surface-alt/70 border-r border-border px-3 text-[11px] font-bold text-muted-foreground/80 h-full flex items-center select-none">
+              <div className="flex h-10 w-full items-center rounded-full border-none glass-card border-none overflow-hidden">
+                <span className="glass bg-white/5 border-white/10/70 border-r border-border px-3 text-[11px] font-bold text-muted-foreground/80 h-full flex items-center select-none">
                   /{agency?.slug}/
                 </span>
                 <input

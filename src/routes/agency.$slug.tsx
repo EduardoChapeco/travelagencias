@@ -58,7 +58,7 @@ export const Route = createFileRoute("/agency/$slug")({
           {slug && (
             <a
               href={`/agency/${slug}`}
-              className="inline-flex h-9 items-center justify-center rounded-full border border-border bg-surface px-4 text-sm font-semibold text-foreground shadow-sm transition-colors hover:bg-surface-alt"
+              className="inline-flex h-9 items-center justify-center rounded-full border-none glass-card border-none px-4 text-sm font-semibold text-foreground shadow-none transition-colors hover:glass bg-white/5 border-white/10"
             >
               Voltar ao Início
             </a>
@@ -94,7 +94,7 @@ function BlockedWrapper({ children }: { children: React.ReactNode }) {
     return (
       <div className="flex h-screen w-screen flex-col items-center justify-center bg-zinc-950 p-6 text-center text-white">
         <div className="max-w-md space-y-6">
-          <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-2xl bg-rose-500/10 text-rose-500 border border-rose-500/20">
+          <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-[var(--radius-card)] bg-rose-500/10 text-rose-500 border border-rose-500/20">
             <AlertOctagon className="h-8 w-8" />
           </div>
 
@@ -116,7 +116,7 @@ function BlockedWrapper({ children }: { children: React.ReactNode }) {
           <div className="flex justify-center gap-3">
             <button
               onClick={() => window.location.reload()}
-              className="h-10 rounded-2xl bg-zinc-800 px-6 text-xs font-bold uppercase tracking-wider text-white hover:bg-zinc-700 transition-all cursor-pointer"
+              className="h-10 rounded-[var(--radius-card)] bg-zinc-800 px-6 text-xs font-bold uppercase tracking-wider text-white hover:bg-zinc-700 transition-all cursor-pointer"
             >
               Tentar Novamente
             </button>

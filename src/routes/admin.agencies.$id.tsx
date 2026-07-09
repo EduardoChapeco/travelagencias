@@ -47,7 +47,7 @@ function Page() {
         >
           <ArrowLeft className="h-3 w-3" /> Voltar para lista
         </Link>
-        <div className="flex flex-col items-center justify-center py-12 px-4 text-center rounded-2xl border border-red-200 bg-red-50/60 max-w-xl mx-auto">
+        <div className="flex flex-col items-center justify-center py-12 px-4 text-center rounded-[var(--radius-card)] border border-red-200 bg-red-50/60 max-w-xl mx-auto">
           <AlertCircle className="h-6 w-6 text-red-600 mb-2" />
           <h3 className="text-sm font-bold text-red-800">Falha ao Carregar Agência</h3>
           <p className="text-xs text-red-600 mt-1">
@@ -108,7 +108,7 @@ function Page() {
 
       <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3 mb-6">
         {/* Card: Dados Cadastrais */}
-        <section className="rounded-2xl border border-border bg-surface p-4">
+        <section className="rounded-[var(--radius-card)] border-none glass-card border-none p-4">
           <h3 className="mb-3 text-sm font-semibold flex items-center gap-2">Dados Cadastrais</h3>
           <dl className="space-y-2 text-xs">
             <div className="flex justify-between">
@@ -131,7 +131,7 @@ function Page() {
         </section>
 
         {/* Card: Operação */}
-        <section className="rounded-2xl border border-border bg-surface p-4">
+        <section className="rounded-[var(--radius-card)] border-none glass-card border-none p-4">
           <h3 className="mb-3 text-sm font-semibold flex items-center gap-2">Operação</h3>
           <dl className="space-y-2 text-xs">
             <div className="flex justify-between">
@@ -154,7 +154,7 @@ function Page() {
         </section>
 
         {/* Card: Status do SaaS */}
-        <section className="rounded-2xl border border-brand/20 bg-brand/5 p-4 relative overflow-hidden">
+        <section className="rounded-[var(--radius-card)] border border-brand/20 bg-brand/5 p-4 relative overflow-hidden">
           <div className="absolute top-0 right-0 p-3 opacity-10">
             <CreditCard className="h-16 w-16" />
           </div>
@@ -212,12 +212,12 @@ function Page() {
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        <section className="lg:col-span-2 rounded-2xl border border-border bg-surface">
+        <section className="lg:col-span-2 rounded-[var(--radius-card)] border-none glass-card border-none">
           <h3 className="border-b border-border px-4 py-3 text-sm font-semibold">
             Membros da Equipe
           </h3>
           <table className="w-full text-sm">
-            <thead className="bg-surface-alt text-xs text-muted-foreground">
+            <thead className="glass bg-white/5 border-white/10 text-xs text-muted-foreground">
               <tr>
                 <th className="px-3 py-2 text-left">Nome</th>
                 <th className="px-3 py-2 text-left">Papel</th>
@@ -387,7 +387,7 @@ function DangerZone({ agency, priv, subscription, plans }: any) {
 
   return (
     <>
-      <section className="rounded-2xl border-2 border-danger/30 bg-danger/5 p-4">
+      <section className="rounded-[var(--radius-card)] border-2 border-danger/30 bg-danger/5 p-4">
         <div className="flex items-center gap-2 mb-4 text-danger">
           <ShieldAlert className="h-5 w-5" />
           <h3 className="font-bold tracking-tight">Zona de Perigo</h3>
@@ -415,7 +415,7 @@ function DangerZone({ agency, priv, subscription, plans }: any) {
               <select
                 disabled={busy}
                 onChange={handleChangePlan}
-                className="w-full rounded-full border border-border bg-surface px-3 py-1.5 text-xs text-foreground focus:border-brand focus:outline-none"
+                className="w-full rounded-full border-none glass-card border-none px-3 py-1.5 text-xs text-foreground focus:border-brand focus:outline-none"
                 defaultValue=""
               >
                 <option value="" disabled>

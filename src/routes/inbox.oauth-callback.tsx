@@ -93,7 +93,7 @@ function OAuthCallbackPage() {
 
   return (
     <div className="flex h-screen w-full flex-col items-center justify-center bg-background px-6 text-center text-foreground">
-      <div className="w-full max-w-md rounded-2xl border border-border bg-surface p-8 shadow-xl flex flex-col items-center gap-4">
+      <div className="w-full max-w-md rounded-[var(--radius-card)] border-none glass-card border-none p-8 shadow-xl flex flex-col items-center gap-4">
         {status === "loading" && (
           <>
             <Loader2 className="h-12 w-12 text-brand animate-spin" />

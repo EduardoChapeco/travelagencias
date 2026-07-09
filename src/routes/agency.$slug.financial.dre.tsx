@@ -4,8 +4,7 @@ import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useAgency } from "@/lib/agency-context";
 import { money } from "@/components/ui/form";
-import { HeaderPortal } from "@/components/shell/HeaderPortal";
-import { ModuleToolbar } from "@/components/shell/ModuleToolbar";
+import { PageHeader } from "@/components/shell/PageHeader";
 
 export const Route = createFileRoute("/agency/$slug/financial/dre")({
   component: DREPage,
@@ -44,8 +43,7 @@ function DREPage() {
 
   return (
     <div className="flex h-full flex-col overflow-hidden">
-      <HeaderPortal>
-        <ModuleToolbar
+              <PageHeader
           title="DRE"
           filters={[
             { label: "30 dias", value: "month" },
@@ -55,23 +53,22 @@ function DREPage() {
           activeFilter={period}
           onFilterChange={(v) => setPeriod(v as "month" | "quarter" | "year")}
         />
-      </HeaderPortal>
-
+      
       <div className="px-4  md:pr-6 pt-4 shrink-0">
         <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
-          <div className="rounded-[var(--radius-card)] border border-border bg-surface p-4">
+          <div className="rounded-[var(--radius-card)] border-none glass-card border-none p-4">
             <div className="text-[11px] uppercase tracking-wide text-muted-foreground">Receita</div>
             <div className="mt-1 font-mono text-xl font-semibold text-success">
               {money(q.data?.income ?? 0)}
             </div>
           </div>
-          <div className="rounded-[var(--radius-card)] border border-border bg-surface p-4">
+          <div className="rounded-[var(--radius-card)] border-none glass-card border-none p-4">
             <div className="text-[11px] uppercase tracking-wide text-muted-foreground">Despesa</div>
             <div className="mt-1 font-mono text-xl font-semibold text-danger">
               {money(q.data?.expense ?? 0)}
             </div>
           </div>
-          <div className="rounded-[var(--radius-card)] border border-border bg-surface p-4">
+          <div className="rounded-[var(--radius-card)] border-none glass-card border-none p-4">
             <div className="text-[11px] uppercase tracking-wide text-muted-foreground">
               Resultado
             </div>
@@ -85,9 +82,9 @@ function DREPage() {
       </div>
 
       <div className="flex-1 overflow-y-auto px-4  md:pr-6 py-4 min-h-0 pb-24">
-        <div className="overflow-hidden rounded-[var(--radius-card)] border border-border bg-surface">
+        <div className="overflow-hidden rounded-[var(--radius-card)] border-none glass-card border-none">
           <table className="w-full text-sm">
-            <thead className="bg-surface-alt/40 text-left text-[11px] uppercase tracking-wide text-muted-foreground">
+            <thead className="glass bg-white/5 border-white/10/40 text-left text-[11px] uppercase tracking-wide text-muted-foreground">
               <tr>
                 <th className="px-3 py-2 font-medium">Categoria</th>
                 <th className="px-3 py-2 text-right font-medium">Receita</th>
@@ -100,7 +97,7 @@ function DREPage() {
                 Object.entries(q.data.byCat)
                   .sort((a, b) => b[1].income - b[1].expense - (a[1].income - a[1].expense))
                   .map(([cat, v]) => (
-                    <tr key={cat} className="border-t border-border hover:bg-surface-alt/30">
+                    <tr key={cat} className="border-t border-border hover:glass bg-white/5 border-white/10/30">
                       <td className="px-3 py-2.5 font-medium">{cat}</td>
                       <td className="px-3 py-2.5 text-right font-mono text-xs text-success">
                         {money(v.income)}

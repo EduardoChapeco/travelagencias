@@ -22,8 +22,7 @@ import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { useAgency } from "@/lib/agency-context";
 import { EmptyState } from "@/components/shell/PageHeader";
-import { HeaderPortal } from "@/components/shell/HeaderPortal";
-import { ModuleToolbar, ModuleActionButton } from "@/components/shell/ModuleToolbar";
+import { PageHeader, ModuleActionButton } from "@/components/shell/PageHeader";
 import {
   Field,
   Input,
@@ -121,8 +120,7 @@ function BlogPage() {
 
   return (
     <div className="flex-1 flex flex-col overflow-hidden min-h-0">
-      <HeaderPortal>
-        <ModuleToolbar
+              <PageHeader
           title="Blog do Portal"
           search={{
             value: filterStatus !== "all" ? filterStatus : "",
@@ -136,8 +134,7 @@ function BlogPage() {
           activeFilter={filterStatus}
           onFilterChange={setFilterStatus}
         />
-      </HeaderPortal>
-
+      
       <ModuleActionButton
         label="Novo Artigo"
         icon={<Plus className="h-3.5 w-3.5" />}
@@ -168,7 +165,7 @@ function BlogPage() {
               icon: BarChart2,
             },
           ].map((s) => (
-            <div key={s.label} className="rounded-2xl border border-border bg-surface p-4">
+            <div key={s.label} className="rounded-[var(--radius-card)] border-none glass-card border-none p-4">
               <div className="flex items-center gap-1.5 text-[11px] text-muted-foreground">
                 <s.icon className="h-3.5 w-3.5" />
                 {s.label}
@@ -198,10 +195,10 @@ function BlogPage() {
               <button
                 key={p.id}
                 onClick={() => setEditing(p)}
-                className="group rounded-[var(--radius-card)] border border-border bg-surface text-left overflow-hidden hover:border-border-strong transition-all"
+                className="group rounded-[var(--radius-card)] border-none glass-card border-none text-left overflow-hidden hover:border-border-strong transition-all"
               >
                 {/* Cover */}
-                <div className="relative aspect-video overflow-hidden bg-surface-alt">
+                <div className="relative aspect-video overflow-hidden glass bg-white/5 border-white/10">
                   {p.cover_image_url ? (
                     <img
                       src={p.cover_image_url}
@@ -230,12 +227,12 @@ function BlogPage() {
                   <div className="mt-3 flex items-center justify-between text-[11px] text-muted-foreground">
                     <div className="flex items-center gap-2">
                       {p.category && (
-                        <span className="rounded bg-surface-alt px-1.5 py-0.5 font-medium">
+                        <span className="rounded glass bg-white/5 border-white/10 px-1.5 py-0.5 font-medium">
                           {p.category}
                         </span>
                       )}
                       {p.tags?.slice(0, 2).map((t) => (
-                        <span key={t} className="rounded bg-surface-alt px-1.5 py-0.5">
+                        <span key={t} className="rounded glass bg-white/5 border-white/10 px-1.5 py-0.5">
                           {t}
                         </span>
                       ))}
@@ -400,7 +397,7 @@ function BlogSheet({
   return (
     <div className="fixed inset-0 z-50 flex justify-end bg-overlay" onClick={onClose}>
       <div
-        className="flex h-full w-full max-w-2xl flex-col border-l border-border bg-surface"
+        className="flex h-full w-full max-w-2xl flex-col border-l border-border glass-card border-none"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header */}
@@ -414,7 +411,7 @@ function BlogSheet({
                 href={previewUrl}
                 target="_blank"
                 rel="noreferrer"
-                className="flex h-8 items-center gap-1.5 rounded-full border border-border px-2.5 text-xs font-medium hover:bg-surface-alt"
+                className="flex h-8 items-center gap-1.5 rounded-full border-none px-2.5 text-xs font-medium hover:glass bg-white/5 border-white/10"
               >
                 <ExternalLink className="h-3.5 w-3.5" />
                 Ver publicado
@@ -423,7 +420,7 @@ function BlogSheet({
             <button
               type="button"
               onClick={onClose}
-              className="flex h-8 w-8 items-center justify-center rounded-full border border-border hover:bg-surface-alt"
+              className="flex h-8 w-8 items-center justify-center rounded-full border-none hover:glass bg-white/5 border-white/10"
             >
               <X className="h-4 w-4" />
             </button>
@@ -462,7 +459,7 @@ function BlogSheet({
               />
             </Field>
 
-            <div className="rounded-[var(--radius-card)] border border-border p-4 bg-surface-alt/50 space-y-4">
+            <div className="rounded-[var(--radius-card)] border-none p-4 glass bg-white/5 border-white/10/50 space-y-4">
               <div className="flex items-center justify-between">
                 <label className="text-sm font-bold text-foreground">Conteúdo do Artigo</label>
               </div>
@@ -491,7 +488,7 @@ function BlogSheet({
               <select
                 value={status}
                 onChange={(e) => setStatus(e.target.value)}
-                className="w-full h-9 px-2.5 rounded-full border border-input bg-surface text-sm outline-none focus:border-border-strong"
+                className="w-full h-9 px-2.5 rounded-full border border-input glass-card border-none text-sm outline-none focus:border-border-strong"
               >
                 <option value="draft">Rascunho</option>
                 <option value="published">Publicado</option>
@@ -514,11 +511,11 @@ function BlogSheet({
             )}
 
             {/* SEO SECTION */}
-            <div className="rounded-2xl border border-border">
+            <div className="rounded-[var(--radius-card)] border-none">
               <button
                 type="button"
                 onClick={() => setSeoOpen((v) => !v)}
-                className="flex w-full items-center justify-between px-4 py-3 text-xs font-semibold uppercase tracking-wide text-muted-foreground hover:bg-surface-alt"
+                className="flex w-full items-center justify-between px-4 py-3 text-xs font-semibold uppercase tracking-wide text-muted-foreground hover:glass bg-white/5 border-white/10"
               >
                 <span className="flex items-center gap-2">
                   <Search className="h-3.5 w-3.5" />
@@ -572,7 +569,7 @@ function BlogSheet({
                     .split(",")
                     .filter(Boolean)
                     .map((t) => (
-                      <span key={t} className="rounded bg-surface-alt px-1.5 py-0.5 font-medium">
+                      <span key={t} className="rounded glass bg-white/5 border-white/10 px-1.5 py-0.5 font-medium">
                         {t.trim()}
                       </span>
                     ))}
@@ -591,7 +588,7 @@ function BlogSheet({
                 type="button"
                 onClick={postToGoogleBusiness}
                 disabled={gbpPosting}
-                className="flex items-center gap-1.5 rounded-full border border-border px-3 py-1.5 text-xs font-medium text-muted-foreground hover:bg-surface-alt hover:text-foreground disabled:opacity-50 transition-colors"
+                className="flex items-center gap-1.5 rounded-full border-none px-3 py-1.5 text-xs font-medium text-muted-foreground hover:glass bg-white/5 border-white/10 hover:text-foreground disabled:opacity-50 transition-colors"
               >
                 <Share2 className="h-3.5 w-3.5" />
                 {gbpPosting ? "Publicando..." : "Publicar no Google"}

@@ -15,8 +15,7 @@ import {
   AlertTriangle,
   CheckCircle2,
 } from "lucide-react";
-import { HeaderPortal } from "@/components/shell/HeaderPortal";
-import { ModuleToolbar, ModuleActionButton } from "@/components/shell/ModuleToolbar";
+import { PageHeader, ModuleActionButton } from "@/components/shell/PageHeader";
 import {
   Field,
   Input,
@@ -258,8 +257,7 @@ function FinancialSettingsPage() {
 
   return (
     <div className="flex h-full flex-col overflow-hidden">
-      <HeaderPortal>
-        <ModuleToolbar
+              <PageHeader
           title="Finanças"
           filters={[
             { label: "Fechamento Mensal", value: "closing" },
@@ -268,8 +266,7 @@ function FinancialSettingsPage() {
           activeFilter={activeTab}
           onFilterChange={(v) => setActiveTab(v as any)}
         />
-      </HeaderPortal>
-
+      
       {activeTab === "commissions" && (
         <ModuleActionButton
           label="Novo Plano"
@@ -284,7 +281,7 @@ function FinancialSettingsPage() {
             ───────────────────────────────────────────────────────────────────── */}
         {activeTab === "closing" && (
           <div className="max-w-3xl space-y-6">
-            <div className="rounded-[var(--radius-card)] border border-border bg-surface p-5 space-y-4">
+            <div className="rounded-[var(--radius-card)] border-none glass-card border-none p-5 space-y-4">
               <div className="flex items-center gap-2 text-sm font-semibold">
                 <Calendar className="h-4 w-4 text-brand" /> Períodos Contábeis Recentes
               </div>
@@ -299,7 +296,7 @@ function FinancialSettingsPage() {
                   Carregando períodos contábeis...
                 </div>
               ) : (
-                <div className="overflow-hidden rounded-[var(--radius-card)] border border-border bg-white">
+                <div className="overflow-hidden rounded-[var(--radius-card)] border-none bg-white">
                   <table className="w-full text-xs text-left">
                     <thead className="bg-gray-50 border-b border-border text-[10px] uppercase font-bold text-gray-500">
                       <tr>
@@ -384,7 +381,7 @@ function FinancialSettingsPage() {
             ───────────────────────────────────────────────────────────────────── */}
         {activeTab === "commissions" && (
           <div className="max-w-4xl space-y-6">
-            <div className="rounded-[var(--radius-card)] border border-border bg-surface p-5 space-y-4">
+            <div className="rounded-[var(--radius-card)] border-none glass-card border-none p-5 space-y-4">
               <div className="flex items-center gap-2 text-sm font-semibold">
                 <TrendingUp className="h-4 w-4 text-brand" /> Regras de Comissionamento de
                 Vendedores
@@ -409,7 +406,7 @@ function FinancialSettingsPage() {
                   {(plansQ.data || []).map((plan) => (
                     <div
                       key={plan.id}
-                      className="border border-border bg-white rounded-[var(--radius-card)] overflow-hidden shadow-xs"
+                      className="border-none bg-white rounded-[var(--radius-card)] overflow-hidden shadow-xs"
                     >
                       {/* Card header */}
                       <div className="flex items-center justify-between px-4 py-3 bg-gray-50/50 border-b border-border">
@@ -456,7 +453,7 @@ function FinancialSettingsPage() {
                         </div>
 
                         {/* List tiers */}
-                        <div className="overflow-hidden rounded-2xl border border-border max-w-xl">
+                        <div className="overflow-hidden rounded-[var(--radius-card)] border-none max-w-xl">
                           <table className="w-full text-[11px] text-left">
                             <thead className="bg-gray-50 border-b border-border text-[9px] uppercase font-bold text-gray-500">
                               <tr>
@@ -507,7 +504,7 @@ function FinancialSettingsPage() {
       {/* New Plan Modal Overlay */}
       {showPlanModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4 animate-in fade-in duration-200">
-          <div className="w-full max-w-md bg-white border border-border rounded-2xl overflow-hidden shadow-none">
+          <div className="w-full max-w-md bg-white border-none rounded-[var(--radius-card)] overflow-hidden shadow-none">
             <div className="flex items-center justify-between px-5 py-4 border-b border-border bg-gray-50/50">
               <div className="flex items-center gap-2">
                 <Percent className="w-5 h-5 text-brand" />
@@ -537,7 +534,7 @@ function FinancialSettingsPage() {
                 <select
                   value={selectedSeller}
                   onChange={(e) => setSelectedSeller(e.target.value)}
-                  className="w-full h-10 rounded-2xl border border-border bg-background px-3 text-xs text-foreground outline-none"
+                  className="w-full h-10 rounded-[var(--radius-card)] border-none bg-background px-3 text-xs text-foreground outline-none"
                   required
                 >
                   <option value="">Selecione o vendedor...</option>
@@ -554,7 +551,7 @@ function FinancialSettingsPage() {
                   <select
                     value={tierMode}
                     onChange={(e) => setTierMode(e.target.value as "integral" | "progressive")}
-                    className="w-full h-10 rounded-2xl border border-border bg-background px-3 text-xs text-foreground outline-none"
+                    className="w-full h-10 rounded-[var(--radius-card)] border-none bg-background px-3 text-xs text-foreground outline-none"
                     required
                   >
                     <option value="progressive">Progressiva (por fatias)</option>

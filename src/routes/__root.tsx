@@ -200,12 +200,12 @@ function RootComponent() {
 function PendingComponent() {
   return (
     <div className="flex h-full flex-col p-6 space-y-4 animate-pulse bg-background">
-      <div className="h-8 w-1/4 rounded-full bg-surface-alt border border-border" />
-      <div className="h-4 w-1/2 rounded-full bg-surface-alt border border-border" />
+      <div className="h-8 w-1/4 rounded-full glass bg-white/5 border-white/10 border-none" />
+      <div className="h-4 w-1/2 rounded-full glass bg-white/5 border-white/10 border-none" />
       <div className="mt-8 grid grid-cols-1 md:grid-cols-3 gap-6">
-        <div className="h-32 rounded-2xl bg-surface-alt border border-border" />
-        <div className="h-32 rounded-2xl bg-surface-alt border border-border" />
-        <div className="h-32 rounded-2xl bg-surface-alt border border-border" />
+        <div className="h-32 rounded-[var(--radius-card)] glass bg-white/5 border-white/10 border-none" />
+        <div className="h-32 rounded-[var(--radius-card)] glass bg-white/5 border-white/10 border-none" />
+        <div className="h-32 rounded-[var(--radius-card)] glass bg-white/5 border-white/10 border-none" />
       </div>
     </div>
   );

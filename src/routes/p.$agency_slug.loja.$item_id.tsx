@@ -99,8 +99,8 @@ function PublicStoreItemDetail() {
   if (isLoading) {
     return (
       <div className="mx-auto w-full max-w-4xl px-4 py-12 md:py-16 space-y-8">
-        <Skeleton className="h-10 w-32 rounded-2xl" />
-        <Skeleton className="h-[400px] w-full rounded-2xl" />
+        <Skeleton className="h-10 w-32 rounded-[var(--radius-card)]" />
+        <Skeleton className="h-[400px] w-full rounded-[var(--radius-card)]" />
         <div className="space-y-4">
           <Skeleton className="h-12 w-3/4" />
           <Skeleton className="h-6 w-full" />
@@ -152,7 +152,7 @@ function PublicStoreItemDetail() {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-10">
         <div className="lg:col-span-2 space-y-8">
           {item.store_cover ? (
-            <div className="aspect-video w-full overflow-hidden rounded-2xl bg-surface-muted border border-border/60">
+            <div className="aspect-video w-full overflow-hidden rounded-[var(--radius-card)] glass-card border-none-muted border-none/60">
               <img
                 src={item.store_cover}
                 alt={item.title}
@@ -160,7 +160,7 @@ function PublicStoreItemDetail() {
               />
             </div>
           ) : (
-            <div className="aspect-video w-full rounded-2xl bg-surface-alt flex flex-col items-center justify-center text-muted-foreground/30 border border-border/60">
+            <div className="aspect-video w-full rounded-[var(--radius-card)] glass bg-white/5 border-white/10 flex flex-col items-center justify-center text-muted-foreground/30 border-none/60">
               <MapPin className="h-16 w-16 mb-4" />
               <span className="font-semibold tracking-widest uppercase text-sm">Sem Imagem</span>
             </div>
@@ -195,7 +195,7 @@ function PublicStoreItemDetail() {
         </div>
 
         <div className="space-y-6">
-          <div className="bg-surface border border-border/80 rounded-2xl p-6 sticky top-24 shadow-sm">
+          <div className="glass-card border-none border-none/80 rounded-[var(--radius-card)] p-6 sticky top-24 shadow-none">
             <h3 className="text-xl font-bold text-foreground mb-2">Investimento</h3>
             
             <div className="flex items-baseline gap-2 mb-6">

@@ -21,7 +21,6 @@ import {
   mergeClients,
 } from "@/services/clients";
 
-import { HeaderPortal } from "@/components/shell/HeaderPortal";
 
 // Subcomponents
 import { DocumentsPanel } from "@/components/clients/DocumentsPanel";
@@ -147,13 +146,12 @@ function ClientDetail() {
       <ConfirmDialog />
       <PromptDialog />
 
-      <HeaderPortal>
-        <div className="flex items-center gap-2">
+              <div className="flex items-center gap-2">
           {!isEditing ? (
             <>
               <button
                 onClick={() => setIsMerging(true)}
-                className="flex h-8 items-gap gap-1.5 rounded-full border border-border bg-surface px-3 text-xs font-semibold text-foreground hover:bg-surface-alt transition-colors cursor-pointer"
+                className="flex h-8 items-gap gap-1.5 rounded-full border-none glass-card border-none px-3 text-xs font-semibold text-foreground hover:glass bg-white/5 border-white/10 transition-colors cursor-pointer"
               >
                 <Merge className="h-3.5 w-3.5" /> Unificar Cadastro
               </button>
@@ -167,14 +165,13 @@ function ClientDetail() {
           ) : (
             <button
               onClick={() => setIsEditing(false)}
-              className="flex h-8 items-center gap-1.5 rounded-full border border-border bg-surface px-3 text-xs font-semibold text-foreground hover:bg-surface-alt transition-colors cursor-pointer"
+              className="flex h-8 items-center gap-1.5 rounded-full border-none glass-card border-none px-3 text-xs font-semibold text-foreground hover:glass bg-white/5 border-white/10 transition-colors cursor-pointer"
             >
               <X className="h-3.5 w-3.5" /> Cancelar
             </button>
           )}
         </div>
-      </HeaderPortal>
-
+      
       <header className="pb-6 border-b border-border">
         <Link
           to="/agency/$slug/clients"
@@ -196,7 +193,7 @@ function ClientDetail() {
           {tags.map((t: string) => (
             <span
               key={t}
-              className="px-3 py-1 bg-surface-alt border border-border text-foreground text-xs font-bold rounded-full"
+              className="px-3 py-1 glass bg-white/5 border-white/10 border-none text-foreground text-xs font-bold rounded-full"
             >
               {t}
             </span>
@@ -283,7 +280,7 @@ function ClientDetail() {
             </button>
             <button
               onClick={() => setIsMerging(false)}
-              className="h-12 px-4 rounded-full border border-border text-sm font-bold cursor-pointer text-foreground bg-background"
+              className="h-12 px-4 rounded-full border-none text-sm font-bold cursor-pointer text-foreground bg-background"
             >
               Cancelar
             </button>
@@ -342,7 +339,7 @@ function ClientDetail() {
                 />
               </div>
 
-              <div className="rounded-full border border-border bg-surface p-6">
+              <div className="rounded-full border-none glass-card border-none p-6">
                 <h3 className="text-xs font-bold uppercase tracking-widest text-muted-foreground mb-3">
                   Preferências e Observações
                 </h3>
@@ -399,7 +396,7 @@ function ClientDetail() {
 
 function InfoBlock({ label, value }: { label: string; value: React.ReactNode }) {
   return (
-    <div className="bg-surface p-5 rounded-full border border-border">
+    <div className="glass-card border-none p-5 rounded-full border-none">
       <div className="text-xs font-bold uppercase tracking-widest text-muted-foreground mb-1.5">
         {label}
       </div>

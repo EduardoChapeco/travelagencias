@@ -462,8 +462,8 @@ function TripReaccommodationPage() {
           const activeDecision = c.decisions?.[0]; // Get latest customer decision
 
           return (
-            <Card key={c.id} className="border border-border/60 overflow-hidden shadow-sm">
-              <CardHeader className="bg-surface-alt/20 border-b border-border/40 py-4 px-6">
+            <Card key={c.id} className="border-none/60 overflow-hidden shadow-none">
+              <CardHeader className="glass bg-white/5 border-white/10/20 border-b border-border/40 py-4 px-6">
                 <div className="flex flex-wrap items-center justify-between gap-4">
                   <div className="flex items-center gap-3">
                     <span className="font-mono text-xs font-bold uppercase tracking-wider bg-rose-500/10 text-rose-600 px-2.5 py-1 rounded">
@@ -575,7 +575,7 @@ function TripReaccommodationPage() {
                             {/* Route & Segments */}
                             <div className="lg:col-span-4 space-y-2">
                               <div className="flex items-center gap-2">
-                                <span className="font-mono text-[10px] font-bold px-1.5 py-0.5 rounded bg-surface-alt border border-border/60">
+                                <span className="font-mono text-[10px] font-bold px-1.5 py-0.5 rounded glass bg-white/5 border-white/10 border-none/60">
                                   ALT {alt.ranking}
                                 </span>
                                 <span className="text-xs text-muted-foreground font-medium capitalize">
@@ -655,7 +655,7 @@ function TripReaccommodationPage() {
                             <div className="lg:col-span-3 flex items-center justify-between lg:justify-end gap-4">
                               <div
                                 className={cn(
-                                  "text-xs font-semibold px-2.5 py-1 rounded-2xl border",
+                                  "text-xs font-semibold px-2.5 py-1 rounded-[var(--radius-card)] border",
                                   riskColor,
                                 )}
                               >
@@ -697,7 +697,7 @@ function TripReaccommodationPage() {
                           )}
 
                           {/* AI & Deterministic details */}
-                          <div className="p-3 bg-surface-alt/10 text-[11px] text-muted-foreground grid grid-cols-1 md:grid-cols-2 gap-4">
+                          <div className="p-3 glass bg-white/5 border-white/10/10 text-[11px] text-muted-foreground grid grid-cols-1 md:grid-cols-2 gap-4">
                             <div>
                               <span className="font-semibold text-foreground">
                                 Diferença Determinística:
@@ -716,7 +716,7 @@ function TripReaccommodationPage() {
                     })}
 
                     {c.alternatives?.length === 0 && (
-                      <div className="rounded-[var(--radius-card)] border border-dashed border-border/60 p-6 text-center text-xs text-muted-foreground bg-surface-alt/5">
+                      <div className="rounded-[var(--radius-card)] border border-dashed border-border/60 p-6 text-center text-xs text-muted-foreground glass bg-white/5 border-white/10/5">
                         Nenhuma alternativa proposta ainda. Clique em "Adicionar Alternativa" para
                         cadastrar itinerários e rodar o comparador.
                       </div>
@@ -769,7 +769,7 @@ function TripReaccommodationPage() {
 
                 {/* 4. Client Acceptance Audit Certificate */}
                 {activeDecision && (
-                  <div className="border border-emerald-200 bg-emerald-500/5 rounded-[var(--radius-card)] overflow-hidden shadow-sm">
+                  <div className="border border-emerald-200 bg-emerald-500/5 rounded-[var(--radius-card)] overflow-hidden shadow-none">
                     <div className="bg-emerald-500/10 border-b border-emerald-200 py-3 px-4 flex items-center justify-between">
                       <div className="flex items-center gap-2 text-xs font-bold text-emerald-800 uppercase tracking-wide">
                         <FileSignature className="h-4 w-4" /> Certificado de Aceite Digital
@@ -802,7 +802,7 @@ function TripReaccommodationPage() {
                           <span className="text-muted-foreground font-semibold">
                             IP do Dispositivo:
                           </span>{" "}
-                          <span className="font-mono text-foreground bg-surface px-1.5 py-0.5 rounded border border-border/40">
+                          <span className="font-mono text-foreground glass-card border-none px-1.5 py-0.5 rounded border-none/40">
                             {activeDecision.ip_address || "N/A"}
                           </span>
                         </div>
@@ -813,7 +813,7 @@ function TripReaccommodationPage() {
                           <span className="text-muted-foreground font-semibold">
                             Assinatura de Integridade (SHA256):
                           </span>{" "}
-                          <span className="font-mono text-[10px] text-foreground bg-surface px-1.5 py-0.5 rounded border border-border/40 break-all">
+                          <span className="font-mono text-[10px] text-foreground glass-card border-none px-1.5 py-0.5 rounded border-none/40 break-all">
                             {activeDecision.signature_hash || "N/A"}
                           </span>
                         </div>
@@ -883,7 +883,7 @@ function TripReaccommodationPage() {
                     {c.operator_requests?.map((req: any) => (
                       <div
                         key={req.id}
-                        className="rounded-2xl border border-border/40 p-3 text-xs bg-surface-alt/10 flex items-center justify-between"
+                        className="rounded-[var(--radius-card)] border-none/40 p-3 text-xs glass bg-white/5 border-white/10/10 flex items-center justify-between"
                       >
                         <div>
                           <span className="font-semibold text-foreground">
@@ -899,7 +899,7 @@ function TripReaccommodationPage() {
                           <span>{fmtDate(req.requested_at)}</span>
                         </div>
                         <div className="flex items-center gap-3">
-                          <span className="font-semibold capitalize text-foreground bg-surface px-2 py-0.5 rounded border border-border/40">
+                          <span className="font-semibold capitalize text-foreground glass-card border-none px-2 py-0.5 rounded border-none/40">
                             {req.status === "confirmed"
                               ? "Confirmado"
                               : req.status === "rejected"
@@ -947,7 +947,7 @@ function TripReaccommodationPage() {
                     ))}
 
                     {c.operator_requests?.length === 0 && (
-                      <div className="text-xs text-muted-foreground italic bg-surface/50 p-4 rounded-[var(--radius-card)] border border-dashed border-border/60 text-center">
+                      <div className="text-xs text-muted-foreground italic glass-card border-none/50 p-4 rounded-[var(--radius-card)] border border-dashed border-border/60 text-center">
                         Nenhum envio ou contato com a operadora registrado para este caso.
                       </div>
                     )}
@@ -959,7 +959,7 @@ function TripReaccommodationPage() {
         })}
 
         {casesQ.data?.length === 0 && (
-          <div className="rounded-2xl border border-dashed border-border/60 p-12 text-center space-y-4 bg-surface-alt/5">
+          <div className="rounded-[var(--radius-card)] border border-dashed border-border/60 p-12 text-center space-y-4 glass bg-white/5 border-white/10/5">
             <Plane className="mx-auto h-12 w-12 text-muted-foreground opacity-50" />
             <div>
               <h3 className="font-semibold text-foreground text-sm">
@@ -1023,7 +1023,7 @@ function TripReaccommodationPage() {
               {altSegments.map((seg, index) => (
                 <div
                   key={index}
-                  className="p-4 rounded-[var(--radius-card)] border border-border/60 bg-surface-alt/20 space-y-4 relative"
+                  className="p-4 rounded-[var(--radius-card)] border-none/60 glass bg-white/5 border-white/10/20 space-y-4 relative"
                 >
                   {altSegments.length > 1 && (
                     <Button

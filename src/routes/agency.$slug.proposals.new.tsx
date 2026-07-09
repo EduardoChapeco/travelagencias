@@ -279,10 +279,10 @@ function NewProposal() {
       {/* OCR Dropzone */}
       <div
         className={cn(
-          "mb-6 max-w-2xl rounded-2xl border border-dashed p-6 text-center transition-all duration-200",
+          "mb-6 max-w-2xl rounded-[var(--radius-card)] border border-dashed p-6 text-center transition-all duration-200",
           isDragging
             ? "border-brand bg-brand/5 scale-[1.01]"
-            : "border-border bg-surface hover:border-brand/40",
+            : "border-border glass-card border-none hover:border-brand/40",
         )}
         onDragOver={(e) => {
           e.preventDefault();
@@ -343,7 +343,7 @@ function NewProposal() {
             <button
               type="button"
               onClick={() => setExtractedItems(null)}
-              className="text-muted-foreground hover:text-danger text-[10px] font-semibold border border-border rounded px-2 py-0.5 hover:bg-surface-alt transition-colors"
+              className="text-muted-foreground hover:text-danger text-[10px] font-semibold border-none rounded px-2 py-0.5 hover:glass bg-white/5 border-white/10 transition-colors"
             >
               Descartar
             </button>
@@ -353,7 +353,7 @@ function NewProposal() {
 
       <form
         onSubmit={handleSubmit(onSubmit)}
-        className="max-w-2xl space-y-3 rounded-2xl border border-border bg-surface p-5"
+        className="max-w-2xl space-y-3 rounded-[var(--radius-card)] border-none glass-card border-none p-5"
       >
         <Field label="Título *" error={errors.title?.message}>
           <Input {...register("title")} placeholder="Ex: Lua de mel em Maldivas" />

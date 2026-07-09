@@ -98,7 +98,7 @@ export function AIFloatingWidget() {
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.95, y: 12 }}
             transition={{ type: "spring", bounce: 0.15, duration: 0.4 }}
-            className="w-[380px] sm:w-[400px] h-[540px] rounded-[var(--radius-card)] overflow-hidden mac-glass-heavy shadow-[0_16px_48px_rgba(0,0,0,0.4)] flex flex-col origin-bottom-left"
+            className="w-[380px] sm:w-[400px] h-[540px] rounded-[var(--radius-card)] overflow-hidden glass text-white bg-black/40 backdrop-blur-2xl shadow-[0_16px_48px_rgba(0,0,0,0.4)] flex flex-col origin-bottom-left"
           >
             {/* Header / Top suggestions */}
             {aiActions && aiActions.length > 0 && (

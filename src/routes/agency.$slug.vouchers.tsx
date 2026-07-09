@@ -24,8 +24,7 @@ import {
 import { supabase } from "@/integrations/supabase/client";
 import { useAgency } from "@/lib/agency-context";
 import { EmptyState } from "@/components/shell/PageHeader";
-import { HeaderPortal } from "@/components/shell/HeaderPortal";
-import { ModuleToolbar } from "@/components/shell/ModuleToolbar";
+import { PageHeader } from "@/components/shell/PageHeader";
 import { ModuleAdminPanel } from "@/components/shell/ModuleAdminPanel";
 import { StatusBadge, fmtDate, GhostButton } from "@/components/ui/form";
 import { cn } from "@/lib/utils";
@@ -224,8 +223,7 @@ function VouchersPage() {
 
   return (
     <div className="flex h-full flex-col overflow-hidden">
-      <HeaderPortal>
-        <ModuleToolbar
+              <PageHeader
           title="Vouchers"
           search={{
             value: activeTab === "vouchers" ? qSearch : flightSearch,
@@ -278,8 +276,7 @@ function VouchersPage() {
             </div>
           }
         />
-      </HeaderPortal>
-
+      
       {activeTab === "vouchers" ? (
         // ========================================
         // Vouchers Tab View
@@ -324,7 +321,7 @@ function VouchersPage() {
                   {filteredVouchers.map((v) => (
                     <div
                       key={v.id}
-                      className="group relative flex flex-col rounded-2xl border border-border bg-surface overflow-hidden transition-all hover:border-brand/40"
+                      className="group relative flex flex-col rounded-[var(--radius-card)] border-none glass-card border-none overflow-hidden transition-all hover:border-brand/40"
                     >
                       {/* Ticket "Cutouts" on the sides */}
                       <div className="absolute top-20 -left-2 w-4 h-4 bg-background border-r border-border rounded-full z-10" />
@@ -390,7 +387,7 @@ function VouchersPage() {
                           <Link
                             to="/agency/$slug/trips/$id/vouchers"
                             params={{ slug, id: v.trip_id }}
-                            className="flex-1 flex items-center justify-center gap-2 rounded-[var(--radius-card)] bg-surface-alt hover:bg-surface-alt/80 px-4 py-2.5 text-xs font-bold transition-colors"
+                            className="flex-1 flex items-center justify-center gap-2 rounded-[var(--radius-card)] glass bg-white/5 border-white/10 hover:glass bg-white/5 border-white/10/80 px-4 py-2.5 text-xs font-bold transition-colors"
                           >
                             <Eye className="h-4 w-4" /> Visualizar Roteiro
                           </Link>
@@ -420,14 +417,14 @@ function VouchersPage() {
                     <GhostButton
                       disabled={page === 1}
                       onClick={() => setPage((p) => Math.max(1, p - 1))}
-                      className="h-9 px-4 text-xs font-semibold rounded-full border border-border"
+                      className="h-9 px-4 text-xs font-semibold rounded-full border-none"
                     >
                       Anterior
                     </GhostButton>
                     <GhostButton
                       disabled={page * pageSize >= vouchersQ.data.count}
                       onClick={() => setPage((p) => p + 1)}
-                      className="h-9 px-4 text-xs font-semibold rounded-full border border-border"
+                      className="h-9 px-4 text-xs font-semibold rounded-full border-none"
                     >
                       Próxima
                     </GhostButton>
@@ -446,7 +443,7 @@ function VouchersPage() {
           <div className="flex-1 overflow-auto px-4  md:pr-6 py-4 min-h-0 pb-24">
             {/* KPI cards dentro do conteúdo */}
             <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-6">
-              <div className="rounded-[var(--radius-card)] border border-border bg-surface-alt/20 p-3 text-center">
+              <div className="rounded-[var(--radius-card)] border-none glass bg-white/5 border-white/10/20 p-3 text-center">
                 <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-wide block mb-1">
                   Total de Voos
                 </span>
@@ -500,7 +497,7 @@ function VouchersPage() {
             )}
 
             {flightsQ.data && flightsQ.data.length === 0 && (
-              <div className="text-center py-20 bg-surface border border-dashed border-border rounded-2xl max-w-2xl mx-auto p-8">
+              <div className="text-center py-20 glass-card border-none border border-dashed border-border rounded-[var(--radius-card)] max-w-2xl mx-auto p-8">
                 <Plane className="h-10 w-10 mx-auto text-muted-foreground/30 mb-4" />
                 <h3 className="font-bold text-sm text-foreground mb-1">
                   Nenhum voo nos próximos 60 dias
@@ -519,9 +516,9 @@ function VouchersPage() {
             )}
 
             {flightsQ.data && filteredFlights.length > 0 && (
-              <div className="border border-border rounded-[var(--radius-card)] bg-surface overflow-x-auto">
+              <div className="border-none rounded-[var(--radius-card)] glass-card border-none overflow-x-auto">
                 <table className="w-full text-xs text-left border-collapse">
-                  <thead className="bg-surface-alt/40 border-b border-border text-[10px] uppercase font-bold text-muted-foreground">
+                  <thead className="glass bg-white/5 border-white/10/40 border-b border-border text-[10px] uppercase font-bold text-muted-foreground">
                     <tr>
                       <th className="px-4 py-3">Passageiro & Viagem</th>
                       <th className="px-4 py-3">Rota / Voo</th>
@@ -543,7 +540,7 @@ function VouchersPage() {
                         <tr
                           key={f.id}
                           className={cn(
-                            "hover:bg-surface-alt/25 transition-colors",
+                            "hover:glass bg-white/5 border-white/10/25 transition-colors",
                             f.status === "confirmed" ? "bg-success/5" : "bg-transparent",
                           )}
                         >
@@ -604,12 +601,12 @@ function VouchersPage() {
                                 onChange={(e) =>
                                   setEditForm({ ...editForm, ticket_code: e.target.value })
                                 }
-                                className="h-8 w-24 rounded border border-border bg-surface px-2 text-xs font-mono font-bold focus:border-brand"
+                                className="h-8 w-24 rounded border-none glass-card border-none px-2 text-xs font-mono font-bold focus:border-brand"
                                 placeholder="Loc..."
                               />
                             ) : f.ticket_code ? (
                               <div className="flex items-center gap-1.5">
-                                <span className="font-mono font-bold bg-surface-alt border border-border rounded px-1.5 py-0.5 text-foreground">
+                                <span className="font-mono font-bold glass bg-white/5 border-white/10 border-none rounded px-1.5 py-0.5 text-foreground">
                                   {f.ticket_code}
                                 </span>
                                 <button
@@ -633,7 +630,7 @@ function VouchersPage() {
                               <input
                                 value={editForm.seat}
                                 onChange={(e) => setEditForm({ ...editForm, seat: e.target.value })}
-                                className="h-8 w-16 rounded border border-border bg-surface px-2 text-xs focus:border-brand"
+                                className="h-8 w-16 rounded border-none glass-card border-none px-2 text-xs focus:border-brand"
                                 placeholder="ex: 12A"
                               />
                             ) : (
@@ -649,7 +646,7 @@ function VouchersPage() {
                                 onChange={(e) =>
                                   setEditForm({ ...editForm, status: e.target.value })
                                 }
-                                className="h-8 rounded border border-border bg-surface px-2 text-xs focus:border-brand cursor-pointer"
+                                className="h-8 rounded border-none glass-card border-none px-2 text-xs focus:border-brand cursor-pointer"
                               >
                                 <option value="pending">Pendente</option>
                                 <option value="confirmed">Conferido</option>
@@ -682,7 +679,7 @@ function VouchersPage() {
                                 onChange={(e) =>
                                   setEditForm({ ...editForm, notes: e.target.value })
                                 }
-                                className="h-8 w-full rounded border border-border bg-surface px-2 text-xs focus:border-brand"
+                                className="h-8 w-full rounded border-none glass-card border-none px-2 text-xs focus:border-brand"
                                 placeholder="Notas..."
                               />
                             ) : (
@@ -715,7 +712,7 @@ function VouchersPage() {
                                   </button>
                                   <button
                                     onClick={() => setEditingId(null)}
-                                    className="p-1.5 rounded bg-surface-alt border border-border hover:bg-surface-alt/75 cursor-pointer text-foreground"
+                                    className="p-1.5 rounded glass bg-white/5 border-white/10 border-none hover:glass bg-white/5 border-white/10/75 cursor-pointer text-foreground"
                                     title="Cancelar"
                                   >
                                     <X className="h-3.5 w-3.5" />
@@ -747,7 +744,7 @@ function VouchersPage() {
                                   </button>
                                   <button
                                     onClick={() => handleStartEdit(f)}
-                                    className="p-1.5 rounded border border-border text-muted-foreground hover:text-foreground cursor-pointer"
+                                    className="p-1.5 rounded border-none text-muted-foreground hover:text-foreground cursor-pointer"
                                     title="Editar Bilhete"
                                   >
                                     <Edit2 className="h-3.5 w-3.5" />

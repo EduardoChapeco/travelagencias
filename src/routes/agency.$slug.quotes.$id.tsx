@@ -27,7 +27,6 @@ import { useEffect, useState } from "react";
 import { createFileRoute, useParams, useNavigate, Link } from "@tanstack/react-router";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useAgency } from "@/lib/agency-context";
-import { HeaderPortal } from "@/components/shell/HeaderPortal";
 import { PageHeader } from "@/components/shell/PageHeader";
 import {
   StatusBadge,
@@ -623,8 +622,7 @@ Resuma de forma profissional e persuasiva (estilo consultor premium de turismo) 
 
   return (
     <div className="flex h-full flex-col overflow-hidden">
-      <HeaderPortal>
-        <div className="flex items-center gap-2">
+              <div className="flex items-center gap-2">
           <Link
             to="/agency/$slug/quotes"
             params={{ slug }}
@@ -634,7 +632,7 @@ Resuma de forma profissional e persuasiva (estilo consultor premium de turismo) 
             Cotações
           </Link>
           
-          <GhostButton onClick={() => setRulesOpen(true)} className="gap-1.5 text-xs h-8 border border-border">
+          <GhostButton onClick={() => setRulesOpen(true)} className="gap-1.5 text-xs h-8 border-none">
             <ShieldCheck className="h-3.5 w-3.5 text-brand animate-pulse" />
             Revisar Regras
           </GhostButton>
@@ -653,10 +651,9 @@ Resuma de forma profissional e persuasiva (estilo consultor premium de turismo) 
             )}
           </PrimaryButton>
         </div>
-      </HeaderPortal>
-
+      
       {/* Header Info */}
-      <div className="border-b border-border bg-surface px-4 md:px-6 py-4 shrink-0 grid grid-cols-1 md:grid-cols-4 gap-4 items-center">
+      <div className="border-b border-border glass-card border-none px-4 md:px-6 py-4 shrink-0 grid grid-cols-1 md:grid-cols-4 gap-4 items-center">
         <div>
           <span className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
             Destino Alvo
@@ -706,7 +703,7 @@ Resuma de forma profissional e persuasiva (estilo consultor premium de turismo) 
       {/* Grid Workspace */}
       <div className="flex-1 flex overflow-hidden">
         {/* Left Side: Scenarios Control */}
-        <div className="w-80 border-r border-border bg-surface-alt/25 flex flex-col overflow-y-auto p-4 shrink-0">
+        <div className="w-80 border-r border-border glass bg-white/5 border-white/10/25 flex flex-col overflow-y-auto p-4 shrink-0">
           <div className="flex items-center justify-between mb-4 pb-2 border-b border-border">
             <h3 className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
               1. Cenários de Busca
@@ -740,7 +737,7 @@ Resuma de forma profissional e persuasiva (estilo consultor premium de turismo) 
                 return (
                   <div
                     key={sc.id}
-                    className={`rounded border p-3 bg-surface hover:border-brand/40 transition-all ${
+                    className={`rounded border p-3 glass-card border-none hover:border-brand/40 transition-all ${
                       isActive ? "border-brand ring-1 ring-brand/10 bg-brand/5" : "border-border"
                     }`}
                   >
@@ -863,7 +860,7 @@ Resuma de forma profissional e persuasiva (estilo consultor premium de turismo) 
 
           {/* Banner: GDS não configurado */}
           {apiNotConfigured && (
-            <div className="mb-4 p-3 bg-warning/5 border border-warning/30 rounded-2xl">
+            <div className="mb-4 p-3 bg-warning/5 border border-warning/30 rounded-[var(--radius-card)]">
               <div className="flex items-start gap-2.5">
                 <AlertTriangle className="h-4 w-4 text-warning shrink-0 mt-0.5" />
                 <div>
@@ -892,15 +889,15 @@ Resuma de forma profissional e persuasiva (estilo consultor premium de turismo) 
         </div>
 
         {/* Right Side: Tabbed Container */}
-        <div className="flex-1 flex flex-col overflow-hidden bg-surface">
+        <div className="flex-1 flex flex-col overflow-hidden glass-card border-none">
           {/* Tab Switcher */}
-          <div className="border-b border-border bg-surface-alt/20 px-6 py-2 shrink-0 flex items-center gap-4">
+          <div className="border-b border-border glass bg-white/5 border-white/10/20 px-6 py-2 shrink-0 flex items-center gap-4">
             <button
               onClick={() => setRightTab("matrix")}
               className={`px-3 py-1.5 text-xs font-semibold rounded-full border transition-all ${
                 rightTab === "matrix"
-                  ? "bg-brand text-brand-foreground border-brand shadow-sm"
-                  : "border-transparent text-muted-foreground hover:text-foreground hover:bg-surface-alt"
+                  ? "bg-brand text-brand-foreground border-brand shadow-none"
+                  : "border-transparent text-muted-foreground hover:text-foreground hover:glass bg-white/5 border-white/10"
               }`}
             >
               Matriz de Comparação
@@ -909,8 +906,8 @@ Resuma de forma profissional e persuasiva (estilo consultor premium de turismo) 
               onClick={() => setRightTab("simulation")}
               className={`px-3 py-1.5 text-xs font-semibold rounded-full border transition-all flex items-center gap-1.5 ${
                 rightTab === "simulation"
-                  ? "bg-brand text-brand-foreground border-brand shadow-sm"
-                  : "border-transparent text-muted-foreground hover:text-foreground hover:bg-surface-alt"
+                  ? "bg-brand text-brand-foreground border-brand shadow-none"
+                  : "border-transparent text-muted-foreground hover:text-foreground hover:glass bg-white/5 border-white/10"
               }`}
             >
               <Sparkles className="h-3.5 w-3.5" />
@@ -919,9 +916,9 @@ Resuma de forma profissional e persuasiva (estilo consultor premium de turismo) 
           </div>
 
           {rightTab === "matrix" ? (
-            <div className="flex-1 overflow-x-auto overflow-y-hidden bg-surface flex py-6 px-6 gap-6">
+            <div className="flex-1 overflow-x-auto overflow-y-hidden glass-card border-none flex py-6 px-6 gap-6">
               {isCandidatesError ? (
-                <div className="flex-1 flex flex-col items-center justify-center text-center p-6 bg-red-50/20 border border-red-200 rounded-2xl">
+                <div className="flex-1 flex flex-col items-center justify-center text-center p-6 bg-red-50/20 border border-red-200 rounded-[var(--radius-card)]">
                   <AlertTriangle className="h-8 w-8 text-red-655 mb-2" />
                   <h3 className="text-sm font-semibold text-red-800">Falha ao carregar pacotes qualificados</h3>
                   <p className="text-xs text-red-600 mt-1 max-w-sm">
@@ -947,11 +944,11 @@ Resuma de forma profissional e persuasiva (estilo consultor premium de turismo) 
                   return (
                     <div
                       key={cand.id}
-                      className="w-96 rounded border border-border bg-surface shrink-0 flex flex-col justify-between overflow-hidden shadow-sm"
+                      className="w-96 rounded border-none glass-card border-none shrink-0 flex flex-col justify-between overflow-hidden shadow-none"
                     >
                       <div>
                         {/* Candidate Header */}
-                        <div className="bg-surface-alt px-4 py-3 border-b border-border flex items-center justify-between">
+                        <div className="glass bg-white/5 border-white/10 px-4 py-3 border-b border-border flex items-center justify-between">
                           <div>
                             <div className="flex items-center gap-1.5">
                               <h3 className="text-xs font-bold text-foreground line-clamp-1">
@@ -984,7 +981,7 @@ Resuma de forma profissional e persuasiva (estilo consultor premium de turismo) 
                         </div>
 
                         {/* Price and Overview */}
-                        <div className="p-4 border-b border-border flex justify-between items-baseline bg-surface-alt/10">
+                        <div className="p-4 border-b border-border flex justify-between items-baseline glass bg-white/5 border-white/10/10">
                           <span className="text-xs text-muted-foreground">
                             Preço Total Estimado
                           </span>
@@ -1019,7 +1016,7 @@ Resuma de forma profissional e persuasiva (estilo consultor premium de turismo) 
                                 Métricas de Conforto
                               </span>
                               <div className="grid grid-cols-3 gap-2 text-center text-[10px]">
-                                <div className="bg-surface-alt rounded p-1">
+                                <div className="glass bg-white/5 border-white/10 rounded p-1">
                                   <span className="block text-muted-foreground font-semibold">
                                     Voos
                                   </span>
@@ -1027,7 +1024,7 @@ Resuma de forma profissional e persuasiva (estilo consultor premium de turismo) 
                                     {card.dimensions?.flight_score || 0}
                                   </span>
                                 </div>
-                                <div className="bg-surface-alt rounded p-1">
+                                <div className="glass bg-white/5 border-white/10 rounded p-1">
                                   <span className="block text-muted-foreground font-semibold">
                                     Hotel
                                   </span>
@@ -1035,7 +1032,7 @@ Resuma de forma profissional e persuasiva (estilo consultor premium de turismo) 
                                     {card.dimensions?.hotel_score || 0}
                                   </span>
                                 </div>
-                                <div className="bg-surface-alt rounded p-1">
+                                <div className="glass bg-white/5 border-white/10 rounded p-1">
                                   <span className="block text-muted-foreground font-semibold">
                                     Logística
                                   </span>
@@ -1048,7 +1045,7 @@ Resuma de forma profissional e persuasiva (estilo consultor premium de turismo) 
                           )}
 
                           {/* AI explanation panel */}
-                          <div className="bg-surface-alt/40 border border-border/60 rounded p-3 text-[11px]">
+                          <div className="glass bg-white/5 border-white/10/40 border-none/60 rounded p-3 text-[11px]">
                             <span className="font-bold text-foreground flex items-center gap-1">
                               <Sparkles className="h-3.5 w-3.5 text-brand" />
                               Consultoria Digital
@@ -1090,7 +1087,7 @@ Resuma de forma profissional e persuasiva (estilo consultor premium de turismo) 
                       </div>
 
                       {/* Candidate Footer Actions */}
-                      <div className="p-4 border-t border-border bg-surface-alt/25 flex gap-2">
+                      <div className="p-4 border-t border-border glass bg-white/5 border-white/10/25 flex gap-2">
                         {cand.status !== "invalid" && (
                           <GhostButton
                             onClick={() => {
@@ -1102,7 +1099,7 @@ Resuma de forma profissional e persuasiva (estilo consultor premium de turismo) 
                               }
                             }}
                             disabled={rejecting !== null}
-                            className="border border-border text-danger hover:bg-danger-bg text-xs px-2.5 h-9 shrink-0"
+                            className="border-none text-danger hover:bg-danger-bg text-xs px-2.5 h-9 shrink-0"
                           >
                             {rejecting === cand.id ? (
                               <Loader2 className="h-3.5 w-3.5 animate-spin" />
@@ -1141,9 +1138,9 @@ Resuma de forma profissional e persuasiva (estilo consultor premium de turismo) 
               )}
             </div>
           ) : (
-            <div className="flex-1 flex flex-col overflow-y-auto bg-surface-alt/10 p-6 gap-6">
+            <div className="flex-1 flex flex-col overflow-y-auto glass bg-white/5 border-white/10/10 p-6 gap-6">
               {/* Header inside Tab */}
-              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-surface border border-border rounded-[var(--radius-card)] p-5 shadow-xs">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 glass-card border-none border-none rounded-[var(--radius-card)] p-5 shadow-xs">
                 <div>
                   <h3 className="text-sm font-bold text-foreground flex items-center gap-1.5">
                     <Sparkles className="h-4 w-4 text-brand" />
@@ -1186,7 +1183,7 @@ Resuma de forma profissional e persuasiva (estilo consultor premium de turismo) 
                   </p>
                 </div>
               ) : simulationRuns.length === 0 ? (
-                <div className="flex-1 border border-dashed border-border rounded-[var(--radius-card)] flex flex-col items-center justify-center text-center p-8 bg-surface">
+                <div className="flex-1 border border-dashed border-border rounded-[var(--radius-card)] flex flex-col items-center justify-center text-center p-8 glass-card border-none">
                   <Sparkles className="h-10 w-10 text-muted-foreground/30 mb-2 animate-pulse" />
                   <h4 className="text-sm font-semibold text-foreground">
                     Nenhuma Simulação Registrada
@@ -1199,7 +1196,7 @@ Resuma de forma profissional e persuasiva (estilo consultor premium de turismo) 
               ) : (
                 <div className="grid grid-cols-1 xl:grid-cols-3 gap-6 items-start">
                   {/* Heatmap Matrix Table */}
-                  <div className="xl:col-span-2 bg-surface border border-border rounded-[var(--radius-card)] p-5 shadow-xs flex flex-col">
+                  <div className="xl:col-span-2 glass-card border-none border-none rounded-[var(--radius-card)] p-5 shadow-xs flex flex-col">
                     <div className="flex items-center justify-between mb-4 border-b border-border/80 pb-3">
                       <span className="text-xs font-bold text-muted-foreground uppercase tracking-wider">
                         Matriz de Calor (Heatmap)
@@ -1235,7 +1232,7 @@ Resuma de forma profissional e persuasiva (estilo consultor premium de turismo) 
                             (persona) => (
                               <tr
                                 key={persona}
-                                className="hover:bg-surface-alt/40 transition-colors"
+                                className="hover:glass bg-white/5 border-white/10/40 transition-colors"
                               >
                                 <td className="py-3 px-4 text-xs font-bold text-foreground uppercase tracking-wider">
                                   {persona}
@@ -1296,7 +1293,7 @@ Resuma de forma profissional e persuasiva (estilo consultor premium de turismo) 
                   </div>
 
                   {/* Detail Panel */}
-                  <div className="bg-surface border border-border rounded-[var(--radius-card)] p-5 shadow-xs">
+                  <div className="glass-card border-none border-none rounded-[var(--radius-card)] p-5 shadow-xs">
                     <h4 className="text-xs font-bold text-muted-foreground uppercase tracking-wider mb-4 border-b border-border pb-3">
                       Detalhes da Persona
                     </h4>
@@ -1390,7 +1387,7 @@ Resuma de forma profissional e persuasiva (estilo consultor premium de turismo) 
           onClick={() => setRulesOpen(false)}
         >
           <div
-            className="h-full w-full max-w-md overflow-y-auto border-l border-border bg-surface p-6 shadow-xl flex flex-col justify-between"
+            className="h-full w-full max-w-md overflow-y-auto border-l border-border glass-card border-none p-6 shadow-xl flex flex-col justify-between"
             onClick={(e) => e.stopPropagation()}
           >
             <div>
@@ -1406,14 +1403,14 @@ Resuma de forma profissional e persuasiva (estilo consultor premium de turismo) 
                 </div>
                 <button
                   onClick={() => setRulesOpen(false)}
-                  className="rounded-full p-1.5 text-muted-foreground hover:bg-surface-alt hover:text-foreground transition-colors"
+                  className="rounded-full p-1.5 text-muted-foreground hover:glass bg-white/5 border-white/10 hover:text-foreground transition-colors"
                 >
                   <Plus className="h-4 w-4 rotate-45" />
                 </button>
               </div>
 
               <div className="space-y-6">
-                <div className="bg-surface-alt/40 border border-border/50 rounded-[var(--radius-card)] p-4 space-y-4">
+                <div className="glass bg-white/5 border-white/10/40 border-none/50 rounded-[var(--radius-card)] p-4 space-y-4">
                   <h3 className="text-xs font-bold uppercase tracking-wider text-foreground">
                     Pesos de Scoring (Soma deve ser 100%)
                   </h3>
@@ -1479,7 +1476,7 @@ Resuma de forma profissional e persuasiva (estilo consultor premium de turismo) 
                   </div>
                 </div>
 
-                <div className="bg-surface-alt/40 border border-border/50 rounded-[var(--radius-card)] p-4 space-y-3">
+                <div className="glass bg-white/5 border-white/10/40 border-none/50 rounded-[var(--radius-card)] p-4 space-y-3">
                   <h3 className="text-xs font-bold uppercase tracking-wider text-foreground">
                     Restrições Logísticas Ativas
                   </h3>

@@ -112,7 +112,7 @@ function PublicBlogPage() {
                 navigator.clipboard.writeText(window.location.href);
                 toast.success("Link copiado para compartilhar!");
               }}
-              className="flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-border text-xs font-bold hover:bg-surface transition-colors"
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-full border-none text-xs font-bold hover:glass-card border-none transition-colors"
             >
               <Share2 className="w-3 h-3" /> Compartilhar
             </button>
@@ -158,7 +158,7 @@ function PublicBlogPage() {
 
           {/* Cover Image */}
           {post.cover_image_url && (
-            <div className="mb-12 rounded-3xl overflow-hidden bg-surface border border-border">
+            <div className="mb-12 rounded-3xl overflow-hidden glass-card border-none border-none">
               <img
                 src={post.cover_image_url}
                 alt={post.title}
@@ -180,7 +180,7 @@ function PublicBlogPage() {
                 {post.tags.map((t: string) => (
                   <span
                     key={t}
-                    className="rounded-full bg-surface-alt px-3 py-1.5 text-xs font-semibold text-foreground"
+                    className="rounded-full glass bg-white/5 border-white/10 px-3 py-1.5 text-xs font-semibold text-foreground"
                   >
                     #{t}
                   </span>
@@ -201,7 +201,7 @@ function PublicBlogPage() {
                   href={`/p/${agency_slug}/blog/${r.slug}`}
                   className="group flex flex-col gap-3"
                 >
-                  <div className="aspect-video bg-surface-alt rounded-2xl overflow-hidden">
+                  <div className="aspect-video glass bg-white/5 border-white/10 rounded-[var(--radius-card)] overflow-hidden">
                     {r.cover_image_url ? (
                       <img
                         src={r.cover_image_url}
@@ -209,7 +209,7 @@ function PublicBlogPage() {
                         className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                       />
                     ) : (
-                      <div className="w-full h-full flex items-center justify-center text-muted-foreground bg-surface border border-border">
+                      <div className="w-full h-full flex items-center justify-center text-muted-foreground glass-card border-none border-none">
                         <BookOpen className="w-8 h-8 opacity-20" />
                       </div>
                     )}
@@ -232,7 +232,7 @@ function PublicBlogPage() {
       </main>
 
       {/* Seção de Captura de Leads (Estilo Apple, grande e imersivo) */}
-      <section id="fale-conosco" className="border-t border-border bg-surface-alt/50 pb-20 pt-20">
+      <section id="fale-conosco" className="border-t border-border glass bg-white/5 border-white/10/50 pb-20 pt-20">
         <div className="max-w-4xl mx-auto px-6">
           <div className="bg-foreground text-background rounded-[2.5rem] p-8 md:p-14 relative overflow-hidden">
             <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full blur-3xl -mr-20 -mt-20"></div>
@@ -296,7 +296,7 @@ function LeadCaptureForm({ agencySlug, origin }: { agencySlug: string; origin: s
 
   if (success) {
     return (
-      <div className="bg-success/20 border border-success/30 rounded-2xl p-6 text-success font-bold text-center">
+      <div className="bg-success/20 border border-success/30 rounded-[var(--radius-card)] p-6 text-success font-bold text-center">
         Recebemos seu contato! Um de nossos consultores vai te chamar em breve.
       </div>
     );
@@ -314,14 +314,14 @@ function LeadCaptureForm({ agencySlug, origin }: { agencySlug: string; origin: s
         value={name}
         onChange={(e) => setName(e.target.value)}
         placeholder="Seu nome"
-        className="w-full h-14 px-5 rounded-2xl bg-white/10 border border-white/20 text-white placeholder:text-white/40 outline-none focus:border-white/50 transition-colors"
+        className="w-full h-14 px-5 rounded-[var(--radius-card)] bg-white/10 border border-white/20 text-white placeholder:text-white/40 outline-none focus:border-white/50 transition-colors"
       />
       <input
         required
         value={contact}
         onChange={(e) => setContact(e.target.value)}
         placeholder="Seu WhatsApp ou E-mail"
-        className="w-full h-14 px-5 rounded-2xl bg-white/10 border border-white/20 text-white placeholder:text-white/40 outline-none focus:border-white/50 transition-colors"
+        className="w-full h-14 px-5 rounded-[var(--radius-card)] bg-white/10 border border-white/20 text-white placeholder:text-white/40 outline-none focus:border-white/50 transition-colors"
       />
 
       <div className="flex items-start gap-3 px-1">
@@ -344,7 +344,7 @@ function LeadCaptureForm({ agencySlug, origin }: { agencySlug: string; origin: s
       <button
         type="submit"
         disabled={submit.isPending}
-        className="w-full h-14 rounded-2xl bg-white text-black font-black uppercase tracking-wider hover:bg-white/90 transition-colors disabled:opacity-50"
+        className="w-full h-14 rounded-[var(--radius-card)] bg-white text-black font-black uppercase tracking-wider hover:bg-white/90 transition-colors disabled:opacity-50"
       >
         {submit.isPending ? "Enviando..." : "Quero Falar com um Consultor"}
       </button>

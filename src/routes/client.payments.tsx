@@ -25,9 +25,9 @@ function ClientPaymentsPage() {
         <EmptyState title="Sem parcelas" description="Você não tem pagamentos pendentes." />
       )}
       {q.data && q.data.length > 0 && (
-        <div className="overflow-hidden rounded-2xl border border-border">
+        <div className="overflow-hidden rounded-[var(--radius-card)] border-none">
           <table className="w-full text-sm">
-            <thead className="bg-surface-alt/40 text-left text-[11px] uppercase text-muted-foreground">
+            <thead className="glass bg-white/5 border-white/10/40 text-left text-[11px] uppercase text-muted-foreground">
               <tr>
                 <th className="px-3 py-2">Parcela</th>
                 <th className="px-3 py-2">Vencimento</th>

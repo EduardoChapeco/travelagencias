@@ -97,7 +97,7 @@ function Page() {
       />
 
       {q.isError && (
-        <div className="mt-4 flex flex-col items-center justify-center py-8 px-4 text-center rounded-2xl border border-red-200 bg-red-50/60 max-w-xl mx-auto">
+        <div className="mt-4 flex flex-col items-center justify-center py-8 px-4 text-center rounded-[var(--radius-card)] border border-red-200 bg-red-50/60 max-w-xl mx-auto">
           <AlertCircle className="h-5 w-5 text-red-600 mb-1.5" />
           <h3 className="text-xs font-bold text-red-800">Falha ao Carregar Chaves</h3>
           <p className="text-[11px] text-red-600 mt-0.5">
@@ -109,7 +109,7 @@ function Page() {
       <div className="mt-4 space-y-4 max-w-5xl">
         <form
           onSubmit={add}
-          className="grid gap-4 rounded-2xl border border-border bg-surface p-4 sm:grid-cols-5 items-end"
+          className="grid gap-4 rounded-[var(--radius-card)] border-none glass-card border-none p-4 sm:grid-cols-5 items-end"
         >
           <Field label="Provedor (ex: gemini, resend)">
             <Input
@@ -167,9 +167,9 @@ function Page() {
         )}
 
         {!q.isLoading && keysList.length > 0 && (
-          <div className="overflow-hidden rounded-2xl border border-border bg-surface">
+          <div className="overflow-hidden rounded-[var(--radius-card)] border-none glass-card border-none">
             <table className="w-full text-sm">
-              <thead className="bg-surface-alt text-xs text-muted-foreground border-b border-border">
+              <thead className="glass bg-white/5 border-white/10 text-xs text-muted-foreground border-b border-border">
                 <tr>
                   <th className="px-4 py-2.5 text-left font-medium">Provedor</th>
                   <th className="px-4 py-2.5 text-left font-medium">Label</th>
@@ -181,7 +181,7 @@ function Page() {
               </thead>
               <tbody className="divide-y divide-border">
                 {keysList.map((k: ApiKey) => (
-                  <tr key={k.id} className="hover:bg-surface-alt/30 transition-colors">
+                  <tr key={k.id} className="hover:glass bg-white/5 border-white/10/30 transition-colors">
                     <td className="px-4 py-3 font-mono text-xs font-semibold text-foreground/80">
                       {k.provider}
                     </td>

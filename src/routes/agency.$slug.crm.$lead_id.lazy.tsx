@@ -205,7 +205,7 @@ function LeadDetailPage() {
   if (leadQ.isError || !leadQ.data) {
     return (
       <div className="fixed inset-0 z-50 flex items-center justify-center bg-background/60 backdrop-blur-sm">
-        <div className="flex flex-col items-center gap-3 p-8 rounded-2xl border border-red-200 bg-red-50 text-center max-w-sm">
+        <div className="flex flex-col items-center gap-3 p-8 rounded-[var(--radius-card)] border border-red-200 bg-red-50 text-center max-w-sm">
           <div className="h-10 w-10 rounded-full bg-red-100 flex items-center justify-center">
             <AlertCircle className="h-5 w-5 text-red-600" />
           </div>
@@ -215,7 +215,7 @@ function LeadDetailPage() {
           </p>
           <button
             onClick={() => navigate({ to: "/agency/$slug/crm", params: { slug } })}
-            className="mt-1 h-8 px-4 rounded-2xl bg-red-100 text-xs font-semibold text-red-800 hover:bg-red-200 cursor-pointer transition-colors"
+            className="mt-1 h-8 px-4 rounded-[var(--radius-card)] bg-red-100 text-xs font-semibold text-red-800 hover:bg-red-200 cursor-pointer transition-colors"
           >
             Voltar ao CRM
           </button>
@@ -450,10 +450,10 @@ function LeadDetailPage() {
         <div className="space-y-6">
           <ConfirmDialog />
           {/* Header Actions Row */}
-          <div className="flex flex-wrap items-center justify-between gap-4 bg-surface-alt/40 border border-border/60 p-4 rounded-[var(--radius-card)]">
+          <div className="flex flex-wrap items-center justify-between gap-4 glass bg-white/5 border-white/10/40 border-none/60 p-4 rounded-[var(--radius-card)]">
             <div className="flex items-center gap-3">
               {lead.avatar_url ? (
-                <div className="relative group h-12 w-12 rounded-full overflow-hidden border border-border">
+                <div className="relative group h-12 w-12 rounded-full overflow-hidden border-none">
                   <img src={lead.avatar_url} className="h-full w-full object-cover" />
                   <label className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 flex items-center justify-center cursor-pointer transition-opacity">
                     <Camera className="h-4 w-4 text-white" />
@@ -466,7 +466,7 @@ function LeadDetailPage() {
                   </label>
                 </div>
               ) : (
-                <label className="h-12 w-12 rounded-full border border-dashed border-border hover:border-brand/60 flex items-center justify-center cursor-pointer group bg-surface">
+                <label className="h-12 w-12 rounded-full border border-dashed border-border hover:border-brand/60 flex items-center justify-center cursor-pointer group glass-card border-none">
                   <Camera className="h-5 w-5 text-muted-foreground group-hover:text-brand" />
                   <input
                     type="file"
@@ -651,7 +651,7 @@ function LeadDetailPage() {
                               toast.error("Falha ao salvar");
                             }
                           }}
-                          className="text-[10px] font-bold bg-background border border-border px-3 py-1.5 rounded-2xl hover:border-brand/40 transition-colors cursor-pointer"
+                          className="text-[10px] font-bold bg-background border-none px-3 py-1.5 rounded-[var(--radius-card)] hover:border-brand/40 transition-colors cursor-pointer"
                         >
                           {opt.label}
                         </button>
@@ -662,7 +662,7 @@ function LeadDetailPage() {
 
                 {/* Stale status notification with reactivation option */}
                 {lead.staleness_status && lead.staleness_status !== "active" && (
-                  <div className="bg-muted/50 border border-border p-4 rounded-[var(--radius-card)] flex items-center justify-between gap-4">
+                  <div className="bg-muted/50 border-none p-4 rounded-[var(--radius-card)] flex items-center justify-between gap-4">
                     <div>
                       <span className="text-xs font-bold text-foreground block">
                         Lead Classificado como Inativo
@@ -693,7 +693,7 @@ function LeadDetailPage() {
                           toast.error("Falha ao reativar");
                         }
                       }}
-                      className="text-xs font-bold h-8 px-3 rounded-2xl"
+                      className="text-xs font-bold h-8 px-3 rounded-[var(--radius-card)]"
                     >
                       Re-ativar Lead
                     </GhostButton>
@@ -707,7 +707,7 @@ function LeadDetailPage() {
                 </div>
 
                 {/* Consentimento LGPD */}
-                <div className="rounded-[var(--radius-card)] border border-border bg-surface p-5 flex items-center justify-between gap-4">
+                <div className="rounded-[var(--radius-card)] border-none glass-card border-none p-5 flex items-center justify-between gap-4">
                   <div>
                     <h4 className="font-bold text-foreground text-sm flex items-center gap-1.5">
                       Consentimento LGPD
@@ -730,7 +730,7 @@ function LeadDetailPage() {
                 </div>
 
                 {/* Stage and Owner Dropdowns Card */}
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 bg-surface p-5 rounded-[var(--radius-card)] border border-border">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 glass-card border-none p-5 rounded-[var(--radius-card)] border-none">
                   <div>
                     <label className="block text-[10px] font-bold uppercase tracking-widest text-muted-foreground mb-1.5">
                       Estágio do Funil
@@ -799,7 +799,7 @@ function LeadDetailPage() {
                 </div>
 
                 {/* Tag pill list and creator */}
-                <div className="rounded-[var(--radius-card)] border border-border bg-surface p-5 space-y-4">
+                <div className="rounded-[var(--radius-card)] border-none glass-card border-none p-5 space-y-4">
                   <h4 className="text-xs font-bold uppercase tracking-widest text-muted-foreground border-b border-border/40 pb-2">
                     Tags do Lead
                   </h4>
@@ -836,7 +836,7 @@ function LeadDetailPage() {
                       placeholder="Nome da tag..."
                       value={newTagName}
                       onChange={(e) => setNewTagName(e.target.value)}
-                      className="h-8 text-xs rounded-2xl"
+                      className="h-8 text-xs rounded-[var(--radius-card)]"
                     />
 
                     <div className="flex flex-wrap gap-1.5">
@@ -859,7 +859,7 @@ function LeadDetailPage() {
                     <GhostButton
                       onClick={addTag}
                       disabled={!newTagName.trim()}
-                      className="w-full h-8 rounded-2xl text-xs font-bold"
+                      className="w-full h-8 rounded-[var(--radius-card)] text-xs font-bold"
                     >
                       <Plus className="h-3.5 w-3.5 mr-1 inline" /> Criar Tag
                     </GhostButton>
@@ -868,7 +868,7 @@ function LeadDetailPage() {
 
                 {/* General notes */}
                 {lead.notes && (
-                  <div className="rounded-[var(--radius-card)] border border-border bg-surface p-5">
+                  <div className="rounded-[var(--radius-card)] border-none glass-card border-none p-5">
                     <h4 className="text-xs font-bold uppercase tracking-widest text-muted-foreground border-b border-border/40 pb-2 mb-3">
                       Anotações de Cadastro
                     </h4>
@@ -894,14 +894,14 @@ function LeadDetailPage() {
                   <div className="flex gap-2">
                     <GhostButton
                       onClick={handleCopyFormLink}
-                      className="h-8 px-3 rounded-2xl text-xs font-bold border-brand/20 bg-brand/5 hover:bg-brand/10"
+                      className="h-8 px-3 rounded-[var(--radius-card)] text-xs font-bold border-brand/20 bg-brand/5 hover:bg-brand/10"
                     >
                       <FileText className="h-3.5 w-3.5 mr-1" /> Copiar Link Form
                     </GhostButton>
                     {lead.phone && (
                       <button
                         onClick={handleShareFormWhatsApp}
-                        className="inline-flex h-8 items-center gap-1.5 rounded-2xl border border-emerald-600/30 bg-emerald-600/5 hover:bg-emerald-600/10 px-3 text-xs font-bold text-emerald-600 transition-colors"
+                        className="inline-flex h-8 items-center gap-1.5 rounded-[var(--radius-card)] border border-emerald-600/30 bg-emerald-600/5 hover:bg-emerald-600/10 px-3 text-xs font-bold text-emerald-600 transition-colors"
                       >
                         <MessageSquare className="h-3.5 w-3.5" /> Enviar Form no WhatsApp
                       </button>
@@ -910,7 +910,7 @@ function LeadDetailPage() {
                 </div>
 
                 {/* Travelers List */}
-                <div className="rounded-[var(--radius-card)] border border-border bg-surface p-5 space-y-4">
+                <div className="rounded-[var(--radius-card)] border-none glass-card border-none p-5 space-y-4">
                   <div className="flex items-center justify-between border-b border-border/40 pb-2">
                     <h4 className="text-xs font-bold uppercase tracking-widest text-muted-foreground">
                       Viajantes Vinculados / Acompanhantes
@@ -929,7 +929,7 @@ function LeadDetailPage() {
                       {lead.pax_list.map((pax, index) => (
                         <div
                           key={index}
-                          className="border border-border/60 p-4 rounded-[var(--radius-card)] bg-surface-alt/15 relative hover:border-border transition-colors"
+                          className="border-none/60 p-4 rounded-[var(--radius-card)] glass bg-white/5 border-white/10/15 relative hover:border-border transition-colors"
                         >
                           <button
                             onClick={() => {
@@ -990,7 +990,7 @@ function LeadDetailPage() {
                 </div>
 
                 {/* Add Traveler form */}
-                <div className="rounded-[var(--radius-card)] border border-border bg-surface p-5 space-y-4">
+                <div className="rounded-[var(--radius-card)] border-none glass-card border-none p-5 space-y-4">
                   <button
                     onClick={() => setPaxFormOpen((o) => !o)}
                     className="text-xs font-bold text-brand hover:underline flex items-center gap-1 cursor-pointer"
@@ -1023,7 +1023,7 @@ function LeadDetailPage() {
                           toast.error("Falha ao salvar acompanhante");
                         }
                       }}
-                      className="border border-border p-4 rounded-[var(--radius-card)] bg-surface-alt/10 space-y-3"
+                      className="border-none p-4 rounded-[var(--radius-card)] glass bg-white/5 border-white/10/10 space-y-3"
                     >
                       <Field label="Nome Completo *">
                         <Input
@@ -1092,7 +1092,7 @@ function LeadDetailPage() {
 
               <TabsContent value="meetings" className="space-y-6">
                 {/* Meeting Scheduler and Follow-ups */}
-                <div className="rounded-[var(--radius-card)] border border-border bg-surface p-5 space-y-4">
+                <div className="rounded-[var(--radius-card)] border-none glass-card border-none p-5 space-y-4">
                   <div className="flex items-center justify-between border-b border-border/40 pb-2">
                     <h4 className="text-xs font-bold uppercase tracking-widest text-muted-foreground">
                       Compromissos & Reuniões Agendadas
@@ -1135,7 +1135,7 @@ function LeadDetailPage() {
                           toast.error("Falha ao criar compromisso");
                         }
                       }}
-                      className="border border-border p-4 rounded-[var(--radius-card)] bg-surface-alt/10 space-y-3"
+                      className="border-none p-4 rounded-[var(--radius-card)] glass bg-white/5 border-white/10/10 space-y-3"
                     >
                       <Field label="Título do Compromisso *">
                         <Input
@@ -1218,7 +1218,7 @@ function LeadDetailPage() {
                       {meetingsQ.data.map((meeting: LeadMeeting) => (
                         <div
                           key={meeting.id}
-                          className="bg-surface-alt/20 border border-border/60 rounded-[var(--radius-card)] p-4 flex flex-col md:flex-row md:items-center justify-between gap-4"
+                          className="glass bg-white/5 border-white/10/20 border-none/60 rounded-[var(--radius-card)] p-4 flex flex-col md:flex-row md:items-center justify-between gap-4"
                         >
                           <div className="space-y-1 min-w-0">
                             <span className="text-xs font-bold text-foreground block truncate">
@@ -1249,7 +1249,7 @@ function LeadDetailPage() {
                                 navigator.clipboard.writeText(inviteText);
                                 toast.success("Convite copiado!");
                               }}
-                              className="text-[10px] font-extrabold uppercase bg-brand/5 border border-brand/10 hover:bg-brand/10 text-brand px-2.5 py-1.5 rounded-2xl transition-colors cursor-pointer"
+                              className="text-[10px] font-extrabold uppercase bg-brand/5 border border-brand/10 hover:bg-brand/10 text-brand px-2.5 py-1.5 rounded-[var(--radius-card)] transition-colors cursor-pointer"
                               title="Copiar texto de convite para enviar por email ou whats"
                             >
                               Copiar Convite
@@ -1269,10 +1269,10 @@ function LeadDetailPage() {
                                   });
                                 }
                               }}
-                              className={`text-[10px] font-extrabold uppercase px-2.5 py-1.5 rounded-2xl transition-colors cursor-pointer ${
+                              className={`text-[10px] font-extrabold uppercase px-2.5 py-1.5 rounded-[var(--radius-card)] transition-colors cursor-pointer ${
                                 meeting.google_event_id
                                   ? "bg-success/10 text-success border border-success/20 cursor-default"
-                                  : "bg-surface border border-border/80 hover:border-brand/40 text-muted-foreground hover:text-foreground"
+                                  : "glass-card border-none border-none/80 hover:border-brand/40 text-muted-foreground hover:text-foreground"
                               }`}
                             >
                               {meeting.google_event_id ? "✓ Sincronizado" : "Google Agenda"}
@@ -1298,7 +1298,7 @@ function LeadDetailPage() {
                                   },
                                 });
                               }}
-                              className="p-1.5 bg-danger/5 hover:bg-danger/10 border border-danger/20 text-danger rounded-2xl transition-colors cursor-pointer"
+                              className="p-1.5 bg-danger/5 hover:bg-danger/10 border border-danger/20 text-danger rounded-[var(--radius-card)] transition-colors cursor-pointer"
                               title="Deletar"
                             >
                               <Trash className="h-3.5 w-3.5" />
@@ -1313,7 +1313,7 @@ function LeadDetailPage() {
 
               <TabsContent value="proposals" className="space-y-6">
                 {/* Proposals Integration */}
-                <div className="rounded-[var(--radius-card)] border border-border bg-surface p-5 space-y-4">
+                <div className="rounded-[var(--radius-card)] border-none glass-card border-none p-5 space-y-4">
                   <div className="flex items-center justify-between border-b border-border/40 pb-2">
                     <h4 className="text-xs font-bold uppercase tracking-widest text-muted-foreground">
                       Propostas de Venda
@@ -1339,7 +1339,7 @@ function LeadDetailPage() {
                       {proposalsQ.data.map((prop) => (
                         <li
                           key={prop.id}
-                          className="bg-surface-alt/30 border border-border/50 rounded-2xl p-2.5 flex flex-col gap-1 text-xs"
+                          className="glass bg-white/5 border-white/10/30 border-none/50 rounded-[var(--radius-card)] p-2.5 flex flex-col gap-1 text-xs"
                         >
                           <div className="flex items-center justify-between font-bold">
                             <span className="text-foreground truncate">{prop.title}</span>
@@ -1351,7 +1351,7 @@ function LeadDetailPage() {
                             <span>
                               #{prop.number} · {fmtDate(prop.created_at)}
                             </span>
-                            <span className="uppercase text-[9px] font-bold px-1.5 py-0.5 bg-surface rounded border border-border">
+                            <span className="uppercase text-[9px] font-bold px-1.5 py-0.5 glass-card border-none rounded border-none">
                               {prop.status}
                             </span>
                           </div>
@@ -1362,12 +1362,12 @@ function LeadDetailPage() {
                 </div>
 
                 {/* Attachments Section */}
-                <div className="rounded-[var(--radius-card)] border border-border bg-surface p-5 space-y-4">
+                <div className="rounded-[var(--radius-card)] border-none glass-card border-none p-5 space-y-4">
                   <h4 className="text-xs font-bold uppercase tracking-widest text-muted-foreground border-b border-border/40 pb-2 flex items-center gap-1.5">
                     <Paperclip className="h-4 w-4 text-brand" /> Documentos e Anexos
                   </h4>
 
-                  <label className="border border-dashed border-border hover:border-brand/40 bg-surface-alt/10 hover:bg-surface-alt/20 rounded-[var(--radius-card)] p-4 flex flex-col items-center justify-center cursor-pointer transition-all">
+                  <label className="border border-dashed border-border hover:border-brand/40 glass bg-white/5 border-white/10/10 hover:glass bg-white/5 border-white/10/20 rounded-[var(--radius-card)] p-4 flex flex-col items-center justify-center cursor-pointer transition-all">
                     <Paperclip className="h-5 w-5 text-muted-foreground mb-1.5" />
                     <span className="text-xs font-bold text-foreground">
                       {uploading ? "Enviando arquivo..." : "Clique para anexar um arquivo"}
@@ -1413,7 +1413,7 @@ function LeadDetailPage() {
                               href={file.url}
                               download={file.name}
                               target="_blank"
-                              className="p-1.5 hover:bg-surface-alt rounded text-muted-foreground hover:text-foreground transition-colors"
+                              className="p-1.5 hover:glass bg-white/5 border-white/10 rounded text-muted-foreground hover:text-foreground transition-colors"
                               title="Baixar Arquivo"
                             >
                               <FileDown className="h-4 w-4" />
@@ -1541,7 +1541,7 @@ function LeadDetailPage() {
                 </div>
 
                 {/* Acessibilidade */}
-                <div className="border border-border p-4 rounded-[var(--radius-card)] space-y-3 bg-surface-alt/10">
+                <div className="border-none p-4 rounded-[var(--radius-card)] space-y-3 glass bg-white/5 border-white/10/10">
                   <span className="text-xs font-bold text-foreground block">
                     Acessibilidade & Cuidados Especiais
                   </span>

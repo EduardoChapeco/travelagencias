@@ -41,8 +41,7 @@ import { useAgency, getModuleName } from "@/lib/agency-context";
 import { signOut } from "@/lib/auth";
 import { supabase } from "@/integrations/supabase/client";
 import { useQuery } from "@tanstack/react-query";
-import { SlimSidebar, type SlimSidebarItem, type ContextItem, type AiAction } from "./SlimSidebar";
-import { DynamicIslandNav, type IslandNavItem } from "./DynamicIslandNav";
+import { DockNavigation, type SlimSidebarItem, type ContextItem } from "./DockNavigation";
 import { useUnreadConversations } from "@/hooks/inbox/useUnreadConversations";
 
 import { NAVIGATION_MODULES, buildContext } from "@/lib/navigation.config";
@@ -171,55 +170,27 @@ export function AppSidebar({
 
   // isHome é recebida como prop — não redeclarar aqui
 
-  // ── Map hub items → items para DynamicIslandNav ──
-  const islandItems: IslandNavItem[] = HUB_ITEMS.filter((h) => !h.adminOnly || isAdmin).map((h) => ({
+  // ── Map hub items → items ──
+  const islandItems: SlimSidebarItem[] = HUB_ITEMS.filter((h) => !h.adminOnly || isAdmin).map((h) => ({
     ...h,
     label: getModuleName(h.label, agency),
     badge: h.label === "inbox" ? (unreadCount > 0 ? unreadCount : undefined) : undefined,
   }));
 
   return (
-    <>
-      {/* ── Mobile Drawer (md:hidden) ──────────────────────────────────── */}
-      <div className="md:hidden">
-        <SlimSidebar
-          mobileOpen={mobileOpen}
-          onMobileClose={onMobileClose}
-          items={visibleHubs}
-          mobileItems={visibleMobileItems}
-          aiActions={aiActions}
-          brand={
-            <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-primary text-xs font-bold text-primary-foreground font-sans">
-              {(agency?.name ?? "T").charAt(0).toUpperCase()}
-            </div>
-          }
-          footer={
-            <button
-              onClick={() => signOut().then(() => navigate({ to: "/auth/login", replace: true }))}
-              className="flex h-8 w-8 items-center justify-center rounded-full text-muted-foreground transition-all hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
-              title="Sair da conta"
-            >
-              <LogOut className="h-[15px] w-[15px] shrink-0" strokeWidth={1.8} />
-            </button>
-          }
-        />
-      </div>
-
-      {/* ── Desktop Dynamic Island Nav (md+) — escondido na Home ───────── */}
-      <DynamicIslandNav
-        hidden={isHome}
-        items={islandItems}
-        contextItems={contextItems}
-        footer={
-          <button
-            onClick={() => signOut().then(() => navigate({ to: "/auth/login", replace: true }))}
-            className="flex h-8 w-full items-center justify-center rounded-full text-white/50 transition-all hover:bg-white/10 hover:text-white cursor-pointer"
-            title="Sair da conta"
-          >
-            <LogOut className="h-[14px] w-[14px] shrink-0" strokeWidth={1.8} />
-          </button>
-        }
-      />
-    </>
+    <DockNavigation
+      isHome={isHome}
+      items={islandItems}
+      contextItems={contextItems as ContextItem[]}
+      footer={
+        <button
+          onClick={() => signOut().then(() => navigate({ to: "/auth/login", replace: true }))}
+          className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full text-white/50 transition-all hover:bg-white/10 hover:text-white cursor-pointer"
+          title="Sair da conta"
+        >
+          <LogOut className="h-[18px] w-[18px] shrink-0" strokeWidth={2} />
+        </button>
+      }
+    />
   );
 }

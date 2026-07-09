@@ -3,8 +3,7 @@ import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useAgency } from "@/lib/agency-context";
-import { HeaderPortal } from "@/components/shell/HeaderPortal";
-import { ModuleToolbar } from "@/components/shell/ModuleToolbar";
+import { PageHeader } from "@/components/shell/PageHeader";
 import {
   Sparkles,
   Calendar,
@@ -99,8 +98,7 @@ function Page() {
 
   return (
     <div className="flex h-full flex-col overflow-hidden">
-      <HeaderPortal>
-        <ModuleToolbar
+              <PageHeader
           title="Auditoria de IA"
           actions={
             <button
@@ -112,8 +110,7 @@ function Page() {
             </button>
           }
         />
-      </HeaderPortal>
-
+      
       {/* Main Container */}
       <div className="flex-1 overflow-y-auto px-4  md:pr-6 py-4 min-h-0 font-sans space-y-6 pb-24">
         <div>
@@ -128,7 +125,7 @@ function Page() {
 
         {/* 1. Metrics Overview */}
         <div className="grid gap-4 grid-cols-2 md:grid-cols-4">
-          <div className="rounded-[var(--radius-card)] border border-border bg-surface p-4 flex flex-col justify-between shadow-xs">
+          <div className="rounded-[var(--radius-card)] border-none glass-card border-none p-4 flex flex-col justify-between shadow-xs">
             <span className="text-[10px] text-muted-foreground uppercase font-semibold">
               Total de Interações
             </span>
@@ -137,7 +134,7 @@ function Page() {
               <span className="text-[10px] text-muted-foreground">mensagens/ações</span>
             </div>
           </div>
-          <div className="rounded-[var(--radius-card)] border border-border bg-surface p-4 flex flex-col justify-between shadow-xs">
+          <div className="rounded-[var(--radius-card)] border-none glass-card border-none p-4 flex flex-col justify-between shadow-xs">
             <span className="text-[10px] text-muted-foreground uppercase font-semibold">
               Ferramentas Executadas
             </span>
@@ -148,7 +145,7 @@ function Page() {
               <span className="text-[10px] text-muted-foreground">actions</span>
             </div>
           </div>
-          <div className="rounded-[var(--radius-card)] border border-border bg-surface p-4 flex flex-col justify-between shadow-xs">
+          <div className="rounded-[var(--radius-card)] border-none glass-card border-none p-4 flex flex-col justify-between shadow-xs">
             <span className="text-[10px] text-muted-foreground uppercase font-semibold">
               Falhas / Erros
             </span>
@@ -164,7 +161,7 @@ function Page() {
               <span className="text-[10px] text-muted-foreground">exceções</span>
             </div>
           </div>
-          <div className="rounded-[var(--radius-card)] border border-border bg-surface p-4 flex flex-col justify-between shadow-xs">
+          <div className="rounded-[var(--radius-card)] border-none glass-card border-none p-4 flex flex-col justify-between shadow-xs">
             <span className="text-[10px] text-muted-foreground uppercase font-semibold">
               Isolamento Multi-Tenant
             </span>
@@ -176,13 +173,13 @@ function Page() {
         </div>
 
         {/* 2. Filter Controls */}
-        <div className="rounded-[var(--radius-card)] border border-border bg-surface p-4 flex flex-wrap gap-4 items-center">
+        <div className="rounded-[var(--radius-card)] border-none glass-card border-none p-4 flex flex-wrap gap-4 items-center">
           <div className="flex flex-col gap-1 shrink-0">
             <span className="text-[10px] text-muted-foreground uppercase">Operador</span>
             <select
               value={selectedUser}
               onChange={(e) => setSelectedUser(e.target.value)}
-              className="rounded-full border border-border bg-surface-alt px-2.5 py-1 text-xs outline-none text-foreground"
+              className="rounded-full border-none glass bg-white/5 border-white/10 px-2.5 py-1 text-xs outline-none text-foreground"
             >
               <option value="all">Todos os operadores</option>
               {members.map((m: any) => (
@@ -198,7 +195,7 @@ function Page() {
             <select
               value={selectedAction}
               onChange={(e) => setSelectedAction(e.target.value)}
-              className="rounded-full border border-border bg-surface-alt px-2.5 py-1 text-xs outline-none text-foreground cursor-pointer"
+              className="rounded-full border-none glass bg-white/5 border-white/10 px-2.5 py-1 text-xs outline-none text-foreground cursor-pointer"
             >
               <option value="all">Todas as ações</option>
               <option value="ai_chat_message">Mensagem de Chat (IA)</option>
@@ -212,8 +209,8 @@ function Page() {
         </div>
 
         {/* 3. Log Stream */}
-        <div className="rounded-[var(--radius-card)] border border-border bg-surface overflow-hidden shadow-xs">
-          <div className="border-b border-border bg-surface-alt px-4 py-3 flex items-center justify-between">
+        <div className="rounded-[var(--radius-card)] border-none glass-card border-none overflow-hidden shadow-xs">
+          <div className="border-b border-border glass bg-white/5 border-white/10 px-4 py-3 flex items-center justify-between">
             <span className="text-xs font-bold text-foreground">Fluxo de Eventos</span>
             <span className="text-[10px] text-muted-foreground">
               Mostrando os últimos 100 registros
@@ -243,7 +240,7 @@ function Page() {
                   <div
                     key={log.id}
                     className={cn(
-                      "p-4 transition-colors hover:bg-surface-alt/40",
+                      "p-4 transition-colors hover:glass bg-white/5 border-white/10/40",
                       isFailed && "bg-rose-500/[0.01]",
                     )}
                   >
@@ -302,7 +299,7 @@ function Page() {
 
                     {/* Expanded details container (JSON Payload) */}
                     {isExpanded && (
-                      <div className="mt-3 rounded border border-border/60 bg-surface-muted p-3 font-mono text-[10px] text-muted-foreground overflow-x-auto space-y-2">
+                      <div className="mt-3 rounded border-none/60 glass-card border-none-muted p-3 font-mono text-[10px] text-muted-foreground overflow-x-auto space-y-2">
                         <div>
                           <span className="text-foreground font-semibold block uppercase text-[9px] mb-1">
                             Metadados e Payload da Ação:

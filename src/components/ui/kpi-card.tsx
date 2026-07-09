@@ -17,17 +17,17 @@ export function KpiCard({
   ...props
 }: KpiCardProps) {
   const bgClasses = {
-    success: "bg-success-bg",
-    danger: "bg-danger-bg",
-    warning: "bg-warning-bg",
-    neutral: "bg-surface",
-    info: "bg-info-bg",
+    success: "glass text-emerald-400 border-emerald-500/20 bg-emerald-500/10",
+    danger: "glass text-rose-400 border-rose-500/20 bg-rose-500/10",
+    warning: "glass text-amber-400 border-amber-500/20 bg-amber-500/10",
+    neutral: "glass-card text-white border-none",
+    info: "glass text-sky-400 border-sky-500/20 bg-sky-500/10",
   };
 
   return (
     <div
       className={cn(
-        "rounded-[var(--radius-card)] border border-border/60 p-5",
+        "rounded-[var(--radius-card)] p-5 backdrop-blur-3xl",
         bgClasses[tone],
         className
       )}

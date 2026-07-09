@@ -113,7 +113,7 @@ function Page() {
   if (err)
     return (
       <div className="flex min-h-screen items-center justify-center bg-background p-6">
-        <div className="rounded-[var(--radius-card)] border border-border bg-surface p-8 text-center text-danger font-bold uppercase tracking-widest">
+        <div className="rounded-[var(--radius-card)] border-none glass-card border-none p-8 text-center text-danger font-bold uppercase tracking-widest">
           {err}
         </div>
       </div>
@@ -129,7 +129,7 @@ function Page() {
   return (
     <div className="mx-auto min-h-screen max-w-lg bg-background px-4 py-8 md:py-12">
       <header className="mb-8 text-center">
-        <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-surface  ring-1 ring-border/50">
+        <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-[var(--radius-card)] glass-card border-none  ring-1 ring-border/50">
           <CreditCard className="h-6 w-6 text-brand" />
         </div>
         <h1 className="text-xl font-bold tracking-tight text-foreground">Seu Carnê Digital</h1>
@@ -139,7 +139,7 @@ function Page() {
       </header>
 
       <section className="mb-8 grid grid-cols-2 gap-4">
-        <div className="rounded-2xl border border-border/50 bg-surface p-5 text-center ">
+        <div className="rounded-[var(--radius-card)] border-none/50 glass-card border-none p-5 text-center ">
           <div className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">
             Total Pago
           </div>
@@ -147,7 +147,7 @@ function Page() {
             {totalPaid.toLocaleString("pt-BR", { style: "currency", currency: "BRL" })}
           </div>
         </div>
-        <div className="rounded-2xl border border-border/50 bg-surface p-5 text-center ">
+        <div className="rounded-[var(--radius-card)] border-none/50 glass-card border-none p-5 text-center ">
           <div className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">
             Restante
           </div>
@@ -169,7 +169,7 @@ function Page() {
               onClick={() => !isPaid && setSelectedInst(inst)}
             >
               <div
-                className={`flex h-6 w-6 shrink-0 items-center justify-center rounded-full  ring-4 ring-background md:order-1 md:group-odd:-translate-x-1/2 md:group-even:translate-x-1/2 ${isPaid ? "bg-success text-white" : isOverdue ? "bg-danger text-white" : "bg-surface border border-border text-brand"}`}
+                className={`flex h-6 w-6 shrink-0 items-center justify-center rounded-full  ring-4 ring-background md:order-1 md:group-odd:-translate-x-1/2 md:group-even:translate-x-1/2 ${isPaid ? "bg-success text-white" : isOverdue ? "bg-danger text-white" : "glass-card border-none border-none text-brand"}`}
               >
                 {isPaid ? (
                   <CheckCircle2 className="h-3.5 w-3.5" />
@@ -181,7 +181,7 @@ function Page() {
               </div>
 
               <div
-                className={`w-[calc(100%-3rem)] md:w-[calc(50%-2rem)] rounded-[var(--radius-card)] border bg-surface p-4  transition-all hover: ${isPaid ? "border-success/30 bg-success/5" : isOverdue ? "border-danger/40 bg-danger/5" : "border-border/50 hover:border-brand/40"}`}
+                className={`w-[calc(100%-3rem)] md:w-[calc(50%-2rem)] rounded-[var(--radius-card)] border glass-card border-none p-4  transition-all hover: ${isPaid ? "border-success/30 bg-success/5" : isOverdue ? "border-danger/40 bg-danger/5" : "border-border/50 hover:border-brand/40"}`}
               >
                 <div className="flex items-center justify-between mb-2">
                   <div className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">
@@ -209,7 +209,7 @@ function Page() {
                     </div>
                   </div>
                   {!isPaid && (
-                    <button className="flex h-8 w-8 items-center justify-center rounded-full bg-surface-alt text-brand transition-colors hover:bg-brand hover:text-white">
+                    <button className="flex h-8 w-8 items-center justify-center rounded-full glass bg-white/5 border-white/10 text-brand transition-colors hover:bg-brand hover:text-white">
                       <QrCode className="h-4 w-4" />
                     </button>
                   )}
@@ -224,7 +224,7 @@ function Page() {
         <Sheet onClose={() => setSelectedInst(null)} title="Pagamento">
           <div className="p-6">
             <div className="mb-8 text-center">
-              <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-surface-alt text-brand">
+              <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full glass bg-white/5 border-white/10 text-brand">
                 <QrCode className="h-8 w-8" />
               </div>
               <h2 className="text-2xl font-bold text-foreground">
@@ -240,11 +240,11 @@ function Page() {
 
             <div className="space-y-4">
               {selectedInst.payment_method === "pix" && selectedInst.external_link ? (
-                <div className="rounded-[var(--radius-card)] border border-border/50 bg-surface-alt/30 p-5 text-center">
+                <div className="rounded-[var(--radius-card)] border-none/50 glass bg-white/5 border-white/10/30 p-5 text-center">
                   <div className="mb-4 text-xs font-semibold uppercase tracking-widest text-muted-foreground">
                     PIX Copia e Cola
                   </div>
-                  <div className="break-all rounded-full bg-surface p-3 font-mono text-[10px] text-foreground ring-1 ring-border ">
+                  <div className="break-all rounded-full glass-card border-none p-3 font-mono text-[10px] text-foreground ring-1 ring-border ">
                     {selectedInst.external_link}
                   </div>
                   <PrimaryButton
@@ -259,7 +259,7 @@ function Page() {
                       Enviar Comprovante de Pagamento
                     </label>
                     <div className="space-y-2">
-                      <label className="flex flex-col items-center justify-center border-2 border-dashed border-border rounded-[var(--radius-card)] p-4 bg-surface hover:bg-surface-alt transition-colors cursor-pointer text-center">
+                      <label className="flex flex-col items-center justify-center border-2 border-dashed border-border rounded-[var(--radius-card)] p-4 glass-card border-none hover:glass bg-white/5 border-white/10 transition-colors cursor-pointer text-center">
                         <span className="text-xs font-bold text-brand">
                           {isUploading ? "Enviando..." : "Selecionar Comprovante (Imagem/PDF)"}
                         </span>
@@ -279,7 +279,7 @@ function Page() {
                   </div>
                 </div>
               ) : selectedInst.payment_method === "credit_card" && selectedInst.external_link ? (
-                <div className="rounded-[var(--radius-card)] border border-border/50 bg-surface-alt/30 p-5 text-center">
+                <div className="rounded-[var(--radius-card)] border-none/50 glass bg-white/5 border-white/10/30 p-5 text-center">
                   <div className="mb-4 text-xs font-semibold uppercase tracking-widest text-muted-foreground">
                     Pagamento via Cartão
                   </div>

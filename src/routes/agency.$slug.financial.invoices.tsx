@@ -7,8 +7,7 @@ import { toast } from "sonner";
 import { EmptyState } from "@/components/shell/PageHeader";
 import { StatusBadge, money, fmtDate, GhostButton } from "@/components/ui/form";
 import { Plus } from "lucide-react";
-import { HeaderPortal } from "@/components/shell/HeaderPortal";
-import { ModuleToolbar, ModuleActionButton } from "@/components/shell/ModuleToolbar";
+import { PageHeader, ModuleActionButton } from "@/components/shell/PageHeader";
 
 export const Route = createFileRoute("/agency/$slug/financial/invoices")({
   component: InvoicesPage,
@@ -52,10 +51,8 @@ function InvoicesPage() {
 
   return (
     <div className="flex h-full flex-col overflow-hidden">
-      <HeaderPortal>
-        <ModuleToolbar title="Faturas" />
-      </HeaderPortal>
-
+              <PageHeader title="Faturas" />
+      
       <ModuleActionButton
         label="Nova Fatura"
         icon={<Plus className="h-3.5 w-3.5" />}
@@ -74,9 +71,9 @@ function InvoicesPage() {
 
         {!q.isLoading && q.data && q.data.data.length > 0 && (
           <>
-            <div className="overflow-hidden rounded-[var(--radius-card)] border border-border bg-surface">
+            <div className="overflow-hidden rounded-[var(--radius-card)] border-none glass-card border-none">
               <table className="w-full text-sm">
-                <thead className="bg-surface-alt/40 text-left text-[11px] uppercase tracking-wide text-muted-foreground">
+                <thead className="glass bg-white/5 border-white/10/40 text-left text-[11px] uppercase tracking-wide text-muted-foreground">
                   <tr>
                     <th className="px-3 py-2 font-medium">Fatura</th>
                     <th className="px-3 py-2 font-medium">Descrição</th>
@@ -88,7 +85,7 @@ function InvoicesPage() {
                 </thead>
                 <tbody>
                   {q.data.data.map((i) => (
-                    <tr key={i.id} className="border-t border-border hover:bg-surface-alt/30">
+                    <tr key={i.id} className="border-t border-border hover:glass bg-white/5 border-white/10/30">
                       <td className="px-3 py-2.5 font-mono text-xs">{i.invoice_number}</td>
                       <td className="px-3 py-2.5 text-xs text-muted-foreground">
                         {i.description ?? "—"}

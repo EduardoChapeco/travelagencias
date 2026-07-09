@@ -113,13 +113,13 @@ function Page() {
         </div>
       </header>
       {done ? (
-        <div className="rounded-2xl border border-success bg-success-bg p-6 text-center text-sm text-success">
+        <div className="rounded-[var(--radius-card)] border border-success bg-success-bg p-6 text-center text-sm text-success">
           ✓ Dados enviados com sucesso. Pode fechar esta página.
         </div>
       ) : (
         <form
           onSubmit={submit}
-          className="space-y-3 rounded-2xl border border-border bg-surface p-5"
+          className="space-y-3 rounded-[var(--radius-card)] border-none glass-card border-none p-5"
         >
           <Field label="Nome completo">
             <Input
@@ -194,12 +194,12 @@ function Page() {
           {/* LGPD Consent — obrigatório, validado via estado React */}
           <div
             id="lgpd_passenger_consent"
-            className={`flex items-start gap-2.5 rounded-2xl border p-4 transition-all ${
+            className={`flex items-start gap-2.5 rounded-[var(--radius-card)] border p-4 transition-all ${
               lgpdError
                 ? "border-red-400 bg-red-50/50"
                 : lgpdConsent
                   ? "border-emerald-300 bg-emerald-50/30"
-                  : "border-border bg-surface"
+                  : "border-border glass-card border-none"
             }`}
           >
             <input
@@ -247,7 +247,7 @@ function Page() {
 function Center({ children }: { children: React.ReactNode }) {
   return (
     <div className="flex min-h-screen items-center justify-center bg-background p-6">
-      <div className="rounded-2xl border border-border bg-surface p-8 text-center">{children}</div>
+      <div className="rounded-[var(--radius-card)] border-none glass-card border-none p-8 text-center">{children}</div>
     </div>
   );
 }

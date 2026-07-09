@@ -694,7 +694,7 @@ function ClientTripDetail() {
             {activeCase && (
               <div
                 className={cn(
-                  "rounded-3xl border p-6 flex flex-col md:flex-row items-start md:items-center justify-between gap-6 shadow-sm",
+                  "rounded-3xl border p-6 flex flex-col md:flex-row items-start md:items-center justify-between gap-6 shadow-none",
                   activeCase.workflow_status === "client_notified"
                     ? "bg-rose-500/10 border-rose-200 text-rose-950 animate-pulse"
                     : activeCase.workflow_status === "client_accepted"
@@ -731,7 +731,7 @@ function ClientTripDetail() {
                 </div>
                 {activeCase.workflow_status === "client_notified" && (
                   <Button
-                    className="cursor-pointer bg-rose-600 hover:bg-rose-700 text-white text-xs font-bold px-6 py-3.5 rounded-2xl shrink-0"
+                    className="cursor-pointer bg-rose-600 hover:bg-rose-700 text-white text-xs font-bold px-6 py-3.5 rounded-[var(--radius-card)] shrink-0"
                     onClick={() => setIsClientReviewOpen(true)}
                   >
                     Revisar e Assinar Aceite
@@ -761,7 +761,7 @@ function ClientTripDetail() {
                 <TripConfirmationItems items={confirmationItemsQ.data ?? []} />
 
                 {(trip.airline || pnr || voucher?.flights?.length) && (
-                  <div className="rounded-3xl bg-surface p-6 border border-border">
+                  <div className="rounded-3xl glass-card border-none p-6 border-none">
                     <div className="mb-5 flex items-center gap-3">
                       <Plane className="h-5 w-5 text-info" />
                       <h3 className="text-sm font-black text-foreground tracking-tight">
@@ -789,7 +789,7 @@ function ClientTripDetail() {
 
               <div className="space-y-6">
                 {trip.group_tour && (
-                  <div className="rounded-3xl bg-surface p-6 border border-border space-y-4">
+                  <div className="rounded-3xl glass-card border-none p-6 border-none space-y-4">
                     <div className="flex items-center gap-3">
                       <Compass className="h-5 w-5 text-brand" />
                       <h3 className="text-sm font-black text-foreground tracking-tight">
@@ -797,7 +797,7 @@ function ClientTripDetail() {
                       </h3>
                     </div>
                     <div className="grid grid-cols-2 gap-4 text-xs">
-                      <div className="p-3 bg-surface-alt/50 border border-border rounded-[var(--radius-card)]">
+                      <div className="p-3 glass bg-white/5 border-white/10/50 border-none rounded-[var(--radius-card)]">
                         <span className="text-[10px] text-muted-foreground uppercase font-bold block">
                           Sua Poltrona
                         </span>
@@ -805,7 +805,7 @@ function ClientTripDetail() {
                           {enrollment?.seat_number || "A definir"}
                         </strong>
                       </div>
-                      <div className="p-3 bg-surface-alt/50 border border-border rounded-[var(--radius-card)]">
+                      <div className="p-3 glass bg-white/5 border-white/10/50 border-none rounded-[var(--radius-card)]">
                         <span className="text-[10px] text-muted-foreground uppercase font-bold block">
                           Acomodação
                         </span>
@@ -941,7 +941,7 @@ function ClientTripDetail() {
             <div className="space-y-6 py-4">
               {/* Opções de escolha se houver mais de uma */}
               {activeCase.alternatives && activeCase.alternatives.length > 1 && (
-                <div className="space-y-2 bg-surface-alt/10 p-3 rounded-[var(--radius-card)] border border-border/60">
+                <div className="space-y-2 glass bg-white/5 border-white/10/10 p-3 rounded-[var(--radius-card)] border-none/60">
                   <span className="text-[11px] font-bold text-muted-foreground uppercase block">
                     Selecione a opção de voo preferida:
                   </span>
@@ -954,8 +954,8 @@ function ClientTripDetail() {
                         className={cn(
                           "p-3 rounded-[var(--radius-card)] border text-left transition-all text-xs flex flex-col gap-1 cursor-pointer",
                           selectedAltId === alt.id
-                            ? "border-brand bg-brand/5 text-foreground font-bold shadow-sm"
-                            : "border-border bg-surface text-muted-foreground hover:text-foreground",
+                            ? "border-brand bg-brand/5 text-foreground font-bold shadow-none"
+                            : "border-border glass-card border-none text-muted-foreground hover:text-foreground",
                         )}
                       >
                         <span>
@@ -987,7 +987,7 @@ function ClientTripDetail() {
                   <div className="space-y-4">
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       {/* Voo Original */}
-                      <div className="rounded-2xl border border-border/60 p-4 bg-slate-500/5">
+                      <div className="rounded-[var(--radius-card)] border-none/60 p-4 bg-slate-500/5">
                         <div className="text-xs font-bold text-slate-500 uppercase tracking-wider mb-3 flex items-center gap-1">
                           <Plane className="h-3.5 w-3.5 rotate-45" /> Voo Original
                         </div>
@@ -1040,7 +1040,7 @@ function ClientTripDetail() {
                       </div>
 
                       {/* Nova Proposta */}
-                      <div className="rounded-2xl border border-rose-200 p-4 bg-rose-500/5">
+                      <div className="rounded-[var(--radius-card)] border border-rose-200 p-4 bg-rose-500/5">
                         <div className="text-xs font-bold text-rose-600 uppercase tracking-wider mb-3 flex items-center gap-1">
                           <Plane className="h-3.5 w-3.5" /> Novo Voo Proposto
                         </div>
@@ -1095,7 +1095,7 @@ function ClientTripDetail() {
 
                     {/* Impact & Warnings */}
                     {analysis && (
-                      <div className="rounded-2xl border border-amber-200 bg-amber-500/5 p-4 space-y-2">
+                      <div className="rounded-[var(--radius-card)] border border-amber-200 bg-amber-500/5 p-4 space-y-2">
                         <div className="text-xs font-bold text-amber-800 flex items-center gap-1">
                           <Shield className="h-4 w-4" /> Análise de Impacto de Viagem
                         </div>
@@ -1164,7 +1164,7 @@ function ClientTripDetail() {
               </div>
 
               {/* Signature Input */}
-              <div className="space-y-2 bg-surface-alt/10 p-4 rounded-2xl border border-border/60">
+              <div className="space-y-2 glass bg-white/5 border-white/10/10 p-4 rounded-[var(--radius-card)] border-none/60">
                 <Label htmlFor="sig-name" className="text-xs font-bold text-foreground">
                   Assinatura Eletrônica do Passageiro
                 </Label>
@@ -1177,7 +1177,7 @@ function ClientTripDetail() {
                   placeholder="Seu Nome Completo"
                   value={typedName}
                   onChange={(e) => setTypedName(e.target.value)}
-                  className="bg-surface font-serif italic text-sm border-border focus:border-brand rounded-[var(--radius-card)]"
+                  className="glass-card border-none font-serif italic text-sm border-border focus:border-brand rounded-[var(--radius-card)]"
                 />
               </div>
             </div>
@@ -1186,7 +1186,7 @@ function ClientTripDetail() {
           <DialogFooter className="flex flex-col sm:flex-row gap-3">
             <Button
               variant="outline"
-              className="cursor-pointer border-rose-200 text-rose-600 hover:bg-rose-50 rounded-2xl text-xs px-5 py-3 order-2 sm:order-1"
+              className="cursor-pointer border-rose-200 text-rose-600 hover:bg-rose-50 rounded-[var(--radius-card)] text-xs px-5 py-3 order-2 sm:order-1"
               onClick={() => {
                 if (!typedName.trim()) {
                   toast.error("Por favor, digite seu nome para recusar a proposta.");
@@ -1209,12 +1209,12 @@ function ClientTripDetail() {
               <Button
                 variant="ghost"
                 onClick={() => setIsClientReviewOpen(false)}
-                className="rounded-2xl text-xs"
+                className="rounded-[var(--radius-card)] text-xs"
               >
                 Voltar
               </Button>
               <Button
-                className="cursor-pointer bg-brand hover:bg-brand-dark text-brand-foreground rounded-2xl text-xs px-6 py-3 shadow-sm"
+                className="cursor-pointer bg-brand hover:bg-brand-dark text-brand-foreground rounded-[var(--radius-card)] text-xs px-6 py-3 shadow-none"
                 onClick={() => {
                   if (!consent1 || !consent2 || !consent3) {
                     toast.error("Você precisa aceitar todas as declarações de ciência!");

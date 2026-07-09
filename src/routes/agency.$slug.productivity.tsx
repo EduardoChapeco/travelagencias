@@ -82,7 +82,7 @@ function ProductivityRoute() {
         ) : (
           <>
             <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-              <div className="bg-surface p-4 rounded-[var(--radius-card)] border border-border flex flex-col justify-center">
+              <div className="glass-card border-none p-4 rounded-[var(--radius-card)] border-none flex flex-col justify-center">
                 <div className="flex items-center gap-2 text-muted-foreground mb-2">
                   <BrainCircuit className="w-4 h-4 text-brand" />
                   <span className="text-xs font-semibold uppercase tracking-wider">
@@ -93,7 +93,7 @@ function ProductivityRoute() {
                   {Object.values(stats?.scoreByAgent || {}).reduce((a, b) => a + b.totalScore, 0)}
                 </span>
               </div>
-              <div className="bg-surface p-4 rounded-[var(--radius-card)] border border-border flex flex-col justify-center">
+              <div className="glass-card border-none p-4 rounded-[var(--radius-card)] border-none flex flex-col justify-center">
                 <div className="flex items-center gap-2 text-muted-foreground mb-2">
                   <CheckCircle2 className="w-4 h-4 text-success" />
                   <span className="text-xs font-semibold uppercase tracking-wider">
@@ -104,7 +104,7 @@ function ProductivityRoute() {
                   {Object.values(stats?.scoreByAgent || {}).reduce((a, b) => a + b.taskCount, 0)}
                 </span>
               </div>
-              <div className="bg-surface p-4 rounded-[var(--radius-card)] border border-border flex flex-col justify-center">
+              <div className="glass-card border-none p-4 rounded-[var(--radius-card)] border-none flex flex-col justify-center">
                 <div className="flex items-center gap-2 text-muted-foreground mb-2">
                   <Target className="w-4 h-4 text-warning" />
                   <span className="text-xs font-semibold uppercase tracking-wider">
@@ -127,7 +127,7 @@ function ProductivityRoute() {
               </div>
             </div>
 
-            <div className="bg-surface border border-border rounded-[var(--radius-card)] p-6">
+            <div className="glass-card border-none border-none rounded-[var(--radius-card)] p-6">
               <h2 className="text-sm font-bold mb-6 flex items-center gap-2">
                 <TrendingUp className="w-4 h-4 text-muted-foreground" /> Velocidade do Time (Pontos
                 IA x Dia)
@@ -165,8 +165,8 @@ function ProductivityRoute() {
               </div>
             </div>
 
-            <div className="bg-surface border border-border rounded-[var(--radius-card)] overflow-hidden">
-              <div className="p-4 border-b border-border bg-surface-alt/50">
+            <div className="glass-card border-none border-none rounded-[var(--radius-card)] overflow-hidden">
+              <div className="p-4 border-b border-border glass bg-white/5 border-white/10/50">
                 <h2 className="text-sm font-bold">Ranking de Produtividade Real</h2>
                 <p className="text-xs text-muted-foreground">
                   Ordenado por pontos de dificuldade acumulados (Não por volume de chamados
@@ -179,7 +179,7 @@ function ProductivityRoute() {
                   .map(([agentId, data], index) => (
                     <div
                       key={agentId}
-                      className="p-4 flex items-center justify-between hover:bg-surface-alt/30 transition-colors"
+                      className="p-4 flex items-center justify-between hover:glass bg-white/5 border-white/10/30 transition-colors"
                     >
                       <div className="flex items-center gap-4">
                         <div className="w-8 h-8 rounded-full bg-brand/10 text-brand flex items-center justify-center font-bold text-xs">

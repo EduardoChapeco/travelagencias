@@ -8,8 +8,7 @@ import { Plus, Filter, Settings2 } from "lucide-react";
 import { useNavigate } from "@tanstack/react-router";
 import { Route } from "@/routes/agency.$slug.daily-tasks";
 import { supabase } from "@/integrations/supabase/client";
-import { HeaderPortal } from "@/components/shell/HeaderPortal";
-import { ModuleToolbar, ModuleActionButton } from "@/components/shell/ModuleToolbar";
+import { PageHeader, ModuleActionButton } from "@/components/shell/PageHeader";
 
 import { MyDayView } from "./views/MyDayView";
 import { KanbanView } from "./views/KanbanView";
@@ -122,8 +121,7 @@ export function TaskShell() {
   return (
     <div className="flex flex-col h-full overflow-hidden bg-transparent">
       {/* Portal para a barra de topo global */}
-      <HeaderPortal>
-        <ModuleToolbar
+              <PageHeader
           title={viewTitle}
           search={{
             value: filters.search || "",
@@ -155,8 +153,7 @@ export function TaskShell() {
             </div>
           }
         />
-      </HeaderPortal>
-
+      
       {/* Botão de Ação Primária no canto esquerdo superior flutuante */}
       <ModuleActionButton
         label="Nova Tarefa"

@@ -221,7 +221,7 @@ function Layout() {
   return (
     <div className="min-h-screen bg-background flex flex-col" style={brandStyles}>
       {/* Top Navbar */}
-      <header className="sticky top-0 z-50 w-full border-b border-border/40 bg-surface/80 backdrop-blur-md">
+      <header className="sticky top-0 z-50 w-full border-b border-border/40 glass-card border-none/80 backdrop-blur-md">
         <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-6">
           {/* Logo / Brand Name */}
           <div className={headerStyle === "minimal" ? "mx-auto" : "flex items-center gap-3"}>
@@ -308,7 +308,7 @@ function Layout() {
       </main>
 
       {/* Footer */}
-      <footer className="border-t border-border/40 bg-surface py-12 mt-auto">
+      <footer className="border-t border-border/40 glass-card border-none py-12 mt-auto">
         <div className="mx-auto max-w-7xl px-6 flex flex-col md:flex-row items-center justify-between gap-4">
           <p className="text-sm text-muted-foreground">
             {settings?.footer_text ||

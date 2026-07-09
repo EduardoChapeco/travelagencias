@@ -67,7 +67,7 @@ function Page() {
 
   if (doneLeadId) {
     return (
-      <div className="mx-auto max-w-md p-10 text-center bg-surface border border-border/50 rounded-2xl  mt-10">
+      <div className="mx-auto max-w-md p-10 text-center glass-card border-none border-none/50 rounded-[var(--radius-card)]  mt-10">
         <div className="flex h-16 w-16 items-center justify-center rounded-full bg-success/10 text-success mx-auto mb-4">
           <svg className="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
@@ -78,7 +78,7 @@ function Page() {
           Os seus dados já estão no sistema da nossa agência.
         </p>
 
-        <div className="mt-6 bg-surface-alt/50 border border-border/50 p-4 rounded-[var(--radius-card)]">
+        <div className="mt-6 glass bg-white/5 border-white/10/50 border-none/50 p-4 rounded-[var(--radius-card)]">
           <div className="text-[10px] uppercase tracking-widest font-bold text-muted-foreground">
             Protocolo de Atendimento
           </div>
@@ -115,7 +115,7 @@ function Page() {
       <p className="mt-1 text-sm text-muted-foreground">{agency.name}</p>
       <form
         onSubmit={submit}
-        className="mt-6 space-y-3 rounded-2xl border border-border bg-surface p-6"
+        className="mt-6 space-y-3 rounded-[var(--radius-card)] border-none glass-card border-none p-6"
       >
         {fields.length === 0 && (
           <>

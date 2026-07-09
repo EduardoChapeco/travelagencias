@@ -56,7 +56,7 @@ function Page() {
                   setFilterAction(e.target.value);
                   setPage(1);
                 }}
-                className="h-9 w-40 rounded-full border border-border bg-surface pl-8 pr-8 text-xs text-foreground focus:border-brand focus:outline-none"
+                className="h-9 w-40 rounded-full border-none glass-card border-none pl-8 pr-8 text-xs text-foreground focus:border-brand focus:outline-none"
               >
                 <option value="">Todas as Ações</option>
                 <option value="created_by_admin">created_by_admin</option>
@@ -78,7 +78,7 @@ function Page() {
                   setFilterEntity(e.target.value);
                   setPage(1);
                 }}
-                className="h-9 w-40 rounded-full border border-border bg-surface pl-8 pr-8 text-xs text-foreground focus:border-brand focus:outline-none"
+                className="h-9 w-40 rounded-full border-none glass-card border-none pl-8 pr-8 text-xs text-foreground focus:border-brand focus:outline-none"
               >
                 <option value="">Todas Entidades</option>
                 <option value="agency">agency</option>
@@ -99,7 +99,7 @@ function Page() {
       />
 
       {q.isError && (
-        <div className="mt-4 flex flex-col items-center justify-center py-8 px-4 text-center rounded-2xl border border-red-200 bg-red-50/60 max-w-xl mx-auto">
+        <div className="mt-4 flex flex-col items-center justify-center py-8 px-4 text-center rounded-[var(--radius-card)] border border-red-200 bg-red-50/60 max-w-xl mx-auto">
           <AlertCircle className="h-5 w-5 text-red-600 mb-1.5" />
           <h3 className="text-xs font-bold text-red-800">Falha ao Carregar Auditoria</h3>
           <p className="text-[11px] text-red-600 mt-0.5">
@@ -124,9 +124,9 @@ function Page() {
       )}
 
       {q.data && totalCount > 0 && (
-        <div className="overflow-hidden rounded-2xl border border-border bg-surface">
+        <div className="overflow-hidden rounded-[var(--radius-card)] border-none glass-card border-none">
           <table className="w-full text-sm">
-            <thead className="bg-surface-alt text-xs text-muted-foreground">
+            <thead className="glass bg-white/5 border-white/10 text-xs text-muted-foreground">
               <tr>
                 <th className="px-3 py-2 text-left">Quando</th>
                 <th className="px-3 py-2 text-left">Ação</th>
@@ -172,7 +172,7 @@ function Page() {
           </table>
 
           {/* Pagination Controls */}
-          <div className="flex items-center justify-between border-t border-border px-4 py-3 bg-surface-alt/30">
+          <div className="flex items-center justify-between border-t border-border px-4 py-3 glass bg-white/5 border-white/10/30">
             <div className="text-xs text-muted-foreground">
               Mostrando{" "}
               <span className="font-medium text-foreground">{(page - 1) * PAGE_SIZE + 1}</span> a{" "}

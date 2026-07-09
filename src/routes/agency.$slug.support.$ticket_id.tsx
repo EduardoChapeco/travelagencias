@@ -253,7 +253,7 @@ function TicketAdvancedRoute() {
       {/* ── Esquerda: Timeline e Interação ────────────────────────────────── */}
       <div className="flex-1 flex flex-col min-w-0 border-r border-border">
         {/* Header */}
-        <div className="p-6 border-b border-border bg-surface flex flex-col gap-4">
+        <div className="p-6 border-b border-border glass-card border-none flex flex-col gap-4">
           <div className="flex items-center gap-4">
             <Link
               to="/agency/$slug/support"
@@ -265,7 +265,7 @@ function TicketAdvancedRoute() {
             <div className="flex-1 min-w-0">
               <h1 className="text-xl font-bold text-foreground flex items-start gap-2 flex-wrap">
                 <span className="flex-1 min-w-0">{ticket.title}</span>
-                <span className="text-sm font-mono font-normal text-muted-foreground bg-surface-muted px-2 py-1 rounded-full border border-border shrink-0">
+                <span className="text-sm font-mono font-normal text-muted-foreground glass-card border-none-muted px-2 py-1 rounded-full border-none shrink-0">
                   {ticket.ticket_hash}
                 </span>
               </h1>
@@ -321,7 +321,7 @@ function TicketAdvancedRoute() {
               </div>
             )}
             {(ticket.tags as string[] || []).map((tag: string) => (
-              <div key={tag} className="px-2 py-1 bg-surface-alt border border-border rounded-full text-xs text-muted-foreground flex items-center gap-1">
+              <div key={tag} className="px-2 py-1 glass bg-white/5 border-white/10 border-none rounded-full text-xs text-muted-foreground flex items-center gap-1">
                 <Tag className="w-3 h-3" /> {tag}
               </div>
             ))}
@@ -329,7 +329,7 @@ function TicketAdvancedRoute() {
         </div>
 
         {/* Timeline */}
-        <div className="flex-1 overflow-y-auto p-6 bg-surface-muted/30">
+        <div className="flex-1 overflow-y-auto p-6 glass-card border-none-muted/30">
           <div className="max-w-3xl mx-auto space-y-6">
             {(!timeline || timeline.length === 0) ? (
               <div className="text-center text-muted-foreground p-8 rounded-[var(--radius-card)] border border-dashed border-border">
@@ -412,12 +412,12 @@ function TicketAdvancedRoute() {
                   key={type}
                   onClick={() => setReplyType(type)}
                   className={cn(
-                    "text-xs px-3 py-1.5 rounded-2xl font-semibold transition-all",
+                    "text-xs px-3 py-1.5 rounded-[var(--radius-card)] font-semibold transition-all",
                     replyType === type
                       ? type === "internal"
                         ? "bg-amber-500 text-white"
                         : "bg-brand text-white"
-                      : "bg-surface-alt text-muted-foreground hover:text-foreground"
+                      : "glass bg-white/5 border-white/10 text-muted-foreground hover:text-foreground"
                   )}
                 >
                   {type === "client" ? "Responder Cliente" : type === "supplier" ? "Contatar Fornecedor" : "Nota Interna"}
@@ -461,7 +461,7 @@ function TicketAdvancedRoute() {
       </div>
 
       {/* ── Direita: Metadados ───────────────────────────────────────────────── */}
-      <div className="w-80 border-l border-border bg-surface-alt flex flex-col shrink-0">
+      <div className="w-80 border-l border-border glass bg-white/5 border-white/10 flex flex-col shrink-0">
         <div className="p-4 border-b border-border font-semibold flex items-center gap-2 text-sm">
           <Ticket className="w-4 h-4 text-brand" /> Metadados do Ticket
         </div>
@@ -470,7 +470,7 @@ function TicketAdvancedRoute() {
           {/* Responsável */}
           <div className="space-y-1">
             <h4 className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">Responsável</h4>
-            <div className="flex items-center gap-2 p-2 rounded-2xl bg-surface border border-border">
+            <div className="flex items-center gap-2 p-2 rounded-[var(--radius-card)] glass-card border-none border-none">
               <div className="h-7 w-7 rounded-full bg-brand/10 text-brand flex items-center justify-center text-xs font-black uppercase shrink-0">
                 {assigneeName.charAt(0)}
               </div>

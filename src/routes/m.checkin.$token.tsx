@@ -216,7 +216,7 @@ function MobileCheckinPage() {
   const passengerLastName = activePassenger ? getLastName(activePassenger.full_name) : "";
 
   return (
-    <div className="mx-auto min-h-screen max-w-md bg-surface text-foreground font-sans pb-12">
+    <div className="mx-auto min-h-screen max-w-md glass-card border-none text-foreground font-sans pb-12">
       {/* Header */}
       <div className="bg-brand text-brand-foreground px-6 py-8 rounded-b-[2.5rem] relative overflow-hidden">
         <div className="absolute top-[-50px] right-[-50px] w-40 h-40 bg-white/10 rounded-full blur-2xl" />
@@ -231,14 +231,14 @@ function MobileCheckinPage() {
       <div className="px-6 py-6 space-y-6">
         {/* Passenger Selector */}
         {details.passengers.length > 1 && (
-          <div className="bg-background border border-border/60 rounded-2xl p-4 space-y-2">
+          <div className="bg-background border-none/60 rounded-[var(--radius-card)] p-4 space-y-2">
             <label className="text-[10px] uppercase font-bold text-muted-foreground tracking-widest flex items-center gap-1.5">
               <Users className="w-3.5 h-3.5" /> Passageiro para Check-in
             </label>
             <select
               value={selectedPassengerId}
               onChange={(e) => setSelectedPassengerId(e.target.value)}
-              className="w-full text-sm border border-border rounded-[var(--radius-card)] px-3 py-2 bg-surface focus:outline-none focus:ring-1 focus:ring-brand font-medium text-foreground"
+              className="w-full text-sm border-none rounded-[var(--radius-card)] px-3 py-2 glass-card border-none focus:outline-none focus:ring-1 focus:ring-brand font-medium text-foreground"
             >
               {details.passengers.map((p) => (
                 <option key={p.id} value={p.id}>
@@ -251,7 +251,7 @@ function MobileCheckinPage() {
 
         {/* Reaccommodation Widget */}
         {details.reaccommodations && details.reaccommodations.length > 0 && (
-          <div className="bg-amber-500/10 border border-amber-500/30 rounded-2xl p-5 space-y-4">
+          <div className="bg-amber-500/10 border border-amber-500/30 rounded-[var(--radius-card)] p-5 space-y-4">
             <div className="flex items-center gap-2 text-amber-600 dark:text-amber-400 font-bold text-sm">
               <AlertOctagon className="w-5 h-5 shrink-0" />
               <span>Aviso de Reacomodação de Voo</span>
@@ -264,7 +264,7 @@ function MobileCheckinPage() {
             {details.reaccommodations.map((reac, rIdx) => (
               <div
                 key={reac.itinerary_id}
-                className="space-y-3 bg-surface border border-border/40 rounded-[var(--radius-card)] p-3"
+                className="space-y-3 glass-card border-none border-none/40 rounded-[var(--radius-card)] p-3"
               >
                 <div className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
                   Proposta Alternativa (V{reac.version})
@@ -311,7 +311,7 @@ function MobileCheckinPage() {
           </h2>
 
           {details.segments.length === 0 ? (
-            <div className="bg-background border border-border/60 rounded-2xl p-5 text-center text-xs text-muted-foreground">
+            <div className="bg-background border-none/60 rounded-[var(--radius-card)] p-5 text-center text-xs text-muted-foreground">
               Nenhum trecho de voo confirmado ativo para esta viagem.
             </div>
           ) : (
@@ -333,7 +333,7 @@ function MobileCheckinPage() {
                 return (
                   <div
                     key={seg.id}
-                    className="bg-background border border-border/60 rounded-2xl p-5 space-y-4"
+                    className="bg-background border-none/60 rounded-[var(--radius-card)] p-5 space-y-4"
                   >
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-2">
@@ -431,7 +431,7 @@ function MobileCheckinPage() {
             </span>
           </div>
 
-          <div className="bg-background border border-border/60 rounded-2xl overflow-hidden ">
+          <div className="bg-background border-none/60 rounded-[var(--radius-card)] overflow-hidden ">
             {checklist.length === 0 ? (
               <div className="p-6 text-center text-xs text-muted-foreground">
                 Nenhuma etapa definida.
@@ -443,7 +443,7 @@ function MobileCheckinPage() {
                     key={i}
                     onClick={() => toggle(i)}
                     disabled={saving}
-                    className={`w-full flex items-center gap-3 p-4 text-left transition-colors hover:bg-surface-alt/50 active:bg-surface-alt ${it.done ? "bg-surface-alt/20" : ""}`}
+                    className={`w-full flex items-center gap-3 p-4 text-left transition-colors hover:glass bg-white/5 border-white/10/50 active:glass bg-white/5 border-white/10 ${it.done ? "glass bg-white/5 border-white/10/20" : ""}`}
                   >
                     {it.done ? (
                       <CheckSquare className="w-5 h-5 text-success shrink-0" />
@@ -464,7 +464,7 @@ function MobileCheckinPage() {
 
         {/* Alerts */}
         {details.card.alerts?.length > 0 && (
-          <div className="bg-warning/10 border border-warning/30 rounded-2xl p-4">
+          <div className="bg-warning/10 border border-warning/30 rounded-[var(--radius-card)] p-4">
             <div className="flex items-center gap-2 text-warning font-bold text-xs mb-2">
               <AlertTriangle className="w-4 h-4" /> Atenção Operacional
             </div>
@@ -477,7 +477,7 @@ function MobileCheckinPage() {
         )}
 
         {isAllDone && (
-          <div className="bg-success/10 border border-success/20 rounded-2xl p-5 text-center">
+          <div className="bg-success/10 border border-success/20 rounded-[var(--radius-card)] p-5 text-center">
             <h3 className="font-bold text-success text-xs mb-1">Tudo Pronto!</h3>
             <p className="text-[11px] text-success/80 font-medium">
               Sua documentação e check-in estão finalizados. Boa viagem!
@@ -486,7 +486,7 @@ function MobileCheckinPage() {
         )}
 
         {/* Emergency Section */}
-        <div className="bg-rose-500/5 border border-rose-500/20 rounded-2xl p-5 space-y-4">
+        <div className="bg-rose-500/5 border border-rose-500/20 rounded-[var(--radius-card)] p-5 space-y-4">
           <div className="flex items-center gap-2 text-rose-600 dark:text-rose-400 font-bold text-xs">
             <AlertOctagon className="w-4 h-4 shrink-0 animate-pulse" />
             <span>Precisa de Ajuda Urgente?</span>
@@ -502,7 +502,7 @@ function MobileCheckinPage() {
                 setEmergencyType("delayed");
                 setEmergencyComment("");
               }}
-              className={`py-2 rounded-[var(--radius-card)] text-xs font-bold border transition-colors ${emergencyType === "delayed" ? "bg-amber-500 text-white border-amber-600" : "bg-surface border-border text-foreground hover:bg-surface-alt"}`}
+              className={`py-2 rounded-[var(--radius-card)] text-xs font-bold border transition-colors ${emergencyType === "delayed" ? "bg-amber-500 text-white border-amber-600" : "glass-card border-none border-border text-foreground hover:glass bg-white/5 border-white/10"}`}
             >
               Voo Atrasou
             </button>
@@ -511,7 +511,7 @@ function MobileCheckinPage() {
                 setEmergencyType("cancelled");
                 setEmergencyComment("");
               }}
-              className={`py-2 rounded-[var(--radius-card)] text-xs font-bold border transition-colors ${emergencyType === "cancelled" ? "bg-rose-600 text-white border-rose-700" : "bg-surface border-border text-foreground hover:bg-surface-alt"}`}
+              className={`py-2 rounded-[var(--radius-card)] text-xs font-bold border transition-colors ${emergencyType === "cancelled" ? "bg-rose-600 text-white border-rose-700" : "glass-card border-none border-border text-foreground hover:glass bg-white/5 border-white/10"}`}
             >
               Voo Cancelado
             </button>
@@ -527,12 +527,12 @@ function MobileCheckinPage() {
                 onChange={(e) => setEmergencyComment(e.target.value)}
                 placeholder="Ex: Novo portão, previsão de novo voo..."
                 rows={3}
-                className="w-full text-xs border border-border rounded-[var(--radius-card)] p-2.5 bg-surface focus:outline-none focus:ring-1 focus:ring-rose-500 font-medium text-foreground resize-none"
+                className="w-full text-xs border-none rounded-[var(--radius-card)] p-2.5 glass-card border-none focus:outline-none focus:ring-1 focus:ring-rose-500 font-medium text-foreground resize-none"
               />
               <div className="flex gap-2">
                 <button
                   onClick={() => setEmergencyType(null)}
-                  className="flex-1 bg-surface border border-border hover:bg-surface-alt py-2 rounded-[var(--radius-card)] text-xs font-bold transition-colors"
+                  className="flex-1 glass-card border-none border-none hover:glass bg-white/5 border-white/10 py-2 rounded-[var(--radius-card)] text-xs font-bold transition-colors"
                 >
                   Cancelar
                 </button>
@@ -559,7 +559,7 @@ function MobileCheckinPage() {
 
 function Center({ children }: { children: React.ReactNode }) {
   return (
-    <div className="flex min-h-screen items-center justify-center bg-surface p-6">
+    <div className="flex min-h-screen items-center justify-center glass-card border-none p-6">
       <div className="flex flex-col items-center justify-center text-center p-8">{children}</div>
     </div>
   );

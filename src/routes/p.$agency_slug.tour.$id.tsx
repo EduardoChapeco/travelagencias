@@ -352,7 +352,7 @@ function Page() {
                 <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-[var(--color-brand)] text-[var(--color-brand-foreground)] uppercase tracking-wider">
                   <Sparkles className="w-3.5 h-3.5" /> Excursão Oficial
                 </span>
-                <h1 className="text-3xl md:text-5xl font-black tracking-tight uppercase leading-none text-white max-w-3xl drop-shadow-md">
+                <h1 className="text-3xl md:text-5xl font-black tracking-tight uppercase leading-none text-white max-w-3xl drop-shadow-none">
                   {t.title}
                 </h1>
                 <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-sm md:text-base font-semibold opacity-90">
@@ -431,7 +431,7 @@ function Page() {
             <div className="lg:col-span-2 space-y-6">
               {/* YouTube Promo Video Embed */}
               {embedVideoUrl && (
-                <section className="bg-white border border-slate-200 rounded-2xl overflow-hidden shadow-xs">
+                <section className="bg-white border border-slate-200 rounded-[var(--radius-card)] overflow-hidden shadow-xs">
                   <div className="p-4 bg-slate-50 border-b border-slate-100 flex items-center gap-2">
                     <Video className="w-5 h-5 text-brand" />
                     <h2 className="font-extrabold text-sm uppercase tracking-wider text-slate-800">
@@ -452,7 +452,7 @@ function Page() {
 
               {/* Hotel Comfort Info */}
               {hotel && hotel.name && (
-                <section className="bg-white border border-slate-200 rounded-2xl p-5 md:p-6 space-y-4 shadow-xs relative">
+                <section className="bg-white border border-slate-200 rounded-[var(--radius-card)] p-5 md:p-6 space-y-4 shadow-xs relative">
                   <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4 border-b border-slate-100 pb-4">
                     <div className="space-y-1">
                       <span className="text-[10px] font-extrabold uppercase tracking-wider text-slate-400 block">
@@ -519,7 +519,7 @@ function Page() {
                             href={imgUrl}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="relative aspect-video rounded-2xl overflow-hidden border border-slate-200 group bg-slate-100 block"
+                            className="relative aspect-video rounded-[var(--radius-card)] overflow-hidden border border-slate-200 group bg-slate-100 block"
                           >
                             <img
                               src={imgUrl}
@@ -536,7 +536,7 @@ function Page() {
 
               {/* Itinerary Chronological */}
               {days.length > 0 && (
-                <section className="bg-white border border-slate-200 rounded-2xl p-5 md:p-6 space-y-4 shadow-xs">
+                <section className="bg-white border border-slate-200 rounded-[var(--radius-card)] p-5 md:p-6 space-y-4 shadow-xs">
                   <h2 className="text-base font-black uppercase tracking-wider text-slate-800 border-b border-slate-100 pb-3 flex items-center gap-2">
                     <ChevronRight className="w-5 h-5 text-brand" /> Roteiro Completo
                   </h2>
@@ -566,7 +566,7 @@ function Page() {
               {(includes.length > 0 || excludes.length > 0) && (
                 <section className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   {includes.length > 0 && (
-                    <div className="bg-white border border-slate-200 rounded-2xl p-5 shadow-xs space-y-3">
+                    <div className="bg-white border border-slate-200 rounded-[var(--radius-card)] p-5 shadow-xs space-y-3">
                       <h3 className="text-xs font-bold uppercase tracking-wider text-emerald-800 flex items-center gap-1.5">
                         <Check className="w-4 h-4 text-emerald-600 shrink-0" /> O que está Incluso
                       </h3>
@@ -581,7 +581,7 @@ function Page() {
                     </div>
                   )}
                   {excludes.length > 0 && (
-                    <div className="bg-white border border-slate-200 rounded-2xl p-5 shadow-xs space-y-3">
+                    <div className="bg-white border border-slate-200 rounded-[var(--radius-card)] p-5 shadow-xs space-y-3">
                       <h3 className="text-xs font-bold uppercase tracking-wider text-rose-800 flex items-center gap-1.5">
                         <XCircle className="w-4 h-4 text-rose-650 shrink-0" /> O que não está
                         Incluso
@@ -602,7 +602,7 @@ function Page() {
 
             {/* Right Reservation sticky widget */}
             <div className="space-y-6">
-              <div className="sticky top-6 bg-white border border-slate-200 rounded-2xl p-5 md:p-6 shadow-sm space-y-5">
+              <div className="sticky top-6 bg-white border border-slate-200 rounded-[var(--radius-card)] p-5 md:p-6 shadow-none space-y-5">
                 <div className="border-b border-slate-100 pb-4 text-center">
                   <span className="text-[10px] font-extrabold uppercase tracking-widest text-slate-400 block">
                     Reservas Online
@@ -779,7 +779,7 @@ function Page() {
                       .getElementById("checkout_anchor")
                       ?.scrollIntoView({ behavior: "smooth", block: "start" });
                   }}
-                  className="w-full flex h-11 items-center justify-center bg-[var(--color-brand)] text-[var(--color-brand-foreground)] rounded-[var(--radius-card)] font-bold uppercase tracking-wider text-xs transition-opacity hover:opacity-90 cursor-pointer shadow-sm"
+                  className="w-full flex h-11 items-center justify-center bg-[var(--color-brand)] text-[var(--color-brand-foreground)] rounded-[var(--radius-card)] font-bold uppercase tracking-wider text-xs transition-opacity hover:opacity-90 cursor-pointer shadow-none"
                 >
                   Reservar Agora
                 </button>
@@ -793,7 +793,7 @@ function Page() {
           <div id="checkout_anchor" className="mt-8 space-y-8 scroll-mt-6">
             {/* Seat Map Selector */}
             {seatMap.length > 0 && (
-              <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-xs">
+              <div className="rounded-[var(--radius-card)] border border-slate-200 bg-white p-6 shadow-xs">
                 <h2 className="text-base font-black text-slate-850 mb-1 text-center uppercase tracking-wider">
                   Escolha suas Poltronas
                 </h2>
@@ -866,7 +866,7 @@ function Page() {
             {/* Registration Form */}
             <form
               onSubmit={handleFormSubmit}
-              className="space-y-6 rounded-2xl border border-slate-200 bg-white p-6 md:p-8 shadow-xs"
+              className="space-y-6 rounded-[var(--radius-card)] border border-slate-200 bg-white p-6 md:p-8 shadow-xs"
             >
               <div className="mb-2 border-b border-slate-100 pb-4">
                 <h2 className="text-base font-black text-slate-850 uppercase tracking-wider">
@@ -1024,7 +1024,7 @@ function Page() {
 
         {/* Step 2: PIX Checkout voucher upload */}
         {checkoutStep === "pix" && (
-          <div className="max-w-xl mx-auto bg-white border border-slate-200 rounded-2xl p-6 md:p-8 shadow-xs space-y-6">
+          <div className="max-w-xl mx-auto bg-white border border-slate-200 rounded-[var(--radius-card)] p-6 md:p-8 shadow-xs space-y-6">
             <div className="text-center">
               <div className="h-12 w-12 bg-emerald-50 rounded-full flex items-center justify-center mx-auto mb-3 border border-emerald-100">
                 <QrCode className="w-6 h-6 text-emerald-600" />
@@ -1126,7 +1126,7 @@ function Page() {
 
         {/* Step 3: Success Screen */}
         {checkoutStep === "success" && (
-          <div className="max-w-md mx-auto bg-white border border-slate-200 rounded-2xl p-8 shadow-sm text-center space-y-6">
+          <div className="max-w-md mx-auto bg-white border border-slate-200 rounded-[var(--radius-card)] p-8 shadow-none text-center space-y-6">
             <div className="h-16 w-16 bg-emerald-50 rounded-full flex items-center justify-center mx-auto border border-emerald-100">
               <Check className="w-8 h-8 text-emerald-600" />
             </div>
@@ -1181,7 +1181,7 @@ function Page() {
                 setSelectedExtras([]);
                 setForm({ passenger_name: "", passenger_cpf: "", email: "", phone: "", notes: "" });
               }}
-              className="w-full h-11 text-xs font-bold uppercase tracking-wider bg-slate-900 text-white rounded-[var(--radius-card)] cursor-pointer hover:bg-slate-800 shadow-sm"
+              className="w-full h-11 text-xs font-bold uppercase tracking-wider bg-slate-900 text-white rounded-[var(--radius-card)] cursor-pointer hover:bg-slate-800 shadow-none"
             >
               Comprar outra passagem
             </button>
@@ -1205,7 +1205,7 @@ function Page() {
                   .getElementById("checkout_anchor")
                   ?.scrollIntoView({ behavior: "smooth", block: "start" });
               }}
-              className="px-6 h-10 bg-[var(--color-brand)] text-[var(--color-brand-foreground)] font-bold text-xs uppercase tracking-wider rounded-[var(--radius-card)] shadow-sm active:scale-95 transition-transform"
+              className="px-6 h-10 bg-[var(--color-brand)] text-[var(--color-brand-foreground)] font-bold text-xs uppercase tracking-wider rounded-[var(--radius-card)] shadow-none active:scale-95 transition-transform"
             >
               Reservar
             </button>

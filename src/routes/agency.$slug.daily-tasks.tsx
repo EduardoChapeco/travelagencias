@@ -1,6 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useAgency } from "@/lib/agency-context";
-import { HeaderPortal } from "@/components/shell/HeaderPortal";
 import { TaskShell } from "@/components/tasks/TaskShell";
 import { Settings2 } from "lucide-react";
 

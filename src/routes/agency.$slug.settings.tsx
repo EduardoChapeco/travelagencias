@@ -5,8 +5,7 @@ import { toast } from "sonner";
 import { Save, Building2, Link2, Mail, Phone, FileText, Shield } from "lucide-react";
 import { fetchAgencySettings, saveSettings } from "@/services/settings";
 import { useAgency } from "@/lib/agency-context";
-import { HeaderPortal } from "@/components/shell/HeaderPortal";
-import { ModuleToolbar } from "@/components/shell/ModuleToolbar";
+import { PageHeader } from "@/components/shell/PageHeader";
 import { Field, Input, PrimaryButton } from "@/components/ui/form";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
@@ -118,8 +117,7 @@ function Page() {
 
   return (
     <div className="flex h-full flex-col overflow-hidden">
-      <HeaderPortal>
-        <ModuleToolbar
+              <PageHeader
           title="Configurações da Agência"
           actions={
             <button
@@ -133,12 +131,11 @@ function Page() {
             </button>
           }
         />
-      </HeaderPortal>
-
+      
       <div className="flex-1 overflow-y-auto px-4  md:pr-6 py-4 min-h-0 pb-24">
         <div className="max-w-2xl space-y-6">
           {/* Header card com identidade */}
-          <div className="flex items-center gap-4 rounded-[var(--radius-card)] border border-border bg-surface px-5 py-4">
+          <div className="flex items-center gap-4 rounded-[var(--radius-card)] border-none glass-card border-none px-5 py-4">
             <div
               className="flex h-14 w-14 shrink-0 items-center justify-center rounded-[var(--radius-card)] text-2xl font-bold text-white"
               style={{ background: agency.brand_color || "#334155" }}
@@ -159,7 +156,7 @@ function Page() {
           {/* Form */}
           <form onSubmit={handleSubmit(onSubmit)} id="settings-form" className="space-y-6">
             {/* Identificação */}
-            <section className="rounded-[var(--radius-card)] border border-border bg-surface p-5 space-y-4">
+            <section className="rounded-[var(--radius-card)] border-none glass-card border-none p-5 space-y-4">
               <div className="flex items-center gap-2 text-sm font-semibold">
                 <Building2 className="h-4 w-4 text-brand" /> Identificação
               </div>
@@ -195,7 +192,7 @@ function Page() {
             </section>
 
             {/* Dados Legais */}
-            <section className="rounded-[var(--radius-card)] border border-border bg-surface p-5 space-y-4">
+            <section className="rounded-[var(--radius-card)] border-none glass-card border-none p-5 space-y-4">
               <div className="flex items-center gap-2 text-sm font-semibold">
                 <Shield className="h-4 w-4 text-brand" /> Dados Legais
               </div>
@@ -210,7 +207,7 @@ function Page() {
             </section>
 
             {/* Contato */}
-            <section className="rounded-[var(--radius-card)] border border-border bg-surface p-5 space-y-4">
+            <section className="rounded-[var(--radius-card)] border-none glass-card border-none p-5 space-y-4">
               <div className="flex items-center gap-2 text-sm font-semibold">
                 <Mail className="h-4 w-4 text-brand" /> Contato Oficial
               </div>
@@ -226,7 +223,7 @@ function Page() {
 
             {/* Aviso sobre slug */}
             {watch("slug") !== q.data?.agency?.slug && (
-              <div className="flex items-start gap-2 rounded-2xl border border-yellow-500/30 bg-yellow-500/5 px-4 py-3 text-xs text-yellow-700 dark:text-yellow-400">
+              <div className="flex items-start gap-2 rounded-[var(--radius-card)] border border-yellow-500/30 bg-yellow-500/5 px-4 py-3 text-xs text-yellow-700 dark:text-yellow-400">
                 <Link2 className="mt-0.5 h-3.5 w-3.5 shrink-0" />
                 <span>
                   Atenção: alterar o endereço web mudará o link de acesso da agência de{" "}

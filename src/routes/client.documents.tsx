@@ -38,7 +38,7 @@ function ClientDocumentsPage() {
           </div>
 
           {q.data?.contracts.length === 0 && (
-            <div className="mb-6 rounded-2xl border border-dashed border-border/80 bg-surface/20 p-8 text-center text-sm text-muted-foreground backdrop-blur-sm">
+            <div className="mb-6 rounded-[var(--radius-card)] border border-dashed border-border/80 glass-card border-none/20 p-8 text-center text-sm text-muted-foreground backdrop-blur-sm">
               Nenhum contrato ativo ou pendente encontrado.
             </div>
           )}
@@ -47,7 +47,7 @@ function ClientDocumentsPage() {
             {q.data?.contracts.map((c) => (
               <div
                 key={c.id}
-                className="group relative flex items-center justify-between rounded-2xl border border-border/50 bg-surface/40 p-4 transition-all duration-300 hover:border-brand/35 hover:bg-surface/90 hover:-translate-y-0.5 hover:shadow-lg hover:shadow-brand/5 backdrop-blur-md"
+                className="group relative flex items-center justify-between rounded-[var(--radius-card)] border-none/50 glass-card border-none/40 p-4 transition-all duration-300 hover:border-brand/35 hover:glass-card border-none/90 hover:-translate-y-0.5 hover:shadow-none hover:shadow-brand/5 backdrop-blur-md"
               >
                 <div className="flex items-center gap-4">
                   <div className="flex h-10 w-10 items-center justify-center rounded-[var(--radius-card)] bg-brand/10 text-brand transition-transform duration-300 group-hover:scale-110">
@@ -73,7 +73,7 @@ function ClientDocumentsPage() {
                       }
                       target="_blank"
                       rel="noreferrer"
-                      className="inline-flex h-8 items-center gap-1.5 rounded-2xl border border-border bg-surface px-3 text-xs font-bold text-foreground hover:bg-accent hover:border-border-strong transition-all"
+                      className="inline-flex h-8 items-center gap-1.5 rounded-[var(--radius-card)] border-none glass-card border-none px-3 text-xs font-bold text-foreground hover:bg-accent hover:border-border-strong transition-all"
                     >
                       <Download className="h-3.5 w-3.5" /> PDF
                     </a>
@@ -101,7 +101,7 @@ function ClientDocumentsPage() {
             {q.data?.vouchers.map((v) => (
               <div
                 key={v.id}
-                className="group relative flex items-center justify-between rounded-2xl border border-border/50 bg-surface/40 p-4 transition-all duration-300 hover:border-brand/35 hover:bg-surface/90 hover:-translate-y-0.5 hover:shadow-lg hover:shadow-brand/5 backdrop-blur-md"
+                className="group relative flex items-center justify-between rounded-[var(--radius-card)] border-none/50 glass-card border-none/40 p-4 transition-all duration-300 hover:border-brand/35 hover:glass-card border-none/90 hover:-translate-y-0.5 hover:shadow-none hover:shadow-brand/5 backdrop-blur-md"
               >
                 <div className="flex items-center gap-4">
                   <div className="flex h-10 w-10 items-center justify-center rounded-[var(--radius-card)] bg-brand/10 text-brand transition-transform duration-300 group-hover:scale-110">
@@ -127,7 +127,7 @@ function ClientDocumentsPage() {
                       }
                       target="_blank"
                       rel="noreferrer"
-                      className="inline-flex h-8 items-center gap-1.5 rounded-2xl border border-border bg-surface px-3 text-xs font-bold text-foreground hover:bg-accent hover:border-border-strong transition-all"
+                      className="inline-flex h-8 items-center gap-1.5 rounded-[var(--radius-card)] border-none glass-card border-none px-3 text-xs font-bold text-foreground hover:bg-accent hover:border-border-strong transition-all"
                     >
                       <Download className="h-3.5 w-3.5" /> PDF
                     </a>

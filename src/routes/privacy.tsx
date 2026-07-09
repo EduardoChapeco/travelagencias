@@ -35,7 +35,7 @@ function PrivacyPage() {
   return (
     <div className="min-h-screen bg-background text-foreground flex flex-col justify-between">
       {/* Header */}
-      <header className="border-b border-border bg-surface py-4 px-6 sticky top-0 z-50">
+      <header className="border-b border-border glass-card border-none py-4 px-6 sticky top-0 z-50">
         <div className="max-w-4xl mx-auto flex items-center justify-between">
           <div className="flex items-center gap-2">
             <ShieldCheck className="h-5 w-5 text-brand" />
@@ -104,7 +104,7 @@ function PrivacyPage() {
       </main>
 
       {/* Footer */}
-      <footer className="border-t border-border bg-surface-alt/20 py-6 px-6 text-center text-xs text-muted-foreground shrink-0">
+      <footer className="border-t border-border glass bg-white/5 border-white/10/20 py-6 px-6 text-center text-xs text-muted-foreground shrink-0">
         <div className="max-w-4xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
           <div className="flex items-center gap-1.5">
             <Building2 className="h-3.5 w-3.5" />

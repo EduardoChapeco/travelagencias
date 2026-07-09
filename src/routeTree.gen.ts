@@ -55,6 +55,8 @@ import { Route as AdminAgentsRouteImport } from './routes/admin.agents'
 import { Route as AdminAgenciesRouteImport } from './routes/admin.agencies'
 import { Route as PAgency_slugIndexRouteImport } from './routes/p.$agency_slug.index'
 import { Route as ClientQuotesIndexRouteImport } from './routes/client.quotes.index'
+import { Route as AgencyQuotesIndexRouteImport } from './routes/agency..quotes.index'
+import { Route as AgencyProposalsIndexRouteImport } from './routes/agency..proposals.index'
 import { Route as AgencySlugIndexRouteImport } from './routes/agency.$slug.index'
 import { Route as PCorporateApproveRouteImport } from './routes/p.corporate.approve'
 import { Route as PAgency_slugContactRouteImport } from './routes/p.$agency_slug.contact'
@@ -104,6 +106,7 @@ import { Route as AgencySlugBrandRouteImport } from './routes/agency.$slug.brand
 import { Route as AgencySlugBoardingRouteImport } from './routes/agency.$slug.boarding'
 import { Route as AgencySlugBillingRouteImport } from './routes/agency.$slug.billing'
 import { Route as AdminAgenciesIdRouteImport } from './routes/admin.agencies.$id'
+import { Route as AgencyTripsRouteImport } from './routes/agency..trips.'
 import { Route as PAgency_slugLojaIndexRouteImport } from './routes/p.$agency_slug.loja.index'
 import { Route as PAgency_slugKbIndexRouteImport } from './routes/p.$agency_slug.kb.index'
 import { Route as AgencySlugTripsIndexRouteImport } from './routes/agency.$slug.trips.index'
@@ -389,6 +392,16 @@ const ClientQuotesIndexRoute = ClientQuotesIndexRouteImport.update({
   path: '/quotes/',
   getParentRoute: () => ClientRoute,
 } as any)
+const AgencyQuotesIndexRoute = AgencyQuotesIndexRouteImport.update({
+  id: '/agency/quotes/',
+  path: '/agency/quotes/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AgencyProposalsIndexRoute = AgencyProposalsIndexRouteImport.update({
+  id: '/agency/proposals/',
+  path: '/agency/proposals/',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AgencySlugIndexRoute = AgencySlugIndexRouteImport.update({
   id: '/',
   path: '/',
@@ -635,6 +648,11 @@ const AdminAgenciesIdRoute = AdminAgenciesIdRouteImport.update({
   id: '/$id',
   path: '/$id',
   getParentRoute: () => AdminAgenciesRoute,
+} as any)
+const AgencyTripsRoute = AgencyTripsRouteImport.update({
+  id: '/agency/trips/',
+  path: '/agency/trips/',
+  getParentRoute: () => rootRouteImport,
 } as any)
 const PAgency_slugLojaIndexRoute = PAgency_slugLojaIndexRouteImport.update({
   id: '/loja/',
@@ -985,6 +1003,7 @@ export interface FileRoutesByFullPath {
   '/admin/': typeof AdminIndexRoute
   '/auth/': typeof AuthIndexRoute
   '/client/': typeof ClientIndexRoute
+  '/agency/trips/': typeof AgencyTripsRoute
   '/admin/agencies/$id': typeof AdminAgenciesIdRoute
   '/agency/$slug/billing': typeof AgencySlugBillingRoute
   '/agency/$slug/boarding': typeof AgencySlugBoardingRoute
@@ -1034,6 +1053,8 @@ export interface FileRoutesByFullPath {
   '/p/$agency_slug/contact': typeof PAgency_slugContactRoute
   '/p/corporate/approve': typeof PCorporateApproveRoute
   '/agency/$slug/': typeof AgencySlugIndexRoute
+  '/agency/proposals/': typeof AgencyProposalsIndexRoute
+  '/agency/quotes/': typeof AgencyQuotesIndexRoute
   '/client/quotes/': typeof ClientQuotesIndexRoute
   '/p/$agency_slug/': typeof PAgency_slugIndexRoute
   '/agency/$slug/bus-layouts/$id': typeof AgencySlugBusLayoutsIdRoute
@@ -1131,6 +1152,7 @@ export interface FileRoutesByTo {
   '/admin': typeof AdminIndexRoute
   '/auth': typeof AuthIndexRoute
   '/client': typeof ClientIndexRoute
+  '/agency/trips': typeof AgencyTripsRoute
   '/admin/agencies/$id': typeof AdminAgenciesIdRoute
   '/agency/$slug/billing': typeof AgencySlugBillingRoute
   '/agency/$slug/boarding': typeof AgencySlugBoardingRoute
@@ -1176,6 +1198,8 @@ export interface FileRoutesByTo {
   '/p/$agency_slug/contact': typeof PAgency_slugContactRoute
   '/p/corporate/approve': typeof PCorporateApproveRoute
   '/agency/$slug': typeof AgencySlugIndexRoute
+  '/agency/proposals': typeof AgencyProposalsIndexRoute
+  '/agency/quotes': typeof AgencyQuotesIndexRoute
   '/client/quotes': typeof ClientQuotesIndexRoute
   '/p/$agency_slug': typeof PAgency_slugIndexRoute
   '/agency/$slug/bus-layouts/$id': typeof AgencySlugBusLayoutsIdRoute
@@ -1277,6 +1301,7 @@ export interface FileRoutesById {
   '/admin/': typeof AdminIndexRoute
   '/auth/': typeof AuthIndexRoute
   '/client/': typeof ClientIndexRoute
+  '/agency/trips/': typeof AgencyTripsRoute
   '/admin/agencies/$id': typeof AdminAgenciesIdRoute
   '/agency/$slug/billing': typeof AgencySlugBillingRoute
   '/agency/$slug/boarding': typeof AgencySlugBoardingRoute
@@ -1326,6 +1351,8 @@ export interface FileRoutesById {
   '/p/$agency_slug/contact': typeof PAgency_slugContactRoute
   '/p/corporate/approve': typeof PCorporateApproveRoute
   '/agency/$slug/': typeof AgencySlugIndexRoute
+  '/agency/proposals/': typeof AgencyProposalsIndexRoute
+  '/agency/quotes/': typeof AgencyQuotesIndexRoute
   '/client/quotes/': typeof ClientQuotesIndexRoute
   '/p/$agency_slug/': typeof PAgency_slugIndexRoute
   '/agency/$slug/bus-layouts/$id': typeof AgencySlugBusLayoutsIdRoute
@@ -1430,6 +1457,7 @@ export interface FileRouteTypes {
     | '/admin/'
     | '/auth/'
     | '/client/'
+    | '/agency/trips/'
     | '/admin/agencies/$id'
     | '/agency/$slug/billing'
     | '/agency/$slug/boarding'
@@ -1479,6 +1507,8 @@ export interface FileRouteTypes {
     | '/p/$agency_slug/contact'
     | '/p/corporate/approve'
     | '/agency/$slug/'
+    | '/agency/proposals/'
+    | '/agency/quotes/'
     | '/client/quotes/'
     | '/p/$agency_slug/'
     | '/agency/$slug/bus-layouts/$id'
@@ -1576,6 +1606,7 @@ export interface FileRouteTypes {
     | '/admin'
     | '/auth'
     | '/client'
+    | '/agency/trips'
     | '/admin/agencies/$id'
     | '/agency/$slug/billing'
     | '/agency/$slug/boarding'
@@ -1621,6 +1652,8 @@ export interface FileRouteTypes {
     | '/p/$agency_slug/contact'
     | '/p/corporate/approve'
     | '/agency/$slug'
+    | '/agency/proposals'
+    | '/agency/quotes'
     | '/client/quotes'
     | '/p/$agency_slug'
     | '/agency/$slug/bus-layouts/$id'
@@ -1721,6 +1754,7 @@ export interface FileRouteTypes {
     | '/admin/'
     | '/auth/'
     | '/client/'
+    | '/agency/trips/'
     | '/admin/agencies/$id'
     | '/agency/$slug/billing'
     | '/agency/$slug/boarding'
@@ -1770,6 +1804,8 @@ export interface FileRouteTypes {
     | '/p/$agency_slug/contact'
     | '/p/corporate/approve'
     | '/agency/$slug/'
+    | '/agency/proposals/'
+    | '/agency/quotes/'
     | '/client/quotes/'
     | '/p/$agency_slug/'
     | '/agency/$slug/bus-layouts/$id'
@@ -1841,6 +1877,7 @@ export interface RootRouteChildren {
   InboxOauthCallbackRoute: typeof InboxOauthCallbackRoute
   PAgency_slugRoute: typeof PAgency_slugRouteWithChildren
   VerifySerialRoute: typeof VerifySerialRoute
+  AgencyTripsRoute: typeof AgencyTripsRoute
   ApiPublicManifestRoute: typeof ApiPublicManifestRoute
   ApiPublicMcpRoute: typeof ApiPublicMcpRoute
   MCheckinTokenRoute: typeof MCheckinTokenRoute
@@ -1851,6 +1888,8 @@ export interface RootRouteChildren {
   MPaymentTokenRoute: typeof MPaymentTokenRoute
   MProposalTokenRoute: typeof MProposalTokenRoute
   PCorporateApproveRoute: typeof PCorporateApproveRoute
+  AgencyProposalsIndexRoute: typeof AgencyProposalsIndexRoute
+  AgencyQuotesIndexRoute: typeof AgencyQuotesIndexRoute
   ApiPublicSitemapAgency_slugRoute: typeof ApiPublicSitemapAgency_slugRoute
 }
 
@@ -2177,6 +2216,20 @@ declare module '@tanstack/react-router' {
       fullPath: '/client/quotes/'
       preLoaderRoute: typeof ClientQuotesIndexRouteImport
       parentRoute: typeof ClientRoute
+    }
+    '/agency/quotes/': {
+      id: '/agency/quotes/'
+      path: '/agency/quotes'
+      fullPath: '/agency/quotes/'
+      preLoaderRoute: typeof AgencyQuotesIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/agency/proposals/': {
+      id: '/agency/proposals/'
+      path: '/agency/proposals'
+      fullPath: '/agency/proposals/'
+      preLoaderRoute: typeof AgencyProposalsIndexRouteImport
+      parentRoute: typeof rootRouteImport
     }
     '/agency/$slug/': {
       id: '/agency/$slug/'
@@ -2520,6 +2573,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/admin/agencies/$id'
       preLoaderRoute: typeof AdminAgenciesIdRouteImport
       parentRoute: typeof AdminAgenciesRoute
+    }
+    '/agency/trips/': {
+      id: '/agency/trips/'
+      path: '/agency/trips'
+      fullPath: '/agency/trips/'
+      preLoaderRoute: typeof AgencyTripsRouteImport
+      parentRoute: typeof rootRouteImport
     }
     '/p/$agency_slug/loja/': {
       id: '/p/$agency_slug/loja/'
@@ -3365,6 +3425,7 @@ const rootRouteChildren: RootRouteChildren = {
   InboxOauthCallbackRoute: InboxOauthCallbackRoute,
   PAgency_slugRoute: PAgency_slugRouteWithChildren,
   VerifySerialRoute: VerifySerialRoute,
+  AgencyTripsRoute: AgencyTripsRoute,
   ApiPublicManifestRoute: ApiPublicManifestRoute,
   ApiPublicMcpRoute: ApiPublicMcpRoute,
   MCheckinTokenRoute: MCheckinTokenRoute,
@@ -3375,6 +3436,8 @@ const rootRouteChildren: RootRouteChildren = {
   MPaymentTokenRoute: MPaymentTokenRoute,
   MProposalTokenRoute: MProposalTokenRoute,
   PCorporateApproveRoute: PCorporateApproveRoute,
+  AgencyProposalsIndexRoute: AgencyProposalsIndexRoute,
+  AgencyQuotesIndexRoute: AgencyQuotesIndexRoute,
   ApiPublicSitemapAgency_slugRoute: ApiPublicSitemapAgency_slugRoute,
 }
 export const routeTree = rootRouteImport

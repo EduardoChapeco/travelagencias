@@ -179,7 +179,7 @@ function TripDestinationPage() {
       {/* Grid de informações */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         {/* Vistos & Entrada */}
-        <div className="rounded-[var(--radius-card)] border border-border bg-surface p-4">
+        <div className="rounded-[var(--radius-card)] border-none glass-card border-none p-4">
           <h3 className="text-xs font-bold uppercase tracking-widest text-muted-foreground mb-3 flex items-center gap-1.5">
             <Globe className="h-3.5 w-3.5" /> Vistos &amp; Entrada
           </h3>
@@ -205,7 +205,7 @@ function TripDestinationPage() {
         </div>
 
         {/* Saúde */}
-        <div className="rounded-[var(--radius-card)] border border-border bg-surface p-4">
+        <div className="rounded-[var(--radius-card)] border-none glass-card border-none p-4">
           <h3 className="text-xs font-bold uppercase tracking-widest text-muted-foreground mb-3 flex items-center gap-1.5">
             <Heart className="h-3.5 w-3.5" /> Saúde
           </h3>
@@ -249,7 +249,7 @@ function TripDestinationPage() {
         </div>
 
         {/* Informações Práticas */}
-        <div className="rounded-[var(--radius-card)] border border-border bg-surface p-4">
+        <div className="rounded-[var(--radius-card)] border-none glass-card border-none p-4">
           <h3 className="text-xs font-bold uppercase tracking-widest text-muted-foreground mb-3 flex items-center gap-1.5">
             <Zap className="h-3.5 w-3.5" /> Informações Práticas
           </h3>
@@ -279,7 +279,7 @@ function TripDestinationPage() {
         </div>
 
         {/* Segurança & Cultura */}
-        <div className="rounded-[var(--radius-card)] border border-border bg-surface p-4">
+        <div className="rounded-[var(--radius-card)] border-none glass-card border-none p-4">
           <h3 className="text-xs font-bold uppercase tracking-widest text-muted-foreground mb-3 flex items-center gap-1.5">
             <ShieldAlert className="h-3.5 w-3.5" /> Segurança &amp; Cultura
           </h3>

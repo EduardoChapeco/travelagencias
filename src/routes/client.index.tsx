@@ -43,7 +43,7 @@ function ClientHome() {
       </h3>
       <div className="space-y-2">
         {q.data?.trips.length === 0 && (
-          <div className="rounded-2xl border border-dashed border-border p-6 text-center text-sm text-muted-foreground">
+          <div className="rounded-[var(--radius-card)] border border-dashed border-border p-6 text-center text-sm text-muted-foreground">
             Sem viagens.
           </div>
         )}
@@ -52,7 +52,7 @@ function ClientHome() {
             key={t.id}
             to="/client/trips/$id"
             params={{ id: t.id }}
-            className="flex items-center justify-between rounded-2xl border border-border bg-surface p-3 hover:border-border-strong"
+            className="flex items-center justify-between rounded-[var(--radius-card)] border-none glass-card border-none p-3 hover:border-border-strong"
           >
             <div>
               <div className="text-xs text-muted-foreground">{t.code}</div>
@@ -73,7 +73,7 @@ function ShortcutCard({ to, icon, label }: { to: string; icon: React.ReactNode; 
   return (
     <Link
       to={to}
-      className="flex flex-col gap-2 rounded-2xl border border-border bg-surface p-4 hover:border-border-strong"
+      className="flex flex-col gap-2 rounded-[var(--radius-card)] border-none glass-card border-none p-4 hover:border-border-strong"
     >
       <div className="flex h-8 w-8 items-center justify-center rounded-full bg-primary/10 text-primary">
         {icon}

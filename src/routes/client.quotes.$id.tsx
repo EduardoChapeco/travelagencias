@@ -167,7 +167,7 @@ function ClientQuoteView() {
       )}
 
       {isSigning && (
-        <div className="bg-surface rounded-[var(--radius-card)] p-4 shadow-sm border border-border">
+        <div className="glass-card border-none rounded-[var(--radius-card)] p-4 shadow-none border-none">
           <KycSignature onSign={handleKycSign} isLoading={decide.isPending} />
         </div>
       )}
@@ -189,8 +189,8 @@ function ClientQuoteView() {
         </div>
       )}
 
-      <div className="bg-white rounded-[var(--radius-card)] shadow-sm border border-border overflow-hidden">
-        <div className="p-4 bg-surface border-b border-border flex items-center gap-2 text-muted-foreground text-sm font-medium">
+      <div className="bg-white rounded-[var(--radius-card)] shadow-none border-none overflow-hidden">
+        <div className="p-4 glass-card border-none border-b border-border flex items-center gap-2 text-muted-foreground text-sm font-medium">
           <FileText className="h-4 w-4" /> Visualização do Documento
         </div>
         <div className="w-full overflow-x-auto bg-zinc-100 p-4 md:p-8 flex justify-center">

@@ -42,7 +42,7 @@ function PublicKnowledgeArticle() {
     );
   if (!q.data?.article)
     return (
-      <div className="min-h-screen flex flex-col items-center justify-center p-6 text-center bg-surface">
+      <div className="min-h-screen flex flex-col items-center justify-center p-6 text-center glass-card border-none">
         <Info className="w-12 h-12 text-muted-foreground mb-4" />
         <h2 className="text-xl font-bold tracking-tight mb-2">Artigo não encontrado</h2>
         <p className="text-muted-foreground text-sm max-w-md">
@@ -78,7 +78,7 @@ function PublicKnowledgeArticle() {
   };
 
   return (
-    <div className="min-h-screen bg-surface">
+    <div className="min-h-screen glass-card border-none">
       <header className="border-b border-border bg-background sticky top-0 z-50">
         <div className="max-w-3xl mx-auto px-6 h-14 flex items-center justify-between">
           <Link
@@ -92,7 +92,7 @@ function PublicKnowledgeArticle() {
       </header>
 
       <main className="max-w-3xl mx-auto px-6 py-10 lg:py-16">
-        <article className="bg-background border border-border rounded-3xl p-8 sm:p-12 ">
+        <article className="bg-background border-none rounded-3xl p-8 sm:p-12 ">
           <div className="mb-8">
             <div className="flex items-center gap-3 mb-6">
               <div className="w-10 h-10 rounded-full bg-brand/10 flex items-center justify-center text-brand">
@@ -116,20 +116,20 @@ function PublicKnowledgeArticle() {
           <div className="mx-auto mt-8">{renderContent()}</div>
 
           {/* Votação */}
-          <div className="mt-16 flex flex-col items-center justify-center p-8 bg-surface-alt/50 rounded-3xl border border-border">
+          <div className="mt-16 flex flex-col items-center justify-center p-8 glass bg-white/5 border-white/10/50 rounded-3xl border-none">
             <h3 className="text-base font-bold mb-5 text-foreground">Este artigo foi útil?</h3>
             <div className="flex gap-4">
               <button
                 onClick={() => voteMutation.mutate({ articleId: article.id, isUpvote: true })}
                 disabled={voted !== null || voteMutation.isPending}
-                className={`flex items-center gap-2 px-8 py-3 rounded-full border text-sm font-bold transition-colors disabled:opacity-50 disabled:cursor-not-allowed ${voted === "up" ? "bg-success/20 text-success border-success/30" : "border-border bg-surface hover:bg-surface-alt hover:border-brand/50"}`}
+                className={`flex items-center gap-2 px-8 py-3 rounded-full border text-sm font-bold transition-colors disabled:opacity-50 disabled:cursor-not-allowed ${voted === "up" ? "bg-success/20 text-success border-success/30" : "border-border glass-card border-none hover:glass bg-white/5 border-white/10 hover:border-brand/50"}`}
               >
                 <ThumbsUp className="w-4 h-4" /> Sim, ajudou
               </button>
               <button
                 onClick={() => voteMutation.mutate({ articleId: article.id, isUpvote: false })}
                 disabled={voted !== null || voteMutation.isPending}
-                className={`flex items-center gap-2 px-8 py-3 rounded-full border text-sm font-bold transition-colors disabled:opacity-50 disabled:cursor-not-allowed ${voted === "down" ? "bg-destructive/20 text-destructive border-destructive/30" : "border-border bg-surface hover:bg-surface-alt hover:border-brand/50"}`}
+                className={`flex items-center gap-2 px-8 py-3 rounded-full border text-sm font-bold transition-colors disabled:opacity-50 disabled:cursor-not-allowed ${voted === "down" ? "bg-destructive/20 text-destructive border-destructive/30" : "border-border glass-card border-none hover:glass bg-white/5 border-white/10 hover:border-brand/50"}`}
               >
                 <ThumbsDown className="w-4 h-4" /> Não ajudou
               </button>

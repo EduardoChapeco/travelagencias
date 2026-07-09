@@ -18,8 +18,7 @@ import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { useAgency } from "@/lib/agency-context";
 import { EmptyState } from "@/components/shell/PageHeader";
-import { HeaderPortal } from "@/components/shell/HeaderPortal";
-import { ModuleToolbar, ModuleActionButton } from "@/components/shell/ModuleToolbar";
+import { PageHeader, ModuleActionButton } from "@/components/shell/PageHeader";
 import {
   Field,
   Input,
@@ -348,8 +347,8 @@ function CashPage() {
 
   if (registersQ.isError) {
     return (
-      <div className="flex-1 flex flex-col items-center justify-center p-8 bg-surface-alt">
-        <div className="text-center space-y-3 max-w-md bg-surface p-6 rounded-[var(--radius-card)] border border-red-200 text-red-800">
+      <div className="flex-1 flex flex-col items-center justify-center p-8 glass bg-white/5 border-white/10">
+        <div className="text-center space-y-3 max-w-md glass-card border-none p-6 rounded-[var(--radius-card)] border border-red-200 text-red-800">
           <AlertCircle className="w-8 h-8 mx-auto text-red-600" />
           <h3 className="text-sm font-bold">Erro ao carregar caixas</h3>
           <p className="text-xs text-red-700">Não foi possível recuperar a lista de caixas da agência. Verifique sua conexão ou suas credenciais de acesso.</p>
@@ -361,12 +360,10 @@ function CashPage() {
   if (!registersQ.isLoading && registers.length === 0) {
     return (
       <div className="flex-1 flex flex-col overflow-hidden min-h-0">
-        <HeaderPortal>
-          <ModuleToolbar
+                  <PageHeader
             title="Caixa Diário"
           />
-        </HeaderPortal>
-        
+                
         <ModuleActionButton
           label="Criar Caixa"
           icon={<Plus className="h-3.5 w-3.5" />}
@@ -391,8 +388,7 @@ function CashPage() {
 
   return (
     <div className="flex-1 flex flex-col overflow-hidden min-h-0">
-      <HeaderPortal>
-        <ModuleToolbar
+              <PageHeader
           title="Fluxo de Caixa"
           actions={
             <div className="flex items-center gap-1.5">
@@ -454,8 +450,7 @@ function CashPage() {
             </div>
           }
         />
-      </HeaderPortal>
-
+      
       <ModuleActionButton
         label="Criar Caixa"
         icon={<Plus className="h-3.5 w-3.5" />}
@@ -464,7 +459,7 @@ function CashPage() {
 
       <div className="flex-1 overflow-y-auto px-4  md:pr-6 py-4 space-y-5 pb-24">
         {/* Register Selector */}
-        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 bg-surface border border-border rounded-[var(--radius-card)] p-4">
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 glass-card border-none border-none rounded-[var(--radius-card)] p-4">
           <div>
             <h1 className="text-xl font-bold tracking-tight">Fluxo de Caixa Diário</h1>
             <p className="text-xs text-muted-foreground mt-0.5">
@@ -494,7 +489,7 @@ function CashPage() {
         {/* KPI Cards */}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
           {activeReg?.type === "physical" && (
-            <div className="bg-surface border border-border rounded-[var(--radius-card)] p-4">
+            <div className="glass-card border-none border-none rounded-[var(--radius-card)] p-4">
               <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest block">
                 Saldo de Abertura
               </span>
@@ -509,7 +504,7 @@ function CashPage() {
             </div>
           )}
 
-          <div className="bg-surface border border-border rounded-[var(--radius-card)] p-4">
+          <div className="glass-card border-none border-none rounded-[var(--radius-card)] p-4">
             <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest flex items-center gap-1">
               <ArrowDownCircle className="w-3.5 h-3.5 text-success" /> Total Entradas
             </span>
@@ -521,7 +516,7 @@ function CashPage() {
             </span>
           </div>
 
-          <div className="bg-surface border border-border rounded-[var(--radius-card)] p-4">
+          <div className="glass-card border-none border-none rounded-[var(--radius-card)] p-4">
             <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest flex items-center gap-1">
               <ArrowUpCircle className="w-3.5 h-3.5 text-danger" /> Total Saídas
             </span>
@@ -531,7 +526,7 @@ function CashPage() {
             </span>
           </div>
 
-          <div className="bg-surface border border-border rounded-[var(--radius-card)] p-4">
+          <div className="glass-card border-none border-none rounded-[var(--radius-card)] p-4">
             <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest block">
               Saldo Atual
             </span>
@@ -556,7 +551,7 @@ function CashPage() {
 
         {/* Closed Physical Register */}
         {activeReg?.type === "physical" && !activeSession && !sessionQ.isLoading && !sessionQ.isError && (
-          <div className="rounded-[var(--radius-card)] border border-dashed border-border bg-surface p-12 text-center">
+          <div className="rounded-[var(--radius-card)] border border-dashed border-border glass-card border-none p-12 text-center">
             <Lock className="mx-auto h-12 w-12 text-muted-foreground mb-3" />
             <h3 className="text-sm font-bold text-foreground">O caixa está fechado</h3>
             <p className="text-xs text-muted-foreground max-w-sm mx-auto mt-1">
@@ -574,7 +569,7 @@ function CashPage() {
 
         {/* Transactions List */}
         {(activeReg?.type !== "physical" || activeSession) && (
-          <div className="bg-surface border border-border rounded-[var(--radius-card)] overflow-hidden">
+          <div className="glass-card border-none border-none rounded-[var(--radius-card)] overflow-hidden">
             <div className="px-5 py-4 border-b border-border flex justify-between items-center">
               <div>
                 <h3 className="text-sm font-bold text-foreground">Extrato de Movimentações</h3>
@@ -606,7 +601,7 @@ function CashPage() {
             ) : (
               <div className="overflow-x-auto">
                 <table className="w-full text-sm">
-                  <thead className="bg-surface-alt text-left text-[10px] font-bold uppercase tracking-wider text-muted-foreground border-b border-border">
+                  <thead className="glass bg-white/5 border-white/10 text-left text-[10px] font-bold uppercase tracking-wider text-muted-foreground border-b border-border">
                     <tr>
                       <th className="px-5 py-3">Data/Hora</th>
                       <th className="px-5 py-3">Descrição / Observações</th>
@@ -617,7 +612,7 @@ function CashPage() {
                   </thead>
                   <tbody className="divide-y divide-border">
                     {txList.map((tx) => (
-                      <tr key={tx.id} className="hover:bg-surface-alt/50 transition-colors">
+                      <tr key={tx.id} className="hover:glass bg-white/5 border-white/10/50 transition-colors">
                         <td className="px-5 py-3.5 whitespace-nowrap text-xs text-muted-foreground font-mono">
                           {new Date(tx.transaction_date).toLocaleString("pt-BR")}
                         </td>
@@ -637,7 +632,7 @@ function CashPage() {
                         </td>
                         <td className="px-5 py-3.5 text-xs">
                           {tx.category ? (
-                            <span className="inline-block bg-surface-alt border border-border rounded px-1.5 py-0.5 text-[9px] font-extrabold uppercase">
+                            <span className="inline-block glass bg-white/5 border-white/10 border-none rounded px-1.5 py-0.5 text-[9px] font-extrabold uppercase">
                               {tx.category}
                             </span>
                           ) : (
@@ -834,7 +829,7 @@ function CloseForm({
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-      <div className="bg-surface-alt border border-border rounded-[var(--radius-card)] p-4 text-xs space-y-2">
+      <div className="glass bg-white/5 border-white/10 border-none rounded-[var(--radius-card)] p-4 text-xs space-y-2">
         <div className="flex justify-between">
           <span className="text-muted-foreground">Saldo esperado no sistema:</span>
           <strong className="font-mono">{money(currentBalance)}</strong>
@@ -1058,7 +1053,7 @@ function ReconciliationForm({
         <Input type="number" {...register("commission_rate")} />
       </Field>
 
-      <div className="bg-surface-alt border border-border rounded-[var(--radius-card)] p-4 text-xs space-y-2.5">
+      <div className="glass bg-white/5 border-white/10 border-none rounded-[var(--radius-card)] p-4 text-xs space-y-2.5">
         <div className="flex justify-between">
           <span className="text-muted-foreground">Valor Total da Venda:</span>
           <strong className="font-mono">{money(totalSale)}</strong>
@@ -1074,7 +1069,7 @@ function ReconciliationForm({
           </strong>
         </div>
         {netDue < 0 && (
-          <div className="flex items-start gap-1.5 text-[10px] text-danger bg-danger-bg border border-danger/20 p-2 rounded-2xl mt-1">
+          <div className="flex items-start gap-1.5 text-[10px] text-danger bg-danger-bg border border-danger/20 p-2 rounded-[var(--radius-card)] mt-1">
             <AlertCircle className="w-3.5 h-3.5 mt-0.5 shrink-0" />
             <span>O valor recebido supera nossa comissão. A operadora deduzirá a diferença.</span>
           </div>

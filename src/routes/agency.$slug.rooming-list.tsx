@@ -30,8 +30,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAgency } from "@/lib/agency-context";
 import { Input, PrimaryButton, GhostButton, StatusBadge, Field } from "@/components/ui/form";
 import { cn } from "@/lib/utils";
-import { HeaderPortal } from "@/components/shell/HeaderPortal";
-import { ModuleToolbar } from "@/components/shell/ModuleToolbar";
+import { PageHeader } from "@/components/shell/PageHeader";
 import type { Database } from "@/integrations/supabase/types";
 import {
   DndContext,
@@ -112,11 +111,11 @@ function DraggablePassenger({
       {...listeners}
       {...attributes}
       className={cn(
-        "flex items-center justify-between py-1.5 px-3 rounded-2xl bg-surface border border-border shadow-xs hover:border-brand/50 hover:shadow-sm cursor-grab active:cursor-grabbing transition-all select-none",
+        "flex items-center justify-between py-1.5 px-3 rounded-[var(--radius-card)] glass-card border-none border-none shadow-xs hover:border-brand/50 hover:shadow-none cursor-grab active:cursor-grabbing transition-all select-none",
         isDragging && "opacity-45 border-dashed border-brand",
         isCompact
           ? "text-xs font-semibold py-1 px-2.5 bg-brand/5 border-brand/10 text-foreground"
-          : "text-xs font-semibold text-foreground bg-surface",
+          : "text-xs font-semibold text-foreground glass-card border-none",
       )}
     >
       <div className="flex items-center gap-1.5 min-w-0">
@@ -157,7 +156,7 @@ function DroppableRoom({
     <div
       ref={setNodeRef}
       className={cn(
-        "rounded-[var(--radius-card)] border bg-surface overflow-hidden transition-all duration-200",
+        "rounded-[var(--radius-card)] border glass-card border-none overflow-hidden transition-all duration-200",
         room.is_confirmed ? "border-success/40" : "border-border",
         isOver && !isFull && "ring-2 ring-brand border-brand bg-brand/5 scale-[1.01]",
         isOver && isFull && "ring-2 ring-danger border-danger bg-danger/5",
@@ -177,7 +176,7 @@ function DroppableUnallocated({ children }: { children: React.ReactNode }) {
     <div
       ref={setNodeRef}
       className={cn(
-        "rounded-[var(--radius-card)] border border-dashed border-border bg-surface-alt/10 p-4 transition-all duration-200",
+        "rounded-[var(--radius-card)] border border-dashed border-border glass bg-white/5 border-white/10/10 p-4 transition-all duration-200",
         isOver && "ring-2 ring-brand border-brand bg-brand/5",
       )}
     >
@@ -518,14 +517,14 @@ function TourPanel({ tour, slug }: TourPanelProps) {
   }
 
   return (
-    <div className="rounded-[var(--radius-card)] border border-border bg-card overflow-hidden shadow-xs print:break-inside-avoid">
+    <div className="rounded-[var(--radius-card)] border-none bg-card overflow-hidden shadow-xs print:break-inside-avoid">
       {/* Header Panel Summary Row */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-4 border-b border-border bg-surface/30">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-4 border-b border-border glass-card border-none/30">
         <button
           onClick={() => setExpanded(!expanded)}
           className="flex flex-1 items-start gap-3.5 text-left cursor-pointer hover:opacity-85 transition-opacity"
         >
-          <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-2xl bg-brand/5 text-brand">
+          <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-[var(--radius-card)] bg-brand/5 text-brand">
             <BedDouble className="h-5 w-5" />
           </div>
           <div>
@@ -543,7 +542,7 @@ function TourPanel({ tour, slug }: TourPanelProps) {
 
         {/* Status toggles & stats */}
         <div className="flex flex-wrap items-center gap-3 shrink-0">
-          <div className="flex items-center gap-2 border border-border/80 rounded-2xl p-1 bg-surface/50 text-[10px] font-bold">
+          <div className="flex items-center gap-2 border-none/80 rounded-[var(--radius-card)] p-1 glass-card border-none/50 text-[10px] font-bold">
             {/* Status (Open / Closed) */}
             <button
               onClick={toggleListStatus}
@@ -564,7 +563,7 @@ function TourPanel({ tour, slug }: TourPanelProps) {
                 "px-2 py-0.5 rounded cursor-pointer transition-colors flex items-center gap-1",
                 tour.rooming_list_sent_hotel
                   ? "bg-green-600 text-white"
-                  : "text-muted-foreground hover:bg-surface-alt",
+                  : "text-muted-foreground hover:glass bg-white/5 border-white/10",
               )}
             >
               {tour.rooming_list_sent_hotel && <Check className="h-2.5 w-2.5" />}
@@ -578,7 +577,7 @@ function TourPanel({ tour, slug }: TourPanelProps) {
                 "px-2 py-0.5 rounded cursor-pointer transition-colors flex items-center gap-1",
                 tour.rooming_list_sent_bus
                   ? "bg-blue-600 text-white"
-                  : "text-muted-foreground hover:bg-surface-alt",
+                  : "text-muted-foreground hover:glass bg-white/5 border-white/10",
               )}
             >
               {tour.rooming_list_sent_bus && <Check className="h-2.5 w-2.5" />}
@@ -619,7 +618,7 @@ function TourPanel({ tour, slug }: TourPanelProps) {
       {/* Expanded Rooming Grid & Drag'n'Drop Area */}
       {expanded && (
         <DndContext sensors={sensors} onDragStart={handleDragStart} onDragEnd={handleDragEnd}>
-          <div className="p-5 space-y-6 bg-surface/10 border-b border-border">
+          <div className="p-5 space-y-6 glass-card border-none/10 border-b border-border">
             {(roomsQ.isLoading || enrolQ.isLoading) && (
               <div className="text-center py-4 text-xs text-muted-foreground animate-pulse">
                 Carregando dados dos quartos e passageiros...
@@ -627,7 +626,7 @@ function TourPanel({ tour, slug }: TourPanelProps) {
             )}
 
             {(roomsQ.isError || enrolQ.isError) && (
-              <div className="flex items-center gap-2 p-3 text-xs border border-red-200 bg-red-50 text-red-700 rounded-2xl">
+              <div className="flex items-center gap-2 p-3 text-xs border border-red-200 bg-red-50 text-red-700 rounded-[var(--radius-card)]">
                 <AlertCircle className="h-4 w-4 shrink-0" />
                 <span>
                   Falha ao carregar dados dos quartos:{" "}
@@ -672,7 +671,7 @@ function TourPanel({ tour, slug }: TourPanelProps) {
                   type="button"
                   onClick={handleExportExcel}
                   disabled={exporting || rooms.length === 0}
-                  className="flex items-center gap-1.5 h-7 px-2.5 rounded-full border border-border bg-surface text-[10px] font-bold text-foreground hover:bg-surface-alt hover:border-brand transition-colors cursor-pointer disabled:opacity-50"
+                  className="flex items-center gap-1.5 h-7 px-2.5 rounded-full border-none glass-card border-none text-[10px] font-bold text-foreground hover:glass bg-white/5 border-white/10 hover:border-brand transition-colors cursor-pointer disabled:opacity-50"
                 >
                   <Download className="h-3 w-3" /> Exportar Excel
                 </button>
@@ -680,7 +679,7 @@ function TourPanel({ tour, slug }: TourPanelProps) {
                   type="button"
                   onClick={handleExportWord}
                   disabled={exporting || rooms.length === 0}
-                  className="flex items-center gap-1.5 h-7 px-2.5 rounded-full border border-border bg-surface text-[10px] font-bold text-foreground hover:bg-surface-alt hover:border-brand transition-colors cursor-pointer disabled:opacity-50"
+                  className="flex items-center gap-1.5 h-7 px-2.5 rounded-full border-none glass-card border-none text-[10px] font-bold text-foreground hover:glass bg-white/5 border-white/10 hover:border-brand transition-colors cursor-pointer disabled:opacity-50"
                 >
                   <FileText className="h-3 w-3" /> Exportar Word
                 </button>
@@ -688,7 +687,7 @@ function TourPanel({ tour, slug }: TourPanelProps) {
                   type="button"
                   onClick={handleExportPdf}
                   disabled={exporting || rooms.length === 0}
-                  className="flex items-center gap-1.5 h-7 px-2.5 rounded-full border border-border bg-surface text-[10px] font-bold text-foreground hover:bg-surface-alt hover:border-brand transition-colors cursor-pointer disabled:opacity-50"
+                  className="flex items-center gap-1.5 h-7 px-2.5 rounded-full border-none glass-card border-none text-[10px] font-bold text-foreground hover:glass bg-white/5 border-white/10 hover:border-brand transition-colors cursor-pointer disabled:opacity-50"
                 >
                   <FileText className="h-3 w-3 text-rose-500" /> Exportar PDF
                 </button>
@@ -713,7 +712,7 @@ function TourPanel({ tour, slug }: TourPanelProps) {
                         value={newRoom.room_number}
                         onChange={(e) => setNewRoom({ ...newRoom, room_number: e.target.value })}
                         placeholder="ex: 201 ou Master Suite"
-                        className="h-8 rounded border border-border bg-surface px-2.5 text-xs text-foreground focus:border-brand focus:outline-none"
+                        className="h-8 rounded border-none glass-card border-none px-2.5 text-xs text-foreground focus:border-brand focus:outline-none"
                         required
                       />
                     </Field>
@@ -721,7 +720,7 @@ function TourPanel({ tour, slug }: TourPanelProps) {
                       <select
                         value={newRoom.room_type}
                         onChange={(e) => setNewRoom({ ...newRoom, room_type: e.target.value })}
-                        className="h-8 rounded border border-border bg-surface px-2.5 text-xs text-foreground focus:border-brand focus:outline-none"
+                        className="h-8 rounded border-none glass-card border-none px-2.5 text-xs text-foreground focus:border-brand focus:outline-none"
                       >
                         {Object.entries(ROOM_TYPE_LABEL).map(([v, l]) => (
                           <option key={v} value={v}>
@@ -735,7 +734,7 @@ function TourPanel({ tour, slug }: TourPanelProps) {
                         value={newRoom.hotel_name}
                         onChange={(e) => setNewRoom({ ...newRoom, hotel_name: e.target.value })}
                         placeholder="Nome do hotel"
-                        className="h-8 rounded border border-border bg-surface px-2.5 text-xs text-foreground focus:border-brand focus:outline-none"
+                        className="h-8 rounded border-none glass-card border-none px-2.5 text-xs text-foreground focus:border-brand focus:outline-none"
                       />
                     </Field>
                     <Field label="Check-in">
@@ -743,7 +742,7 @@ function TourPanel({ tour, slug }: TourPanelProps) {
                         type="date"
                         value={newRoom.checkin_date}
                         onChange={(e) => setNewRoom({ ...newRoom, checkin_date: e.target.value })}
-                        className="h-8 rounded border border-border bg-surface px-2.5 text-xs text-foreground focus:border-brand focus:outline-none"
+                        className="h-8 rounded border-none glass-card border-none px-2.5 text-xs text-foreground focus:border-brand focus:outline-none"
                       />
                     </Field>
                     <Field label="Check-out">
@@ -751,7 +750,7 @@ function TourPanel({ tour, slug }: TourPanelProps) {
                         type="date"
                         value={newRoom.checkout_date}
                         onChange={(e) => setNewRoom({ ...newRoom, checkout_date: e.target.value })}
-                        className="h-8 rounded border border-border bg-surface px-2.5 text-xs text-foreground focus:border-brand focus:outline-none"
+                        className="h-8 rounded border-none glass-card border-none px-2.5 text-xs text-foreground focus:border-brand focus:outline-none"
                       />
                     </Field>
                     <Field label="Notas">
@@ -759,7 +758,7 @@ function TourPanel({ tour, slug }: TourPanelProps) {
                         value={newRoom.notes}
                         onChange={(e) => setNewRoom({ ...newRoom, notes: e.target.value })}
                         placeholder="Observações..."
-                        className="h-8 rounded border border-border bg-surface px-2.5 text-xs text-foreground focus:border-brand focus:outline-none"
+                        className="h-8 rounded border-none glass-card border-none px-2.5 text-xs text-foreground focus:border-brand focus:outline-none"
                       />
                     </Field>
                   </div>
@@ -801,7 +800,7 @@ function TourPanel({ tour, slug }: TourPanelProps) {
                       {/* Room Card Title */}
                       <div
                         className={cn(
-                          "flex items-center justify-between px-3 py-2 border-b border-border bg-surface/50",
+                          "flex items-center justify-between px-3 py-2 border-b border-border glass-card border-none/50",
                           room.is_confirmed &&
                             "bg-success/5 border-success/20 text-success-foreground",
                         )}
@@ -811,7 +810,7 @@ function TourPanel({ tour, slug }: TourPanelProps) {
                           <span className="font-bold text-xs truncate">
                             Quarto {room.room_number}
                           </span>
-                          <span className="text-[9px] text-muted-foreground shrink-0 bg-surface px-1.5 py-0.5 rounded border border-border">
+                          <span className="text-[9px] text-muted-foreground shrink-0 glass-card border-none px-1.5 py-0.5 rounded border-none">
                             {ROOM_TYPE_LABEL[room.room_type] ?? room.room_type}
                           </span>
                         </div>
@@ -854,7 +853,7 @@ function TourPanel({ tour, slug }: TourPanelProps) {
                             {roomPax.length}/{cap}
                           </span>
                         </div>
-                        <div className="h-1 bg-surface-alt rounded-full overflow-hidden">
+                        <div className="h-1 glass bg-white/5 border-white/10 rounded-full overflow-hidden">
                           <div
                             className={cn(
                               "h-full rounded-full transition-all",
@@ -905,7 +904,7 @@ function TourPanel({ tour, slug }: TourPanelProps) {
 
                       {/* Hotel detail Footer */}
                       {(room.hotel_name || room.checkin_date) && (
-                        <div className="px-3 py-1.5 border-t border-border/50 bg-surface-alt/10 text-[9px] text-muted-foreground font-medium flex flex-wrap gap-x-2 gap-y-0.5">
+                        <div className="px-3 py-1.5 border-t border-border/50 glass bg-white/5 border-white/10/10 text-[9px] text-muted-foreground font-medium flex flex-wrap gap-x-2 gap-y-0.5">
                           {room.hotel_name && (
                             <span className="flex items-center gap-0.5">
                               <Hotel className="h-2 w-2" />
@@ -924,7 +923,7 @@ function TourPanel({ tour, slug }: TourPanelProps) {
 
             {/* Validation Closure checklist */}
             {rooms.length > 0 && (
-              <div className="rounded-[var(--radius-card)] border border-border bg-surface p-4">
+              <div className="rounded-[var(--radius-card)] border-none glass-card border-none p-4">
                 <h5 className="text-xs font-bold text-foreground mb-3 flex items-center gap-1.5">
                   <CheckCircle2 className="h-4 w-4 text-success" /> Checklist de Fechamento do Grupo
                 </h5>
@@ -950,7 +949,7 @@ function TourPanel({ tour, slug }: TourPanelProps) {
                     <div
                       key={i}
                       className={cn(
-                        "flex items-center gap-2 p-2 rounded-2xl border",
+                        "flex items-center gap-2 p-2 rounded-[var(--radius-card)] border",
                         check.ok
                           ? "bg-success/5 text-success border-success/10"
                           : "bg-warning/5 text-warning border-warning/10",
@@ -972,7 +971,7 @@ function TourPanel({ tour, slug }: TourPanelProps) {
           {/* Drag overlay */}
           <DragOverlay>
             {activeDragId ? (
-              <div className="flex items-center gap-1.5 py-1.5 px-3 rounded-2xl bg-surface border border-brand shadow-md text-xs font-semibold text-foreground cursor-grabbing opacity-90 select-none">
+              <div className="flex items-center gap-1.5 py-1.5 px-3 rounded-[var(--radius-card)] glass-card border-none border border-brand shadow-none text-xs font-semibold text-foreground cursor-grabbing opacity-90 select-none">
                 <Users2 className="h-3.5 w-3.5 text-brand" />
                 <span>{activeDragName}</span>
               </div>
@@ -982,7 +981,7 @@ function TourPanel({ tour, slug }: TourPanelProps) {
           {/* Edit Room Modal */}
           {editingRoom && (
             <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
-              <div className="w-full max-w-md rounded-[var(--radius-card)] bg-background p-6 border border-border shadow-lg">
+              <div className="w-full max-w-md rounded-[var(--radius-card)] bg-background p-6 border-none shadow-none">
                 <h4 className="text-sm font-bold text-foreground mb-4">
                   Editar Quarto {editingRoom.room_number}
                 </h4>
@@ -993,7 +992,7 @@ function TourPanel({ tour, slug }: TourPanelProps) {
                       onChange={(e) =>
                         setEditingRoom({ ...editingRoom, room_number: e.target.value })
                       }
-                      className="h-9 w-full rounded border border-border bg-surface px-2.5 text-xs text-foreground focus:border-brand focus:outline-none"
+                      className="h-9 w-full rounded border-none glass-card border-none px-2.5 text-xs text-foreground focus:border-brand focus:outline-none"
                       required
                     />
                   </Field>
@@ -1004,7 +1003,7 @@ function TourPanel({ tour, slug }: TourPanelProps) {
                         onChange={(e) =>
                           setEditingRoom({ ...editingRoom, room_type: e.target.value })
                         }
-                        className="h-9 w-full rounded border border-border bg-surface px-2.5 text-xs text-foreground focus:border-brand focus:outline-none"
+                        className="h-9 w-full rounded border-none glass-card border-none px-2.5 text-xs text-foreground focus:border-brand focus:outline-none"
                       >
                         {Object.entries(ROOM_TYPE_LABEL).map(([v, l]) => (
                           <option key={v} value={v}>
@@ -1019,7 +1018,7 @@ function TourPanel({ tour, slug }: TourPanelProps) {
                         onChange={(e) =>
                           setEditingRoom({ ...editingRoom, hotel_name: e.target.value })
                         }
-                        className="h-9 w-full rounded border border-border bg-surface px-2.5 text-xs text-foreground focus:border-brand focus:outline-none"
+                        className="h-9 w-full rounded border-none glass-card border-none px-2.5 text-xs text-foreground focus:border-brand focus:outline-none"
                       />
                     </Field>
                   </div>
@@ -1031,7 +1030,7 @@ function TourPanel({ tour, slug }: TourPanelProps) {
                         onChange={(e) =>
                           setEditingRoom({ ...editingRoom, checkin_date: e.target.value })
                         }
-                        className="h-9 w-full rounded border border-border bg-surface px-2.5 text-xs text-foreground focus:border-brand focus:outline-none"
+                        className="h-9 w-full rounded border-none glass-card border-none px-2.5 text-xs text-foreground focus:border-brand focus:outline-none"
                       />
                     </Field>
                     <Field label="Check-out">
@@ -1041,7 +1040,7 @@ function TourPanel({ tour, slug }: TourPanelProps) {
                         onChange={(e) =>
                           setEditingRoom({ ...editingRoom, checkout_date: e.target.value })
                         }
-                        className="h-9 w-full rounded border border-border bg-surface px-2.5 text-xs text-foreground focus:border-brand focus:outline-none"
+                        className="h-9 w-full rounded border-none glass-card border-none px-2.5 text-xs text-foreground focus:border-brand focus:outline-none"
                       />
                     </Field>
                   </div>
@@ -1049,7 +1048,7 @@ function TourPanel({ tour, slug }: TourPanelProps) {
                     <input
                       value={editingRoom.notes || ""}
                       onChange={(e) => setEditingRoom({ ...editingRoom, notes: e.target.value })}
-                      className="h-9 w-full rounded border border-border bg-surface px-2.5 text-xs text-foreground focus:border-brand focus:outline-none"
+                      className="h-9 w-full rounded border-none glass-card border-none px-2.5 text-xs text-foreground focus:border-brand focus:outline-none"
                       placeholder="Observações..."
                     />
                   </Field>
@@ -1122,8 +1121,7 @@ function RoomingListDashboard() {
 
   return (
     <div className="flex flex-col h-full text-foreground overflow-hidden">
-      <HeaderPortal>
-        <ModuleToolbar
+              <PageHeader
           title="Rooming List"
           search={{
             value: search,
@@ -1147,8 +1145,7 @@ function RoomingListDashboard() {
             </GhostButton>
           }
         />
-      </HeaderPortal>
-
+      
       {/* Content list */}
       <div className="flex-1 overflow-y-auto px-4  md:pr-6 py-4 space-y-4">
         {toursQ.isError && (

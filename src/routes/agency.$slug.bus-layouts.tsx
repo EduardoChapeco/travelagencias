@@ -6,8 +6,7 @@ import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { useAgency } from "@/lib/agency-context";
 import { EmptyState } from "@/components/shell/PageHeader";
-import { HeaderPortal } from "@/components/shell/HeaderPortal";
-import { ModuleToolbar, ModuleActionButton } from "@/components/shell/ModuleToolbar";
+import { PageHeader, ModuleActionButton } from "@/components/shell/PageHeader";
 import { ModuleAdminPanel } from "@/components/shell/ModuleAdminPanel";
 import { Field, Input, Select, PrimaryButton, GhostButton, Sheet } from "@/components/ui/form";
 import { EditVehicleModal } from "./agency.$slug.bus-layouts.$id";
@@ -51,8 +50,7 @@ function BusLayoutsPage() {
 
   return (
     <div className="flex h-full flex-col overflow-hidden">
-      <HeaderPortal>
-        <ModuleToolbar
+              <PageHeader
           title="Frota & Ônibus"
           search={{
             value: qSearch,
@@ -79,8 +77,7 @@ function BusLayoutsPage() {
             ) : undefined
           }
         />
-      </HeaderPortal>
-
+      
       <ModuleActionButton
         label="Novo Layout"
         icon={<Plus className="h-3.5 w-3.5" />}
@@ -101,10 +98,10 @@ function BusLayoutsPage() {
             {filtered.map((l) => (
               <div
                 key={l.id}
-                className="flex flex-col justify-between rounded-2xl border border-border bg-surface p-5 hover:border-border-strong transition-all shadow-xs"
+                className="flex flex-col justify-between rounded-[var(--radius-card)] border-none glass-card border-none p-5 hover:border-border-strong transition-all shadow-xs"
               >
                 <div className="flex items-start justify-between gap-3">
-                  <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-surface-alt">
+                  <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-[var(--radius-card)] glass bg-white/5 border-white/10">
                     <Bus className="h-5 w-5 text-muted-foreground" />
                   </div>
                   <div className="flex-1 text-right">
@@ -117,7 +114,7 @@ function BusLayoutsPage() {
                 <div className="mt-4 pt-3 border-t border-border flex justify-between items-center gap-2">
                    <button 
                      onClick={() => setEditingLayout(l)} 
-                     className="text-[11px] font-semibold text-muted-foreground hover:text-foreground flex items-center gap-1 transition-colors px-2.5 py-1.5 rounded-full hover:bg-surface-alt cursor-pointer border border-border bg-surface"
+                     className="text-[11px] font-semibold text-muted-foreground hover:text-foreground flex items-center gap-1 transition-colors px-2.5 py-1.5 rounded-full hover:glass bg-white/5 border-white/10 cursor-pointer border-none glass-card border-none"
                    >
                      <Settings2 className="h-3 w-3" /> Cadastro
                    </button>

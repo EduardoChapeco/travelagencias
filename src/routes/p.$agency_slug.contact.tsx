@@ -164,19 +164,19 @@ function ContactPage() {
 
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
         {errorMsg && (
-          <div className="rounded-2xl border border-danger bg-danger/5 p-4 text-sm text-danger font-medium text-center">
+          <div className="rounded-[var(--radius-card)] border border-danger bg-danger/5 p-4 text-sm text-danger font-medium text-center">
             {errorMsg}
           </div>
         )}
 
-        <div className="space-y-4 rounded-3xl border border-border bg-surface p-6 md:p-8">
+        <div className="space-y-4 rounded-3xl border-none glass-card border-none p-6 md:p-8">
           <div className="space-y-1.5">
             <label className="text-xs font-bold uppercase tracking-widest text-muted-foreground ml-2">
               Nome Completo *
             </label>
             <input
               {...register("name")}
-              className="w-full h-12 px-4 rounded-2xl border border-border bg-background text-sm focus:border-foreground focus:ring-1 focus:ring-foreground outline-none transition-all"
+              className="w-full h-12 px-4 rounded-[var(--radius-card)] border-none bg-background text-sm focus:border-foreground focus:ring-1 focus:ring-foreground outline-none transition-all"
               placeholder="Como quer ser chamado?"
             />
             {errors.name && (
@@ -193,7 +193,7 @@ function ContactPage() {
               </label>
               <input
                 {...register("phone")}
-                className="w-full h-12 px-4 rounded-2xl border border-border bg-background text-sm focus:border-foreground focus:ring-1 focus:ring-foreground outline-none transition-all"
+                className="w-full h-12 px-4 rounded-[var(--radius-card)] border-none bg-background text-sm focus:border-foreground focus:ring-1 focus:ring-foreground outline-none transition-all"
                 placeholder="(11) 99999-9999"
               />
               {errors.phone && (
@@ -209,7 +209,7 @@ function ContactPage() {
               <input
                 type="email"
                 {...register("email")}
-                className="w-full h-12 px-4 rounded-2xl border border-border bg-background text-sm focus:border-foreground focus:ring-1 focus:ring-foreground outline-none transition-all"
+                className="w-full h-12 px-4 rounded-[var(--radius-card)] border-none bg-background text-sm focus:border-foreground focus:ring-1 focus:ring-foreground outline-none transition-all"
                 placeholder="seu@email.com"
               />
               {errors.email && (
@@ -226,7 +226,7 @@ function ContactPage() {
             </label>
             <input
               {...register("destination")}
-              className="w-full h-12 px-4 rounded-2xl border border-border bg-background text-sm focus:border-foreground focus:ring-1 focus:ring-foreground outline-none transition-all"
+              className="w-full h-12 px-4 rounded-[var(--radius-card)] border-none bg-background text-sm focus:border-foreground focus:ring-1 focus:ring-foreground outline-none transition-all"
               placeholder="Para onde você quer ir?"
             />
             {errors.destination && (
@@ -244,7 +244,7 @@ function ContactPage() {
               <input
                 type="date"
                 {...register("travel_start")}
-                className="w-full h-12 px-4 rounded-2xl border border-border bg-background text-sm focus:border-foreground focus:ring-1 focus:ring-foreground outline-none transition-all"
+                className="w-full h-12 px-4 rounded-[var(--radius-card)] border-none bg-background text-sm focus:border-foreground focus:ring-1 focus:ring-foreground outline-none transition-all"
               />
               {errors.travel_start && (
                 <span className="text-[11px] font-semibold text-red-500 ml-2 block">
@@ -259,7 +259,7 @@ function ContactPage() {
               <input
                 type="date"
                 {...register("travel_end")}
-                className="w-full h-12 px-4 rounded-2xl border border-border bg-background text-sm focus:border-foreground focus:ring-1 focus:ring-foreground outline-none transition-all"
+                className="w-full h-12 px-4 rounded-[var(--radius-card)] border-none bg-background text-sm focus:border-foreground focus:ring-1 focus:ring-foreground outline-none transition-all"
               />
               {errors.travel_end && (
                 <span className="text-[11px] font-semibold text-red-500 ml-2 block">
@@ -278,7 +278,7 @@ function ContactPage() {
                 type="number"
                 min="1"
                 {...register("pax_count")}
-                className="w-full h-12 px-4 rounded-2xl border border-border bg-background text-sm focus:border-foreground focus:ring-1 focus:ring-foreground outline-none transition-all"
+                className="w-full h-12 px-4 rounded-[var(--radius-card)] border-none bg-background text-sm focus:border-foreground focus:ring-1 focus:ring-foreground outline-none transition-all"
               />
               {errors.pax_count && (
                 <span className="text-[11px] font-semibold text-red-500 ml-2 block">
@@ -295,7 +295,7 @@ function ContactPage() {
                 min="0"
                 step="100"
                 {...register("estimated_value")}
-                className="w-full h-12 px-4 rounded-2xl border border-border bg-background text-sm focus:border-foreground focus:ring-1 focus:ring-foreground outline-none transition-all"
+                className="w-full h-12 px-4 rounded-[var(--radius-card)] border-none bg-background text-sm focus:border-foreground focus:ring-1 focus:ring-foreground outline-none transition-all"
                 placeholder="Ex: 15000"
               />
               {errors.estimated_value && (
@@ -313,7 +313,7 @@ function ContactPage() {
             <textarea
               rows={4}
               {...register("notes")}
-              className="w-full px-4 py-3 rounded-2xl border border-border bg-background text-sm focus:border-foreground focus:ring-1 focus:ring-foreground outline-none transition-all resize-none"
+              className="w-full px-4 py-3 rounded-[var(--radius-card)] border-none bg-background text-sm focus:border-foreground focus:ring-1 focus:ring-foreground outline-none transition-all resize-none"
               placeholder="O que não pode faltar nessa viagem?"
             />
             {errors.notes && (

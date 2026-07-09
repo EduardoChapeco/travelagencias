@@ -2,8 +2,29 @@ import { Link, useRouterState } from "@tanstack/react-router";
 import { type ComponentType, type ReactNode, useState, useEffect } from "react";
 import { cn } from "@/lib/utils";
 import { Loader2, ChevronLeft, Sparkles } from "lucide-react";
-import { type SlimSidebarItem, type ContextItem } from "./SlimSidebar";
+
 import { Tooltip, TooltipContent, TooltipTrigger, TooltipProvider } from "@/components/ui/tooltip";
+
+type Icon = ComponentType<{ className?: string; strokeWidth?: number }>;
+
+export type SlimSidebarItem = {
+  type?: "link" | "header";
+  to?: string;
+  label: string;
+  icon?: Icon;
+  exact?: boolean;
+  adminOnly?: boolean;
+  matchPaths?: string[];
+  badge?: number;
+};
+
+export type ContextItem = {
+  label: string;
+  to: string;
+  icon: Icon;
+  exact?: boolean;
+  adminOnly?: boolean;
+};
 
 function isItemActive(item: SlimSidebarItem, pathname: string): boolean {
   if (!item.to) return false;
@@ -107,7 +128,7 @@ function DockItem({
 // isHome=true  → horizontal pill, fixed bottom-center (macOS style)
 // isHome=false → vertical sidebar, fixed left edge (grudada na esquerda)
 // ─────────────────────────────────────────────────────────────────────────────
-export function FloatingDock({
+export function DockNavigation({
   items,
   contextItems = [],
   footer,
@@ -141,7 +162,7 @@ export function FloatingDock({
   if (isHome) {
     // ── Horizontal dock — bottom center ────────────────────────────────────
     return (
-      <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-30 hidden md:block pointer-events-none">
+      <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-30 pointer-events-none">
         <TooltipProvider delayDuration={80}>
           <div className="pointer-events-auto flex items-center gap-1.5 px-4 py-3 rounded-full bg-black/30 backdrop-blur-2xl border border-white/15 shadow-[0_8px_32px_rgba(0,0,0,0.4)]">
             {dockItems.map((item, idx) => (
@@ -165,12 +186,13 @@ export function FloatingDock({
     );
   }
 
-  // ── Vertical dock — left edge (grudada no canto esquerdo) ───────────────────
+  // ── Vertical dock (md+) & Horizontal Bottom Bar (mobile) ───────────────────
+  // Structural (not fixed). Handled by AppShell's flex layout.
   return (
-    <div className="fixed left-0 top-0 bottom-0 w-[72px] z-30 hidden md:flex flex-col items-center justify-between py-6 bg-black/10 dark:bg-black/30 backdrop-blur-2xl border-r border-white/5 shadow-none">
+    <div className="w-full md:w-[72px] h-[72px] md:h-full z-30 flex md:flex-col items-center justify-between px-4 md:px-0 py-0 md:py-6 bg-black/80 md:bg-black/10 dark:md:bg-black/30 backdrop-blur-2xl border-t md:border-t-0 md:border-r border-white/10 md:border-white/5 shadow-none flex-row shrink-0 relative">
       <TooltipProvider delayDuration={80}>
         {/* Top: Back button when context mode is active */}
-        <div className="flex flex-col items-center gap-2">
+        <div className="flex md:flex-col items-center gap-2 flex-row w-full md:w-auto">
           {hasContext && showContextOnly && (
             <button
               onClick={() => setShowContextOnly(false)}
@@ -182,7 +204,7 @@ export function FloatingDock({
           )}
 
           {/* List items (contextual submenus or general modules) */}
-          <div className="flex flex-col items-center gap-1.5 max-h-[calc(100vh-200px)] overflow-y-auto no-scrollbar">
+          <div className="flex flex-row md:flex-col items-center gap-1.5 md:max-h-[calc(100vh-200px)] overflow-x-auto md:overflow-x-visible md:overflow-y-auto no-scrollbar w-full md:w-auto justify-start md:justify-center px-2 md:px-0">
             {displayItems.map((item, idx) => (
               <DockItem
                 key={`${item.to}-${idx}`}
@@ -196,7 +218,7 @@ export function FloatingDock({
         </div>
 
         {/* Bottom / Footer (IA + Logout) alinhados na base */}
-        <div className="flex flex-col items-center gap-3 mt-auto shrink-0">
+        <div className="flex flex-row md:flex-col items-center gap-3 md:mt-auto shrink-0 ml-auto md:ml-0">
           {/* Botão de IA integrado e alinhado */}
           <button
             onClick={() => document.dispatchEvent(new CustomEvent("open-ai-chat"))}
@@ -207,7 +229,7 @@ export function FloatingDock({
           </button>
 
           {/* Divider */}
-          <div className="w-8 h-[1px] bg-white/10 shrink-0" />
+          <div className="h-8 md:h-[1px] w-[1px] md:w-8 bg-white/10 shrink-0" />
 
           {/* Logout button */}
           <div className="shrink-0">{footer}</div>

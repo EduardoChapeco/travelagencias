@@ -59,9 +59,9 @@ function Page() {
         <EmptyState title={search ? "Nenhum contrato encontrado" : "Sem contratos"} />
       )}
       {q.data && totalCount > 0 && (
-        <div className="overflow-hidden rounded-2xl border border-border bg-surface">
+        <div className="overflow-hidden rounded-[var(--radius-card)] border-none glass-card border-none">
           <table className="w-full text-sm">
-            <thead className="bg-surface-alt text-xs text-muted-foreground">
+            <thead className="glass bg-white/5 border-white/10 text-xs text-muted-foreground">
               <tr>
                 <th className="px-3 py-2 text-left">Cliente</th>
                 <th className="px-3 py-2 text-left">Agência</th>
@@ -88,7 +88,7 @@ function Page() {
               ))}
             </tbody>
           </table>
-          <div className="flex items-center justify-between border-t border-border px-4 py-3 bg-surface-alt/30">
+          <div className="flex items-center justify-between border-t border-border px-4 py-3 glass bg-white/5 border-white/10/30">
             <div className="text-xs text-muted-foreground">
               Mostrando{" "}
               <span className="font-medium text-foreground">{(page - 1) * PAGE_SIZE + 1}</span> a{" "}

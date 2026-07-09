@@ -70,12 +70,12 @@ export function DataTable<TData, TValue>({
 
   return (
     <div className="flex-1 flex flex-col justify-between h-full min-h-0 space-y-4">
-      <div className="flex-1 rounded-[var(--radius-card)] border border-border bg-surface overflow-hidden flex flex-col">
+      <div className="flex-1 rounded-[var(--radius-card)] border-none glass-card text-white overflow-hidden flex flex-col">
         <div className="flex-1 overflow-y-auto no-scrollbar">
           <Table>
-            <TableHeader className="bg-surface-alt/50">
+            <TableHeader className="bg-white/5 border-b border-white/10">
               {table.getHeaderGroups().map((headerGroup) => (
-                <TableRow key={headerGroup.id}>
+                <TableRow key={headerGroup.id} className="border-none">
                   {headerGroup.headers.map((header) => {
                     return (
                       <TableHead
