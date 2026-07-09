@@ -1,8 +1,14 @@
-# 00_CURRENT_TRUTH.md
-# Estado Atual da Verdade (Current Truth)
+﻿# 00_CURRENT_TRUTH.md
 
-## 1. Classificação das Correções Anteriores
-- **Causa Raiz das Superfícies Brancas (Quotes, Contratos, Calendário):** CORREÇÃO COMPROVADA. O computed style `--color-surface` era herdado estaticamente de `:root` como `#ffffff` devido a restrições de escopo do CSS. Redefinir `--color-surface` e `--color-surface-alt` localmente sob `.os-workspace` corrigiu a árvore de renderização.
-- **Dock sobreposto ao CRM Kanban:** CORREÇÃO COMPROVADA. A main workspace usava um padding estático `md:pl-[84px]`. A margem foi reescrita no AppShell para checar `contextItems` e expandir para `md:pl-[300px]` quando há itens contextuais na tela.
-- **EmptyState do Caixa Diário comprimido:** CORREÇÃO COMPROVADA. Faltavam classes de largura no container flex do `EmptyState` primitive. Corrigido com `w-full max-w-md` no componente compartilhado.
-- **Calendário branco e deslocado:** CORREÇÃO COMPROVADA. O grid de dias não tinha `flex-grow` ou `flex-1`, fazendo com que `grid-rows-6` com `1fr` colapsasse a zero e deslocasse as marcações. Adicionado `flex-1`.
+**Status do TravelOS Dock & Header**
+
+**O QUE FUNCIONA:**
+- DockNavigation agrupa os ícones num glass pill quando está na Home (isHome=true).
+- O Workspace aplica transparência total (ambient effect) adequadamente sobre o wallpaper via AppShell.
+- PageHeader implementa botões, busca e filtros.
+
+**O QUE ESTÁ QUEBRADO (Problemas de Arquitetura):**
+- **Dock Lateral:** Ao invés de usar a semântica "pill flutuante" (afastamento do edge-gap), o DockNavigation (quando isHome=false) gruda na tela ocupando exatamente md:w-[72px] e border-r, agindo como uma sidebar larga legada disfarçada.
+- **Header:** O header é renderizado de forma descentralizada por componentes locais. As páginas invocam PageHeader misturado com ModuleActionButton, posicionando actions massivas no grid em vez de estarem no Island Head.
+- **Geometria:** AppShell gerencia colunas com um Flexbox misto, dependendo de empurrar componentes, no lugar de um CSS Grid fixo que ceda um gutter específico.
+- **Duplicações:** O contexto/navbar está replicado sem padronização nas views.

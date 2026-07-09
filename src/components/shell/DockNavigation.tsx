@@ -187,9 +187,15 @@ export function DockNavigation({
   }
 
   // ── Vertical dock (md+) & Horizontal Bottom Bar (mobile) ───────────────────
-  // Structural (not fixed). Handled by AppShell's flex layout.
+  // Structural (not fixed). Handled by AppShell's CSS Grid layout.
   return (
-    <div className="w-full md:w-[72px] h-[72px] md:h-full z-30 flex md:flex-col items-center justify-between px-4 md:px-0 py-0 md:py-6 bg-black/80 md:bg-black/10 dark:md:bg-black/30 backdrop-blur-2xl border-t md:border-t-0 md:border-r border-white/10 md:border-white/5 shadow-none flex-row shrink-0 relative">
+    <div 
+      className="w-full h-[72px] md:h-full z-30 flex md:flex-col items-center justify-between px-4 md:px-0 py-0 md:py-6 bg-black/80 md:bg-black/20 backdrop-blur-2xl border-t md:border-t-0 md:border border-white/10 md:border-white/15 md:rounded-[var(--dock-radius)] md:shadow-[0_8px_32px_rgba(0,0,0,0.2)] flex-row shrink-0 relative transition-all duration-300"
+      style={{
+        width: "100%",
+        maxWidth: "var(--dock-collapsed-width)"
+      }}
+    >
       <TooltipProvider delayDuration={80}>
         {/* Top: Back button when context mode is active */}
         <div className="flex md:flex-col items-center gap-2 flex-row w-full md:w-auto">

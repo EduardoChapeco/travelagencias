@@ -39,13 +39,17 @@
   --ds-header-height: 44px;
   --ds-ai-left: 8px;
 
-  /* Semantic Layout Tokens */
-  --shell-header-height: 44px;
-  --shell-primary-nav-width: 52px;
-  --shell-primary-nav-expanded-width: 184px;
-  --shell-context-nav-width: 220px;
+  /* Semantic Layout Tokens (Canonical Architecture) */
+  --shell-edge-gap: 12px;
   --shell-content-gutter: 16px;
+  --shell-header-height: 44px;
   --shell-page-padding: 24px;
+
+  /* Dock Navigation Tokens */
+  --dock-collapsed-width: 60px;
+  --dock-expanded-width: 220px;
+  --dock-padding: 8px;
+  --dock-radius: var(--radius-full);
 }
 
 .dark {

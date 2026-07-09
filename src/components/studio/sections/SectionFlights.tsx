@@ -11,11 +11,12 @@ import {
   SMALL_INPUT,
 } from "@/components/proposals/ProposalFormFields";
 import { replaceAt } from "@/components/proposals/ProposalFormFields";
+import { Trash2, Plus, PlaneTakeoff, PlaneLanding, BaggageClaim, Search } from "lucide-react";
 import { useAgency } from "@/lib/agency-context";
+import { getAgencyMarkup, calculateMarkup } from "@/utils/pricing";
 import { infotravelSearchFlights } from "@/services/infotravel";
 import { toast } from "sonner";
 import { PrimaryButton } from "@/components/ui/form";
-import { Search } from "lucide-react";
 import {
   SupplierAutocomplete,
   type SupplierOption,
@@ -79,8 +80,8 @@ export function SectionFlights({ draft, save }: Props) {
   }
 
   function importFlight(f: Flight) {
-    const markup = (agency as any)?.integrations_config?.infotravel_markup || 0;
-    const finalPrice = Math.round(f.price * (1 + markup / 100));
+    const markup = getAgencyMarkup(agency, "infotravel");
+    const finalPrice = calculateMarkup(f.price, markup);
 
     save({
       flights: [

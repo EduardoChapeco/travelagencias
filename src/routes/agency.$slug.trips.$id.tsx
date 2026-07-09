@@ -57,7 +57,7 @@ function getDaysToTrip(travelStart?: string | null): number | null {
   return diff;
 }
 
-import { useSidebarStore } from "@/lib/sidebar-store";
+
 
 function TripLayout() {
   const { slug, id } = Route.useParams();
@@ -73,25 +73,9 @@ function TripLayout() {
   const [showEmitModal, setShowEmitModal] = useState(false);
   const [emitStep, setEmitStep] = useState(1);
 
-  const { setContext, clearContext } = useSidebarStore();
 
-  useEffect(() => {
-    const items = [
-      { label: "Visão Geral", to: `/agency/${slug}/trips/${id}`, icon: ReceiptText, exact: true },
-      { label: "Passageiros", to: `/agency/${slug}/trips/${id}/passengers`, icon: Users },
-      { label: "Financeiro", to: `/agency/${slug}/trips/${id}/financial`, icon: ReceiptText },
-      { label: "Aéreos", to: `/agency/${slug}/trips/${id}/flights`, icon: Plane },
-      { label: "Hospedagem", to: `/agency/${slug}/trips/${id}/lodging`, icon: Hotel },
-      { label: "Contrato", to: `/agency/${slug}/trips/${id}/contract`, icon: FileSignature },
-      { label: "Confirmação", to: `/agency/${slug}/trips/${id}/confirmation`, icon: CheckCircle2 },
-      { label: "Vouchers", to: `/agency/${slug}/trips/${id}/vouchers`, icon: Ticket },
-      { label: "Check-in & Embarque", to: `/agency/${slug}/trips/${id}/boarding`, icon: Navigation },
-      { label: "Destino & Segurança", to: `/agency/${slug}/trips/${id}/destination`, icon: MapPin },
-      { label: "Histórico", to: `/agency/${slug}/trips/${id}/history`, icon: Clock },
-    ];
-    setContext("Detalhes da Viagem", items);
-    return () => clearContext();
-  }, [slug, id, setContext, clearContext]);
+
+
 
   const getTabClass = (tabPath: string, exact = false) => {
     const active = exact ? pathname === tabPath : pathname.startsWith(tabPath);

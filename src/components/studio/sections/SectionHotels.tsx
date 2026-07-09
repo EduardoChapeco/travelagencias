@@ -9,7 +9,9 @@ import {
   FileUploadList,
 } from "@/components/proposals/ProposalFormFields";
 import { replaceAt } from "@/components/proposals/ProposalFormFields";
+import { MapPin, Star, Utensils, Wifi, Plane as Pool } from "lucide-react";
 import { useAgency } from "@/lib/agency-context";
+import { getAgencyMarkup, calculateMarkup } from "@/utils/pricing";
 import { Trash2, Plus, Search } from "lucide-react";
 import { useState, useEffect } from "react";
 import { StudioUnsplashPicker } from "@/components/studio/StudioUnsplashPicker";
@@ -88,8 +90,8 @@ export function SectionHotels({ draft, save }: Props) {
   }
 
   function importHotel(h: Hotel) {
-    const markup = (agency as any)?.integrations_config?.infotravel_markup || 0;
-    const finalPrice = Math.round(h.price * (1 + markup / 100));
+    const markup = getAgencyMarkup(agency, "infotravel");
+    const finalPrice = calculateMarkup(h.price, markup);
 
     save({
       hotels: [

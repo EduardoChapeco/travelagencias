@@ -23,7 +23,7 @@ export const Route = createFileRoute("/agency/$slug/financial")({
   component: FinancialLayout,
 });
 
-import { useSidebarStore } from "@/lib/sidebar-store";
+
 import { DollarSign, FileText, Settings, Target, Users, BookOpen } from "lucide-react";
 import { useEffect } from "react";
 
@@ -32,7 +32,7 @@ function FinancialLayout() {
   const { pathname } = useLocation();
   const { agency, isAgencyAdmin } = useAgency();
   const [activeSubTab, setActiveSubTab] = useState<"route" | "settings">("route");
-  const { setContext, clearContext } = useSidebarStore();
+
 
   const tabs = [
     { to: "/agency/$slug/financial/cash" as any, label: "Fluxo de caixa" },
@@ -44,17 +44,7 @@ function FinancialLayout() {
     { to: "/agency/$slug/financial/operators" as any, label: "Faturamento" },
   ] as const;
 
-  useEffect(() => {
-    const items = [
-      { label: "Caixa", to: `/agency/${slug}/financial/cash`, icon: DollarSign },
-      { label: "DRE", to: `/agency/${slug}/financial/dre`, icon: Target },
-      { label: "Faturas", to: `/agency/${slug}/financial/invoices`, icon: FileText },
-      { label: "Grupos", to: `/agency/${slug}/financial/groups`, icon: Users },
-      { label: "Livro-Razão", to: `/agency/${slug}/financial/ledger`, icon: BookOpen },
-    ];
-    setContext("Financeiro", items);
-    return () => clearContext();
-  }, [slug, setContext, clearContext]);
+
 
   return (
     <div className="flex h-full flex-col overflow-hidden">
