@@ -349,7 +349,7 @@ function CalendarPage() {
             ))}
           </div>
 
-          <div className="grid grid-cols-7 grid-rows-6 divide-y divide-x divide-white/5 bg-transparent">
+          <div className="flex-1 grid grid-cols-7 grid-rows-6 divide-y divide-x divide-white/5 bg-transparent">
             {calendarDays.map(({ day, isCurrentMonth, date }, idx) => {
               const dateMeetings = getMeetingsForDate(date, filteredMeetings);
               const dateTasks = getTasksForDate(date, tasksQ.data || []);
