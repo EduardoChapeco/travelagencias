@@ -265,15 +265,16 @@ function FinancialSettingsPage() {
           ]}
           activeFilter={activeTab}
           onFilterChange={(v) => setActiveTab(v as any)}
+          primaryAction={
+            activeTab === "commissions" ? (
+              <ModuleActionButton
+                label="Novo Plano"
+                icon={<Plus className="h-3.5 w-3.5" />}
+                onClick={() => setShowPlanModal(true)}
+              />
+            ) : undefined
+          }
         />
-      
-      {activeTab === "commissions" && (
-        <ModuleActionButton
-          label="Novo Plano"
-          icon={<Plus className="h-3.5 w-3.5" />}
-          onClick={() => setShowPlanModal(true)}
-        />
-      )}
 
       <div className="flex-1 overflow-y-auto px-4  md:pr-6 py-4 min-h-0">
         {/* ─────────────────────────────────────────────────────────────────────

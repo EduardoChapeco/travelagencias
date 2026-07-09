@@ -229,15 +229,16 @@ function CRMPage() {
               </div>
             ) : undefined
           }
+          primaryAction={
+            activeTab !== "admin" ? (
+              <ModuleActionButton
+                label="Novo Lead"
+                icon={<Plus className="h-3.5 w-3.5" />}
+                onClick={() => setNewOpen(true)}
+              />
+            ) : undefined
+          }
         />
-      
-      {activeTab !== "admin" && (
-        <ModuleActionButton
-          label="Novo Lead"
-          icon={<Plus className="h-3.5 w-3.5" />}
-          onClick={() => setNewOpen(true)}
-        />
-      )}
 
       <Tabs value={activeTab} onValueChange={setActiveTab} className="flex flex-col flex-1 min-h-0">
 

@@ -362,12 +362,13 @@ function CashPage() {
       <div className="flex-1 flex flex-col overflow-hidden min-h-0">
                   <PageHeader
             title="Caixa Diário"
-          />
-                
-        <ModuleActionButton
+            primaryAction={
+            <ModuleActionButton
           label="Criar Caixa"
           icon={<Plus className="h-3.5 w-3.5" />}
-          onClick={() => setNewRegisterSheet(true)}
+              onClick={() => setNewRegisterSheet(true)}
+            />
+          }
         />
 
         <div className="flex-1 flex items-center justify-center p-8">
@@ -449,13 +450,14 @@ function CashPage() {
               )}
             </div>
           }
-        />
-      
-      <ModuleActionButton
+          primaryAction={
+            <ModuleActionButton
         label="Criar Caixa"
         icon={<Plus className="h-3.5 w-3.5" />}
-        onClick={() => setNewRegisterSheet(true)}
-      />
+              onClick={() => setNewRegisterSheet(true)}
+            />
+          }
+        />
 
       <div className="flex-1 overflow-y-auto px-4  md:pr-6 py-4 space-y-5 pb-24">
         {/* Register Selector */}

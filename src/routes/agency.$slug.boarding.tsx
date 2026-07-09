@@ -272,13 +272,14 @@ function BoardingKanbanPage() {
               )}
             </div>
           }
-        />
-      
-      <ModuleActionButton
+          primaryAction={
+            <ModuleActionButton
         label="Cadastrar Localizador"
         icon={<Plus className="h-3.5 w-3.5" />}
-        onClick={() => setOpen(true)}
-      />
+              onClick={() => setOpen(true)}
+            />
+          }
+        />
 
       {q.isLoading && (
         <div className="flex flex-1 items-center justify-center">

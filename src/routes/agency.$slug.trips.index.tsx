@@ -511,13 +511,14 @@ function TripsList() {
               )}
             </div>
           }
-        />
-      
-      <ModuleActionButton
+          primaryAction={
+            <ModuleActionButton
         label="Nova Viagem"
         icon={<Plus className="h-3.5 w-3.5" />}
-        onClick={() => setNewOpen(true)}
-      />
+              onClick={() => setNewOpen(true)}
+            />
+          }
+        />
 
       <div className="flex-1 overflow-hidden px-4  md:pr-6 py-4 flex flex-col min-h-0 pb-24">
         {list.isError && (

@@ -192,13 +192,14 @@ function VisasPage() {
               )}
             </div>
           }
-        />
-      
-      <ModuleActionButton
+          primaryAction={
+            <ModuleActionButton
         label="Novo Processo"
         icon={<Plus className="h-3.5 w-3.5" />}
-        onClick={() => setNewOpen(true)}
-      />
+              onClick={() => setNewOpen(true)}
+            />
+          }
+        />
 
       <div className="flex-1 overflow-x-auto pt-4 px-4  md:pr-6 pb-24">
         {(stagesQ.isError || visasQ.isError) && (

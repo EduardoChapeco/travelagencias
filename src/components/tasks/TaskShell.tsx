@@ -152,14 +152,14 @@ export function TaskShell() {
               )}
             </div>
           }
-        />
-      
-      {/* Botão de Ação Primária no canto esquerdo superior flutuante */}
-      <ModuleActionButton
+          primaryAction={
+            <ModuleActionButton
         label="Nova Tarefa"
         icon={<Plus className="h-3.5 w-3.5" />}
-        onClick={() => setNewTaskOpen(true)}
-      />
+              onClick={() => setNewTaskOpen(true)}
+            />
+          }
+        />
 
       {/* Modal de nova tarefa */}
       <NewTaskModal open={newTaskOpen} onClose={() => setNewTaskOpen(false)} />
@@ -179,7 +179,7 @@ export function TaskShell() {
       >
         {/* ── Content Area ──────────────────────────────────────────────── */}
         <div 
-          className="flex-1 overflow-auto p-4 md:p-6 bg-transparent data-[view=kanban]:p-0"
+          className="flex-1 overflow-auto p-[var(--shell-page-padding)] bg-transparent data-[view=kanban]:p-0"
           data-view={activeView}
         >
           {activeView === "my-day" && <MyDayView filters={computedFilters} />}

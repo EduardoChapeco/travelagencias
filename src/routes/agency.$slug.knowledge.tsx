@@ -109,13 +109,14 @@ function KnowledgePage() {
           ]}
           activeFilter={tab}
           onFilterChange={(v) => setTab(v as any)}
-        />
-      
-      <ModuleActionButton
+          primaryAction={
+            <ModuleActionButton
         label={tab === "articles" ? "Novo Artigo" : "Novo Playbook"}
         icon={<Plus className="h-3.5 w-3.5" />}
-        onClick={() => tab === "articles" ? setOpen(true) : setPlaybookOpen(true)}
-      />
+              onClick={() => tab === "articles" ? setOpen(true) : setPlaybookOpen(true)}
+            />
+          }
+        />
 
       {/* ARTICLES TAB */}
       {tab === "articles" && (

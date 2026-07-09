@@ -159,13 +159,14 @@ function CorporatePage() {
               )}
             </div>
           }
-        />
-      
-      <ModuleActionButton
+          primaryAction={
+            <ModuleActionButton
         label="Nova RFP"
         icon={<Plus className="h-3.5 w-3.5" />}
-        onClick={() => setNewOpen(true)}
-      />
+              onClick={() => setNewOpen(true)}
+            />
+          }
+        />
 
       <div className="flex-1 overflow-y-auto px-4  md:pr-6 py-4 min-h-0 flex flex-col gap-4 pb-24">
         {!rfpsQ.isLoading && rfps.length === 0 && (

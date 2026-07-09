@@ -233,13 +233,14 @@ function ClientsPage() {
               </button>
             ) : undefined
           }
+          primaryAction={
+            <ModuleActionButton
+              label={showDeleted ? "Sair da Lixeira" : "Novo Cliente"}
+              icon={showDeleted ? <ArrowLeft className="h-3.5 w-3.5" /> : <Plus className="h-3.5 w-3.5" />}
+              onClick={() => showDeleted ? setShowDeleted(false) : setNewOpen(true)}
+            />
+          }
         />
-      
-      <ModuleActionButton
-        label={showDeleted ? "Sair da Lixeira" : "Novo Cliente"}
-        icon={showDeleted ? <ArrowLeft className="h-3.5 w-3.5" /> : <Plus className="h-3.5 w-3.5" />}
-        onClick={() => showDeleted ? setShowDeleted(false) : setNewOpen(true)}
-      />
 
       <div className="flex-1 overflow-hidden px-4  md:pr-6 py-4 flex flex-col min-h-0 pb-24">
         {list.isLoading && (

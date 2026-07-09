@@ -197,7 +197,7 @@ export function AppShell({
         <div id="shell-header-portal" className="flex-1 px-4 z-50 flex items-center justify-center pointer-events-auto min-w-0" />
 
         {/* Right: Pill ultra-fina — hora, data e notificações */}
-        <div className="flex items-center gap-3 glass-pill px-3 py-1 rounded-full pointer-events-auto text-[11px] font-medium tracking-wide shrink-0">
+        <div className="flex items-center gap-3 glass-pill px-3 h-8 rounded-full pointer-events-auto text-[11px] font-medium tracking-wide shrink-0">
           <span className="text-white/70 capitalize hidden sm:inline">{dateStr}</span>
           <span className="text-white/90">{timeStr}</span>
           <div className="w-[1px] h-2.5 bg-white/15" />

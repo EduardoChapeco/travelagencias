@@ -143,13 +143,14 @@ function TeamPage() {
             onChange: setSearchQuery,
             placeholder: "Buscar por nome ou email...",
           }}
-        />
-      
-      <ModuleActionButton
+          primaryAction={
+            <ModuleActionButton
         label="Convidar Membro"
         icon={<Plus className="h-3.5 w-3.5" />}
-        onClick={() => setOpen(true)}
-      />
+              onClick={() => setOpen(true)}
+            />
+          }
+        />
 
       <div className="flex-1 overflow-y-auto px-4  md:pr-6 py-4 min-h-0 pb-24">
         {(members.isError || invites.isError) && (

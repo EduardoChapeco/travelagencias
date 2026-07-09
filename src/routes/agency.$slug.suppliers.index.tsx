@@ -336,13 +336,14 @@ function SuppliersPage() {
               )}
             </div>
           }
-        />
-      
-      <ModuleActionButton
+          primaryAction={
+            <ModuleActionButton
         label="Novo Fornecedor"
         icon={<Plus className="h-3.5 w-3.5" />}
-        onClick={() => setOpen(true)}
-      />
+              onClick={() => setOpen(true)}
+            />
+          }
+        />
 
       <div className="flex flex-1 overflow-hidden">
         {/* ── Sidebar de filtros ── */}

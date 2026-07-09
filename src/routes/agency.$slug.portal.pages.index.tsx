@@ -392,18 +392,19 @@ function PagesPage() {
           ]}
           activeFilter={activeTab}
           onFilterChange={(v) => setActiveTab(v as any)}
+          primaryAction={
+            <ModuleActionButton
+              label="Nova Página"
+              icon={<Plus className="h-3.5 w-3.5" />}
+              onClick={() => {
+                setSelectedTemplateId("empty");
+                setNewPageTitle("");
+                setNewPageSlug("");
+                setCreateModalOpen(true);
+              }}
+            />
+          }
         />
-      
-      <ModuleActionButton
-        label="Nova Página"
-        icon={<Plus className="h-3.5 w-3.5" />}
-        onClick={() => {
-          setSelectedTemplateId("empty");
-          setNewPageTitle("");
-          setNewPageSlug("");
-          setCreateModalOpen(true);
-        }}
-      />
 
       <div className="flex-1 overflow-y-auto px-4  md:pr-6 py-4 min-h-0 space-y-6 pb-24">
         {(q.isError || analyticsQ.isError) && (

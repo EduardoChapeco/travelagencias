@@ -85,10 +85,14 @@ export function AIFloatingWidget() {
     <div
       ref={widgetRef}
       className={cn(
-        "fixed z-50 flex flex-col items-start gap-3 font-sans select-none pointer-events-auto",
-        isHome ? "bottom-6 left-4" : "bottom-6"
+        "fixed z-50 flex flex-col gap-3 font-sans select-none pointer-events-auto transition-all duration-300",
+        isHome ? "bottom-6 left-4 items-start" : "bottom-[var(--shell-edge-gap)] items-center"
       )}
-      style={isHome ? undefined : { left: "2px", zIndex: 100 }}
+      style={isHome ? undefined : { 
+        left: "calc(var(--shell-edge-gap) + (var(--dock-collapsed-width) / 2))",
+        transform: "translateX(-50%)",
+        zIndex: 100 
+      }}
     >
       {/* ── Chat Container — abre acima e à direita do botão ──────────── */}
       <AnimatePresence>

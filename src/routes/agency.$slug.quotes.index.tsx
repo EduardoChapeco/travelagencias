@@ -611,23 +611,22 @@ Texto: "${aiText}"`;
               </div>
             ) : undefined
           }
+          primaryAction={
+            activeTab === "quotes" ? (
+              <ModuleActionButton
+                label="Nova Cotação"
+                icon={<Plus className="h-3.5 w-3.5" />}
+                onClick={() => setNewOpen(true)}
+              />
+            ) : activeTab === "promotions" ? (
+              <ModuleActionButton
+                label="Novo Alerta"
+                icon={<Bell className="h-3.5 w-3.5" />}
+                onClick={() => setWatcherOpen(true)}
+              />
+            ) : undefined
+          }
         />
-      
-      {activeTab === "quotes" && (
-        <ModuleActionButton
-          label="Nova Cotação"
-          icon={<Plus className="h-3.5 w-3.5" />}
-          onClick={() => setNewOpen(true)}
-        />
-      )}
-
-      {activeTab === "promotions" && (
-        <ModuleActionButton
-          label="Novo Alerta"
-          icon={<Bell className="h-3.5 w-3.5" />}
-          onClick={() => setWatcherOpen(true)}
-        />
-      )}
 
       {/* Main Content */}
       <div className="flex-1 overflow-hidden px-4  md:pr-6 py-4 flex flex-col min-h-0 pb-24">

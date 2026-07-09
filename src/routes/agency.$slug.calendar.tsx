@@ -313,13 +313,14 @@ function CalendarPage() {
               )}
             </div>
           }
-        />
-      
-      <ModuleActionButton
+          primaryAction={
+            <ModuleActionButton
         label="Novo Evento"
         icon={<Plus className="h-3.5 w-3.5" />}
-        onClick={() => setNewEventOpen(true)}
-      />
+              onClick={() => setNewEventOpen(true)}
+            />
+          }
+        />
 
       <div className="flex-1 overflow-auto px-4  md:pr-6 py-4 flex flex-col">
         {(meetingsQ.isError || usersQ.isError || leadsQ.isError) && (

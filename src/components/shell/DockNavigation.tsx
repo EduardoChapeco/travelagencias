@@ -223,17 +223,8 @@ export function DockNavigation({
           </div>
         </div>
 
-        {/* Bottom / Footer (IA + Logout) alinhados na base */}
+        {/* Bottom / Footer (Logout) alinhados na base */}
         <div className="flex flex-row md:flex-col items-center gap-3 md:mt-auto shrink-0 ml-auto md:ml-0">
-          {/* Botão de IA integrado e alinhado */}
-          <button
-            onClick={() => document.dispatchEvent(new CustomEvent("open-ai-chat"))}
-            className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full text-white/70 hover:text-white hover:bg-white/10 hover:rounded-2xl transition-all duration-200 cursor-pointer"
-            title="Falar com IA"
-          >
-            <Sparkles className="h-5 w-5 text-brand-light animate-pulse-slow" />
-          </button>
-
           {/* Divider */}
           <div className="h-8 md:h-[1px] w-[1px] md:w-8 bg-white/10 shrink-0" />
 

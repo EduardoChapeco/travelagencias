@@ -51,13 +51,14 @@ function InvoicesPage() {
 
   return (
     <div className="flex h-full flex-col overflow-hidden">
-              <PageHeader title="Faturas" />
-      
-      <ModuleActionButton
+              <PageHeader title="Faturas"   primaryAction={
+            <ModuleActionButton
         label="Nova Fatura"
         icon={<Plus className="h-3.5 w-3.5" />}
-        onClick={() => toast.info("Nova Fatura (Em breve)")}
-      />
+              onClick={() => toast.info("Nova Fatura (Em breve)")}
+            />
+          }
+        />
 
       <div className="flex-1 overflow-y-auto px-4  md:pr-6 py-4 min-h-0">
         {q.isLoading && <div className="text-sm text-muted-foreground">Carregando…</div>}

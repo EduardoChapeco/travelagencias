@@ -76,13 +76,14 @@ function BusLayoutsPage() {
               </button>
             ) : undefined
           }
-        />
-      
-      <ModuleActionButton
+          primaryAction={
+            <ModuleActionButton
         label="Novo Layout"
         icon={<Plus className="h-3.5 w-3.5" />}
-        onClick={() => setOpen(true)}
-      />
+              onClick={() => setOpen(true)}
+            />
+          }
+        />
 
       <div className="flex-1 overflow-y-auto px-4  md:pr-6 py-4 flex flex-col gap-4">
         {q.isLoading && <div className="text-sm text-muted-foreground">Carregando…</div>}

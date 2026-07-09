@@ -320,13 +320,14 @@ function DestinationIntelligencePage() {
               <span className="hidden sm:inline"><strong className="text-white">{q.data?.filter((d) => d.visa_required).length ?? 0}</strong> exigem visto</span>
             </div>
           }
-        />
-      
-      <ModuleActionButton
+          primaryAction={
+            <ModuleActionButton
         label="Novo Destino"
         icon={<Plus className="h-3.5 w-3.5" />}
-        onClick={openCreate}
-      />
+              onClick={openCreate}
+            />
+          }
+        />
 
       <ConfirmDialog />
 

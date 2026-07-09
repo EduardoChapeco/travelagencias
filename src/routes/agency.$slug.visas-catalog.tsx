@@ -86,13 +86,14 @@ function VisasCatalogPage() {
               <ArrowLeft className="w-3 h-3" /> Voltar
             </Link>
           }
-        />
-      
-      <ModuleActionButton
+          primaryAction={
+            <ModuleActionButton
         label="Novo Catálogo"
         icon={<Plus className="h-3.5 w-3.5" />}
-        onClick={() => setOpen(true)}
-      />
+              onClick={() => setOpen(true)}
+            />
+          }
+        />
 
       <div className="flex-1 overflow-y-auto px-4  md:pr-6 py-4 min-h-0 pb-24">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">

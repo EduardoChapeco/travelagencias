@@ -99,13 +99,14 @@ function SupportRoute() {
           ]}
           activeFilter={stageFilter}
           onFilterChange={setStageFilter}
-        />
-      
-      <ModuleActionButton
+          primaryAction={
+            <ModuleActionButton
         label="Novo Ticket"
         icon={<Plus className="h-3.5 w-3.5" />}
-        onClick={() => setTicketSheetOpen(true)}
-      />
+              onClick={() => setTicketSheetOpen(true)}
+            />
+          }
+        />
 
       <div className="flex-1 overflow-hidden px-4  md:pr-6 py-4 flex flex-col min-h-0 space-y-4 pb-24">
         {isError && (

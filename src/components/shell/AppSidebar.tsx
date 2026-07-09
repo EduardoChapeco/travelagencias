@@ -170,17 +170,11 @@ export function AppSidebar({
 
   // isHome é recebida como prop — não redeclarar aqui
 
-  // ── Map hub items → items ──
-  const islandItems: SlimSidebarItem[] = HUB_ITEMS.filter((h) => !h.adminOnly || isAdmin).map((h) => ({
-    ...h,
-    label: getModuleName(h.label, agency),
-    badge: h.label === "inbox" ? (unreadCount > 0 ? unreadCount : undefined) : undefined,
-  }));
 
   return (
     <DockNavigation
       isHome={isHome}
-      items={islandItems}
+      items={visibleHubs}
       contextItems={contextItems as ContextItem[]}
       footer={
         <button

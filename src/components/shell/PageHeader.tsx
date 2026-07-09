@@ -17,6 +17,7 @@ export function PageHeader({
   activeFilter,
   onFilterChange,
   actions,
+  primaryAction,
 }: {
   title: string;
   description?: string;
@@ -29,6 +30,7 @@ export function PageHeader({
   activeFilter?: string;
   onFilterChange?: (value: string) => void;
   actions?: ReactNode;
+  primaryAction?: ReactNode;
 }) {
   return (
     <>
@@ -108,6 +110,13 @@ export function PageHeader({
           {actions && (
             <div className="flex items-center gap-2">
               {actions}
+            </div>
+          )}
+
+          {/* ── Primary Action ── */}
+          {primaryAction && (
+            <div className="flex items-center ml-2 border-l border-white/15 pl-4">
+              {primaryAction}
             </div>
           )}
         </div>
