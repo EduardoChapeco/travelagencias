@@ -3,6 +3,7 @@ import { type Proposal, suggestIncludesExcludesViaAI } from "@/services/proposal
 import { Accordion, TagsEditor } from "@/components/proposals/ProposalFormFields";
 import { Sparkles, Loader2 } from "lucide-react";
 import { toast } from "sonner";
+import { Button } from "@/components/ui/button";
 
 interface Props {
   draft: Proposal;
@@ -63,7 +64,7 @@ export function SectionIncludes({ draft, save }: Props) {
   return (
     <div className="space-y-4">
       {/* AI Suggestion Premium Button */}
-      <button
+      <Button
         type="button"
         onClick={handleAISuggestions}
         disabled={loading}
@@ -75,7 +76,7 @@ export function SectionIncludes({ draft, save }: Props) {
           <Sparkles className="h-4 w-4 text-brand animate-pulse" />
         )}
         {loading ? "Gerando sugestões..." : "Sugerir com IA"}
-      </button>
+      </Button>
 
       <div className="space-y-3">
         <Accordion title={`O que inclui (${(draft.includes ?? []).length})`}>

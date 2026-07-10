@@ -12,7 +12,7 @@ import { Field } from "@/components/ui/field";
 import { FormInput as Input } from "@/components/ui/input";
 import { NativeSelect as Select } from "@/components/ui/select";
 import { FormTextarea as Textarea } from "@/components/ui/textarea";
-import { PrimaryButton, GhostButton } from "@/components/ui/button";
+import { PrimaryButton, GhostButton , Button } from "@/components/ui/button";
 import { StatusBadge } from "@/components/ui/badge";
 import { fmtDate } from "@/lib/formatters";
 import { FileUploader } from "@/components/uploads/FileUploader";
@@ -175,7 +175,7 @@ function BlogPage() {
         {filtered.length > 0 && (
           <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3">
             {filtered.map((p) => (
-              <button
+              <Button
                 key={p.id}
                 onClick={() => setEditing(p)}
                 className="group rounded-[var(--radius-card)] border-none glass-card border-none text-left overflow-hidden hover:border-border-strong transition-all"
@@ -231,7 +231,7 @@ function BlogPage() {
                     </div>
                   )}
                 </div>
-              </button>
+              </Button>
             ))}
           </div>
         )}
@@ -400,13 +400,13 @@ function BlogSheet({
                 Ver publicado
               </a>
             )}
-            <button
+            <Button
               type="button"
               onClick={onClose}
               className="flex h-8 w-8 items-center justify-center rounded-full border-none hover:glass bg-white/5 border-white/10"
             >
               <X className="h-4 w-4" />
-            </button>
+            </Button>
           </div>
         </div>
 
@@ -495,7 +495,7 @@ function BlogSheet({
 
             {/* SEO SECTION */}
             <div className="rounded-[var(--radius-card)] border-none">
-              <button
+              <Button
                 type="button"
                 onClick={() => setSeoOpen((v) => !v)}
                 className="flex w-full items-center justify-between px-4 py-3 text-xs font-semibold uppercase tracking-wide text-muted-foreground hover:glass bg-white/5 border-white/10"
@@ -505,7 +505,7 @@ function BlogSheet({
                   SEO e redes sociais
                 </span>
                 <span className={`transition-transform ${seoOpen ? "rotate-180" : ""}`}>▾</span>
-              </button>
+              </Button>
               {seoOpen && (
                 <div className="space-y-3 border-t border-border px-4 py-4">
                   <Field label="Título para SEO" hint="Padrão: título do artigo. Máx 60 caracteres">
@@ -567,7 +567,7 @@ function BlogSheet({
           <div className="flex items-center gap-2">
             {/* Google Business Post button */}
             {post?.status === "published" && !post?.google_posted_at && (
-              <button
+              <Button
                 type="button"
                 onClick={postToGoogleBusiness}
                 disabled={gbpPosting}
@@ -575,7 +575,7 @@ function BlogSheet({
               >
                 <Share2 className="h-3.5 w-3.5" />
                 {gbpPosting ? "Publicando..." : "Publicar no Google"}
-              </button>
+              </Button>
             )}
             {post?.google_posted_at && (
               <span className="flex items-center gap-1.5 text-xs text-success font-medium">

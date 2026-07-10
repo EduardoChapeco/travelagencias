@@ -10,7 +10,7 @@ import {
 import { Field } from "@/components/ui/field";
 import { FormInput as Input } from "@/components/ui/input";
 import { NativeSelect as Select } from "@/components/ui/select";
-import { PrimaryButton, GhostButton } from "@/components/ui/button";
+import { PrimaryButton, GhostButton , Button } from "@/components/ui/button";
 import { StatusBadge } from "@/components/ui/badge";
 import { money, fmtDate } from "@/lib/formatters";
 
@@ -328,14 +328,14 @@ function ReconciliationPage() {
                     </td>
                     <td className="px-4 py-3.5 text-right">
                       <div className="inline-flex items-center gap-1.5">
-                        <button
+                        <Button
                           onClick={() => handleViewReceipt(rec.receipt_url)}
                           className="h-7 w-7 rounded-[var(--radius-card)] border-none flex items-center justify-center text-gray-400 hover:text-gray-900 hover:bg-gray-100 transition-colors bg-transparent cursor-pointer"
                           title="Ver Comprovante"
                         >
                           <Eye className="w-4 h-4" />
-                        </button>
-                        <button
+                        </Button>
+                        <Button
                           onClick={() => {
                             setSelectedReceipt(rec);
                             const matchingSession = sessionsQ.data?.find(
@@ -349,13 +349,13 @@ function ReconciliationPage() {
                           className="h-7 px-2.5 rounded-[var(--radius-card)] bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-[10px] uppercase tracking-wide flex items-center gap-1 cursor-pointer transition-colors"
                         >
                           <Check className="w-3.5 h-3.5" /> Conciliar
-                        </button>
-                        <button
+                        </Button>
+                        <Button
                           onClick={() => setRejectReceipt(rec)}
                           className="h-7 px-2.5 rounded-[var(--radius-card)] border-none hover:bg-rose-50 text-rose-600 font-bold text-[10px] uppercase tracking-wide flex items-center gap-1 cursor-pointer transition-colors"
                         >
                           <X className="w-3.5 h-3.5" /> Recusar
-                        </button>
+                        </Button>
                       </div>
                     </td>
                   </tr>
@@ -377,12 +377,12 @@ function ReconciliationPage() {
                   Aprovar Comprovante
                 </h3>
               </div>
-              <button
+              <Button
                 onClick={() => setSelectedReceipt(null)}
                 className="p-1 rounded hover:bg-gray-100"
               >
                 <X className="w-4 h-4" />
-              </button>
+              </Button>
             </div>
 
             <div className="p-5 space-y-4">
@@ -399,12 +399,12 @@ function ReconciliationPage() {
                 </div>
                 <div className="flex justify-between border-t border-border/50 pt-1.5 mt-1.5 font-bold">
                   <span className="text-gray-600">Comprovante:</span>
-                  <button
+                  <Button
                     onClick={() => handleViewReceipt(selectedReceipt.receipt_url)}
                     className="text-brand underline flex items-center gap-1 bg-transparent border-0 p-0 cursor-pointer"
                   >
                     <FileText className="w-3.5 h-3.5" /> Abrir Anexo
-                  </button>
+                  </Button>
                 </div>
               </div>
 
@@ -482,12 +482,12 @@ function ReconciliationPage() {
                   Recusar Comprovante
                 </h3>
               </div>
-              <button
+              <Button
                 onClick={() => setRejectReceipt(null)}
                 className="p-1 rounded hover:bg-gray-100"
               >
                 <X className="w-4 h-4" />
-              </button>
+              </Button>
             </div>
 
             <div className="p-5 space-y-4">

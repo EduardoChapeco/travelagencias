@@ -6,7 +6,7 @@ import { Field } from "@/components/ui/field";
 import { FormInput as Input } from "@/components/ui/input";
 import { NativeSelect as Select } from "@/components/ui/select";
 import { FormTextarea as Textarea } from "@/components/ui/textarea";
-import { PrimaryButton, GhostButton } from "@/components/ui/button";
+import { PrimaryButton, GhostButton , Button } from "@/components/ui/button";
 import { SheetPage } from "@/components/ui/sheet";
 import { toast } from "sonner";
 import { useForm } from "react-hook-form";
@@ -220,7 +220,7 @@ export function NewClientWizard({
             {step === 0 && (
               <div className="space-y-5 animate-in fade-in slide-in-from-right-4 duration-300">
                 <div className="flex gap-4">
-                  <button
+                  <Button
                     type="button"
                     onClick={() => setValue("kind", "individual", { shouldValidate: true })}
                     className={`flex-1 flex flex-col items-center justify-center p-4 rounded-[var(--radius-card)] border-2 cursor-pointer transition-colors ${watchKind === "individual" ? "border-brand bg-brand/5" : "border-border/50 bg-surface hover:border-brand/40"}`}
@@ -233,8 +233,8 @@ export function NewClientWizard({
                     >
                       Pessoa Física
                     </span>
-                  </button>
-                  <button
+                  </Button>
+                  <Button
                     type="button"
                     onClick={() => setValue("kind", "company", { shouldValidate: true })}
                     className={`flex-1 flex flex-col items-center justify-center p-4 rounded-[var(--radius-card)] border-2 cursor-pointer transition-colors ${watchKind === "company" ? "border-brand bg-brand/5" : "border-border/50 bg-surface hover:border-brand/40"}`}
@@ -247,7 +247,7 @@ export function NewClientWizard({
                     >
                       Empresa
                     </span>
-                  </button>
+                  </Button>
                 </div>
 
                 <Field

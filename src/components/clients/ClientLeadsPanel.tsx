@@ -3,6 +3,7 @@ import { Link, useParams } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { Ticket as TicketIcon } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
+import { Button } from "@/components/ui/button";
 
 export function ClientLeadsPanel({ clientId, agencyId }: { clientId: string; agencyId: string }) {
   const { slug } = useParams({ from: "/agency/$slug/clients/$id" });
@@ -25,7 +26,7 @@ export function ClientLeadsPanel({ clientId, agencyId }: { clientId: string; age
 
   return (
     <div className="rounded-3xl border border-border bg-background overflow-hidden">
-      <button
+      <Button
         type="button"
         onClick={() => setOpen((o) => !o)}
         className="flex w-full items-center justify-between px-6 py-4 text-sm font-bold hover:bg-surface/50 transition-colors text-foreground cursor-pointer"
@@ -34,7 +35,7 @@ export function ClientLeadsPanel({ clientId, agencyId }: { clientId: string; age
           <TicketIcon className="h-4 w-4 text-brand" />
           Oportunidades (CRM) ({leads.length})
         </div>
-      </button>
+      </Button>
 
       {open && (
         <div className="px-6 pb-6 space-y-4 border-t border-border/50 pt-4 bg-background">

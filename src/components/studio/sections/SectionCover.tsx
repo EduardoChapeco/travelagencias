@@ -5,6 +5,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { useState } from "react";
 import { StudioUnsplashPicker } from "@/components/studio/StudioUnsplashPicker";
+import { Button } from "@/components/ui/button";
 
 interface SectionCoverProps {
   draft: Proposal;
@@ -90,7 +91,7 @@ export function SectionCover({ draft, save }: SectionCoverProps) {
                   disabled={uploadingCover}
                 />
               </label>
-              <button
+              <Button
                 type="button"
                 title="Buscar no Unsplash"
                 onClick={() => {
@@ -100,8 +101,8 @@ export function SectionCover({ draft, save }: SectionCoverProps) {
                 className="flex h-8 w-8 shrink-0 items-center justify-center rounded-2xl border border-border/60 bg-surface text-xs hover:bg-surface-alt transition-colors"
               >
                 <Search className="h-3.5 w-3.5" />
-              </button>
-              <button
+              </Button>
+              <Button
                 type="button"
                 title="Gerar com IA"
                 onClick={() => {
@@ -116,7 +117,7 @@ export function SectionCover({ draft, save }: SectionCoverProps) {
                 className="flex h-8 w-8 shrink-0 items-center justify-center rounded-2xl border border-brand/40 bg-brand/5 text-brand text-xs hover:bg-brand/10 transition-colors"
               >
                 <Sparkles className="h-3.5 w-3.5" />
-              </button>
+              </Button>
             </div>
 
             {showAiPrompt && (
@@ -125,13 +126,13 @@ export function SectionCover({ draft, save }: SectionCoverProps) {
                   <span className="text-[10px] uppercase tracking-wide font-bold text-brand flex items-center gap-1">
                     <Sparkles className="w-3 h-3" /> Gerar Capa com IA
                   </span>
-                  <button
+                  <Button
                     type="button"
                     onClick={() => setShowAiPrompt(false)}
                     className="text-muted-foreground hover:text-foreground text-xs"
                   >
                     Fechar
-                  </button>
+                  </Button>
                 </div>
                 <textarea
                   className="w-full p-2 text-xs rounded-2xl border border-border bg-surface outline-none focus:border-brand resize-none"
@@ -140,7 +141,7 @@ export function SectionCover({ draft, save }: SectionCoverProps) {
                   onChange={(e) => setAiPrompt(e.target.value)}
                   placeholder="Descreva a imagem que deseja gerar..."
                 />
-                <button
+                <Button
                   type="button"
                   disabled={generatingCover || !aiPrompt}
                   onClick={async () => {
@@ -179,7 +180,7 @@ export function SectionCover({ draft, save }: SectionCoverProps) {
                     <Sparkles className="w-3.5 h-3.5" />
                   )}
                   {generatingCover ? "Gerando..." : "Gerar Imagem"}
-                </button>
+                </Button>
               </div>
             )}
 
@@ -189,12 +190,12 @@ export function SectionCover({ draft, save }: SectionCoverProps) {
                   <span className="text-[10px] uppercase tracking-wide font-semibold">
                     Buscar imagem
                   </span>
-                  <button
+                  <Button
                     onClick={() => setShowUnsplashCover(false)}
                     className="text-muted-foreground hover:text-foreground text-xs"
                   >
                     Fechar
-                  </button>
+                  </Button>
                 </div>
                 <StudioUnsplashPicker
                   agencyId={draft.agency_id}
@@ -216,13 +217,13 @@ export function SectionCover({ draft, save }: SectionCoverProps) {
                   alt="Preview Cover"
                   className="h-full w-full object-cover"
                 />
-                <button
+                <Button
                   type="button"
                   onClick={() => save({ cover_image_url: null })}
                   className="absolute right-1 top-1 rounded bg-destructive/80 px-1.5 py-0.5 text-[9px] text-white hover:bg-destructive"
                 >
                   Remover
-                </button>
+                </Button>
               </div>
             )}
           </div>
@@ -309,13 +310,13 @@ export function SectionCover({ draft, save }: SectionCoverProps) {
                 <div className="text-[10px] text-muted-foreground">
                   Foto vinculada ao consultor.
                 </div>
-                <button
+                <Button
                   type="button"
                   onClick={() => save({ agent_photo_url: null })}
                   className="ml-auto rounded bg-destructive/80 px-2 py-0.5 text-[9px] text-white hover:bg-destructive"
                 >
                   Remover
-                </button>
+                </Button>
               </div>
             )}
           </div>

@@ -20,6 +20,7 @@ import {
 import { useCallback, useState } from "react";
 import { MediaLibraryPicker } from "../uploads/MediaLibraryPicker";
 import { AIGeneratorSheet } from "./AIGeneratorSheet";
+import { Button } from "@/components/ui/button";
 
 export function RichTextEditorInner({
   value,
@@ -70,101 +71,101 @@ export function RichTextEditorInner({
     <div className="border border-input rounded-full overflow-hidden bg-surface">
       {/* Toolbar */}
       <div className="flex flex-wrap items-center gap-1 border-b border-border p-1 bg-surface-alt/30">
-        <button
+        <Button
           type="button"
           onClick={() => setAiModalOpen(true)}
           className={`${btnClass} text-brand hover:text-brand-foreground hover:bg-brand/10`}
           title="Gerar conteúdo com IA"
         >
           <Wand2 className="w-4 h-4" />
-        </button>
+        </Button>
         <div className="w-px h-4 bg-border mx-1" />
-        <button
+        <Button
           type="button"
           onClick={() => editor.chain().focus().toggleBold().run()}
           className={`${btnClass} ${editor.isActive("bold") ? activeClass : ""}`}
         >
           <Bold className="w-4 h-4" />
-        </button>
-        <button
+        </Button>
+        <Button
           type="button"
           onClick={() => editor.chain().focus().toggleItalic().run()}
           className={`${btnClass} ${editor.isActive("italic") ? activeClass : ""}`}
         >
           <Italic className="w-4 h-4" />
-        </button>
-        <button
+        </Button>
+        <Button
           type="button"
           onClick={() => editor.chain().focus().toggleStrike().run()}
           className={`${btnClass} ${editor.isActive("strike") ? activeClass : ""}`}
         >
           <Strikethrough className="w-4 h-4" />
-        </button>
+        </Button>
         <div className="w-px h-4 bg-border mx-1" />
-        <button
+        <Button
           type="button"
           onClick={() => editor.chain().focus().toggleHeading({ level: 2 }).run()}
           className={`${btnClass} ${editor.isActive("heading", { level: 2 }) ? activeClass : ""}`}
         >
           <Heading2 className="w-4 h-4" />
-        </button>
-        <button
+        </Button>
+        <Button
           type="button"
           onClick={() => editor.chain().focus().toggleHeading({ level: 3 }).run()}
           className={`${btnClass} ${editor.isActive("heading", { level: 3 }) ? activeClass : ""}`}
         >
           <Heading3 className="w-4 h-4" />
-        </button>
+        </Button>
         <div className="w-px h-4 bg-border mx-1" />
-        <button
+        <Button
           type="button"
           onClick={() => editor.chain().focus().toggleBulletList().run()}
           className={`${btnClass} ${editor.isActive("bulletList") ? activeClass : ""}`}
         >
           <List className="w-4 h-4" />
-        </button>
-        <button
+        </Button>
+        <Button
           type="button"
           onClick={() => editor.chain().focus().toggleOrderedList().run()}
           className={`${btnClass} ${editor.isActive("orderedList") ? activeClass : ""}`}
         >
           <ListOrdered className="w-4 h-4" />
-        </button>
-        <button
+        </Button>
+        <Button
           type="button"
           onClick={() => editor.chain().focus().toggleBlockquote().run()}
           className={`${btnClass} ${editor.isActive("blockquote") ? activeClass : ""}`}
         >
           <Quote className="w-4 h-4" />
-        </button>
+        </Button>
         <div className="w-px h-4 bg-border mx-1" />
-        <button
+        <Button
           type="button"
           onClick={setLink}
           className={`${btnClass} ${editor.isActive("link") ? activeClass : ""}`}
         >
           <LinkIcon className="w-4 h-4" />
-        </button>
-        <button type="button" onClick={addImage} className={btnClass}>
+        </Button>
+        <Button type="button" onClick={addImage} className={btnClass}>
           <ImageIcon className="w-4 h-4" />
-        </button>
+        </Button>
         <div className="flex-1" />
-        <button
+        <Button
           type="button"
           onClick={() => editor.chain().focus().undo().run()}
           disabled={!editor.can().undo()}
           className={btnClass}
         >
           <Undo className="w-4 h-4" />
-        </button>
-        <button
+        </Button>
+        <Button
           type="button"
           onClick={() => editor.chain().focus().redo().run()}
           disabled={!editor.can().redo()}
           className={btnClass}
         >
           <Redo className="w-4 h-4" />
-        </button>
+        </Button>
       </div>
       <EditorContent editor={editor} />
       <MediaLibraryPicker

@@ -31,6 +31,7 @@ import { RecordTable } from "@/components/trips/financial/RecordTable";
 import { InstallmentTable } from "@/components/trips/financial/InstallmentTable";
 import { PlanForm } from "@/components/trips/financial/PlanForm";
 import { AddRecordSheet } from "@/components/trips/financial/AddRecordSheet";
+import { Button } from "@/components/ui/button";
 
 export const Route = createFileRoute("/agency/$slug/trips/$id/financial")({
   head: ({ context }: any) => ({ meta: [{ title: `Financeiro da Viagem · ${context?.brand?.platform_name || 'Turis'}` }] }),
@@ -261,20 +262,20 @@ function TripFinancial() {
       <div className="mb-6 flex items-center justify-between">
         <h2 className="text-lg font-semibold tracking-tight text-foreground">Gestão Financeira</h2>
         <div className="flex items-center gap-2">
-          <button
+          <Button
             onClick={() => setShowOcrModal(true)}
             className="flex h-9 items-center gap-1.5 rounded-full border-none glass-card border-none px-4 text-xs font-semibold text-foreground hover:glass bg-white/5 border-white/10 transition-all cursor-pointer"
           >
             <Upload className="h-3.5 w-3.5" />
             Importar Boleto (OCR)
-          </button>
-          <button
+          </Button>
+          <Button
             onClick={() => setShowAddRecord(true)}
             className="flex h-9 items-center gap-1.5 rounded-full bg-primary px-4 text-xs font-semibold text-primary-foreground hover:opacity-95 transition-all cursor-pointer"
           >
             <Plus className="h-3.5 w-3.5" />
             Novo Lançamento
-          </button>
+          </Button>
         </div>
       </div>
 
@@ -356,13 +357,13 @@ function TripFinancial() {
       <div className="mb-4 mt-8 flex items-center justify-between">
         <h3 className="text-base font-bold text-foreground">Planos de Parcelamento</h3>
         {Array.isArray(planQ.data) && planQ.data.length > 0 && !showPlanForm && (
-          <button
+          <Button
             onClick={() => setShowPlanForm(true)}
             className="flex h-8 items-center gap-1.5 rounded-full border-none glass-card border-none px-3 text-xs font-semibold text-foreground hover:glass bg-white/5 border-white/10 transition-all cursor-pointer"
           >
             <Plus className="h-3.5 w-3.5" />
             Novo Plano
-          </button>
+          </Button>
         )}
       </div>
 
@@ -409,12 +410,12 @@ function TripFinancial() {
         : !showPlanForm && (
             <div className="py-8 text-center text-sm text-muted-foreground glass-card border-none border-none/60 rounded-[var(--radius-card)] mb-6">
               Nenhum plano de parcelamento criado.
-              <button
+              <Button
                 onClick={() => setShowPlanForm(true)}
                 className="mt-2 block mx-auto text-xs text-primary hover:underline font-bold cursor-pointer"
               >
                 + Criar primeiro plano
-              </button>
+              </Button>
             </div>
           )}
 
@@ -444,7 +445,7 @@ function TripFinancial() {
                 <FileText className="h-5 w-5 text-brand" />
                 <h3 className="font-bold text-foreground">Importar Boleto via OCR</h3>
               </div>
-              <button
+              <Button
                 onClick={() => {
                   setShowOcrModal(false);
                   setOcrResult(null);
@@ -453,7 +454,7 @@ function TripFinancial() {
                 className="rounded-full p-1.5 text-muted-foreground hover:glass bg-white/5 border-white/10"
               >
                 <X className="h-4 w-4" />
-              </button>
+              </Button>
             </div>
 
             <div className="p-5 space-y-4">
@@ -565,7 +566,7 @@ function TripFinancial() {
                   </div>
 
                   <div className="flex gap-2 pt-1">
-                    <button
+                    <Button
                       onClick={() => {
                         setOcrResult(null);
                         setOcrFile(null);
@@ -573,13 +574,13 @@ function TripFinancial() {
                       className="flex-1 h-9 rounded-[var(--radius-card)] border-none text-xs font-bold text-muted-foreground hover:glass bg-white/5 border-white/10"
                     >
                       Refazer Scan
-                    </button>
-                    <button
+                    </Button>
+                    <Button
                       onClick={applyOcrToInstallment}
                       className="flex-1 h-9 rounded-[var(--radius-card)] bg-brand text-xs font-bold text-brand-foreground hover:bg-brand/90"
                     >
                       Salvar Dados
-                    </button>
+                    </Button>
                   </div>
                 </div>
               )}
@@ -611,7 +612,7 @@ function Section({
   return (
     <div className="mb-6 rounded-[var(--radius-card)] border-none/60 glass-card border-none overflow-hidden">
       <div className="flex items-center justify-between px-5 py-4 hover:glass bg-white/5 border-white/10/50 transition-colors">
-        <button
+        <Button
           onClick={onToggle}
           className="flex flex-1 items-center gap-3 text-sm font-semibold text-left text-foreground cursor-pointer"
         >
@@ -622,15 +623,15 @@ function Section({
           )}
           {title}
           <span className="ml-auto font-mono text-sm text-muted-foreground">{total}</span>
-        </button>
+        </Button>
         {onAdd && (
-          <button
+          <Button
             onClick={onAdd}
             className="ml-3 flex items-center gap-1 text-xs text-primary hover:underline font-bold cursor-pointer"
           >
             <Plus className="h-3.5 w-3.5" />
             {addLabel}
-          </button>
+          </Button>
         )}
       </div>
       {open && <div className="border-t border-border px-4 pb-4 pt-3 glass-card border-none">{children}</div>}

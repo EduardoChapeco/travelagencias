@@ -12,7 +12,7 @@ import { Field } from "@/components/ui/field";
 import { FormInput as Input } from "@/components/ui/input";
 import { NativeSelect as Select } from "@/components/ui/select";
 import { SimpleSheet as Sheet } from "@/components/ui/sheet";
-import { PrimaryButton, GhostButton } from "@/components/ui/button";
+import { PrimaryButton, GhostButton , Button } from "@/components/ui/button";
 import { StatusBadge } from "@/components/ui/badge";
 import { fmtDate } from "@/lib/formatters";
 import { supabase } from "@/integrations/supabase/client";
@@ -196,12 +196,12 @@ function TeamPage() {
                     </td>
                     <td className="px-3 py-2.5">
                       {m.role === "agent" ? (
-                        <button
+                        <Button
                           onClick={() => setSelectedAgent(m)}
                           className="inline-flex items-center gap-1 text-xs font-semibold text-brand hover:underline"
                         >
                           <Percent className="h-3 w-3" /> Configurar
-                        </button>
+                        </Button>
                       ) : (
                         <span className="text-xs text-muted-foreground">—</span>
                       )}
@@ -210,12 +210,12 @@ function TeamPage() {
                       {fmtDate(m.created_at)}
                     </td>
                     <td className="px-3 py-2.5 text-right">
-                      <button
+                      <Button
                         onClick={() => removeMember(m.user_id)}
                         className="text-xs text-destructive hover:underline inline-flex items-center gap-1"
                       >
                         <Trash2 className="h-3 w-3" /> Remover
-                      </button>
+                      </Button>
                     </td>
                   </tr>
                 ))}
@@ -259,19 +259,19 @@ function TeamPage() {
                     <td className="px-3 py-2.5 text-right">
                       <div className="flex items-center justify-end gap-3">
                         {!i.accepted_at && (
-                          <button
+                          <Button
                             onClick={() => copyInvite(i.token)}
                             className="text-xs text-primary hover:underline inline-flex items-center gap-1"
                           >
                             <Copy className="h-3 w-3" /> Link
-                          </button>
+                          </Button>
                         )}
-                        <button
+                        <Button
                           onClick={() => deleteInviteById(i.id)}
                           className="text-xs text-destructive hover:underline"
                         >
                           Cancelar
-                        </button>
+                        </Button>
                       </div>
                     </td>
                   </tr>
@@ -429,13 +429,13 @@ function AgentCommissionSheet({
                 <span className="text-xs font-semibold uppercase text-muted-foreground">
                   Faixas de Faturamento
                 </span>
-                <button
+                <Button
                   type="button"
                   onClick={handleAddRange}
                   className="inline-flex items-center gap-1 text-xs text-brand hover:underline font-semibold"
                 >
                   <PlusCircle className="h-3.5 w-3.5" /> Adicionar Faixa
-                </button>
+                </Button>
               </div>
 
               <div className="space-y-2 max-h-[300px] overflow-y-auto pr-1">
@@ -495,14 +495,14 @@ function AgentCommissionSheet({
                         />
                       </div>
                     </div>
-                    <button
+                    <Button
                       type="button"
                       onClick={() => handleRemoveRange(index)}
                       className="mt-4 text-destructive hover:bg-destructive/10 p-1.5 rounded transition-colors self-center"
                       disabled={scaleRanges.length <= 1}
                     >
                       <X className="h-4 w-4" />
-                    </button>
+                    </Button>
                   </div>
                 ))}
               </div>

@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect, useCallback } from "react";
 import { Search, X, ChevronDown, Loader2 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { Button } from "@/components/ui/button";
 
 export type SearchableOption = {
   value: string;
@@ -121,7 +122,7 @@ export function SearchableSelect({
   return (
     <div ref={containerRef} className={cn("relative w-full", className)}>
       {/* Trigger */}
-      <button
+      <Button
         type="button"
         disabled={disabled}
         onClick={() => !disabled && setOpen((o) => !o)}
@@ -167,7 +168,7 @@ export function SearchableSelect({
             />
           )}
         </span>
-      </button>
+      </Button>
 
       {/* Dropdown */}
       {open && (
@@ -184,13 +185,13 @@ export function SearchableSelect({
               className="flex-1 bg-transparent text-sm outline-none placeholder:text-muted-foreground"
             />
             {query && (
-              <button
+              <Button
                 type="button"
                 onClick={() => setQuery("")}
                 className="text-muted-foreground hover:text-foreground"
               >
                 <X className="h-3.5 w-3.5" />
-              </button>
+              </Button>
             )}
           </div>
 
@@ -207,7 +208,7 @@ export function SearchableSelect({
               </div>
             ) : (
               filteredOptions.map((opt) => (
-                <button
+                <Button
                   key={opt.value}
                   type="button"
                   onClick={() => handleSelect(opt)}
@@ -220,7 +221,7 @@ export function SearchableSelect({
                   {opt.sublabel && (
                     <span className="shrink-0 text-xs text-muted-foreground">{opt.sublabel}</span>
                   )}
-                </button>
+                </Button>
               ))
             )}
           </div>

@@ -30,7 +30,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAgency } from "@/lib/agency-context";
 import { FormInput as Input } from "@/components/ui/input";
 import { Field } from "@/components/ui/field";
-import { PrimaryButton, GhostButton } from "@/components/ui/button";
+import { PrimaryButton, GhostButton , Button } from "@/components/ui/button";
 import { StatusBadge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
 import { PageHeader } from "@/components/shell/PageHeader";
@@ -126,7 +126,7 @@ function DraggablePassenger({
         <span className="truncate">{name}</span>
       </div>
       {onRemove && (
-        <button
+        <Button
           type="button"
           onClick={(e) => {
             e.stopPropagation();
@@ -135,7 +135,7 @@ function DraggablePassenger({
           className="text-muted-foreground hover:text-danger transition-colors cursor-pointer ml-2 shrink-0 pointer-events-auto"
         >
           <XCircle className="h-3.5 w-3.5" />
-        </button>
+        </Button>
       )}
     </div>
   );
@@ -523,7 +523,7 @@ function TourPanel({ tour, slug }: TourPanelProps) {
     <div className="rounded-[var(--radius-card)] border-none bg-card overflow-hidden shadow-xs print:break-inside-avoid">
       {/* Header Panel Summary Row */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-4 border-b border-border glass-card border-none/30">
-        <button
+        <Button
           onClick={() => setExpanded(!expanded)}
           className="flex flex-1 items-start gap-3.5 text-left cursor-pointer hover:opacity-85 transition-opacity"
         >
@@ -541,13 +541,13 @@ function TourPanel({ tour, slug }: TourPanelProps) {
               </span>
             </p>
           </div>
-        </button>
+        </Button>
 
         {/* Status toggles & stats */}
         <div className="flex flex-wrap items-center gap-3 shrink-0">
           <div className="flex items-center gap-2 border-none/80 rounded-[var(--radius-card)] p-1 glass-card border-none/50 text-[10px] font-bold">
             {/* Status (Open / Closed) */}
-            <button
+            <Button
               onClick={toggleListStatus}
               className={cn(
                 "px-2 py-0.5 rounded cursor-pointer transition-colors",
@@ -557,10 +557,10 @@ function TourPanel({ tour, slug }: TourPanelProps) {
               )}
             >
               Rooming: {tour.rooming_list_status === "closed" ? "Fechado" : "Aberto"}
-            </button>
+            </Button>
 
             {/* Sent Hotel Toggle */}
-            <button
+            <Button
               onClick={toggleSentHotel}
               className={cn(
                 "px-2 py-0.5 rounded cursor-pointer transition-colors flex items-center gap-1",
@@ -571,10 +571,10 @@ function TourPanel({ tour, slug }: TourPanelProps) {
             >
               {tour.rooming_list_sent_hotel && <Check className="h-2.5 w-2.5" />}
               Hotel
-            </button>
+            </Button>
 
             {/* Sent Bus Toggle */}
-            <button
+            <Button
               onClick={toggleSentBus}
               className={cn(
                 "px-2 py-0.5 rounded cursor-pointer transition-colors flex items-center gap-1",
@@ -585,7 +585,7 @@ function TourPanel({ tour, slug }: TourPanelProps) {
             >
               {tour.rooming_list_sent_bus && <Check className="h-2.5 w-2.5" />}
               Ônibus
-            </button>
+            </Button>
           </div>
 
           <div className="text-[10px] text-muted-foreground font-semibold flex gap-2">
@@ -609,12 +609,12 @@ function TourPanel({ tour, slug }: TourPanelProps) {
             </span>
           </div>
 
-          <button
+          <Button
             onClick={() => setExpanded(!expanded)}
             className="p-1 text-muted-foreground hover:text-foreground shrink-0 cursor-pointer"
           >
             {expanded ? <ChevronDown className="h-4 w-4" /> : <ChevronRight className="h-4 w-4" />}
-          </button>
+          </Button>
         </div>
       </div>
 
@@ -670,37 +670,37 @@ function TourPanel({ tour, slug }: TourPanelProps) {
                 <Hotel className="h-4 w-4 text-brand" /> Quartos Cadastrados
               </h4>
               <div className="flex items-center gap-2">
-                <button
+                <Button
                   type="button"
                   onClick={handleExportExcel}
                   disabled={exporting || rooms.length === 0}
                   className="flex items-center gap-1.5 h-7 px-2.5 rounded-full border-none glass-card border-none text-[10px] font-bold text-foreground hover:glass bg-white/5 border-white/10 hover:border-brand transition-colors cursor-pointer disabled:opacity-50"
                 >
                   <Download className="h-3 w-3" /> Exportar Excel
-                </button>
-                <button
+                </Button>
+                <Button
                   type="button"
                   onClick={handleExportWord}
                   disabled={exporting || rooms.length === 0}
                   className="flex items-center gap-1.5 h-7 px-2.5 rounded-full border-none glass-card border-none text-[10px] font-bold text-foreground hover:glass bg-white/5 border-white/10 hover:border-brand transition-colors cursor-pointer disabled:opacity-50"
                 >
                   <FileText className="h-3 w-3" /> Exportar Word
-                </button>
-                <button
+                </Button>
+                <Button
                   type="button"
                   onClick={handleExportPdf}
                   disabled={exporting || rooms.length === 0}
                   className="flex items-center gap-1.5 h-7 px-2.5 rounded-full border-none glass-card border-none text-[10px] font-bold text-foreground hover:glass bg-white/5 border-white/10 hover:border-brand transition-colors cursor-pointer disabled:opacity-50"
                 >
                   <FileText className="h-3 w-3 text-rose-500" /> Exportar PDF
-                </button>
-                <button
+                </Button>
+                <Button
                   type="button"
                   onClick={() => setAddOpen(true)}
                   className="flex items-center gap-1.5 h-7 px-2.5 rounded-full bg-brand text-[10px] font-bold text-brand-foreground hover:opacity-90 cursor-pointer"
                 >
                   <Plus className="h-3 w-3" /> Novo Quarto
-                </button>
+                </Button>
               </div>
             </div>
 
@@ -818,7 +818,7 @@ function TourPanel({ tour, slug }: TourPanelProps) {
                           </span>
                         </div>
                         <div className="flex items-center gap-1">
-                          <button
+                          <Button
                             type="button"
                             onClick={() => toggleConfirmed(room.id, room.is_confirmed)}
                             title={room.is_confirmed ? "Confirmado" : "Confirmar com hotel"}
@@ -830,21 +830,21 @@ function TourPanel({ tour, slug }: TourPanelProps) {
                             )}
                           >
                             <CheckCircle2 className="h-3.5 w-3.5" />
-                          </button>
-                          <button
+                          </Button>
+                          <Button
                             type="button"
                             onClick={() => setEditingRoom(room)}
                             className="p-1 rounded text-muted-foreground hover:text-foreground cursor-pointer"
                           >
                             <FileText className="h-3 w-3" />
-                          </button>
-                          <button
+                          </Button>
+                          <Button
                             type="button"
                             onClick={() => removeRoom(room.id)}
                             className="p-1 rounded text-muted-foreground hover:text-danger cursor-pointer"
                           >
                             <Trash2 className="h-3 w-3" />
-                          </button>
+                          </Button>
                         </div>
                       </div>
 

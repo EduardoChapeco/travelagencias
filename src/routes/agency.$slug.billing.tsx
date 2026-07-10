@@ -21,7 +21,7 @@ import {
 } from "lucide-react";
 import { useAgency } from "@/lib/agency-context";
 import { PageHeader } from "@/components/shell/PageHeader";
-import { PrimaryButton, GhostButton } from "@/components/ui/button";
+import { PrimaryButton, GhostButton , Button } from "@/components/ui/button";
 import { StatusBadge } from "@/components/ui/badge";
 import { SheetPage } from "@/components/ui/sheet";
 
@@ -366,12 +366,12 @@ function BillingPage() {
 
                 <div className="mt-8 pt-4 border-t border-border">
                   {isCurrent ? (
-                    <button
+                    <Button
                       disabled
                       className="w-full h-10 rounded-[var(--radius-card)] glass bg-white/5 border-white/10 border-none text-xs font-bold text-muted-foreground flex items-center justify-center gap-1.5"
                     >
                       Plano Atual
-                    </button>
+                    </Button>
                   ) : (
                     <PrimaryButton
                       onClick={() => {

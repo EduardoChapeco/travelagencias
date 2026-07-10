@@ -12,6 +12,7 @@ import {
 import { Link, useParams } from "@tanstack/react-router";
 import { toast } from "sonner";
 import { fetchTeamMembers } from "@/services/settings";
+import { Button } from "@/components/ui/button";
 
 
 interface StickyNotesCanvasProps {
@@ -258,18 +259,18 @@ export function StickyNotesCanvas({ renderNoteContent, onNoteFocusChange }: Stic
 
           {/* Adicionar nota (apenas no modo editar) */}
           {isEditable && (
-            <button
+            <Button
               onClick={() => addMutation.mutate()}
               disabled={addMutation.isPending}
               className="flex items-center justify-center h-10 w-10 rounded-full bg-brand/20 hover:bg-brand/35 text-brand border border-brand/25 transition-all cursor-pointer disabled:opacity-50"
               title="Adicionar Nota"
             >
               <Plus className="w-[18px] h-[18px]" />
-            </button>
+            </Button>
           )}
 
           {/* Toggle modo organizar */}
-          <button
+          <Button
             onClick={() => setIsEditable(!isEditable)}
             className={cn(
               "flex items-center gap-1.5 h-10 px-4 rounded-full transition-all cursor-pointer text-[11px] font-black uppercase tracking-wider",
@@ -284,7 +285,7 @@ export function StickyNotesCanvas({ renderNoteContent, onNoteFocusChange }: Stic
             ) : (
               <><Edit3 className="w-3.5 h-3.5" /><span>Organizar</span></>
             )}
-          </button>
+          </Button>
         </div>
       </div>
     </div>

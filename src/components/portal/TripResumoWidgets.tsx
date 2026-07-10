@@ -18,6 +18,7 @@ import {
 } from "lucide-react";
 import { fmtDate } from "@/lib/formatters";
 import { AppWidget } from "@/components/portal/TripPortalShared";
+import { Button } from "@/components/ui/button";
 
 // ─── Confirmation Items ───────────────────────────────────────────────────────
 interface ConfirmationItem {
@@ -267,7 +268,7 @@ export function TripCheckinWidget({
           instantaneamente.
         </p>
         <div className="flex gap-2">
-          <button
+          <Button
             type="button"
             disabled={emergencyPending}
             onClick={() => {
@@ -278,8 +279,8 @@ export function TripCheckinWidget({
             className="flex-1 py-1.5 px-3 rounded-[var(--radius-card)] bg-rose-600 hover:bg-rose-700 text-white text-xs font-bold shadow-none transition-colors disabled:opacity-50"
           >
             Meu Voo Atrasou
-          </button>
-          <button
+          </Button>
+          <Button
             type="button"
             disabled={emergencyPending}
             onClick={() => {
@@ -290,7 +291,7 @@ export function TripCheckinWidget({
             className="flex-1 py-1.5 px-3 rounded-[var(--radius-card)] border border-rose-600 text-rose-700 hover:bg-rose-50 text-xs font-bold shadow-none transition-colors disabled:opacity-50 bg-white"
           >
             Voo Cancelado
-          </button>
+          </Button>
         </div>
       </div>
     </div>
@@ -410,7 +411,7 @@ export function TripBoardingCard({
             </div>
             <div className="rounded-2xl border border-border/60 bg-surface/50 overflow-hidden divide-y divide-border/40">
               {localChecklist.map((it, idx) => (
-                <button
+                <Button
                   key={idx}
                   type="button"
                   onClick={() => onToggle(idx)}
@@ -431,7 +432,7 @@ export function TripBoardingCard({
                   >
                     {it.label}
                   </span>
-                </button>
+                </Button>
               ))}
             </div>
           </div>
@@ -659,12 +660,12 @@ export function TripAccommodation({ hotels }: { hotels: any[] }) {
 export function TripCancelTrigger({ onClick }: { onClick: () => void }) {
   return (
     <div className="pt-6 border-t border-border flex justify-center">
-      <button
+      <Button
         onClick={onClick}
         className="text-xs font-bold text-muted-foreground hover:text-danger hover:underline flex items-center gap-1 transition-colors"
       >
         <Ban className="w-3 h-3" /> Solicitar Cancelamento da Viagem
-      </button>
+      </Button>
     </div>
   );
 }

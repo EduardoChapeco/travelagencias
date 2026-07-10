@@ -1,5 +1,6 @@
 import React, { useRef, useState, useCallback, useEffect } from "react";
 import { Camera, MapPin, CheckCircle, ShieldAlert, Loader2 } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
 type KycSignatureProps = {
   onSign: (data: { photoBlob: Blob; latitude: number; longitude: number }) => Promise<void>;
@@ -115,12 +116,12 @@ export function KycSignature({ onSign, isLoading }: KycSignatureProps) {
             Para garantir a sua segurança e evitar fraudes, precisamos de uma foto sua (Selfie) e da sua localização atual antes de assinar.
           </p>
         </div>
-        <button
+        <Button
           onClick={startKycProcess}
           className="w-full bg-primary text-primary-foreground font-semibold h-11 rounded-[var(--radius-card)] flex items-center justify-center gap-2 hover:bg-primary/90 transition-colors"
         >
           <Camera className="h-5 w-5" /> Iniciar Verificação
-        </button>
+        </Button>
       </div>
     );
   }
@@ -132,7 +133,7 @@ export function KycSignature({ onSign, isLoading }: KycSignatureProps) {
           <div className="text-center p-6 bg-surface text-foreground rounded-[var(--radius-card)]">
             <ShieldAlert className="h-10 w-10 text-red-500 mx-auto mb-3" />
             <p className="font-semibold">{errorMsg}</p>
-            <button onClick={() => setStep("intro")} className="mt-4 text-primary text-sm font-semibold hover:underline">Tentar Novamente</button>
+            <Button onClick={() => setStep("intro")} className="mt-4 text-primary text-sm font-semibold hover:underline">Tentar Novamente</Button>
           </div>
         ) : (
           <div className="relative aspect-[3/4] w-full rounded-[var(--radius-card)] overflow-hidden bg-zinc-900">
@@ -152,12 +153,12 @@ export function KycSignature({ onSign, isLoading }: KycSignatureProps) {
             </div>
             
             <div className="absolute bottom-6 left-0 right-0 flex justify-center z-20">
-              <button
+              <Button
                 onClick={capturePhoto}
                 className="h-16 w-16 bg-white rounded-full border-4 border-zinc-300 shadow-xl flex items-center justify-center active:scale-95 transition-transform"
               >
                 <div className="h-12 w-12 rounded-full border-2 border-zinc-900"></div>
-              </button>
+              </Button>
             </div>
             <canvas ref={canvasRef} className="hidden" />
           </div>
@@ -184,22 +185,22 @@ export function KycSignature({ onSign, isLoading }: KycSignatureProps) {
         </div>
 
         <div className="flex flex-col gap-3 pt-2">
-          <button
+          <Button
             onClick={handleConfirm}
             disabled={isLoading}
             className="w-full bg-green-600 text-white font-semibold h-11 rounded-[var(--radius-card)] flex items-center justify-center gap-2 hover:bg-green-700 transition-colors disabled:opacity-50"
           >
             {isLoading ? <Loader2 className="h-5 w-5 animate-spin" /> : <CheckCircle className="h-5 w-5" />}
             Confirmar e Assinar
-          </button>
+          </Button>
           
-          <button
+          <Button
             onClick={handleRetake}
             disabled={isLoading}
             className="text-sm font-semibold text-muted-foreground hover:text-foreground disabled:opacity-50"
           >
             Tirar outra foto
-          </button>
+          </Button>
         </div>
       </div>
     );

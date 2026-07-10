@@ -20,6 +20,7 @@ import {
 } from "lucide-react";
 import { toast } from "sonner";
 import { logTripAudit } from "@/services/audit";
+import { Button } from "@/components/ui/button";
 
 export const Route = createFileRoute("/agency/$slug/trips/$id/lodging")({
   head: ({ context }: any) => ({ meta: [{ title: `Hospedagem · ${context?.brand?.platform_name || 'Turis'}` }] }),
@@ -191,7 +192,7 @@ function TripLodgingPage() {
         </div>
 
         {!showAddForm && !editingCardId && (
-          <button
+          <Button
             onClick={() => {
               resetForm();
               setShowAddForm(true);
@@ -200,7 +201,7 @@ function TripLodgingPage() {
           >
             <Plus className="h-3.5 w-3.5" />
             <span>Adicionar Hospedagem</span>
-          </button>
+          </Button>
         )}
       </div>
 
@@ -312,7 +313,7 @@ function TripLodgingPage() {
           </div>
 
           <div className="flex justify-end gap-2 pt-2">
-            <button
+            <Button
               onClick={() => {
                 setShowAddForm(false);
                 setEditingCardId(null);
@@ -321,8 +322,8 @@ function TripLodgingPage() {
               className="px-3 py-1.5 border-none text-xs rounded hover:glass bg-white/5 border-white/10 cursor-pointer"
             >
               Cancelar
-            </button>
-            <button
+            </Button>
+            <Button
               onClick={() => {
                 if (editingCardId) {
                   updateLodgingMut.mutate(editingCardId);
@@ -333,7 +334,7 @@ function TripLodgingPage() {
               className="px-3 py-1.5 bg-brand text-brand-foreground text-xs rounded hover:bg-brand/90 cursor-pointer"
             >
               Salvar
-            </button>
+            </Button>
           </div>
         </div>
       )}
@@ -373,14 +374,14 @@ function TripLodgingPage() {
                 </div>
 
                 <div className="flex items-center gap-3">
-                  <button
+                  <Button
                     onClick={() => startEdit(card)}
                     className="h-7 w-7 inline-flex items-center justify-center border-none hover:glass bg-white/5 border-white/10 rounded transition-colors text-muted-foreground cursor-pointer"
                     title="Editar"
                   >
                     <Pencil className="h-3.5 w-3.5" />
-                  </button>
-                  <button
+                  </Button>
+                  <Button
                     onClick={() => {
                       if (confirm("Deseja realmente excluir esta hospedagem?")) {
                         deleteLodgingMut.mutate(card.id);
@@ -390,7 +391,7 @@ function TripLodgingPage() {
                     title="Excluir"
                   >
                     <Trash2 className="h-3.5 w-3.5" />
-                  </button>
+                  </Button>
                   <StatusBadge tone={card.status === "confirmed" ? "success" : "warning"}>
                     {card.status === "confirmed" ? "Confirmada" : "Pendente"}
                   </StatusBadge>

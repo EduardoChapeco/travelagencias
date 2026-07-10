@@ -4,6 +4,7 @@ import { toast } from "sonner";
 import { FileText, AlertTriangle, Trash2, FileUp } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useConfirm } from "@/hooks/use-confirm";
+import { Button } from "@/components/ui/button";
 
 const DOC_TYPES: { value: string; label: string }[] = [
   { value: "passport", label: "Passaporte" },
@@ -100,7 +101,7 @@ export function DocumentsPanel({ clientId, agencyId }: { clientId: string; agenc
 
   return (
     <div className="rounded-3xl border border-border bg-background overflow-hidden">
-      <button
+      <Button
         type="button"
         onClick={() => setOpen((o) => !o)}
         className="flex w-full items-center justify-between px-6 py-4 text-sm font-bold hover:bg-surface/50 transition-colors text-foreground"
@@ -121,7 +122,7 @@ export function DocumentsPanel({ clientId, agencyId }: { clientId: string; agenc
             </span>
           )}
         </div>
-      </button>
+      </Button>
 
       {open && (
         <div className="px-6 pb-6 space-y-4 border-t border-border/50 bg-background">
@@ -166,12 +167,12 @@ export function DocumentsPanel({ clientId, agencyId }: { clientId: string; agenc
                     {doc.notes && <span> · {doc.notes}</span>}
                   </div>
                 </div>
-                <button
+                <Button
                   onClick={() => deleteDoc(doc.id)}
                   className="text-muted-foreground hover:text-danger transition-colors cursor-pointer"
                 >
                   <Trash2 className="h-4 w-4" />
-                </button>
+                </Button>
               </div>
             );
           })}
@@ -230,30 +231,30 @@ export function DocumentsPanel({ clientId, agencyId }: { clientId: string; agenc
                 </div>
               </div>
               <div className="flex gap-2">
-                <button
+                <Button
                   onClick={saveDoc}
                   disabled={saving}
                   className="flex-1 h-9 rounded-2xl bg-brand text-brand-foreground text-xs font-bold hover:opacity-90 disabled:opacity-60 cursor-pointer"
                 >
                   {saving ? "Salvando..." : "Salvar"}
-                </button>
-                <button
+                </Button>
+                <Button
                   onClick={() => setAdding(false)}
                   className="h-9 px-4 rounded-2xl border border-border text-xs font-semibold cursor-pointer text-foreground bg-surface"
                 >
                   Cancelar
-                </button>
+                </Button>
               </div>
             </div>
           )}
 
           {!adding && (
-            <button
+            <Button
               onClick={() => setAdding(true)}
               className="flex items-center gap-1.5 text-xs font-semibold text-brand hover:underline cursor-pointer"
             >
               <FileUp className="h-3.5 w-3.5" /> Adicionar documento
-            </button>
+            </Button>
           )}
         </div>
       )}

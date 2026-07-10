@@ -4,7 +4,7 @@ import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { Field } from "@/components/ui/field";
 import { FormInput as Input } from "@/components/ui/input";
-import { PrimaryButton, GhostButton } from "@/components/ui/button";
+import { PrimaryButton, GhostButton , Button } from "@/components/ui/button";
 import { StatusBadge } from "@/components/ui/badge";
 import { generateContractHash, generateContractPdf } from "@/lib/pdf-generator";
 import {
@@ -1019,13 +1019,13 @@ function Page() {
                     <FileCheck className="h-4.5 w-4.5" /> Baixar Contrato Assinado (.PDF)
                   </a>
                 )}
-                <button
+                <Button
                   type="button"
                   onClick={downloadLegalZip}
                   className="flex-1 flex items-center justify-center gap-2 bg-brand text-brand-foreground text-xs font-bold py-3 px-4 rounded-[var(--radius-card)] hover:bg-brand/90 transition-all active:scale-[0.98] cursor-pointer"
                 >
                   <FileArchive className="h-4.5 w-4.5" /> Baixar Pacote Jurídico (.ZIP)
-                </button>
+                </Button>
               </div>
             )}
           </section>
@@ -1188,13 +1188,13 @@ function Page() {
                           alt="Doc Frente"
                           className="h-24 rounded border-none object-cover"
                         />
-                        <button
+                        <Button
                           type="button"
                           onClick={() => setDocumentFront(null)}
                           className="absolute -top-1.5 -right-1.5 rounded-full bg-danger p-1 text-white text-[10px] w-5 h-5 flex items-center justify-center"
                         >
                           x
-                        </button>
+                        </Button>
                       </div>
                     ) : (
                       <label className="flex flex-col items-center justify-center h-24 rounded-[var(--radius-card)] border border-dashed border-border glass-card border-none cursor-pointer hover:glass bg-white/5 border-white/10/25 transition-colors">
@@ -1223,13 +1223,13 @@ function Page() {
                           alt="Doc Verso"
                           className="h-24 rounded border-none object-cover"
                         />
-                        <button
+                        <Button
                           type="button"
                           onClick={() => setDocumentBack(null)}
                           className="absolute -top-1.5 -right-1.5 rounded-full bg-danger p-1 text-white text-[10px] w-5 h-5 flex items-center justify-center"
                         >
                           x
-                        </button>
+                        </Button>
                       </div>
                     ) : (
                       <label className="flex flex-col items-center justify-center h-24 rounded-[var(--radius-card)] border border-dashed border-border glass-card border-none cursor-pointer hover:glass bg-white/5 border-white/10/25 transition-colors">
@@ -1276,7 +1276,7 @@ function Page() {
                         alt="selfie de verificação"
                         className="h-24 w-24 rounded-full border-4 border-surface object-cover"
                       />
-                      <button
+                      <Button
                         type="button"
                         onClick={() => setSelfie(null)}
                         className="absolute bottom-0 right-0 rounded-full bg-danger p-1.5 text-white hover:bg-danger/80"
@@ -1294,7 +1294,7 @@ function Page() {
                             d="M6 18L18 6M6 6l12 12"
                           />
                         </svg>
-                      </button>
+                      </Button>
                     </div>
                   ) : (
                     <div className="flex flex-col items-start gap-2">
@@ -1368,7 +1368,7 @@ function Page() {
                           controls
                           className="h-24 rounded border-none bg-black max-w-[160px]"
                         />
-                        <button
+                        <Button
                           type="button"
                           onClick={() => {
                             setVideoKyc(null);
@@ -1377,7 +1377,7 @@ function Page() {
                           className="absolute -top-1.5 -right-1.5 rounded-full bg-danger p-1 text-white text-[10px] w-5 h-5 flex items-center justify-center"
                         >
                           x
-                        </button>
+                        </Button>
                       </div>
                     ) : (
                       <div className="flex flex-wrap gap-2">
@@ -1493,13 +1493,13 @@ function Page() {
                 )}
 
                 {selfie && documentFront && documentBack && facialMatchSuccess && readConfirmed && (
-                  <button
+                  <Button
                     type="button"
                     onClick={clearSig}
                     className="absolute bottom-2 right-2 rounded-full glass-card border-none px-2.5 py-1.5 text-[10px] font-semibold text-muted-foreground hover:text-danger transition-colors border-none/40 font-sans"
                   >
                     Limpar Canvas
-                  </button>
+                  </Button>
                 )}
               </div>
             </Field>
@@ -1651,13 +1651,13 @@ function AdendumSignerPanel({
           onPointerUp={endDraw}
           onPointerLeave={endDraw}
         />
-        <button
+        <Button
           type="button"
           onClick={clearSig}
           className="absolute bottom-1 right-1 rounded glass-card border-none border px-2 py-0.5 text-[9px] font-semibold text-muted-foreground hover:text-danger"
         >
           Limpar
-        </button>
+        </Button>
       </div>
       <PrimaryButton disabled={signing} onClick={handleSign} className="w-full text-xs py-2">
         {signing ? "Assinando..." : "Assinar Aditivo"}

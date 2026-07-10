@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Phone, AlertCircle, Compass, Lightbulb, Loader2 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { AppWidget } from "@/components/portal/TripPortalShared";
+import { Button } from "@/components/ui/button";
 
 interface TabContatosProps {
   trip: any;
@@ -109,12 +110,12 @@ export function TabContatos({ trip, voucher }: TabContatosProps) {
           >
             {!contactsAiLoaded && (
               <div className="text-center py-4 space-y-3">
-                <button
+                <Button
                   onClick={handleLoadAiContacts}
                   className="inline-flex items-center gap-2 px-4 py-2 rounded-[var(--radius-card)] bg-info/10 text-info text-xs font-bold border border-info/20 hover:bg-info/20 transition-colors"
                 >
                   <Lightbulb className="h-3.5 w-3.5" /> Carregar Informações do Destino
-                </button>
+                </Button>
                 <p className="text-[10px] text-muted-foreground">
                   A IA analisa seu destino e rotas de conexão.
                 </p>

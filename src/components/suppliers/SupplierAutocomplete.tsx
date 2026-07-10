@@ -2,6 +2,7 @@ import { useState, useRef, useEffect, useCallback } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Search, Star, MapPin, X } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
 // ─── Types ───────────────────────────────────────────────────────────────────
 
@@ -123,13 +124,13 @@ export function SupplierAutocomplete({
               <MapPin className="h-2.5 w-2.5" /> {value.city}
             </span>
           )}
-          <button
+          <Button
             type="button"
             onClick={handleClear}
             className="p-0.5 rounded hover:bg-surface-alt text-muted-foreground hover:text-foreground transition-colors"
           >
             <X className="h-3.5 w-3.5" />
-          </button>
+          </Button>
         </div>
       ) : (
         <div className="relative">
@@ -174,7 +175,7 @@ export function SupplierAutocomplete({
             <ul className="max-h-64 overflow-y-auto">
               {results.map((supplier) => (
                 <li key={supplier.id}>
-                  <button
+                  <Button
                     type="button"
                     onClick={() => handleSelect(supplier)}
                     className="w-full text-left px-4 py-3 hover:bg-surface-alt transition-colors border-b border-border/50 last:border-0"
@@ -209,7 +210,7 @@ export function SupplierAutocomplete({
                         )}
                       </div>
                     )}
-                  </button>
+                  </Button>
                 </li>
               ))}
             </ul>

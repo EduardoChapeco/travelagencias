@@ -8,6 +8,7 @@ import { Field } from "@/components/ui/field";
 import { FormInput as Input } from "@/components/ui/input";
 import { NativeSelect as Select } from "@/components/ui/select";
 import { money } from "@/lib/formatters";
+import { Button } from "@/components/ui/button";
 
 function getAgentPct(rule: any, monthlyBilling: number): number {
   if (!rule) {
@@ -227,7 +228,7 @@ export function CommissionSection({
 
   return (
     <div className="mb-6 rounded-[var(--radius-card)] border border-border bg-surface overflow-hidden">
-      <button
+      <Button
         type="button"
         onClick={() => setOpen((o) => !o)}
         className="flex w-full items-center justify-between px-5 py-4 text-sm font-semibold hover:bg-surface-alt/40 transition-colors"
@@ -246,7 +247,7 @@ export function CommissionSection({
             <ChevronRight className="h-4 w-4 text-foreground" />
           )}
         </div>
-      </button>
+      </Button>
 
       {open && (
         <div className="px-5 pb-5 space-y-5 border-t border-border/50 bg-surface">
@@ -290,13 +291,13 @@ export function CommissionSection({
               <h4 className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
                 Itens da Viagem
               </h4>
-              <button
+              <Button
                 type="button"
                 onClick={addItem}
                 className="inline-flex items-center gap-1 text-xs text-brand hover:underline font-semibold"
               >
                 <Plus className="h-3.5 w-3.5" /> Adicionar Item
-              </button>
+              </Button>
             </div>
 
             {items.length === 0 ? (
@@ -409,13 +410,13 @@ export function CommissionSection({
                             )}
                           </span>
                         </div>
-                        <button
+                        <Button
                           type="button"
                           onClick={() => removeItem(index)}
                           className="text-destructive hover:bg-destructive/10 p-2 rounded transition-colors"
                         >
                           <Trash2 className="h-4 w-4" />
-                        </button>
+                        </Button>
                       </div>
                     </div>
                   </div>
@@ -481,13 +482,13 @@ export function CommissionSection({
           </div>
 
           <div className="flex justify-end">
-            <button
+            <Button
               onClick={saveCommission}
               disabled={saving}
               className="flex h-9 items-center gap-1.5 rounded-full bg-primary px-4 text-xs font-semibold text-primary-foreground hover:opacity-90 disabled:opacity-60 transition-all cursor-pointer"
             >
               {saving ? "Salvando…" : "Salvar configuração de comissão"}
-            </button>
+            </Button>
           </div>
         </div>
       )}

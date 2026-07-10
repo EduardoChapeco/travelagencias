@@ -1,5 +1,6 @@
 import React from "react";
 import { Monitor, Smartphone, Tablet } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
 export type DeviceViewport = "mobile" | "tablet" | "desktop";
 
@@ -95,7 +96,7 @@ type DeviceSelectorProps = {
 export function DeviceSelector({ viewport, onChange }: DeviceSelectorProps) {
   return (
     <div className="flex items-center gap-1 bg-surface border border-border rounded-2xl p-1">
-      <button
+      <Button
         onClick={() => onChange("desktop")}
         className={`p-1.5 rounded-full transition-colors ${
           viewport === "desktop" ? "bg-accent text-foreground" : "text-muted-foreground hover:bg-accent/50 hover:text-foreground"
@@ -103,8 +104,8 @@ export function DeviceSelector({ viewport, onChange }: DeviceSelectorProps) {
         title="Desktop"
       >
         <Monitor className="h-4 w-4" />
-      </button>
-      <button
+      </Button>
+      <Button
         onClick={() => onChange("tablet")}
         className={`p-1.5 rounded-full transition-colors ${
           viewport === "tablet" ? "bg-accent text-foreground" : "text-muted-foreground hover:bg-accent/50 hover:text-foreground"
@@ -112,8 +113,8 @@ export function DeviceSelector({ viewport, onChange }: DeviceSelectorProps) {
         title="Tablet"
       >
         <Tablet className="h-4 w-4" />
-      </button>
-      <button
+      </Button>
+      <Button
         onClick={() => onChange("mobile")}
         className={`p-1.5 rounded-full transition-colors ${
           viewport === "mobile" ? "bg-accent text-foreground" : "text-muted-foreground hover:bg-accent/50 hover:text-foreground"
@@ -121,7 +122,7 @@ export function DeviceSelector({ viewport, onChange }: DeviceSelectorProps) {
         title="Mobile"
       >
         <Smartphone className="h-4 w-4" />
-      </button>
+      </Button>
     </div>
   );
 }

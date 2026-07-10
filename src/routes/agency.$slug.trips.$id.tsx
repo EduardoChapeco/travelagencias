@@ -1,3 +1,4 @@
+import { Button } from "@/components/ui/button";
 import { createFileRoute, Link, Outlet, useNavigate, useParams, useLocation } from "@tanstack/react-router";
 import { TabsList } from "@/components/ui/tabs";
 import { useState, useEffect } from "react";
@@ -326,19 +327,19 @@ function TripLayout() {
               <div className="flex items-center gap-1.5 bg-emerald-500/10 border border-emerald-500/20 px-3 h-8 rounded-full text-xs font-semibold text-emerald-600">
                 <Wifi className="h-3.5 w-3.5 text-emerald-500 shrink-0" />
                 <span>Localizador: {linkQ.data.external_id}</span>
-                <button
+                <Button
                   onClick={() => syncGdsMut.mutate()}
                   disabled={syncBusy}
                   className="ml-1 text-emerald-600 hover:text-emerald-800 disabled:opacity-50 cursor-pointer p-0.5 rounded hover:bg-emerald-500/10 transition-colors"
                   title="Atualizar status da reserva agora"
                 >
                   <RefreshCw className={cn("h-3 w-3", syncBusy && "animate-spin")} />
-                </button>
+                </Button>
               </div>
             ) : (
               isAgencyAdmin && (
                 <div className="flex items-center gap-2">
-                  <button
+                  <Button
                     onClick={() => setShowEmitModal(true)}
                     disabled={bookingBusy || syncBusy}
                     title="Emitir viagem na operadora parceira"
@@ -350,9 +351,9 @@ function TripLayout() {
                       <Wifi className="h-3.5 w-3.5" />
                     )}
                     <span>Emitir na Operadora</span>
-                  </button>
+                  </Button>
 
-                  <button
+                  <Button
                     onClick={() => setShowImportModal(true)}
                     disabled={bookingBusy || syncBusy}
                     title="Vincular viagem a um localizador de reserva existente"
@@ -360,37 +361,37 @@ function TripLayout() {
                   >
                     <Download className="h-3.5 w-3.5 text-muted-foreground shrink-0" />
                     <span>Vincular Localizador</span>
-                  </button>
+                  </Button>
                 </div>
               )
             )}
 
             {/* Ver como Cliente */}
-            <button
+            <Button
               onClick={() => window.open(`/client/trips/${id}`, "_blank")}
               title="Ver como cliente"
               className="flex h-8 items-center justify-center gap-1.5 rounded-full border-none glass-card border-none px-2 sm:px-3 text-xs font-medium text-muted-foreground hover:glass bg-white/5 border-white/10 hover:text-foreground transition-colors cursor-pointer"
             >
               <Eye className="h-3.5 w-3.5" />
               <span className="hidden sm:inline">Ver como Cliente</span>
-            </button>
+            </Button>
 
             {/* Enviar para Cliente */}
-            <button
+            <Button
               onClick={handleSendToClient}
               title="Enviar link da viagem ao cliente via WhatsApp"
               className="flex h-8 items-center justify-center gap-1.5 rounded-full border border-emerald-500/30 bg-emerald-500/5 px-2 sm:px-3 text-xs font-medium text-emerald-600 hover:bg-emerald-500/10 transition-colors cursor-pointer"
             >
               <Send className="h-3.5 w-3.5" />
               <span className="hidden sm:inline">Enviar ao Cliente</span>
-            </button>
+            </Button>
 
             {/* Menu de ações */}
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <button className="flex h-8 w-8 items-center justify-center rounded-full border-none glass-card border-none text-muted-foreground hover:glass bg-white/5 border-white/10 hover:text-foreground transition-colors">
+                <Button className="flex h-8 w-8 items-center justify-center rounded-full border-none glass-card border-none text-muted-foreground hover:glass bg-white/5 border-white/10 hover:text-foreground transition-colors">
                   <MoreHorizontal className="h-4 w-4" />
-                </button>
+                </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end" className="w-60">
                 <div className="px-2 py-1.5 text-[10px] font-bold uppercase tracking-widest text-muted-foreground">
@@ -546,7 +547,7 @@ function TripLayout() {
             </div>
 
             <div className="flex gap-3 pt-2">
-              <button
+              <Button
                 type="button"
                 onClick={() => {
                   setShowImportModal(false);
@@ -555,8 +556,8 @@ function TripLayout() {
                 className="flex-1 h-10 rounded-[var(--radius-card)] border-none glass-card border-none text-xs font-bold text-muted-foreground hover:glass bg-white/5 border-white/10 transition-colors cursor-pointer"
               >
                 Cancelar
-              </button>
-              <button
+              </Button>
+              <Button
                 type="button"
                 disabled={!importBookingId.trim() || importGdsMut.isPending}
                 onClick={() => importGdsMut.mutate(importBookingId)}
@@ -568,7 +569,7 @@ function TripLayout() {
                   <Download className="h-4 w-4" />
                 )}
                 Importar
-              </button>
+              </Button>
             </div>
           </div>
         </div>
@@ -624,7 +625,7 @@ function TripLayout() {
                 </div>
 
                 <div className="flex gap-3 pt-2">
-                  <button
+                  <Button
                     type="button"
                     onClick={() => {
                       setShowEmitModal(false);
@@ -633,15 +634,15 @@ function TripLayout() {
                     className="flex-1 h-10 rounded-[var(--radius-card)] border-none glass-card border-none text-xs font-bold text-muted-foreground hover:glass bg-white/5 border-white/10 transition-colors cursor-pointer"
                   >
                     Cancelar
-                  </button>
-                  <button
+                  </Button>
+                  <Button
                     type="button"
                     disabled={!paxQ.data || paxQ.data.length === 0}
                     onClick={() => setEmitStep(2)}
                     className="flex-1 h-10 rounded-[var(--radius-card)] bg-brand text-xs font-bold text-brand-foreground hover:bg-brand/90 transition-colors flex items-center justify-center gap-1.5 cursor-pointer disabled:opacity-50"
                   >
                     Validar e Avançar
-                  </button>
+                  </Button>
                 </div>
               </>
             ) : (
@@ -664,14 +665,14 @@ function TripLayout() {
                 </div>
 
                 <div className="flex gap-3 pt-2">
-                  <button
+                  <Button
                     type="button"
                     onClick={() => setEmitStep(1)}
                     className="flex-1 h-10 rounded-[var(--radius-card)] border-none glass-card border-none text-xs font-bold text-muted-foreground hover:glass bg-white/5 border-white/10 transition-colors cursor-pointer"
                   >
                     Voltar
-                  </button>
-                  <button
+                  </Button>
+                  <Button
                     type="button"
                     disabled={bookGdsMut.isPending}
                     onClick={() => {
@@ -687,7 +688,7 @@ function TripLayout() {
                       <Wifi className="h-4 w-4" />
                     )}
                     Confirmar Emissão
-                  </button>
+                  </Button>
                 </div>
               </>
             )}

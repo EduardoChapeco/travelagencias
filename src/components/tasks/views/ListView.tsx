@@ -19,6 +19,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { TASK_STATUSES, TASK_PRIORITIES } from "@/lib/tasks/task.constants";
 import { cn } from "@/lib/utils";
 import { TaskDetailDrawer } from "../TaskDetailDrawer";
+import { Button } from "@/components/ui/button";
 
 export function ListView({ filters }: { filters: TaskFiltersState }) {
   const qc = useQueryClient();
@@ -174,7 +175,7 @@ function StatusGroupSection({
                       className={cn("hover:bg-[var(--surface-alt)]/30 transition-colors cursor-pointer", task.status === "done" && "opacity-60")}
                     >
                       <td className="p-3 text-center">
-                        <button
+                        <Button
                           onClick={(e) => { e.stopPropagation(); toggleStatus(task.id, task.status as TaskStatus); }}
                           className={cn(
                             "flex h-4.5 w-4.5 mx-auto items-center justify-center rounded border cursor-pointer transition-all",
@@ -182,7 +183,7 @@ function StatusGroupSection({
                           )}
                         >
                           <Check className="h-3 w-3 stroke-[3]" />
-                        </button>
+                        </Button>
                       </td>
                       <td className="p-3 font-semibold text-foreground">
                         <span className="hover:text-brand transition-colors">{task.title}</span>
@@ -245,12 +246,12 @@ function StatusGroupSection({
             className="flex-1 h-8 bg-transparent border-none text-[11px] font-semibold outline-none text-foreground placeholder:text-muted-foreground/60 px-2"
           />
           {quickTitle.trim() && (
-            <button
+            <Button
               type="submit"
               className="h-7 px-3 rounded bg-brand text-white text-[10px] font-bold hover:bg-brand/90 cursor-pointer shadow-xs transition-colors shrink-0"
             >
               Adicionar
-            </button>
+            </Button>
           )}
         </form>
       </div>

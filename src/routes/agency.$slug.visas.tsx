@@ -12,7 +12,7 @@ import { CSS } from "@dnd-kit/utilities";
 import { fetchVisaStages, fetchVisas, persistVisaMove } from "@/services/visas";
 import { useAgency } from "@/lib/agency-context";
 import { toast } from "sonner";
-import { PrimaryButton } from "@/components/ui/button";
+import { PrimaryButton , Button } from "@/components/ui/button";
 import { StatusBadge } from "@/components/ui/badge";
 import { fmtDate } from "@/lib/formatters";
 import { NewVisaWizard } from "@/components/visas/NewVisaWizard";
@@ -169,13 +169,13 @@ function VisasPage() {
                 <FileText className="w-3.5 h-3.5" /> Catálogo
               </Link>
               {isAgencyAdmin && (
-                <button
+                <Button
                   onClick={() => setAdminPanelOpen(true)}
                   className="h-7 w-7 flex items-center justify-center rounded-full border border-white/15 text-white/60 hover:text-white hover:bg-white/10 transition-colors cursor-pointer"
                   title="Administrar Vistos"
                 >
                   <Settings2 className="h-3.5 w-3.5" />
-                </button>
+                </Button>
               )}
             </div>
           }

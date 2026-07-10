@@ -6,7 +6,7 @@ import {
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { useAgency } from "@/lib/agency-context";
-import { PrimaryButton, GhostButton } from "@/components/ui/button";
+import { PrimaryButton, GhostButton , Button } from "@/components/ui/button";
 import { StatusBadge } from "@/components/ui/badge";
 import { money, fmtDate } from "@/lib/formatters";
 import JSZip from "jszip";
@@ -630,7 +630,7 @@ function TripContract() {
         <div className="flex items-center gap-2 flex-wrap justify-end">
           {publicUrl && (
             <>
-              <button
+              <Button
                 onClick={() => {
                   navigator.clipboard.writeText(publicUrl);
                   toast.success("Link copiado");
@@ -639,7 +639,7 @@ function TripContract() {
               >
                 <Copy className="h-3.5 w-3.5" />
                 Copiar link de assinatura
-              </button>
+              </Button>
               <a
                 href={publicUrl}
                 target="_blank"
@@ -653,13 +653,13 @@ function TripContract() {
           )}
 
           {contract?.status === "signed" && (
-            <button
+            <Button
               onClick={handleDownloadZip}
               className="flex h-8 items-center gap-1.5 rounded-full border border-success bg-success/10 text-success px-3 text-xs font-semibold hover:bg-success/20 transition-colors"
             >
               <Download className="h-3.5 w-3.5" />
               Baixar Pacote (ZIP)
-            </button>
+            </Button>
           )}
 
           {!contract && (
@@ -727,13 +727,13 @@ function TripContract() {
             </div>
           </div>
           <div className="flex items-center gap-3">
-            <button
+            <Button
               onClick={handleDownloadZip}
               className="flex items-center gap-1.5 text-xs text-success font-bold border border-success/30 bg-success/10 px-3 py-1.5 rounded hover:bg-success/20 transition-colors"
             >
               <Download className="h-3.5 w-3.5" />
               Baixar Pacote ZIP
-            </button>
+            </Button>
             <a
               href={`/verify/${contract.certificate?.serial}`}
               target="_blank"

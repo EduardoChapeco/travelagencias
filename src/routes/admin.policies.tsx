@@ -6,7 +6,7 @@ import { Shield, FileText, Scale, Save, Eye, EyeOff, Clock, History, AlertCircle
 import { PageHeader } from "@/components/shell/PageHeader";
 import { Field } from "@/components/ui/field";
 import { FormInput as Input } from "@/components/ui/input";
-import { PrimaryButton, GhostButton } from "@/components/ui/button";
+import { PrimaryButton, GhostButton , Button } from "@/components/ui/button";
 import { StatusBadge } from "@/components/ui/badge";
 import { fmtDate } from "@/lib/formatters";
 import { RichTextEditor } from "@/components/ui/RichTextEditor";
@@ -148,7 +148,7 @@ function Page() {
           {docs.map((doc) => {
             const Icon = icons[doc.kind] ?? FileText;
             return (
-              <button
+              <Button
                 key={doc.kind}
                 onClick={() => setActiveKind(doc.kind)}
                 className={
@@ -168,7 +168,7 @@ function Page() {
                     <span className="text-[10px] text-muted-foreground">v{doc.version}</span>
                   </div>
                 </div>
-              </button>
+              </Button>
             );
           })}
 
@@ -206,7 +206,7 @@ function Page() {
                 )}
               </div>
               <div className="flex items-center gap-2">
-                <button
+                <Button
                   type="button"
                   onClick={() => setPreviewMode((v) => !v)}
                   className="flex h-8 items-center gap-1.5 rounded-full border-none px-2.5 text-xs hover:glass bg-white/5 border-white/10"
@@ -217,7 +217,7 @@ function Page() {
                     <Eye className="h-3.5 w-3.5" />
                   )}
                   {previewMode ? "Editar" : "Previa"}
-                </button>
+                </Button>
                 {activeDoc.is_published ? (
                   <GhostButton type="button" onClick={unpublish} className="text-xs">
                     Despublicar

@@ -3,6 +3,7 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { BedDouble, Plus, Trash2, Check, X, Users, Hotel } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
 // ─── Types ───────────────────────────────────────────────────────────────────
 
@@ -210,13 +211,13 @@ export function RoomingList({
           )}
         </div>
         {!showForm && (
-          <button
+          <Button
             type="button"
             onClick={() => setShowForm(true)}
             className="flex items-center gap-1 text-[11px] font-semibold text-brand hover:underline"
           >
             <Plus className="h-3 w-3" /> Quarto
-          </button>
+          </Button>
         )}
       </div>
 
@@ -230,13 +231,13 @@ export function RoomingList({
             <span className="text-xs font-bold uppercase tracking-wider text-foreground">
               {editingId ? "Editar Quarto" : "Novo Quarto"}
             </span>
-            <button
+            <Button
               type="button"
               onClick={resetForm}
               className="text-muted-foreground hover:text-foreground"
             >
               <X className="h-3.5 w-3.5" />
-            </button>
+            </Button>
           </div>
 
           <div className="grid grid-cols-2 gap-2">
@@ -311,7 +312,7 @@ export function RoomingList({
               <label className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wider flex items-center gap-1">
                 <Users className="h-3 w-3" /> Passageiros no Quarto
               </label>
-              <button
+              <Button
                 type="button"
                 onClick={() =>
                   setPassengers([...passengers, { name: "", document: "", meal_plan: "BB" }])
@@ -319,7 +320,7 @@ export function RoomingList({
                 className="text-[10px] text-brand hover:underline"
               >
                 + Passageiro
-              </button>
+              </Button>
             </div>
             <div className="space-y-1">
               {passengers.map((p, i) => (
@@ -363,13 +364,13 @@ export function RoomingList({
                     <option value="RO">RO</option>
                   </select>
                   {passengers.length > 1 && (
-                    <button
+                    <Button
                       type="button"
                       onClick={() => setPassengers(passengers.filter((_, x) => x !== i))}
                       className="text-danger hover:opacity-70"
                     >
                       <X className="h-3 w-3" />
-                    </button>
+                    </Button>
                   )}
                 </div>
               ))}
@@ -389,20 +390,20 @@ export function RoomingList({
           </div>
 
           <div className="flex justify-end gap-2 pt-1">
-            <button
+            <Button
               type="button"
               onClick={resetForm}
               className="h-7 px-3 text-xs rounded border border-border hover:bg-surface-alt transition-colors"
             >
               Cancelar
-            </button>
-            <button
+            </Button>
+            <Button
               type="submit"
               disabled={createMut.isPending || updateMut.isPending}
               className="h-7 px-3 text-xs rounded bg-brand text-white font-semibold disabled:opacity-60 hover:bg-brand/90 transition-colors"
             >
               {editingId ? "Salvar" : "Adicionar Quarto"}
-            </button>
+            </Button>
           </div>
         </form>
       )}
@@ -453,7 +454,7 @@ export function RoomingList({
                   )}
                 </div>
                 <div className="flex items-center gap-1.5">
-                  <button
+                  <Button
                     type="button"
                     onClick={() =>
                       confirmMut.mutate({ id: room.id, confirmed: !room.is_confirmed })
@@ -465,15 +466,15 @@ export function RoomingList({
                     }`}
                   >
                     {room.is_confirmed ? "Desconfirmar" : "Confirmar"}
-                  </button>
-                  <button
+                  </Button>
+                  <Button
                     type="button"
                     onClick={() => handleEdit(room)}
                     className="p-1 rounded border border-border hover:bg-surface-alt text-muted-foreground hover:text-foreground transition-colors"
                   >
                     <Hotel className="h-3 w-3" />
-                  </button>
-                  <button
+                  </Button>
+                  <Button
                     type="button"
                     onClick={() => {
                       if (confirm(`Remover quarto ${room.room_number}?`)) {
@@ -483,7 +484,7 @@ export function RoomingList({
                     className="p-1 rounded border border-border hover:bg-surface-alt text-muted-foreground hover:text-danger transition-colors"
                   >
                     <Trash2 className="h-3 w-3" />
-                  </button>
+                  </Button>
                 </div>
               </div>
 

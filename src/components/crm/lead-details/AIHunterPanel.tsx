@@ -1,4 +1,5 @@
 import { useParams, useNavigate } from "@tanstack/react-router";
+import { Button } from "@/components/ui/button";
 import { useEffect, useState } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
@@ -265,14 +266,14 @@ export function AIHunterPanel({ leadId, agencyId }: { leadId: string; agencyId: 
           <Sparkles className="h-5 w-5 text-brand" />
           <span className="font-bold text-sm text-foreground">Análise de Perfil do Cliente</span>
         </div>
-        <button
+        <Button
           onClick={triggerAnalysis}
           disabled={analyzing}
           className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-bold border border-brand/40 text-brand bg-brand/5 rounded-2xl hover:bg-brand/10 transition-colors disabled:opacity-50"
         >
           <Bot className="h-3.5 w-3.5" />
           {analyzing ? "Analisando..." : "Analisar Agora"}
-        </button>
+        </Button>
       </div>
 
       {/* Bloco de Criação de Cotação por IA */}
@@ -297,39 +298,39 @@ export function AIHunterPanel({ leadId, agencyId }: { leadId: string; agencyId: 
         {errorMsg && <p className="text-xs text-danger font-medium">{errorMsg}</p>}
 
         <div className="flex flex-wrap gap-2 pt-1">
-          <button
+          <Button
             onClick={generateAIProposal}
             disabled={generatingProposal}
             className="inline-flex h-9 items-center gap-1.5 rounded-2xl border border-brand/30 bg-brand text-brand-foreground px-4 text-xs font-bold transition-all hover:opacity-90 disabled:opacity-50"
           >
             <Sparkles className={`h-3.5 w-3.5 ${generatingProposal ? "animate-spin" : ""}`} />
             {generatingProposal ? "Gerando Proposta..." : "Gerar Proposta automaticamente"}
-          </button>
+          </Button>
 
           {createdProposal && (
             <>
-              <button
+              <Button
                 onClick={editProposal}
                 className="inline-flex h-9 items-center gap-1.5 rounded-2xl border border-border bg-surface hover:bg-surface-alt px-3 text-xs font-bold transition-all text-foreground"
               >
                 <Pencil className="h-3.5 w-3.5" /> Editar no Studio
-              </button>
+              </Button>
 
-              <button
+              <Button
                 onClick={sendProposalToWhatsApp}
                 disabled={sendingWa}
                 className="inline-flex h-9 items-center gap-1.5 rounded-2xl border border-emerald-500/30 bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-600 px-3 text-xs font-bold transition-all disabled:opacity-50"
               >
                 <Send className="h-3.5 w-3.5" />
                 {sendingWa ? "Enviando..." : "Enviar por WhatsApp"}
-              </button>
+              </Button>
 
-              <button
+              <Button
                 onClick={copyProposalLink}
                 className="inline-flex h-9 items-center gap-1.5 rounded-2xl border border-border bg-surface hover:bg-surface-alt px-3 text-xs font-bold transition-all text-foreground"
               >
                 <FileText className="h-3.5 w-3.5" /> Copiar Link
-              </button>
+              </Button>
 
               <a
                 href={`${window.location.origin}/m/proposal/${createdProposal.publicToken}`}

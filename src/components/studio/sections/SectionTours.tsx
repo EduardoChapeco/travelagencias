@@ -12,7 +12,7 @@ import { replaceAt } from "@/components/proposals/ProposalFormFields";
 import { useAgency } from "@/lib/agency-context";
 import { supabase } from "@/integrations/supabase/client";
 import { Search } from "lucide-react";
-import { PrimaryButton } from "@/components/ui/button";
+import { PrimaryButton , Button } from "@/components/ui/button";
 import { toast } from "sonner";
 
 interface Props {
@@ -135,7 +135,7 @@ export function SectionTours({ draft, save }: Props) {
       ))}
       <div className="flex gap-2">
         <AddBtn onClick={add}>Adicionar passeio</AddBtn>
-        <button
+        <Button
           type="button"
           onClick={() => {
             setPromoOpen(true);
@@ -145,7 +145,7 @@ export function SectionTours({ draft, save }: Props) {
           className="flex-1 inline-flex items-center justify-center gap-1.5 h-[34px] rounded border border-border bg-surface text-xs font-semibold text-muted-foreground hover:bg-surface-alt hover:text-foreground transition-all cursor-pointer"
         >
           <Search className="h-3.5 w-3.5" /> Importar Promoção
-        </button>
+        </Button>
       </div>
 
       {promoOpen && (
@@ -158,13 +158,13 @@ export function SectionTours({ draft, save }: Props) {
               <h3 className="ds-h3 text-foreground flex items-center gap-2">
                 <Search className="h-4 w-4 text-brand" /> Buscar Promoção / Excursão
               </h3>
-              <button
+              <Button
                 type="button"
                 onClick={() => setPromoOpen(false)}
                 className="text-xs text-muted-foreground hover:text-foreground font-semibold"
               >
                 Fechar
-              </button>
+              </Button>
             </div>
 
             <div className="space-y-3 flex-1 overflow-y-auto no-scrollbar pr-1">
@@ -229,13 +229,13 @@ export function SectionTours({ draft, save }: Props) {
                             currency: "BRL",
                           })}
                         </span>
-                        <button
+                        <Button
                           type="button"
                           onClick={() => importPromotion(promo)}
                           className="px-2.5 py-1 text-[10px] bg-primary text-primary-foreground font-semibold rounded hover:bg-primary/95 transition-all cursor-pointer"
                         >
                           Selecionar
-                        </button>
+                        </Button>
                       </div>
                     </div>
                   </div>

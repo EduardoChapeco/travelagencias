@@ -5,6 +5,7 @@ import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 import { X, Check, Loader2, CheckCircle2, Plus } from "lucide-react";
 import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
 
 const db = supabase as any;
 
@@ -166,7 +167,7 @@ export function TaskChecklistSection({ taskId, agencyId, onChange }: TaskCheckli
       <div className="space-y-1">
         {checklist.map((item) => (
           <div key={item.id} className="flex items-center gap-2 group p-2 rounded-2xl hover:bg-[var(--surface-alt)]/30 transition-colors">
-            <button
+            <Button
               onClick={() => toggleCheckItem(item)}
               className={cn(
                 "h-4 w-4 rounded border flex items-center justify-center shrink-0 transition-all",
@@ -176,16 +177,16 @@ export function TaskChecklistSection({ taskId, agencyId, onChange }: TaskCheckli
               )}
             >
               <Check className="h-2.5 w-2.5 stroke-[3]" />
-            </button>
+            </Button>
             <span className={cn("flex-1 text-xs text-foreground leading-relaxed", item.is_done && "line-through text-muted-foreground")}>
               {item.title}
             </span>
-            <button
+            <Button
               onClick={() => deleteCheckItem(item.id)}
               className="opacity-0 group-hover:opacity-100 h-5 w-5 flex items-center justify-center rounded text-muted-foreground/50 hover:text-[var(--danger)] transition-all"
             >
               <X className="h-3 w-3" />
-            </button>
+            </Button>
           </div>
         ))}
 
@@ -199,12 +200,12 @@ export function TaskChecklistSection({ taskId, agencyId, onChange }: TaskCheckli
             className="flex-1 h-8 bg-transparent border-none text-xs outline-none px-0 focus-visible:ring-0 placeholder:text-muted-foreground/40"
           />
           {newCheckItem.trim() && (
-            <button
+            <Button
               type="submit"
               className="h-6 px-2 text-[10px] font-bold bg-brand text-white rounded hover:bg-brand/90 transition-colors"
             >
               <Plus className="h-3 w-3" />
-            </button>
+            </Button>
           )}
         </form>
       </div>

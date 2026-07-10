@@ -2,6 +2,7 @@ import { useCallback, useId, useRef, useState } from "react";
 import { Upload, X, Loader2, Plus } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
+import { Button } from "@/components/ui/button";
 
 type Props = {
   values: string[];
@@ -111,14 +112,14 @@ export function MultiFileUploader({
             className="group relative aspect-square overflow-hidden rounded-full border border-border bg-surface"
           >
             <img src={url} alt="" className="h-full w-full object-cover" />
-            <button
+            <Button
               type="button"
               onClick={() => remove(i)}
               className="absolute right-1 top-1 rounded-full bg-background/90 p-1 opacity-0 group-hover:opacity-100"
               aria-label="Remover"
             >
               <X className="h-3 w-3" />
-            </button>
+            </Button>
           </div>
         ))}
         {values.length < max && (

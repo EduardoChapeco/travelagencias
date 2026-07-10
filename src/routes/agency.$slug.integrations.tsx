@@ -29,7 +29,7 @@ import { useAgency } from "@/lib/agency-context";
 import { Field } from "@/components/ui/field";
 import { FormInput as Input } from "@/components/ui/input";
 import { NativeSelect as Select } from "@/components/ui/select";
-import { PrimaryButton, GhostButton } from "@/components/ui/button";
+import { PrimaryButton, GhostButton , Button } from "@/components/ui/button";
 import { StatusBadge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
@@ -521,7 +521,7 @@ function WhatsAppTab({ agencyId }: { agencyId: string }) {
           <code className="flex-1 text-xs glass bg-white/5 border-white/10 border-none rounded px-3 py-2 font-mono truncate">
             {`[SUPABASE_URL]/functions/v1/whatsapp-webhook`}
           </code>
-          <button
+          <Button
             type="button"
             onClick={() => {
               navigator.clipboard.writeText(webhookUrl);
@@ -530,7 +530,7 @@ function WhatsAppTab({ agencyId }: { agencyId: string }) {
             className="shrink-0 px-3 py-2 text-xs border-none rounded-[var(--radius-card)] hover:glass bg-white/5 border-white/10 transition-colors"
           >
             Copiar
-          </button>
+          </Button>
         </div>
       </div>
 
@@ -541,13 +541,13 @@ function WhatsAppTab({ agencyId }: { agencyId: string }) {
             <div className="flex items-center gap-2">
               <BarChart3 className="h-4 w-4 text-brand" /> API Oficial Meta
             </div>
-            <button
+            <Button
               type="button"
               onClick={launchEmbeddedSignup}
               className="bg-brand text-white text-xs font-bold px-3 py-1.5 rounded-[var(--radius-card)] hover:bg-brand/90 flex items-center gap-1.5 transition-all shadow-none cursor-pointer"
             >
               <Zap className="h-3.5 w-3.5" /> Conectar WhatsApp via Meta
-            </button>
+            </Button>
           </div>
           <div className="grid gap-3 sm:grid-cols-2">
             <Field label="Meta App ID" hint="ID do aplicativo no painel de desenvolvedores Meta">
@@ -1190,7 +1190,7 @@ function InfotravelTab({ agencyId }: { agencyId: string }) {
           </p>
         </div>
         {!showForm && (
-          <button
+          <Button
             type="button"
             onClick={() => {
               setForm(emptyForm);
@@ -1201,7 +1201,7 @@ function InfotravelTab({ agencyId }: { agencyId: string }) {
           >
             <Plus className="h-3.5 w-3.5" />
             Nova Operadora
-          </button>
+          </Button>
         )}
       </div>
 
@@ -1216,7 +1216,7 @@ function InfotravelTab({ agencyId }: { agencyId: string }) {
               <Wifi className="h-4 w-4 text-brand" />
               {editingOperatorId ? "Editar Operadora" : "Nova Operadora Infotravel"}
             </h4>
-            <button
+            <Button
               type="button"
               onClick={() => {
                 setAddingNew(false);
@@ -1226,7 +1226,7 @@ function InfotravelTab({ agencyId }: { agencyId: string }) {
               className="text-xs text-muted-foreground hover:text-foreground cursor-pointer"
             >
               Cancelar
-            </button>
+            </Button>
           </div>
 
           <div className="rounded-[var(--radius-card)] border-none/60 glass bg-white/5 border-white/10/30 px-4 py-3 text-xs text-muted-foreground">
@@ -1382,7 +1382,7 @@ function InfotravelTab({ agencyId }: { agencyId: string }) {
                 </div>
 
                 <div className="flex items-center gap-2 shrink-0">
-                  <button
+                  <Button
                     type="button"
                     onClick={(e) => {
                       e.stopPropagation();
@@ -1397,8 +1397,8 @@ function InfotravelTab({ agencyId }: { agencyId: string }) {
                       <Zap className="h-3 w-3" />
                     )}
                     Testar
-                  </button>
-                  <button
+                  </Button>
+                  <Button
                     type="button"
                     onClick={(e) => {
                       e.stopPropagation();
@@ -1408,8 +1408,8 @@ function InfotravelTab({ agencyId }: { agencyId: string }) {
                     className="flex items-center gap-1 px-2.5 py-1.5 rounded-[var(--radius-card)] border-none text-[11px] font-semibold text-muted-foreground hover:border-brand/40 hover:text-brand transition-all cursor-pointer"
                   >
                     Editar
-                  </button>
-                  <button
+                  </Button>
+                  <Button
                     type="button"
                     onClick={(e) => {
                       e.stopPropagation();
@@ -1418,7 +1418,7 @@ function InfotravelTab({ agencyId }: { agencyId: string }) {
                     className="flex items-center gap-1 px-2.5 py-1.5 rounded-[var(--radius-card)] border border-danger/20 text-[11px] font-semibold text-danger/70 hover:bg-danger/10 hover:text-danger transition-all cursor-pointer"
                   >
                     <Trash2 className="h-3 w-3" />
-                  </button>
+                  </Button>
                 </div>
               </div>
 
@@ -1479,14 +1479,14 @@ function InfotravelTab({ agencyId }: { agencyId: string }) {
                 </Field>
               </div>
             </div>
-            <button
+            <Button
               type="button"
               disabled={syncBusy || !isConfigured}
               onClick={handleRunBackfill}
               className="mt-4 flex h-9 items-center justify-center gap-2 rounded-[var(--radius-card)] bg-brand/10 text-xs font-bold text-brand hover:bg-brand/20 transition-all border border-brand/20 disabled:opacity-50 cursor-pointer"
             >
               <Play className="h-3.5 w-3.5" /> Iniciar Importação de Reservas
-            </button>
+            </Button>
           </div>
 
           {/* Lado Direito: Polling Engine */}
@@ -1504,7 +1504,7 @@ function InfotravelTab({ agencyId }: { agencyId: string }) {
                 O sistema realiza esta atualização automaticamente a cada 4 horas.
               </div>
             </div>
-            <button
+            <Button
               type="button"
               disabled={syncBusy || !isConfigured}
               onClick={handleRunPolling}
@@ -1512,7 +1512,7 @@ function InfotravelTab({ agencyId }: { agencyId: string }) {
             >
               <RefreshCw className={`h-3.5 w-3.5 ${syncBusy ? "animate-spin" : ""}`} /> Atualizar
               Viagens Ativas
-            </button>
+            </Button>
           </div>
         </div>
 
@@ -1596,13 +1596,13 @@ function InfotravelTab({ agencyId }: { agencyId: string }) {
                         </td>
                         <td className="px-4 py-3 text-center">
                           {errorCount > 0 ? (
-                            <button
+                            <Button
                               type="button"
                               onClick={() => setErrorDetailsJobId(job.id)}
                               className="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[10px] font-bold bg-danger/10 text-danger border border-danger/20 hover:bg-danger/20 cursor-pointer transition-all"
                             >
                               <AlertCircle className="h-3 w-3" /> {errorCount} ocorrência(s)
-                            </button>
+                            </Button>
                           ) : (
                             <span className="text-muted-foreground/40">—</span>
                           )}
@@ -1629,13 +1629,13 @@ function InfotravelTab({ agencyId }: { agencyId: string }) {
               <h3 className="text-md font-bold text-foreground flex items-center gap-1.5 text-danger">
                 <AlertCircle className="h-5 w-5" /> Relatório de Ocorrências no Processamento
               </h3>
-              <button
+              <Button
                 type="button"
                 onClick={() => setErrorDetailsJobId(null)}
                 className="text-xs text-muted-foreground hover:text-foreground font-semibold glass bg-white/5 border-white/10 px-3 py-1.5 rounded-[var(--radius-card)] cursor-pointer"
               >
                 Fechar
-              </button>
+              </Button>
             </div>
 
             <div className="flex-1 overflow-y-auto space-y-3 pr-1">
@@ -1665,13 +1665,13 @@ function InfotravelTab({ agencyId }: { agencyId: string }) {
             </div>
 
             <div className="border-t border-border pt-4 mt-4 text-right">
-              <button
+              <Button
                 type="button"
                 onClick={() => setErrorDetailsJobId(null)}
                 className="h-9 px-4 rounded-[var(--radius-card)] bg-brand text-xs font-bold text-brand-foreground hover:bg-brand/90 cursor-pointer transition-all"
               >
                 Entendido
-              </button>
+              </Button>
             </div>
           </div>
         </div>

@@ -25,6 +25,7 @@ import { fmtDate } from "@/lib/formatters";
 import { NewPassengerSheet } from "@/components/trips/NewPassengerSheet";
 import { toast } from "sonner";
 import { useConfirm } from "@/hooks/use-confirm";
+import { Button } from "@/components/ui/button";
 
 export const Route = createFileRoute("/agency/$slug/trips/$id/passengers")({
   head: ({ context }: any) => ({ meta: [{ title: `Passageiros · ${context?.brand?.platform_name || 'Turis'}` }] }),
@@ -306,12 +307,12 @@ function PassengersPage() {
             Gerencie os passageiros vinculados a este roteiro e seus documentos operacionais.
           </p>
         </div>
-        <button
+        <Button
           onClick={() => setOpen(true)}
           className="flex h-8 items-center gap-1.5 rounded-full bg-brand px-3.5 text-xs font-semibold text-brand-foreground hover:bg-brand/90 transition-colors cursor-pointer"
         >
           <Plus className="h-3.5 w-3.5" /> Adicionar Passageiro
-        </button>
+        </Button>
       </div>
 
       {/* ── Banner: Passageiros importados da cotação (aguardando revisão) ─── */}
@@ -332,7 +333,7 @@ function PassengersPage() {
             </div>
           </div>
           <div className="flex items-center gap-3 shrink-0">
-            <button
+            <Button
               onClick={() => confirmAllImported.mutate()}
               disabled={confirmAllImported.isPending}
               className="h-9 px-4 rounded-[var(--radius-card)] bg-warning/20 border border-warning/30 text-xs font-bold text-warning hover:bg-warning/30 transition-all flex items-center justify-center gap-2 cursor-pointer"
@@ -343,7 +344,7 @@ function PassengersPage() {
                 <ShieldCheck className="h-3.5 w-3.5" />
               )}
               Confirmar Todos
-            </button>
+            </Button>
             <span className="text-[10px] font-bold text-warning bg-warning/10 border border-warning/20 px-2 py-1 rounded whitespace-nowrap">
               Pendente de Revisão
             </span>
@@ -400,7 +401,7 @@ function PassengersPage() {
                     </div>
                   </div>
                 </div>
-                <button
+                <Button
                   onClick={() => {
                     confirm({
                       title: "Remover passageiro?",
@@ -413,7 +414,7 @@ function PassengersPage() {
                   title="Remover passageiro"
                 >
                   <Trash2 className="h-4 w-4" />
-                </button>
+                </Button>
               </div>
 
               {/* Body Card */}
@@ -529,15 +530,15 @@ function PassengersPage() {
                                       : "Outro"}
                               </span>
                               <div className="flex items-center gap-2">
-                                <button
+                                <Button
                                   type="button"
                                   onClick={() => handleDownloadDoc(doc.file_path)}
                                   className="text-muted-foreground hover:text-brand transition-colors p-0.5"
                                   title="Visualizar / Baixar"
                                 >
                                   <Download className="h-3.5 w-3.5" />
-                                </button>
-                                <button
+                                </Button>
+                                <Button
                                   type="button"
                                   onClick={() => {
                                     confirm({
@@ -552,7 +553,7 @@ function PassengersPage() {
                                   title="Excluir"
                                 >
                                   <Trash2 className="h-3.5 w-3.5" />
-                                </button>
+                                </Button>
                               </div>
                             </div>
                             {doc.expiration_date && (
@@ -631,12 +632,12 @@ function PassengersPage() {
                       />
                     </label>
                   </div>
-                  <button
+                  <Button
                     onClick={() => setActiveReviewPassengerId(p.id)}
                     className="w-full flex h-8 items-center justify-center gap-1.5 rounded-[var(--radius-card)] border border-brand/30 bg-brand/5 text-brand hover:bg-brand/10 text-xs font-bold transition-all mt-2 cursor-pointer"
                   >
                     <ShieldCheck className="h-4 w-4" /> Conferência de Dados
-                  </button>
+                  </Button>
                 </div>
               </div>
             </div>
@@ -930,12 +931,12 @@ function DataConferencePanel({
                 Revise e corrija os dados cadastrais do passageiro.
               </p>
             </div>
-            <button
+            <Button
               onClick={onClose}
               className="text-xs text-muted-foreground hover:text-foreground font-semibold glass bg-white/5 border-white/10 px-3 py-1.5 rounded-[var(--radius-card)]"
             >
               Fechar
-            </button>
+            </Button>
           </div>
 
           <div className="space-y-4 flex-1">
@@ -1061,13 +1062,13 @@ function DataConferencePanel({
           </div>
 
           <div className="border-t border-border pt-4 mt-6 flex gap-3">
-            <button
+            <Button
               onClick={onClose}
               className="flex-1 h-10 rounded-[var(--radius-card)] border-none glass-card border-none text-xs font-bold text-muted-foreground hover:glass bg-white/5 border-white/10 transition-colors cursor-pointer"
             >
               Cancelar
-            </button>
-            <button
+            </Button>
+            <Button
               onClick={handleSave}
               disabled={saving || uploading}
               className="flex-1 h-10 rounded-[var(--radius-card)] bg-brand text-xs font-bold text-brand-foreground hover:bg-brand/90 transition-colors flex items-center justify-center gap-1.5 cursor-pointer"
@@ -1078,7 +1079,7 @@ function DataConferencePanel({
                 <ShieldCheck className="h-4 w-4" />
               )}
               Salvar & Confirmar
-            </button>
+            </Button>
           </div>
         </div>
       </div>

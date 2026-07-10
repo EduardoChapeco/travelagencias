@@ -11,7 +11,7 @@ import { PageHeader, ModuleActionButton } from "@/components/shell/PageHeader";
 import { ModuleAdminPanel } from "@/components/shell/ModuleAdminPanel";
 import { NativeSelect as Select } from "@/components/ui/select";
 import { FormInput as Input } from "@/components/ui/input";
-import { PrimaryButton, GhostButton } from "@/components/ui/button";
+import { PrimaryButton, GhostButton , Button } from "@/components/ui/button";
 import { StatusBadge } from "@/components/ui/badge";
 import { fmtDate } from "@/lib/formatters";
 import { NewCorporateRfpWizard } from "@/components/corporate/NewCorporateRfpWizard";
@@ -135,14 +135,14 @@ function CorporatePage() {
               </select>
 
               {isAgencyAdmin && (
-                <button
+                <Button
                   type="button"
                   onClick={() => setAdminPanelOpen(true)}
                   className="h-7 w-7 flex items-center justify-center rounded-full text-white/60 hover:text-white hover:bg-white/10 transition-colors cursor-pointer"
                   title="Administrar Corporativo"
                 >
                   <Settings2 className="h-3.5 w-3.5" />
-                </button>
+                </Button>
               )}
             </div>
           }

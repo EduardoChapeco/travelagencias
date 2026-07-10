@@ -1,6 +1,7 @@
 import { Camera, Image as ImageIcon, ShieldAlert } from "lucide-react";
 import { fmtDate } from "@/lib/formatters";
 import { MultiFileUploader } from "@/components/uploads/MultiFileUploader";
+import { Button } from "@/components/ui/button";
 
 interface TabMemoriasProps {
   tripId: string;
@@ -37,13 +38,13 @@ export function TabMemorias({
             sua permissão, utilizá-las em comunicações ou divulgações institucionais de marketing.
           </p>
           <div className="pt-2">
-            <button
+            <Button
               onClick={onAcceptLgpd}
               disabled={acceptLgpdPending}
               className="px-6 py-2.5 rounded-[var(--radius-card)] bg-primary text-primary-foreground text-xs font-bold hover:opacity-90 transition-opacity"
             >
               {acceptLgpdPending ? "Registrando..." : "Aceitar e Habilitar Galeria"}
-            </button>
+            </Button>
           </div>
         </div>
       ) : (

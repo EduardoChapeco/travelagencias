@@ -1,3 +1,4 @@
+import { Button } from "@/components/ui/button";
 import { createFileRoute, useParams, Link } from "@tanstack/react-router";
 import { useAgency } from "@/lib/agency-context";
 import { useState, useEffect } from "react";
@@ -182,11 +183,11 @@ function ContextMenuItem({
   }
 
   return (
-    <button
+    <Button
       onClick={onClick}
       className="flex items-center gap-2 w-full text-left px-3 py-2 rounded-[var(--radius-card)] hover:bg-white/10 hover:text-white transition-all text-white/80 group cursor-pointer"
     >
       {content}
-    </button>
+    </Button>
   );
 }

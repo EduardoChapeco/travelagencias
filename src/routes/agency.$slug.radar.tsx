@@ -18,6 +18,7 @@ import {
   Sparkles
 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { Button } from "@/components/ui/button";
 
 const RadarMapWidget = lazy(() =>
   import("@/components/radar/RadarMapWidget").then((m) => ({ default: m.RadarMapWidget }))
@@ -265,7 +266,7 @@ function RadarTVPage() {
           </div>
 
           <div className="flex items-center gap-1 bg-slate-900/80 border border-slate-800 p-0.5 rounded-[var(--radius-card)]">
-            <button
+            <Button
               onClick={() => setActiveTab("all")}
               className={cn(
                 "px-3 py-1.5 text-[10px] font-bold uppercase rounded-full tracking-wider transition-all cursor-pointer",
@@ -273,8 +274,8 @@ function RadarTVPage() {
               )}
             >
               Todos ({travelers.length})
-            </button>
-            <button
+            </Button>
+            <Button
               onClick={() => setActiveTab("in_transit")}
               className={cn(
                 "px-3 py-1.5 text-[10px] font-bold uppercase rounded-full tracking-wider transition-all cursor-pointer",
@@ -288,16 +289,16 @@ function RadarTVPage() {
                 if (!start) return false;
                 return end ? (now >= start && now <= end) : (now.toDateString() === start.toDateString());
               }).length})
-            </button>
+            </Button>
           </div>
 
-          <button
+          <Button
             onClick={toggleFullscreen}
             className="p-2.5 rounded-[var(--radius-card)] bg-slate-900/80 border border-slate-800 text-slate-300 hover:text-white hover:bg-slate-800 transition-all cursor-pointer"
             title="Alternar Tela Cheia (Modo TV)"
           >
             {isFullscreen ? <Minimize2 className="h-4 w-4" /> : <Maximize2 className="h-4 w-4" />}
-          </button>
+          </Button>
         </div>
       </div>
 
@@ -372,7 +373,7 @@ function RadarTVPage() {
               </div>
             ) : (
               filteredTravelers.map((t) => (
-                <button
+                <Button
                   key={t.id}
                   onClick={() => setSelectedPin(t)}
                   className={cn(
@@ -411,7 +412,7 @@ function RadarTVPage() {
                       <span>Início: {new Date(t.startDate).toLocaleDateString("pt-BR", { day: "numeric", month: "short" })}</span>
                     </div>
                   )}
-                </button>
+                </Button>
               ))
             )}
           </div>
@@ -424,12 +425,12 @@ function RadarTVPage() {
                   <span className="text-[8px] font-black uppercase text-brand tracking-widest">Informações Detalhadas</span>
                   <h4 className="text-sm font-black text-white">{selectedPin.name}</h4>
                 </div>
-                <button 
+                <Button 
                   onClick={() => setSelectedPin(null)}
                   className="text-slate-400 hover:text-slate-100 cursor-pointer"
                 >
                   <Minimize2 className="h-3.5 w-3.5" />
-                </button>
+                </Button>
               </div>
 
               <div className="space-y-2 text-xs">

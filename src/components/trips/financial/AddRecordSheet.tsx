@@ -1,3 +1,4 @@
+import { Button } from "@/components/ui/button";
 import { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
@@ -162,7 +163,7 @@ export function AddRecordSheet({
       {/* Type toggle */}
       <div className="mb-6 flex rounded-2xl border border-border p-0.5 text-xs bg-surface-alt/10">
         {(["income", "expense"] as const).map((t) => (
-          <button
+          <Button
             key={t}
             type="button"
             onClick={() => setRecordType(t)}
@@ -173,7 +174,7 @@ export function AddRecordSheet({
             }`}
           >
             {t === "income" ? "Receita" : "Custo"}
-          </button>
+          </Button>
         ))}
       </div>
 
@@ -236,20 +237,20 @@ export function AddRecordSheet({
         </Field>
 
         <div className="mt-8 flex gap-3">
-          <button
+          <Button
             type="submit"
             disabled={isSubmitting}
             className="flex-1 h-10 rounded-full bg-primary text-sm font-semibold text-primary-foreground disabled:opacity-60 cursor-pointer"
           >
             {isSubmitting ? "Salvando…" : "Adicionar Lançamento"}
-          </button>
-          <button
+          </Button>
+          <Button
             type="button"
             onClick={onClose}
             className="flex-1 h-10 rounded-full border border-border text-sm font-medium hover:bg-surface-alt transition-colors cursor-pointer text-foreground bg-surface"
           >
             Cancelar
-          </button>
+          </Button>
         </div>
       </form>
     </SheetPage>

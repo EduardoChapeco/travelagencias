@@ -7,7 +7,7 @@ import {
   markAllNotificationsRead,
 } from "@/services/client-area";
 import { PageHeader, EmptyState } from "@/components/shell/PageHeader";
-import { GhostButton } from "@/components/ui/button";
+import { GhostButton , Button } from "@/components/ui/button";
 
 export const Route = createFileRoute("/client/notifications")({
   head: ({ context }: any) => ({ meta: [{ title: `Notificações · ${context?.brand?.platform_name || 'Turis'}` }] }),
@@ -65,13 +65,13 @@ function Page() {
                 </div>
               </div>
               {!n.read_at && (
-                <button
+                <Button
                   onClick={() => markRead(n.id)}
                   className="rounded p-1 hover:glass bg-white/5 border-white/10"
                   title="Marcar como lida"
                 >
                   <Check className="h-4 w-4" />
-                </button>
+                </Button>
               )}
             </li>
           ))}

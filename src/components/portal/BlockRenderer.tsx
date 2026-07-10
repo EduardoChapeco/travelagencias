@@ -325,6 +325,7 @@ export function BlockRenderer({
 }
 
 import { type BuilderBinding } from "@/types/builder-core";
+import { Button } from "@/components/ui/button";
 
 function BoundBlockWrapper({
   block,
@@ -1462,13 +1463,13 @@ function NewsletterBlock({
               placeholder={block.placeholder || "Seu melhor e-mail"}
               className="flex-1 h-11 px-4 rounded-3xl border border-border bg-surface text-xs text-foreground placeholder:text-muted-foreground/50 focus:border-brand/60 focus:ring-1 focus:ring-brand/60 outline-none transition-colors"
             />
-            <button
+            <Button
               type="submit"
               disabled={loading}
               className="h-11 rounded-3xl bg-brand hover:bg-brand/90 px-6 text-xs font-bold text-brand-foreground transition-all hover:scale-105 active:scale-95 cursor-pointer disabled:opacity-50"
             >
               {loading ? "Cadastrando..." : block.button_label || "Cadastrar"}
-            </button>
+            </Button>
           </form>
         )}
       </div>
@@ -1626,13 +1627,13 @@ function PendingContractsWidgetBlock({
               />
             </div>
           </div>
-          <button
+          <Button
             type="submit"
             disabled={searching}
             className="w-full mt-2 h-9 rounded-2xl bg-brand text-brand-foreground font-bold text-xs hover:bg-brand/90 transition-colors disabled:opacity-50"
           >
             {searching ? "Buscando..." : "Consultar Contratos"}
-          </button>
+          </Button>
         </form>
       )}
 
@@ -1838,13 +1839,13 @@ function SupportTicketBlock({ block, agencySlug }: { block: any; agencySlug: str
               rows={4}
             />
           </div>
-          <button
+          <Button
             type="submit"
             disabled={busy}
             className="w-full h-12 rounded-3xl bg-brand text-brand-foreground font-bold hover:bg-brand/90 disabled:opacity-50 transition-colors"
           >
             {busy ? "Enviando..." : "Abrir Chamado"}
-          </button>
+          </Button>
         </form>
       )}
     </section>
@@ -2166,7 +2167,7 @@ function ContactBlock({ block, agencySlug }: { block: any; agencySlug: string })
             />
           </div>
           <div className="pt-2">
-            <button
+            <Button
               type="submit"
               disabled={busy}
               className="w-full flex items-center justify-center gap-2 h-12 rounded-3xl bg-foreground text-background font-bold hover:bg-foreground/90 disabled:opacity-50 transition-colors"
@@ -2178,7 +2179,7 @@ function ContactBlock({ block, agencySlug }: { block: any; agencySlug: string })
                   <Send className="w-4 h-4" /> Enviar Mensagem
                 </>
               )}
-            </button>
+            </Button>
           </div>
         </form>
       )}
@@ -2350,22 +2351,22 @@ function FeaturedDestinationFilterBlock({
       )}
 
       <div className="flex flex-wrap items-center justify-center gap-1.5 mb-8">
-        <button
+        <Button
           type="button"
           onClick={() => setSelected("all")}
           className={`px-4 py-1.5 rounded-full text-xs font-bold transition-all border${selected === "all" ? "bg-brand text-brand-foreground border-brand" : "bg-surface text-muted-foreground border-border hover:bg-surface-alt"}`}
         >
           Todos
-        </button>
+        </Button>
         {destinations.map((dest) => (
-          <button
+          <Button
             key={dest}
             type="button"
             onClick={() => setSelected(dest)}
             className={`px-4 py-1.5 rounded-full text-xs font-bold transition-all border${selected === dest ? "bg-brand text-brand-foreground border-brand" : "bg-surface text-muted-foreground border-border hover:bg-surface-alt"}`}
           >
             {dest}
-          </button>
+          </Button>
         ))}
       </div>
 
@@ -2928,13 +2929,13 @@ function AgencyVouchersBlock({
               onChange={(e) => setDocument(e.target.value)}
               className="w-full h-11 px-4 rounded-3xl border border-border bg-surface-alt text-xs text-foreground focus:border-brand focus:ring-1 focus:ring-brand outline-none"
             />
-            <button
+            <Button
               type="submit"
               disabled={loading}
               className="w-full h-11 rounded-3xl bg-brand text-brand-foreground font-bold text-xs hover:bg-brand/90 transition-all disabled:opacity-50"
             >
               {loading ? "Buscando..." : "Buscar Meus Vouchers"}
-            </button>
+            </Button>
           </form>
         ) : (
           <div className="space-y-3">
@@ -2975,12 +2976,12 @@ function AgencyVouchersBlock({
                 </div>
               ))
             )}
-            <button
+            <Button
               onClick={() => setSearched(false)}
               className="w-full mt-2 text-center text-[10px] text-brand hover:underline font-bold"
             >
               Consultar outro documento
-            </button>
+            </Button>
           </div>
         )}
       </div>
@@ -3178,13 +3179,13 @@ function LeadCaptureCallbackBlock({ block, agencySlug }: { block: any; agencySlu
               onChange={(e) => setPhone(e.target.value)}
               className="w-full sm:flex-1 h-10 px-3 rounded-2xl border border-border bg-surface text-xs text-foreground focus:border-brand focus:ring-1 focus:ring-brand outline-none"
             />
-            <button
+            <Button
               type="submit"
               disabled={loading}
               className="w-full sm:w-auto shrink-0 h-10 px-4 rounded-2xl bg-brand text-brand-foreground font-bold text-xs hover:bg-brand/90 transition-all cursor-pointer disabled:opacity-50"
             >
               Ligar
-            </button>
+            </Button>
           </form>
         )}
       </div>
@@ -3477,12 +3478,12 @@ function GiftCardsStoreBlock({ block, agencySlug }: { block: any; agencySlug: st
         <p className="text-xs text-muted-foreground max-w-xs">
           {block.subtitle || "Presenteie quem você ama com experiências e memórias incríveis."}
         </p>
-        <button
+        <Button
           onClick={handleGiftClick}
           className="mt-2 h-10 px-5 rounded-2xl bg-brand text-brand-foreground font-bold text-xs hover:bg-brand/90 transition-all cursor-pointer hover:scale-105 active:scale-95"
         >
           Presentear Agora
-        </button>
+        </Button>
       </div>
     </div>
   );
@@ -3613,13 +3614,13 @@ function CorporateRfpFormBlock({ block, agencySlug }: { block: any; agencySlug: 
               className="w-full px-3 py-2 rounded-2xl border border-border bg-surface-alt text-xs text-foreground outline-none focus:border-brand resize-y"
               rows={2}
             />
-            <button
+            <Button
               type="submit"
               disabled={busy}
               className="w-full h-10 rounded-2xl bg-brand text-brand-foreground font-bold text-xs hover:bg-brand/90 transition-all disabled:opacity-50"
             >
               {busy ? "Enviando..." : "Enviar Solicitação B2B"}
-            </button>
+            </Button>
           </form>
         )}
       </div>
@@ -3720,13 +3721,13 @@ function ClientDocumentUploadBlock({ block, agencyId }: { block: any; agencyId?:
               />
             </div>
 
-            <button
+            <Button
               type="submit"
               disabled={busy}
               className="w-full h-10 rounded-2xl bg-brand text-brand-foreground font-bold text-xs hover:bg-brand/90 transition-all disabled:opacity-50 flex items-center justify-center gap-1.5"
             >
               <Upload className="w-3.5 h-3.5" /> {busy ? "Enviando..." : "Enviar Documento"}
-            </button>
+            </Button>
           </form>
         )}
       </div>
@@ -3789,13 +3790,13 @@ function BiolinkNewsletterBoxBlock({ block, agencySlug }: { block: any; agencySl
             onChange={(e) => setEmail(e.target.value)}
             className="flex-1 px-3 bg-transparent text-xs text-foreground placeholder:text-muted-foreground/50 border-0 outline-none"
           />
-          <button
+          <Button
             type="submit"
             disabled={busy}
             className="h-9 px-4 rounded-3xl bg-brand text-brand-foreground text-[10px] font-bold hover:bg-brand/90 transition-all cursor-pointer disabled:opacity-50 shrink-0"
           >
             {busy ? "Salvando..." : block.button_label || "Inscrever"}
-          </button>
+          </Button>
         </form>
       )}
     </div>
@@ -3918,13 +3919,13 @@ function VisaCheckerBlock({ block }: { block: any }) {
               />
             </div>
           </div>
-          <button
+          <Button
             type="submit"
             disabled={loading}
             className="w-full h-10 rounded-2xl bg-brand text-brand-foreground font-bold text-xs hover:bg-brand/90 transition-all disabled:opacity-50"
           >
             {loading ? "Verificando..." : "Consultar Requisitos"}
-          </button>
+          </Button>
         </form>
 
         {searched && !loading && (
@@ -4158,14 +4159,14 @@ function InsuranceSimulatorBlock({ block, agencySlug }: { block: any; agencySlug
                   { key: "mid", label: "61 a 75 anos" },
                   { key: "senior", label: "Acima de 75" },
                 ].map((age) => (
-                  <button
+                  <Button
                     key={age.key}
                     type="button"
                     onClick={() => setAgeRange(age.key)}
                     className={`py-2 rounded-2xl text-[10px] font-bold border transition-colors${ageRange === age.key ? "bg-brand text-brand-foreground border-brand" : "bg-surface-alt/40 border-border hover:bg-surface-alt/80"}`}
                   >
                     {age.label}
-                  </button>
+                  </Button>
                 ))}
               </div>
             </div>
@@ -4187,12 +4188,12 @@ function InsuranceSimulatorBlock({ block, agencySlug }: { block: any; agencySlug
                       Médico: {p.medicalLimit} | Bagagem: {p.baggageLimit}
                     </span>
                   </div>
-                  <button
+                  <Button
                     onClick={() => handleSelectPlan(p)}
                     className="h-8 px-3.5 rounded-2xl bg-brand text-brand-foreground text-[10px] font-bold hover:bg-brand/90 transition-colors shrink-0"
                   >
                     R$ {p.price.toFixed(0)}
-                  </button>
+                  </Button>
                 </div>
               ))}
             </div>
@@ -4254,20 +4255,20 @@ function InsuranceSimulatorBlock({ block, agencySlug }: { block: any; agencySlug
             </div>
 
             <div className="flex gap-2 pt-2">
-              <button
+              <Button
                 type="button"
                 onClick={() => setStep("simulate")}
                 className="flex-1 h-10 rounded-2xl border border-border text-foreground font-bold text-xs hover:bg-surface-alt transition-colors"
               >
                 Voltar
-              </button>
-              <button
+              </Button>
+              <Button
                 type="submit"
                 disabled={loading}
                 className="flex-[2] h-10 rounded-2xl bg-brand text-brand-foreground font-bold text-xs hover:bg-brand/90 transition-all disabled:opacity-50"
               >
                 {loading ? "Enviando..." : "Contratar Cobertura"}
-              </button>
+              </Button>
             </div>
           </form>
         )}
@@ -4342,7 +4343,7 @@ function ReviewsSubmissionFormBlock({ block, agencyId }: { block: any; agencyId?
           <form onSubmit={handleSubmit} className="space-y-3">
             <div className="flex justify-center gap-1.5 py-1">
               {[1, 2, 3, 4, 5].map((star) => (
-                <button
+                <Button
                   key={star}
                   type="button"
                   onClick={() => setStars(star)}
@@ -4351,7 +4352,7 @@ function ReviewsSubmissionFormBlock({ block, agencyId }: { block: any; agencyId?
                   <Star
                     className={`h-6 w-6${star <= stars ? "fill-yellow-400 text-yellow-400" : "text-muted-foreground/30"}`}
                   />
-                </button>
+                </Button>
               ))}
             </div>
 
@@ -4382,13 +4383,13 @@ function ReviewsSubmissionFormBlock({ block, agencyId }: { block: any; agencyId?
               rows={3}
             />
 
-            <button
+            <Button
               type="submit"
               disabled={loading || !agencyId}
               className="w-full h-10 rounded-2xl bg-brand text-brand-foreground font-bold text-xs hover:bg-brand/90 transition-all disabled:opacity-50"
             >
               {loading ? "Enviando..." : "Enviar Avaliação"}
-            </button>
+            </Button>
           </form>
         )}
       </div>
@@ -4565,14 +4566,14 @@ function CustomPackageLeadBuilderBlock({ block, agencySlug }: { block: any; agen
                 />
               </div>
             </div>
-            <button
+            <Button
               type="button"
               disabled={!dest.trim()}
               onClick={handleNext}
               className="w-full h-10 mt-2 rounded-2xl bg-brand text-brand-foreground font-bold text-xs hover:bg-brand/90 transition-colors disabled:opacity-50"
             >
               Continuar
-            </button>
+            </Button>
           </div>
         )}
 
@@ -4617,33 +4618,33 @@ function CustomPackageLeadBuilderBlock({ block, agencySlug }: { block: any; agen
                   { key: "medium", label: "Moderado" },
                   { key: "high", label: "Altíssimo Padrão" },
                 ].map((b) => (
-                  <button
+                  <Button
                     key={b.key}
                     type="button"
                     onClick={() => setBudget(b.key)}
                     className={`py-2 rounded-2xl text-[10px] font-bold border transition-colors${budget === b.key ? "bg-brand text-brand-foreground border-brand" : "bg-surface-alt/40 border-border hover:bg-surface-alt/80"}`}
                   >
                     {b.label}
-                  </button>
+                  </Button>
                 ))}
               </div>
             </div>
 
             <div className="flex gap-2 pt-2">
-              <button
+              <Button
                 type="button"
                 onClick={handlePrev}
                 className="flex-1 h-10 rounded-2xl border border-border text-foreground font-bold text-xs hover:bg-surface-alt transition-colors"
               >
                 Voltar
-              </button>
-              <button
+              </Button>
+              <Button
                 type="button"
                 onClick={handleNext}
                 className="flex-1 h-10 rounded-2xl bg-brand text-brand-foreground font-bold text-xs hover:bg-brand/90 transition-colors"
               >
                 Continuar
-              </button>
+              </Button>
             </div>
           </div>
         )}
@@ -4691,20 +4692,20 @@ function CustomPackageLeadBuilderBlock({ block, agencySlug }: { block: any; agen
             </div>
 
             <div className="flex gap-2 pt-2">
-              <button
+              <Button
                 type="button"
                 onClick={handlePrev}
                 className="flex-1 h-10 rounded-2xl border border-border text-foreground font-bold text-xs hover:bg-surface-alt transition-colors"
               >
                 Voltar
-              </button>
-              <button
+              </Button>
+              <Button
                 type="submit"
                 disabled={loading}
                 className="flex-1 h-10 rounded-2xl bg-brand text-brand-foreground font-bold text-xs hover:bg-brand/90 transition-all disabled:opacity-50"
               >
                 {loading ? "Processando..." : "Solicitar Roteiro"}
-              </button>
+              </Button>
             </div>
           </form>
         )}
@@ -4947,13 +4948,13 @@ function CurrencyCalculatorBlock({ block }: { block: any }) {
               </select>
             </div>
 
-            <button
+            <Button
               type="button"
               onClick={swapCurrencies}
               className="mt-4 p-2 rounded-2xl border border-border hover:bg-surface-alt transition-colors shrink-0 text-muted-foreground"
             >
               ⇄
-            </button>
+            </Button>
 
             <div className="flex-1">
               <label className="text-[9px] uppercase font-bold text-muted-foreground">Para</label>
@@ -5060,13 +5061,13 @@ function InteractiveFlightTrackerBlock({ block }: { block: any }) {
             onChange={(e) => setCode(e.target.value)}
             className="flex-1 h-10 px-3 rounded-2xl border border-border bg-surface text-xs font-mono font-bold uppercase tracking-wider outline-none focus:border-brand"
           />
-          <button
+          <Button
             type="submit"
             disabled={loading}
             className="h-10 px-4 rounded-2xl bg-brand text-brand-foreground font-bold text-xs hover:bg-brand/90 transition-all cursor-pointer disabled:opacity-50 shrink-0"
           >
             {loading ? "Buscando..." : "Consultar"}
-          </button>
+          </Button>
         </form>
 
         {searched && !loading && flight && (
@@ -5163,13 +5164,13 @@ function BiolinkQrCodeShareBlock({ block }: { block: any }) {
           <img src={qrCodeUrl} alt="Biolink QR Code" className="w-32 h-32 object-contain" />
         </div>
 
-        <button
+        <Button
           onClick={handleShare}
           className="w-full flex items-center justify-center gap-2 h-11 rounded-3xl bg-brand text-brand-foreground font-bold text-xs hover:bg-brand/90 transition-all cursor-pointer"
         >
           <Share2 className="w-4 h-4" />
           {copied ? "Link Copiado!" : "Compartilhar Link"}
-        </button>
+        </Button>
       </div>
     </div>
   );

@@ -2,6 +2,7 @@ import { Trash2, Check } from "lucide-react";
 import { StatusBadge } from "@/components/ui/badge";
 import { money, fmtDate } from "@/lib/formatters";
 import { type FinancialRecord } from "@/services/trips";
+import { Button } from "@/components/ui/button";
 
 export function RecordTable({
   records,
@@ -47,21 +48,21 @@ export function RecordTable({
             <td className="py-2 text-right">
               <div className="flex justify-end items-center gap-2">
                 {r.status !== "confirmed" && onConfirm && (
-                  <button
+                  <Button
                     onClick={() => onConfirm(r.id)}
                     className="text-muted-foreground hover:text-emerald-600 cursor-pointer"
                     title="Marcar como Pago/Recebido"
                   >
                     <Check className="h-3.5 w-3.5" />
-                  </button>
+                  </Button>
                 )}
-                <button
+                <Button
                   onClick={() => onDelete(r.id)}
                   className="text-muted-foreground hover:text-danger cursor-pointer"
                   title="Cancelar lançamento"
                 >
                   <Trash2 className="h-3.5 w-3.5" />
-                </button>
+                </Button>
               </div>
             </td>
           </tr>

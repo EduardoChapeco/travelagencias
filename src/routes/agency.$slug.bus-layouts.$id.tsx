@@ -10,7 +10,7 @@ import { FormInput as Input } from "@/components/ui/input";
 import { SimpleSheet as Sheet } from "@/components/ui/sheet";
 import { Field } from "@/components/ui/field";
 import { NativeSelect as Select } from "@/components/ui/select";
-import { PrimaryButton, GhostButton } from "@/components/ui/button";
+import { PrimaryButton, GhostButton , Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
 export const Route = createFileRoute("/agency/$slug/bus-layouts/$id")({
@@ -165,7 +165,7 @@ function BusLayoutEditorPage() {
         <div className="flex flex-wrap items-center gap-2">
           <span className="text-xs font-bold text-muted-foreground mr-2">Ferramenta Ativa:</span>
           {(["seat", "aisle", "wc", "door"] as const).map((t) => (
-            <button
+            <Button
               key={t}
               type="button"
               onClick={() => setActiveTool(t)}
@@ -180,7 +180,7 @@ function BusLayoutEditorPage() {
               {t === "aisle" && "⬜ Corredor"}
               {t === "wc" && "🚻 Banheiro"}
               {t === "door" && "🚪 Porta"}
-            </button>
+            </Button>
           ))}
         </div>
 
@@ -213,7 +213,7 @@ function BusLayoutEditorPage() {
         >
           {map.map((cell, idx) => (
             <div key={`${cell.r}-${cell.c}`} className="relative group">
-              <button
+              <Button
                 type="button"
                 onClick={() => handleCellClick(idx)}
                 className={cn(
@@ -226,7 +226,7 @@ function BusLayoutEditorPage() {
                 )}
               >
                 {cell.type !== "seat" && cell.label}
-              </button>
+              </Button>
               {cell.type === "seat" && (
                 <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
                   <input

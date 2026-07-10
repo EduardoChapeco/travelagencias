@@ -8,6 +8,7 @@ import {
   SMALL_INPUT,
 } from "@/components/proposals/ProposalFormFields";
 import { Users, Trash2 } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
 interface Props {
   draft: Proposal;
@@ -64,7 +65,7 @@ export function SectionTravelers({ draft, save }: Props) {
                 save({ pax_names: arr } as any);
               }}
             />
-            <button
+            <Button
               type="button"
               onClick={() => {
                 const arr = ((draft as any).pax_names ?? []).filter(
@@ -75,7 +76,7 @@ export function SectionTravelers({ draft, save }: Props) {
               className="rounded p-1 text-muted-foreground hover:text-danger transition-colors"
             >
               <Trash2 className="h-3.5 w-3.5" />
-            </button>
+            </Button>
           </div>
         ))}
       </div>

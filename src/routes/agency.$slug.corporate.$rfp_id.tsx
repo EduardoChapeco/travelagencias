@@ -9,7 +9,7 @@ import { useState } from "react";
 import { FormTextarea as Textarea } from "@/components/ui/textarea";
 import { FormInput as Input } from "@/components/ui/input";
 import { NativeSelect as Select } from "@/components/ui/select";
-import { PrimaryButton, GhostButton } from "@/components/ui/button";
+import { PrimaryButton, GhostButton , Button } from "@/components/ui/button";
 import { StatusBadge } from "@/components/ui/badge";
 import { fmtDate } from "@/lib/formatters";
 
@@ -99,7 +99,7 @@ function RfpDetailPage() {
       <ConfirmDialog />
               <div className="flex items-center gap-2">
           {rfp.status === "negotiating" && (
-            <button
+            <Button
               onClick={() => {
                 navigator.clipboard.writeText(
                   `${window.location.origin}/p/corporate/approve?token=${rfp.approval_token}`,
@@ -109,7 +109,7 @@ function RfpDetailPage() {
               className="flex h-8 items-center gap-1.5 rounded-full border-none glass-card border-none px-3 text-xs font-semibold text-foreground hover:glass bg-white/5 border-white/10 transition-colors cursor-pointer"
             >
               <Send className="w-3.5 h-3.5" /> Link do Cliente
-            </button>
+            </Button>
           )}
         </div>
             <div className="flex-1 overflow-y-auto p-4 md:p-8 min-h-0">
@@ -342,21 +342,21 @@ function RfpDetailPage() {
                     </div>
 
                     <div className="mt-4 pt-3 border-t border-border/50 flex justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                      <button
+                      <Button
                         onClick={() => removeOption(opt.id)}
                         className="text-xs font-medium text-danger hover:underline"
                       >
                         Remover
-                      </button>
+                      </Button>
                       {rfp.status !== "approved" && (
-                        <button
+                        <Button
                           onClick={() =>
                             updateMut.mutate({ approved_option_id: opt.id, status: "approved" })
                           }
                           className="text-xs font-medium text-success hover:underline"
                         >
                           Marcar como Aprovada
-                        </button>
+                        </Button>
                       )}
                     </div>
                   </div>

@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { MessageCircle, Check, AlertCircle, Clock, Paperclip, Send } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
 type OmniMsg = {
   id: string;
@@ -372,13 +373,13 @@ export function OmnichannelChat({
             }
           }}
         />
-        <button
+        <Button
           onClick={sendMessage}
           disabled={!text.trim() || sending}
           className="p-2.5 bg-brand text-brand-foreground rounded-full hover:opacity-90 transition-opacity shrink-0 disabled:opacity-40"
         >
           <Send className="h-4 w-4" />
-        </button>
+        </Button>
       </div>
     </div>
   );

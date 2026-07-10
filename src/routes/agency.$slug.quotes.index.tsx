@@ -693,7 +693,7 @@ Texto: "${aiText}"`;
                             >
                               Central de Decisão
                             </Link>
-                            <button
+                            <Button
                               onClick={() => {
                                 if (
                                   confirm(
@@ -706,7 +706,7 @@ Texto: "${aiText}"`;
                               className="inline-flex h-7 w-7 items-center justify-center rounded border-none text-danger hover:bg-danger-bg hover:border-danger/30 transition-colors"
                             >
                               <Trash2 className="h-3.5 w-3.5" />
-                            </button>
+                            </Button>
                           </div>
                         </td>
                       </tr>
@@ -790,7 +790,7 @@ Texto: "${aiText}"`;
 
                   {/* Delete button (only super admins can delete global rules; agency members can delete agency ones) */}
                   {(doc.scope === "agency" || isSuperAdmin) && (
-                    <button
+                    <Button
                       onClick={() => {
                         if (
                           confirm(
@@ -804,7 +804,7 @@ Texto: "${aiText}"`;
                       title="Excluir diretriz"
                     >
                       <Trash2 className="h-3.5 w-3.5" />
-                    </button>
+                    </Button>
                   )}
                 </div>
               </div>
@@ -874,22 +874,22 @@ Texto: "${aiText}"`;
                           )}
 
                           <div className="flex gap-2 mt-1">
-                            <button
+                            <Button
                               onClick={() => approveCandidateMut.mutate(cand.id)}
                               disabled={approveCandidateMut.isPending}
                               className="flex-1 inline-flex items-center justify-center gap-1.5 h-8 rounded border border-success/40 bg-success/10 text-[11px] font-bold text-success hover:bg-success/20 transition-colors disabled:opacity-50"
                             >
                               <CheckCircle2 className="h-3.5 w-3.5" />
                               Aprovar e Ativar Regra
-                            </button>
-                            <button
+                            </Button>
+                            <Button
                               onClick={() => rejectCandidateMut.mutate(cand.id)}
                               disabled={rejectCandidateMut.isPending}
                               className="inline-flex items-center justify-center gap-1.5 h-8 px-3 rounded border border-danger/30 bg-danger/5 text-[11px] font-bold text-danger hover:bg-danger/10 transition-colors disabled:opacity-50"
                             >
                               <XCircle className="h-3.5 w-3.5" />
                               Rejeitar
-                            </button>
+                            </Button>
                           </div>
                         </div>
                       );
@@ -949,7 +949,7 @@ Texto: "${aiText}"`;
                             </td>
                             <td className="px-4 py-3.5 text-right">
                               <div className="flex items-center justify-end gap-1.5">
-                                <button
+                                <Button
                                   onClick={() =>
                                     toggleRuleMut.mutate({
                                       id: rule.id,
@@ -965,9 +965,9 @@ Texto: "${aiText}"`;
                                     <ToggleLeft className="h-3.5 w-3.5" />
                                   )}
                                   {rule.status === "active" ? "Pausar" : "Ativar"}
-                                </button>
+                                </Button>
                                 {(rule.scope === "agency" || isSuperAdmin) && (
-                                  <button
+                                  <Button
                                     onClick={() => {
                                       if (confirm("Excluir esta regra permanentemente?")) {
                                         deleteRuleMut.mutate(rule.id);
@@ -976,7 +976,7 @@ Texto: "${aiText}"`;
                                     className="inline-flex h-7 w-7 items-center justify-center rounded border-none text-danger hover:bg-danger-bg transition-colors"
                                   >
                                     <Trash2 className="h-3.5 w-3.5" />
-                                  </button>
+                                  </Button>
                                 )}
                               </div>
                             </td>
@@ -1067,7 +1067,7 @@ Texto: "${aiText}"`;
                           </div>
                         </div>
                         <div className="flex items-center gap-2 border-t border-border pt-2">
-                          <button
+                          <Button
                             onClick={() =>
                               toggleWatcherMut.mutate({
                                 id: w.id,
@@ -1081,8 +1081,8 @@ Texto: "${aiText}"`;
                             ) : (
                               <><Bell className="h-3 w-3" /> Ativar</>
                             )}
-                          </button>
-                          <button
+                          </Button>
+                          <Button
                             onClick={() => {
                               if (confirm("Remover este alerta de monitoramento?")) {
                                 deleteWatcherMut.mutate(w.id);
@@ -1091,7 +1091,7 @@ Texto: "${aiText}"`;
                             className="inline-flex h-7 w-7 items-center justify-center rounded border-none text-danger hover:bg-danger-bg transition-colors"
                           >
                             <Trash2 className="h-3.5 w-3.5" />
-                          </button>
+                          </Button>
                         </div>
                       </div>
                     );
@@ -1174,20 +1174,20 @@ Texto: "${aiText}"`;
 
                         {promo.status === "new" && (
                           <div className="flex gap-2 border-t border-border pt-2">
-                            <button
+                            <Button
                               onClick={() => updatePromotionMut.mutate({ id: promo.id, status: "approved" })}
                               className="flex-1 inline-flex items-center justify-center gap-1 h-7 rounded border border-success/40 bg-success/10 text-[10px] font-bold text-success hover:bg-success/20 transition-colors"
                             >
                               <CheckCircle2 className="h-3 w-3" />
                               Aprovar
-                            </button>
-                            <button
+                            </Button>
+                            <Button
                               onClick={() => updatePromotionMut.mutate({ id: promo.id, status: "dismissed" })}
                               className="inline-flex items-center justify-center gap-1 h-7 px-2 rounded border-none text-[10px] font-semibold text-muted-foreground hover:glass bg-white/5 border-white/10 transition-colors"
                             >
                               <XCircle className="h-3 w-3" />
                               Ignorar
-                            </button>
+                            </Button>
                           </div>
                         )}
                       </div>
@@ -1222,12 +1222,12 @@ Texto: "${aiText}"`;
                     pesquisa GDS.
                   </p>
                 </div>
-                <button
+                <Button
                   onClick={() => setNewOpen(false)}
                   className="rounded-full p-1.5 text-muted-foreground hover:glass bg-white/5 border-white/10 hover:text-foreground transition-colors"
                 >
                   <Plus className="h-5 w-5 rotate-45" />
-                </button>
+                </Button>
               </div>
 
               {/* AI Conversation Parser Section */}
@@ -1386,12 +1386,12 @@ Texto: "${aiText}"`;
                     embeddings de 1536 dimensões automaticamente.
                   </p>
                 </div>
-                <button
+                <Button
                   onClick={() => setNewKnowledgeOpen(false)}
                   className="rounded-full p-1.5 text-muted-foreground hover:glass bg-white/5 border-white/10 hover:text-foreground transition-colors"
                 >
                   <Plus className="h-5 w-5 rotate-45" />
-                </button>
+                </Button>
               </div>
 
               <div className="space-y-4">
@@ -1486,12 +1486,12 @@ Texto: "${aiText}"`;
                     Configure os critérios de monitoramento automático de tarifas GDS.
                   </p>
                 </div>
-                <button
+                <Button
                   onClick={() => setWatcherOpen(false)}
                   className="rounded-full p-1.5 text-muted-foreground hover:glass bg-white/5 border-white/10 hover:text-foreground transition-colors"
                 >
                   <Plus className="h-5 w-5 rotate-45" />
-                </button>
+                </Button>
               </div>
 
               <div className="space-y-4">

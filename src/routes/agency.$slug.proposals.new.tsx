@@ -13,7 +13,7 @@ import { Field } from "@/components/ui/field";
 import { FormInput as Input } from "@/components/ui/input";
 import { NativeSelect as Select } from "@/components/ui/select";
 import { FormTextarea as Textarea } from "@/components/ui/textarea";
-import { PrimaryButton, GhostButton } from "@/components/ui/button";
+import { PrimaryButton, GhostButton , Button } from "@/components/ui/button";
 import {
   createProposal,
   fetchClientsPick,
@@ -344,13 +344,13 @@ function NewProposal() {
                 ao criar a cotação.
               </p>
             </div>
-            <button
+            <Button
               type="button"
               onClick={() => setExtractedItems(null)}
               className="text-muted-foreground hover:text-danger text-[10px] font-semibold border-none rounded px-2 py-0.5 hover:glass bg-white/5 border-white/10 transition-colors"
             >
               Descartar
-            </button>
+            </Button>
           </div>
         )}
       </div>

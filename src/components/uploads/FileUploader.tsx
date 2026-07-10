@@ -2,6 +2,7 @@ import { useCallback, useId, useRef, useState } from "react";
 import { Upload, X, FileText, Loader2, Link2 } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
+import { Button } from "@/components/ui/button";
 
 type Variant = "image" | "pdf" | "video" | "any";
 
@@ -130,14 +131,14 @@ export function FileUploader({
             <FileText className="h-8 w-8 text-muted-foreground" />
           )}
           <div className="flex-1 truncate text-xs text-muted-foreground">{value}</div>
-          <button
+          <Button
             type="button"
             onClick={() => onChange(null)}
             className="rounded-full border border-border p-1 hover:bg-surface-alt"
             aria-label="Remover"
           >
             <X className="h-4 w-4" />
-          </button>
+          </Button>
         </div>
       ) : (
         <div

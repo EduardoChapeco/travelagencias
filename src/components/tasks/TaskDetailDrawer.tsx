@@ -280,12 +280,12 @@ export function TaskDetailDrawer({ task, open, onClose, onUpdated }: TaskDetailD
                 )}
               </div>
             </div>
-            <button
+            <Button
               onClick={handleClose}
               className="h-8 w-8 flex items-center justify-center rounded-2xl text-muted-foreground hover:text-foreground hover:bg-[var(--surface-alt)] transition-colors shrink-0"
             >
               <X className="h-4 w-4" />
-            </button>
+            </Button>
           </div>
 
           {/* ── Scrollable Content ─────────────────────────────────────────── */}

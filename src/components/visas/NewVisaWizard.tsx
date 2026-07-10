@@ -16,7 +16,7 @@ import { Field } from "@/components/ui/field";
 import { FormInput as Input } from "@/components/ui/input";
 import { NativeSelect as Select } from "@/components/ui/select";
 import { FormTextarea as Textarea } from "@/components/ui/textarea";
-import { PrimaryButton, GhostButton } from "@/components/ui/button";
+import { PrimaryButton, GhostButton , Button } from "@/components/ui/button";
 import { SearchableSelect } from "@/components/ui/searchable-select";
 import { SheetPage } from "@/components/ui/sheet";
 import { toast } from "sonner";
@@ -372,12 +372,12 @@ export function NewVisaWizard({
                           {(doc.file.size / 1024).toFixed(1)} KB - {doc.file.name}
                         </p>
                       </div>
-                      <button
+                      <Button
                         onClick={() => removeDoc(idx)}
                         className="text-danger hover:bg-danger/10 p-2 rounded-full"
                       >
                         <X className="h-4 w-4" />
-                      </button>
+                      </Button>
                     </div>
                   ))}
                 </div>

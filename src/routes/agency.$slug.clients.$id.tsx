@@ -29,6 +29,7 @@ import { ClientLeadsPanel } from "@/components/clients/ClientLeadsPanel";
 import { AIAnalysisPanel } from "@/components/clients/AIAnalysisPanel";
 import { Timeline360 } from "@/components/clients/Timeline360";
 import { ClientForm } from "@/components/clients/ClientForm";
+import { Button } from "@/components/ui/button";
 
 export const Route = createFileRoute("/agency/$slug/clients/$id")({
   head: ({ context }: any) => ({ meta: [{ title: `Cliente · ${context?.brand?.platform_name || 'Turis'}` }] }),
@@ -150,26 +151,26 @@ function ClientDetail() {
               <div className="flex items-center gap-2">
           {!isEditing ? (
             <>
-              <button
+              <Button
                 onClick={() => setIsMerging(true)}
                 className="flex h-8 items-gap gap-1.5 rounded-full border-none glass-card border-none px-3 text-xs font-semibold text-foreground hover:glass bg-white/5 border-white/10 transition-colors cursor-pointer"
               >
                 <Merge className="h-3.5 w-3.5" /> Unificar Cadastro
-              </button>
-              <button
+              </Button>
+              <Button
                 onClick={() => setIsEditing(true)}
                 className="flex h-8 items-center gap-1.5 rounded-full bg-brand px-3 text-xs font-semibold text-brand-foreground hover:bg-brand/90 transition-colors cursor-pointer"
               >
                 <Edit3 className="h-3.5 w-3.5" /> Editar Perfil
-              </button>
+              </Button>
             </>
           ) : (
-            <button
+            <Button
               onClick={() => setIsEditing(false)}
               className="flex h-8 items-center gap-1.5 rounded-full border-none glass-card border-none px-3 text-xs font-semibold text-foreground hover:glass bg-white/5 border-white/10 transition-colors cursor-pointer"
             >
               <X className="h-3.5 w-3.5" /> Cancelar
-            </button>
+            </Button>
           )}
         </div>
       
@@ -199,7 +200,7 @@ function ClientDetail() {
               {t}
             </span>
           ))}
-          <button
+          <Button
             onClick={() => {
               prompt({
                 title: "Nova Tag",
@@ -221,7 +222,7 @@ function ClientDetail() {
             className="px-3 py-1 border border-dashed border-border text-muted-foreground hover:text-foreground text-xs font-semibold rounded-full transition-colors cursor-pointer bg-transparent"
           >
             + Tag
-          </button>
+          </Button>
         </div>
       </header>
 
@@ -253,7 +254,7 @@ function ClientDetail() {
                 loading={allClientsQ.isLoading}
               />
             </div>
-            <button
+            <Button
               onClick={() => {
                 if (!mergeTargetId) return toast.error("Selecione um cliente");
                 confirm({
@@ -278,13 +279,13 @@ function ClientDetail() {
               className="h-12 px-6 rounded-full bg-warning text-warning-foreground font-bold text-sm hover:opacity-90 transition-opacity disabled:opacity-50 cursor-pointer"
             >
               {mergeClientsMutation.isPending ? "Unificando..." : "Confirmar Unificação"}
-            </button>
-            <button
+            </Button>
+            <Button
               onClick={() => setIsMerging(false)}
               className="h-12 px-4 rounded-full border-none text-sm font-bold cursor-pointer text-foreground bg-background"
             >
               Cancelar
-            </button>
+            </Button>
           </div>
         </div>
       )}

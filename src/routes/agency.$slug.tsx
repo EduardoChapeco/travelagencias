@@ -3,6 +3,7 @@ import { AppShell } from "@/components/shell/AppShell";
 import { Loader2, AlertOctagon } from "lucide-react";
 import { AgencyProvider, useAgency, type Agency } from "@/lib/agency-context";
 import { supabase } from "@/integrations/supabase/client";
+import { Button } from "@/components/ui/button";
 
 export const Route = createFileRoute("/agency/$slug")({
   ssr: false,
@@ -47,14 +48,14 @@ export const Route = createFileRoute("/agency/$slug")({
           {error.message || "Erro desconhecido ao carregar esta página."}
         </p>
         <div className="mt-4 flex gap-3">
-          <button
+          <Button
             onClick={() => {
               if (typeof window !== "undefined") window.location.reload();
             }}
             className="inline-flex h-9 items-center justify-center rounded-full bg-brand px-4 text-sm font-semibold text-white shadow transition-colors hover:bg-brand/90 cursor-pointer"
           >
             Recarregar Página
-          </button>
+          </Button>
           {slug && (
             <a
               href={`/agency/${slug}`}
@@ -114,12 +115,12 @@ function BlockedWrapper({ children }: { children: React.ReactNode }) {
           </div>
 
           <div className="flex justify-center gap-3">
-            <button
+            <Button
               onClick={() => window.location.reload()}
               className="h-10 rounded-[var(--radius-card)] bg-zinc-800 px-6 text-xs font-bold uppercase tracking-wider text-white hover:bg-zinc-700 transition-all cursor-pointer"
             >
               Tentar Novamente
-            </button>
+            </Button>
           </div>
         </div>
       </div>

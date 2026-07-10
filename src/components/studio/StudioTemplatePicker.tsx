@@ -1,6 +1,7 @@
 import { CanvasFormat } from "./StudioFrame";
 import { PROPOSAL_TEMPLATES } from "@/components/proposals/templates";
 import { Check } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
 // Preview color map per template id
 const PREVIEW_STYLES: Record<string, { bg: string; accent: string }> = {
@@ -42,7 +43,7 @@ export function StudioTemplatePicker({ format, value, onChange }: StudioTemplate
         const style = PREVIEW_STYLES[tpl.id] ?? { bg: "#f1f5f9", accent: "#3b82f6" };
 
         return (
-          <button
+          <Button
             key={tpl.id}
             type="button"
             onClick={() => onChange(tpl.id)}
@@ -87,7 +88,7 @@ export function StudioTemplatePicker({ format, value, onChange }: StudioTemplate
                 {tpl.description}
               </div>
             </div>
-          </button>
+          </Button>
         );
       })}
     </div>

@@ -3,6 +3,7 @@ import { Map } from "lucide-react";
 import { Accordion } from "@/components/proposals/ProposalFormFields";
 import { type Proposal } from "@/services/proposals";
 import type { Waypoint } from "@/components/studio/StudioMapWidget";
+import { Button } from "@/components/ui/button";
 
 const StudioMapWidget = lazy(() =>
   import("@/components/studio/StudioMapWidget").then((m) => ({
@@ -30,23 +31,23 @@ export function SectionMap({ draft, save }: SectionMapProps) {
                   alt="Mapa do Roteiro"
                   className="h-full w-full object-cover"
                 />
-                <button
+                <Button
                   type="button"
                   onClick={() => save({ map_image_url: null })}
                   className="absolute right-1 top-1 rounded bg-destructive/80 px-1.5 py-0.5 text-[9px] text-white hover:bg-destructive"
                 >
                   Remover
-                </button>
+                </Button>
               </div>
             )}
-            <button
+            <Button
               type="button"
               onClick={() => setShowMap(true)}
               className="flex w-full items-center justify-center gap-2 rounded-2xl border border-dashed border-border py-3 text-xs text-muted-foreground hover:bg-surface-alt transition-colors"
             >
               <Map className="h-3.5 w-3.5" />
               {draft.map_image_url ? "Editar Mapa Interativo" : "Abrir Mapa Interativo"}
-            </button>
+            </Button>
           </div>
         )}
 
@@ -56,13 +57,13 @@ export function SectionMap({ draft, save }: SectionMapProps) {
               <span className="text-[10px] uppercase tracking-wide font-semibold">
                 Mapa Interativo
               </span>
-              <button
+              <Button
                 type="button"
                 onClick={() => setShowMap(false)}
                 className="text-xs text-muted-foreground hover:text-foreground"
               >
                 Fechar
-              </button>
+              </Button>
             </div>
             <Suspense
               fallback={

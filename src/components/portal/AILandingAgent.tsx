@@ -1,6 +1,7 @@
 import React, { useState, useRef, useEffect } from "react";
 import { MessageSquare, X, Send, Bot, User, CheckCircle2 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
+import { Button } from "@/components/ui/button";
 
 export function AILandingAgent({ agencySlug, blocks }: { agencySlug: string; blocks: any[] }) {
   const [isOpen, setIsOpen] = useState(false);
@@ -76,12 +77,12 @@ export function AILandingAgent({ agencySlug, blocks }: { agencySlug: string; blo
     <>
       {/* Floating Button */}
       {!isOpen && (
-        <button
+        <Button
           onClick={() => setIsOpen(true)}
           className="fixed bottom-6 right-6 z-50 flex h-14 w-14 items-center justify-center rounded-full bg-brand text-brand-foreground shadow-none border-2 border-primary hover:scale-110 transition-transform"
         >
           <MessageSquare className="h-6 w-6" />
-        </button>
+        </Button>
       )}
 
       {/* Chat Window */}
@@ -96,12 +97,12 @@ export function AILandingAgent({ agencySlug, blocks }: { agencySlug: string; blo
                 <p className="text-[10px] opacity-80">Respondendo agora</p>
               </div>
             </div>
-            <button
+            <Button
               onClick={() => setIsOpen(false)}
               className="rounded-full p-1 hover:bg-brand-foreground/20 transition-colors"
             >
               <X className="h-5 w-5" />
-            </button>
+            </Button>
           </div>
 
           {/* Messages Area */}
@@ -156,13 +157,13 @@ export function AILandingAgent({ agencySlug, blocks }: { agencySlug: string; blo
                 placeholder={isConverted ? "Atendimento transferido..." : "Digite sua mensagem..."}
                 className="w-full rounded-full border border-border bg-surface-alt py-2.5 pl-4 pr-12 text-sm outline-none focus:border-brand disabled:opacity-50"
               />
-              <button
+              <Button
                 type="submit"
                 disabled={!input.trim() || isLoading || isConverted}
                 className="absolute right-1.5 flex h-8 w-8 items-center justify-center rounded-full bg-brand text-brand-foreground disabled:opacity-50 disabled:bg-muted"
               >
                 <Send className="h-4 w-4 ml-0.5" />
-              </button>
+              </Button>
             </form>
           </div>
         </div>

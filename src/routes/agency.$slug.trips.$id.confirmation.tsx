@@ -31,6 +31,7 @@ import {
 } from "lucide-react";
 import { toast } from "sonner";
 import { logTripAudit } from "@/services/audit";
+import { Button } from "@/components/ui/button";
 
 export const Route = createFileRoute("/agency/$slug/trips/$id/confirmation")({
   head: ({ context }: any) => ({ meta: [{ title: `Confirmação de Reserva · ${context?.brand?.platform_name || 'Turis'}` }] }),
@@ -284,13 +285,13 @@ function TripConfirmationPage() {
         </div>
 
         {!showForm && (
-          <button
+          <Button
             onClick={openAdd}
             className="inline-flex h-8 items-center gap-1.5 rounded-full bg-brand text-brand-foreground px-3 text-xs font-medium hover:bg-brand/90 transition-colors cursor-pointer shrink-0"
           >
             <Plus className="h-3.5 w-3.5" />
             <span>Adicionar Localizador</span>
-          </button>
+          </Button>
         )}
       </div>
 
@@ -337,12 +338,12 @@ function TripConfirmationPage() {
             <h3 className="text-xs font-bold uppercase tracking-widest text-foreground">
               {editingId ? "Editar Localizador" : "Novo Localizador de Serviço"}
             </h3>
-            <button
+            <Button
               onClick={closeForm}
               className="h-7 w-7 inline-flex items-center justify-center rounded hover:glass bg-white/5 border-white/10 text-muted-foreground cursor-pointer"
             >
               <X className="h-3.5 w-3.5" />
-            </button>
+            </Button>
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
@@ -440,19 +441,19 @@ function TripConfirmationPage() {
           </div>
 
           <div className="flex justify-end gap-2 pt-2 border-t border-border">
-            <button
+            <Button
               onClick={closeForm}
               className="px-3 py-1.5 border-none text-xs rounded-full hover:glass bg-white/5 border-white/10 cursor-pointer transition-colors"
             >
               Cancelar
-            </button>
-            <button
+            </Button>
+            <Button
               onClick={handleSave}
               disabled={isSaving}
               className="px-4 py-1.5 bg-brand text-brand-foreground text-xs rounded-full hover:bg-brand/90 cursor-pointer transition-colors disabled:opacity-50"
             >
               {isSaving ? "Salvando…" : editingId ? "Atualizar" : "Salvar Localizador"}
-            </button>
+            </Button>
           </div>
         </div>
       )}
@@ -482,13 +483,13 @@ function TripConfirmationPage() {
             Adicione os códigos de confirmação para cada serviço desta viagem (voos, hotéis,
             transfers, etc.).
           </p>
-          <button
+          <Button
             onClick={openAdd}
             className="mt-4 inline-flex items-center gap-1.5 px-4 py-2 rounded-[var(--radius-card)] bg-brand text-brand-foreground text-xs font-medium hover:bg-brand/90 transition-colors cursor-pointer"
           >
             <Plus className="h-3.5 w-3.5" />
             Adicionar primeiro localizador
-          </button>
+          </Button>
         </div>
       )}
 
@@ -547,7 +548,7 @@ function TripConfirmationPage() {
                 </div>
 
                 {/* Status — clicável para ciclar */}
-                <button
+                <Button
                   onClick={() =>
                     cycleMut.mutate({
                       id: item.id,
@@ -561,19 +562,19 @@ function TripConfirmationPage() {
                   <StatusBadge tone={STATUS_TONE[item.status] ?? "warning"}>
                     {STATUS_LABELS[item.status] ?? item.status}
                   </StatusBadge>
-                </button>
+                </Button>
 
                 {/* Editar */}
-                <button
+                <Button
                   onClick={() => openEdit(item)}
                   className="h-7 w-7 inline-flex items-center justify-center border-none rounded hover:glass bg-white/5 border-white/10 text-muted-foreground cursor-pointer transition-colors sm:opacity-0 sm:group-hover:opacity-100"
                   title="Editar"
                 >
                   <Pencil className="h-3 w-3" />
-                </button>
+                </Button>
 
                 {/* Excluir */}
-                <button
+                <Button
                   onClick={() => {
                     if (confirm("Remover este localizador?")) {
                       deleteMut.mutate(item.id);
@@ -584,7 +585,7 @@ function TripConfirmationPage() {
                   title="Excluir"
                 >
                   <Trash2 className="h-3 w-3" />
-                </button>
+                </Button>
               </div>
             </div>
           ))}

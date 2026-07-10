@@ -14,7 +14,7 @@ import { FormInput as Input } from "@/components/ui/input";
 import { NativeSelect as Select } from "@/components/ui/select";
 import { FormTextarea as Textarea } from "@/components/ui/textarea";
 import { SimpleSheet as Sheet } from "@/components/ui/sheet";
-import { PrimaryButton, GhostButton } from "@/components/ui/button";
+import { PrimaryButton, GhostButton , Button } from "@/components/ui/button";
 import { money } from "@/lib/formatters";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
@@ -399,30 +399,30 @@ function CashPage() {
 
               {(activeReg?.type !== "physical" || activeSession) && (
                 <div className="flex gap-1">
-                  <button
+                  <Button
                     onClick={() => setNewTxType("receipt")}
                     className="h-7 px-2.5 rounded-full bg-success hover:bg-success/90 text-[11px] font-semibold text-white transition-all cursor-pointer"
                   >
                     + Entrada
-                  </button>
-                  <button
+                  </Button>
+                  <Button
                     onClick={() => setNewTxType("payment")}
                     className="h-7 px-2.5 rounded-full bg-danger hover:bg-danger/90 text-[11px] font-semibold text-white transition-all cursor-pointer"
                   >
                     + Saída
-                  </button>
-                  <button
+                  </Button>
+                  <Button
                     onClick={() => setNewTxType("reconciliation")}
                     className="h-7 px-2.5 rounded-full bg-info hover:bg-info/90 text-[11px] font-semibold text-white transition-all cursor-pointer flex items-center gap-1"
                   >
                     <Coins className="h-3 w-3" /> Conciliar
-                  </button>
-                  <button
+                  </Button>
+                  <Button
                     onClick={() => setNewTxType("vale")}
                     className="h-7 px-2.5 rounded-full bg-warning hover:bg-warning/90 text-[11px] font-semibold text-white transition-all cursor-pointer flex items-center gap-1"
                   >
                     <Users className="h-3 w-3" /> Vale
-                  </button>
+                  </Button>
                   <label className="h-7 px-2.5 rounded-full border border-white/15 bg-white/5 hover:bg-white/10 text-[11px] font-semibold text-white/90 transition-all cursor-pointer flex items-center gap-1">
                     <FileText className="h-3 w-3" /> OCR
                     <input
@@ -608,12 +608,12 @@ function CashPage() {
                         <td className="px-5 py-3.5">
                           <div className="text-xs font-semibold text-foreground">{tx.notes}</div>
                           {tx.receipt_url && (
-                            <button
+                            <Button
                               onClick={() => handleViewReceipt(tx.receipt_url!)}
                               className="text-[10px] text-brand hover:underline bg-transparent border-0 p-0 cursor-pointer"
                             >
                               Ver comprovante
-                            </button>
+                            </Button>
                           )}
                         </td>
                         <td className="px-5 py-3.5 whitespace-nowrap text-xs text-muted-foreground capitalize">

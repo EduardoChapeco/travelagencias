@@ -4,6 +4,7 @@ import { SortableContext, useSortable, verticalListSortingStrategy } from "@dnd-
 import { type Stage, type Lead } from "@/services/crm";
 import { SortableLead, LeadCardView } from "./LeadCard";
 import { cn } from "@/lib/utils";
+import { Button } from "@/components/ui/button";
 
 type BoardProps = {
   stages: Stage[];
@@ -184,7 +185,7 @@ function MobileStageAccordion({
 
   return (
     <div className="rounded-[var(--radius-card)] border border-border bg-surface overflow-hidden shadow-none">
-      <button
+      <Button
         onClick={() => setExpanded(!expanded)}
         className="w-full flex items-center justify-between px-4 py-3 bg-surface-alt/10 text-left border-b border-border/40 focus:outline-none"
         style={{ borderLeft: `4px solid ${stage.color || "#9ca3af"}` }}
@@ -211,7 +212,7 @@ function MobileStageAccordion({
         <span className="text-muted-foreground text-[10px] font-bold uppercase tracking-wider">
           {expanded ? "Recolher ▲" : "Expandir ▼"}
         </span>
-      </button>
+      </Button>
       {expanded && (
         <div className="p-3 space-y-3 bg-background/10">
           {leads.map((lead) => (

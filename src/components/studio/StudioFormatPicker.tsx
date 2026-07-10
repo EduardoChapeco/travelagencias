@@ -1,5 +1,6 @@
 import { CanvasFormat } from "./StudioFrame";
 import { File, MonitorPlay, Smartphone, Layout } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
 interface FormatOption {
   value: CanvasFormat;
@@ -47,7 +48,7 @@ export function StudioFormatPicker({ value, onChange }: StudioFormatPickerProps)
         const Icon = opt.icon;
         const active = value === opt.value;
         return (
-          <button
+          <Button
             key={opt.value}
             type="button"
             onClick={() => onChange(opt.value)}
@@ -64,7 +65,7 @@ export function StudioFormatPicker({ value, onChange }: StudioFormatPickerProps)
               <span className="text-xs font-bold">{opt.label}</span>
             </div>
             <span className="text-[10px] text-muted-foreground leading-snug">{opt.desc}</span>
-          </button>
+          </Button>
         );
       })}
     </div>

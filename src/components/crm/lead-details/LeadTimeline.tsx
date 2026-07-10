@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { Button } from "@/components/ui/button";
 import { useMutation } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
@@ -114,13 +115,13 @@ export function NewActivity({
           className="border-0 bg-transparent focus:ring-0 resize-none py-2 min-h-[38px] text-xs"
         />
       </div>
-      <button
+      <Button
         type="submit"
         disabled={busy || !content.trim()}
         className="m-1 rounded-2xl bg-brand text-brand-foreground px-3.5 py-1.5 text-xs font-bold transition-opacity hover:opacity-90 disabled:opacity-30"
       >
         Postar
-      </button>
+      </Button>
     </form>
   );
 }
@@ -207,14 +208,14 @@ function ActivityItem({ activity, onChanged }: { activity: Activity; onChanged: 
 
           {mine && !edit && activity.type !== "stage_change" && (
             <div className="flex items-center gap-1.5 opacity-0 group-hover:opacity-100 transition-opacity">
-              <button
+              <Button
                 onClick={() => setEdit(true)}
                 className="text-muted-foreground hover:text-foreground transition-colors p-0.5"
                 title="Editar"
               >
                 <Pencil className="h-3 w-3" />
-              </button>
-              <button
+              </Button>
+              <Button
                 onClick={() => {
                   confirm({
                     title: "Deletar Registro",
@@ -227,7 +228,7 @@ function ActivityItem({ activity, onChanged }: { activity: Activity; onChanged: 
                 title="Deletar"
               >
                 <Trash className="h-3 w-3" />
-              </button>
+              </Button>
             </div>
           )}
         </div>
@@ -242,7 +243,7 @@ function ActivityItem({ activity, onChanged }: { activity: Activity; onChanged: 
               className="rounded-2xl border-border text-xs"
             />
             <div className="flex justify-end gap-1.5">
-              <button
+              <Button
                 onClick={() => {
                   setEdit(false);
                   setContent(activity.content ?? "");
@@ -250,14 +251,14 @@ function ActivityItem({ activity, onChanged }: { activity: Activity; onChanged: 
                 className="rounded-2xl px-3 py-1 text-xs font-semibold hover:bg-surface-alt transition-colors"
               >
                 Cancelar
-              </button>
-              <button
+              </Button>
+              <Button
                 onClick={() => save.mutate()}
                 disabled={save.isPending}
                 className="rounded-2xl bg-brand text-brand-foreground px-3 py-1 text-xs font-bold transition-opacity hover:opacity-90"
               >
                 Salvar
-              </button>
+              </Button>
             </div>
           </div>
         ) : (

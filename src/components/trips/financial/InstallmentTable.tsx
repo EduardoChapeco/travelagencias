@@ -3,6 +3,7 @@ import { StatusBadge } from "@/components/ui/badge";
 import { money, fmtDate } from "@/lib/formatters";
 import { type PaymentInstallment } from "@/services/trips";
 import { handleViewReceipt } from "@/utils/storage-helper";
+import { Button } from "@/components/ui/button";
 
 const INST_STATUS_TONE: Record<string, "success" | "warning" | "danger" | "neutral"> = {
   paid: "success",
@@ -72,21 +73,21 @@ export function InstallmentTable({
             </td>
             <td className="py-2 text-right">
               {inst.status !== "paid" && inst.receipt_url && (
-                <button
+                <Button
                   onClick={() => handleViewReceipt(inst.receipt_url!)}
                   className="inline-block mr-2 text-[10px] text-brand hover:underline font-bold align-middle bg-transparent border-0 p-0 cursor-pointer"
                 >
                   Ver Recibo
-                </button>
+                </Button>
               )}
               {inst.status === "pending" || inst.status === "late" ? (
-                <button
+                <Button
                   onClick={() => onMarkPaid(inst.id)}
                   className="inline-flex items-center gap-1 rounded px-2 py-1 text-[11px] font-medium text-success hover:bg-success-bg cursor-pointer align-middle"
                 >
                   <CheckCircle className="h-3.5 w-3.5" />
                   Pago
-                </button>
+                </Button>
               ) : (
                 <CheckCircle className="h-3.5 w-3.5 text-success mx-auto align-middle" />
               )}

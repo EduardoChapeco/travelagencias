@@ -8,7 +8,7 @@ import {
 import { Copy, CheckCircle2, AlertCircle, CreditCard, ExternalLink, QrCode } from "lucide-react";
 import { toast } from "sonner";
 import { SimpleSheet as Sheet } from "@/components/ui/sheet";
-import { PrimaryButton } from "@/components/ui/button";
+import { PrimaryButton , Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
 
 export const Route = createFileRoute("/m/payment/$token")({
@@ -210,9 +210,9 @@ function Page() {
                     </div>
                   </div>
                   {!isPaid && (
-                    <button className="flex h-8 w-8 items-center justify-center rounded-full glass bg-white/5 border-white/10 text-brand transition-colors hover:bg-brand hover:text-white">
+                    <Button className="flex h-8 w-8 items-center justify-center rounded-full glass bg-white/5 border-white/10 text-brand transition-colors hover:bg-brand hover:text-white">
                       <QrCode className="h-4 w-4" />
-                    </button>
+                    </Button>
                   )}
                 </div>
               </div>

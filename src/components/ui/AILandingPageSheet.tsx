@@ -3,7 +3,7 @@ import { SheetPage } from "./sheet";
 import { Field } from "@/components/ui/field";
 import { FormInput as Input } from "@/components/ui/input";
 import { FormTextarea as Textarea } from "@/components/ui/textarea";
-import { PrimaryButton, GhostButton } from "@/components/ui/button";
+import { PrimaryButton, GhostButton , Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { Wand2, Copy } from "lucide-react";
@@ -77,20 +77,20 @@ export function AILandingPageSheet({
       </div>
 
       <div className="flex border-b border-border mb-6">
-        <button
+        <Button
           type="button"
           onClick={() => setMode("prompt")}
           className={`flex-1 pb-3 text-sm font-semibold border-b-2 ${mode === "prompt" ? "border-brand text-foreground" : "border-transparent text-muted-foreground"}`}
         >
           Criar por Texto
-        </button>
-        <button
+        </Button>
+        <Button
           type="button"
           onClick={() => setMode("clone")}
           className={`flex-1 pb-3 text-sm font-semibold border-b-2 ${mode === "clone" ? "border-brand text-foreground" : "border-transparent text-muted-foreground"}`}
         >
           Clonar Site (URL)
-        </button>
+        </Button>
       </div>
 
       <form onSubmit={handleGenerate} className="space-y-4">

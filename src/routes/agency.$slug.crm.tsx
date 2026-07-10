@@ -26,7 +26,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { FormTextarea as Textarea } from "@/components/ui/textarea";
-import { PrimaryButton, GhostButton } from "@/components/ui/button";
+import { PrimaryButton, GhostButton , Button } from "@/components/ui/button";
 import { SearchableSelect } from "@/components/ui/searchable-select";
 import { SheetPage } from "@/components/ui/sheet";
 import { toast } from "sonner";
@@ -861,7 +861,7 @@ function StageSettingsPanel({
               className="flex items-center gap-4 bg-background p-3 rounded-full border-none"
             >
               <div className="flex flex-col gap-1 items-center justify-center px-1">
-                <button
+                <Button
                   disabled={idx === 0}
                   onClick={() => {
                     const arr = [...localStages];
@@ -871,8 +871,8 @@ function StageSettingsPanel({
                   className="text-muted-foreground hover:text-brand disabled:opacity-30"
                 >
                   ▲
-                </button>
-                <button
+                </Button>
+                <Button
                   disabled={idx === localStages.length - 1}
                   onClick={() => {
                     const arr = [...localStages];
@@ -882,7 +882,7 @@ function StageSettingsPanel({
                   className="text-muted-foreground hover:text-brand disabled:opacity-30"
                 >
                   ▼
-                </button>
+                </Button>
               </div>
 
               <input
@@ -921,13 +921,13 @@ function StageSettingsPanel({
               </div>
 
               {!s.is_won && !s.is_lost && (
-                <button
+                <Button
                   onClick={() => handleDelete(s.id)}
                   className="p-2 text-muted-foreground hover:text-danger hover:bg-danger/10 rounded-full transition-colors"
                   title="Excluir Coluna"
                 >
                   <Trash2 className="h-4 w-4" />
-                </button>
+                </Button>
               )}
             </div>
           ))}

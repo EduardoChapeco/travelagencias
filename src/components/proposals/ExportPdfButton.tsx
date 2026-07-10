@@ -1,3 +1,4 @@
+import { Button } from "@/components/ui/button";
 import { useState } from "react";
 import {
   Download,
@@ -339,14 +340,14 @@ export function ExportPdfButton({ proposal }: Props) {
       )}
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
-          <button
+          <Button
             type="button"
             disabled={busy}
             className="flex h-9 items-center gap-1.5 rounded-full bg-primary px-3 text-xs font-semibold text-primary-foreground disabled:opacity-60 whitespace-nowrap"
           >
             <Download className="h-3.5 w-3.5" />
             {busy ? "Processando…" : "Exportar"}
-          </button>
+          </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end" className="w-56">
           <DropdownMenuLabel className="text-[10px] uppercase tracking-wide text-muted-foreground font-normal pb-1">

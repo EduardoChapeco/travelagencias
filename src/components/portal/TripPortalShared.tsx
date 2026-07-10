@@ -1,4 +1,5 @@
 import React from "react";
+import { Button } from "@/components/ui/button";
 
 // ─── AppWidget ──────────────────────────────────────────────────────────────
 export function AppWidget({
@@ -34,7 +35,7 @@ export function TabButton({
   onClick: () => void;
 }) {
   return (
-    <button
+    <Button
       onClick={onClick}
       className={`flex items-center gap-2 py-4 border-b-2 font-bold text-sm whitespace-nowrap transition-colors${
         active
@@ -43,6 +44,6 @@ export function TabButton({
       }`}
     >
       {icon} {label}
-    </button>
+    </Button>
   );
 }

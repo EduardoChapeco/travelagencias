@@ -4,7 +4,7 @@ import { Field } from "@/components/ui/field";
 import { FormInput as Input } from "@/components/ui/input";
 import { FormTextarea as Textarea } from "@/components/ui/textarea";
 import { NativeSelect as Select } from "@/components/ui/select";
-import { PrimaryButton, GhostButton } from "@/components/ui/button";
+import { PrimaryButton, GhostButton , Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { Wand2, Link as LinkIcon, Sparkles } from "lucide-react";
@@ -122,20 +122,20 @@ Retorne **SOMENTE** um array JSON válido sem markdown em volta. A estrutura EXA
         </p>
       </div>
       <div className="flex border-b border-border mb-4">
-        <button
+        <Button
           type="button"
           className={`py-2 px-4 text-sm font-medium border-b-2 flex items-center gap-2 ${tab === "topic" ? "border-brand text-foreground" : "border-transparent text-muted-foreground"}`}
           onClick={() => setTab("topic")}
         >
           <Sparkles className="w-4 h-4" /> Nova Ideia
-        </button>
-        <button
+        </Button>
+        <Button
           type="button"
           className={`py-2 px-4 text-sm font-medium border-b-2 flex items-center gap-2 ${tab === "url" ? "border-brand text-foreground" : "border-transparent text-muted-foreground"}`}
           onClick={() => setTab("url")}
         >
           <LinkIcon className="w-4 h-4" /> A partir de um Link
-        </button>
+        </Button>
       </div>
 
       <form onSubmit={handleGenerate} className="space-y-4">

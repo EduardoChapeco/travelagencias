@@ -11,7 +11,7 @@ import {
   DndContext, DragOverlay, PointerSensor, TouchSensor, useSensor, useSensors, closestCorners, type DragEndEvent, type DragStartEvent, } from "@dnd-kit/core";
 import { arrayMove } from "@dnd-kit/sortable";
 import { useAgency } from "@/lib/agency-context";
-import { PrimaryButton } from "@/components/ui/button";
+import { PrimaryButton , Button } from "@/components/ui/button";
 import { StatusBadge } from "@/components/ui/badge";
 import { fmtDate } from "@/lib/formatters";
 
@@ -235,7 +235,7 @@ function BoardingKanbanPage() {
           actions={
             <div className="flex items-center gap-1.5">
               {(localCards?.length ?? 0) > 0 && (
-                <button
+                <Button
                   onClick={handleExportExcel}
                   disabled={exporting}
                   className="h-7 px-2.5 flex items-center gap-1 rounded-full border border-white/15 text-white/60 hover:text-white hover:bg-white/10 transition-colors cursor-pointer text-[11px] font-semibold disabled:opacity-50"
@@ -243,16 +243,16 @@ function BoardingKanbanPage() {
                 >
                   <Download className="h-3 w-3" />
                   {exporting ? "..." : "Excel"}
-                </button>
+                </Button>
               )}
               {isAgencyAdmin && (
-                <button
+                <Button
                   onClick={() => setAdminPanelOpen(true)}
                   className="h-7 w-7 flex items-center justify-center rounded-full border border-white/15 text-white/60 hover:text-white hover:bg-white/10 transition-colors cursor-pointer"
                   title="Administrar Embarques"
                 >
                   <Settings2 className="h-3.5 w-3.5" />
-                </button>
+                </Button>
               )}
             </div>
           }
@@ -408,24 +408,24 @@ function BoardingKanbanPage() {
                   {currentMonth.toLocaleDateString("pt-BR", { month: "long", year: "numeric" })}
                 </h2>
                 <div className="flex items-center gap-1.5">
-                  <button
+                  <Button
                     onClick={handlePrevMonth}
                     className="flex h-8 w-8 items-center justify-center rounded-full border-none glass-card border-none text-foreground hover:glass bg-white/5 border-white/10 transition-colors cursor-pointer"
                   >
                     <ChevronLeft className="h-4 w-4" />
-                  </button>
-                  <button
+                  </Button>
+                  <Button
                     onClick={() => setCurrentMonth(new Date())}
                     className="h-8 px-3 text-xs font-semibold rounded-full border-none glass-card border-none text-foreground hover:glass bg-white/5 border-white/10 transition-colors cursor-pointer"
                   >
                     Hoje
-                  </button>
-                  <button
+                  </Button>
+                  <Button
                     onClick={handleNextMonth}
                     className="flex h-8 w-8 items-center justify-center rounded-full border-none glass-card border-none text-foreground hover:glass bg-white/5 border-white/10 transition-colors cursor-pointer"
                   >
                     <ChevronRight className="h-4 w-4" />
-                  </button>
+                  </Button>
                 </div>
               </div>
 
@@ -465,7 +465,7 @@ function BoardingKanbanPage() {
                           const stage =
                             BOARDING_STAGES.find((s) => s.id === card.status) ?? BOARDING_STAGES[0];
                           return (
-                            <button
+                            <Button
                               key={card.id}
                               onClick={() => setDetail(card)}
                               className="w-full text-left p-1 text-[10px] rounded-xs border-none glass-card border-none hover:glass bg-white/5 border-white/10 transition-colors truncate font-semibold block group"
@@ -479,7 +479,7 @@ function BoardingKanbanPage() {
                                   {card.pnr || card.trip_title || "Sem PNR"}
                                 </span>
                               </span>
-                            </button>
+                            </Button>
                           );
                         })}
                       </div>

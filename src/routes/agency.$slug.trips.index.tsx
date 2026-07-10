@@ -610,13 +610,13 @@ function TripsList() {
               <h3 className="ds-h3 text-foreground flex items-center gap-2">
                 <Search className="h-4 w-4 text-brand" /> Importar do Infotravel
               </h3>
-              <button
+              <Button
                 type="button"
                 onClick={() => setImportOpen(false)}
                 className="text-xs text-muted-foreground hover:text-foreground font-semibold"
               >
                 Fechar
-              </button>
+              </Button>
             </div>
 
             <div className="space-y-4">
@@ -637,14 +637,14 @@ function TripsList() {
                 </p>
               </div>
 
-              <button
+              <Button
                 type="button"
                 disabled={importing || !bookingId.trim()}
                 onClick={handleImportBooking}
                 className="w-full flex h-9 items-center justify-center rounded-full bg-brand px-3 text-xs font-semibold text-brand-foreground hover:bg-brand/90 transition-colors disabled:opacity-50 cursor-pointer"
               >
                 {importing ? "Importando..." : "Confirmar Importação"}
-              </button>
+              </Button>
             </div>
           </div>
         </div>

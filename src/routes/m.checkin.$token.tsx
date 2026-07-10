@@ -16,6 +16,7 @@ import {
 } from "lucide-react";
 import { toast } from "sonner";
 import { getLastName, getAirlineCheckinUrl } from "@/utils/airline-deeplinks";
+import { Button } from "@/components/ui/button";
 
 export const Route = createFileRoute("/m/checkin/$token")({
   head: ({ context }: any) => ({ meta: [{ title: `Meu Embarque · ${context?.brand?.platform_name || 'Turis'}` }] }),
@@ -287,7 +288,7 @@ function MobileCheckinPage() {
                   ))}
                 </div>
 
-                <button
+                <Button
                   onClick={() => handleAcceptReaccommodation(reac.itinerary_id)}
                   disabled={acceptingReac}
                   className="w-full text-xs bg-brand text-brand-foreground hover:bg-brand/90 py-2 rounded-[var(--radius-card)] font-bold flex items-center justify-center gap-1.5 transition-colors disabled:opacity-50"
@@ -298,7 +299,7 @@ function MobileCheckinPage() {
                     <CheckCircle2 className="w-3.5 h-3.5" />
                   )}
                   Aceitar e Confirmar Novo Voo
-                </button>
+                </Button>
               </div>
             ))}
           </div>
@@ -406,13 +407,13 @@ function MobileCheckinPage() {
                       )}
                     </div>
 
-                    <button
+                    <Button
                       onClick={() => handleCheckinClick(seg, checkinUrl)}
                       className="w-full bg-brand text-brand-foreground hover:bg-brand/90 py-2.5 rounded-[var(--radius-card)] font-bold text-xs flex items-center justify-center gap-1.5 transition-colors"
                     >
                       Iniciar Check-in na {seg.airline_code}{" "}
                       <ExternalLink className="w-3.5 h-3.5" />
-                    </button>
+                    </Button>
                   </div>
                 );
               })}
@@ -439,7 +440,7 @@ function MobileCheckinPage() {
             ) : (
               <div className="divide-y divide-border/40">
                 {checklist.map((it, i) => (
-                  <button
+                  <Button
                     key={i}
                     onClick={() => toggle(i)}
                     disabled={saving}
@@ -455,7 +456,7 @@ function MobileCheckinPage() {
                     >
                       {it.label}
                     </span>
-                  </button>
+                  </Button>
                 ))}
               </div>
             )}
@@ -497,7 +498,7 @@ function MobileCheckinPage() {
           </p>
 
           <div className="grid grid-cols-2 gap-3">
-            <button
+            <Button
               onClick={() => {
                 setEmergencyType("delayed");
                 setEmergencyComment("");
@@ -505,8 +506,8 @@ function MobileCheckinPage() {
               className={`py-2 rounded-[var(--radius-card)] text-xs font-bold border transition-colors ${emergencyType === "delayed" ? "bg-amber-500 text-white border-amber-600" : "glass-card border-none border-border text-foreground hover:glass bg-white/5 border-white/10"}`}
             >
               Voo Atrasou
-            </button>
-            <button
+            </Button>
+            <Button
               onClick={() => {
                 setEmergencyType("cancelled");
                 setEmergencyComment("");
@@ -514,7 +515,7 @@ function MobileCheckinPage() {
               className={`py-2 rounded-[var(--radius-card)] text-xs font-bold border transition-colors ${emergencyType === "cancelled" ? "bg-rose-600 text-white border-rose-700" : "glass-card border-none border-border text-foreground hover:glass bg-white/5 border-white/10"}`}
             >
               Voo Cancelado
-            </button>
+            </Button>
           </div>
 
           {emergencyType && (
@@ -530,13 +531,13 @@ function MobileCheckinPage() {
                 className="w-full text-xs border-none rounded-[var(--radius-card)] p-2.5 glass-card border-none focus:outline-none focus:ring-1 focus:ring-rose-500 font-medium text-foreground resize-none"
               />
               <div className="flex gap-2">
-                <button
+                <Button
                   onClick={() => setEmergencyType(null)}
                   className="flex-1 glass-card border-none border-none hover:glass bg-white/5 border-white/10 py-2 rounded-[var(--radius-card)] text-xs font-bold transition-colors"
                 >
                   Cancelar
-                </button>
-                <button
+                </Button>
+                <Button
                   onClick={handleSubmitEmergency}
                   disabled={submittingEmergency}
                   className="flex-1 bg-rose-600 hover:bg-rose-700 text-white py-2 rounded-[var(--radius-card)] text-xs font-bold flex items-center justify-center gap-1.5 transition-colors disabled:opacity-50"
@@ -547,7 +548,7 @@ function MobileCheckinPage() {
                     <Send className="w-3.5 h-3.5" />
                   )}
                   Enviar Alerta
-                </button>
+                </Button>
               </div>
             </div>
           )}

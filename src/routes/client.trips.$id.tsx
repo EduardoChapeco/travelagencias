@@ -948,7 +948,7 @@ function ClientTripDetail() {
                   </span>
                   <div className="grid grid-cols-2 gap-3">
                     {activeCase.alternatives.map((alt: any, i: number) => (
-                      <button
+                      <Button
                         key={alt.id}
                         type="button"
                         onClick={() => setSelectedAltId(alt.id)}
@@ -969,7 +969,7 @@ function ClientTripDetail() {
                               ?.destination_iata
                           }
                         </span>
-                      </button>
+                      </Button>
                     ))}
                   </div>
                 </div>

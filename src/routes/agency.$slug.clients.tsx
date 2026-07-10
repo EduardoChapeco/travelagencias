@@ -195,12 +195,12 @@ function ClientsPage() {
       header: () => <div className="text-right">Ação</div>,
       cell: ({ row }) => (
         <div className="text-right">
-          <button
+          <Button
             onClick={() => restoreMutation.mutate(row.original.id)}
             className="text-xs font-semibold text-brand hover:underline"
           >
             Restaurar
-          </button>
+          </Button>
         </div>
       ),
     });

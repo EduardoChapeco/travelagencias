@@ -19,7 +19,7 @@ import { Field } from "@/components/ui/field";
 import { FormInput as Input } from "@/components/ui/input";
 import { NativeSelect as Select } from "@/components/ui/select";
 import { FormTextarea as Textarea } from "@/components/ui/textarea";
-import { PrimaryButton, GhostButton } from "@/components/ui/button";
+import { PrimaryButton, GhostButton , Button } from "@/components/ui/button";
 import { StatusBadge } from "@/components/ui/badge";
 import { toast } from "sonner";
 
@@ -235,13 +235,13 @@ export function ContractClauseLibrary({
                   ? `Editar Cláusula: ${editingClause.title}`
                   : "Nova Cláusula Customizada"}
               </h3>
-              <button
+              <Button
                 type="button"
                 onClick={resetForm}
                 className="text-muted-foreground hover:text-foreground"
               >
                 <X className="h-4 w-4" />
-              </button>
+              </Button>
             </div>
 
             <Field label="Título da Cláusula">
@@ -362,23 +362,23 @@ export function ContractClauseLibrary({
                             </div>
                             <div className="flex items-center gap-1.5 opacity-40 group-hover:opacity-100 transition-opacity">
                               {isGlobal ? (
-                                <button
+                                <Button
                                   onClick={() => handleDuplicate(clause)}
                                   className="flex h-7 px-2.5 items-center gap-1 rounded border border-border bg-surface text-[10px] font-semibold text-foreground hover:bg-surface-alt transition-colors"
                                   title="Duplicar para personalizar esta cláusula padrão"
                                 >
                                   <Copy className="h-3 w-3 text-muted-foreground" /> Personalizar
-                                </button>
+                                </Button>
                               ) : (
                                 <>
-                                  <button
+                                  <Button
                                     onClick={() => handleEdit(clause)}
                                     className="p-1.5 rounded border border-border hover:bg-surface-alt text-muted-foreground hover:text-foreground transition-colors"
                                     title="Editar Cláusula"
                                   >
                                     <Edit2 className="h-3.5 w-3.5" />
-                                  </button>
-                                  <button
+                                  </Button>
+                                  <Button
                                     onClick={() => {
                                       if (
                                         confirm(
@@ -392,7 +392,7 @@ export function ContractClauseLibrary({
                                     title="Excluir Cláusula"
                                   >
                                     <Trash2 className="h-3.5 w-3.5" />
-                                  </button>
+                                  </Button>
                                 </>
                               )}
                             </div>

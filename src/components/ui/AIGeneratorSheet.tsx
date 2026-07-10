@@ -4,7 +4,7 @@ import { Field } from "@/components/ui/field";
 import { FormInput as Input } from "@/components/ui/input";
 import { FormTextarea as Textarea } from "@/components/ui/textarea";
 import { NativeSelect as Select } from "@/components/ui/select";
-import { PrimaryButton, GhostButton } from "@/components/ui/button";
+import { PrimaryButton, GhostButton , Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { Wand2, Link as LinkIcon, Sparkles, X } from "lucide-react";
@@ -104,29 +104,29 @@ Contexto fornecido: ${context}`;
             <p className="text-xs text-white/60">Escreva ou faça upload (OCR)</p>
           </div>
         </div>
-        <button 
+        <Button 
           onClick={() => onOpenChange(false)}
           className="h-10 w-10 rounded-full bg-white/10 flex items-center justify-center text-white hover:bg-white/20 transition-colors"
         >
           <X className="w-5 h-5" />
-        </button>
+        </Button>
       </div>
 
       <div className="flex border-b border-white/10 shrink-0">
-        <button
+        <Button
           type="button"
           className={`py-3 flex-1 text-sm font-medium border-b-2 flex items-center justify-center gap-2 transition-colors ${tab === "topic" ? "border-brand-light text-white" : "border-transparent text-white/50 hover:text-white"}`}
           onClick={() => setTab("topic")}
         >
           <Sparkles className="w-4 h-4" /> Tema Livre
-        </button>
-        <button
+        </Button>
+        <Button
           type="button"
           className={`py-3 flex-1 text-sm font-medium border-b-2 flex items-center justify-center gap-2 transition-colors ${tab === "url" ? "border-brand-light text-white" : "border-transparent text-white/50 hover:text-white"}`}
           onClick={() => setTab("url")}
         >
           <LinkIcon className="w-4 h-4" /> Ler Link/Arquivo
-        </button>
+        </Button>
       </div>
 
       <form onSubmit={handleGenerate} className="flex-1 overflow-y-auto p-6 space-y-6">
@@ -180,15 +180,15 @@ Contexto fornecido: ${context}`;
       </form>
 
       <div className="p-6 border-t border-white/10 bg-white/5 shrink-0 flex gap-3">
-        <button 
+        <Button 
           type="button" 
           onClick={() => onOpenChange(false)} 
           disabled={loading}
           className="h-12 flex-1 rounded-full border border-white/10 text-white font-medium hover:bg-white/10 transition-colors"
         >
           Cancelar
-        </button>
-        <button 
+        </Button>
+        <Button 
           type="submit" 
           disabled={loading} 
           onClick={handleGenerate}
@@ -196,7 +196,7 @@ Contexto fornecido: ${context}`;
         >
           <Wand2 className="w-4 h-4" />
           {loading ? "Processando..." : "Gerar"}
-        </button>
+        </Button>
       </div>
     </div>
   );

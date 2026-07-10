@@ -9,7 +9,7 @@ import { EmptyState } from "@/components/shell/PageHeader";
 import { PageHeader } from "@/components/shell/PageHeader";
 import { ModuleAdminPanel } from "@/components/shell/ModuleAdminPanel";
 import { StatusBadge } from "@/components/ui/badge";
-import { GhostButton } from "@/components/ui/button";
+import { GhostButton , Button } from "@/components/ui/button";
 import { fmtDate } from "@/lib/formatters";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
@@ -236,7 +236,7 @@ function VouchersPage() {
                 { id: "pending", label: "Pendentes" },
                 { id: "confirmed", label: "Conferidos" },
               ].map((btn) => (
-                <button
+                <Button
                   key={btn.id}
                   onClick={() => setStatusFilter(btn.id as any)}
                   className={`px-2.5 py-1 rounded-full text-[11px] font-semibold cursor-pointer transition-all ${
@@ -246,16 +246,16 @@ function VouchersPage() {
                   }`}
                 >
                   {btn.label}
-                </button>
+                </Button>
               ))}
               {isAgencyAdmin && activeTab === "vouchers" && (
-                <button
+                <Button
                   onClick={() => setAdminPanelOpen(true)}
                   className="h-7 w-7 flex items-center justify-center rounded-full border border-white/15 text-white/60 hover:text-white hover:bg-white/10 transition-colors cursor-pointer"
                   title="Administrar Vouchers"
                 >
                   <Settings2 className="h-3.5 w-3.5" />
-                </button>
+                </Button>
               )}
             </div>
           }
@@ -593,13 +593,13 @@ function VouchersPage() {
                                 <span className="font-mono font-bold glass bg-white/5 border-white/10 border-none rounded px-1.5 py-0.5 text-foreground">
                                   {f.ticket_code}
                                 </span>
-                                <button
+                                <Button
                                   onClick={() => handleCopyLocator(f.ticket_code)}
                                   className="text-muted-foreground hover:text-foreground cursor-pointer"
                                   title="Copiar"
                                 >
                                   <Copy className="h-3 w-3" />
-                                </button>
+                                </Button>
                               </div>
                             ) : (
                               <span className="text-warning font-semibold flex items-center gap-1">
@@ -678,7 +678,7 @@ function VouchersPage() {
                             <div className="flex items-center justify-end gap-1.5">
                               {isEditing ? (
                                 <>
-                                  <button
+                                  <Button
                                     onClick={() =>
                                       updateTicketMut.mutate({
                                         id: f.id,
@@ -693,19 +693,19 @@ function VouchersPage() {
                                     title="Salvar"
                                   >
                                     <Check className="h-3.5 w-3.5" />
-                                  </button>
-                                  <button
+                                  </Button>
+                                  <Button
                                     onClick={() => setEditingId(null)}
                                     className="p-1.5 rounded glass bg-white/5 border-white/10 border-none hover:glass bg-white/5 border-white/10/75 cursor-pointer text-foreground"
                                     title="Cancelar"
                                   >
                                     <X className="h-3.5 w-3.5" />
-                                  </button>
+                                  </Button>
                                 </>
                               ) : (
                                 <>
                                   {/* Quick toggle check */}
-                                  <button
+                                  <Button
                                     onClick={() =>
                                       updateTicketMut.mutate({
                                         id: f.id,
@@ -725,14 +725,14 @@ function VouchersPage() {
                                     }
                                   >
                                     <CheckCircle2 className="h-3.5 w-3.5" />
-                                  </button>
-                                  <button
+                                  </Button>
+                                  <Button
                                     onClick={() => handleStartEdit(f)}
                                     className="p-1.5 rounded border-none text-muted-foreground hover:text-foreground cursor-pointer"
                                     title="Editar Bilhete"
                                   >
                                     <Edit2 className="h-3.5 w-3.5" />
-                                  </button>
+                                  </Button>
                                 </>
                               )}
                             </div>

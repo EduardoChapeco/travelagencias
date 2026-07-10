@@ -2,6 +2,7 @@ import { useState } from "react";
 import { toast } from "sonner";
 import { Brain, Sparkles } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
+import { Button } from "@/components/ui/button";
 
 export function AIAnalysisPanel({
   client,
@@ -106,7 +107,7 @@ Gere um objeto JSON contendo exatamente as seguintes chaves. Não inclua nenhuma
 
   return (
     <div className="rounded-3xl border border-border bg-background overflow-hidden">
-      <button
+      <Button
         type="button"
         onClick={() => setOpen((o) => !o)}
         className="flex w-full items-center justify-between px-6 py-4 text-sm font-bold hover:bg-surface/50 transition-colors text-foreground cursor-pointer"
@@ -116,7 +117,7 @@ Gere um objeto JSON contendo exatamente as seguintes chaves. Não inclua nenhuma
           Análise de Perfil
         </div>
         <div className="text-[10px] font-bold text-brand opacity-70">BETA</div>
-      </button>
+      </Button>
 
       {open && (
         <div className="px-6 pb-6 border-t border-border/50 space-y-4 bg-background">
@@ -127,12 +128,12 @@ Gere um objeto JSON contendo exatamente as seguintes chaves. Não inclua nenhuma
                 O assistente analisará o histórico de viagens, cotações e padrões de comportamento
                 do cliente.
               </p>
-              <button
+              <Button
                 onClick={runAnalysis}
                 className="flex items-center gap-1.5 mx-auto h-9 rounded-2xl bg-brand text-white px-4 text-xs font-bold hover:opacity-90 cursor-pointer"
               >
                 <Sparkles className="h-3.5 w-3.5" /> Analisar Perfil
-              </button>
+              </Button>
             </div>
           )}
 
@@ -196,12 +197,12 @@ Gere um objeto JSON contendo exatamente as seguintes chaves. Não inclua nenhuma
                 <p className="text-sm font-semibold text-foreground">{analysis.nextAction}</p>
               </div>
 
-              <button
+              <Button
                 onClick={runAnalysis}
                 className="text-xs text-muted-foreground hover:text-brand underline cursor-pointer"
               >
                 Regenerar análise
-              </button>
+              </Button>
             </div>
           )}
         </div>

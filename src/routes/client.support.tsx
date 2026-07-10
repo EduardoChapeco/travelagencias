@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { LifeBuoy, Plus, ExternalLink } from "lucide-react";
 import { fetchClientTickets, createClientTicket, fetchClientAgencies } from "@/services/client-area";
 import { toast } from "sonner";
+import { Button } from "@/components/ui/button";
 
 export const Route = createFileRoute("/client/support")({
   component: ClientSupportRoute,
@@ -100,12 +101,12 @@ function ClientSupportRoute() {
             Acompanhe suas solicitações e pedidos de suporte.
           </p>
         </div>
-        <button
+        <Button
           onClick={() => setIsCreating(true)}
           className="bg-primary text-primary-foreground h-10 px-4 rounded-full text-sm font-semibold flex items-center justify-center gap-2 hover:bg-primary/90 transition-colors"
         >
           <Plus className="h-4 w-4" /> Novo Chamado
-        </button>
+        </Button>
       </div>
 
       {isCreating && (
@@ -153,20 +154,20 @@ function ClientSupportRoute() {
             </div>
 
             <div className="flex justify-end gap-3 pt-2">
-              <button
+              <Button
                 type="button"
                 onClick={() => setIsCreating(false)}
                 className="h-10 px-4 rounded-full text-sm font-semibold bg-accent text-accent-foreground hover:bg-accent/80 transition-colors"
               >
                 Cancelar
-              </button>
-              <button
+              </Button>
+              <Button
                 type="submit"
                 disabled={!title || !description}
                 className="h-10 px-4 rounded-full text-sm font-semibold bg-primary text-primary-foreground hover:bg-primary/90 transition-colors disabled:opacity-50"
               >
                 Enviar Chamado
-              </button>
+              </Button>
             </div>
           </form>
         </div>
@@ -198,9 +199,9 @@ function ClientSupportRoute() {
               </div>
               <div className="shrink-0">
                 {/* No futuro podemos adicionar uma página de detalhes do ticket, por enquanto mostramos resumo */}
-                <button className="h-9 px-3 rounded-full border-none text-sm font-medium hover:bg-accent transition-colors flex items-center gap-2 text-muted-foreground">
+                <Button className="h-9 px-3 rounded-full border-none text-sm font-medium hover:bg-accent transition-colors flex items-center gap-2 text-muted-foreground">
                   <ExternalLink className="h-4 w-4" /> Detalhes
-                </button>
+                </Button>
               </div>
             </div>
           ))}

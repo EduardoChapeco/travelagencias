@@ -22,7 +22,7 @@ import { Field } from "@/components/ui/field";
 import { FormInput as Input } from "@/components/ui/input";
 import { FormTextarea as Textarea } from "@/components/ui/textarea";
 import { NativeSelect as Select } from "@/components/ui/select";
-import { PrimaryButton } from "@/components/ui/button";
+import { PrimaryButton , Button } from "@/components/ui/button";
 
 export const Route = createFileRoute("/agency/$slug/portal/settings")({
   head: ({ context }: any) => ({ meta: [{ title: `Configurações do Portal · ${context?.brand?.platform_name || 'Turis'}` }] }),
@@ -170,7 +170,7 @@ function PortalSettingsPage() {
                 <Eye className="h-3.5 w-3.5" />
                 <span className="hidden sm:inline">Ver portal</span>
               </a>
-              <button
+              <Button
                 type="submit"
                 form="portal-settings-form"
                 disabled={busy}
@@ -178,7 +178,7 @@ function PortalSettingsPage() {
               >
                 <Save className="h-3.5 w-3.5" />
                 <span>{busy ? "Salvando..." : "Salvar"}</span>
-              </button>
+              </Button>
             </div>
           }
         />
@@ -329,7 +329,7 @@ function PortalSettingsPage() {
                       },
                     ] as { id: "simple" | "full" | "minimal"; label: string; desc: string }[]
                   ).map((s) => (
-                    <button
+                    <Button
                       key={s.id}
                       type="button"
                       onClick={() => set("header_style", s.id)}
@@ -341,7 +341,7 @@ function PortalSettingsPage() {
                     >
                       <div className="text-xs font-semibold mb-1">{s.label}</div>
                       <div className="text-[10px] text-muted-foreground">{s.desc}</div>
-                    </button>
+                    </Button>
                   ))}
                 </div>
               </div>
@@ -370,13 +370,13 @@ function PortalSettingsPage() {
               <div>
                 <div className="mb-2 flex items-center justify-between">
                   <span className="text-xs font-medium">Links de navegação</span>
-                  <button
+                  <Button
                     type="button"
                     onClick={() => addNavLink("nav_links")}
                     className="flex items-center gap-1 text-xs text-brand hover:underline"
                   >
                     <Plus className="h-3 w-3" /> Adicionar
-                  </button>
+                  </Button>
                 </div>
                 <div className="space-y-2">
                   {form.nav_links.map((link, i) => (
@@ -393,13 +393,13 @@ function PortalSettingsPage() {
                         placeholder="/"
                         className="text-xs font-mono"
                       />
-                      <button
+                      <Button
                         type="button"
                         onClick={() => removeNavLink("nav_links", i)}
                         className="p-1.5 text-muted-foreground hover:text-destructive"
                       >
                         <Trash2 className="h-3.5 w-3.5" />
-                      </button>
+                      </Button>
                     </div>
                   ))}
                 </div>
@@ -424,13 +424,13 @@ function PortalSettingsPage() {
               <div>
                 <div className="mb-2 flex items-center justify-between">
                   <span className="text-xs font-medium">Links do rodapé</span>
-                  <button
+                  <Button
                     type="button"
                     onClick={() => addNavLink("footer_links")}
                     className="flex items-center gap-1 text-xs text-brand hover:underline"
                   >
                     <Plus className="h-3 w-3" /> Adicionar
-                  </button>
+                  </Button>
                 </div>
                 <div className="space-y-2">
                   {form.footer_links.map((link, i) => (
@@ -447,13 +447,13 @@ function PortalSettingsPage() {
                         placeholder="/privacidade"
                         className="text-xs font-mono"
                       />
-                      <button
+                      <Button
                         type="button"
                         onClick={() => removeNavLink("footer_links", i)}
                         className="p-1.5 text-muted-foreground hover:text-destructive"
                       >
                         <Trash2 className="h-3.5 w-3.5" />
-                      </button>
+                      </Button>
                     </div>
                   ))}
                 </div>

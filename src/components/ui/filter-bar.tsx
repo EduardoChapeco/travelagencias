@@ -2,6 +2,7 @@ import * as React from "react";
 import { cn } from "@/lib/utils";
 import { Search } from "lucide-react";
 import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
 
 export interface FilterOption {
   label: string;
@@ -39,7 +40,7 @@ export function FilterBar({
         {options.map((option) => {
           const isActive = activeValue === option.value;
           return (
-            <button
+            <Button
               key={option.value}
               onClick={() => onValueChange(option.value)}
               className={cn(
@@ -62,7 +63,7 @@ export function FilterBar({
                   {option.count}
                 </span>
               )}
-            </button>
+            </Button>
           );
         })}
       </div>

@@ -5,6 +5,7 @@ import { formatDistanceToNow } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import { Sparkles, MessageCircle, Mail } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { Button } from "@/components/ui/button";
 
 interface ConversationListProps {
   conversations: any[];
@@ -58,7 +59,7 @@ export function ConversationList({ conversations, selectedId, onSelect, isLoadin
               const channelType = conv.channels?.type || 'whatsapp';
               
               return (
-              <button
+              <Button
                 key={conv.id}
                 onClick={() => onSelect(conv.id)}
                 className={cn(
@@ -110,7 +111,7 @@ export function ConversationList({ conversations, selectedId, onSelect, isLoadin
                     </Badge>
                   )}
                 </div>
-              </button>
+              </Button>
             )})}
           </div>
         )}

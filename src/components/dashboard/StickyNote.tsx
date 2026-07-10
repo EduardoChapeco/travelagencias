@@ -3,6 +3,7 @@ import { Trash2, GripHorizontal, Palette, Users, Bus, ScrollText, Lock, Globe, U
 import { cn } from "@/lib/utils";
 import { useAgency } from "@/lib/agency-context";
 import { supabase } from "@/integrations/supabase/client";
+import { Button } from "@/components/ui/button";
 
 export type NoteData = {
   id: string;
@@ -304,7 +305,7 @@ export function StickyNote({
           <div className="flex items-center gap-1.5 opacity-0 group-hover:opacity-100 transition-opacity">
             {/* Color picker toggle */}
             <div className="relative">
-              <button
+              <Button
                 onClick={() => {
                   setShowColorPicker(!showColorPicker);
                   setShowSharingPicker(false);
@@ -313,11 +314,11 @@ export function StickyNote({
                 title="Mudar cor"
               >
                 <Palette className="w-3.5 h-3.5 opacity-60" />
-              </button>
+              </Button>
               {showColorPicker && (
                 <div className="absolute top-6 right-0 bg-white dark:bg-zinc-900 border border-border rounded-xl p-1.5 flex gap-1 z-50 shadow-lg">
                   {COLORS.map((c) => (
-                    <button
+                    <Button
                       key={c.name}
                       onClick={() => handleColorSelect(c.name)}
                       className={cn(
@@ -333,7 +334,7 @@ export function StickyNote({
 
             {/* Sharing / Visibility options toggle */}
             <div className="relative">
-              <button
+              <Button
                 onClick={() => {
                   setShowSharingPicker(!showSharingPicker);
                   setShowColorPicker(false);
@@ -355,11 +356,11 @@ export function StickyNote({
                 ) : (
                   <Lock className="w-3.5 h-3.5 opacity-60" />
                 )}
-              </button>
+              </Button>
               {showSharingPicker && (
                 <div className="absolute top-6 right-0 bg-white dark:bg-zinc-950 border border-border rounded-2xl p-2 flex flex-col gap-1 z-50 shadow-2xl w-48 text-foreground">
                   <span className="text-[9px] font-black uppercase tracking-wider text-muted-foreground px-2 py-1">Visibilidade</span>
-                  <button
+                  <Button
                     onClick={() => handleVisibilityChange("private")}
                     className={cn(
                       "flex items-center gap-2 px-2.5 py-1.5 rounded-xl hover:bg-black/5 dark:hover:bg-white/5 text-left cursor-pointer transition-colors text-xs font-bold w-full",
@@ -368,8 +369,8 @@ export function StickyNote({
                   >
                     <Lock className="w-3.5 h-3.5 opacity-70" />
                     <span>Pessoal (Privado)</span>
-                  </button>
-                  <button
+                  </Button>
+                  <Button
                     onClick={() => handleVisibilityChange("public")}
                     className={cn(
                       "flex items-center gap-2 px-2.5 py-1.5 rounded-xl hover:bg-black/5 dark:hover:bg-white/5 text-left cursor-pointer transition-colors text-xs font-bold w-full",
@@ -378,10 +379,10 @@ export function StickyNote({
                   >
                     <Globe className="w-3.5 h-3.5 opacity-70" />
                     <span>Público Agência</span>
-                  </button>
+                  </Button>
                   {teamMembers && teamMembers.length > 0 && (
                     <>
-                      <button
+                      <Button
                         onClick={() => setShowAgentSelector(!showAgentSelector)}
                         className={cn(
                           "flex items-center justify-between px-2.5 py-1.5 rounded-xl hover:bg-black/5 dark:hover:bg-white/5 text-left cursor-pointer transition-colors text-xs font-bold w-full",
@@ -392,12 +393,12 @@ export function StickyNote({
                           <UserCheck className="w-3.5 h-3.5 opacity-70" />
                           <span>Para Agente...</span>
                         </div>
-                      </button>
+                      </Button>
                       
                       {showAgentSelector && (
                         <div className="mt-1 border-t border-border pt-1.5 flex flex-col gap-0.5 max-h-32 overflow-y-auto no-scrollbar">
                           {teamMembers.map((member) => (
-                            <button
+                            <Button
                               key={member.user_id}
                               onClick={() => handleAssignAgent(member.user_id)}
                               className={cn(
@@ -406,7 +407,7 @@ export function StickyNote({
                               )}
                             >
                               {member.full_name}
-                            </button>
+                            </Button>
                           ))}
                         </div>
                       )}
@@ -417,13 +418,13 @@ export function StickyNote({
             </div>
 
             {/* Delete note */}
-            <button
+            <Button
               onClick={() => onDelete(note.id)}
               className="p-1 rounded-full hover:bg-black/5 dark:hover:bg-white/5 transition-colors text-rose-600 dark:text-rose-400 cursor-pointer"
               title="Excluir lembrete"
             >
               <Trash2 className="w-3.5 h-3.5" />
-            </button>
+            </Button>
           </div>
         </div>
       )}
@@ -446,7 +447,7 @@ export function StickyNote({
                 {searchResults.map((item) => {
                   const Icon = item.type === "lead" ? Users : item.type === "trip" ? Bus : ScrollText;
                   return (
-                    <button
+                    <Button
                       key={`${item.type}-${item.id}`}
                       type="button"
                       onMouseDown={(e) => {
@@ -457,7 +458,7 @@ export function StickyNote({
                     >
                       <Icon className="w-3.5 h-3.5 shrink-0 opacity-70" />
                       <span className="truncate">{item.label}</span>
-                    </button>
+                    </Button>
                   );
                 })}
               </div>

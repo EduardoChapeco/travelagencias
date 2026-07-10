@@ -29,7 +29,7 @@ import { Field } from "@/components/ui/field";
 import { FormInput as Input } from "@/components/ui/input";
 import { NativeSelect as Select } from "@/components/ui/select";
 import { FormTextarea as Textarea } from "@/components/ui/textarea";
-import { PrimaryButton, GhostButton } from "@/components/ui/button";
+import { PrimaryButton, GhostButton , Button } from "@/components/ui/button";
 import { StatusBadge } from "@/components/ui/badge";
 import { PageHeader, ModuleActionButton } from "@/components/shell/PageHeader";
 
@@ -341,12 +341,12 @@ function DestinationIntelligencePage() {
               {searchQuery ? "Nenhum destino encontrado" : "Nenhum destino cadastrado ainda"}
             </p>
             {!searchQuery && (
-              <button
+              <Button
                 onClick={openCreate}
                 className="mt-3 flex h-8 items-center gap-1.5 rounded-full bg-primary px-3 text-xs font-semibold text-primary-foreground"
               >
                 <Plus className="h-3.5 w-3.5" /> Cadastrar primeiro destino
-              </button>
+              </Button>
             )}
           </div>
         ) : (
@@ -394,7 +394,7 @@ function DestinationIntelligencePage() {
                       </div>
                     </div>
                     <div className="flex items-center gap-1 shrink-0">
-                      <button
+                      <Button
                         onClick={async () => {
                           try {
                             const {
@@ -445,8 +445,8 @@ function DestinationIntelligencePage() {
                         }
                       >
                         <CheckCircle className="h-3 w-3" />
-                      </button>
-                      <button
+                      </Button>
+                      <Button
                         onClick={() => generateWithAI(dest.destination)}
                         disabled={generating === dest.destination}
                         className="h-6 w-6 rounded border-none flex items-center justify-center text-muted-foreground hover:text-brand hover:border-brand transition-colors"
@@ -455,15 +455,15 @@ function DestinationIntelligencePage() {
                         <RefreshCw
                           className={`h-3 w-3 ${generating === dest.destination ? "animate-spin" : ""}`}
                         />
-                      </button>
-                      <button
+                      </Button>
+                      <Button
                         onClick={() => openEdit(dest)}
                         className="h-6 w-6 rounded border-none flex items-center justify-center text-muted-foreground hover:text-foreground transition-colors"
                         title="Editar"
                       >
                         <Edit2 className="h-3 w-3" />
-                      </button>
-                      <button
+                      </Button>
+                      <Button
                         onClick={() =>
                           confirm({
                             title: "Remover destino?",
@@ -476,7 +476,7 @@ function DestinationIntelligencePage() {
                         title="Excluir"
                       >
                         <Trash2 className="h-3 w-3" />
-                      </button>
+                      </Button>
                     </div>
                   </div>
 
@@ -576,12 +576,12 @@ function DestinationIntelligencePage() {
               <h2 className="text-sm font-bold text-foreground">
                 {editing ? `Editar: ${editing.destination}` : "Novo Destino"}
               </h2>
-              <button
+              <Button
                 onClick={closeForm}
                 className="rounded border-none p-1 hover:glass bg-white/5 border-white/10"
               >
                 <X className="h-4 w-4" />
-              </button>
+              </Button>
             </div>
 
             <div className="p-5 space-y-4">

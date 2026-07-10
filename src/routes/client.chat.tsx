@@ -11,6 +11,7 @@ import {
 import { toast } from "sonner";
 import { ClientShell } from "@/components/shell/ClientShell";
 import { fmtDate } from "@/lib/formatters";
+import { Button } from "@/components/ui/button";
 
 export const Route = createFileRoute("/client/chat")({
   component: ClientChatRoute,
@@ -249,16 +250,16 @@ function ClientChatRoute() {
               disabled={loading || !conversationId}
             />
             <div className="flex items-center gap-1 shrink-0">
-              <button className="p-2 text-muted-foreground hover:bg-zinc-200 hover:text-foreground rounded-full transition-colors hidden sm:block">
+              <Button className="p-2 text-muted-foreground hover:bg-zinc-200 hover:text-foreground rounded-full transition-colors hidden sm:block">
                 <Paperclip className="w-4 h-4" />
-              </button>
-              <button
+              </Button>
+              <Button
                 onClick={handleSend}
                 disabled={loading || !inputText.trim()}
                 className="bg-primary text-primary-foreground p-2 rounded-full hover:bg-primary/90 transition-colors disabled:opacity-50"
               >
                 <Send className="w-4 h-4" />
-              </button>
+              </Button>
             </div>
           </div>
         </div>

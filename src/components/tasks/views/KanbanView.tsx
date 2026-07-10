@@ -176,13 +176,13 @@ function QuickAddCard({
 
   if (!open) {
     return (
-      <button
+      <Button
         onClick={() => setOpen(true)}
         className="w-full mt-1 flex items-center gap-1.5 text-[11px] text-muted-foreground/70 hover:text-muted-foreground px-2 py-1.5 rounded-2xl hover:bg-surface-alt/40 transition-colors"
       >
         <Plus className="w-3.5 h-3.5" />
         Adicionar card
-      </button>
+      </Button>
     );
   }
 
@@ -290,14 +290,14 @@ function KanbanColumn({
       {/* Column Header */}
       <div className="p-3 border-b border-border/60 bg-surface-alt/20 sticky top-0 flex items-center justify-between rounded-t-xl shrink-0 gap-2">
         {/* Drag handle de coluna */}
-        <button
+        <Button
           {...colAttr}
           {...colListeners}
           className="text-muted-foreground/40 hover:text-muted-foreground cursor-grab active:cursor-grabbing transition-colors p-0.5 rounded"
           title="Arrastar coluna"
         >
           <GripVertical className="w-3.5 h-3.5" />
-        </button>
+        </Button>
 
         {/* Label da coluna */}
         <div className="flex items-center gap-2 flex-1 min-w-0">

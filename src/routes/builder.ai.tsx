@@ -14,6 +14,7 @@ import {
   AlertCircle,
 } from "lucide-react";
 import { searchUnsplashPhoto } from "@/lib/unsplash";
+import { Button } from "@/components/ui/button";
 
 export const Route = createFileRoute("/builder/ai")({
   head: () => ({
@@ -373,7 +374,7 @@ function AISiteBuilder() {
                       >
                         Visualizar Site
                       </a>
-                      <button
+                      <Button
                         onClick={() =>
                           navigate({
                             to: "/agency/$slug/portal/pages/$page_id",
@@ -383,7 +384,7 @@ function AISiteBuilder() {
                         className="flex-1 h-8 rounded-[var(--radius-card)] bg-brand hover:bg-brand-hover text-white text-[10px] font-bold transition-colors"
                       >
                         Editar Seções
-                      </button>
+                      </Button>
                     </div>
                   </div>
                 )}
@@ -435,13 +436,13 @@ function AISiteBuilder() {
             className="flex-1 h-10 px-4 rounded-[var(--radius-card)] border-none glass-card border-none text-xs focus:outline-none focus:border-brand disabled:opacity-50"
             onKeyDown={(e) => e.key === "Enter" && handleSend()}
           />
-          <button
+          <Button
             onClick={handleSend}
             disabled={loading || !input.trim() || !selectedAgencyId}
             className="w-10 h-10 rounded-[var(--radius-card)] bg-brand text-white flex items-center justify-center hover:bg-brand-hover disabled:opacity-50 shrink-0 transition-colors"
           >
             <Send className="w-4 h-4" />
-          </button>
+          </Button>
         </div>
       </div>
     </div>

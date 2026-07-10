@@ -5,7 +5,7 @@ import { toast } from "sonner";
 import {
   X, Clock, Users, AlertTriangle, Link as LinkIcon, CheckSquare, Square, Pencil, Check, Hotel, Bus, UserCheck, Phone, Plane, MapPin, Upload, Ticket, Loader2, Trash2, Globe, FileText, } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
-import { PrimaryButton, GhostButton } from "@/components/ui/button";
+import { PrimaryButton, GhostButton , Button } from "@/components/ui/button";
 import { fmtDate } from "@/lib/formatters";
 import {
   type BoardingCard as Card,
@@ -498,16 +498,16 @@ export function CardDetailPanel({
           </div>
           <div className="flex items-center gap-2">
             {editDirty && (
-              <button
+              <Button
                 type="button"
                 onClick={saveInlineEdits}
                 disabled={editSaving}
                 className="flex items-center gap-1.5 h-7 rounded-full bg-brand text-brand-foreground px-3 text-xs font-semibold"
               >
                 {editSaving ? "Salvando…" : "Salvar alterações"}
-              </button>
+              </Button>
             )}
-            <button
+            <Button
               type="button"
               onClick={exportGuiaPdf}
               className="flex items-center gap-1.5 h-7 rounded border border-border bg-surface px-2.5 text-xs font-semibold text-foreground hover:bg-surface-alt transition-colors"
@@ -515,27 +515,27 @@ export function CardDetailPanel({
             >
               <FileText className="h-3.5 w-3.5 text-muted-foreground" />
               <span>PDF Guia</span>
-            </button>
-            <button
+            </Button>
+            <Button
               type="button"
               onClick={() => setIsEditing(!isEditing)}
               className={`rounded border border-border p-1 hover:bg-surface-alt ${isEditing ? "bg-brand/10 border-brand text-brand" : ""}`}
               title={isEditing ? "Visualizar Informações" : "Editar Informações"}
             >
               <Pencil className="h-4 w-4" />
-            </button>
-            <button
+            </Button>
+            <Button
               type="button"
               onClick={onClose}
               className="rounded border border-border p-1 hover:bg-surface-alt"
             >
               <X className="h-4 w-4" />
-            </button>
+            </Button>
           </div>
         </div>
         {/* Section toggle */}
         <div className="flex border-b border-border shrink-0">
-          <button
+          <Button
             onClick={() => setActiveSection("main")}
             className={`flex-1 py-2 text-xs font-semibold transition-colors ${
               activeSection === "main"
@@ -544,8 +544,8 @@ export function CardDetailPanel({
             }`}
           >
             Operacional
-          </button>
-          <button
+          </Button>
+          <Button
             onClick={() => setActiveSection("tickets")}
             className={`flex-1 py-2 text-xs font-semibold transition-colors ${
               activeSection === "tickets"
@@ -555,8 +555,8 @@ export function CardDetailPanel({
           >
             Bilhetes{" "}
             {ticketsCardQ.data && ticketsCardQ.data.length > 0 && `(${ticketsCardQ.data.length})`}
-          </button>
-          <button
+          </Button>
+          <Button
             onClick={() => setActiveSection("rooming")}
             className={`flex-1 py-2 text-xs font-semibold transition-colors ${
               activeSection === "rooming"
@@ -565,19 +565,19 @@ export function CardDetailPanel({
             }`}
           >
             Rooming List
-          </button>
+          </Button>
         </div>
         {/* ── SECTION: TICKETS ── */}
         {activeSection === "tickets" && (
           <div className="p-5 space-y-4">
             <div className="flex items-center justify-between">
               <h3 className="text-sm font-semibold">Bilhetes / Ingressos</h3>
-              <button
+              <Button
                 onClick={() => ticketFileRef.current?.click()}
                 className="flex items-center gap-1.5 h-7 border border-border rounded-full px-2.5 text-xs text-muted-foreground hover:text-foreground hover:bg-surface-alt transition-colors"
               >
                 <Upload className="h-3 w-3" /> Upload Bilhete
-              </button>
+              </Button>
               <input
                 ref={ticketFileRef}
                 type="file"
@@ -647,7 +647,7 @@ export function CardDetailPanel({
                         Ver
                       </a>
                     )}
-                    <button
+                    <Button
                       onClick={async () => {
                         await supabase.from("boarding_tickets").delete().eq("id", t.id);
                         qc.invalidateQueries({ queryKey: ["boarding_tickets", card.id] });
@@ -655,7 +655,7 @@ export function CardDetailPanel({
                       className="text-muted-foreground hover:text-danger p-1"
                     >
                       <Trash2 className="h-3.5 w-3.5" />
-                    </button>
+                    </Button>
                   </div>
                 </div>
               ))}
@@ -715,7 +715,7 @@ export function CardDetailPanel({
                             {f.date ? new Date(f.date).toLocaleDateString("pt-BR") : "S/Data"}
                           </div>
                         </div>
-                        <button
+                        <Button
                           type="button"
                           onClick={() => {
                             setAirline(f.airline ?? "");
@@ -728,7 +728,7 @@ export function CardDetailPanel({
                           className="h-6 rounded bg-brand/10 text-brand text-[10px] font-bold px-2 hover:bg-brand/20 transition-colors shrink-0"
                         >
                           Importar
-                        </button>
+                        </Button>
                       </div>
                     ))}
                   </div>
@@ -952,7 +952,7 @@ export function CardDetailPanel({
                       instantaneamente.
                     </p>
                     <div className="flex gap-2">
-                      <button
+                      <Button
                         type="button"
                         disabled={triggerEmergency.isPending}
                         onClick={() => {
@@ -963,8 +963,8 @@ export function CardDetailPanel({
                         className="flex-1 py-1.5 px-3 rounded bg-red-600 hover:bg-red-700 text-white text-[11px] font-bold shadow-none transition-colors disabled:opacity-50"
                       >
                         Meu Voo Atrasou
-                      </button>
-                      <button
+                      </Button>
+                      <Button
                         type="button"
                         disabled={triggerEmergency.isPending}
                         onClick={() => {
@@ -975,7 +975,7 @@ export function CardDetailPanel({
                         className="flex-1 py-1.5 px-3 rounded border border-red-600 hover:bg-red-100 text-red-700 text-[11px] font-bold shadow-none transition-colors disabled:opacity-50 bg-white"
                       >
                         Voo Cancelado
-                      </button>
+                      </Button>
                     </div>
                   </div>
 
@@ -1230,13 +1230,13 @@ export function CardDetailPanel({
                         className="flex items-center gap-1 rounded-full bg-warning/10 border border-warning/30 text-warning px-2 py-0.5 text-[11px] font-semibold"
                       >
                         {tag}
-                        <button
+                        <Button
                           type="button"
                           onClick={() => removeTag(tag)}
                           className="hover:text-danger"
                         >
                           <X className="h-3 w-3" />
-                        </button>
+                        </Button>
                       </span>
                     ))}
                   </div>
@@ -1245,14 +1245,14 @@ export function CardDetailPanel({
                     {PRESET_TAGS.filter((t) => !tags.includes(t))
                       .slice(0, 5)
                       .map((tag) => (
-                        <button
+                        <Button
                           key={tag}
                           type="button"
                           onClick={() => addTag(tag)}
                           className="rounded-full border border-border bg-surface-alt px-2 py-0.5 text-[10px] text-muted-foreground hover:border-warning hover:text-warning transition-colors"
                         >
                           + {tag}
-                        </button>
+                        </Button>
                       ))}
                   </div>
                   <div className="flex gap-2">
@@ -1269,13 +1269,13 @@ export function CardDetailPanel({
                       placeholder="Nova tag personalizada…"
                       className="h-8 flex-1 rounded-full border border-border bg-surface px-2.5 text-xs outline-none focus:border-border-strong text-foreground"
                     />
-                    <button
+                    <Button
                       type="button"
                       onClick={() => addTag(newTag)}
                       className="h-8 rounded-full border border-border px-2.5 text-xs hover:bg-surface-alt text-foreground"
                     >
                       + Add
-                    </button>
+                    </Button>
                   </div>
                 </div>
               </>
@@ -1312,25 +1312,25 @@ export function CardDetailPanel({
               <div className="space-y-2">
                 {checklist.map((item, i) => (
                   <div key={i} className="flex items-center gap-2 group/item">
-                    <button type="button" onClick={() => toggleItem(i)} className="shrink-0">
+                    <Button type="button" onClick={() => toggleItem(i)} className="shrink-0">
                       {item.done ? (
                         <CheckSquare className="h-4 w-4 text-success" />
                       ) : (
                         <Square className="h-4 w-4 text-muted-foreground" />
                       )}
-                    </button>
+                    </Button>
                     <span
                       className={`flex-1 text-sm text-foreground ${item.done ? "line-through text-muted-foreground" : ""}`}
                     >
                       {item.label}
                     </span>
-                    <button
+                    <Button
                       type="button"
                       onClick={() => removeItem(i)}
                       className="opacity-0 group-hover/item:opacity-100 text-muted-foreground hover:text-danger"
                     >
                       <X className="h-3.5 w-3.5" />
-                    </button>
+                    </Button>
                   </div>
                 ))}
               </div>
@@ -1348,13 +1348,13 @@ export function CardDetailPanel({
                   placeholder="Novo item…"
                   className="h-8 flex-1 rounded-full border border-border bg-surface px-2.5 text-xs outline-none focus:border-border-strong text-foreground"
                 />
-                <button
+                <Button
                   type="button"
                   onClick={addItem}
                   className="h-8 rounded-full border border-border px-2.5 text-xs hover:bg-surface-alt text-foreground"
                 >
                   + Adicionar
-                </button>
+                </Button>
               </div>
             </div>
 
@@ -1412,13 +1412,13 @@ export function CardDetailPanel({
                   Chamados de Suporte
                 </div>
                 {!showTicketForm && (
-                  <button
+                  <Button
                     type="button"
                     onClick={() => setShowTicketForm(true)}
                     className="text-[10px] font-bold text-primary hover:underline bg-transparent border-none p-0 cursor-pointer"
                   >
                     + Abrir Chamado
-                  </button>
+                  </Button>
                 )}
               </div>
 
@@ -1464,15 +1464,15 @@ export function CardDetailPanel({
                     </div>
                   </div>
                   <div className="flex gap-2 justify-end">
-                    <button
+                    <Button
                       type="button"
                       disabled={createTicket.isPending || !ticketTitle}
                       onClick={() => createTicket.mutate()}
                       className="h-7 rounded bg-brand text-brand-foreground text-xs font-semibold px-3 hover:bg-brand/95"
                     >
                       Enviar
-                    </button>
-                    <button
+                    </Button>
+                    <Button
                       type="button"
                       onClick={() => {
                         setShowTicketForm(false);
@@ -1482,7 +1482,7 @@ export function CardDetailPanel({
                       className="h-7 rounded border border-border text-xs px-3 hover:bg-surface-alt text-foreground"
                     >
                       Cancelar
-                    </button>
+                    </Button>
                   </div>
                 </div>
               )}

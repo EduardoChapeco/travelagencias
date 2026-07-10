@@ -18,6 +18,7 @@ import {
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { ActionRegistry } from "@/lib/ai/ActionRegistry";
+import { Button } from "@/components/ui/button";
 
 // @ts-ignore
 export const Route = createFileRoute("/agency/$slug/settings/ai-audit")({
@@ -101,13 +102,13 @@ function Page() {
               <PageHeader
           title="Auditoria de IA"
           actions={
-            <button
+            <Button
               onClick={() => auditQuery.refetch()}
               className="h-7 px-3 flex items-center gap-1 rounded-full text-white/60 hover:text-white hover:bg-white/10 transition-colors cursor-pointer"
             >
               <RefreshCw className={cn("h-3.5 w-3.5", auditQuery.isFetching && "animate-spin")} />
               <span className="hidden sm:inline">Atualizar</span>
-            </button>
+            </Button>
           }
         />
       
@@ -272,13 +273,13 @@ function Page() {
                             Sucesso
                           </span>
                         )}
-                        <button
+                        <Button
                           onClick={() => setExpandedLog(isExpanded ? null : log.id)}
                           className="p-1 rounded hover:bg-muted text-muted-foreground hover:text-foreground"
                           title="Ver detalhes técnicos"
                         >
                           <Eye className="h-3.5 w-3.5" />
-                        </button>
+                        </Button>
                       </div>
                     </div>
 

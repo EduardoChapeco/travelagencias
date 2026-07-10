@@ -4,6 +4,7 @@ import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { type Proposal } from "@/services/proposals";
 import { SheetPage } from "@/components/ui/sheet";
+import { Button } from "@/components/ui/button";
 
 type Props = {
   draft: Proposal;
@@ -67,13 +68,13 @@ Não inclua crases markdown nem texto adicional.`;
 
   return (
     <>
-      <button
+      <Button
         type="button"
         onClick={() => setOpen(true)}
         className="flex h-9 items-center gap-1.5 rounded-full bg-amber-500/10 border border-amber-500/30 px-3 text-xs font-semibold text-amber-600 hover:bg-amber-500/20 transition-all"
       >
         <Sparkles className="h-3.5 w-3.5" /> Assistente de Escrita
-      </button>
+      </Button>
 
       <SheetPage
         isOpen={open}
@@ -99,7 +100,7 @@ Não inclua crases markdown nem texto adicional.`;
             />
           </div>
 
-          <button
+          <Button
             onClick={handleMagic}
             disabled={busy}
             className="w-full flex h-10 items-center justify-center gap-2 rounded-[var(--radius-card)] bg-amber-500 text-white font-bold hover:bg-amber-600 transition-all disabled:opacity-60"
@@ -113,7 +114,7 @@ Não inclua crases markdown nem texto adicional.`;
                 <Wand2 className="h-4 w-4" /> Aplicar Mágica
               </>
             )}
-          </button>
+          </Button>
         </div>
       </SheetPage>
     </>

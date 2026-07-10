@@ -7,7 +7,7 @@ import { Field } from "@/components/ui/field";
 import { FormInput as Input } from "@/components/ui/input";
 import { NativeSelect as Select } from "@/components/ui/select";
 import { FormTextarea as Textarea } from "@/components/ui/textarea";
-import { PrimaryButton, GhostButton } from "@/components/ui/button";
+import { PrimaryButton, GhostButton , Button } from "@/components/ui/button";
 import { StatusBadge } from "@/components/ui/badge";
 import { fmtDate, money } from "@/lib/formatters";
 import { SheetPage } from "@/components/ui/sheet";
@@ -584,7 +584,7 @@ export function NewGroupTourWizard({
                     {AMENITIES_LIST.map((amenity) => {
                       const selected = watchHotelAmenities?.includes(amenity);
                       return (
-                        <button
+                        <Button
                           key={amenity}
                           type="button"
                           onClick={() => {
@@ -601,7 +601,7 @@ export function NewGroupTourWizard({
                           }`}
                         >
                           {amenity}
-                        </button>
+                        </Button>
                       );
                     })}
                   </div>
@@ -725,7 +725,7 @@ export function NewGroupTourWizard({
                           <span className="font-mono font-bold text-brand text-sm">
                             {money(tier.price)}
                           </span>
-                          <button
+                          <Button
                             type="button"
                             onClick={() => {
                               setValue(
@@ -737,7 +737,7 @@ export function NewGroupTourWizard({
                             className="text-muted-foreground hover:text-danger p-1"
                           >
                             <Trash2 className="h-4 w-4" />
-                          </button>
+                          </Button>
                         </div>
                       </div>
                     ))
@@ -836,7 +836,7 @@ export function NewGroupTourWizard({
                           <span className="font-mono font-bold text-success text-sm">
                             +{money(ext.price)}
                           </span>
-                          <button
+                          <Button
                             type="button"
                             onClick={() => {
                               setValue(
@@ -848,7 +848,7 @@ export function NewGroupTourWizard({
                             className="text-muted-foreground hover:text-danger p-1"
                           >
                             <Trash2 className="h-4 w-4" />
-                          </button>
+                          </Button>
                         </div>
                       </div>
                     ))
@@ -927,7 +927,7 @@ export function NewGroupTourWizard({
                           <span className="flex items-center gap-1.5">
                             <Check className="h-3 w-3" /> {inc}
                           </span>
-                          <button
+                          <Button
                             type="button"
                             onClick={() =>
                               setValue(
@@ -939,7 +939,7 @@ export function NewGroupTourWizard({
                             className="hover:text-danger"
                           >
                             <X className="h-3 w-3" />
-                          </button>
+                          </Button>
                         </div>
                       ))}
                       {watchIncludes.length === 0 && (
@@ -994,7 +994,7 @@ export function NewGroupTourWizard({
                           <span className="flex items-center gap-1.5">
                             <X className="h-3 w-3" /> {exc}
                           </span>
-                          <button
+                          <Button
                             type="button"
                             onClick={() =>
                               setValue(
@@ -1006,7 +1006,7 @@ export function NewGroupTourWizard({
                             className="hover:text-danger/70"
                           >
                             <X className="h-3 w-3" />
-                          </button>
+                          </Button>
                         </div>
                       ))}
                       {watchExcludes.length === 0 && (
@@ -1028,13 +1028,13 @@ export function NewGroupTourWizard({
                     <div className="relative w-full h-40 rounded-[var(--radius-card)] border border-border overflow-hidden group">
                       <img src={watchCoverUrl} alt="Cover" className="w-full h-full object-cover" />
                       <div className="absolute inset-0 bg-background/80 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                        <button
+                        <Button
                           type="button"
                           onClick={() => setValue("coverUrl", "", { shouldValidate: true })}
                           className="text-danger flex items-center gap-2 text-sm font-bold bg-surface px-4 py-2 rounded-2xl border border-danger/30 hover:bg-danger hover:text-white transition-colors"
                         >
                           <Trash2 className="h-4 w-4" /> Remover Imagem
-                        </button>
+                        </Button>
                       </div>
                     </div>
                   ) : (
@@ -1098,7 +1098,7 @@ export function NewGroupTourWizard({
                           <div className="flex h-8 w-8 items-center justify-center rounded-full bg-brand/10 text-brand font-bold text-xs">
                             {idx + 1}
                           </div>
-                          <button
+                          <Button
                             type="button"
                             onClick={() =>
                               setValue(
@@ -1113,7 +1113,7 @@ export function NewGroupTourWizard({
                             title="Remover dia"
                           >
                             <Trash2 className="h-4 w-4" />
-                          </button>
+                          </Button>
                         </div>
                         <div className="flex-1 space-y-3">
                           <Input

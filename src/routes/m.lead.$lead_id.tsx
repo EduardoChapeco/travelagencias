@@ -6,7 +6,7 @@ import { Field } from "@/components/ui/field";
 import { FormInput as Input } from "@/components/ui/input";
 import { NativeSelect as Select } from "@/components/ui/select";
 import { FormTextarea as Textarea } from "@/components/ui/textarea";
-import { PrimaryButton } from "@/components/ui/button";
+import { PrimaryButton , Button } from "@/components/ui/button";
 import { ShieldCheck, Calendar, Users, MapPin, Sparkles, Heart, X, Plus } from "lucide-react";
 
 export const Route = createFileRoute("/m/lead/$lead_id")({
@@ -441,7 +441,7 @@ function PublicLeadFormPage() {
                           </div>
                         )}
                       </div>
-                      <button
+                      <Button
                         type="button"
                         onClick={() => {
                           const updated = (form.pax_list || []).filter((_, idx) => idx !== index);
@@ -450,20 +450,20 @@ function PublicLeadFormPage() {
                         className="text-muted-foreground hover:text-danger p-1"
                       >
                         <X className="h-4 w-4" />
-                      </button>
+                      </Button>
                     </div>
                   ))}
                 </div>
               )}
 
-              <button
+              <Button
                 type="button"
                 onClick={() => setPaxFormOpen((o) => !o)}
                 className="text-xs font-bold text-brand hover:underline flex items-center gap-1 mt-2 cursor-pointer"
               >
                 <Plus className="h-4 w-4" />{" "}
                 {paxFormOpen ? "Fechar Formulário" : "Adicionar Acompanhante"}
-              </button>
+              </Button>
 
               {paxFormOpen && (
                 <div className="border-none/80 p-4 rounded-[var(--radius-card)] glass bg-white/5 border-white/10/10 space-y-3 mt-3">

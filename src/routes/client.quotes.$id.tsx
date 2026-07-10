@@ -8,6 +8,7 @@ import { PageHeader } from "@/components/shell/PageHeader";
 import { KycSignature } from "@/components/client-portal/KycSignature";
 import { getProposalTemplate } from "@/components/proposals/templates";
 import { CanvasFormat } from "@/components/studio/StudioFrame";
+import { Button } from "@/components/ui/button";
 type ProposalPublic = any;
 function ClientCanvasFrame({ children, format }: { children: React.ReactNode, format: string }) {
   return <div className={`canvas-frame ${format}`}>{children}</div>;
@@ -125,12 +126,12 @@ function ClientQuoteView() {
   return (
     <div className="max-w-4xl mx-auto space-y-6 pb-20">
       <div className="flex items-center justify-between mb-4">
-        <button 
+        <Button 
           onClick={() => navigate({ to: "/client/quotes" })}
           className="flex items-center gap-2 text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
         >
           <ArrowLeft className="h-4 w-4" /> Voltar
-        </button>
+        </Button>
       </div>
 
       <PageHeader
@@ -148,20 +149,20 @@ function ClientQuoteView() {
             </div>
           </div>
           <div className="flex items-center gap-2">
-            <button
+            <Button
               onClick={() => decide.mutate("rejected")}
               disabled={decide.isPending || isSigning}
               className="px-4 py-2 text-sm font-semibold text-red-600 bg-red-100 hover:bg-red-200 rounded-full transition-colors disabled:opacity-50"
             >
               Recusar
-            </button>
-            <button
+            </Button>
+            <Button
               onClick={() => setIsSigning(true)}
               disabled={decide.isPending || isSigning}
               className="px-4 py-2 text-sm font-semibold text-white bg-green-600 hover:bg-green-700 rounded-full flex items-center gap-2 transition-colors disabled:opacity-50"
             >
               <Check className="h-4 w-4" /> Aceitar Proposta
-            </button>
+            </Button>
           </div>
         </div>
       )}

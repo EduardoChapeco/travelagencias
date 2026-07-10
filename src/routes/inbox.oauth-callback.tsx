@@ -4,6 +4,7 @@ import { z } from "zod";
 import { Loader2, CheckCircle2, XCircle } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
+import { Button } from "@/components/ui/button";
 
 const searchSchema = z.object({
   code: z.string().optional(),
@@ -115,12 +116,12 @@ function OAuthCallbackPage() {
             <XCircle className="h-12 w-12 text-destructive animate-pulse" />
             <h2 className="text-lg font-bold text-destructive">Falha na Conexão</h2>
             <p className="text-sm text-muted-foreground mb-4">{message}</p>
-            <button
+            <Button
               onClick={() => navigate({ to: "/" })}
               className="w-full h-10 rounded-[var(--radius-card)] bg-brand text-white text-xs font-bold hover:bg-brand/90 transition-all cursor-pointer"
             >
               Voltar ao Painel
-            </button>
+            </Button>
           </>
         )}
       </div>

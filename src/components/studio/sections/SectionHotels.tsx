@@ -17,7 +17,7 @@ import { useState, useEffect } from "react";
 import { StudioUnsplashPicker } from "@/components/studio/StudioUnsplashPicker";
 import { infotravelSearchHotels } from "@/services/infotravel";
 import { toast } from "sonner";
-import { PrimaryButton } from "@/components/ui/button";
+import { PrimaryButton , Button } from "@/components/ui/button";
 import {
   SupplierAutocomplete,
   type SupplierOption,
@@ -198,13 +198,13 @@ export function SectionHotels({ draft, save }: Props) {
               <span className="text-[10px] uppercase tracking-wider font-bold text-muted-foreground">
                 Quartos
               </span>
-              <button
+              <Button
                 type="button"
                 onClick={() => addRoom(i)}
                 className="flex items-center gap-1 text-[10px] text-brand hover:underline"
               >
                 <Plus className="h-3 w-3" /> Adicionar
-              </button>
+              </Button>
             </div>
             {(h.rooms ?? []).map((r, ri) => (
               <div key={ri} className="flex items-center gap-2 mb-1">
@@ -221,13 +221,13 @@ export function SectionHotels({ draft, save }: Props) {
                   value={r.qty}
                   onChange={(e) => updRoom(i, ri, { qty: parseInt(e.target.value) || 1 })}
                 />
-                <button
+                <Button
                   type="button"
                   onClick={() => removeRoom(i, ri)}
                   className="rounded p-1 text-muted-foreground hover:text-danger transition-colors"
                 >
                   <Trash2 className="h-3.5 w-3.5" />
-                </button>
+                </Button>
               </div>
             ))}
           </div>
@@ -247,13 +247,13 @@ export function SectionHotels({ draft, save }: Props) {
                   <span className="text-[10px] uppercase tracking-wide font-semibold">
                     Buscar imagem
                   </span>
-                  <button
+                  <Button
                     type="button"
                     onClick={() => setUnsplashOpenIndex(null)}
                     className="text-xs text-muted-foreground hover:text-foreground"
                   >
                     Fechar
-                  </button>
+                  </Button>
                 </div>
                 <StudioUnsplashPicker
                   agencyId={agency?.id ?? ""}
@@ -268,13 +268,13 @@ export function SectionHotels({ draft, save }: Props) {
                 />
               </div>
             ) : (
-              <button
+              <Button
                 type="button"
                 onClick={() => setUnsplashOpenIndex(i)}
                 className="flex w-full items-center justify-center gap-1.5 rounded-full border border-dashed border-border py-2 text-[10px] text-muted-foreground hover:bg-surface-alt transition-colors mt-1"
               >
                 <Search className="h-3 w-3" /> Buscar foto do hotel no Unsplash
-              </button>
+              </Button>
             )}
           </div>
 
@@ -292,13 +292,13 @@ export function SectionHotels({ draft, save }: Props) {
       ))}
       <div className="flex gap-2">
         <AddBtn onClick={add}>Adicionar hotel</AddBtn>
-        <button
+        <Button
           type="button"
           onClick={() => setInfotravelOpen(true)}
           className="flex-1 inline-flex items-center justify-center gap-1.5 h-[34px] rounded border border-border bg-surface text-xs font-semibold text-muted-foreground hover:bg-surface-alt hover:text-foreground transition-all cursor-pointer"
         >
           <Search className="h-3.5 w-3.5" /> Buscar no Infotravel
-        </button>
+        </Button>
       </div>
 
       {infotravelOpen && (
@@ -311,13 +311,13 @@ export function SectionHotels({ draft, save }: Props) {
               <h3 className="ds-h3 text-foreground flex items-center gap-2">
                 <Search className="h-4 w-4 text-brand" /> Buscar Hotel no Infotravel
               </h3>
-              <button
+              <Button
                 type="button"
                 onClick={() => setInfotravelOpen(false)}
                 className="text-xs text-muted-foreground hover:text-foreground font-semibold"
               >
                 Fechar
-              </button>
+              </Button>
             </div>
 
             <div className="space-y-3 flex-1 overflow-y-auto no-scrollbar pr-1">
@@ -404,13 +404,13 @@ export function SectionHotels({ draft, save }: Props) {
                             currency: "BRL",
                           })}
                         </span>
-                        <button
+                        <Button
                           type="button"
                           onClick={() => importHotel(hotel)}
                           className="px-2.5 py-1 text-[10px] bg-primary text-primary-foreground font-semibold rounded hover:bg-primary/95 transition-all cursor-pointer"
                         >
                           Selecionar
-                        </button>
+                        </Button>
                       </div>
                     </div>
                   </div>

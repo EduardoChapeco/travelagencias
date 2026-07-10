@@ -40,7 +40,7 @@ import {
 import { Field } from "@/components/ui/field";
 import { FormInput as Input } from "@/components/ui/input";
 import { NativeSelect as Select } from "@/components/ui/select";
-import { PrimaryButton, GhostButton } from "@/components/ui/button";
+import { PrimaryButton, GhostButton , Button } from "@/components/ui/button";
 
 export const Route = createFileRoute("/agency/$slug/calendar")({
   head: ({ context }: any) => ({ meta: [{ title: `Agenda · ${context?.brand?.platform_name || 'Turis'}` }] }),
@@ -257,24 +257,24 @@ function CalendarPage() {
           title={`${MONTHS[month]} ${year}`}
           actions={
             <div className="flex items-center gap-1.5">
-              <button
+              <Button
                 onClick={handlePrevMonth}
                 className="h-7 w-7 flex items-center justify-center border border-white/10 hover:border-white/20 bg-white/5 rounded-full transition-colors cursor-pointer text-white/90"
               >
                 <ChevronLeft className="h-3 w-3" />
-              </button>
-              <button
+              </Button>
+              <Button
                 onClick={handleToday}
                 className="h-7 px-3 border border-white/10 hover:border-white/20 bg-white/5 text-[10px] font-bold rounded-full transition-colors cursor-pointer text-white/90"
               >
                 Hoje
-              </button>
-              <button
+              </Button>
+              <Button
                 onClick={handleNextMonth}
                 className="h-7 w-7 flex items-center justify-center border border-white/10 hover:border-white/20 bg-white/5 rounded-full transition-colors cursor-pointer text-white/90"
               >
                 <ChevronRight className="h-3 w-3" />
-              </button>
+              </Button>
 
               <div className="w-[1px] h-5 bg-white/12" />
 
@@ -306,13 +306,13 @@ function CalendarPage() {
               )}
 
               {isAgencyAdmin && (
-                <button
+                <Button
                   onClick={() => setAdminPanelOpen(true)}
                   className="h-7 w-7 flex items-center justify-center rounded-full border border-white/15 text-white/60 hover:text-white hover:bg-white/10 transition-colors cursor-pointer"
                   title="Administrar Calendário"
                 >
                   <Settings2 className="h-3.5 w-3.5" />
-                </button>
+                </Button>
               )}
             </div>
           }
@@ -469,12 +469,12 @@ function CalendarPage() {
                     selectedMeeting.meeting_type}
                 </span>
               </div>
-              <button
+              <Button
                 onClick={() => setSelectedMeeting(null)}
                 className="text-muted-foreground hover:text-foreground p-1 cursor-pointer"
               >
                 <X className="h-4 w-4" />
-              </button>
+              </Button>
             </div>
 
             <div className="space-y-3.5 text-xs">
@@ -534,7 +534,7 @@ function CalendarPage() {
               </div>
 
               <div className="flex items-center gap-2 pt-1">
-                <button
+                <Button
                   onClick={async () => {
                     const toastId = toast.loading("Sincronizando com Google Agenda...");
                     try {
@@ -559,7 +559,7 @@ function CalendarPage() {
                       <RefreshCw className="h-3.5 w-3.5" /> Sincronizar Google Agenda
                     </>
                   )}
-                </button>
+                </Button>
               </div>
             </div>
 
@@ -570,7 +570,7 @@ function CalendarPage() {
               >
                 Fechar
               </GhostButton>
-              <button
+              <Button
                 onClick={() => {
                   confirm({
                     title: "Excluir Compromisso",
@@ -582,7 +582,7 @@ function CalendarPage() {
                 className="inline-flex h-8 items-center gap-1 px-3 bg-danger/5 hover:bg-danger/10 border border-danger/20 text-danger text-xs font-bold rounded-[var(--radius-card)] transition-colors cursor-pointer"
               >
                 <Trash className="h-3.5 w-3.5" /> Excluir
-              </button>
+              </Button>
             </div>
           </div>
         </div>
@@ -630,13 +630,13 @@ function CalendarPage() {
           >
             <div className="flex items-center justify-between border-b border-border/40 pb-3">
               <h3 className="text-sm font-bold text-foreground">Novo Compromisso</h3>
-              <button
+              <Button
                 type="button"
                 onClick={() => setNewEventOpen(false)}
                 className="text-muted-foreground hover:text-foreground p-1 cursor-pointer"
               >
                 <X className="h-4 w-4" />
-              </button>
+              </Button>
             </div>
 
             <div className="space-y-3">

@@ -16,7 +16,7 @@ import { useAgency } from "@/lib/agency-context";
 import { getAgencyMarkup, calculateMarkup } from "@/utils/pricing";
 import { infotravelSearchFlights } from "@/services/infotravel";
 import { toast } from "sonner";
-import { PrimaryButton } from "@/components/ui/button";
+import { PrimaryButton , Button } from "@/components/ui/button";
 import {
   SupplierAutocomplete,
   type SupplierOption,
@@ -216,13 +216,13 @@ export function SectionFlights({ draft, save }: Props) {
       ))}
       <div className="flex gap-2">
         <AddBtn onClick={add}>Adicionar voo</AddBtn>
-        <button
+        <Button
           type="button"
           onClick={() => setInfotravelOpen(true)}
           className="flex-1 inline-flex items-center justify-center gap-1.5 h-[34px] rounded border border-border bg-surface text-xs font-semibold text-muted-foreground hover:bg-surface-alt hover:text-foreground transition-all cursor-pointer"
         >
           <Search className="h-3.5 w-3.5" /> Buscar no Infotravel
-        </button>
+        </Button>
       </div>
 
       {infotravelOpen && (
@@ -235,13 +235,13 @@ export function SectionFlights({ draft, save }: Props) {
               <h3 className="ds-h3 text-foreground flex items-center gap-2">
                 <Search className="h-4 w-4 text-brand" /> Buscar Voo no Infotravel
               </h3>
-              <button
+              <Button
                 type="button"
                 onClick={() => setInfotravelOpen(false)}
                 className="text-xs text-muted-foreground hover:text-foreground font-semibold"
               >
                 Fechar
-              </button>
+              </Button>
             </div>
 
             <div className="space-y-3 flex-1 overflow-y-auto no-scrollbar pr-1">
@@ -331,13 +331,13 @@ export function SectionFlights({ draft, save }: Props) {
                             currency: "BRL",
                           })}
                         </span>
-                        <button
+                        <Button
                           type="button"
                           onClick={() => importFlight(flight)}
                           className="px-2.5 py-1 text-[10px] bg-primary text-primary-foreground font-semibold rounded hover:bg-primary/95 transition-all cursor-pointer"
                         >
                           Selecionar
-                        </button>
+                        </Button>
                       </div>
                     </div>
                   </div>

@@ -19,7 +19,7 @@ import { PageHeader, ModuleActionButton } from "@/components/shell/PageHeader";
 import { Field } from "@/components/ui/field";
 import { FormInput as Input } from "@/components/ui/input";
 import { NativeSelect as Select } from "@/components/ui/select";
-import { PrimaryButton, GhostButton } from "@/components/ui/button";
+import { PrimaryButton, GhostButton , Button } from "@/components/ui/button";
 import { StatusBadge } from "@/components/ui/badge";
 
 export const Route = createFileRoute("/agency/$slug/settings/financial")({
@@ -334,7 +334,7 @@ function FinancialSettingsPage() {
                             </td>
                             <td className="px-4 py-3.5 text-right">
                               {isClosed ? (
-                                <button
+                                <Button
                                   onClick={() =>
                                     togglePeriodStatus.mutate({
                                       periodId: savedPeriod.id,
@@ -346,9 +346,9 @@ function FinancialSettingsPage() {
                                   className="inline-flex items-center gap-1 text-[10px] font-bold text-rose-600 border border-rose-600/20 bg-rose-50 hover:bg-rose-100 px-2 py-1 rounded-full cursor-pointer transition-colors"
                                 >
                                   <Unlock className="w-3 h-3" /> Reabrir
-                                </button>
+                                </Button>
                               ) : (
-                                <button
+                                <Button
                                   onClick={() =>
                                     togglePeriodStatus.mutate({
                                       periodId: savedPeriod?.id,
@@ -360,7 +360,7 @@ function FinancialSettingsPage() {
                                   className="inline-flex items-center gap-1 text-[10px] font-bold text-emerald-600 border border-emerald-600/20 bg-emerald-50 hover:bg-emerald-100 px-2 py-1 rounded-full cursor-pointer transition-colors"
                                 >
                                   <Lock className="w-3 h-3" /> Travar Mês
-                                </button>
+                                </Button>
                               )}
                             </td>
                           </tr>
@@ -418,7 +418,7 @@ function FinancialSettingsPage() {
                           <StatusBadge tone={plan.status === "active" ? "success" : "neutral"}>
                             {plan.status === "active" ? "Ativo" : "Inativo"}
                           </StatusBadge>
-                          <button
+                          <Button
                             onClick={() => {
                               if (confirm("Deseja realmente apagar este plano contábil?")) {
                                 deletePlan.mutate(plan.id);
@@ -427,7 +427,7 @@ function FinancialSettingsPage() {
                             className="p-1 rounded text-gray-400 hover:text-rose-600 hover:bg-gray-100 transition-colors cursor-pointer"
                           >
                             <Trash2 className="w-4 h-4" />
-                          </button>
+                          </Button>
                         </div>
                       </div>
 
@@ -510,12 +510,12 @@ function FinancialSettingsPage() {
                   Criar Novo Plano de Comissão
                 </h3>
               </div>
-              <button
+              <Button
                 onClick={() => setShowPlanModal(false)}
                 className="p-1 rounded hover:bg-gray-100"
               >
                 <X className="w-4 h-4" />
-              </button>
+              </Button>
             </div>
 
             <div className="p-5 space-y-4 text-xs">

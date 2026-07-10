@@ -163,12 +163,12 @@ export function StudioMapWidget({
           >
             <span className="font-bold">{i + 1}.</span>
             <span className="truncate max-w-[150px]">{wp.label}</span>
-            <button
+            <Button
               onClick={() => removeWaypoint(wp.id)}
               className="text-muted-foreground hover:text-red-500 ml-1"
             >
               &times;
-            </button>
+            </Button>
           </div>
         ))}
       </div>

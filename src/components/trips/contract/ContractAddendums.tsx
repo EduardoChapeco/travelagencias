@@ -5,7 +5,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { Plus } from "lucide-react";
 import { FormInput as Input } from "@/components/ui/input";
 import { Field } from "@/components/ui/field";
-import { PrimaryButton, GhostButton } from "@/components/ui/button";
+import { PrimaryButton, GhostButton , Button } from "@/components/ui/button";
 import { StatusBadge } from "@/components/ui/badge";
 
 type Addendum = {
@@ -91,13 +91,13 @@ export function ContractAddendums({
       <div className="mb-4 flex items-center justify-between">
         <h2 className="text-sm font-semibold text-foreground">Aditivos e Retificações</h2>
         {contractStatus === "signed" && !showAddForm && (
-          <button
+          <Button
             onClick={() => setShowAddForm(true)}
             className="flex items-center gap-1 text-xs text-primary font-bold hover:underline"
           >
             <Plus className="h-3.5 w-3.5" />
             Novo Aditivo
-          </button>
+          </Button>
         )}
       </div>
 

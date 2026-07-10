@@ -8,7 +8,7 @@ import { FormInput as Input } from "@/components/ui/input";
 import { NativeSelect as Select } from "@/components/ui/select";
 import { Field } from "@/components/ui/field";
 import { StatusBadge } from "@/components/ui/badge";
-import { GhostButton, PrimaryButton } from "@/components/ui/button";
+import { GhostButton, PrimaryButton , Button } from "@/components/ui/button";
 import { fmtDate, money } from "@/lib/formatters";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
@@ -681,12 +681,12 @@ Resuma de forma profissional e persuasiva (estilo consultor premium de turismo) 
               1. Cenários de Busca
             </h3>
             {quote.scenarios.length === 0 && (
-              <button
+              <Button
                 onClick={() => createScenariosMut.mutate()}
                 className="text-[10px] font-bold text-brand hover:underline"
               >
                 Gerar Padrões
-              </button>
+              </Button>
             )}
           </div>
 
@@ -864,7 +864,7 @@ Resuma de forma profissional e persuasiva (estilo consultor premium de turismo) 
         <div className="flex-1 flex flex-col overflow-hidden glass-card border-none">
           {/* Tab Switcher */}
           <div className="border-b border-border glass bg-white/5 border-white/10/20 px-6 py-2 shrink-0 flex items-center gap-4">
-            <button
+            <Button
               onClick={() => setRightTab("matrix")}
               className={`px-3 py-1.5 text-xs font-semibold rounded-full border transition-all ${
                 rightTab === "matrix"
@@ -873,8 +873,8 @@ Resuma de forma profissional e persuasiva (estilo consultor premium de turismo) 
               }`}
             >
               Matriz de Comparação
-            </button>
-            <button
+            </Button>
+            <Button
               onClick={() => setRightTab("simulation")}
               className={`px-3 py-1.5 text-xs font-semibold rounded-full border transition-all flex items-center gap-1.5 ${
                 rightTab === "simulation"
@@ -884,7 +884,7 @@ Resuma de forma profissional e persuasiva (estilo consultor premium de turismo) 
             >
               <Sparkles className="h-3.5 w-3.5" />
               Simulação de Personas
-            </button>
+            </Button>
           </div>
 
           {rightTab === "matrix" ? (
@@ -1033,7 +1033,7 @@ Resuma de forma profissional e persuasiva (estilo consultor premium de turismo) 
                               </p>
                             )}
                             <div className="mt-2.5 flex justify-end">
-                              <button
+                              <Button
                                 onClick={() =>
                                   handleExplainWithAi(
                                     cand.id,
@@ -1052,7 +1052,7 @@ Resuma de forma profissional e persuasiva (estilo consultor premium de turismo) 
                                   <Sparkles className="h-3 w-3" />
                                 )}
                                 Pedir Explicação IA
-                              </button>
+                              </Button>
                             </div>
                           </div>
                         </div>
@@ -1236,7 +1236,7 @@ Resuma de forma profissional e persuasiva (estilo consultor premium de turismo) 
 
                                     return (
                                       <td key={c.id} className="py-3 px-4 text-center">
-                                        <button
+                                        <Button
                                           onClick={() =>
                                             result &&
                                             setSelectedResult({ ...result, candidateName: c.name })
@@ -1248,7 +1248,7 @@ Resuma de forma profissional e persuasiva (estilo consultor premium de turismo) 
                                           }`}
                                         >
                                           {score || "—"}
-                                        </button>
+                                        </Button>
                                       </td>
                                     );
                                   })}
@@ -1373,12 +1373,12 @@ Resuma de forma profissional e persuasiva (estilo consultor premium de turismo) 
                     Ajuste os pesos que o motor contábil e de IA utilizam para pontuar e classificar cada alternativa de viagem.
                   </p>
                 </div>
-                <button
+                <Button
                   onClick={() => setRulesOpen(false)}
                   className="rounded-full p-1.5 text-muted-foreground hover:glass bg-white/5 border-white/10 hover:text-foreground transition-colors"
                 >
                   <Plus className="h-4 w-4 rotate-45" />
-                </button>
+                </Button>
               </div>
 
               <div className="space-y-6">

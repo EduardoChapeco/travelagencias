@@ -3,6 +3,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { UploadCloud, Image as ImageIcon, Check, Loader2, X } from "lucide-react";
 import { useAgency } from "@/lib/agency-context";
+import { Button } from "@/components/ui/button";
 
 export function MediaLibraryPicker({
   open,
@@ -65,12 +66,12 @@ export function MediaLibraryPicker({
           <h2 className="text-lg font-semibold tracking-tight flex items-center gap-2">
             <ImageIcon className="w-5 h-5 text-brand" /> Media Library Central
           </h2>
-          <button
+          <Button
             onClick={() => onOpenChange(false)}
             className="rounded-full p-2 hover:bg-surface-alt"
           >
             <X className="w-5 h-5" />
-          </button>
+          </Button>
         </div>
 
         <div className="flex-1 overflow-y-auto p-6 bg-surface-alt/20">

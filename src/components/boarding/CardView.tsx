@@ -10,6 +10,7 @@ import {
 } from "lucide-react";
 import { fmtDate } from "@/lib/formatters";
 import { type BoardingCard as Card, type ChecklistItem } from "@/services/boarding";
+import { Button } from "@/components/ui/button";
 
 export function CardView({
   card,
@@ -145,13 +146,13 @@ export function CardView({
 
       {/* Click for details */}
       {onCardClick && (
-        <button
+        <Button
           type="button"
           onClick={() => onCardClick(card)}
           className="flex w-full items-center justify-between border-t border-border/50 px-4 py-2 text-[11px] font-medium text-muted-foreground hover:text-brand hover:bg-surface-alt/30 transition-colors"
         >
           Ver detalhes <ChevronRight className="h-3.5 w-3.5" />
-        </button>
+        </Button>
       )}
     </div>
   );

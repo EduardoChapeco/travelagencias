@@ -4,7 +4,7 @@ import { useState, useEffect, useRef } from "react";
 import { toast } from "sonner";
 import { z } from "zod";
 import { supabase } from "@/integrations/supabase/client";
-import { PrimaryButton, GhostButton } from "@/components/ui/button";
+import { PrimaryButton, GhostButton , Button } from "@/components/ui/button";
 import { money, fmtDate } from "@/lib/formatters";
 import {
   Calendar,
@@ -522,19 +522,19 @@ function DecideActions({
   }
   return (
     <div className="flex flex-col gap-2">
-      <button
+      <Button
         onClick={() => setConfirm("accepted")}
         className="h-10 w-full rounded-[var(--radius-card)] text-xs font-bold transition-all active:scale-[0.98] cursor-pointer"
         style={{ background: brand, color: brandFg }}
       >
         Aceitar proposta
-      </button>
-      <button
+      </Button>
+      <Button
         onClick={() => setConfirm("rejected")}
         className="h-10 w-full rounded-[var(--radius-card)] border-none glass-card border-none text-xs font-medium text-muted-foreground hover:text-foreground transition-all hover:bg-slate-50 cursor-pointer"
       >
         Recusar proposta
-      </button>
+      </Button>
     </div>
   );
 }

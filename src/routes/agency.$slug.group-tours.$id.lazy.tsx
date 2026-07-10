@@ -19,7 +19,7 @@ import { FormInput as Input } from "@/components/ui/input";
 import { NativeSelect as Select } from "@/components/ui/select";
 import { SimpleSheet as Sheet } from "@/components/ui/sheet";
 import { FormTextarea as Textarea } from "@/components/ui/textarea";
-import { PrimaryButton, GhostButton } from "@/components/ui/button";
+import { PrimaryButton, GhostButton , Button } from "@/components/ui/button";
 import { StatusBadge } from "@/components/ui/badge";
 import { fmtDate, money } from "@/lib/formatters";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
@@ -299,12 +299,12 @@ function TourDetailPage() {
             ? tourQ.error.message
             : "Ocorreu um erro desconhecido ao carregar os dados."}
         </p>
-        <button
+        <Button
           onClick={() => tourQ.refetch()}
           className="mt-4 px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-[var(--radius-card)] text-xs font-semibold shadow-none transition-colors"
         >
           Tentar Novamente
-        </button>
+        </Button>
       </div>
     );
   }
@@ -386,12 +386,12 @@ function TourDetailPage() {
           >
             {t.is_public ? "Tornar privada" : "Publicar"}
           </GhostButton>
-          <button
+          <Button
             onClick={() => setOpen(true)}
             className="flex h-8 items-center gap-1.5 rounded-full bg-brand px-3 text-xs font-semibold text-brand-foreground transition-colors shrink-0 cursor-pointer hover:opacity-90"
           >
             <UserPlus className="h-3.5 w-3.5" /> Inscrever passageiro
-          </button>
+          </Button>
         </div>
       
       <PageHeader title={t.title} description={t.destination ?? "Excursão em grupo terrestre"} />
@@ -471,12 +471,12 @@ function TourDetailPage() {
           <div className="rounded border-none glass-card border-none p-6">
             <div className="mb-4 flex items-center justify-between">
               <h3 className="text-sm font-semibold">Configurações Gerais</h3>
-              <button
+              <Button
                 onClick={() => setEditOpen(true)}
                 className="text-xs font-semibold text-brand hover:underline"
               >
                 Editar Excursão
-              </button>
+              </Button>
             </div>
             <div className="space-y-4">
               <Field label="Descrição Pública (Importante)">
@@ -584,7 +584,7 @@ function TourDetailPage() {
                     { id: "cruise", label: "Cruzeiro" },
                     { id: "land_only", label: "Terrestre apenas" },
                   ].map((btn) => (
-                    <button
+                    <Button
                       key={btn.id}
                       onClick={() => setSegmentFilter(btn.id)}
                       className={`px-3 py-1 rounded-full text-xs font-semibold cursor-pointer transition-colors ${
@@ -594,7 +594,7 @@ function TourDetailPage() {
                       }`}
                     >
                       {btn.label}
-                    </button>
+                    </Button>
                   ))}
                 </div>
                 <div className="text-[11px] text-muted-foreground font-mono">
@@ -684,7 +684,7 @@ function TourDetailPage() {
                           <td className="px-3 py-2.5 text-center flex items-center justify-center gap-1.5">
                             {e.status === "confirmed" && (
                               <div className="flex items-center gap-1.5">
-                                <button
+                                <Button
                                   onClick={() =>
                                     setReceiptData({
                                       payerName: e.passenger_name,
@@ -705,8 +705,8 @@ function TourDetailPage() {
                                   className="inline-flex h-7 px-2.5 items-center justify-center rounded bg-brand/5 text-brand hover:bg-brand/10 text-[10px] font-bold transition-all cursor-pointer"
                                 >
                                   Recibo
-                                </button>
-                                <button
+                                </Button>
+                                <Button
                                   onClick={() => {
                                     confirm({
                                       title: "Cancelar Inscrição Confirmada",
@@ -720,19 +720,19 @@ function TourDetailPage() {
                                   title="Cancelar Inscrição"
                                 >
                                   <Trash2 className="w-3.5 h-3.5" />
-                                </button>
+                                </Button>
                               </div>
                             )}
                             {e.status === "pending" && (
                               <div className="flex items-center gap-1.5">
-                                <button
+                                <Button
                                   onClick={() => approveEnrollment.mutate(e)}
                                   disabled={approveEnrollment.isPending || cancelEnrollment.isPending}
                                   className="inline-flex h-7 px-2.5 items-center justify-center rounded bg-emerald-500/10 text-emerald-600 hover:bg-emerald-500/20 text-[10px] font-bold transition-all cursor-pointer disabled:opacity-50"
                                 >
                                   Aprovar
-                                </button>
-                                <button
+                                </Button>
+                                <Button
                                   onClick={() => {
                                     confirm({
                                       title: "Rejeitar Inscrição",
@@ -745,7 +745,7 @@ function TourDetailPage() {
                                   className="inline-flex h-7 px-2.5 items-center justify-center rounded bg-rose-500/10 text-rose-600 hover:bg-rose-500/20 text-[10px] font-bold transition-all cursor-pointer disabled:opacity-50"
                                 >
                                   Rejeitar
-                                </button>
+                                </Button>
                               </div>
                             )}
                           </td>
@@ -843,12 +843,12 @@ function TourDetailPage() {
                               ? money(Number(cost.amount))
                               : money(Number(cost.amount) * pCount)}
                           </strong>
-                          <button
+                          <Button
                             onClick={() => deleteCost(cost.id)}
                             className="text-muted-foreground hover:text-danger p-1"
                           >
                             <Trash2 className="w-3.5 h-3.5" />
-                          </button>
+                          </Button>
                         </div>
                       </div>
                     ))
@@ -1365,13 +1365,13 @@ function FlyersTabContent({ tour, agency }: { tour: any; agency: any }) {
           </div>
         </div>
 
-        <button
+        <Button
           onClick={handleDownloadFlyer}
           disabled={downloading}
           className="flex items-center justify-center gap-1.5 h-9 w-[300px] rounded-[var(--radius-card)] bg-brand text-xs font-bold text-brand-foreground hover:opacity-90 transition-opacity cursor-pointer disabled:opacity-50"
         >
           <Download className="h-3.5 w-3.5" /> Baixar Flyer (PNG)
-        </button>
+        </Button>
       </div>
 
       {/* Col 2: Customization Controls */}
@@ -1403,7 +1403,7 @@ function FlyersTabContent({ tour, agency }: { tour: any; agency: any }) {
                 bg: "bg-gradient-to-r from-teal-700 to-slate-950 border-teal-400",
               },
             ].map((th) => (
-              <button
+              <Button
                 key={th.id}
                 type="button"
                 onClick={() => setSelectedTheme(th.id as any)}
@@ -1415,7 +1415,7 @@ function FlyersTabContent({ tour, agency }: { tour: any; agency: any }) {
               >
                 <span className={`h-3 w-3 rounded-full border shrink-0 ${th.bg}`} />
                 {th.label}
-              </button>
+              </Button>
             ))}
           </div>
         </div>
@@ -1470,13 +1470,13 @@ function FlyersTabContent({ tour, agency }: { tour: any; agency: any }) {
         </div>
 
         <div className="pt-2 border-t border-border">
-          <button
+          <Button
             onClick={handleCreateBrochure}
             disabled={creatingBrochure}
             className="flex items-center justify-center gap-2 h-10 w-full rounded-[var(--radius-card)] bg-slate-900 text-xs font-bold text-white hover:bg-slate-800 transition-colors cursor-pointer disabled:opacity-50"
           >
             <Sparkles className="h-4 w-4 text-brand" /> Criar Apresentação no Studio
-          </button>
+          </Button>
           <span className="text-[10px] text-muted-foreground block mt-2 text-center">
             Será gerado um material comercial no Studio onde poderá diagramar novos slides e exportar em PDF.
           </span>
@@ -1780,7 +1780,7 @@ function HotelPricingTabContent({ tour, onUpdate }: { tour: any; onUpdate: () =>
               {AMENITIES_LIST.map((am) => {
                 const isSel = amenities.includes(am);
                 return (
-                  <button
+                  <Button
                     key={am}
                     type="button"
                     onClick={() => {
@@ -1794,7 +1794,7 @@ function HotelPricingTabContent({ tour, onUpdate }: { tour: any; onUpdate: () =>
                     }`}
                   >
                     {am}
-                  </button>
+                  </Button>
                 );
               })}
             </div>
@@ -1883,12 +1883,12 @@ function HotelPricingTabContent({ tour, onUpdate }: { tour: any; onUpdate: () =>
                     </div>
                     <div className="flex items-center gap-2.5 shrink-0 ml-2">
                       <span className="font-mono font-bold text-brand">{money(t.price)}</span>
-                      <button
+                      <Button
                         onClick={() => handleDeleteTier(i)}
                         className="text-muted-foreground hover:text-danger p-1"
                       >
                         <Trash2 className="h-3.5 w-3.5" />
-                      </button>
+                      </Button>
                     </div>
                   </div>
                 ))
@@ -1968,12 +1968,12 @@ function HotelPricingTabContent({ tour, onUpdate }: { tour: any; onUpdate: () =>
                     </div>
                     <div className="flex items-center gap-2.5 shrink-0 ml-2">
                       <span className="font-mono font-bold text-success">+{money(e.price)}</span>
-                      <button
+                      <Button
                         onClick={() => handleDeleteExtra(i)}
                         className="text-muted-foreground hover:text-danger p-1"
                       >
                         <Trash2 className="h-3.5 w-3.5" />
-                      </button>
+                      </Button>
                     </div>
                   </div>
                 ))
@@ -2134,13 +2134,13 @@ function ItineraryEditor({
             <Sparkles className="h-4 w-4 text-primary" />
             <span className="text-sm font-semibold text-primary">Construtor Mágico de Roteiro</span>
           </div>
-          <button
+          <Button
             type="button"
             onClick={() => setAiOpen(!aiOpen)}
             className="text-xs font-medium text-primary hover:underline"
           >
             {aiOpen ? "Ocultar" : "Usar IA"}
-          </button>
+          </Button>
         </div>
 
         {aiOpen && (
@@ -2183,22 +2183,22 @@ function ItineraryEditor({
               </div>
             )}
           </div>
-          <button
+          <Button
             onClick={() => handleRemove(Number(d.day_number || (d as any).day))}
             className="text-muted-foreground hover:text-danger p-2"
           >
             <Trash2 className="h-4 w-4" />
-          </button>
+          </Button>
         </div>
       ))}
 
       {!adding ? (
-        <button
+        <Button
           onClick={() => setAdding(true)}
           className="flex w-full items-center justify-center gap-1 rounded border border-dashed border-border p-4 text-sm font-medium text-muted-foreground hover:glass bg-white/5 border-white/10"
         >
           <Plus className="h-4 w-4" /> Adicionar Dia
-        </button>
+        </Button>
       ) : (
         <form
           onSubmit={handleAdd}
@@ -2398,7 +2398,7 @@ function BusSeatManager({
               const isOccupied = !!assigned;
               return (
                 <div key={`${cell.r}-${cell.c}`} className="relative">
-                  <button
+                  <Button
                     type="button"
                     onClick={() => cell.type === "seat" && setSelectedSeat(cell)}
                     disabled={cell.type !== "seat"}
@@ -2416,7 +2416,7 @@ function BusSeatManager({
                     )}
                   >
                     {cell.label}
-                  </button>
+                  </Button>
                   {isOccupied && cell.type === "seat" && (
                     <div className="absolute -top-2 -right-2 h-4 w-4 bg-brand rounded-full border-2 border-surface" />
                   )}
@@ -2443,7 +2443,7 @@ function BusSeatManager({
                 </li>
               ))}
             </ul>
-            <button
+            <Button
               type="button"
               onClick={async () => {
                 const { error } = await supabase
@@ -2457,7 +2457,7 @@ function BusSeatManager({
               className="mt-2 w-full text-center py-1.5 bg-amber-600 hover:bg-amber-700 text-white font-bold rounded-[var(--radius-card)] text-[10px] transition-colors cursor-pointer"
             >
               Liberar Assentos
-            </button>
+            </Button>
           </div>
         )}
 
@@ -2852,7 +2852,7 @@ function EditTour({
                   }}
                   placeholder="Ex: Almoço incluso"
                 />
-                <button
+                <Button
                   type="button"
                   onClick={() => {
                     if (newInc.trim()) {
@@ -2863,7 +2863,7 @@ function EditTour({
                   className="bg-slate-100 hover:bg-slate-200 border-none px-3 rounded-[var(--radius-card)] text-sm shrink-0 cursor-pointer"
                 >
                   +
-                </button>
+                </Button>
               </div>
             </Field>
             <div className="flex flex-col gap-1.5 max-h-[120px] overflow-y-auto pr-1">
@@ -2873,13 +2873,13 @@ function EditTour({
                   className="flex items-center justify-between bg-emerald-50/60 border border-emerald-100 text-emerald-800 text-xs py-1 px-2.5 rounded-[var(--radius-card)] font-semibold"
                 >
                   <span className="truncate">✓ {inc}</span>
-                  <button
+                  <Button
                     type="button"
                     onClick={() => setIncludes(includes.filter((_, idx) => idx !== i))}
                     className="text-emerald-500 hover:text-emerald-850 p-0.5 ml-2 cursor-pointer font-bold"
                   >
                     ×
-                  </button>
+                  </Button>
                 </div>
               ))}
               {includes.length === 0 && (
@@ -2906,7 +2906,7 @@ function EditTour({
                   }}
                   placeholder="Ex: Taxa de turismo"
                 />
-                <button
+                <Button
                   type="button"
                   onClick={() => {
                     if (newExc.trim()) {
@@ -2917,7 +2917,7 @@ function EditTour({
                   className="bg-slate-100 hover:bg-slate-200 border-none px-3 rounded-[var(--radius-card)] text-sm shrink-0 cursor-pointer"
                 >
                   +
-                </button>
+                </Button>
               </div>
             </Field>
             <div className="flex flex-col gap-1.5 max-h-[120px] overflow-y-auto pr-1">
@@ -2927,13 +2927,13 @@ function EditTour({
                   className="flex items-center justify-between bg-red-50/60 border border-red-100 text-red-800 text-xs py-1 px-2.5 rounded-[var(--radius-card)] font-semibold"
                 >
                   <span className="truncate">✗ {exc}</span>
-                  <button
+                  <Button
                     type="button"
                     onClick={() => setExcludes(excludes.filter((_, idx) => idx !== i))}
                     className="text-red-500 hover:text-red-850 p-0.5 ml-2 cursor-pointer font-bold"
                   >
                     ×
-                  </button>
+                  </Button>
                 </div>
               ))}
               {excludes.length === 0 && (
@@ -3001,7 +3001,7 @@ function DraggablePassenger({
         <span className="truncate">{name}</span>
       </div>
       {onRemove && (
-        <button
+        <Button
           type="button"
           onClick={(e) => {
             e.stopPropagation(); // Avoid triggering any drag
@@ -3010,7 +3010,7 @@ function DraggablePassenger({
           className="text-muted-foreground hover:text-danger transition-colors cursor-pointer ml-2 shrink-0 pointer-events-auto"
         >
           <XCircle className="h-3.5 w-3.5" />
-        </button>
+        </Button>
       )}
     </div>
   );
@@ -3416,7 +3416,7 @@ function RoomingListManager({
           <div className="flex items-center gap-2">
             {rooms.length > 0 && (
               <>
-                <button
+                <Button
                   type="button"
                   onClick={handleExportExcel}
                   disabled={exporting}
@@ -3425,8 +3425,8 @@ function RoomingListManager({
                 >
                   <Download className="h-3.5 w-3.5" />{" "}
                   {exporting ? "Exportando..." : "Exportar Excel"}
-                </button>
-                <button
+                </Button>
+                <Button
                   type="button"
                   onClick={handleExportPdf}
                   disabled={exporting}
@@ -3435,16 +3435,16 @@ function RoomingListManager({
                 >
                   <FileText className="h-3.5 w-3.5 text-rose-500" />{" "}
                   {exporting ? "Exportando..." : "Exportar PDF"}
-                </button>
+                </Button>
               </>
             )}
-            <button
+            <Button
               type="button"
               onClick={() => setAddOpen(true)}
               className="flex items-center gap-1.5 h-8 px-3 rounded-full bg-primary text-xs font-semibold text-primary-foreground hover:opacity-95 cursor-pointer"
             >
               <Plus className="h-3.5 w-3.5" /> Novo Quarto
-            </button>
+            </Button>
           </div>
         </div>
 
@@ -3547,21 +3547,21 @@ function RoomingListManager({
                       </div>
                     </div>
                     <div className="flex items-center gap-2">
-                      <button
+                      <Button
                         type="button"
                         onClick={() => toggleConfirmed(room.id, room.is_confirmed)}
                         title={room.is_confirmed ? "Clique para desconfirmar" : "Confirmar quarto"}
                         className={`p-1 rounded transition-colors cursor-pointer ${room.is_confirmed ? "text-success" : "text-muted-foreground hover:text-success"}`}
                       >
                         <CheckCircle2 className="h-4 w-4" />
-                      </button>
-                      <button
+                      </Button>
+                      <Button
                         type="button"
                         onClick={() => removeRoom(room.id)}
                         className="p-1 rounded text-muted-foreground hover:text-danger transition-colors cursor-pointer"
                       >
                         <Trash2 className="h-3.5 w-3.5" />
-                      </button>
+                      </Button>
                     </div>
                   </div>
 

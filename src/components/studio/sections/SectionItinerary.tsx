@@ -8,6 +8,7 @@ import { StudioUnsplashPicker } from "@/components/studio/StudioUnsplashPicker";
 import { Sparkles, Loader2, Search } from "lucide-react";
 import { toast } from "sonner";
 import { refineItineraryText } from "@/services/proposals";
+import { Button } from "@/components/ui/button";
 
 interface Props {
   draft: Proposal;
@@ -137,14 +138,14 @@ export function SectionItinerary({ draft, save }: Props) {
             <div className="flex items-center justify-between">
               <span className="block text-[10px] uppercase tracking-wide text-muted-foreground">Galeria do Dia</span>
               <div className="flex gap-2">
-                <button
+                <Button
                   type="button"
                   onClick={() => setShowUnsplash(showUnsplash === i ? null : i)}
                   className="flex h-6 items-center justify-center rounded border border-border/60 bg-surface px-2 text-[10px] hover:bg-surface-alt transition-colors"
                   title="Buscar no Unsplash"
                 >
                   <Search className="h-3 w-3 mr-1" /> Buscar
-                </button>
+                </Button>
                 <label className="flex h-6 cursor-pointer items-center justify-center rounded bg-brand/10 px-2 text-[10px] font-bold text-brand hover:bg-brand/20 transition-colors">
                   {uploadingImage === i ? "Enviando..." : "+ Fazer Upload"}
                   <input
@@ -167,12 +168,12 @@ export function SectionItinerary({ draft, save }: Props) {
                   <span className="text-[10px] uppercase tracking-wide font-semibold">
                     Buscar imagem para o dia
                   </span>
-                  <button
+                  <Button
                     onClick={() => setShowUnsplash(null)}
                     className="text-muted-foreground hover:text-foreground text-[10px]"
                   >
                     Fechar
-                  </button>
+                  </Button>
                 </div>
                 <StudioUnsplashPicker
                   agencyId={draft.agency_id}
@@ -193,7 +194,7 @@ export function SectionItinerary({ draft, save }: Props) {
                 {d.images.map((url, imgIdx) => (
                   <div key={imgIdx} className="relative h-12 w-12 overflow-hidden rounded border border-border">
                     <img src={url} alt={`Dia ${i + 1}`} className="h-full w-full object-cover" />
-                    <button
+                    <Button
                       type="button"
                       onClick={() => {
                         const newArr = [...d.images!];
@@ -203,7 +204,7 @@ export function SectionItinerary({ draft, save }: Props) {
                       className="absolute right-0 top-0 rounded bg-red-500/80 px-1 py-0.5 text-[8px] text-white hover:bg-red-500"
                     >
                       X
-                    </button>
+                    </Button>
                   </div>
                 ))}
               </div>
@@ -218,7 +219,7 @@ export function SectionItinerary({ draft, save }: Props) {
             />
           </div>
           <div className="mt-3">
-            <button
+            <Button
               type="button"
               onClick={() => refineWithAI(i)}
               disabled={refining === i}
@@ -230,7 +231,7 @@ export function SectionItinerary({ draft, save }: Props) {
                 <Sparkles className="h-3 w-3" />
               )}
               {refining === i ? "Refinando…" : "Melhorar com IA"}
-            </button>
+            </Button>
           </div>
         </Card>
       ))}

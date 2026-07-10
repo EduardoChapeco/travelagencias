@@ -16,7 +16,7 @@ import {
 import { Field } from "@/components/ui/field";
 import { FormInput as Input } from "@/components/ui/input";
 import { NativeSelect as Select } from "@/components/ui/select";
-import { PrimaryButton, GhostButton } from "@/components/ui/button";
+import { PrimaryButton, GhostButton , Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 import { createPortal } from "react-dom";
@@ -263,13 +263,13 @@ export function NewTripWizard({
               Gestão completa de viagens, orçamentos e passageiros.
             </p>
           </div>
-          <button
+          <Button
             type="button"
             onClick={onClose}
             className="flex h-8 w-8 items-center justify-center rounded-full text-muted-foreground hover:bg-surface-alt hover:text-foreground transition-colors"
           >
             <X className="h-4 w-4" />
-          </button>
+          </Button>
         </div>
 
         {/* Stepper */}
@@ -349,7 +349,7 @@ export function NewTripWizard({
                     <span className="text-xs font-bold text-muted-foreground uppercase tracking-wider">
                       Cliente Responsável
                     </span>
-                    <button
+                    <Button
                       type="button"
                       onClick={() => {
                         setIsNewClientMode(!isNewClientMode);
@@ -362,7 +362,7 @@ export function NewTripWizard({
                       className="text-xs font-semibold text-brand hover:underline"
                     >
                       {isNewClientMode ? "Selecionar Existente" : "Cadastrar Novo"}
-                    </button>
+                    </Button>
                   </div>
 
                   {!isNewClientMode ? (

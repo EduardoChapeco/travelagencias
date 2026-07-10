@@ -25,7 +25,7 @@ import { useAgency } from "@/lib/agency-context";
 import { Field } from "@/components/ui/field";
 import { FormInput as Input } from "@/components/ui/input";
 import { FormTextarea as Textarea } from "@/components/ui/textarea";
-import { PrimaryButton, GhostButton } from "@/components/ui/button";
+import { PrimaryButton, GhostButton , Button } from "@/components/ui/button";
 import { StatusBadge } from "@/components/ui/badge";
 import { FileUploader } from "@/components/uploads/FileUploader";
 import { MultiFileUploader } from "@/components/uploads/MultiFileUploader";
@@ -406,14 +406,14 @@ function Page() {
                 <Eye className="h-3.5 w-3.5" />
                 <span className="hidden sm:inline">Ver portal</span>
               </a>
-              <button
+              <Button
                 onClick={() => setPreviewOpen(!previewOpen)}
                 className="h-7 px-3 flex items-center gap-1 rounded-full text-white/60 hover:text-white hover:bg-white/10 transition-colors cursor-pointer"
               >
                 <Globe className="h-3.5 w-3.5" />
                 <span>{previewOpen ? "Fechar prévia" : "Prévia"}</span>
-              </button>
-              <button
+              </Button>
+              <Button
                 type="submit"
                 form="company-form"
                 disabled={busy}
@@ -421,7 +421,7 @@ function Page() {
               >
                 <Save className="h-3.5 w-3.5" />
                 <span>{busy ? "Salvando..." : "Salvar"}</span>
-              </button>
+              </Button>
             </div>
           }
         />
@@ -583,7 +583,7 @@ function Page() {
                         <h4 className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
                           Google
                         </h4>
-                        <button
+                        <Button
                           type="button"
                           onClick={syncGbp}
                           disabled={gbpSyncing}
@@ -591,7 +591,7 @@ function Page() {
                         >
                           <RefreshCw className={`h-3 w-3 ${gbpSyncing ? "animate-spin" : ""}`} />
                           {gbpSyncing ? "Sincronizando…" : "Sincronizar GBP"}
-                        </button>
+                        </Button>
                       </div>
                       <div className="mb-3 flex items-start gap-2 rounded-full border-none/50 glass bg-white/5 border-white/10 px-3 py-2">
                         <Info className="mt-0.5 h-3.5 w-3.5 shrink-0 text-muted-foreground" />

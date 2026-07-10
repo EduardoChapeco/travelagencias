@@ -1,4 +1,5 @@
 import { AlertCircle } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
 interface CancelModalProps {
   cancelReason: string;
@@ -52,19 +53,19 @@ export function CancelModal({
           </div>
 
           <div className="flex gap-3">
-            <button
+            <Button
               onClick={onClose}
               className="flex-1 h-12 rounded-full border border-border font-bold text-sm hover:bg-muted transition-colors"
             >
               Voltar
-            </button>
-            <button
+            </Button>
+            <Button
               onClick={onConfirm}
               disabled={!cancelReason || isPending}
               className="flex-1 h-12 rounded-full bg-danger text-danger-foreground font-bold text-sm hover:opacity-90 disabled:opacity-50 transition-opacity"
             >
               {isPending ? "Enviando..." : "Solicitar Cancelamento"}
-            </button>
+            </Button>
           </div>
         </div>
       </div>

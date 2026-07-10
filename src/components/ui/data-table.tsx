@@ -18,7 +18,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 
-import { GhostButton } from "@/components/ui/button";
+import { GhostButton , Button } from "@/components/ui/button";
 import {
   ChevronLeft,
   ChevronRight,
@@ -192,7 +192,7 @@ export function DataTableColumnHeader<TData, TValue>({
 
   return (
     <div className={`flex items-center space-x-2 ${className}`}>
-      <button
+      <Button
         onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
         className="flex items-center gap-1 hover:text-foreground hover:bg-surface-alt px-1.5 py-1 -ml-1.5 rounded-full transition-colors"
       >
@@ -204,7 +204,7 @@ export function DataTableColumnHeader<TData, TValue>({
         ) : (
           <ArrowUpDown className="h-3 w-3 text-muted-foreground/50" />
         )}
-      </button>
+      </Button>
     </div>
   );
 }

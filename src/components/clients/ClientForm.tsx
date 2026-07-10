@@ -9,6 +9,7 @@ import { NativeSelect as Select } from "@/components/ui/select";
 import { FormTextarea as Textarea } from "@/components/ui/textarea";
 import { MultiFileUploader } from "@/components/uploads/MultiFileUploader";
 import { useConfirm } from "@/hooks/use-confirm";
+import { Button } from "@/components/ui/button";
 
 const clientFormSchema = z.object({
   full_name: z.string().min(2, "Nome deve ter pelo menos 2 caracteres"),
@@ -145,7 +146,7 @@ export function ClientForm({
       </div>
 
       <div className="flex items-center justify-between border-t border-border/50 pt-4">
-        <button
+        <Button
           type="button"
           onClick={() => {
             confirm({
@@ -158,14 +159,14 @@ export function ClientForm({
           className="text-danger hover:underline text-sm font-semibold flex items-center gap-1.5 cursor-pointer bg-transparent border-none"
         >
           <Trash2 className="w-4 h-4" /> Arquivar Cliente
-        </button>
-        <button
+        </Button>
+        <Button
           type="submit"
           disabled={saving}
           className="h-12 px-8 rounded-full bg-foreground text-background text-sm font-bold flex items-center gap-2 hover:opacity-90 cursor-pointer"
         >
           <Check className="w-4 h-4" /> {saving ? "Salvando..." : "Salvar Edição"}
-        </button>
+        </Button>
       </div>
       <ConfirmDialog />
     </form>

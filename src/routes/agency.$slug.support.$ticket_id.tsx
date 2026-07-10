@@ -412,7 +412,7 @@ function TicketAdvancedRoute() {
           <div className="max-w-3xl mx-auto flex flex-col gap-3">
             <div className="flex gap-1.5 flex-wrap">
               {(["client", "supplier", "internal"] as const).map((type) => (
-                <button
+                <Button
                   key={type}
                   onClick={() => setReplyType(type)}
                   className={cn(
@@ -425,7 +425,7 @@ function TicketAdvancedRoute() {
                   )}
                 >
                   {type === "client" ? "Responder Cliente" : type === "supplier" ? "Contatar Fornecedor" : "Nota Interna"}
-                </button>
+                </Button>
               ))}
             </div>
             <div className="relative">

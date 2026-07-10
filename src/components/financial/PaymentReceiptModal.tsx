@@ -4,6 +4,7 @@ import { money } from "@/lib/formatters";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { cn } from "@/lib/utils";
+import { Button } from "@/components/ui/button";
 
 interface PaymentReceiptModalProps {
   isOpen: boolean;
@@ -289,7 +290,7 @@ export function PaymentReceiptModal({ isOpen, onClose, data }: PaymentReceiptMod
 
           <div className="flex items-center gap-4">
             {/* Layout switch */}
-            <button
+            <Button
               onClick={() => setIsThermal(!isThermal)}
               className="flex items-center gap-1.5 text-[10px] font-bold text-slate-600 hover:text-slate-900 transition-colors"
             >
@@ -299,14 +300,14 @@ export function PaymentReceiptModal({ isOpen, onClose, data }: PaymentReceiptMod
               ) : (
                 <ToggleLeft className="h-5 w-5 text-muted-foreground" />
               )}
-            </button>
+            </Button>
 
-            <button
+            <Button
               onClick={onClose}
               className="rounded-full p-1 text-slate-400 hover:bg-slate-200 hover:text-slate-600 transition-colors"
             >
               <X className="h-4 w-4" />
-            </button>
+            </Button>
           </div>
         </div>
 
@@ -567,28 +568,28 @@ export function PaymentReceiptModal({ isOpen, onClose, data }: PaymentReceiptMod
 
         {/* Action Controls footer */}
         <div className="border-t border-border bg-slate-50 px-5 py-3 flex flex-wrap gap-2 justify-end">
-          <button
+          <Button
             onClick={handlePrint}
             className="flex items-center gap-1.5 h-8 px-3.5 rounded-full border border-border bg-white text-xs font-bold text-slate-700 hover:bg-slate-50 cursor-pointer"
           >
             <Printer className="h-3.5 w-3.5" /> Imprimir Recibo
-          </button>
+          </Button>
 
-          <button
+          <Button
             onClick={handleDownloadPdf}
             disabled={exporting}
             className="flex items-center gap-1.5 h-8 px-3.5 rounded-full border border-border bg-white text-xs font-bold text-slate-700 hover:bg-slate-50 cursor-pointer disabled:opacity-50"
           >
             <Download className="h-3.5 w-3.5" /> Baixar PDF
-          </button>
+          </Button>
 
-          <button
+          <Button
             onClick={handleDownloadPng}
             disabled={exporting}
             className="flex items-center gap-1.5 h-8 px-3.5 rounded-full border border-border bg-white text-xs font-bold text-slate-700 hover:bg-slate-50 cursor-pointer disabled:opacity-50"
           >
             <ImageIcon className="h-3.5 w-3.5" /> Salvar Imagem
-          </button>
+          </Button>
         </div>
       </div>
     </div>

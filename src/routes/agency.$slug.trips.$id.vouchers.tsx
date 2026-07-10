@@ -10,7 +10,7 @@ import { Field } from "@/components/ui/field";
 import { FormInput as Input } from "@/components/ui/input";
 import { NativeSelect as Select } from "@/components/ui/select";
 import { StatusBadge } from "@/components/ui/badge";
-import { GhostButton, PrimaryButton } from "@/components/ui/button";
+import { GhostButton, PrimaryButton , Button } from "@/components/ui/button";
 import { fmtDate } from "@/lib/formatters";
 import { processVoucherWithAI } from "@/lib/ocr-ai";
 // html2canvas is loaded on-demand — see getHtml2Canvas() below
@@ -323,7 +323,7 @@ function TripVouchers() {
       <ConfirmDialog />
       <div className="mb-6 flex items-center justify-between">
         <h2 className="text-lg font-semibold tracking-tight">Vouchers & Guias</h2>
-        <button
+        <Button
           onClick={() => {
             if (trip) initNewVoucher(trip, passengersQ.data ?? []);
           }}
@@ -331,7 +331,7 @@ function TripVouchers() {
         >
           <Plus className="h-3.5 w-3.5" />
           Novo voucher
-        </button>
+        </Button>
       </div>
 
       {vouchersQ.isLoading && (
@@ -345,7 +345,7 @@ function TripVouchers() {
           <div className="mt-1 text-xs text-muted-foreground">
             Crie um voucher manualmente ou importe um PDF da operadora.
           </div>
-          <button
+          <Button
             onClick={() => {
               if (trip) initNewVoucher(trip, passengersQ.data ?? []);
             }}
@@ -353,7 +353,7 @@ function TripVouchers() {
           >
             <Plus className="h-3.5 w-3.5" />
             Criar voucher
-          </button>
+          </Button>
         </div>
       )}
 
@@ -413,13 +413,13 @@ function TripVouchers() {
 
             {/* Actions */}
             <div className="mt-3 flex items-center gap-2 border-t border-border pt-3">
-              <button
+              <Button
                 onClick={() => editVoucher(v)}
                 className="flex h-7 flex-1 items-center justify-center gap-1 rounded-full border-none text-xs hover:glass bg-white/5 border-white/10"
               >
                 <Edit2 className="h-3.5 w-3.5" />
                 Editar
-              </button>
+              </Button>
               {v.pdf_url && (
                 <a
                   href={v.pdf_url}
@@ -431,14 +431,14 @@ function TripVouchers() {
                   PDF
                 </a>
               )}
-              <button
+              <Button
                 onClick={() => setStoryVoucher(v)}
                 className="flex h-7 flex-1 items-center justify-center gap-1 rounded-full border-none text-xs bg-brand text-brand-foreground hover:opacity-90 font-semibold"
               >
                 <Instagram className="h-3.5 w-3.5" />
                 Story
-              </button>
-              <button
+              </Button>
+              <Button
                 onClick={() => {
                   confirm({
                     title: "Excluir voucher?",
@@ -450,7 +450,7 @@ function TripVouchers() {
                 className="flex h-7 items-center justify-center rounded-full border-none px-2 text-muted-foreground hover:bg-danger-bg hover:text-danger hover:border-danger"
               >
                 <Trash2 className="h-3.5 w-3.5" />
-              </button>
+              </Button>
             </div>
           </div>
         ))}

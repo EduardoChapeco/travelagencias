@@ -58,7 +58,7 @@ import { Field } from "@/components/ui/field";
 import { FormInput as Input } from "@/components/ui/input";
 import { NativeSelect as Select } from "@/components/ui/select";
 import { FormTextarea as Textarea } from "@/components/ui/textarea";
-import { PrimaryButton, GhostButton } from "@/components/ui/button";
+import { PrimaryButton, GhostButton , Button } from "@/components/ui/button";
 import { StatusBadge } from "@/components/ui/badge";
 import { BlockRenderer } from "@/components/portal/BlockRenderer";
 import { AILandingPageSheet } from "@/components/ui/AILandingPageSheet";
@@ -153,7 +153,7 @@ function SortableBlock({ block, selectedBlockId, setSelectedBlockId, removeBlock
           </span>
         </div>
         <div className="flex items-center gap-1">
-          <button
+          <Button
             type="button"
             onClick={(e) => {
               e.stopPropagation();
@@ -162,7 +162,7 @@ function SortableBlock({ block, selectedBlockId, setSelectedBlockId, removeBlock
             className="p-1 ml-2 text-muted-foreground hover:text-destructive outline-none"
           >
             <Trash2 className="h-3.5 w-3.5" />
-          </button>
+          </Button>
         </div>
       </div>
     </div>
@@ -575,12 +575,12 @@ function PageEditorRoute() {
         <p className="text-xs text-red-600 mt-1 max-w-md">
           {error instanceof Error ? error.message : "Página não encontrada ou acesso negado."}
         </p>
-        <button
+        <Button
           onClick={() => navigate({ to: "/agency/$slug/portal/pages", params: { slug } })}
           className="mt-4 h-8 px-4 rounded-[var(--radius-card)] bg-red-100 text-xs font-semibold text-red-800 hover:bg-red-200 cursor-pointer transition-colors"
         >
           Voltar às Páginas
-        </button>
+        </Button>
       </div>
     );
   }
@@ -672,10 +672,10 @@ function PageEditorRoute() {
           {/* Page Dropdown Switcher */}
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <button className="flex items-center gap-1.5 h-7 px-2.5 rounded-full border-none bg-white text-xs font-semibold text-foreground hover:glass bg-white/5 border-white/10 transition-colors cursor-pointer select-none">
+              <Button className="flex items-center gap-1.5 h-7 px-2.5 rounded-full border-none bg-white text-xs font-semibold text-foreground hover:glass bg-white/5 border-white/10 transition-colors cursor-pointer select-none">
                 <span>Página: {title || "Nova Página"}</span>
                 <span className="text-muted-foreground text-[8px]">▼</span>
-              </button>
+              </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent className="w-56" align="start">
               <DropdownMenuLabel>Alternar Página</DropdownMenuLabel>
@@ -718,9 +718,9 @@ function PageEditorRoute() {
           {!isNew && (
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <button className="flex h-7 w-7 items-center justify-center rounded-full border-none bg-white text-muted-foreground hover:glass bg-white/5 border-white/10 hover:text-foreground transition-colors cursor-pointer">
+                <Button className="flex h-7 w-7 items-center justify-center rounded-full border-none bg-white text-muted-foreground hover:glass bg-white/5 border-white/10 hover:text-foreground transition-colors cursor-pointer">
                   <Settings className="w-3.5 h-3.5" />
-                </button>
+                </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="start">
                 <DropdownMenuLabel>Opções da Página</DropdownMenuLabel>
@@ -789,7 +789,7 @@ function PageEditorRoute() {
 
         {/* Viewport controls - compact divide group */}
         <div className="hidden md:flex items-center bg-white border-none p-0.5 rounded-full divide-x divide-border">
-          <button
+          <Button
             onClick={() => {
               if (mode === "biolink") {
                 toast.warning("Biolinks são exibidos de forma estrita em visualização Mobile.");
@@ -802,8 +802,8 @@ function PageEditorRoute() {
             className={`h-6 px-2 flex items-center justify-center transition-colors cursor-pointer ${mode === "biolink" ? "opacity-30 cursor-not-allowed" : ""}${viewport === "desktop" ? "glass bg-white/5 border-white/10 text-foreground font-semibold" : "text-muted-foreground hover:text-foreground"}`}
           >
             <Monitor className="h-3.5 w-3.5" />
-          </button>
-          <button
+          </Button>
+          <Button
             onClick={() => {
               if (mode === "biolink") {
                 toast.warning("Biolinks são exibidos de forma estrita em visualização Mobile.");
@@ -816,14 +816,14 @@ function PageEditorRoute() {
             className={`h-6 px-2 flex items-center justify-center transition-colors cursor-pointer ${mode === "biolink" ? "opacity-30 cursor-not-allowed" : ""}${viewport === "tablet" ? "glass bg-white/5 border-white/10 text-foreground font-semibold" : "text-muted-foreground hover:text-foreground"}`}
           >
             <Tablet className="h-3.5 w-3.5" />
-          </button>
-          <button
+          </Button>
+          <Button
             onClick={() => setViewport("mobile")}
             title="Modo Celular"
             className={`h-6 px-2 flex items-center justify-center transition-colors cursor-pointer${viewport === "mobile" ? "glass bg-white/5 border-white/10 text-foreground font-semibold" : "text-muted-foreground hover:text-foreground"}`}
           >
             <Smartphone className="h-3.5 w-3.5" />
-          </button>
+          </Button>
         </div>
 
         <div className="hidden sm:flex items-center gap-2">
@@ -876,18 +876,18 @@ function PageEditorRoute() {
         <div className="w-12 flex-shrink-0 border-r border-border bg-white flex flex-col items-center py-4 justify-between select-none">
           <div className="flex flex-col items-center gap-5 w-full">
             {/* Back button */}
-            <button
+            <Button
               onClick={() => navigate({ to: "/agency/$slug/portal/pages", params: { slug } })}
               title="Voltar para Lista de Páginas"
               className="p-2 rounded-full text-muted-foreground hover:text-foreground hover:glass bg-white/5 border-white/10 transition-colors cursor-pointer"
             >
               <ArrowLeft className="h-4.5 w-4.5" />
-            </button>
+            </Button>
 
             <hr className="w-6 border-border" />
 
             {/* Sidebar Tab Triggers */}
-            <button
+            <Button
               onClick={() => {
                 if (isLeftSidebarOpen && leftTab === "sections") {
                   setIsLeftSidebarOpen(false);
@@ -900,9 +900,9 @@ function PageEditorRoute() {
               className={`p-2 rounded-full transition-colors cursor-pointer ${isLeftSidebarOpen && leftTab === "sections" ? "bg-brand/10 text-brand font-bold" : "text-muted-foreground hover:text-foreground hover:glass bg-white/5 border-white/10"}`}
             >
               <Plus className="h-4.5 w-4.5" />
-            </button>
+            </Button>
 
-            <button
+            <Button
               onClick={() => {
                 if (isLeftSidebarOpen && leftTab === "templates") {
                   setIsLeftSidebarOpen(false);
@@ -915,9 +915,9 @@ function PageEditorRoute() {
               className={`p-2 rounded-full transition-colors cursor-pointer ${isLeftSidebarOpen && leftTab === "templates" ? "bg-brand/10 text-brand font-bold" : "text-muted-foreground hover:text-foreground hover:glass bg-white/5 border-white/10"}`}
             >
               <Sparkles className="h-4.5 w-4.5" />
-            </button>
+            </Button>
 
-            <button
+            <Button
               onClick={() => {
                 if (isLeftSidebarOpen && leftTab === "layers") {
                   setIsLeftSidebarOpen(false);
@@ -935,35 +935,35 @@ function PageEditorRoute() {
                   {blocks.length}
                 </span>
               )}
-            </button>
+            </Button>
           </div>
 
           <div className="flex flex-col items-center gap-3 w-full">
             {/* Settings toggles */}
-            <button
+            <Button
               onClick={() => setPageSettingsOpen(true)}
               title="Configurações Gerais"
               className="p-2 rounded-full text-muted-foreground hover:text-foreground hover:glass bg-white/5 border-white/10 transition-colors cursor-pointer"
             >
               <Settings className="h-4.5 w-4.5" />
-            </button>
+            </Button>
 
-            <button
+            <Button
               onClick={() => setSeoSettingsOpen(true)}
               title="Configurações SEO"
               className="p-2 rounded-full text-muted-foreground hover:text-foreground hover:glass bg-white/5 border-white/10 transition-colors cursor-pointer"
             >
               <Globe className="h-4.5 w-4.5" />
-            </button>
+            </Button>
 
             {!isNew && (
-              <button
+              <Button
                 onClick={() => setHistorySettingsOpen(true)}
                 title="Histórico de Versões"
                 className="p-2 rounded-full text-muted-foreground hover:text-foreground hover:glass bg-white/5 border-white/10 transition-colors cursor-pointer"
               >
                 <History className="h-4.5 w-4.5" />
-              </button>
+              </Button>
             )}
           </div>
         </div>
@@ -973,7 +973,7 @@ function PageEditorRoute() {
           <div className="w-[268px] flex-shrink-0 border-r border-border bg-white flex flex-col overflow-hidden animate-in slide-in-from-left duration-200">
             {/* Minimally Styled Tabs */}
             <div className="flex border-b border-border bg-white shrink-0 select-none px-4 gap-4">
-              <button
+              <Button
                 type="button"
                 onClick={() => setLeftTab("sections")}
                 className={`py-3 text-[10px] uppercase tracking-wider font-bold transition-all border-b-2 -mb-[1px] cursor-pointer ${
@@ -983,8 +983,8 @@ function PageEditorRoute() {
                 }`}
               >
                 Seções
-              </button>
-              <button
+              </Button>
+              <Button
                 type="button"
                 onClick={() => setLeftTab("templates")}
                 className={`py-3 text-[10px] uppercase tracking-wider font-bold transition-all border-b-2 -mb-[1px] cursor-pointer ${
@@ -994,8 +994,8 @@ function PageEditorRoute() {
                 }`}
               >
                 Templates
-              </button>
-              <button
+              </Button>
+              <Button
                 type="button"
                 onClick={() => setLeftTab("layers")}
                 className={`py-3 text-[10px] uppercase tracking-wider font-bold transition-all border-b-2 -mb-[1px] cursor-pointer ${
@@ -1005,7 +1005,7 @@ function PageEditorRoute() {
                 }`}
               >
                 Camadas
-              </button>
+              </Button>
             </div>
 
             {/* TAB CONTENT: SECTIONS */}
@@ -1114,7 +1114,7 @@ function PageEditorRoute() {
                           const isBiolinkType = type.startsWith("biolink_");
 
                           return (
-                            <button
+                            <Button
                               key={type}
                               type="button"
                               onClick={() => addBlock(type)}
@@ -1137,7 +1137,7 @@ function PageEditorRoute() {
                                   Bio
                                 </span>
                               )}
-                            </button>
+                            </Button>
                           );
                         })}
                         </div>
@@ -1146,13 +1146,13 @@ function PageEditorRoute() {
                   })}
                 </div>
 
-                <button
+                <Button
                   type="button"
                   onClick={() => setAiModalOpen(true)}
                   className="w-full flex items-center justify-center gap-1.5 border border-brand/20 bg-brand/5 py-2 text-xs font-bold text-brand hover:bg-brand/10 transition-colors cursor-pointer"
                 >
                   <Sparkles className="h-3.5 w-3.5" /> Estruturar com Inteligência
-                </button>
+                </Button>
               </div>
             )}
 
@@ -1170,7 +1170,7 @@ function PageEditorRoute() {
 
                 <div className="space-y-2">
                   {CMS_TEMPLATES.map((tpl) => (
-                    <button
+                    <Button
                       key={tpl.id}
                       type="button"
                       onClick={() => handleApplyTemplate(tpl.id)}
@@ -1189,7 +1189,7 @@ function PageEditorRoute() {
                       <span className="text-[10px] text-muted-foreground leading-normal">
                         {tpl.description}
                       </span>
-                    </button>
+                    </Button>
                   ))}
                 </div>
               </div>
@@ -1336,14 +1336,14 @@ function PageEditorRoute() {
                       {blockLabel}
                     </h3>
                   </div>
-                  <button
+                  <Button
                     type="button"
                     onClick={() => setSelectedBlockId(null)}
                     title="Fechar painel"
                     className="p-1 text-muted-foreground hover:text-foreground hover:glass bg-white/5 border-white/10 rounded-full transition-colors mt-0.5"
                   >
                     <PanelLeft className="w-4 h-4" />
-                  </button>
+                  </Button>
                 </div>
 
                 {/* Scrollable form area */}
@@ -1643,7 +1643,7 @@ function PageEditorRoute() {
                       {new Date(v.created_at).toLocaleString("pt-BR")}
                     </div>
                   </div>
-                  <button
+                  <Button
                     type="button"
                     onClick={() => {
                       revertVersion(v);
@@ -1652,7 +1652,7 @@ function PageEditorRoute() {
                     className="text-xs font-semibold text-primary hover:underline flex items-center gap-1"
                   >
                     <History className="w-3.5 h-3.5" /> Reverter
-                  </button>
+                  </Button>
                 </div>
               </div>
             ))}

@@ -12,6 +12,7 @@ import {
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import { type Lead } from "@/services/crm";
+import { Button } from "@/components/ui/button";
 
 type LeadCardProps = {
   lead: Lead;
@@ -252,44 +253,44 @@ export function LeadCardView({
           ) : (
             <>
               {lead.phone && (
-                <button
+                <Button
                   type="button"
                   onClick={handleWhatsApp}
                   className="p-1 text-emerald-500 hover:bg-emerald-500/10 rounded transition-colors"
                   title="WhatsApp Rápido"
                 >
                   <Send className="h-3.5 w-3.5" />
-                </button>
+                </Button>
               )}
               {onCreateProposal && !lead.client_id && (
-                <button
+                <Button
                   type="button"
                   onClick={handleCreateProposal}
                   className="p-1 text-brand hover:bg-brand/10 rounded transition-colors"
                   title="Criar Proposta"
                 >
                   <FileText className="h-3.5 w-3.5" />
-                </button>
+                </Button>
               )}
               {onTransfer && (
-                <button
+                <Button
                   type="button"
                   onClick={() => setTransferMode(true)}
                   className="p-1 text-muted-foreground hover:text-foreground hover:bg-surface-alt rounded transition-colors"
                   title="Transferir Dono"
                 >
                   <UserPlus className="h-3.5 w-3.5" />
-                </button>
+                </Button>
               )}
               {onArchive && (
-                <button
+                <Button
                   type="button"
                   onClick={() => onArchive(lead.id)}
                   className="p-1 text-muted-foreground hover:text-danger hover:bg-danger/10 rounded transition-colors"
                   title="Arquivar Lead"
                 >
                   <Archive className="h-3.5 w-3.5" />
-                </button>
+                </Button>
               )}
             </>
           )}

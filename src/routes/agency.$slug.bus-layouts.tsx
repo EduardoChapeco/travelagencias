@@ -12,7 +12,7 @@ import { Field } from "@/components/ui/field";
 import { FormInput as Input } from "@/components/ui/input";
 import { NativeSelect as Select } from "@/components/ui/select";
 import { SimpleSheet as Sheet } from "@/components/ui/sheet";
-import { PrimaryButton, GhostButton } from "@/components/ui/button";
+import { PrimaryButton, GhostButton , Button } from "@/components/ui/button";
 import { EditVehicleModal } from "./agency.$slug.bus-layouts.$id";
 
 export const Route = createFileRoute("/agency/$slug/bus-layouts")({
@@ -71,13 +71,13 @@ function BusLayoutsPage() {
           onFilterChange={setTypeFilter}
           actions={
             isAgencyAdmin ? (
-              <button
+              <Button
                 onClick={() => setAdminPanelOpen(true)}
                 className="h-7 w-7 flex items-center justify-center rounded-full border border-white/15 text-white/60 hover:text-white hover:bg-white/10 transition-colors cursor-pointer"
                 title="Administrar layouts"
               >
                 <Settings2 className="h-3.5 w-3.5" />
-              </button>
+              </Button>
             ) : undefined
           }
           primaryAction={
@@ -117,12 +117,12 @@ function BusLayoutsPage() {
                   </div>
                 </div>
                 <div className="mt-4 pt-3 border-t border-border flex justify-between items-center gap-2">
-                   <button 
+                   <Button 
                      onClick={() => setEditingLayout(l)} 
                      className="text-[11px] font-semibold text-muted-foreground hover:text-foreground flex items-center gap-1 transition-colors px-2.5 py-1.5 rounded-full hover:glass bg-white/5 border-white/10 cursor-pointer border-none glass-card border-none"
                    >
                      <Settings2 className="h-3 w-3" /> Cadastro
-                   </button>
+                   </Button>
                    <Link
                      to="/agency/$slug/bus-layouts/$id"
                      params={{ slug, id: l.id }}

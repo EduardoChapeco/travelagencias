@@ -8,7 +8,7 @@ import { useAgency } from "@/lib/agency-context";
 import { PageHeader } from "@/components/shell/PageHeader";
 import { Field } from "@/components/ui/field";
 import { FormInput as Input } from "@/components/ui/input";
-import { PrimaryButton } from "@/components/ui/button";
+import { PrimaryButton , Button } from "@/components/ui/button";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -122,7 +122,7 @@ function Page() {
               <PageHeader
           title="Configurações da Agência"
           actions={
-            <button
+            <Button
               type="submit"
               form="settings-form"
               disabled={isSubmitting}
@@ -130,7 +130,7 @@ function Page() {
             >
               <Save className="h-3.5 w-3.5" />
               <span>{isSubmitting ? "Salvando..." : "Salvar"}</span>
-            </button>
+            </Button>
           }
         />
       

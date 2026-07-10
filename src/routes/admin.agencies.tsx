@@ -10,6 +10,7 @@ import { toast } from "sonner";
 import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { Button } from "@/components/ui/button";
 
 const agenciesQueryOptions = queryOptions({
   queryKey: ["admin-agencies"],
@@ -89,12 +90,12 @@ function Page() {
     <>
       <div className="flex items-center justify-between">
         <PageHeader title="Agências" description="Todas as agências cadastradas na plataforma." />
-        <button
+        <Button
           onClick={() => setOpen(true)}
           className="flex items-center gap-2 rounded-full bg-primary px-4 py-2 text-sm font-medium text-primary-foreground hover:bg-primary/90"
         >
           <Plus className="h-4 w-4" /> Nova Agência
-        </button>
+        </Button>
       </div>
 
       {q.isError && (
@@ -186,13 +187,13 @@ function Page() {
                       />
                     </div>
                   </div>
-                  <button
+                  <Button
                     disabled={loading}
                     type="submit"
                     className="mt-2 w-full rounded-full bg-primary px-4 py-2 text-sm font-medium text-primary-foreground disabled:opacity-50"
                   >
                     {loading ? "Provisionando..." : "Criar Agência e Gerar Convite"}
-                  </button>
+                  </Button>
                 </form>
               ) : (
                 <div className="mt-4 flex flex-col gap-4">
@@ -210,15 +211,15 @@ function Page() {
                         value={inviteUrl}
                         className="flex-1 rounded-full border-none glass bg-white/5 border-white/10 px-3 py-2 font-mono text-xs text-muted-foreground"
                       />
-                      <button
+                      <Button
                         onClick={handleCopy}
                         className="rounded-full border-none bg-background px-3 py-2 text-sm hover:glass bg-white/5 border-white/10"
                       >
                         Copiar
-                      </button>
+                      </Button>
                     </div>
                   </div>
-                  <button
+                  <Button
                     type="button"
                     onClick={() => {
                       setOpen(false);
@@ -227,7 +228,7 @@ function Page() {
                     className="mt-4 w-full rounded-full border-none px-4 py-2 text-sm hover:glass bg-white/5 border-white/10"
                   >
                     Fechar
-                  </button>
+                  </Button>
                 </div>
               )}
             </div>

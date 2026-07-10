@@ -4,6 +4,7 @@ import { ArrowLeft, ExternalLink, Copy, Eye } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { money, fmtDate } from "@/lib/formatters";
+import { Button } from "@/components/ui/button";
 
 export const Route = createFileRoute("/agency/$slug/proposals/$id/preview")({
   head: ({ context }: any) => ({ meta: [{ title: `Pré-visualização da Proposta · ${context?.brand?.platform_name || 'Turis'}` }] }),
@@ -181,7 +182,7 @@ function ProposalPreview() {
           </span>
         </div>
         <div className="flex items-center gap-2">
-          <button
+          <Button
             onClick={() => {
               navigator.clipboard.writeText(publicUrl);
               toast.success("Link copiado");
@@ -191,7 +192,7 @@ function ProposalPreview() {
           >
             <Copy className="h-3.5 w-3.5" />
             <span className="hidden sm:inline">Copiar link</span>
-          </button>
+          </Button>
           <a
             href={publicUrl}
             target="_blank"

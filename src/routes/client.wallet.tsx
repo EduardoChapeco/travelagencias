@@ -1,3 +1,4 @@
+import { Button } from "@/components/ui/button";
 import { createFileRoute } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
@@ -108,9 +109,9 @@ function ClientWallet() {
                   {config.label}
                 </div>
                 {isSelected && (
-                  <button onClick={(e) => { e.stopPropagation(); setSelectedPass(null); }} className="p-2 bg-white/20 rounded-full hover:bg-white/30 transition-colors">
+                  <Button onClick={(e) => { e.stopPropagation(); setSelectedPass(null); }} className="p-2 bg-white/20 rounded-full hover:bg-white/30 transition-colors">
                     <X className="h-4 w-4" />
-                  </button>
+                  </Button>
                 )}
               </div>
 

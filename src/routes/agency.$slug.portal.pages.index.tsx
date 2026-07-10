@@ -27,7 +27,7 @@ import { useAgency } from "@/lib/agency-context";
 import { FormInput as Input } from "@/components/ui/input";
 import { NativeSelect as Select } from "@/components/ui/select";
 import { StatusBadge } from "@/components/ui/badge";
-import { PrimaryButton, GhostButton } from "@/components/ui/button";
+import { PrimaryButton, GhostButton , Button } from "@/components/ui/button";
 import { CMS_TEMPLATES, getTemplateById } from "@/lib/cms-templates";
 import { savePortalPageDraft } from "@/services/portal";
 import { SheetPage } from "@/components/ui/sheet";
@@ -521,13 +521,13 @@ function PagesPage() {
                     </div>
 
                     <div className="mt-5 pt-3 border-t border-border/40">
-                      <button
+                      <Button
                         onClick={() => openCreateWithTemplate(tpl.id)}
                         className="w-full flex items-center justify-center gap-1 py-2 rounded-full border border-brand/20 bg-brand/5 text-xs font-bold text-brand group-hover:bg-brand group-hover:text-brand-foreground group-hover:border-transparent transition-all"
                       >
                         Usar este design{" "}
                         <ArrowRight className="h-3.5 w-3.5 ml-1 transition-transform group-hover:translate-x-0.5" />
-                      </button>
+                      </Button>
                     </div>
                   </div>
                 );
@@ -550,13 +550,13 @@ function PagesPage() {
                 </p>
                 {searchQuery.trim() === "" && (
                   <div className="flex gap-2 mt-5">
-                    <button
+                    <Button
                       onClick={() => setActiveTab("templates")}
                       className="flex h-9 items-center gap-1.5 rounded-full border-none glass-card border-none hover:glass-card border-none-hover px-4 text-xs font-semibold text-foreground transition-all"
                     >
                       <LayoutTemplate className="h-3.5 w-3.5" /> Escolher Template
-                    </button>
-                    <button
+                    </Button>
+                    <Button
                       onClick={() => {
                         setSelectedTemplateId("empty");
                         setNewPageTitle("");
@@ -566,7 +566,7 @@ function PagesPage() {
                       className="flex h-9 items-center gap-1.5 rounded-full bg-primary px-4 text-xs font-semibold text-primary-foreground hover:bg-primary/90 transition-all"
                     >
                       <Plus className="h-4 w-4" /> Página em Branco
-                    </button>
+                    </Button>
                   </div>
                 )}
               </div>
@@ -668,23 +668,23 @@ function PagesPage() {
                               <ExternalLink className="h-3.5 w-3.5" />
                             </a>
                           )}
-                          <button
+                          <Button
                             onClick={() => handleDuplicate(p)}
                             className="flex items-center justify-center p-1.5 rounded-full border-none hover:glass-card border-none-hover text-muted-foreground hover:text-foreground transition-colors"
                             title="Duplicar Página"
                           >
                             <Copy className="h-3.5 w-3.5" />
-                          </button>
-                          <button
+                          </Button>
+                          <Button
                             onClick={() => deletePage(p)}
                             className="flex items-center justify-center p-1.5 rounded-full border-none hover:bg-destructive/5 text-muted-foreground hover:text-destructive transition-colors"
                             title="Excluir Página"
                           >
                             <Trash2 className="h-3.5 w-3.5" />
-                          </button>
+                          </Button>
                         </div>
 
-                        <button
+                        <Button
                           onClick={() => togglePublish(p)}
                           className={`text-xs font-bold px-3 py-1.5 rounded-full transition-colors${
                             p.is_published
@@ -693,7 +693,7 @@ function PagesPage() {
                           }`}
                         >
                           {p.is_published ? "Despublicar" : "Publicar"}
-                        </button>
+                        </Button>
                       </div>
                     </div>
                   );

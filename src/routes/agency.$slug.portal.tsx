@@ -1,3 +1,4 @@
+import { Button } from "@/components/ui/button";
 import {
   createFileRoute,
   Outlet,
@@ -43,7 +44,7 @@ function Page() {
               pathname === tab.path ||
               (tab.path.endsWith("/pages") && pathname.includes("/portal/pages"));
             return (
-              <button
+              <Button
                 key={tab.path}
                 type="button"
                 onClick={() => navigate({ to: tab.path as any })}
@@ -54,7 +55,7 @@ function Page() {
                 }`}
               >
                 {tab.label}
-              </button>
+              </Button>
             );
           })}
         </div>

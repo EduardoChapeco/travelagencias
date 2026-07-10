@@ -5,6 +5,7 @@ import { useAgency } from "@/lib/agency-context";
 import { X, Plus, Tag as TagIcon, Check } from "lucide-react";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "@/components/ui/command";
+import { Button } from "@/components/ui/button";
 
 export interface DSTagPickerProps {
   value?: string[];
@@ -117,14 +118,14 @@ export function DSTagPicker({
                 >
                   {name}
                   {!disabled && (
-                    <button
+                    <Button
                       type="button"
                       onClick={(e) => handleRemove(e, tagStr)}
                       className="ml-0.5 inline-flex h-3 w-3 items-center justify-center rounded-full outline-none hover:bg-black/20 focus:ring-2 focus:ring-black/40"
                     >
                       <X className="h-2.5 w-2.5" />
                       <span className="sr-only">Remover tag</span>
-                    </button>
+                    </Button>
                   )}
                 </span>
               );
@@ -150,7 +151,7 @@ export function DSTagPicker({
               {isLoading ? (
                 <span className="text-muted-foreground">Carregando tags...</span>
               ) : inputValue ? (
-                <button
+                <Button
                   type="button"
                   onClick={handleCreate}
                   disabled={createTagMutation.isPending}
@@ -158,7 +159,7 @@ export function DSTagPicker({
                 >
                   <Plus className="h-4 w-4" />
                   Criar "{inputValue}"
-                </button>
+                </Button>
               ) : (
                 <span className="text-muted-foreground">Nenhuma tag encontrada.</span>
               )}

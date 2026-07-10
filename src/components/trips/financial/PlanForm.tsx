@@ -6,6 +6,7 @@ import { Field } from "@/components/ui/field";
 import { FormInput as Input } from "@/components/ui/input";
 import { NativeSelect as Select } from "@/components/ui/select";
 import { createPaymentPlan } from "@/services/trips";
+import { Button } from "@/components/ui/button";
 
 const PAYMENT_METHODS = [
   ["pix", "Pix"],
@@ -125,20 +126,20 @@ export function PlanForm({
         </label>
       </div>
       <div className="flex gap-2">
-        <button
+        <Button
           type="submit"
           disabled={isSubmitting}
           className="h-8 rounded-full bg-primary px-4 text-xs font-semibold text-primary-foreground disabled:opacity-60 cursor-pointer"
         >
           {isSubmitting ? "Criando…" : "Criar plano"}
-        </button>
-        <button
+        </Button>
+        <Button
           type="button"
           onClick={onCancel}
           className="h-8 rounded-full border border-border px-4 text-xs cursor-pointer text-foreground bg-surface"
         >
           Cancelar
-        </button>
+        </Button>
       </div>
     </form>
   );

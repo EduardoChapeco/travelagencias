@@ -79,7 +79,7 @@ import { FormInput as Input } from "@/components/ui/input";
 import { NativeSelect as Select } from "@/components/ui/select";
 import { FormTextarea as Textarea } from "@/components/ui/textarea";
 import { StatusBadge } from "@/components/ui/badge";
-import { GhostButton, PrimaryButton } from "@/components/ui/button";
+import { GhostButton, PrimaryButton , Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Skeleton } from "@/components/ui/skeleton";
 import { cn } from "@/lib/utils";
@@ -127,7 +127,7 @@ function StarRatingInput({ value, onChange }: { value: number; onChange: (v: num
   return (
     <span className="flex items-center gap-0.5">
       {Array.from({ length: 5 }).map((_, i) => (
-        <button
+        <Button
           key={i}
           type="button"
           onClick={() => onChange(i + 1)}
@@ -141,7 +141,7 @@ function StarRatingInput({ value, onChange }: { value: number; onChange: (v: num
               i < (hover || value) ? "fill-amber-400 text-amber-400" : "text-border",
             )}
           />
-        </button>
+        </Button>
       ))}
     </span>
   );
@@ -368,13 +368,13 @@ function TabContacts({ supplierId, agencyId }: { supplierId: string; agencyId: s
                 )}
               </div>
             </div>
-            <button
+            <Button
               onClick={() => deleteMut.mutate(c.id)}
               className="text-muted-foreground hover:text-danger transition-colors p-1"
               title="Remover"
             >
               <Trash2 className="h-3.5 w-3.5" />
-            </button>
+            </Button>
           </div>
         ))}
       </div>
@@ -612,12 +612,12 @@ function TabProducts({ supplierId, agencyId }: { supplierId: string; agencyId: s
                   </p>
                 )}
               </div>
-              <button
+              <Button
                 onClick={() => deleteMut.mutate(p.id)}
                 className="text-muted-foreground hover:text-danger transition-colors p-1 shrink-0"
               >
                 <Trash2 className="h-3.5 w-3.5" />
-              </button>
+              </Button>
             </div>
           );
         })}
@@ -792,7 +792,7 @@ function TabFiles({ supplierId, agencyId }: { supplierId: string; agencyId: stri
                   Ver
                 </a>
                 {!f.ocr_reviewed && (
-                  <button
+                  <Button
                     onClick={() => handleOCR(f.id, f.file_url)}
                     disabled={running === f.id}
                     className="flex items-center gap-1 text-xs border border-[--brand-primary,theme(colors.pink.400)] text-[--brand-primary,theme(colors.pink.600)] bg-[--brand-primary,theme(colors.pink.500)]/5 hover:bg-[--brand-primary,theme(colors.pink.500)]/10 rounded px-2 py-1 transition-colors"
@@ -804,19 +804,19 @@ function TabFiles({ supplierId, agencyId }: { supplierId: string; agencyId: stri
                       <Brain className="h-3 w-3" />
                     )}
                     <span className="hidden sm:inline">Extrair com IA</span>
-                  </button>
+                  </Button>
                 )}
                 {f.ocr_reviewed && (
                   <span className="text-[10px] text-green-600 border border-green-200 bg-green-50 rounded px-1.5 py-0.5 font-semibold">
                     ✓ Revisado
                   </span>
                 )}
-                <button
+                <Button
                   onClick={() => deleteMut.mutate(f.id)}
                   className="text-muted-foreground hover:text-danger p-1"
                 >
                   <Trash2 className="h-3.5 w-3.5" />
-                </button>
+                </Button>
               </div>
             </div>
             {f.ocr_data && !f.ocr_reviewed && (
@@ -828,7 +828,7 @@ function TabFiles({ supplierId, agencyId }: { supplierId: string; agencyId: stri
                 <pre className="text-[10px] text-amber-800 overflow-auto max-h-40">
                   {JSON.stringify(f.ocr_data, null, 2)}
                 </pre>
-                <button
+                <Button
                   disabled={isPersisting === f.id}
                   onClick={async () => {
                     setIsPersisting(f.id);
@@ -870,7 +870,7 @@ function TabFiles({ supplierId, agencyId }: { supplierId: string; agencyId: stri
                   className="mt-2 text-amber-700 border border-amber-300 rounded px-2 py-1 hover:bg-amber-100 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   {isPersisting === f.id ? "Salvando..." : "✓ Confirmar e persistir dados"}
-                </button>
+                </Button>
               </div>
             )}
           </div>
@@ -1033,12 +1033,12 @@ function TabReviews({ supplierId, agencyId }: { supplierId: string; agencyId: st
                   {new Date(r.created_at).toLocaleDateString("pt-BR")} · {r.user?.email ?? "—"}
                 </div>
               </div>
-              <button
+              <Button
                 onClick={() => deleteMut.mutate(r.id)}
                 className="text-muted-foreground hover:text-danger p-1"
               >
                 <Trash2 className="h-3.5 w-3.5" />
-              </button>
+              </Button>
             </div>
           </div>
         ))}

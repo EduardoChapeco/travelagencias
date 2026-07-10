@@ -38,6 +38,7 @@ import { type PortalBlock, type LegacyPortalBlock } from "@/lib/cms-types";
 import { RichTextEditor } from "@/components/ui/RichTextEditor";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
+import { Button } from "@/components/ui/button";
 
 type Props = {
   block: PortalBlock;
@@ -80,7 +81,7 @@ function IconPicker({ value, onChange }: { value: string; onChange: (key: string
 
   return (
     <div className="relative">
-      <button
+      <Button
         type="button"
         onClick={() => setOpen((p) => !p)}
         className="flex items-center gap-2 h-9 px-3 rounded-2xl border border-border bg-surface-alt text-xs font-medium hover:border-brand/60 transition-colors w-full"
@@ -94,12 +95,12 @@ function IconPicker({ value, onChange }: { value: string; onChange: (key: string
           {current?.label || value || "Selecionar ícone"}
         </span>
         <ChevronDown className="w-3.5 h-3.5 text-muted-foreground" />
-      </button>
+      </Button>
       {open && (
         <div className="absolute z-50 top-10 left-0 w-64 p-3 rounded-3xl border border-border bg-surface shadow-none">
           <div className="grid grid-cols-6 gap-1.5">
             {ICON_OPTIONS.map((opt) => (
-              <button
+              <Button
                 key={opt.key}
                 type="button"
                 title={opt.label}
@@ -115,7 +116,7 @@ function IconPicker({ value, onChange }: { value: string; onChange: (key: string
               >
                 <opt.Component className="w-4 h-4" />
                 <span className="leading-tight text-center">{opt.label}</span>
-              </button>
+              </Button>
             ))}
           </div>
         </div>
@@ -421,7 +422,7 @@ export function BlockFormEditor({ block: blockItem, updateBlock, agencyId }: Pro
                     <span className="text-[10px] font-bold text-muted-foreground uppercase">
                       Item #{itemIdx + 1}
                     </span>
-                    <button
+                    <Button
                       type="button"
                       onClick={() => {
                         const newItems = (block.items || []).filter((_, idx) => idx !== itemIdx);
@@ -430,7 +431,7 @@ export function BlockFormEditor({ block: blockItem, updateBlock, agencyId }: Pro
                       className="p-1.5 text-muted-foreground hover:text-destructive transition-colors"
                     >
                       <Trash2 className="w-4 h-4" />
-                    </button>
+                    </Button>
                   </div>
                   <Field label="Ícone">
                     <IconPicker
@@ -467,7 +468,7 @@ export function BlockFormEditor({ block: blockItem, updateBlock, agencyId }: Pro
                   </Field>
                 </div>
               ))}
-              <button
+              <Button
                 type="button"
                 onClick={() => {
                   const newItems = [
@@ -483,7 +484,7 @@ export function BlockFormEditor({ block: blockItem, updateBlock, agencyId }: Pro
                 className="text-xs text-brand font-medium hover:underline mt-2 inline-block"
               >
                 + Adicionar Item
-              </button>
+              </Button>
             </div>
           </div>
         );
@@ -567,7 +568,7 @@ export function BlockFormEditor({ block: blockItem, updateBlock, agencyId }: Pro
                       }}
                     />
                   </div>
-                  <button
+                  <Button
                     type="button"
                     onClick={() => {
                       const newItems = (block.items || []).filter((_, idx) => idx !== itemIdx);
@@ -576,10 +577,10 @@ export function BlockFormEditor({ block: blockItem, updateBlock, agencyId }: Pro
                     className="p-2 text-muted-foreground hover:text-destructive"
                   >
                     <Trash2 className="w-4 h-4" />
-                  </button>
+                  </Button>
                 </div>
               ))}
-              <button
+              <Button
                 type="button"
                 onClick={() => {
                   const newItems = [
@@ -591,7 +592,7 @@ export function BlockFormEditor({ block: blockItem, updateBlock, agencyId }: Pro
                 className="text-xs text-brand font-medium hover:underline mt-2 inline-block"
               >
                 + Adicionar Pergunta
-              </button>
+              </Button>
             </div>
           </div>
         );
@@ -676,7 +677,7 @@ export function BlockFormEditor({ block: blockItem, updateBlock, agencyId }: Pro
                           </option>
                         ))}
                       </Select>
-                      <button
+                      <Button
                         type="button"
                         onClick={() =>
                           updateBlock(block.id, {
@@ -686,12 +687,12 @@ export function BlockFormEditor({ block: blockItem, updateBlock, agencyId }: Pro
                         className="p-1.5 text-muted-foreground hover:text-destructive"
                       >
                         <Trash2 className="w-4 h-4" />
-                      </button>
+                      </Button>
                     </div>
                   </div>
                 </div>
               ))}
-              <button
+              <Button
                 type="button"
                 onClick={() =>
                   updateBlock(block.id, {
@@ -710,7 +711,7 @@ export function BlockFormEditor({ block: blockItem, updateBlock, agencyId }: Pro
                 className="text-xs text-brand font-medium hover:underline"
               >
                 + Adicionar depoimento
-              </button>
+              </Button>
             </div>
           </div>
         );
@@ -807,7 +808,7 @@ export function BlockFormEditor({ block: blockItem, updateBlock, agencyId }: Pro
                       updateBlock(block.id, { items: arr });
                     }}
                   />
-                  <button
+                  <Button
                     type="button"
                     onClick={() =>
                       updateBlock(block.id, {
@@ -817,10 +818,10 @@ export function BlockFormEditor({ block: blockItem, updateBlock, agencyId }: Pro
                     className="p-1.5 text-muted-foreground hover:text-destructive"
                   >
                     <Trash2 className="w-4 h-4" />
-                  </button>
+                  </Button>
                 </div>
               ))}
-              <button
+              <Button
                 type="button"
                 onClick={() =>
                   updateBlock(block.id, {
@@ -833,7 +834,7 @@ export function BlockFormEditor({ block: blockItem, updateBlock, agencyId }: Pro
                 className="text-xs text-brand font-medium hover:underline"
               >
                 + Adicionar número
-              </button>
+              </Button>
             </div>
           </div>
         );
@@ -1034,7 +1035,7 @@ export function BlockFormEditor({ block: blockItem, updateBlock, agencyId }: Pro
                       updateBlock(block.id, { items: arr });
                     }}
                   />
-                  <button
+                  <Button
                     type="button"
                     onClick={() =>
                       updateBlock(block.id, {
@@ -1044,7 +1045,7 @@ export function BlockFormEditor({ block: blockItem, updateBlock, agencyId }: Pro
                     className="p-1.5 text-muted-foreground hover:text-destructive"
                   >
                     <Trash2 className="w-4 h-4" />
-                  </button>
+                  </Button>
                 </div>
                 <div className="flex gap-2 items-center mt-2">
                   <Input
@@ -1072,7 +1073,7 @@ export function BlockFormEditor({ block: blockItem, updateBlock, agencyId }: Pro
                 </div>
               </div>
             ))}
-            <button
+            <Button
               type="button"
               onClick={() =>
                 updateBlock(block.id, {
@@ -1085,7 +1086,7 @@ export function BlockFormEditor({ block: blockItem, updateBlock, agencyId }: Pro
               className="text-xs text-brand font-medium hover:underline"
             >
               + Adicionar link
-            </button>
+            </Button>
           </div>
         );
 
@@ -1193,7 +1194,7 @@ export function BlockFormEditor({ block: blockItem, updateBlock, agencyId }: Pro
                     <span className="text-[10px] font-bold text-muted-foreground uppercase">
                       Destino #{idx + 1}
                     </span>
-                    <button
+                    <Button
                       type="button"
                       onClick={() =>
                         updateBlock(block.id, {
@@ -1204,7 +1205,7 @@ export function BlockFormEditor({ block: blockItem, updateBlock, agencyId }: Pro
                       title="Excluir Destino"
                     >
                       <Trash2 className="w-3.5 h-3.5" />
-                    </button>
+                    </Button>
                   </div>
                   <div className="grid grid-cols-2 gap-2">
                     <Field label="Destino">
@@ -1268,7 +1269,7 @@ export function BlockFormEditor({ block: blockItem, updateBlock, agencyId }: Pro
                   />
                 </div>
               ))}
-              <button
+              <Button
                 type="button"
                 onClick={() =>
                   updateBlock(block.id, {
@@ -1287,7 +1288,7 @@ export function BlockFormEditor({ block: blockItem, updateBlock, agencyId }: Pro
                 className="text-xs text-brand font-medium hover:underline mt-2 inline-block"
               >
                 + Adicionar Destino
-              </button>
+              </Button>
             </div>
           </div>
         );
@@ -1558,7 +1559,7 @@ export function BlockFormEditor({ block: blockItem, updateBlock, agencyId }: Pro
                   key={idx}
                   className="border border-border p-3 rounded-2xl bg-surface space-y-2 relative"
                 >
-                  <button
+                  <Button
                     type="button"
                     onClick={() => {
                       const newDepts = ((block as any).departments || []).filter(
@@ -1569,7 +1570,7 @@ export function BlockFormEditor({ block: blockItem, updateBlock, agencyId }: Pro
                     className="absolute top-2 right-2 p-1 text-muted-foreground hover:text-destructive"
                   >
                     <Trash2 className="w-4 h-4" />
-                  </button>
+                  </Button>
                   <div className="grid grid-cols-2 gap-2">
                     <Field label="Nome do Setor">
                       <Input
@@ -1620,7 +1621,7 @@ export function BlockFormEditor({ block: blockItem, updateBlock, agencyId }: Pro
                   </div>
                 </div>
               ))}
-              <button
+              <Button
                 type="button"
                 onClick={() => {
                   const newDepts = [
@@ -1632,7 +1633,7 @@ export function BlockFormEditor({ block: blockItem, updateBlock, agencyId }: Pro
                 className="text-xs text-brand font-medium hover:underline mt-1 inline-block"
               >
                 + Adicionar Canal
-              </button>
+              </Button>
             </div>
           </div>
         );
@@ -2161,7 +2162,7 @@ export function BlockFormEditor({ block: blockItem, updateBlock, agencyId }: Pro
     <div className="space-y-6 bg-white p-1">
       {/* Tab Selector */}
       <div className="flex border-b border-border bg-white shrink-0 select-none px-2 gap-3 overflow-x-auto scrollbar-none">
-        <button
+        <Button
           type="button"
           onClick={() => setActiveTab("content")}
           className={`py-2 text-[9px] uppercase tracking-wider font-bold transition-all border-b-2 -mb-[1px] whitespace-nowrap cursor-pointer ${
@@ -2171,8 +2172,8 @@ export function BlockFormEditor({ block: blockItem, updateBlock, agencyId }: Pro
           }`}
         >
           Conteúdo
-        </button>
-        <button
+        </Button>
+        <Button
           type="button"
           onClick={() => setActiveTab("style")}
           className={`py-2 text-[9px] uppercase tracking-wider font-bold transition-all border-b-2 -mb-[1px] whitespace-nowrap cursor-pointer ${
@@ -2182,8 +2183,8 @@ export function BlockFormEditor({ block: blockItem, updateBlock, agencyId }: Pro
           }`}
         >
           Estilo
-        </button>
-        <button
+        </Button>
+        <Button
           type="button"
           onClick={() => setActiveTab("bindings")}
           className={`py-2 text-[9px] uppercase tracking-wider font-bold transition-all border-b-2 -mb-[1px] whitespace-nowrap cursor-pointer ${
@@ -2193,8 +2194,8 @@ export function BlockFormEditor({ block: blockItem, updateBlock, agencyId }: Pro
           }`}
         >
           Vínculos
-        </button>
-        <button
+        </Button>
+        <Button
           type="button"
           onClick={() => setActiveTab("animation")}
           className={`py-2 text-[9px] uppercase tracking-wider font-bold transition-all border-b-2 -mb-[1px] whitespace-nowrap cursor-pointer ${
@@ -2204,8 +2205,8 @@ export function BlockFormEditor({ block: blockItem, updateBlock, agencyId }: Pro
           }`}
         >
           Animação
-        </button>
-        <button
+        </Button>
+        <Button
           type="button"
           onClick={() => setActiveTab("responsive")}
           className={`py-2 text-[9px] uppercase tracking-wider font-bold transition-all border-b-2 -mb-[1px] whitespace-nowrap cursor-pointer ${
@@ -2215,7 +2216,7 @@ export function BlockFormEditor({ block: blockItem, updateBlock, agencyId }: Pro
           }`}
         >
           Responsivo
-        </button>
+        </Button>
       </div>
 
       {/* Tab Content */}
@@ -2381,7 +2382,7 @@ export function BlockFormEditor({ block: blockItem, updateBlock, agencyId }: Pro
                   {Object.entries(brandColors).map(([key, val]) => {
                     if (!val) return null;
                     return (
-                      <button
+                      <Button
                         key={key}
                         type="button"
                         onClick={() => updateStyle({ bg_color: val, backgroundColor: val })}
@@ -2436,7 +2437,7 @@ export function BlockFormEditor({ block: blockItem, updateBlock, agencyId }: Pro
                         value: "linear-gradient(135deg, #d946ef 0%, #4f46e5 100%)",
                       },
                     ].map((p) => (
-                      <button
+                      <Button
                         key={p.name}
                         type="button"
                         onClick={() => updateStyle({ bg_gradient: p.value })}
@@ -2447,7 +2448,7 @@ export function BlockFormEditor({ block: blockItem, updateBlock, agencyId }: Pro
                           style={{ background: p.value }}
                         />
                         <span className="truncate">{p.name}</span>
-                      </button>
+                      </Button>
                     ))}
                   </div>
                 </div>
@@ -2590,13 +2591,13 @@ export function BlockFormEditor({ block: blockItem, updateBlock, agencyId }: Pro
                 <span className="text-[9px] font-bold text-muted-foreground uppercase w-full mb-1">
                   Presets de Contraste:
                 </span>
-                <button
+                <Button
                   type="button"
                   onClick={() => updateStyle({ text_color: "#ffffff", textColor: "light" })}
                   className="w-5 h-5 rounded-full border border-border cursor-pointer shadow-none bg-white"
                   title="Branco: #ffffff"
                 />
-                <button
+                <Button
                   type="button"
                   onClick={() => updateStyle({ text_color: "#0f172a", textColor: "dark" })}
                   className="w-5 h-5 rounded-full border border-border cursor-pointer shadow-none bg-slate-900"
@@ -2605,7 +2606,7 @@ export function BlockFormEditor({ block: blockItem, updateBlock, agencyId }: Pro
                 {Object.entries(brandColors).map(([key, val]) => {
                   if (!val) return null;
                   return (
-                    <button
+                    <Button
                       key={key}
                       type="button"
                       onClick={() => updateStyle({ text_color: val, textColor: val })}
@@ -2939,7 +2940,7 @@ function SectionStyleEditor({ block, updateBlock, agencyId }: Props) {
                 Cores da Agência:
               </span>
               {brandColor && (
-                <button
+                <Button
                   type="button"
                   onClick={() => updateStyle({ bg_color: brandColor })}
                   className="w-5 h-5 rounded-full border border-border cursor-pointer shadow-none hover:scale-110 active:scale-95 transition-transform"
@@ -2948,7 +2949,7 @@ function SectionStyleEditor({ block, updateBlock, agencyId }: Props) {
                 />
               )}
               {brandColorLight && (
-                <button
+                <Button
                   type="button"
                   onClick={() => updateStyle({ bg_color: brandColorLight })}
                   className="w-5 h-5 rounded-full border border-border cursor-pointer shadow-none hover:scale-110 active:scale-95 transition-transform"
@@ -3004,7 +3005,7 @@ function SectionStyleEditor({ block, updateBlock, agencyId }: Props) {
                 Presets de Contraste:
               </span>
               {brandOriginalFg && (
-                <button
+                <Button
                   type="button"
                   onClick={() => updateStyle({ text_color: brandOriginalFg })}
                   className="w-5 h-5 rounded-full border border-border cursor-pointer shadow-none hover:scale-110 active:scale-95 transition-transform"
@@ -3013,7 +3014,7 @@ function SectionStyleEditor({ block, updateBlock, agencyId }: Props) {
                 />
               )}
               {brandColor && (
-                <button
+                <Button
                   type="button"
                   onClick={() => updateStyle({ text_color: brandColor })}
                   className="w-5 h-5 rounded-full border border-border cursor-pointer shadow-none hover:scale-110 active:scale-95 transition-transform"
@@ -3021,13 +3022,13 @@ function SectionStyleEditor({ block, updateBlock, agencyId }: Props) {
                   title={`Principal da Marca: ${brandColor}`}
                 />
               )}
-              <button
+              <Button
                 type="button"
                 onClick={() => updateStyle({ text_color: "#ffffff" })}
                 className="w-5 h-5 rounded-full border border-border cursor-pointer shadow-none hover:scale-110 active:scale-95 transition-transform bg-white"
                 title="Branco: #ffffff"
               />
-              <button
+              <Button
                 type="button"
                 onClick={() => updateStyle({ text_color: "#0f172a" })}
                 className="w-5 h-5 rounded-full border border-border cursor-pointer shadow-none hover:scale-110 active:scale-95 transition-transform bg-slate-900"
@@ -3352,13 +3353,13 @@ function UnsplashPicker({ value, onChange }: { value: string; onChange: (url: st
 
   return (
     <div className="inline-block">
-      <button
+      <Button
         type="button"
         onClick={() => setOpen(!open)}
         className="px-3 h-9 rounded-2xl border border-border bg-surface-alt text-xs font-semibold hover:border-brand/60 transition-colors"
       >
         {value ? "Buscar no Unsplash" : "Buscar no Unsplash"}
-      </button>
+      </Button>
 
       {open && (
         <div className="absolute z-50 right-4 w-72 p-4 rounded-3xl border border-border bg-surface shadow-none space-y-3 mt-2">
@@ -3371,14 +3372,14 @@ function UnsplashPicker({ value, onChange }: { value: string; onChange: (url: st
               className="flex-1 px-3 py-1.5 text-xs rounded-2xl border border-border outline-none bg-surface"
               onKeyDown={(e) => e.key === "Enter" && search()}
             />
-            <button
+            <Button
               type="button"
               onClick={search}
               disabled={loading}
               className="px-3 py-1.5 bg-brand text-white text-xs font-bold rounded-2xl"
             >
               {loading ? "Buscando..." : "Buscar"}
-            </button>
+            </Button>
           </div>
           {photos.length > 0 ? (
             <div className="grid grid-cols-3 gap-2 max-h-48 overflow-y-auto pr-1">
@@ -3488,7 +3489,7 @@ function ListFieldEditor({ items, onChange, defaultValue, agencyId }: ListFieldE
                 </span>
 
                 <div className="flex items-center gap-1.5">
-                  <button
+                  <Button
                     type="button"
                     onClick={(e) => {
                       e.stopPropagation();
@@ -3498,8 +3499,8 @@ function ListFieldEditor({ items, onChange, defaultValue, agencyId }: ListFieldE
                     className="p-1 text-muted-foreground hover:text-foreground disabled:opacity-40"
                   >
                     ▲
-                  </button>
-                  <button
+                  </Button>
+                  <Button
                     type="button"
                     onClick={(e) => {
                       e.stopPropagation();
@@ -3509,8 +3510,8 @@ function ListFieldEditor({ items, onChange, defaultValue, agencyId }: ListFieldE
                     className="p-1 text-muted-foreground hover:text-foreground disabled:opacity-40"
                   >
                     ▼
-                  </button>
-                  <button
+                  </Button>
+                  <Button
                     type="button"
                     onClick={(e) => {
                       e.stopPropagation();
@@ -3519,7 +3520,7 @@ function ListFieldEditor({ items, onChange, defaultValue, agencyId }: ListFieldE
                     className="p-1 text-muted-foreground hover:text-destructive"
                   >
                     <Trash2 className="h-3.5 w-3.5" />
-                  </button>
+                  </Button>
                 </div>
               </div>
 
@@ -3622,13 +3623,13 @@ function ListFieldEditor({ items, onChange, defaultValue, agencyId }: ListFieldE
         })}
       </div>
 
-      <button
+      <Button
         type="button"
         onClick={addItem}
         className="w-full py-2 border border-dashed border-border rounded-3xl text-xs font-semibold hover:border-brand/40 hover:bg-surface-alt/25 transition-colors text-center"
       >
         + Adicionar Item
-      </button>
+      </Button>
     </div>
   );
 }

@@ -12,7 +12,7 @@ import { Field } from "@/components/ui/field";
 import { FormInput as Input } from "@/components/ui/input";
 import { FormTextarea as Textarea } from "@/components/ui/textarea";
 import { SimpleSheet as Sheet } from "@/components/ui/sheet";
-import { PrimaryButton, GhostButton } from "@/components/ui/button";
+import { PrimaryButton, GhostButton , Button } from "@/components/ui/button";
 import { StatusBadge } from "@/components/ui/badge";
 import { RichTextEditor } from "@/components/ui/RichTextEditor";
 
@@ -128,7 +128,7 @@ function KnowledgePage() {
 
           <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6 pb-12">
             {filtered.map((a: any) => (
-              <button
+              <Button
                 key={a.id}
                 onClick={() => setViewing(a)}
                 className="group rounded-[var(--radius-card)] border-none glass-card border-none p-5 text-left transition-all hover:border-brand/40 cursor-pointer flex flex-col justify-between"
@@ -169,7 +169,7 @@ function KnowledgePage() {
                     ))}
                   </div>
                 )}
-              </button>
+              </Button>
             ))}
           </div>
         </div>
@@ -188,7 +188,7 @@ function KnowledgePage() {
 
           <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3">
             {filteredPlaybooks.map((pb: any) => (
-              <button
+              <Button
                 key={pb.id}
                 onClick={() => setViewingPlaybook(pb)}
                 className="group rounded-[var(--radius-card)] border-none glass-card border-none p-5 text-left transition-all hover:border-brand/40 cursor-pointer flex flex-col justify-between"
@@ -203,7 +203,7 @@ function KnowledgePage() {
                   <div className="mt-2 font-bold text-sm text-foreground flex items-center justify-between gap-2">
                     {pb.title}
                     <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                      <button
+                      <Button
                         onClick={(e) => {
                           e.stopPropagation();
                           setEditingPlaybook(pb);
@@ -211,7 +211,7 @@ function KnowledgePage() {
                         className="p-1 hover:glass bg-white/5 border-white/10 rounded text-muted-foreground cursor-pointer"
                       >
                         <Edit2 className="w-3.5 h-3.5" />
-                      </button>
+                      </Button>
                     </div>
                   </div>
                   <p className="text-xs text-muted-foreground mt-1 line-clamp-2 leading-relaxed">
@@ -224,7 +224,7 @@ function KnowledgePage() {
                     {pb.steps?.length || 0} etapas definidas
                   </span>
                 </div>
-              </button>
+              </Button>
             ))}
           </div>
         </div>
@@ -418,13 +418,13 @@ function PlaybookSheet({
           <h2 className="text-base font-semibold tracking-tight">
             {initialData ? "Editar Playbook" : "Novo Playbook"}
           </h2>
-          <button
+          <Button
             type="button"
             onClick={onClose}
             className="flex h-8 w-8 items-center justify-center rounded-full border-none hover:glass bg-white/5 border-white/10 text-muted-foreground hover:text-foreground transition-colors cursor-pointer"
           >
             x
-          </button>
+          </Button>
         </div>
 
         <div className="flex-1 overflow-y-auto px-6 py-5">
@@ -481,14 +481,14 @@ function PlaybookSheet({
                     key={idx}
                     className="glass bg-white/5 border-white/10/40 border-none rounded-[var(--radius-card)] p-4 relative space-y-3"
                   >
-                    <button
+                    <Button
                       type="button"
                       onClick={() => removeStep(idx)}
                       disabled={steps.length === 1}
                       className="absolute right-3 top-3 text-muted-foreground hover:text-destructive transition-colors disabled:opacity-30 cursor-pointer"
                     >
                       <Trash2 className="w-4 h-4" />
-                    </button>
+                    </Button>
 
                     <div className="flex items-center gap-3">
                       <div className="flex h-6 w-6 items-center justify-center rounded-full bg-brand text-brand-foreground text-xs font-bold">
@@ -622,13 +622,13 @@ function ArticleSheet({
                 Ver publicado
               </a>
             )}
-            <button
+            <Button
               type="button"
               onClick={onClose}
               className="flex h-8 w-8 items-center justify-center rounded-full border-none hover:glass bg-white/5 border-white/10"
             >
               x
-            </button>
+            </Button>
           </div>
         </div>
 
@@ -659,20 +659,20 @@ function ArticleSheet({
               <div className="flex items-center justify-between">
                 <label className="text-sm font-bold text-foreground">Conteúdo</label>
                 <div className="flex glass-card border-none rounded-full p-1 border-none">
-                  <button
+                  <Button
                     type="button"
                     onClick={() => setEditorMode("simple")}
                     className={`px-3 py-1 text-xs font-semibold rounded-full ${editorMode === "simple" ? "bg-foreground text-background" : "text-muted-foreground"}`}
                   >
                     Simples
-                  </button>
-                  <button
+                  </Button>
+                  <Button
                     type="button"
                     onClick={() => setEditorMode("advanced")}
                     className={`px-3 py-1 text-xs font-semibold rounded-full ${editorMode === "advanced" ? "bg-foreground text-background" : "text-muted-foreground"}`}
                   >
                     Avançado
-                  </button>
+                  </Button>
                 </div>
               </div>
 

@@ -31,7 +31,7 @@ import { useAgency } from "@/lib/agency-context";
 import { EmptyState } from "@/components/shell/PageHeader";
 import { PageHeader, ModuleActionButton } from "@/components/shell/PageHeader";
 import { ModuleAdminPanel } from "@/components/shell/ModuleAdminPanel";
-import { PrimaryButton, GhostButton } from "@/components/ui/button";
+import { PrimaryButton, GhostButton , Button } from "@/components/ui/button";
 import { StatusBadge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
 import { NewSupplierWizard } from "@/components/suppliers/NewSupplierWizard";
@@ -319,21 +319,21 @@ function SuppliersPage() {
           onFilterChange={(v) => setKindFilter(v as any)}
           actions={
             <div className="flex items-center gap-1.5">
-              <button
+              <Button
                 onClick={() => setViewMode(viewMode === "grid" ? "list" : "grid")}
                 className="h-7 px-2 flex items-center justify-center rounded-full border border-white/15 text-white/60 hover:text-white hover:bg-white/10 transition-colors cursor-pointer text-[11px] font-semibold"
                 title={viewMode === "grid" ? "Ver em Lista" : "Ver em Grid"}
               >
                 {viewMode === "grid" ? <List className="h-3.5 w-3.5" /> : <LayoutGrid className="h-3.5 w-3.5" />}
-              </button>
+              </Button>
               {isAgencyAdmin && (
-                <button
+                <Button
                   onClick={() => setAdminPanelOpen(true)}
                   className="h-7 w-7 flex items-center justify-center rounded-full border border-white/15 text-white/60 hover:text-white hover:bg-white/10 transition-colors cursor-pointer"
                   title="Administrar"
                 >
                   <Settings2 className="h-3.5 w-3.5" />
-                </button>
+                </Button>
               )}
             </div>
           }
@@ -364,7 +364,7 @@ function SuppliersPage() {
                 { id: "visa", label: "Assessoria Consular" },
                 { id: "other", label: "Outros" },
               ].map((c) => (
-                <button
+                <Button
                   key={c.id}
                   onClick={() => setKindFilter(c.id as any)}
                   className={cn(
@@ -375,7 +375,7 @@ function SuppliersPage() {
                   )}
                 >
                   {c.label}
-                </button>
+                </Button>
               ))}
             </div>
           </div>

@@ -3,6 +3,7 @@ import { fmtDate, money } from "@/lib/formatters";
 import { AppWidget } from "@/components/portal/TripPortalShared";
 import { toast } from "sonner";
 import { handleViewReceipt } from "@/utils/storage-helper";
+import { Button } from "@/components/ui/button";
 
 interface TabFinanceiroProps {
   trip: any;
@@ -192,12 +193,12 @@ export function TabFinanceiro({
                                 <span className="font-bold">Comprovante enviado!</span> Aguardando
                                 conciliação da agência.
                                 {inst.receipt_url && (
-                                  <button
+                                  <Button
                                     onClick={() => handleViewReceipt(inst.receipt_url)}
                                     className="text-brand font-bold underline ml-1.5 inline-block bg-transparent border-0 p-0 cursor-pointer"
                                   >
                                     Visualizar Arquivo
-                                  </button>
+                                  </Button>
                                 )}
                               </div>
                             </div>

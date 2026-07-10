@@ -7,7 +7,7 @@ import { Field } from "@/components/ui/field";
 import { FormInput as Input } from "@/components/ui/input";
 import { NativeSelect as Select } from "@/components/ui/select";
 import { FormTextarea as Textarea } from "@/components/ui/textarea";
-import { PrimaryButton, GhostButton } from "@/components/ui/button";
+import { PrimaryButton, GhostButton , Button } from "@/components/ui/button";
 import { SheetPage } from "@/components/ui/sheet";
 import { createProposal, fetchClientsPick, fetchLeadsPick } from "@/services/proposals";
 import {
@@ -97,7 +97,7 @@ function ClientCombobox({
 
   return (
     <div className="relative" ref={ref}>
-      <button
+      <Button
         type="button"
         onClick={() => {
           setOpen((v) => !v);
@@ -120,7 +120,7 @@ function ClientCombobox({
         ) : (
           <ChevronDown className="h-3.5 w-3.5 text-muted-foreground" />
         )}
-      </button>
+      </Button>
 
       {open && (
         <div className="absolute z-50 mt-1 w-full rounded-2xl border border-border bg-surface">
@@ -144,7 +144,7 @@ function ClientCombobox({
               </div>
             )}
             {filtered.map((c) => (
-              <button
+              <Button
                 key={c.id}
                 type="button"
                 onClick={() => {
@@ -157,21 +157,21 @@ function ClientCombobox({
                 <User className="h-3.5 w-3.5 shrink-0 text-muted-foreground" />
                 <span className="flex-1 truncate">{c.full_name}</span>
                 {c.id === value && <Check className="h-3.5 w-3.5 text-brand" />}
-              </button>
+              </Button>
             ))}
           </div>
 
           {/* Quick create */}
           {!showQuickCreate ? (
             <div className="border-t border-border">
-              <button
+              <Button
                 type="button"
                 onClick={() => setShowQuickCreate(true)}
                 className="flex w-full items-center gap-2 px-3 py-2.5 text-xs font-semibold text-brand hover:bg-brand/5"
               >
                 <UserPlus className="h-3.5 w-3.5" />
                 Criar cliente rápido
-              </button>
+              </Button>
             </div>
           ) : (
             <div className="border-t border-border p-3 space-y-2">
@@ -256,7 +256,7 @@ function LeadCombobox({
 
   return (
     <div className="relative" ref={ref}>
-      <button
+      <Button
         type="button"
         onClick={() => {
           setOpen((v) => !v);
@@ -279,7 +279,7 @@ function LeadCombobox({
         ) : (
           <ChevronDown className="h-3.5 w-3.5 text-muted-foreground" />
         )}
-      </button>
+      </Button>
 
       {open && (
         <div className="absolute z-50 mt-1 w-full rounded-2xl border border-border bg-surface">
@@ -294,7 +294,7 @@ function LeadCombobox({
             />
           </div>
           <div className="max-h-40 overflow-y-auto">
-            <button
+            <Button
               type="button"
               onClick={() => {
                 onChange("");
@@ -304,14 +304,14 @@ function LeadCombobox({
               className="flex w-full items-center px-3 py-2 text-xs text-muted-foreground hover:bg-surface-alt"
             >
               — nenhum —
-            </button>
+            </Button>
             {filtered.length === 0 && query && (
               <div className="px-3 py-3 text-xs text-muted-foreground text-center">
                 Nenhum lead encontrado
               </div>
             )}
             {filtered.map((l) => (
-              <button
+              <Button
                 key={l.id}
                 type="button"
                 onClick={() => {
@@ -324,7 +324,7 @@ function LeadCombobox({
                 <User className="h-3.5 w-3.5 shrink-0 text-muted-foreground" />
                 <span className="flex-1 truncate">{l.name}</span>
                 {l.id === value && <Check className="h-3.5 w-3.5 text-brand" />}
-              </button>
+              </Button>
             ))}
           </div>
         </div>
@@ -626,13 +626,13 @@ export function NewProposalSheet({
                 hotéis e {extractedItems.itinerary?.length ?? 0} dias de roteiro serão aplicados.
               </p>
             </div>
-            <button
+            <Button
               type="button"
               onClick={() => setExtractedItems(null)}
               className="text-muted-foreground hover:text-danger border border-border rounded px-1.5 py-0.5 hover:bg-surface transition-colors"
             >
               Descartar
-            </button>
+            </Button>
           </div>
         )}
       </div>

@@ -26,6 +26,7 @@ import {
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
 import { updateBoardingCardChecklist } from "@/services/boarding";
+import { Button } from "@/components/ui/button";
 
 export const Route = createFileRoute("/agency/$slug/trips/$id/boarding")({
   head: ({ context }: any) => ({ meta: [{ title: `Check-in & Embarque · ${context?.brand?.platform_name || 'Turis'}` }] }),
@@ -262,7 +263,7 @@ function TripBoardingPage() {
 
         {/* Tab Selector */}
         <div className="flex glass bg-white/5 border-white/10 p-0.5 rounded-[var(--radius-card)] border-none/60 text-[11px] font-semibold">
-          <button
+          <Button
             onClick={() => setActiveTab("cards")}
             className={cn(
               "px-3 py-1.5 rounded-full transition-all flex items-center gap-1.5",
@@ -272,8 +273,8 @@ function TripBoardingPage() {
             )}
           >
             <ListTodo className="h-3.5 w-3.5" /> Cartões
-          </button>
-          <button
+          </Button>
+          <Button
             onClick={() => setActiveTab("settings")}
             className={cn(
               "px-3 py-1.5 rounded-full transition-all flex items-center gap-1.5",
@@ -283,7 +284,7 @@ function TripBoardingPage() {
             )}
           >
             <Link2 className="h-3.5 w-3.5" /> e-Check-in & Timeline
-          </button>
+          </Button>
         </div>
       </div>
 
@@ -446,7 +447,7 @@ function TripBoardingPage() {
                                 toggleItemMut.variables?.cardId === card.id &&
                                 toggleItemMut.variables?.index === idx;
                               return (
-                                <button
+                                <Button
                                   key={idx}
                                   disabled={isPending}
                                   onClick={() =>
@@ -476,7 +477,7 @@ function TripBoardingPage() {
                                   >
                                     {item.label}
                                   </span>
-                                </button>
+                                </Button>
                               );
                             })}
                           </div>
@@ -554,7 +555,7 @@ function TripBoardingPage() {
                         }
                         className="flex-1 text-xs border-none rounded-[var(--radius-card)] px-2.5 py-2 bg-background focus:outline-none focus:ring-1 focus:ring-brand font-medium text-foreground"
                       />
-                      <button
+                      <Button
                         onClick={() =>
                           saveCheckinLinkMut.mutate({
                             segmentId: seg.id,
@@ -566,7 +567,7 @@ function TripBoardingPage() {
                         className="bg-brand text-brand-foreground hover:bg-brand/90 px-3 py-2 rounded-[var(--radius-card)] text-xs font-bold transition-all disabled:opacity-50"
                       >
                         Salvar
-                      </button>
+                      </Button>
                     </div>
                   </div>
                 ))}

@@ -10,6 +10,7 @@ import { NewGroupTourWizard } from "@/components/group-tours/NewGroupTourWizard"
 import { StatusBadge } from "@/components/ui/badge";
 import { fmtDate, money } from "@/lib/formatters";
 import { PageHeader, ModuleActionButton } from "@/components/shell/PageHeader";
+import { Button } from "@/components/ui/button";
 
 export const Route = createFileRoute("/agency/$slug/group-tours/")({
   head: ({ context }: any) => ({ meta: [{ title: `Excursões em grupo · ${context?.brand?.platform_name || 'Turis'}` }] }),
@@ -63,13 +64,13 @@ function GroupToursPage() {
           onFilterChange={(v) => setStatusFilter(v)}
           actions={
             isAgencyAdmin && (
-              <button
+              <Button
                 onClick={() => setAdminPanelOpen(true)}
                 className="h-7 w-7 flex items-center justify-center rounded-full border border-white/15 text-white/60 hover:text-white hover:bg-white/10 transition-colors cursor-pointer"
                 title="Administrar Excursões"
               >
                 <Settings2 className="h-3.5 w-3.5" />
-              </button>
+              </Button>
             )
           }
           primaryAction={

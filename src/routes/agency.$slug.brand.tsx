@@ -16,7 +16,7 @@ import { useAgency } from "@/lib/agency-context";
 import { Field } from "@/components/ui/field";
 import { FormInput as Input } from "@/components/ui/input";
 import { NativeSelect as Select } from "@/components/ui/select";
-import { PrimaryButton } from "@/components/ui/button";
+import { PrimaryButton , Button } from "@/components/ui/button";
 
 export const Route = createFileRoute("/agency/$slug/brand")({
   head: ({ context }: any) => ({ meta: [{ title: `Identidade visual · ${context?.brand?.platform_name || 'Turis'}` }] }),
@@ -210,13 +210,13 @@ function BrandPage() {
 
   return (
     <div className="space-y-6">
-              <button
+              <Button
           onClick={save}
           disabled={saving}
           className="flex h-8 items-center gap-1.5 rounded-full bg-brand px-3 text-xs font-semibold text-brand-foreground hover:bg-brand/90 transition-colors cursor-pointer disabled:opacity-50"
         >
           {saving ? "Salvando..." : "Salvar alterações"}
-        </button>
+        </Button>
       
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
         {/* Left Side settings form - using div wrapper instead of form */}
@@ -240,13 +240,13 @@ function BrandPage() {
                       alt="Logo"
                       className="max-h-full max-w-full object-contain"
                     />
-                    <button
+                    <Button
                       type="button"
                       onClick={() => setForm((f) => ({ ...f, logo_url: "" }))}
                       className="absolute -top-2 -right-2 p-1 bg-destructive text-white rounded-full opacity-0 group-hover:opacity-100 transition-opacity"
                     >
                       <X className="w-3 h-3" />
-                    </button>
+                    </Button>
                   </div>
                 ) : (
                   <label className="cursor-pointer my-2 flex flex-col items-center gap-1">
@@ -279,13 +279,13 @@ function BrandPage() {
                       alt="Logo Branco"
                       className="max-h-full max-w-full object-contain"
                     />
-                    <button
+                    <Button
                       type="button"
                       onClick={() => setForm((f) => ({ ...f, logo_white_url: "" }))}
                       className="absolute -top-2 -right-2 p-1 bg-destructive text-white rounded-full opacity-0 group-hover:opacity-100 transition-opacity"
                     >
                       <X className="w-3 h-3" />
-                    </button>
+                    </Button>
                   </div>
                 ) : (
                   <label className="cursor-pointer my-2 flex flex-col items-center gap-1 text-slate-400">
@@ -318,13 +318,13 @@ function BrandPage() {
                       alt="Favicon"
                       className="max-h-full max-w-full object-contain"
                     />
-                    <button
+                    <Button
                       type="button"
                       onClick={() => setForm((f) => ({ ...f, favicon_url: "" }))}
                       className="absolute -top-2 -right-2 p-1 bg-destructive text-white rounded-full opacity-0 group-hover:opacity-100 transition-opacity"
                     >
                       <X className="w-3 h-3" />
-                    </button>
+                    </Button>
                   </div>
                 ) : (
                   <label className="cursor-pointer my-2 flex flex-col items-center gap-1">
@@ -497,12 +497,12 @@ function BrandPage() {
                   <span>Destinos</span>
                   <span>Sobre</span>
                   <span>Blog</span>
-                  <button
+                  <Button
                     className="px-3 py-1 rounded-xs text-[10px] font-bold text-white transition-colors"
                     style={{ backgroundColor: "var(--brand-primary)" }}
                   >
                     Contato
-                  </button>
+                  </Button>
                 </nav>
               </div>
 
@@ -531,15 +531,15 @@ function BrandPage() {
                   parcerias globais de turismo.
                 </p>
                 <div className="flex gap-2.5">
-                  <button
+                  <Button
                     className="px-4 py-2 rounded-full text-[10px] font-bold transition-all shadow-none"
                     style={{ backgroundColor: "var(--brand-secondary)", color: "#111827" }}
                   >
                     Falar no WhatsApp
-                  </button>
-                  <button className="px-4 py-2 rounded-full border border-white/40 text-[10px] font-bold bg-white/10 hover:bg-white/20 transition-all text-white">
+                  </Button>
+                  <Button className="px-4 py-2 rounded-full border border-white/40 text-[10px] font-bold bg-white/10 hover:bg-white/20 transition-all text-white">
                     Explorar Viagens
-                  </button>
+                  </Button>
                 </div>
               </div>
 

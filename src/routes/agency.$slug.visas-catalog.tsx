@@ -13,7 +13,7 @@ import { FormInput as Input } from "@/components/ui/input";
 import { NativeSelect as Select } from "@/components/ui/select";
 import { FormTextarea as Textarea } from "@/components/ui/textarea";
 import { SimpleSheet as Sheet } from "@/components/ui/sheet";
-import { PrimaryButton, GhostButton } from "@/components/ui/button";
+import { PrimaryButton, GhostButton , Button } from "@/components/ui/button";
 
 export const Route = createFileRoute("/agency/$slug/visas-catalog")({
   head: ({ context }: any) => ({ meta: [{ title: `Catálogo de Requisitos · ${context?.brand?.platform_name || 'Turis'}` }] }),
@@ -127,7 +127,7 @@ function VisasCatalogPage() {
                             : "Outro"}
                   </span>
                   {req.agency_id !== null && (
-                    <button
+                    <Button
                       type="button"
                       onClick={() => {
                         confirm({
@@ -141,7 +141,7 @@ function VisasCatalogPage() {
                       className="text-muted-foreground hover:text-danger p-0.5"
                     >
                       <Trash2 className="w-4 h-4" />
-                    </button>
+                    </Button>
                   )}
                 </div>
 

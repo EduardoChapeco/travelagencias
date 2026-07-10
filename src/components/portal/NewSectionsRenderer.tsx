@@ -1,3 +1,4 @@
+import { Button } from "@/components/ui/button";
 /* eslint-disable react-hooks/rules-of-hooks */
 import React, { useState, useEffect } from "react";
 import { useScrollAnimation, useParallax, useCountUp } from "@/hooks/use-scroll-animation";
@@ -412,13 +413,13 @@ export function NewSectionsRenderer({
                     </div>
                   </div>
                   <div className="pt-5 md:pt-0">
-                    <button
+                    <Button
                       onClick={() => handleLinkClick(config.searchButtonActionUrl || "#")}
                       className="w-full h-11 rounded-3xl text-sm font-bold text-white transition-colors"
                       style={{ backgroundColor: "var(--brand-primary, #1E3A5F)" }}
                     >
                       {config.searchButtonText || "Pesquisar"}
-                    </button>
+                    </Button>
                   </div>
                 </div>
               </div>
@@ -669,20 +670,20 @@ export function NewSectionsRenderer({
               </h2>
             </div>
             <div className="flex items-center gap-2">
-              <button
+              <Button
                 onClick={() => setActiveIndex((prev) => Math.max(0, prev - 1))}
                 disabled={activeIndex === 0}
                 className="h-10 w-10 border border-border rounded-full flex items-center justify-center hover:bg-surface-alt disabled:opacity-40 transition-colors"
               >
                 <ChevronLeft className="h-5 w-5" />
-              </button>
-              <button
+              </Button>
+              <Button
                 onClick={() => setActiveIndex((prev) => Math.min(items.length - 1, prev + 1))}
                 disabled={activeIndex >= items.length - 1}
                 className="h-10 w-10 border border-border rounded-full flex items-center justify-center hover:bg-surface-alt disabled:opacity-40 transition-colors"
               >
                 <ChevronRight className="h-5 w-5" />
-              </button>
+              </Button>
             </div>
           </div>
 
@@ -756,12 +757,12 @@ export function NewSectionsRenderer({
               </p>
               {config.ctaText && (
                 <div className="pt-2">
-                  <button
+                  <Button
                     className="px-6 py-3 rounded-3xl text-sm font-bold text-white"
                     style={{ backgroundColor: "var(--brand-primary, #1E3A5F)" }}
                   >
                     {config.ctaText}
-                  </button>
+                  </Button>
                 </div>
               )}
             </div>
@@ -996,13 +997,13 @@ export function NewSectionsRenderer({
                   placeholder="Seu melhor e-mail"
                   className="w-full text-xs p-3 rounded-3xl border border-border outline-none bg-surface"
                 />
-                <button
+                <Button
                   onClick={() => toast.success("Inscrito com sucesso!")}
                   className="w-full py-3 rounded-3xl text-xs font-bold text-white transition-colors"
                   style={{ backgroundColor: "var(--brand-primary, #1E3A5F)" }}
                 >
                   Inscrever-se
-                </button>
+                </Button>
               </div>
             </div>
           </div>
@@ -1744,7 +1745,7 @@ export function NewSectionsRenderer({
 
           <div className="flex justify-center items-center gap-2 pt-4">
             {items.map((_: any, idx: number) => (
-              <button
+              <Button
                 key={idx}
                 onClick={() => setActiveIndex(idx)}
                 className={`h-2.5 rounded-full transition-all duration-300${activeIndex === idx ? "w-6 bg-brand" : "w-2.5 bg-border"}`}
@@ -2218,13 +2219,13 @@ export function NewSectionsRenderer({
               onChange={(e) => setEmail(e.target.value)}
               className="flex-1 p-3 rounded-3xl border border-border outline-none bg-surface text-sm"
             />
-            <button
+            <Button
               onClick={handleSubscribe}
               className="px-6 py-3 rounded-3xl text-sm font-bold text-white transition-colors"
               style={{ backgroundColor: "var(--brand-primary, #1E3A5F)" }}
             >
               {config.buttonText || "Cadastrar"}
-            </button>
+            </Button>
           </div>
         </section>
       );
@@ -2360,14 +2361,14 @@ export function NewSectionsRenderer({
               </div>
 
               <div className="pt-2 text-right">
-                <button
+                <Button
                   onClick={handleSubmit}
                   disabled={sending}
                   className="px-6 py-3 rounded-3xl text-xs font-bold text-white transition-colors"
                   style={{ backgroundColor: "var(--brand-primary, #1E3A5F)" }}
                 >
                   {sending ? "Enviando..." : "Enviar Orçamento"}
-                </button>
+                </Button>
               </div>
             </div>
           )}
@@ -2541,12 +2542,12 @@ export function NewSectionsRenderer({
                   placeholder="Seu e-mail"
                   className="flex-1 p-2.5 rounded-3xl border-none outline-none bg-white text-black text-xs"
                 />
-                <button
+                <Button
                   onClick={() => toast.success("Inscrito!")}
                   className="px-5 py-2.5 bg-white text-black font-extrabold text-xs rounded-3xl"
                 >
                   {config.ctaButtonText}
-                </button>
+                </Button>
               </div>
             </div>
             <div className="text-center text-xs text-muted-foreground">{config.description}</div>

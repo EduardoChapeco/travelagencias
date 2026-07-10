@@ -779,13 +779,13 @@ function InboxModule() {
 
           <Sheet open={isConnectSheetOpen} onOpenChange={setIsConnectSheetOpen}>
             <SheetTrigger asChild>
-              <button 
+              <Button 
                 className="flex h-8 items-center gap-1 px-2.5 rounded border-none glass-card border-none text-xs font-semibold text-muted-foreground hover:text-foreground hover:border-border-strong transition-colors cursor-pointer"
                 title="Configurar conexões e e-mail"
               >
                 <Plug className="w-3.5 h-3.5" />
                 <span>Canais</span>
-              </button>
+              </Button>
             </SheetTrigger>
             <SheetContent side="left" className="p-0 w-80 glass-card border-none border-r border-border">
               <SheetHeader className="p-4 border-b border-border">
@@ -839,7 +839,7 @@ function InboxModule() {
                     <>
                       <h3 className="text-[10px] font-extrabold uppercase tracking-wide text-muted-foreground">Adicionar Conexão</h3>
                       
-                      <button 
+                      <Button 
                         onClick={() => setConnectType("gmail")}
                         className="flex items-center gap-3 w-full text-left rounded-[var(--radius-card)] border-none px-3 py-2.5 text-xs font-semibold text-foreground hover:glass bg-white/5 border-white/10 transition-all cursor-pointer glass-card border-none"
                       >
@@ -848,9 +848,9 @@ function InboxModule() {
                           <p className="font-bold">Conectar Gmail</p>
                           <span className="text-[10px] text-muted-foreground font-normal">Sincronize mensagens do e-mail comercial.</span>
                         </div>
-                      </button>
+                      </Button>
 
-                      <button 
+                      <Button 
                         onClick={() => setConnectType("whatsapp")}
                         className="flex items-center gap-3 w-full text-left rounded-[var(--radius-card)] border-none px-3 py-2.5 text-xs font-semibold text-foreground hover:glass bg-white/5 border-white/10 transition-all cursor-pointer glass-card border-none"
                       >
@@ -859,9 +859,9 @@ function InboxModule() {
                           <p className="font-bold">Integrar WhatsApp</p>
                           <span className="text-[10px] text-muted-foreground font-normal">Conecte via WhatsApp Cloud API Oficial ou Evolution API.</span>
                         </div>
-                      </button>
+                      </Button>
 
-                      <button 
+                      <Button 
                         onClick={() => setConnectType("instagram")}
                         className="flex items-center gap-3 w-full text-left rounded-[var(--radius-card)] border-none px-3 py-2.5 text-xs font-semibold text-foreground hover:glass bg-white/5 border-white/10 transition-all cursor-pointer glass-card border-none"
                       >
@@ -870,17 +870,17 @@ function InboxModule() {
                           <p className="font-bold">Integrar Instagram</p>
                           <span className="text-[10px] text-muted-foreground font-normal">Receba mensagens diretas da rede Meta.</span>
                         </div>
-                      </button>
+                      </Button>
                     </>
                   ) : (
                     <div className="space-y-4">
                       <div className="flex items-center justify-between pb-2 border-b border-border">
-                        <button
+                        <Button
                           onClick={() => setConnectType(null)}
                           className="text-[10px] font-black uppercase text-brand hover:underline cursor-pointer flex items-center gap-1 bg-transparent border-none"
                         >
                           ← Voltar
-                        </button>
+                        </Button>
                         <span className="text-[9px] font-extrabold uppercase text-muted-foreground tracking-wider">
                           {connectType === "gmail" ? "Gmail" : connectType === "whatsapp" ? "WhatsApp" : "Instagram"}
                         </span>
@@ -889,7 +889,7 @@ function InboxModule() {
                       {connectType === "gmail" && (
                         <div className="space-y-4">
                           <div className="flex gap-2 p-1 glass bg-white/5 border-white/10 rounded-[var(--radius-card)] border-none">
-                            <button
+                            <Button
                               type="button"
                               onClick={() => setGmailSubTab("oauth")}
                               className={cn(
@@ -900,8 +900,8 @@ function InboxModule() {
                               )}
                             >
                               Conta Google (OAuth)
-                            </button>
-                            <button
+                            </Button>
+                            <Button
                               type="button"
                               onClick={() => setGmailSubTab("smtp")}
                               className={cn(
@@ -912,7 +912,7 @@ function InboxModule() {
                               )}
                             >
                               Resend (SMTP)
-                            </button>
+                            </Button>
                           </div>
 
                           {gmailSubTab === "oauth" ? (
@@ -920,7 +920,7 @@ function InboxModule() {
                               <p className="text-[11px] text-muted-foreground leading-normal font-sans">
                                 Conecte seu e-mail do Gmail de forma segura usando o protocolo OAuth oficial do Google. Você será redirecionado para a página de consentimento do Google.
                               </p>
-                              <button
+                              <Button
                                 type="button"
                                 disabled={submittingConfig}
                                 onClick={async () => {
@@ -955,7 +955,7 @@ function InboxModule() {
                                 ) : (
                                   "Entrar com o Google"
                                 )}
-                              </button>
+                              </Button>
                             </div>
                           ) : (
                             <form onSubmit={async (e) => {
@@ -1027,13 +1027,13 @@ function InboxModule() {
                                   className="w-full h-8 px-2.5 rounded glass-card border-none border-none text-xs outline-none focus:ring-1 focus:ring-brand text-foreground"
                                 />
                               </div>
-                              <button
+                              <Button
                                 type="submit"
                                 disabled={submittingConfig}
                                 className="w-full h-8 rounded bg-brand text-white text-xs font-bold hover:bg-brand/90 cursor-pointer disabled:opacity-50"
                               >
                                 {submittingConfig ? "Salvando..." : "Conectar Canal Resend"}
-                              </button>
+                              </Button>
                             </form>
                           )}
                         </div>
@@ -1204,13 +1204,13 @@ function InboxModule() {
                             </>
                           )}
 
-                          <button
+                          <Button
                             type="submit"
                             disabled={submittingConfig}
                             className="w-full h-8 rounded bg-brand text-white text-xs font-bold hover:bg-brand/90 cursor-pointer disabled:opacity-50"
                           >
                             {submittingConfig ? "Gravando chaves..." : "Conectar WhatsApp"}
-                          </button>
+                          </Button>
                         </form>
                       )}
 
@@ -1274,13 +1274,13 @@ function InboxModule() {
                               className="w-full h-8 px-2.5 rounded glass-card border-none border-none text-xs outline-none focus:ring-1 focus:ring-brand text-foreground"
                             />
                           </div>
-                          <button
+                          <Button
                             type="submit"
                             disabled={submittingConfig}
                             className="w-full h-8 rounded bg-brand text-white text-xs font-bold hover:bg-brand/90 cursor-pointer disabled:opacity-50"
                           >
                             {submittingConfig ? "Salvando chaves..." : "Conectar Instagram"}
-                          </button>
+                          </Button>
                         </form>
                       )}
                     </div>
@@ -1305,7 +1305,7 @@ function InboxModule() {
 
           {/* Dynamic channels filter & Meus */}
           <div className="flex items-center gap-1.5 overflow-x-auto no-scrollbar py-0.5">
-            <button
+            <Button
               onClick={() => setFilterChannel(null)}
               className={`flex items-center gap-1.5 rounded-full px-2.5 py-1 text-[10px] font-bold uppercase transition-colors whitespace-nowrap border ${
                 filterChannel === null
@@ -1315,10 +1315,10 @@ function InboxModule() {
             >
               <Inbox className="h-3 w-3" />
               Tudo
-            </button>
+            </Button>
 
             {activeChannelTypes.includes("whatsapp") && (
-              <button
+              <Button
                 onClick={() => setFilterChannel("whatsapp")}
                 className={`flex items-center gap-1.5 rounded-full px-2.5 py-1 text-[10px] font-bold uppercase transition-colors whitespace-nowrap border ${
                   filterChannel === "whatsapp"
@@ -1328,11 +1328,11 @@ function InboxModule() {
               >
                 <Phone className="h-3 w-3" />
                 Whats
-              </button>
+              </Button>
             )}
 
             {activeChannelTypes.includes("email") && (
-              <button
+              <Button
                 onClick={() => setFilterChannel("email")}
                 className={`flex items-center gap-1.5 rounded-full px-2.5 py-1 text-[10px] font-bold uppercase transition-colors whitespace-nowrap border ${
                   filterChannel === "email"
@@ -1342,12 +1342,12 @@ function InboxModule() {
               >
                 <Mail className="h-3 w-3" />
                 E-mail
-              </button>
+              </Button>
             )}
 
             {/* Instagram dinâmico se a agência tiver chaves ou conversas dele */}
             {(activeChannelTypes.includes("instagram" as any) || conversations.some(c => (c.channels as any)?.type === "instagram")) && (
-              <button
+              <Button
                 onClick={() => setFilterChannel("instagram")}
                 className={`flex items-center gap-1.5 rounded-full px-2.5 py-1 text-[10px] font-bold uppercase transition-colors whitespace-nowrap border ${
                   filterChannel === "instagram"
@@ -1357,10 +1357,10 @@ function InboxModule() {
               >
                 <Instagram className="h-3 w-3" />
                 Insta
-              </button>
+              </Button>
             )}
 
-            <button
+            <Button
               onClick={() => setMySessionsOnly(!mySessionsOnly)}
               className={`ml-auto flex items-center gap-1 rounded-full px-2.5 py-1 text-[10px] font-bold uppercase transition-colors border ${
                 mySessionsOnly
@@ -1369,7 +1369,7 @@ function InboxModule() {
               }`}
             >
               Meus
-            </button>
+            </Button>
           </div>
         </div>
 
@@ -1398,7 +1398,7 @@ function InboxModule() {
             const isSelected = c.id === selectedId;
 
             return (
-              <button
+              <Button
                 key={c.id}
                 onClick={() => setSelectedId(c.id)}
                 className={cn(
@@ -1447,7 +1447,7 @@ function InboxModule() {
                     )}
                   </div>
                 </div>
-              </button>
+              </Button>
             );
           })}
         </div>
@@ -1462,13 +1462,13 @@ function InboxModule() {
           <div className="flex flex-1 flex-col h-full overflow-hidden">
             {/* Thread Header */}
             <div className="flex items-center gap-3 border-b border-border px-4 py-3 glass-card border-none shrink-0">
-              <button
+              <Button
                 onClick={() => setSelectedId(null)}
                 className="md:hidden flex h-8 w-8 items-center justify-center rounded-full border-none glass-card border-none text-muted-foreground hover:text-foreground transition-colors cursor-pointer"
                 title="Voltar para a lista"
               >
                 <ChevronLeft className="h-4 w-4" />
-              </button>
+              </Button>
 
               <div className="flex h-9 w-9 items-center justify-center rounded-full glass bg-white/5 border-white/10 border-none">
                 {selectedConversation?.contacts?.metadata?.avatar_url ? (
@@ -1500,16 +1500,16 @@ function InboxModule() {
               </div>
 
               <div className="ml-auto flex items-center gap-2">
-                <button
+                <Button
                   onClick={generateAiSuggestion}
                   disabled={generatingAi}
                   className="flex items-center gap-1.5 rounded-full border-none px-2.5 py-1.5 text-xs font-semibold text-brand glass-card border-none hover:glass bg-white/5 border-white/10 transition-colors disabled:opacity-50 cursor-pointer"
                 >
                   <Sparkles className={cn("h-3.5 w-3.5", generatingAi && "animate-pulse")} />
                   <span>{generatingAi ? "Sugerindo..." : "IA Resposta"}</span>
-                </button>
+                </Button>
 
-                <button
+                <Button
                   onClick={() => setShowDetails(!showDetails)}
                   className={cn(
                     "flex h-8 w-8 items-center justify-center rounded-full border-none transition-colors hover:glass bg-white/5 border-white/10 cursor-pointer",
@@ -1518,7 +1518,7 @@ function InboxModule() {
                   title="Ocultar/Mostrar painel do contato"
                 >
                   <Info className="h-4 w-4" />
-                </button>
+                </Button>
               </div>
             </div>
 
@@ -1534,7 +1534,7 @@ function InboxModule() {
                     <p className="text-xs text-foreground leading-relaxed">{aiSuggestion}</p>
                   </div>
                   <div className="flex gap-1.5 shrink-0">
-                    <button
+                    <Button
                       onClick={() => {
                         setReply(aiSuggestion);
                         setAiSuggestion(null);
@@ -1542,10 +1542,10 @@ function InboxModule() {
                       className="rounded bg-brand px-2.5 py-1 text-[10px] font-bold text-brand-foreground hover:bg-brand/90 transition-colors cursor-pointer"
                     >
                       Usar
-                    </button>
-                    <button onClick={() => setAiSuggestion(null)} className="text-muted-foreground hover:text-foreground">
+                    </Button>
+                    <Button onClick={() => setAiSuggestion(null)} className="text-muted-foreground hover:text-foreground">
                       <X className="h-4 w-4" />
-                    </button>
+                    </Button>
                   </div>
                 </div>
               </div>
@@ -1598,16 +1598,16 @@ function InboxModule() {
             {/* Input & Sending Actions */}
             <div className="border-t border-border p-3 glass-card border-none shrink-0">
               <div className="flex items-end gap-2">
-                <button
+                <Button
                   onClick={() => fileInputRef.current?.click()}
                   className="flex h-10 w-10 shrink-0 items-center justify-center rounded-[var(--radius-card)] border-none glass-card border-none hover:glass bg-white/5 border-white/10 text-muted-foreground hover:text-foreground transition-colors cursor-pointer"
                   title="Anexar arquivo"
                 >
                   <Paperclip className="h-4 w-4" />
-                </button>
+                </Button>
                 <input type="file" ref={fileInputRef} onChange={handleAttachmentUpload} className="hidden" />
 
-                <button
+                <Button
                   onClick={recording ? stopRecording : startRecording}
                   className={cn(
                     "flex h-10 w-10 shrink-0 items-center justify-center rounded-[var(--radius-card)] border transition-all cursor-pointer",
@@ -1618,7 +1618,7 @@ function InboxModule() {
                   title={recording ? "Parar gravação" : "Gravar mensagem de voz"}
                 >
                   <Mic className="h-4 w-4" />
-                </button>
+                </Button>
 
                 <textarea
                   value={reply}
@@ -1635,7 +1635,7 @@ function InboxModule() {
                   className="flex-1 resize-none rounded-[var(--radius-card)] border-none glass bg-white/5 border-white/10 px-3 py-2.5 text-sm outline-none focus:border-brand text-foreground"
                 />
                 
-                <button
+                <Button
                   onClick={() => {
                     if (reply.trim()) sendReplyMutation.mutate(reply);
                   }}
@@ -1643,7 +1643,7 @@ function InboxModule() {
                   className="flex h-10 w-10 shrink-0 items-center justify-center rounded-[var(--radius-card)] bg-brand text-brand-foreground hover:bg-brand/90 disabled:opacity-50 transition-colors cursor-pointer"
                 >
                   <Send className="h-4 w-4" />
-                </button>
+                </Button>
               </div>
             </div>
           </div>
@@ -1669,14 +1669,14 @@ function InboxModule() {
             <h3 className="text-[10px] font-extrabold uppercase tracking-wider text-muted-foreground">
               Painel do Cliente
             </h3>
-            <button onClick={() => setShowDetails(false)} className="text-muted-foreground hover:text-foreground cursor-pointer">
+            <Button onClick={() => setShowDetails(false)} className="text-muted-foreground hover:text-foreground cursor-pointer">
               <X className="h-4 w-4" />
-            </button>
+            </Button>
           </div>
 
           {/* Sub-Tabs */}
           <div className="flex border-b border-border text-xs font-bold shrink-0 glass bg-white/5 border-white/10/30">
-            <button
+            <Button
               onClick={() => setDetailsTab("profile")}
               className={cn(
                 "flex-1 py-2.5 text-center border-b-2 transition-colors cursor-pointer",
@@ -1684,8 +1684,8 @@ function InboxModule() {
               )}
             >
               Perfil
-            </button>
-            <button
+            </Button>
+            <Button
               onClick={() => setDetailsTab("documents")}
               className={cn(
                 "flex-1 py-2.5 text-center border-b-2 transition-colors cursor-pointer",
@@ -1693,8 +1693,8 @@ function InboxModule() {
               )}
             >
               Docs
-            </button>
-            <button
+            </Button>
+            <Button
               onClick={() => setDetailsTab("notices")}
               className={cn(
                 "flex-1 py-2.5 text-center border-b-2 transition-colors cursor-pointer",
@@ -1702,8 +1702,8 @@ function InboxModule() {
               )}
             >
               Avisos
-            </button>
-            <button
+            </Button>
+            <Button
               onClick={() => setDetailsTab("ai_templates")}
               className={cn(
                 "flex-1 py-2.5 text-center border-b-2 transition-colors cursor-pointer",
@@ -1711,7 +1711,7 @@ function InboxModule() {
               )}
             >
               Templates
-            </button>
+            </Button>
           </div>
 
           {/* Tab content scroll block */}
@@ -1745,7 +1745,7 @@ function InboxModule() {
                         <span className="text-[9px] font-extrabold uppercase tracking-wide text-foreground">
                           Vincular Contato ao CRM
                         </span>
-                        <button
+                        <Button
                           onClick={() => {
                             setIsLinkingOpen(false);
                             setCrmSearchQuery("");
@@ -1753,11 +1753,11 @@ function InboxModule() {
                           className="text-[9px] font-bold text-muted-foreground hover:text-foreground"
                         >
                           Cancelar
-                        </button>
+                        </Button>
                       </div>
 
                       <div className="flex gap-1.5">
-                        <button
+                        <Button
                           type="button"
                           onClick={() => setCrmSearchType("lead")}
                           className={cn(
@@ -1768,8 +1768,8 @@ function InboxModule() {
                           )}
                         >
                           Lead
-                        </button>
-                        <button
+                        </Button>
+                        <Button
                           type="button"
                           onClick={() => setCrmSearchType("client")}
                           className={cn(
@@ -1780,7 +1780,7 @@ function InboxModule() {
                           )}
                         >
                           Cliente
-                        </button>
+                        </Button>
                       </div>
 
                       <input
@@ -1800,7 +1800,7 @@ function InboxModule() {
                       {crmSearchResults.length > 0 && (
                         <div className="max-h-28 overflow-y-auto border-none/50 rounded glass-card border-none divide-y divide-border/30">
                           {crmSearchResults.map((res: any) => (
-                            <button
+                            <Button
                               key={res.id}
                               type="button"
                               onClick={() => {
@@ -1816,19 +1816,19 @@ function InboxModule() {
                               <span className="text-[8px] text-muted-foreground">
                                 {res.email || ""} {res.phone ? `(${res.phone})` : ""}
                               </span>
-                            </button>
+                            </Button>
                           ))}
                         </div>
                       )}
 
                       {(explicitLeadId || explicitClientId) && (
-                        <button
+                        <Button
                           type="button"
                           onClick={() => linkContactToCrm(null, null)}
                           className="w-full text-center py-1 border border-danger/30 text-danger bg-danger/5 hover:bg-danger/10 text-[9px] font-bold rounded mt-1"
                         >
                           Remover Vínculo Atual
-                        </button>
+                        </Button>
                       )}
                     </div>
                   ) : matchedLead ? (
@@ -1838,12 +1838,12 @@ function InboxModule() {
                           Lead no CRM
                         </span>
                         <div className="flex items-center gap-2">
-                          <button
+                          <Button
                             onClick={() => setIsLinkingOpen(true)}
                             className="text-[9px] font-bold text-muted-foreground hover:text-brand hover:underline"
                           >
                             Alterar vínculo
-                          </button>
+                          </Button>
                           <Link
                             to="/agency/$slug/crm/$lead_id"
                             params={{ slug: agency?.slug || "", lead_id: (matchedLead as any).id }}
@@ -1863,12 +1863,12 @@ function InboxModule() {
                           Cliente Cadastrado
                         </span>
                         <div className="flex items-center gap-2">
-                          <button
+                          <Button
                             onClick={() => setIsLinkingOpen(true)}
                             className="text-[9px] font-bold text-muted-foreground hover:text-emerald-600 hover:underline"
                           >
                             Alterar vínculo
-                          </button>
+                          </Button>
                           <Link
                             to="/agency/$slug/clients/$id"
                             params={{ slug: agency?.slug || "", id: (matchedClient as any).id }}
@@ -1884,18 +1884,18 @@ function InboxModule() {
                     <div className="space-y-2 text-center py-1">
                       <p className="text-[10px] text-muted-foreground">Não localizado no CRM</p>
                       <div className="flex flex-col gap-1.5">
-                        <button
+                        <Button
                           onClick={createLeadFromSession}
                           className="w-full text-[10px] font-bold border border-brand/35 text-brand bg-brand/5 hover:bg-brand/10 py-1.5 rounded-[var(--radius-card)] flex items-center justify-center gap-1 cursor-pointer"
                         >
                           <UserPlus className="w-3.5 h-3.5" /> Importar como Lead
-                        </button>
-                        <button
+                        </Button>
+                        <Button
                           onClick={() => setIsLinkingOpen(true)}
                           className="w-full text-[10px] font-bold border-none text-muted-foreground glass-card border-none hover:text-foreground hover:glass bg-white/5 border-white/10/25 py-1.5 rounded-[var(--radius-card)] flex items-center justify-center gap-1 cursor-pointer"
                         >
                           <Link2 className="w-3.5 h-3.5" /> Vincular Lead/Cliente Existente
-                        </button>
+                        </Button>
                       </div>
                     </div>
                   )}
@@ -1908,16 +1908,16 @@ function InboxModule() {
                   </h4>
                   <div className="space-y-1.5">
                     {matchedLead && (
-                      <button
+                      <Button
                         onClick={generateAiProposalForLead}
                         className="flex items-center gap-2 w-full text-left rounded-[var(--radius-card)] border border-brand/20 bg-brand/5 px-3 py-1.5 text-xs font-bold text-brand hover:bg-brand/10 transition-colors cursor-pointer"
                       >
                         <Sparkles className="w-3.5 h-3.5" />
                         <span>Gerar Proposta IA</span>
-                      </button>
+                      </Button>
                     )}
 
-                    <button
+                    <Button
                       onClick={() => {
                         setReply((prev) => (prev ? prev + "\n" : "") + `Olá! Segue o link para assinatura do seu contrato: ${window.location.origin}/m/contract/assinar-aqui`);
                         toast.success("Link do contrato copiado!");
@@ -1926,9 +1926,9 @@ function InboxModule() {
                     >
                       <FileCheck className="w-3.5 h-3.5 text-muted-foreground" />
                       <span>Enviar Contrato</span>
-                    </button>
+                    </Button>
 
-                    <button
+                    <Button
                       onClick={() => {
                         setReply((prev) => (prev ? prev + "\n" : "") + `Olá! Você pode acompanhar sua viagem e vouchers direto pelo nosso Portal do Cliente: ${window.location.origin}/client`);
                         toast.success("Link do portal de cliente copiado!");
@@ -1937,7 +1937,7 @@ function InboxModule() {
                     >
                       <ExternalLink className="w-3.5 h-3.5 text-muted-foreground" />
                       <span>MagicLink Portal</span>
-                    </button>
+                    </Button>
                   </div>
                 </div>
               </div>
@@ -1969,14 +1969,14 @@ function InboxModule() {
                     </div>
                     <div className="relative">
                       <input type="file" id="client-doc-inbox-upload" onChange={handleDocUpload} disabled={uploadingDoc} className="hidden" />
-                      <button
+                      <Button
                         onClick={() => document.getElementById("client-doc-inbox-upload")?.click()}
                         disabled={uploadingDoc}
                         className="w-full h-16 border border-dashed border-border hover:border-brand/50 rounded-[var(--radius-card)] flex flex-col items-center justify-center text-[10px] font-medium text-muted-foreground glass-card border-none hover:text-foreground cursor-pointer transition-colors disabled:opacity-50"
                       >
                         <Plus className="h-4 w-4 mb-1 text-muted-foreground/60" />
                         {uploadingDoc ? "Enviando..." : "Upload Documento"}
-                      </button>
+                      </Button>
                     </div>
                   </div>
                 ) : (
@@ -2018,9 +2018,9 @@ function InboxModule() {
                       <h4 className="text-[10px] font-extrabold uppercase tracking-wider text-muted-foreground">
                         Observações Internas
                       </h4>
-                      <button onClick={saveContactNotes} disabled={savingNotes} className="text-[10px] text-brand font-bold hover:underline disabled:opacity-50 cursor-pointer">
+                      <Button onClick={saveContactNotes} disabled={savingNotes} className="text-[10px] text-brand font-bold hover:underline disabled:opacity-50 cursor-pointer">
                         {savingNotes ? "Salvando..." : "Salvar"}
-                      </button>
+                      </Button>
                     </div>
                     <textarea
                       value={contactNotes}
@@ -2045,10 +2045,10 @@ function InboxModule() {
                       <h4 className="text-[10px] font-extrabold uppercase tracking-wider text-muted-foreground flex items-center gap-1">
                         <Bot className="w-3.5 h-3.5 text-brand" /> IA RAG Insights
                       </h4>
-                      <button onClick={triggerAnalysis} disabled={analyzing} className="text-[10px] text-brand font-bold hover:underline flex items-center gap-1 disabled:opacity-50 cursor-pointer">
+                      <Button onClick={triggerAnalysis} disabled={analyzing} className="text-[10px] text-brand font-bold hover:underline flex items-center gap-1 disabled:opacity-50 cursor-pointer">
                         <RefreshCw className={cn("w-3 h-3", analyzing && "animate-spin")} />
                         <span>Atualizar</span>
-                      </button>
+                      </Button>
                     </div>
 
                     {leadInsights ? (

@@ -2,6 +2,7 @@ import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Store, ShoppingCart, ChevronRight } from "lucide-react";
 import { Link } from "@tanstack/react-router";
+import { Button } from "@/components/ui/button";
 
 export function ClientStoreWidget({ agencyId, themeColor }: { agencyId: string; themeColor: string }) {
   const { data: tours, isLoading } = useQuery({
@@ -68,12 +69,12 @@ export function ClientStoreWidget({ agencyId, themeColor }: { agencyId: string; 
                 Saída: {tour.departure_date ? new Date(tour.departure_date).toLocaleDateString() : "A definir"}
               </p>
               
-              <button 
+              <Button 
                 className="w-full mt-3 h-8 rounded-full text-xs font-semibold flex items-center justify-center gap-2 transition-colors text-white hover:opacity-90"
                 style={{ backgroundColor: themeColor }}
               >
                 <ShoppingCart className="h-3 w-3" /> Comprar Agora
-              </button>
+              </Button>
             </div>
           </div>
         ))}

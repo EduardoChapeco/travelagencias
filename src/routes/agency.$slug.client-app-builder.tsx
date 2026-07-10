@@ -15,7 +15,7 @@ import {
 import { supabase } from "@/integrations/supabase/client";
 import { useAgency } from "@/lib/agency-context";
 import { PageHeader } from "@/components/shell/PageHeader";
-import { PrimaryButton } from "@/components/ui/button";
+import { PrimaryButton , Button } from "@/components/ui/button";
 
 import { DraggableList, DraggableItem } from "@/components/ui/DraggableList";
 import { UniversalDevicePreview } from "@/components/ui/universal-device-preview";
@@ -211,12 +211,12 @@ function ClientAppBuilderPage() {
                           <h4 className="text-sm font-semibold">{meta.label}</h4>
                           <p className="text-xs text-muted-foreground">{meta.desc}</p>
                         </div>
-                        <button
+                        <Button
                           onClick={() => handleToggleHide(block.id)}
                           className="text-xs px-2 py-1 rounded-full bg-accent text-accent-foreground hover:bg-muted"
                         >
                           {block.hidden ? "Mostrar" : "Ocultar"}
-                        </button>
+                        </Button>
                       </div>
                     </DraggableItem>
                   );

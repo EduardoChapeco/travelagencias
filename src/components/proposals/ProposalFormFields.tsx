@@ -22,13 +22,13 @@ export function Accordion({
   const [open, setOpen] = useState(!!defaultOpen);
   return (
     <div className="mb-4 overflow-hidden rounded-[var(--radius-card)] bg-surface  ring-1 ring-border/50 transition-all">
-      <button
+      <Button
         onClick={() => setOpen(!open)}
         className="flex w-full items-center justify-between px-4 py-3 text-left text-xs font-bold uppercase tracking-widest text-muted-foreground hover:bg-surface-alt/50 transition-colors"
       >
         <span>{title}</span>
         {open ? <ChevronDown className="h-4 w-4" /> : <ChevronRight className="h-4 w-4" />}
-      </button>
+      </Button>
       {open && <div className="border-t border-border/50 p-4">{children}</div>}
     </div>
   );
@@ -153,13 +153,13 @@ export function L({ label, children }: { label: string; children: React.ReactNod
 export function Card({ children, onRemove }: { children: React.ReactNode; onRemove: () => void }) {
   return (
     <div className="relative mb-3 rounded-[var(--radius-card)] border border-border/60 bg-surface-alt/20 p-4">
-      <button
+      <Button
         type="button"
         onClick={onRemove}
         className="absolute right-2 top-2 rounded p-1 text-muted-foreground hover:bg-surface hover:text-danger transition-colors"
       >
         <Trash2 className="h-3.5 w-3.5" />
-      </button>
+      </Button>
       {children}
     </div>
   );
@@ -167,6 +167,7 @@ export function Card({ children, onRemove }: { children: React.ReactNode; onRemo
 
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
+import { Button } from "@/components/ui/button";
 
 export function FileUploadList({
   agencyId,
@@ -204,13 +205,13 @@ export function FileUploadList({
         {images.map((u, i) => (
           <div key={i} className="relative">
             <img src={u} alt="" className="h-12 w-12 rounded object-cover" />
-            <button
+            <Button
               type="button"
               onClick={() => onChange(images.filter((_, x) => x !== i))}
               className="absolute -right-1 -top-1 rounded-full bg-destructive px-1 text-[10px] text-destructive-foreground hover:bg-destructive/80 transition-colors"
             >
               ×
-            </button>
+            </Button>
           </div>
         ))}
       </div>
@@ -230,14 +231,14 @@ export function FileUploadList({
 
 export function AddBtn({ children, onClick }: { children: React.ReactNode; onClick: () => void }) {
   return (
-    <button
+    <Button
       type="button"
       onClick={onClick}
       className="flex h-8 items-center gap-1.5 rounded-2xl border border-border/60 bg-surface px-3 text-xs font-semibold hover:bg-surface-alt transition-colors"
     >
       <Plus className="h-3.5 w-3.5" />
       {children}
-    </button>
+    </Button>
   );
 }
 
@@ -260,13 +261,13 @@ export function TagsEditor({
             className="flex items-center gap-1 rounded bg-surface-alt px-2 py-0.5 text-[11px]"
           >
             {t}
-            <button
+            <Button
               type="button"
               onClick={() => onChange(tags.filter((_, x) => x !== i))}
               className="text-muted-foreground hover:text-danger"
             >
               ×
-            </button>
+            </Button>
           </span>
         ))}
       </div>

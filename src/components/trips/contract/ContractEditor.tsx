@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Plus, Trash2, Shield, ChevronDown, ChevronRight } from "lucide-react";
 import { money } from "@/lib/formatters";
+import { Button } from "@/components/ui/button";
 
 export type Clause = {
   number: number;
@@ -62,7 +63,7 @@ export function ContractEditor({
         <div className="mb-3 flex items-center justify-between">
           <h2 className="text-sm font-semibold">Contratantes (Pagantes)</h2>
           {isEditable && (
-            <button
+            <Button
               onClick={() => {
                 setClientData([
                   ...clientData,
@@ -73,7 +74,7 @@ export function ContractEditor({
             >
               <Plus className="h-3.5 w-3.5" />
               Adicionar
-            </button>
+            </Button>
           )}
         </div>
         <div className="space-y-3">
@@ -86,12 +87,12 @@ export function ContractEditor({
               className="flex flex-col gap-2 rounded-full border border-border p-3 bg-surface-alt/10 relative"
             >
               {isEditable && (
-                <button
+                <Button
                   onClick={() => setClientData(clientData.filter((_, x) => x !== i))}
                   className="absolute top-2 right-2 text-muted-foreground hover:text-danger p-1"
                 >
                   <Trash2 className="h-3.5 w-3.5" />
-                </button>
+                </Button>
               )}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
                 <input
@@ -185,13 +186,13 @@ export function ContractEditor({
         <div className="rounded-2xl border border-border bg-surface p-5">
           <div className="mb-3 flex items-center justify-between">
             <h2 className="text-sm font-semibold">Cláusulas Personalizadas</h2>
-            <button
+            <Button
               onClick={() => setEditingCustom(true)}
               className="flex items-center gap-1 text-xs text-primary hover:underline font-bold"
             >
               <Plus className="h-3.5 w-3.5" />
               Adicionar
-            </button>
+            </Button>
           </div>
 
           {customClauses.length === 0 && (
@@ -212,12 +213,12 @@ export function ContractEditor({
                   </div>
                   <div className="text-foreground">{c.clause_text}</div>
                 </div>
-                <button
+                <Button
                   onClick={() => setCustomClauses(customClauses.filter((_, x) => x !== i))}
                   className="text-muted-foreground hover:text-danger p-1 shrink-0"
                 >
                   <Trash2 className="h-3.5 w-3.5" />
-                </button>
+                </Button>
               </div>
             ))}
           </div>
@@ -238,7 +239,7 @@ export function ContractEditor({
                 className="w-full p-2 rounded border border-input bg-surface text-xs outline-none focus:border-border-strong resize-none text-foreground"
               />
               <div className="flex gap-2">
-                <button
+                <Button
                   onClick={() => {
                     if (!newClause.section || !newClause.clause_text) return;
                     setCustomClauses([
@@ -256,8 +257,8 @@ export function ContractEditor({
                   className="h-7 rounded bg-brand text-brand-foreground px-3 text-xs font-bold transition-opacity hover:opacity-95"
                 >
                   Adicionar
-                </button>
-                <button
+                </Button>
+                <Button
                   onClick={() => {
                     setEditingCustom(false);
                     setNewClause({ section: "", clause_text: "" });
@@ -265,7 +266,7 @@ export function ContractEditor({
                   className="h-7 rounded border border-border bg-surface px-3 text-xs font-bold hover:bg-surface-alt text-foreground"
                 >
                   Cancelar
-                </button>
+                </Button>
               </div>
             </div>
           )}
@@ -274,7 +275,7 @@ export function ContractEditor({
 
       {/* Fixed clauses accordion */}
       <div className="rounded-2xl border border-border bg-surface">
-        <button
+        <Button
           onClick={() => setShowClauses(!showClauses)}
           className="flex w-full items-center justify-between px-5 py-3 text-sm font-semibold hover:bg-surface-alt text-foreground"
         >
@@ -284,7 +285,7 @@ export function ContractEditor({
           ) : (
             <ChevronRight className="h-4 w-4 text-muted-foreground" />
           )}
-        </button>
+        </Button>
 
         {showClauses && (
           <div className="divide-y divide-border border-t border-border bg-surface-alt/10">

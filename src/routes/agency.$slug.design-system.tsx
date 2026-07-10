@@ -26,7 +26,7 @@ import { Field } from "@/components/ui/field";
 import { FormInput as Input } from "@/components/ui/input";
 import { NativeSelect as Select } from "@/components/ui/select";
 import { FormTextarea as Textarea } from "@/components/ui/textarea";
-import { PrimaryButton, GhostButton } from "@/components/ui/button";
+import { PrimaryButton, GhostButton , Button } from "@/components/ui/button";
 import { StatusBadge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
 
@@ -257,7 +257,7 @@ function DesignSystemPage() {
       } else if (el.type === "paragraph") {
         elementsMarkup += `\n    <p className="text-xs text-muted-foreground leading-relaxed max-w-xl">${el.content}</p>`;
       } else if (el.type === "button") {
-        elementsMarkup += `\n    <button className="inline-flex h-9 items-center justify-center rounded-full bg-brand text-xs font-semibold text-brand-foreground px-5 py-2 hover:bg-brand/90 transition-all select-none">${el.buttonText}</button>`;
+        elementsMarkup += `\n    <Button className="inline-flex h-9 items-center justify-center rounded-full bg-brand text-xs font-semibold text-brand-foreground px-5 py-2 hover:bg-brand/90 transition-all select-none">${el.buttonText}</Button>`;
       } else if (el.type === "image") {
         elementsMarkup += `\n    <img src="${el.imageUrl}" alt="Mockup" className="rounded-[var(--radius-card)] border-none w-full object-cover max-h-48" />`;
       } else if (el.type === "features") {
@@ -299,7 +299,7 @@ function DesignSystemPage() {
             { id: "presets", label: "⚙️ Presets Page Builder" },
             { id: "sandbox", label: "🔬 Sandbox de Layout" },
           ].map((tab) => (
-            <button
+            <Button
               key={tab.id}
               onClick={() => setActiveTab(tab.id as any)}
               className={cn(
@@ -311,7 +311,7 @@ function DesignSystemPage() {
             >
               <span>{tab.label}</span>
               {activeTab === tab.id && <div className="w-1.5 h-1.5 rounded-full bg-brand" />}
-            </button>
+            </Button>
           ))}
         </nav>
 
@@ -438,12 +438,12 @@ function DesignSystemPage() {
                       className="w-10 h-6 rounded border-none/60 shrink-0"
                       style={{ backgroundColor: `var(${token.name})` }}
                     />
-                    <button
+                    <Button
                       onClick={() => copyToClipboard(`var(${token.name})`)}
                       className="text-[10px] text-brand hover:underline flex items-center gap-1 cursor-pointer font-semibold"
                     >
                       <Copy className="h-2.5 w-2.5" /> Copiar token
-                    </button>
+                    </Button>
                   </div>
                 </div>
               ))}
@@ -903,36 +903,36 @@ function DesignSystemPage() {
                     Incluir Elementos
                   </span>
                   <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
-                    <button
+                    <Button
                       onClick={() => addSandboxElement("header")}
                       className="h-8 rounded-[var(--radius-card)] glass-card border-none border-none hover:border-brand/40 text-[10px] font-semibold text-foreground flex items-center justify-center gap-1 cursor-pointer"
                     >
                       <Plus className="w-3 h-3" /> Título
-                    </button>
-                    <button
+                    </Button>
+                    <Button
                       onClick={() => addSandboxElement("paragraph")}
                       className="h-8 rounded-[var(--radius-card)] glass-card border-none border-none hover:border-brand/40 text-[10px] font-semibold text-foreground flex items-center justify-center gap-1 cursor-pointer"
                     >
                       <Plus className="w-3 h-3" /> Parágrafo
-                    </button>
-                    <button
+                    </Button>
+                    <Button
                       onClick={() => addSandboxElement("button")}
                       className="h-8 rounded-[var(--radius-card)] glass-card border-none border-none hover:border-brand/40 text-[10px] font-semibold text-foreground flex items-center justify-center gap-1 cursor-pointer"
                     >
                       <Plus className="w-3 h-3" /> Botão CTA
-                    </button>
-                    <button
+                    </Button>
+                    <Button
                       onClick={() => addSandboxElement("image")}
                       className="h-8 rounded-[var(--radius-card)] glass-card border-none border-none hover:border-brand/40 text-[10px] font-semibold text-foreground flex items-center justify-center gap-1 cursor-pointer"
                     >
                       <Plus className="w-3 h-3" /> Imagem
-                    </button>
-                    <button
+                    </Button>
+                    <Button
                       onClick={() => addSandboxElement("features")}
                       className="h-8 rounded-[var(--radius-card)] glass-card border-none border-none hover:border-brand/40 text-[10px] font-semibold text-foreground flex items-center justify-center gap-1 cursor-pointer"
                     >
                       <Plus className="w-3 h-3" /> Recursos
-                    </button>
+                    </Button>
                   </div>
                 </div>
 
@@ -952,12 +952,12 @@ function DesignSystemPage() {
                             <span className="text-[10px] font-bold uppercase tracking-wider text-brand">
                               #{i + 1} {el.type}
                             </span>
-                            <button
+                            <Button
                               onClick={() => removeSandboxElement(el.id)}
                               className="text-muted-foreground hover:text-danger cursor-pointer"
                             >
                               <Trash2 className="w-3.5 h-3.5" />
-                            </button>
+                            </Button>
                           </div>
 
                           {el.type === "header" && (
@@ -1067,9 +1067,9 @@ function DesignSystemPage() {
                         if (el.type === "button") {
                           return (
                             <div key={el.id}>
-                              <button className="inline-flex h-9 items-center justify-center rounded-full bg-brand text-xs font-semibold text-brand-foreground px-5 py-2 hover:bg-brand/90 transition-all select-none cursor-pointer">
+                              <Button className="inline-flex h-9 items-center justify-center rounded-full bg-brand text-xs font-semibold text-brand-foreground px-5 py-2 hover:bg-brand/90 transition-all select-none cursor-pointer">
                                 {el.buttonText}
-                              </button>
+                              </Button>
                             </div>
                           );
                         }
@@ -1115,12 +1115,12 @@ function DesignSystemPage() {
                     <span className="text-[11px] font-bold text-muted-foreground uppercase tracking-widest flex items-center gap-1">
                       <Code className="w-3.5 h-3.5 text-brand" /> Código JSX (Tailwind v4)
                     </span>
-                    <button
+                    <Button
                       onClick={() => copyToClipboard(generateSandboxCode())}
                       className="text-xs font-bold text-brand hover:underline flex items-center gap-1.5 cursor-pointer"
                     >
                       <Copy className="w-3.5 h-3.5" /> Copiar Código
-                    </button>
+                    </Button>
                   </div>
 
                   <pre className="bg-zinc-950 text-zinc-100 p-4 rounded-[var(--radius-card)] border border-zinc-800 font-mono text-[10.5px] leading-relaxed overflow-x-auto max-h-60 scrollbar-thin">

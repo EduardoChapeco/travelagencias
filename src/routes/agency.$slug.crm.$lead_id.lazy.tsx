@@ -20,7 +20,7 @@ import { Field } from "@/components/ui/field";
 import { FormInput as Input } from "@/components/ui/input";
 import { NativeSelect as Select } from "@/components/ui/select";
 import { FormTextarea as Textarea } from "@/components/ui/textarea";
-import { PrimaryButton, GhostButton } from "@/components/ui/button";
+import { PrimaryButton, GhostButton , Button } from "@/components/ui/button";
 import { fmtDate, money } from "@/lib/formatters";
 import { SheetPage } from "@/components/ui/sheet";
 import { NewProposalSheet } from "@/components/proposals/NewProposalSheet";
@@ -177,12 +177,12 @@ function LeadDetailPage() {
           <p className="text-xs text-red-600">
             {leadQ.isError && leadQ.error instanceof Error ? leadQ.error.message : "Lead não encontrado ou acesso negado."}
           </p>
-          <button
+          <Button
             onClick={() => navigate({ to: "/agency/$slug/crm", params: { slug } })}
             className="mt-1 h-8 px-4 rounded-[var(--radius-card)] bg-red-100 text-xs font-semibold text-red-800 hover:bg-red-200 cursor-pointer transition-colors"
           >
             Voltar ao CRM
-          </button>
+          </Button>
         </div>
       </div>
     );
@@ -470,21 +470,21 @@ function LeadDetailPage() {
                 </a>
               )}
               {lead.phone && (
-                <button
+                <Button
                   onClick={handleShareFormWhatsApp}
                   className="inline-flex h-9 items-center gap-1.5 rounded-full border border-emerald-600/30 bg-emerald-600/5 hover:bg-emerald-600/10 px-3 text-xs font-bold text-emerald-600 transition-colors"
                   title="Enviar Formulário via WhatsApp"
                 >
                   <MessageSquare className="h-3.5 w-3.5" /> Enviar Form WA
-                </button>
+                </Button>
               )}
-              <button
+              <Button
                 onClick={handleCopyFormLink}
                 className="inline-flex h-9 items-center gap-1.5 rounded-full border border-brand/30 bg-brand/5 hover:bg-brand/10 px-3 text-xs font-bold text-brand transition-colors"
                 title="Copiar Link do Formulário"
               >
                 <FileText className="h-3.5 w-3.5" /> Link Form
-              </button>
+              </Button>
 
               <PrimaryButton
                 onClick={() =>
@@ -596,7 +596,7 @@ function LeadDetailPage() {
                         { label: "Sem Crédito / Orçamento", v: "no_credit" },
                         { label: "Viagem Adiada", v: "postponed" },
                       ].map((opt) => (
-                        <button
+                        <Button
                           key={opt.v}
                           type="button"
                           onClick={async () => {
@@ -618,7 +618,7 @@ function LeadDetailPage() {
                           className="text-[10px] font-bold bg-background border-none px-3 py-1.5 rounded-[var(--radius-card)] hover:border-brand/40 transition-colors cursor-pointer"
                         >
                           {opt.label}
-                        </button>
+                        </Button>
                       ))}
                     </div>
                   </div>
@@ -782,12 +782,12 @@ function LeadDetailPage() {
                             style={{ backgroundColor: color || "#3b82f6" }}
                           >
                             {name}
-                            <button
+                            <Button
                               onClick={() => removeTag(tag)}
                               className="hover:bg-black/20 rounded p-0.5 shrink-0"
                             >
                               <X className="h-3 w-3" />
-                            </button>
+                            </Button>
                           </span>
                         );
                       })}
@@ -805,7 +805,7 @@ function LeadDetailPage() {
 
                     <div className="flex flex-wrap gap-1.5">
                       {TAG_COLOR_PRESETS.map((color) => (
-                        <button
+                        <Button
                           key={color.value}
                           type="button"
                           onClick={() => setNewTagColor(color.value)}
@@ -863,12 +863,12 @@ function LeadDetailPage() {
                       <FileText className="h-3.5 w-3.5 mr-1" /> Copiar Link Form
                     </GhostButton>
                     {lead.phone && (
-                      <button
+                      <Button
                         onClick={handleShareFormWhatsApp}
                         className="inline-flex h-8 items-center gap-1.5 rounded-[var(--radius-card)] border border-emerald-600/30 bg-emerald-600/5 hover:bg-emerald-600/10 px-3 text-xs font-bold text-emerald-600 transition-colors"
                       >
                         <MessageSquare className="h-3.5 w-3.5" /> Enviar Form no WhatsApp
-                      </button>
+                      </Button>
                     )}
                   </div>
                 </div>
@@ -895,7 +895,7 @@ function LeadDetailPage() {
                           key={index}
                           className="border-none/60 p-4 rounded-[var(--radius-card)] glass bg-white/5 border-white/10/15 relative hover:border-border transition-colors"
                         >
-                          <button
+                          <Button
                             onClick={() => {
                               confirm({
                                 title: "Remover Acompanhante",
@@ -918,7 +918,7 @@ function LeadDetailPage() {
                             title="Remover"
                           >
                             <X className="h-3.5 w-3.5" />
-                          </button>
+                          </Button>
                           <span className="text-xs font-bold text-foreground block truncate pr-8">
                             {pax.full_name}
                           </span>
@@ -955,13 +955,13 @@ function LeadDetailPage() {
 
                 {/* Add Traveler form */}
                 <div className="rounded-[var(--radius-card)] border-none glass-card border-none p-5 space-y-4">
-                  <button
+                  <Button
                     onClick={() => setPaxFormOpen((o) => !o)}
                     className="text-xs font-bold text-brand hover:underline flex items-center gap-1 cursor-pointer"
                   >
                     <Plus className="h-4 w-4" />{" "}
                     {paxFormOpen ? "Fechar Formulário" : "Adicionar Acompanhante Manualmente"}
-                  </button>
+                  </Button>
 
                   {paxFormOpen && (
                     <form
@@ -1061,12 +1061,12 @@ function LeadDetailPage() {
                     <h4 className="text-xs font-bold uppercase tracking-widest text-muted-foreground">
                       Compromissos & Reuniões Agendadas
                     </h4>
-                    <button
+                    <Button
                       onClick={() => setMeetingFormOpen((o) => !o)}
                       className="text-brand text-xs font-bold hover:underline flex items-center gap-0.5 cursor-pointer"
                     >
                       <Plus className="h-3.5 w-3.5" /> Agendar Reunião
-                    </button>
+                    </Button>
                   </div>
 
                   {meetingFormOpen && (
@@ -1205,7 +1205,7 @@ function LeadDetailPage() {
                           </div>
 
                           <div className="flex items-center gap-3 self-end md:self-center shrink-0">
-                            <button
+                            <Button
                               type="button"
                               onClick={async () => {
                                 const url = `${window.location.origin}/m/lead/${lead.id}`;
@@ -1217,9 +1217,9 @@ function LeadDetailPage() {
                               title="Copiar texto de convite para enviar por email ou whats"
                             >
                               Copiar Convite
-                            </button>
+                            </Button>
 
-                            <button
+                            <Button
                               type="button"
                               onClick={async () => {
                                 const toastId = toast.loading("Sincronizando com Google Agenda...");
@@ -1240,9 +1240,9 @@ function LeadDetailPage() {
                               }`}
                             >
                               {meeting.google_event_id ? "✓ Sincronizado" : "Google Agenda"}
-                            </button>
+                            </Button>
 
-                            <button
+                            <Button
                               type="button"
                               onClick={() => {
                                 confirm({
@@ -1266,7 +1266,7 @@ function LeadDetailPage() {
                               title="Deletar"
                             >
                               <Trash className="h-3.5 w-3.5" />
-                            </button>
+                            </Button>
                           </div>
                         </div>
                       ))}
@@ -1282,12 +1282,12 @@ function LeadDetailPage() {
                     <h4 className="text-xs font-bold uppercase tracking-widest text-muted-foreground">
                       Propostas de Venda
                     </h4>
-                    <button
+                    <Button
                       onClick={() => setProposalSheetOpen(true)}
                       className="text-brand text-xs font-bold hover:underline flex items-center gap-0.5 cursor-pointer"
                     >
                       <Plus className="h-3.5 w-3.5" /> Nova Cotação
-                    </button>
+                    </Button>
                   </div>
 
                   {proposalsQ.isLoading ? (
@@ -1382,13 +1382,13 @@ function LeadDetailPage() {
                             >
                               <FileDown className="h-4 w-4" />
                             </a>
-                            <button
+                            <Button
                               onClick={() => removeAttachment(file.id)}
                               className="p-1.5 hover:bg-danger/10 rounded text-muted-foreground hover:text-danger transition-colors cursor-pointer"
                               title="Remover"
                             >
                               <Trash className="h-4 w-4" />
-                            </button>
+                            </Button>
                           </div>
                         </li>
                       ))}

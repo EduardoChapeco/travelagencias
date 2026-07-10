@@ -25,7 +25,7 @@ import { PageHeader, EmptyState } from "@/components/shell/PageHeader";
 import { Field } from "@/components/ui/field";
 import { FormInput as Input } from "@/components/ui/input";
 import { FormTextarea as Textarea } from "@/components/ui/textarea";
-import { PrimaryButton, GhostButton } from "@/components/ui/button";
+import { PrimaryButton, GhostButton , Button } from "@/components/ui/button";
 import { StatusBadge } from "@/components/ui/badge";
 import { useForm, useFieldArray } from "react-hook-form";
 import { z } from "zod";
@@ -219,20 +219,20 @@ function Page() {
               >
                 <Edit2 className="h-3.5 w-3.5" /> Editar
               </GhostButton>
-              <button
+              <Button
                 type="button"
                 onClick={() => handleToggleActive(plan)}
                 className="flex h-9 items-center gap-1.5 rounded-full border-none px-3 text-xs hover:glass bg-white/5 border-white/10"
               >
                 {plan.is_active ? "Desativar" : "Ativar"}
-              </button>
-              <button
+              </Button>
+              <Button
                 type="button"
                 onClick={() => handleDelete(plan.id)}
                 className="flex h-9 w-9 items-center justify-center rounded-full border border-danger/30 text-danger hover:bg-danger-bg"
               >
                 <Trash2 className="h-3.5 w-3.5" />
-              </button>
+              </Button>
             </div>
           </div>
         ))}
@@ -397,13 +397,13 @@ function PlanEditor({
           <div>
             <div className="mb-2 flex items-center justify-between">
               <div className="text-xs font-medium text-muted-foreground">Features</div>
-              <button
+              <Button
                 type="button"
                 onClick={() => append({ label: "", included: true })}
                 className="text-xs text-brand hover:underline"
               >
                 + Adicionar
-              </button>
+              </Button>
             </div>
             <div className="space-y-2">
               {fields.map((field, i) => (
@@ -418,13 +418,13 @@ function PlanEditor({
                     className="flex-1"
                     {...register(`features.${i}.label` as const)}
                   />
-                  <button
+                  <Button
                     type="button"
                     onClick={() => remove(i)}
                     className="text-danger hover:text-danger/80"
                   >
                     <X className="h-4 w-4" />
-                  </button>
+                  </Button>
                 </div>
               ))}
             </div>
