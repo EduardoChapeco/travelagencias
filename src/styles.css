@@ -370,6 +370,18 @@
 
   .text-balance { text-wrap: balance; }
   .text-pretty { text-wrap: pretty; }
+
+  /* ── OS Ambient Text Utilities ────────────────────────────────────────────
+   * Uso exclusivo em elementos sobre wallpaper (fora do .os-workspace).
+   * Ex: AppShell header, DockNavigation, status bar.
+   * Fonte canônica: --os-text, --os-text-muted, --os-text-faint em :root.
+   * NÃO use text-white hardcoded nesses contextos — use essas classes.
+   */
+  .text-os       { color: var(--os-text); }
+  .text-os-muted { color: var(--os-text-muted); }
+  .text-os-faint { color: var(--os-text-faint); }
+  .hover\:text-os:hover       { color: var(--os-text); }
+  .hover\:text-os-muted:hover { color: var(--os-text-muted); }
 }
 
 /* ── Print Styles ─────────────────────────────────────────────────────── */

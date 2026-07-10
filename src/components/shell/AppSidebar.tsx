@@ -43,6 +43,10 @@ import { supabase } from "@/integrations/supabase/client";
 import { useQuery } from "@tanstack/react-query";
 import { DockNavigation, type SlimSidebarItem, type ContextItem } from "./DockNavigation";
 import { useUnreadConversations } from "@/hooks/inbox/useUnreadConversations";
+import { useLayoutStore } from "@/hooks/use-layout-store";
+import { AIFloatingWidget } from "./AIFloatingWidget";
+import { Plus } from "lucide-react";
+import { Tooltip, TooltipContent, TooltipTrigger, TooltipProvider } from "@/components/ui/tooltip";
 
 import { NAVIGATION_MODULES, buildContext } from "@/lib/navigation.config";
 
@@ -171,20 +175,80 @@ export function AppSidebar({
   // isHome é recebida como prop — não redeclarar aqui
 
 
+  const primaryAction = useLayoutStore((state) => state.primaryAction);
+
+  if (isHome) {
+    return (
+      <DockNavigation
+        isHome={isHome}
+        items={visibleHubs}
+        contextItems={contextItems as ContextItem[]}
+        footer={
+          <button
+              onClick={() => signOut().then(() => navigate({ to: "/auth/login", replace: true }))}
+              className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full text-os-faint transition-all hover:bg-white/10 hover:text-os cursor-pointer"
+              title="Sair da conta"
+            >
+            <LogOut className="h-[18px] w-[18px] shrink-0" strokeWidth={2} />
+          </button>
+        }
+      />
+    );
+  }
+
   return (
-    <DockNavigation
-      isHome={isHome}
-      items={visibleHubs}
-      contextItems={contextItems as ContextItem[]}
-      footer={
-        <button
-          onClick={() => signOut().then(() => navigate({ to: "/auth/login", replace: true }))}
-          className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full text-white/50 transition-all hover:bg-white/10 hover:text-white cursor-pointer"
-          title="Sair da conta"
-        >
-          <LogOut className="h-[18px] w-[18px] shrink-0" strokeWidth={2} />
-        </button>
-      }
-    />
+    <div className="flex flex-col items-center justify-between gap-4 h-full w-full select-none py-1">
+      {/* 1. Botão de Ação Primária no Topo (não encosta na pill) */}
+      <div className="shrink-0 h-14 w-14 flex items-center justify-center">
+        {primaryAction ? (
+          <TooltipProvider delayDuration={80}>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <button
+                  onClick={primaryAction.onClick}
+                  disabled={primaryAction.disabled || primaryAction.loading}
+                  className="h-14 w-14 rounded-full flex items-center justify-center bg-primary text-primary-foreground border border-white/10 hover:scale-[1.05] active:scale-[0.98] transition-all cursor-pointer shadow-[0_4px_12px_rgba(47,96,230,0.3)] disabled:opacity-50 shrink-0"
+                >
+                  {primaryAction.icon || <Plus className="h-6 w-6" />}
+                </button>
+              </TooltipTrigger>
+              <TooltipContent
+                side="right"
+                sideOffset={12}
+                className="rounded-[var(--radius-card)] px-3 py-1.5 text-xs font-semibold bg-black/80 backdrop-blur-md text-white border border-white/10"
+              >
+                {primaryAction.label}
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
+        ) : (
+          /* Espaçador invisível para manter o equilíbrio visual */
+          <div className="h-14 w-14" />
+        )}
+      </div>
+
+      {/* 2. Dock de Navegação Central (altura fluida, rolável) */}
+      <div className="flex-1 min-h-0 w-full flex items-center justify-center">
+        <DockNavigation
+          isHome={false}
+          items={visibleHubs}
+          contextItems={contextItems as ContextItem[]}
+          footer={
+            <button
+              onClick={() => signOut().then(() => navigate({ to: "/auth/login", replace: true }))}
+              className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full text-os-faint transition-all hover:bg-white/10 hover:text-os cursor-pointer"
+              title="Sair da conta"
+            >
+              <LogOut className="h-[18px] w-[18px] shrink-0" strokeWidth={2} />
+            </button>
+          }
+        />
+      </div>
+
+      {/* 3. Assistente de IA na Base (não encosta na pill) */}
+      <div className="shrink-0">
+        <AIFloatingWidget inline />
+      </div>
+    </div>
   );
 }

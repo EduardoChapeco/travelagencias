@@ -74,8 +74,8 @@ function DockItem({
             "relative flex shrink-0 items-center justify-center transition-all duration-200",
             baseSize,
             active
-              ? "rounded-2xl bg-white/20 text-white"
-              : "rounded-full text-white/70 hover:text-white hover:bg-white/10 hover:rounded-2xl",
+              ? "rounded-2xl bg-white/20 text-os"
+              : "rounded-full text-os-muted hover:text-os hover:bg-white/10 hover:rounded-2xl",
             isPending && "opacity-60 animate-pulse",
             hovered && !active && "scale-110",
           )}
@@ -190,7 +190,7 @@ export function DockNavigation({
   // Structural (not fixed). Handled by AppShell's CSS Grid layout.
   return (
     <div 
-      className="w-full h-[72px] md:h-full z-30 flex md:flex-col items-center justify-between px-4 md:px-0 py-0 md:py-6 bg-black/80 md:bg-black/20 backdrop-blur-2xl border-t md:border-t-0 md:border border-white/10 md:border-white/15 md:rounded-[var(--dock-radius)] md:shadow-[0_8px_32px_rgba(0,0,0,0.2)] flex-row shrink-0 relative transition-all duration-300"
+      className="w-full h-[72px] md:h-auto z-30 flex md:flex-col items-center justify-between px-4 md:px-0 py-0 md:py-6 bg-black/80 md:bg-black/20 backdrop-blur-2xl border-t md:border-t-0 md:border border-white/10 md:border-white/15 md:rounded-[var(--dock-radius)] md:shadow-[0_8px_32px_rgba(0,0,0,0.2)] flex-row shrink-0 relative transition-all duration-300"
       style={{
         width: "100%",
         maxWidth: "var(--dock-collapsed-width)"
@@ -202,7 +202,7 @@ export function DockNavigation({
           {hasContext && showContextOnly && (
             <button
               onClick={() => setShowContextOnly(false)}
-              className="relative flex h-11 w-11 shrink-0 items-center justify-center rounded-full text-white/50 hover:text-white hover:bg-white/10 hover:rounded-2xl transition-all duration-200 cursor-pointer mb-2 border border-white/5"
+              className="relative flex h-11 w-11 shrink-0 items-center justify-center rounded-full text-os-faint hover:text-os hover:bg-white/10 hover:rounded-2xl transition-all duration-200 cursor-pointer mb-2 border border-white/5"
               title="Voltar para o menu principal"
             >
               <ChevronLeft className="h-5 w-5" strokeWidth={2.5} />

@@ -23,9 +23,9 @@ import { ptBR } from "date-fns/locale";
 import { useConfirm } from "@/hooks/use-confirm";
 import { supabase } from "@/integrations/supabase/client";
 import { useAgency } from "@/lib/agency-context";
-import { PageHeader, ModuleActionButton } from "@/components/shell/PageHeader";
+import { PageHeader, ModuleActionButton, EmptyState } from "@/components/shell/PageHeader";
 import { ModuleAdminPanel } from "@/components/shell/ModuleAdminPanel";
-import { EmptyState } from "@/components/shell/PageHeader";
+import { Button } from "@/components/ui/button";
 import { StatusBadge, GhostButton, money, fmtDate } from "@/components/ui/form";
 import { DataTable, DataTableColumnHeader } from "@/components/ui/data-table";
 import { ColumnDef } from "@tanstack/react-table";
@@ -493,21 +493,23 @@ function TripsList() {
           onFilterChange={(v) => { setStatusFilter(v); setPage(1); }}
           actions={
             <div className="flex items-center gap-1.5">
-              <button
+              <Button
+                variant="ghost"
+                size="sm"
                 onClick={() => setImportOpen(true)}
-                className="h-7 px-2.5 flex items-center gap-1.5 rounded-full border border-white/15 text-white/60 hover:text-white hover:bg-white/10 transition-colors cursor-pointer text-[11px] font-semibold"
                 title="Importar do Infotravel"
               >
                 <Search className="h-3 w-3" /> Infotravel
-              </button>
+              </Button>
               {isAgencyAdmin && (
-                <button
+                <Button
+                  variant="ghost"
+                  size="icon"
                   onClick={() => setAdminPanelOpen(true)}
-                  className="h-7 w-7 flex items-center justify-center rounded-full border border-white/15 text-white/60 hover:text-white hover:bg-white/10 transition-colors cursor-pointer"
                   title="Administrar Viagens"
                 >
                   <Settings2 className="h-3.5 w-3.5" />
-                </button>
+                </Button>
               )}
             </div>
           }

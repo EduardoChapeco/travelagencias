@@ -5,9 +5,9 @@ import { Plus, Settings2, Trash2, ArrowLeft } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { useAgency } from "@/lib/agency-context";
-import { EmptyState } from "@/components/shell/PageHeader";
-import { PageHeader, ModuleActionButton } from "@/components/shell/PageHeader";
+import { EmptyState, PageHeader, ModuleActionButton } from "@/components/shell/PageHeader";
 import { ModuleAdminPanel } from "@/components/shell/ModuleAdminPanel";
+import { Button } from "@/components/ui/button";
 import {
   Field,
   Input,
@@ -224,13 +224,14 @@ function ClientsPage() {
           onFilterChange={() => setShowDeleted(!showDeleted)}
           actions={
             isAgencyAdmin ? (
-              <button
+              <Button
+                variant="ghost"
+                size="icon"
                 onClick={() => setAdminPanelOpen(true)}
-                className="h-7 w-7 flex items-center justify-center rounded-full border border-white/15 text-white/60 hover:text-white hover:bg-white/10 transition-colors cursor-pointer"
                 title="Administrar Clientes"
               >
                 <Settings2 className="h-3.5 w-3.5" />
-              </button>
+              </Button>
             ) : undefined
           }
           primaryAction={

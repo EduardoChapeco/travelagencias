@@ -142,6 +142,7 @@ import { Route as AgencySlugFinancialInvoicesRouteImport } from './routes/agency
 import { Route as AgencySlugFinancialGroupsRouteImport } from './routes/agency.$slug.financial.groups'
 import { Route as AgencySlugFinancialDreRouteImport } from './routes/agency.$slug.financial.dre'
 import { Route as AgencySlugFinancialCashRouteImport } from './routes/agency.$slug.financial.cash'
+import { Route as AgencySlugDailyTasksSupportRouteImport } from './routes/agency.$slug.daily-tasks.support'
 import { Route as AgencySlugCrmLead_idRouteImport } from './routes/agency.$slug.crm.$lead_id'
 import { Route as AgencySlugCorporateRfp_idRouteImport } from './routes/agency.$slug.corporate.$rfp_id'
 import { Route as AgencySlugClientsIdRouteImport } from './routes/agency.$slug.clients.$id'
@@ -845,6 +846,12 @@ const AgencySlugFinancialCashRoute = AgencySlugFinancialCashRouteImport.update({
   path: '/cash',
   getParentRoute: () => AgencySlugFinancialRoute,
 } as any)
+const AgencySlugDailyTasksSupportRoute =
+  AgencySlugDailyTasksSupportRouteImport.update({
+    id: '/support',
+    path: '/support',
+    getParentRoute: () => AgencySlugDailyTasksRoute,
+  } as any)
 const AgencySlugCrmLead_idRoute = AgencySlugCrmLead_idRouteImport.update({
   id: '/$lead_id',
   path: '/$lead_id',
@@ -1017,7 +1024,7 @@ export interface FileRoutesByFullPath {
   '/agency/$slug/contracts': typeof AgencySlugContractsRoute
   '/agency/$slug/corporate': typeof AgencySlugCorporateRouteWithChildren
   '/agency/$slug/crm': typeof AgencySlugCrmRouteWithChildren
-  '/agency/$slug/daily-tasks': typeof AgencySlugDailyTasksRoute
+  '/agency/$slug/daily-tasks': typeof AgencySlugDailyTasksRouteWithChildren
   '/agency/$slug/design-system': typeof AgencySlugDesignSystemRoute
   '/agency/$slug/destination-intelligence': typeof AgencySlugDestinationIntelligenceRoute
   '/agency/$slug/financial': typeof AgencySlugFinancialRouteWithChildren
@@ -1061,6 +1068,7 @@ export interface FileRoutesByFullPath {
   '/agency/$slug/clients/$id': typeof AgencySlugClientsIdRoute
   '/agency/$slug/corporate/$rfp_id': typeof AgencySlugCorporateRfp_idRoute
   '/agency/$slug/crm/$lead_id': typeof AgencySlugCrmLead_idRoute
+  '/agency/$slug/daily-tasks/support': typeof AgencySlugDailyTasksSupportRoute
   '/agency/$slug/financial/cash': typeof AgencySlugFinancialCashRoute
   '/agency/$slug/financial/dre': typeof AgencySlugFinancialDreRoute
   '/agency/$slug/financial/groups': typeof AgencySlugFinancialGroupsRoute
@@ -1166,7 +1174,7 @@ export interface FileRoutesByTo {
   '/agency/$slug/contracts': typeof AgencySlugContractsRoute
   '/agency/$slug/corporate': typeof AgencySlugCorporateRouteWithChildren
   '/agency/$slug/crm': typeof AgencySlugCrmRouteWithChildren
-  '/agency/$slug/daily-tasks': typeof AgencySlugDailyTasksRoute
+  '/agency/$slug/daily-tasks': typeof AgencySlugDailyTasksRouteWithChildren
   '/agency/$slug/design-system': typeof AgencySlugDesignSystemRoute
   '/agency/$slug/destination-intelligence': typeof AgencySlugDestinationIntelligenceRoute
   '/agency/$slug/financial': typeof AgencySlugFinancialRouteWithChildren
@@ -1206,6 +1214,7 @@ export interface FileRoutesByTo {
   '/agency/$slug/clients/$id': typeof AgencySlugClientsIdRoute
   '/agency/$slug/corporate/$rfp_id': typeof AgencySlugCorporateRfp_idRoute
   '/agency/$slug/crm/$lead_id': typeof AgencySlugCrmLead_idRoute
+  '/agency/$slug/daily-tasks/support': typeof AgencySlugDailyTasksSupportRoute
   '/agency/$slug/financial/cash': typeof AgencySlugFinancialCashRoute
   '/agency/$slug/financial/dre': typeof AgencySlugFinancialDreRoute
   '/agency/$slug/financial/groups': typeof AgencySlugFinancialGroupsRoute
@@ -1315,7 +1324,7 @@ export interface FileRoutesById {
   '/agency/$slug/contracts': typeof AgencySlugContractsRoute
   '/agency/$slug/corporate': typeof AgencySlugCorporateRouteWithChildren
   '/agency/$slug/crm': typeof AgencySlugCrmRouteWithChildren
-  '/agency/$slug/daily-tasks': typeof AgencySlugDailyTasksRoute
+  '/agency/$slug/daily-tasks': typeof AgencySlugDailyTasksRouteWithChildren
   '/agency/$slug/design-system': typeof AgencySlugDesignSystemRoute
   '/agency/$slug/destination-intelligence': typeof AgencySlugDestinationIntelligenceRoute
   '/agency/$slug/financial': typeof AgencySlugFinancialRouteWithChildren
@@ -1359,6 +1368,7 @@ export interface FileRoutesById {
   '/agency/$slug/clients/$id': typeof AgencySlugClientsIdRoute
   '/agency/$slug/corporate/$rfp_id': typeof AgencySlugCorporateRfp_idRoute
   '/agency/$slug/crm/$lead_id': typeof AgencySlugCrmLead_idRoute
+  '/agency/$slug/daily-tasks/support': typeof AgencySlugDailyTasksSupportRoute
   '/agency/$slug/financial/cash': typeof AgencySlugFinancialCashRoute
   '/agency/$slug/financial/dre': typeof AgencySlugFinancialDreRoute
   '/agency/$slug/financial/groups': typeof AgencySlugFinancialGroupsRoute
@@ -1515,6 +1525,7 @@ export interface FileRouteTypes {
     | '/agency/$slug/clients/$id'
     | '/agency/$slug/corporate/$rfp_id'
     | '/agency/$slug/crm/$lead_id'
+    | '/agency/$slug/daily-tasks/support'
     | '/agency/$slug/financial/cash'
     | '/agency/$slug/financial/dre'
     | '/agency/$slug/financial/groups'
@@ -1660,6 +1671,7 @@ export interface FileRouteTypes {
     | '/agency/$slug/clients/$id'
     | '/agency/$slug/corporate/$rfp_id'
     | '/agency/$slug/crm/$lead_id'
+    | '/agency/$slug/daily-tasks/support'
     | '/agency/$slug/financial/cash'
     | '/agency/$slug/financial/dre'
     | '/agency/$slug/financial/groups'
@@ -1812,6 +1824,7 @@ export interface FileRouteTypes {
     | '/agency/$slug/clients/$id'
     | '/agency/$slug/corporate/$rfp_id'
     | '/agency/$slug/crm/$lead_id'
+    | '/agency/$slug/daily-tasks/support'
     | '/agency/$slug/financial/cash'
     | '/agency/$slug/financial/dre'
     | '/agency/$slug/financial/groups'
@@ -2826,6 +2839,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AgencySlugFinancialCashRouteImport
       parentRoute: typeof AgencySlugFinancialRoute
     }
+    '/agency/$slug/daily-tasks/support': {
+      id: '/agency/$slug/daily-tasks/support'
+      path: '/support'
+      fullPath: '/agency/$slug/daily-tasks/support'
+      preLoaderRoute: typeof AgencySlugDailyTasksSupportRouteImport
+      parentRoute: typeof AgencySlugDailyTasksRoute
+    }
     '/agency/$slug/crm/$lead_id': {
       id: '/agency/$slug/crm/$lead_id'
       path: '/$lead_id'
@@ -3124,6 +3144,17 @@ const AgencySlugCrmRouteWithChildren = AgencySlugCrmRoute._addFileChildren(
   AgencySlugCrmRouteChildren,
 )
 
+interface AgencySlugDailyTasksRouteChildren {
+  AgencySlugDailyTasksSupportRoute: typeof AgencySlugDailyTasksSupportRoute
+}
+
+const AgencySlugDailyTasksRouteChildren: AgencySlugDailyTasksRouteChildren = {
+  AgencySlugDailyTasksSupportRoute: AgencySlugDailyTasksSupportRoute,
+}
+
+const AgencySlugDailyTasksRouteWithChildren =
+  AgencySlugDailyTasksRoute._addFileChildren(AgencySlugDailyTasksRouteChildren)
+
 interface AgencySlugFinancialRouteChildren {
   AgencySlugFinancialCashRoute: typeof AgencySlugFinancialCashRoute
   AgencySlugFinancialDreRoute: typeof AgencySlugFinancialDreRoute
@@ -3308,7 +3339,7 @@ interface AgencySlugRouteChildren {
   AgencySlugContractsRoute: typeof AgencySlugContractsRoute
   AgencySlugCorporateRoute: typeof AgencySlugCorporateRouteWithChildren
   AgencySlugCrmRoute: typeof AgencySlugCrmRouteWithChildren
-  AgencySlugDailyTasksRoute: typeof AgencySlugDailyTasksRoute
+  AgencySlugDailyTasksRoute: typeof AgencySlugDailyTasksRouteWithChildren
   AgencySlugDesignSystemRoute: typeof AgencySlugDesignSystemRoute
   AgencySlugDestinationIntelligenceRoute: typeof AgencySlugDestinationIntelligenceRoute
   AgencySlugFinancialRoute: typeof AgencySlugFinancialRouteWithChildren
@@ -3349,7 +3380,7 @@ const AgencySlugRouteChildren: AgencySlugRouteChildren = {
   AgencySlugContractsRoute: AgencySlugContractsRoute,
   AgencySlugCorporateRoute: AgencySlugCorporateRouteWithChildren,
   AgencySlugCrmRoute: AgencySlugCrmRouteWithChildren,
-  AgencySlugDailyTasksRoute: AgencySlugDailyTasksRoute,
+  AgencySlugDailyTasksRoute: AgencySlugDailyTasksRouteWithChildren,
   AgencySlugDesignSystemRoute: AgencySlugDesignSystemRoute,
   AgencySlugDestinationIntelligenceRoute:
     AgencySlugDestinationIntelligenceRoute,

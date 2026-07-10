@@ -32,3 +32,12 @@
   - Sombras nativas hardcoded (`shadow-sm`, `shadow-md`, `shadow-lg`) eliminadas (`shadow-none`) em favor da leveza intrínseca do Ambient OS (Glass não tem sombra chapada sólida).
 - **Limpeza de Lixo Arquitetural (Orphan Files)**: Exclusão do `DynamicIsland.tsx` que estava não-utilizado, mas poluía a pasta de Shell, causando confusão na navegação base (agora única com `DockNavigation.tsx`).
 - **Remoção de Legados Fantasmas (`mac-glass-*`)**: Excluídos últimos resquícios como `mac-glass-heavy` no AppShell e demais rotas para o token translúcido único do projeto.
+
+## Lotes A, B, C, D, E (Executados nesta Sessão)
+- **Extensão do useLayoutStore**: Adicionado o estado `primaryAction` (com tipo `PrimaryActionConfig`) ao Zustand store de layout.
+- **Ajuste de Sidebar/Dock (AppSidebar & DockNavigation)**: Redesenhado o sidebar vertical no desktop para organizar 3 seções independentes e não-sobrepostas: Botão de Ação Primária no topo, `DockNavigation` (com `md:h-auto` de altura fluida e `max-h` com rolagem vertical) no centro, e Assistente de IA (`AIFloatingWidget inline`) na base.
+- **Unificação de Ações Contextuais**: Refatorado `PageHeader.tsx` para normalizar automaticamente a prop `primaryAction` (JSX ou objeto) e registrá-la no `useLayoutStore` global.
+- **Hiding no Top Bar**: No desktop, a ação primária do `PageHeader` é ocultada do portal do topo (`md:hidden`) já que está no sidebar, mas mantida no mobile.
+- **Evitado Duplicação do Assistente de IA**: O `AIFloatingWidget` é renderizado `inline` no sidebar (desktop) e `fixed` na Home ou no Mobile. No mobile de módulos, ele flutua no canto inferior direito (`bottom-20 right-4`), acima do dock para não colidir.
+- **Alturas Padronizadas**: Altura de todos os componentes superiores (busca, filtros e island direita) padronizada em `32px` (`h-8`).
+- **Interceptador de Rota de Suporte**: Criada a rota `src/routes/agency.$slug.daily-tasks.support.tsx` para interceptar acessos a `/daily-tasks/support` e redirecionar para `/support` com TanStack Router.

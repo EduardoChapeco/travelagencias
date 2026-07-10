@@ -27,7 +27,7 @@ import {
   Eye,
 } from "lucide-react";
 import { useAgency } from "@/lib/agency-context";
-;
+import { Button } from "@/components/ui/button";
 import { PageHeader, EmptyState, ModuleActionButton } from "@/components/shell/PageHeader";
 import {
   StatusBadge,
@@ -589,10 +589,11 @@ Texto: "${aiText}"`;
           actions={
             activeTab === "knowledge" ? (
               <div className="flex items-center gap-1.5">
-                <button
+                <Button
+                  variant="ghost"
+                  size="sm"
                   onClick={handleFeedDefaultGuidelines}
                   disabled={feedingDefaults}
-                  className="h-7 px-2.5 flex items-center gap-1 rounded-full border border-white/15 text-white/60 hover:text-white hover:bg-white/10 transition-colors cursor-pointer text-[11px] font-semibold"
                 >
                   {feedingDefaults ? (
                     <Loader2 className="h-3 w-3 animate-spin" />
@@ -600,14 +601,14 @@ Texto: "${aiText}"`;
                     <Plus className="h-3 w-3" />
                   )}
                   Padrões
-                </button>
-                <button
+                </Button>
+                <Button
+                  size="sm"
                   onClick={() => setNewKnowledgeOpen(true)}
-                  className="h-7 px-2.5 flex items-center gap-1 rounded-full bg-brand text-brand-foreground hover:bg-brand/90 transition-colors cursor-pointer text-[11px] font-semibold"
                 >
                   <Sparkles className="h-3 w-3" />
                   Alimentar Diretriz
-                </button>
+                </Button>
               </div>
             ) : undefined
           }

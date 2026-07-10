@@ -18,10 +18,11 @@ import {
   AlertCircle,
 } from "lucide-react";
 import { useAgency } from "@/lib/agency-context";
-;
+import { Button } from "@/components/ui/button";
 import { ModuleAdminPanel } from "@/components/shell/ModuleAdminPanel";
 import { PageHeader, EmptyState, ModuleActionButton } from "@/components/shell/PageHeader";
-import { StatusBadge, money, fmtDate, GhostButton, Input, Select } from "@/components/ui/form";
+import { StatusBadge, money, fmtDate, GhostButton, Input } from "@/components/ui/form";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import {
   fetchProposalsList,
   duplicateProposal,
@@ -159,31 +160,36 @@ function ProposalsList() {
           }}
           actions={
             <div className="flex items-center gap-1.5">
-              <select
+              <Select
                 value={statusFilter}
-                onChange={(e: any) => {
-                  setStatusFilter(e.target.value);
+                onValueChange={(v) => {
+                  setStatusFilter(v);
                   setPage(1);
                 }}
-                className="h-7 text-[11px] font-semibold bg-transparent hover:bg-white/5 rounded-full text-white/70 hover:text-white outline-none px-2 cursor-pointer transition-colors"
               >
-                <option value="all" className="bg-neutral-900 text-white">Todos Status</option>
-                <option value="draft" className="bg-neutral-900 text-white">Rascunho</option>
-                <option value="sent" className="bg-neutral-900 text-white">Enviada</option>
-                <option value="viewed" className="bg-neutral-900 text-white">Visualizada</option>
-                <option value="accepted" className="bg-neutral-900 text-white">Aceita</option>
-                <option value="converted" className="bg-neutral-900 text-white">Convertida</option>
-                <option value="rejected" className="bg-neutral-900 text-white">Recusada</option>
-                <option value="expired" className="bg-neutral-900 text-white">Expirada</option>
-              </select>
+                <SelectTrigger className="h-7 text-[11px] font-semibold bg-transparent hover:bg-white/10 rounded-full text-os-muted hover:text-os border-white/10 px-2 cursor-pointer transition-colors focus:ring-0">
+                  <SelectValue placeholder="Todos Status" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">Todos Status</SelectItem>
+                  <SelectItem value="draft">Rascunho</SelectItem>
+                  <SelectItem value="sent">Enviada</SelectItem>
+                  <SelectItem value="viewed">Visualizada</SelectItem>
+                  <SelectItem value="accepted">Aceita</SelectItem>
+                  <SelectItem value="converted">Convertida</SelectItem>
+                  <SelectItem value="rejected">Recusada</SelectItem>
+                  <SelectItem value="expired">Expirada</SelectItem>
+                </SelectContent>
+              </Select>
               {isAgencyAdmin && (
-                <button
+                <Button
+                  variant="ghost"
+                  size="icon"
                   onClick={() => setAdminPanelOpen(true)}
-                  className="h-7 w-7 flex items-center justify-center rounded-full border border-white/15 text-white/60 hover:text-white hover:bg-white/10 transition-colors cursor-pointer"
                   title="Administrar Cotações"
                 >
                   <Settings2 className="h-3.5 w-3.5" />
-                </button>
+                </Button>
               )}
             </div>
           }

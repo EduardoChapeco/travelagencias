@@ -9,6 +9,7 @@ import { useNavigate } from "@tanstack/react-router";
 import { Route } from "@/routes/agency.$slug.daily-tasks";
 import { supabase } from "@/integrations/supabase/client";
 import { PageHeader, ModuleActionButton } from "@/components/shell/PageHeader";
+import { ModuleAdminPanel } from "@/components/shell/ModuleAdminPanel";
 
 import { MyDayView } from "./views/MyDayView";
 import { KanbanView } from "./views/KanbanView";
@@ -21,7 +22,7 @@ import { NewTaskModal } from "./NewTaskModal";
 import { TaskFiltersDrawer } from "./TaskFiltersDrawer";
 
 export function TaskShell() {
-  const { isAgencyAdmin } = useAgency();
+  const { agency, isAgencyAdmin } = useAgency();
   const navigate = useNavigate();
   const search = Route.useSearch() as any;
   const activeView = (search.view as TaskView) || "my-day";
@@ -39,6 +40,7 @@ export function TaskShell() {
 
   const [newTaskOpen, setNewTaskOpen] = useState(false);
   const [filtersOpen, setFiltersOpen] = useState(false);
+  const [adminPanelOpen, setAdminPanelOpen] = useState(false);
   const [currentUserId, setCurrentUserId] = useState<string | null>(null);
   const [subTab, setSubTab] = useState("all");
 
@@ -143,12 +145,15 @@ export function TaskShell() {
                 Filtros
               </Button>
               {isAgencyAdmin && (
-                <button
-                  className="flex h-7 w-7 items-center justify-center rounded-full hover:bg-white/5 text-white/70 hover:text-white transition-colors cursor-pointer shrink-0 animate-fadeIn"
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="h-7 w-7 shrink-0 animate-fadeIn"
                   title="Administrar Módulo"
+                  onClick={() => setAdminPanelOpen(true)}
                 >
                   <Settings2 className="h-3.5 w-3.5" />
-                </button>
+                </Button>
               )}
             </div>
           }
@@ -198,6 +203,16 @@ export function TaskShell() {
           )}
         </div>
       </Tabs>
+
+      {agency && (
+        <ModuleAdminPanel
+          isOpen={adminPanelOpen}
+          onClose={() => setAdminPanelOpen(false)}
+          moduleKey="daily-tasks"
+          moduleName="Dia a Dia"
+          agencyId={agency.id}
+        />
+      )}
     </div>
   );
 }

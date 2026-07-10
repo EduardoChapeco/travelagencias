@@ -16,6 +16,7 @@ import {
 import { useAgency } from "@/lib/agency-context";
 import { EmptyState } from "@/components/shell/PageHeader";
 import { Field, Input, Select, Textarea, PrimaryButton, GhostButton } from "@/components/ui/form";
+import { Select as RadixSelect, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { SearchableSelect } from "@/components/ui/searchable-select";
 import { SheetPage } from "@/components/ui/sheet";
 import { toast } from "sonner";
@@ -78,8 +79,8 @@ function CRMPage() {
   const [proposalLeadId, setProposalLeadId] = useState<string | null>(null);
 
   const [searchQuery, setSearchQuery] = useState("");
-  const [ownerFilter, setOwnerFilter] = useState("");
-  const [sourceFilter, setSourceFilter] = useState("");
+  const [ownerFilter, setOwnerFilter] = useState("all");
+  const [sourceFilter, setSourceFilter] = useState("all");
 
   const [localLeads, setLocalLeads] = useState<Lead[] | null>(null);
 
@@ -114,8 +115,8 @@ function CRMPage() {
         !l.email?.toLowerCase().includes(searchQuery.toLowerCase())
       )
         return false;
-      if (ownerFilter && l.owner_id !== ownerFilter) return false;
-      if (sourceFilter && l.source !== sourceFilter) return false;
+      if (ownerFilter && ownerFilter !== "all" && l.owner_id !== ownerFilter) return false;
+      if (sourceFilter && sourceFilter !== "all" && l.source !== sourceFilter) return false;
       return true;
     });
   }, [localLeads, searchQuery, ownerFilter, sourceFilter]);
@@ -198,34 +199,36 @@ function CRMPage() {
           actions={
             activeTab !== "admin" ? (
               <div className="flex items-center gap-1">
-                <select
-                  value={ownerFilter}
-                  onChange={(e: any) => setOwnerFilter(e.target.value)}
-                  className="h-7 text-[11px] font-semibold bg-transparent hover:bg-white/5 rounded-full text-white/70 hover:text-white outline-none px-2.5 cursor-pointer transition-colors"
-                >
-                  <option value="" className="bg-neutral-900 text-white">Responsáveis</option>
-                  {usersQ.data?.map(
-                    (u: any) =>
-                      u.user_id && (
-                        <option key={u.user_id} value={u.user_id} className="bg-neutral-900 text-white">
-                          {u.user_name || "Sem nome"}
-                        </option>
-                      ),
-                  )}
-                </select>
+                <RadixSelect value={ownerFilter} onValueChange={setOwnerFilter}>
+                  <SelectTrigger className="h-7 text-[11px] font-semibold bg-transparent hover:bg-white/10 rounded-full text-os-muted hover:text-os border-white/10 px-2.5 cursor-pointer transition-colors focus:ring-0">
+                    <SelectValue placeholder="Responsáveis" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">Responsáveis</SelectItem>
+                    {usersQ.data?.map(
+                      (u: any) =>
+                        u.user_id && (
+                          <SelectItem key={u.user_id} value={u.user_id}>
+                            {u.user_name || "Sem nome"}
+                          </SelectItem>
+                        ),
+                    )}
+                  </SelectContent>
+                </RadixSelect>
 
-                <select
-                  value={sourceFilter}
-                  onChange={(e: any) => setSourceFilter(e.target.value)}
-                  className="h-7 text-[11px] font-semibold bg-transparent hover:bg-white/5 rounded-full text-white/70 hover:text-white outline-none px-2.5 cursor-pointer transition-colors"
-                >
-                  <option value="" className="bg-neutral-900 text-white">Origens</option>
-                  <option value="whatsapp" className="bg-neutral-900 text-white">WhatsApp</option>
-                  <option value="instagram" className="bg-neutral-900 text-white">Instagram</option>
-                  <option value="website" className="bg-neutral-900 text-white">Site</option>
-                  <option value="referral" className="bg-neutral-900 text-white">Indicação</option>
-                  <option value="walkin" className="bg-neutral-900 text-white">Presencial</option>
-                </select>
+                <RadixSelect value={sourceFilter} onValueChange={setSourceFilter}>
+                  <SelectTrigger className="h-7 text-[11px] font-semibold bg-transparent hover:bg-white/10 rounded-full text-os-muted hover:text-os border-white/10 px-2.5 cursor-pointer transition-colors focus:ring-0">
+                    <SelectValue placeholder="Origens" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">Origens</SelectItem>
+                    <SelectItem value="whatsapp">WhatsApp</SelectItem>
+                    <SelectItem value="instagram">Instagram</SelectItem>
+                    <SelectItem value="website">Site</SelectItem>
+                    <SelectItem value="referral">Indicação</SelectItem>
+                    <SelectItem value="walkin">Presencial</SelectItem>
+                  </SelectContent>
+                </RadixSelect>
               </div>
             ) : undefined
           }

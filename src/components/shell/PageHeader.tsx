@@ -1,13 +1,44 @@
-import type { ReactNode } from "react";
+import React, { useEffect, useMemo, type ReactNode } from "react";
 import { Search, X, FolderSearch } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { HeaderPortal } from "./HeaderPortal";
+import { useLayoutStore, type PrimaryActionConfig } from "@/hooks/use-layout-store";
+import { useRouterState } from "@tanstack/react-router";
+import { useAgency } from "@/lib/agency-context";
+import { Button } from "@/components/ui/button";
 
 export type ToolbarFilter = {
   label: string;
   value: string;
   count?: number;
 };
+
+export function normalizePrimaryAction(action: React.ReactNode): PrimaryActionConfig | null {
+  if (!action) return null;
+
+  if (typeof action === "object" && action !== null && "onClick" in action && "label" in action) {
+    return action as unknown as PrimaryActionConfig;
+  }
+
+  if (React.isValidElement(action)) {
+    const props = action.props as any;
+    if (props && typeof props.onClick === "function") {
+      let label = props.label;
+      if (!label && typeof props.children === "string") {
+        label = props.children;
+      }
+      return {
+        label: label || "Ação",
+        icon: props.icon,
+        onClick: props.onClick,
+        disabled: props.disabled,
+        loading: props.loading,
+      };
+    }
+  }
+
+  return null;
+}
 
 export function PageHeader({
   title,
@@ -32,6 +63,24 @@ export function PageHeader({
   actions?: ReactNode;
   primaryAction?: ReactNode;
 }) {
+  const setPrimaryAction = useLayoutStore((state) => state.setPrimaryAction);
+  const normalizedAction = useMemo(() => normalizePrimaryAction(primaryAction), [primaryAction]);
+
+  const { agency } = useAgency();
+  const rawPathname = useRouterState({ select: (s) => s.location.pathname });
+  const pathname = (rawPathname ?? "/").replace(/\/$/, "") || "/";
+  const isHome = pathname === `/agency/${agency?.slug}` || pathname === `/agency/${agency?.slug}/`;
+
+  // Se estiver em uma página de módulo normal (com sidebar), o sidebar exibirá a ação principal.
+  const hasSidebar = !isHome && pathname.startsWith("/agency/");
+
+  useEffect(() => {
+    if (normalizedAction) {
+      setPrimaryAction(normalizedAction);
+      return () => setPrimaryAction(null);
+    }
+  }, [normalizedAction, setPrimaryAction]);
+
   return (
     <>
       {/* Teleport the controls (Search, Filters, Actions) to the AppShell Top Bar */}
@@ -44,8 +93,8 @@ export function PageHeader({
               {search && (
                 <div className="relative w-64 shrink-0">
                   <Search
-                    className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-white/50 pointer-events-none"
-                    strokeWidth={2}
+                    className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground/60 pointer-events-none"
+                    strokeWidth={2.2}
                   />
                   <input
                     type="text"
@@ -53,9 +102,9 @@ export function PageHeader({
                     onChange={(e) => search.onChange(e.target.value)}
                     placeholder={search.placeholder ?? "Buscar..."}
                     className={cn(
-                      "w-full h-8 rounded-full bg-white/10 border border-white/10",
-                      "pl-9 pr-9 text-[13px] text-white placeholder:text-white/50",
-                      "focus:outline-none focus:ring-1 focus:ring-white/30 focus:bg-white/20",
+                      "w-full h-8 rounded-full bg-surface-alt/50 border border-border/50",
+                      "pl-9 pr-9 text-[12px] font-semibold text-foreground placeholder:text-muted-foreground/60",
+                      "focus:outline-none focus:ring-1 focus:ring-primary/50 focus:bg-surface-alt",
                       "transition-all duration-150"
                     )}
                   />
@@ -63,7 +112,7 @@ export function PageHeader({
                     <button
                       type="button"
                       onClick={() => search.onChange("")}
-                      className="absolute right-3 top-1/2 -translate-y-1/2 text-white/50 hover:text-white transition-colors cursor-pointer"
+                      className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors cursor-pointer"
                     >
                       <X className="h-3.5 w-3.5" strokeWidth={2.5} />
                     </button>
@@ -71,9 +120,9 @@ export function PageHeader({
                 </div>
               )}
 
-              {/* ── Filter Pills ── */}
+              {/* ── Filter Pills (Height 32px standard) ── */}
               {filters && filters.length > 0 && (
-                <div className="flex items-center gap-1 bg-white/10 border border-white/10 p-1 rounded-full overflow-x-auto no-scrollbar max-w-full">
+                <div className="flex items-center gap-1 bg-surface-alt/30 border border-border/30 p-0.5 h-8 rounded-full overflow-x-auto no-scrollbar max-w-full">
                   {filters.map((f) => {
                     const isActive = activeFilter === f.value;
                     return (
@@ -81,18 +130,18 @@ export function PageHeader({
                         key={f.value}
                         onClick={() => onFilterChange?.(f.value)}
                         className={cn(
-                          "px-3 py-1 rounded-full text-[12px] font-semibold whitespace-nowrap transition-all duration-200 cursor-pointer flex items-center gap-1.5",
+                          "px-3 h-7 rounded-full text-[11px] font-extrabold whitespace-nowrap transition-all duration-200 cursor-pointer flex items-center gap-1.5",
                           isActive
-                            ? "bg-white text-black shadow-sm"
-                            : "text-white/70 hover:text-white hover:bg-white/20"
+                            ? "bg-primary text-primary-foreground shadow-sm"
+                            : "text-muted-foreground hover:text-foreground hover:bg-surface-alt"
                         )}
                       >
                         {f.label}
                         {f.count !== undefined && (
                           <span
                             className={cn(
-                              "px-1.5 py-0.5 rounded-full text-[10px] leading-none",
-                              isActive ? "bg-black/20 text-black" : "bg-white/20 text-white/80"
+                              "px-1.5 py-0.5 rounded-full text-[9px] leading-none font-bold",
+                              isActive ? "bg-black/20 text-primary-foreground" : "bg-border text-muted-foreground"
                             )}
                           >
                             {f.count}
@@ -106,16 +155,19 @@ export function PageHeader({
             </div>
           )}
 
-          {/* ── Actions (Contextual Button) ── */}
+          {/* ── Actions (Contextual Button, Height 32px standard) ── */}
           {actions && (
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-2 h-8">
               {actions}
             </div>
           )}
 
-          {/* ── Primary Action ── */}
+          {/* ── Primary Action (Omit on Desktop if sidebar handles it) ── */}
           {primaryAction && (
-            <div className="flex items-center ml-2 border-l border-white/15 pl-4">
+            <div className={cn(
+              "flex items-center ml-2 border-l border-border/50 pl-4 h-8",
+              hasSidebar ? "md:hidden" : ""
+            )}>
               {primaryAction}
             </div>
           )}
@@ -124,39 +176,45 @@ export function PageHeader({
 
       {/* Inline Flow: Only the Title and Description */}
       <div className="mb-6 flex flex-col gap-1 md:hidden">
-        <h1 className="text-xl font-bold text-white">{title}</h1>
-        {description && <p className="text-sm text-white/60 mt-1">{description}</p>}
+        <h1 className="text-xl font-bold text-foreground">{title}</h1>
+        {description && <p className="text-sm text-muted-foreground mt-1">{description}</p>}
       </div>
     </>
   );
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
-// ModuleActionButton — botão de ação contextual circular flutuante
+// ModuleActionButton — thin semantic wrapper sobre o Button canônico.
+// Contrato público mantido para zero-breaking-change nos 22 consumers.
+// Visual delegado ao Button primitive (size="sm" → h-8 px-3 text-xs rounded-full).
 export function ModuleActionButton({
   label,
   icon,
   onClick,
   className,
+  disabled,
+  loading,
 }: {
   label: string;
   icon?: ReactNode;
   onClick: () => void;
   className?: string;
+  disabled?: boolean;
+  loading?: boolean;
 }) {
   return (
-    <button
+    <Button
+      size="sm"
       onClick={onClick}
-      className={cn(
-        "flex items-center gap-1.5 px-3 py-1.5 bg-primary text-primary-foreground rounded-full text-[12px] font-bold hover:bg-primary/90 transition-all shadow-sm cursor-pointer whitespace-nowrap",
-        className
-      )}
+      disabled={disabled || loading}
+      className={cn("gap-1.5 font-bold whitespace-nowrap", className)}
     >
       {icon}
       <span>{label}</span>
-    </button>
+    </Button>
   );
 }
+
 
 export function EmptyState({
   title,

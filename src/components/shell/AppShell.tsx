@@ -146,10 +146,10 @@ export function AppShell({
       />
 
       {/* 2. Top Status Bar — Ultra-minimalista com logo à esquerda, portal contextual no meio e hora à direita */}
-      <header className="absolute top-0 left-0 right-0 h-[var(--shell-header-height)] px-4 flex justify-between items-center text-white z-40 bg-transparent border-none pointer-events-none">
+      <header className="absolute top-0 left-0 right-0 h-[var(--shell-header-height)] px-4 flex justify-between items-center text-os z-40 bg-transparent border-none pointer-events-none">
         {/* Left: Logo da agência (quadrado verde) */}
         <div className="flex items-center gap-2 pointer-events-auto shrink-0">
-          <Link to={`/agency/${agency?.slug}` as any} className="flex items-center gap-2 font-extrabold text-sm tracking-tight text-white/85 hover:text-white transition-colors">
+          <Link to={`/agency/${agency?.slug}` as any} className="flex items-center gap-2 font-extrabold text-sm tracking-tight text-os-muted hover:text-os transition-colors">
             {brandInfo?.logo_url ? (
               <img
                 src={brandInfo.logo_url}
@@ -171,8 +171,8 @@ export function AppShell({
 
         {/* Right: Pill ultra-fina — hora, data e notificações */}
         <div className="flex items-center gap-3 glass-pill px-3 h-8 rounded-full pointer-events-auto text-[11px] font-medium tracking-wide shrink-0">
-          <span className="text-white/70 capitalize hidden sm:inline">{dateStr}</span>
-          <span className="text-white/90">{timeStr}</span>
+          <span className="text-os-muted capitalize hidden sm:inline">{dateStr}</span>
+          <span className="text-os">{timeStr}</span>
           <div className="w-[1px] h-2.5 bg-white/15" />
           <NotificationBadge minimal />
         </div>
@@ -219,7 +219,7 @@ export function AppShell({
           )}>
             {/* Mobile Title (Menu button removed since dock is at bottom) */}
             <div className="md:hidden flex items-center gap-3 px-4 pt-3 pb-1 shrink-0">
-              {title && <h1 className="text-base font-semibold text-white">{title}</h1>}
+              {title && <h1 className="text-base font-semibold text-os">{title}</h1>}
             </div>
 
             <main className="no-scrollbar flex-1 overflow-hidden relative os-workspace flex flex-col rounded-[var(--radius-card)] bg-black/10 glass-card border border-white/5 md:shadow-2xl">

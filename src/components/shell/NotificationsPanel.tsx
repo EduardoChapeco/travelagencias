@@ -259,7 +259,7 @@ export function NotificationBadge({ minimal = false }: { minimal?: boolean }) {
         onClick={() => setOpen(!open)}
         className={
           minimal
-            ? "relative flex h-5 w-5 items-center justify-center text-white/70 hover:text-white transition-colors cursor-pointer"
+            ? "relative flex h-5 w-5 items-center justify-center text-os-muted hover:text-os transition-colors cursor-pointer"
             : `relative flex h-8 w-8 items-center justify-center rounded-full border border-border text-xs font-medium cursor-pointer ${
                 open
                   ? "bg-surface-alt text-foreground"

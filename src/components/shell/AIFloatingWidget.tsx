@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Sparkles, X, MessageSquare, Compass, Send } from "lucide-react";
+import { Sparkles, X, Compass } from "lucide-react";
 import { AIChatPanel } from "./AIChatPanel";
 import { buildContext } from "@/lib/navigation.config";
 import { useAgency } from "@/lib/agency-context";
@@ -8,13 +8,16 @@ import { useRouterState, useParams } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { cn } from "@/lib/utils";
+import { useIsMobile } from "@/hooks/use-mobile";
+import { Tooltip, TooltipContent, TooltipTrigger, TooltipProvider } from "@/components/ui/tooltip";
 
-export function AIFloatingWidget() {
+export function AIFloatingWidget({ inline = false }: { inline?: boolean }) {
   const { agency, isAgencyAdmin } = useAgency();
   const params = useParams({ strict: false }) as { slug?: string };
   const slug = params.slug ?? agency?.slug;
   const isAdmin = !!isAgencyAdmin;
   const base = `/agency/${slug}`;
+  const isMobile = useIsMobile();
 
   const rawPathname = useRouterState({
     select: (s) => s.location.pathname,
@@ -81,20 +84,108 @@ export function AIFloatingWidget() {
 
   const isHome = pathname === `/agency/${slug}` || pathname === `/agency/${slug}/`;
 
+  // Hide the fixed widget on desktop module views to avoid duplication with the inline widget inside AppSidebar
+  if (!inline && !isHome && !isMobile) {
+    return null;
+  }
+
+  // ── 1. Inline Sidebar Rendering (Desktop Module View) ───────────────────
+  if (inline) {
+    return (
+      <div
+        ref={widgetRef}
+        className="relative z-50 flex flex-col items-center select-none font-sans"
+      >
+        <AnimatePresence>
+          {isOpen && (
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95, y: 12 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.95, y: 12 }}
+              transition={{ type: "spring", bounce: 0.15, duration: 0.4 }}
+              className="absolute bottom-16 left-0 origin-bottom-left w-[380px] sm:w-[400px] h-[540px] rounded-[var(--radius-card)] overflow-hidden glass text-white bg-black/40 backdrop-blur-2xl shadow-[0_16px_48px_rgba(0,0,0,0.4)] flex flex-col"
+            >
+              {aiActions && aiActions.length > 0 && (
+                <div className="px-4 pt-3 pb-2 bg-white/5 border-b border-white/10 shrink-0">
+                  <span className="text-[10px] font-black uppercase tracking-wider text-white/50 flex items-center gap-1 mb-2">
+                    <Compass className="w-3.5 h-3.5" /> Ações Rápidas desta página
+                  </span>
+                  <div className="flex flex-wrap gap-1.5 max-h-[80px] overflow-y-auto no-scrollbar">
+                    {aiActions.map((act: any, idx: number) => (
+                      <button
+                        key={idx}
+                        onClick={() => handleSuggestionClick(act.prompt)}
+                        className="px-2.5 py-1 text-[11px] font-bold rounded-full bg-brand/20 hover:bg-brand/35 text-brand-light border border-brand/20 transition-all cursor-pointer truncate max-w-full"
+                        title={act.prompt}
+                      >
+                        {act.label}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              <div className="flex-1 min-h-0 bg-transparent">
+                <AIChatPanel
+                  key={chatKey}
+                  isEmbedded={true}
+                  initialPrompt={selectedPrompt}
+                  onClose={() => setIsOpen(false)}
+                />
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+
+        <TooltipProvider delayDuration={80}>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <button
+                onClick={() => {
+                  setIsOpen(!isOpen);
+                  setSelectedPrompt("");
+                }}
+                className={cn(
+                  "h-14 w-14 rounded-full flex items-center justify-center glass-dock border border-white/20 text-white hover:border-white/40 cursor-pointer transition-all duration-200 hover:scale-[1.03] active:scale-[0.98]",
+                  isOpen && "bg-brand/20 border-brand/35"
+                )}
+              >
+                {isOpen ? (
+                  <X className="w-5 h-5 shrink-0" strokeWidth={2.2} />
+                ) : (
+                  <Sparkles className="w-5 h-5 text-brand-light shrink-0" strokeWidth={2.2} />
+                )}
+              </button>
+            </TooltipTrigger>
+            <TooltipContent
+              side="right"
+              sideOffset={12}
+              className="rounded-[var(--radius-card)] px-3 py-1.5 text-xs font-semibold bg-black/80 backdrop-blur-md text-white border border-white/10"
+            >
+              Assistente de IA
+            </TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
+      </div>
+    );
+  }
+
+  // ── 2. Fixed Floating Rendering (Home or Mobile Views) ───────────────────
   return (
     <div
       ref={widgetRef}
       className={cn(
         "fixed z-50 flex flex-col gap-3 font-sans select-none pointer-events-auto transition-all duration-300",
-        isHome ? "bottom-6 left-4 items-start" : "bottom-[var(--shell-edge-gap)] items-center"
+        isHome 
+          ? "bottom-6 left-4 items-start" 
+          : "bottom-20 right-4 items-end md:bottom-[var(--shell-edge-gap)] md:items-center"
       )}
       style={isHome ? undefined : { 
-        left: "calc(var(--shell-edge-gap) + (var(--dock-collapsed-width) / 2))",
-        transform: "translateX(-50%)",
+        left: isMobile ? undefined : "calc(var(--shell-edge-gap) + (var(--dock-collapsed-width) / 2))",
+        transform: isMobile ? undefined : "translateX(-50%)",
         zIndex: 100 
       }}
     >
-      {/* ── Chat Container — abre acima e à direita do botão ──────────── */}
       <AnimatePresence>
         {isOpen && (
           <motion.div
@@ -102,9 +193,11 @@ export function AIFloatingWidget() {
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.95, y: 12 }}
             transition={{ type: "spring", bounce: 0.15, duration: 0.4 }}
-            className="w-[380px] sm:w-[400px] h-[540px] rounded-[var(--radius-card)] overflow-hidden glass text-white bg-black/40 backdrop-blur-2xl shadow-[0_16px_48px_rgba(0,0,0,0.4)] flex flex-col origin-bottom-left"
+            className={cn(
+              "w-[380px] sm:w-[400px] h-[540px] rounded-[var(--radius-card)] overflow-hidden glass text-white bg-black/40 backdrop-blur-2xl shadow-[0_16px_48px_rgba(0,0,0,0.4)] flex flex-col",
+              isMobile ? "origin-bottom-right" : "origin-bottom-left"
+            )}
           >
-            {/* Header / Top suggestions */}
             {aiActions && aiActions.length > 0 && (
               <div className="px-4 pt-3 pb-2 bg-white/5 border-b border-white/10 shrink-0">
                 <span className="text-[10px] font-black uppercase tracking-wider text-white/50 flex items-center gap-1 mb-2">
@@ -125,7 +218,6 @@ export function AIFloatingWidget() {
               </div>
             )}
 
-            {/* AIChatPanel wrapped in container */}
             <div className="flex-1 min-h-0 bg-transparent">
               <AIChatPanel
                 key={chatKey}
@@ -138,7 +230,6 @@ export function AIFloatingWidget() {
         )}
       </AnimatePresence>
 
-      {/* ── Pill Trigger — mesma altura do dock (h-14/56px), expande no hover ── */}
       <motion.button
         layout
         onClick={() => {
@@ -149,12 +240,10 @@ export function AIFloatingWidget() {
         onMouseLeave={() => setIsHovered(false)}
         className={cn(
           "h-14 flex items-center justify-center rounded-full glass-dock border border-white/20 text-white hover:border-white/40 cursor-pointer transition-all duration-200",
-          isOpen
-            ? "bg-brand/20 border-brand/35 w-14"
-            : "hover:scale-[1.03]"
+          isOpen ? "bg-brand/20 border-brand/35 w-14" : "hover:scale-[1.03]"
         )}
         style={{
-          width: isOpen ? "56px" : isHovered ? "148px" : "56px",
+          width: isOpen ? "56px" : isHovered && !isMobile ? "148px" : "56px",
         }}
         transition={{ type: "spring", stiffness: 380, damping: 30 }}
       >
@@ -162,11 +251,11 @@ export function AIFloatingWidget() {
           {isOpen ? (
             <X className="w-5 h-5 shrink-0" strokeWidth={2.2} />
           ) : (
-            <Sparkles className="w-5 h-5 text-brand-light shrink-0 animate-pulse-slow" strokeWidth={2.2} />
+            <Sparkles className="w-5 h-5 text-brand-light shrink-0" strokeWidth={2.2} />
           )}
 
           <AnimatePresence>
-            {!isOpen && isHovered && (
+            {!isOpen && isHovered && !isMobile && (
               <motion.span
                 initial={{ opacity: 0, x: -8 }}
                 animate={{ opacity: 1, x: 0 }}
