@@ -15,7 +15,7 @@ import {
 import { supabase } from "@/integrations/supabase/client";
 import { useAgency } from "@/lib/agency-context";
 import { PageHeader } from "@/components/shell/PageHeader";
-import { PrimaryButton } from "@/components/ui/form";
+import { PrimaryButton } from "@/components/ui/button";
 
 import { DraggableList, DraggableItem } from "@/components/ui/DraggableList";
 import { UniversalDevicePreview } from "@/components/ui/universal-device-preview";

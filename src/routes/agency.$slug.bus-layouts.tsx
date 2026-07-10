@@ -8,7 +8,11 @@ import { useAgency } from "@/lib/agency-context";
 import { EmptyState } from "@/components/shell/PageHeader";
 import { PageHeader, ModuleActionButton } from "@/components/shell/PageHeader";
 import { ModuleAdminPanel } from "@/components/shell/ModuleAdminPanel";
-import { Field, Input, Select, PrimaryButton, GhostButton, Sheet } from "@/components/ui/form";
+import { Field } from "@/components/ui/field";
+import { FormInput as Input } from "@/components/ui/input";
+import { NativeSelect as Select } from "@/components/ui/select";
+import { SimpleSheet as Sheet } from "@/components/ui/sheet";
+import { PrimaryButton, GhostButton } from "@/components/ui/button";
 import { EditVehicleModal } from "./agency.$slug.bus-layouts.$id";
 
 export const Route = createFileRoute("/agency/$slug/bus-layouts")({

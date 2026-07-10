@@ -9,7 +9,8 @@ import {
   deleteLeadActivity,
   type Activity,
 } from "@/services/crm";
-import { Select, Textarea } from "@/components/ui/form";
+import { NativeSelect as Select } from "@/components/ui/select";
+import { FormTextarea as Textarea } from "@/components/ui/textarea";
 import {
   StickyNote,
   Phone,

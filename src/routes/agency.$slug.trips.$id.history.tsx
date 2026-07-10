@@ -3,7 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useAgency } from "@/lib/agency-context";
 import { Clock, User, Activity, FileText, Settings, Shield } from "lucide-react";
-import { fmtDate } from "@/components/ui/form";
+import { fmtDate } from "@/lib/formatters";
 
 export const Route = createFileRoute("/agency/$slug/trips/$id/history")({
   head: ({ context }: any) => ({ meta: [{ title: `Histórico · ${context?.brand?.platform_name || 'Turis'}` }] }),

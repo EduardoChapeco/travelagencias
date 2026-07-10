@@ -9,7 +9,9 @@ import {
   type IntegrationsConfig,
 } from "@/services/admin";
 import { PageHeader } from "@/components/shell/PageHeader";
-import { Field, Input, PrimaryButton } from "@/components/ui/form";
+import { Field } from "@/components/ui/field";
+import { FormInput as Input } from "@/components/ui/input";
+import { PrimaryButton } from "@/components/ui/button";
 
 export const Route = createFileRoute("/admin/integrations")({
   head: () => ({ meta: [{ title: "Integrações & APIs · Admin" }] }),

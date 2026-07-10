@@ -1,5 +1,5 @@
 import { AlertCircle, CreditCard, CheckCircle, Clock } from "lucide-react";
-import { fmtDate, money } from "@/components/ui/form";
+import { fmtDate, money } from "@/lib/formatters";
 import { AppWidget } from "@/components/portal/TripPortalShared";
 import { toast } from "sonner";
 import { handleViewReceipt } from "@/utils/storage-helper";

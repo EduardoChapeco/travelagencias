@@ -3,7 +3,7 @@
  * Estilo clássico, analítico, focado em dados (baseado no PDF COT-161CF5)
  */
 import { type Proposal } from "@/services/proposals";
-import { money, fmtDate } from "@/components/ui/form";
+import { money, fmtDate } from "@/lib/formatters";
 import { Plane, Hotel, Car, Compass, Check, X, PhoneCall } from "lucide-react";
 import { buildBaseViewModel } from "@/lib/adapters";
 

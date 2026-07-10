@@ -8,56 +8,20 @@ import { NewActivity, Timeline } from "@/components/crm/lead-details/LeadTimelin
 import { OmnichannelChat } from "@/components/crm/lead-details/OmnichannelChat";
 import { AIHunterPanel } from "@/components/crm/lead-details/AIHunterPanel";
 import {
-  X,
-  MessageSquare,
-  UserCheck,
-  Plus,
-  Paperclip,
-  Check,
-  ShieldAlert,
-  Camera,
-  Trash,
-  Send,
-  FileText,
-  FileDown,
-  AlertCircle,
-  Sparkles,
-  Pencil,
-} from "lucide-react";
+  X, MessageSquare, UserCheck, Plus, Paperclip, Check, ShieldAlert, Camera, Trash, Send, FileText, FileDown, AlertCircle, Sparkles, Pencil, } from "lucide-react";
 import { toast } from "sonner";
 import confetti from "canvas-confetti";
 import { supabase } from "@/integrations/supabase/client";
 import {
-  fetchStages,
-  fetchLeadById,
-  fetchLeadActivities,
-  fetchLeadOwnerProfile,
-  promoteLeadToClient,
-  updateLead,
-  addLeadActivity,
-  uploadLeadAttachment,
-  fetchAgencyUsers,
-  transferLead,
-  fetchLeadMeetings,
-  createLeadMeeting,
-  deleteLeadMeeting,
-  syncMeetingToGoogleCalendar,
-  type Stage,
-  type Lead,
-  type LeadMeeting,
-} from "@/services/crm";
+  fetchStages, fetchLeadById, fetchLeadActivities, fetchLeadOwnerProfile, promoteLeadToClient, updateLead, addLeadActivity, uploadLeadAttachment, fetchAgencyUsers, transferLead, fetchLeadMeetings, createLeadMeeting, deleteLeadMeeting, syncMeetingToGoogleCalendar, type Stage, type Lead, type LeadMeeting, } from "@/services/crm";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useAgency } from "@/lib/agency-context";
-import {
-  Field,
-  Input,
-  Select,
-  Textarea,
-  PrimaryButton,
-  GhostButton,
-  fmtDate,
-  money,
-} from "@/components/ui/form";
+import { Field } from "@/components/ui/field";
+import { FormInput as Input } from "@/components/ui/input";
+import { NativeSelect as Select } from "@/components/ui/select";
+import { FormTextarea as Textarea } from "@/components/ui/textarea";
+import { PrimaryButton, GhostButton } from "@/components/ui/button";
+import { fmtDate, money } from "@/lib/formatters";
 import { SheetPage } from "@/components/ui/sheet";
 import { NewProposalSheet } from "@/components/proposals/NewProposalSheet";
 import { useConfirm } from "@/hooks/use-confirm";

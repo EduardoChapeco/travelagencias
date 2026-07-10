@@ -37,7 +37,10 @@ import {
   syncMeetingToGoogleCalendar,
   type LeadMeeting,
 } from "@/services/crm";
-import { Field, Input, Select, PrimaryButton, GhostButton } from "@/components/ui/form";
+import { Field } from "@/components/ui/field";
+import { FormInput as Input } from "@/components/ui/input";
+import { NativeSelect as Select } from "@/components/ui/select";
+import { PrimaryButton, GhostButton } from "@/components/ui/button";
 
 export const Route = createFileRoute("/agency/$slug/calendar")({
   head: ({ context }: any) => ({ meta: [{ title: `Agenda · ${context?.brand?.platform_name || 'Turis'}` }] }),

@@ -3,7 +3,10 @@ import { useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { Trash2, Search, ArrowRight, ShieldAlert, Loader2, CheckCircle2 } from "lucide-react";
-import { Field, Input, Select, PrimaryButton } from "@/components/ui/form";
+import { Field } from "@/components/ui/field";
+import { FormInput as Input } from "@/components/ui/input";
+import { NativeSelect as Select } from "@/components/ui/select";
+import { PrimaryButton } from "@/components/ui/button";
 
 // @ts-ignore: Route path may not be regenerated in routeTree yet
 export const Route = (createFileRoute as any)("/data-deletion")({

@@ -74,15 +74,12 @@ type ReviewWithJoins = Database["public"]["Tables"]["supplier_reviews"]["Row"] &
   trip: { destination: string | null } | null;
 };
 import { PageHeader } from "@/components/shell/PageHeader";
-import {
-  StatusBadge,
-  GhostButton,
-  PrimaryButton,
-  Field,
-  Input,
-  Select,
-  Textarea,
-} from "@/components/ui/form";
+import { Field } from "@/components/ui/field";
+import { FormInput as Input } from "@/components/ui/input";
+import { NativeSelect as Select } from "@/components/ui/select";
+import { FormTextarea as Textarea } from "@/components/ui/textarea";
+import { StatusBadge } from "@/components/ui/badge";
+import { GhostButton, PrimaryButton } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Skeleton } from "@/components/ui/skeleton";
 import { cn } from "@/lib/utils";

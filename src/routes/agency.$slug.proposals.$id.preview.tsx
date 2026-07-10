@@ -3,7 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 import { ArrowLeft, ExternalLink, Copy, Eye } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
-import { money, fmtDate } from "@/components/ui/form";
+import { money, fmtDate } from "@/lib/formatters";
 
 export const Route = createFileRoute("/agency/$slug/proposals/$id/preview")({
   head: ({ context }: any) => ({ meta: [{ title: `Pré-visualização da Proposta · ${context?.brand?.platform_name || 'Turis'}` }] }),

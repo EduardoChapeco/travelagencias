@@ -3,7 +3,8 @@ import { useQuery } from "@tanstack/react-query";
 import { Plane } from "lucide-react";
 import { fetchClientTrips } from "@/services/client-area";
 import { PageHeader, EmptyState } from "@/components/shell/PageHeader";
-import { fmtDate, money, StatusBadge } from "@/components/ui/form";
+import { StatusBadge } from "@/components/ui/badge";
+import { fmtDate, money } from "@/lib/formatters";
 
 export const Route = createFileRoute("/client/trips")({
   head: ({ context }: any) => ({ meta: [{ title: `Minhas viagens · ${context?.brand?.platform_name || 'Turis'}` }] }),

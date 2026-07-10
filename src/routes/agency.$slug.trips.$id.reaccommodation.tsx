@@ -3,7 +3,8 @@ import { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useAgency } from "@/lib/agency-context";
-import { StatusBadge, fmtDate } from "@/components/ui/form";
+import { StatusBadge } from "@/components/ui/badge";
+import { fmtDate } from "@/lib/formatters";
 import {
   fetchChangeCases,
   createChangeCase,

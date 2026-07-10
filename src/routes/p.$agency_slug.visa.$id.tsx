@@ -3,7 +3,10 @@ import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { fetchPublicLeadForm, submitPublicLeadForm } from "@/services/public";
-import { Field, Input, PrimaryButton, Textarea } from "@/components/ui/form";
+import { Field } from "@/components/ui/field";
+import { FormInput as Input } from "@/components/ui/input";
+import { FormTextarea as Textarea } from "@/components/ui/textarea";
+import { PrimaryButton } from "@/components/ui/button";
 
 export const Route = createFileRoute("/p/$agency_slug/visa/$id")({
   head: ({ context }: any) => ({ meta: [{ title: `Solicitação de visto · ${context?.brand?.platform_name || 'Turis'}` }] }),

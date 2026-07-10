@@ -1,7 +1,31 @@
 import { test, expect } from "@playwright/test";
 import { createClient } from "@supabase/supabase-js";
+import { existsSync, readFileSync } from "node:fs";
+import { resolve } from "node:path";
+import { fileURLToPath } from "node:url";
+
+const projectRoot = fileURLToPath(new URL("../../", import.meta.url));
+const routeTreePath = fileURLToPath(new URL("../../src/routeTree.gen.ts", import.meta.url));
 
 test.describe("Isolamento Multi-Tenant e Segurança RLS", () => {
+  test("Não deve registrar rotas operacionais de agência sem tenant", () => {
+    const routeTree = readFileSync(routeTreePath, "utf8");
+    const forbiddenRoutes = ["/agency/quotes", "/agency/proposals", "/agency/trips"];
+    const forbiddenFiles = [
+      "src/routes/agency..quotes.index.tsx",
+      "src/routes/agency..proposals.index.tsx",
+      "src/routes/agency..trips..tsx",
+    ];
+
+    for (const route of forbiddenRoutes) {
+      expect(routeTree).not.toContain(`'${route}/'`);
+    }
+
+    for (const relativePath of forbiddenFiles) {
+      expect(existsSync(resolve(projectRoot, relativePath))).toBeFalsy();
+    }
+  });
+
   test("Deve redirecionar usuário não autenticado ao tentar acessar rotas da agência", async ({
     page,
   }) => {

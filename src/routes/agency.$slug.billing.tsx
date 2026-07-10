@@ -21,7 +21,8 @@ import {
 } from "lucide-react";
 import { useAgency } from "@/lib/agency-context";
 import { PageHeader } from "@/components/shell/PageHeader";
-import { PrimaryButton, GhostButton, StatusBadge } from "@/components/ui/form";
+import { PrimaryButton, GhostButton } from "@/components/ui/button";
+import { StatusBadge } from "@/components/ui/badge";
 import { SheetPage } from "@/components/ui/sheet";
 
 export const Route = createFileRoute("/agency/$slug/billing")({

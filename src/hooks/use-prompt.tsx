@@ -9,7 +9,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
-import { Input } from "@/components/ui/form";
+import { FormInput as Input } from "@/components/ui/input";
 
 type PromptOptions = {
   title: string;

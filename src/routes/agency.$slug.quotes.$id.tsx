@@ -1,43 +1,15 @@
-import {
-  ArrowLeft,
-  Compass,
-  Calendar,
-  Users,
-  DollarSign,
-  AlertTriangle,
-  CheckCircle,
-  Plus,
-  Play,
-  Loader2,
-  Sparkles,
-  ArrowRight,
-  TrendingUp,
-  MapPin,
-  Building,
-  Plane,
-  Truck,
-  Heart,
-  ChevronRight,
-  HelpCircle,
-  RefreshCw,
-  ShieldCheck,
-  Sliders,
-} from "lucide-react";
+import { ArrowLeft, Compass, Calendar, Users, DollarSign, AlertTriangle, CheckCircle, Plus, Play, Loader2, Sparkles, ArrowRight, TrendingUp, MapPin, Building, Plane, Truck, Heart, ChevronRight, HelpCircle, RefreshCw, ShieldCheck, Sliders, } from "lucide-react";
 import { useEffect, useState } from "react";
 import { createFileRoute, useParams, useNavigate, Link } from "@tanstack/react-router";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useAgency } from "@/lib/agency-context";
 import { PageHeader } from "@/components/shell/PageHeader";
-import {
-  StatusBadge,
-  fmtDate,
-  money,
-  GhostButton,
-  PrimaryButton,
-  Input,
-  Select,
-  Field,
-} from "@/components/ui/form";
+import { FormInput as Input } from "@/components/ui/input";
+import { NativeSelect as Select } from "@/components/ui/select";
+import { Field } from "@/components/ui/field";
+import { StatusBadge } from "@/components/ui/badge";
+import { GhostButton, PrimaryButton } from "@/components/ui/button";
+import { fmtDate, money } from "@/lib/formatters";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import {

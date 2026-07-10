@@ -1,5 +1,5 @@
 import { TrendingUp, TrendingDown, DollarSign, CreditCard } from "lucide-react";
-import { money } from "@/components/ui/form";
+import { money } from "@/lib/formatters";
 
 export function FinancialKpis({
   totalIncome,

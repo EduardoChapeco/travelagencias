@@ -2,31 +2,15 @@ import { createFileRoute, Link, useParams } from "@tanstack/react-router";
 import { useState, useEffect } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import {
-  Ticket,
-  Search,
-  Plane,
-  Download,
-  Eye,
-  MapPin,
-  Calendar,
-  Users,
-  Settings2,
-  Check,
-  Edit2,
-  Save,
-  X,
-  ExternalLink,
-  Copy,
-  AlertCircle,
-  CheckCircle2,
-  RefreshCw,
-} from "lucide-react";
+  Ticket, Search, Plane, Download, Eye, MapPin, Calendar, Users, Settings2, Check, Edit2, Save, X, ExternalLink, Copy, AlertCircle, CheckCircle2, RefreshCw, } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAgency } from "@/lib/agency-context";
 import { EmptyState } from "@/components/shell/PageHeader";
 import { PageHeader } from "@/components/shell/PageHeader";
 import { ModuleAdminPanel } from "@/components/shell/ModuleAdminPanel";
-import { StatusBadge, fmtDate, GhostButton } from "@/components/ui/form";
+import { StatusBadge } from "@/components/ui/badge";
+import { GhostButton } from "@/components/ui/button";
+import { fmtDate } from "@/lib/formatters";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
 

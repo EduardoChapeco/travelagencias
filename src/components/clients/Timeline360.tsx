@@ -1,6 +1,7 @@
 import { Link } from "@tanstack/react-router";
 import { FileSignature, Calendar, ShieldCheck, Ticket as TicketIcon } from "lucide-react";
-import { fmtDate, money, StatusBadge } from "@/components/ui/form";
+import { StatusBadge } from "@/components/ui/badge";
+import { fmtDate, money } from "@/lib/formatters";
 
 type TimelineEvent = {
   type: "proposal" | "trip" | "lgpd" | "ticket";

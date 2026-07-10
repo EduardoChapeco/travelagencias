@@ -5,6 +5,7 @@ import * as SelectPrimitive from "@radix-ui/react-select";
 import { Check, ChevronDown, ChevronUp } from "lucide-react";
 
 import { cn } from "@/lib/utils";
+import { formControlClassName } from "@/components/ui/input";
 
 const Select = SelectPrimitive.Root;
 
@@ -138,7 +139,15 @@ const SelectSeparator = React.forwardRef<
 ));
 SelectSeparator.displayName = SelectPrimitive.Separator.displayName;
 
+const NativeSelect = React.forwardRef<HTMLSelectElement, React.ComponentProps<"select">>(
+  ({ className, ...props }, ref) => (
+    <select ref={ref} {...props} className={cn(formControlClassName, className)} />
+  ),
+);
+NativeSelect.displayName = "NativeSelect";
+
 export {
+  NativeSelect,
   Select,
   SelectGroup,
   SelectValue,

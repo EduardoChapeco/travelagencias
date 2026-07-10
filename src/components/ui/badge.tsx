@@ -28,4 +28,36 @@ function Badge({ className, variant, ...props }: BadgeProps) {
   return <div className={cn(badgeVariants({ variant }), className)} {...props} />;
 }
 
-export { Badge, badgeVariants };
+export interface StatusBadgeProps extends React.HTMLAttributes<HTMLSpanElement> {
+  tone?: "neutral" | "success" | "warning" | "danger" | "info";
+}
+
+function StatusBadge({
+  children,
+  tone = "neutral",
+  className,
+  ...props
+}: StatusBadgeProps) {
+  const tones: Record<NonNullable<StatusBadgeProps["tone"]>, string> = {
+    neutral: "bg-neutral-650 text-white",
+    success: "bg-emerald-650 text-white",
+    warning: "bg-amber-650 text-white",
+    danger: "bg-rose-650 text-white",
+    info: "bg-blue-650 text-white",
+  };
+
+  return (
+    <span
+      className={cn(
+        "status-badge inline-flex items-center rounded-badge px-2.5 py-0.5 text-[10px] font-extrabold uppercase tracking-widest border-none text-shadow-none",
+        tones[tone],
+        className,
+      )}
+      {...props}
+    >
+      {children}
+    </span>
+  );
+}
+
+export { Badge, StatusBadge, badgeVariants };

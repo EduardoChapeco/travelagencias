@@ -4,7 +4,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { MapPin, Calendar, ArrowRight } from "lucide-react";
 import { FilterBar } from "@/components/ui/filter-bar";
 import { useState } from "react";
-import { money } from "@/components/ui/form";
+import { money } from "@/lib/formatters";
 import { Skeleton } from "@/components/ui/skeleton";
 
 export const Route = createFileRoute("/p/$agency_slug/loja/")({

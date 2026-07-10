@@ -5,7 +5,9 @@ import { toast } from "sonner";
 import { useConfirm } from "@/hooks/use-confirm";
 import { Plus, Trash2, KeyRound, AlertCircle } from "lucide-react";
 import { PageHeader, EmptyState } from "@/components/shell/PageHeader";
-import { Field, Input, PrimaryButton, GhostButton } from "@/components/ui/form";
+import { Field } from "@/components/ui/field";
+import { FormInput as Input } from "@/components/ui/input";
+import { PrimaryButton, GhostButton } from "@/components/ui/button";
 import {
   fetchGlobalApiKeys,
   saveGlobalApiKey,

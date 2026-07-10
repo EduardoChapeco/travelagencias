@@ -3,7 +3,7 @@
  * Focado em visualização na tela (16:9 ou A4 Landscape), com fotos enormes e slides separados.
  */
 import { type Proposal } from "@/services/proposals";
-import { money, fmtDate } from "@/components/ui/form";
+import { money, fmtDate } from "@/lib/formatters";
 import { buildBaseViewModel } from "@/lib/adapters";
 import {
   Plane,

@@ -17,7 +17,7 @@ import { useState, useEffect } from "react";
 import { StudioUnsplashPicker } from "@/components/studio/StudioUnsplashPicker";
 import { infotravelSearchHotels } from "@/services/infotravel";
 import { toast } from "sonner";
-import { PrimaryButton } from "@/components/ui/form";
+import { PrimaryButton } from "@/components/ui/button";
 import {
   SupplierAutocomplete,
   type SupplierOption,

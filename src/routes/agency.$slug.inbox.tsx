@@ -5,7 +5,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAgency } from "@/lib/agency-context";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
-import { money } from "@/components/ui/form";
+import { money } from "@/lib/formatters";
 import {
   MessageSquare,
   Send,

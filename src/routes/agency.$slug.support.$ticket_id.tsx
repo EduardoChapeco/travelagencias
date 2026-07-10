@@ -8,8 +8,12 @@ import {
   ArrowLeft, User, Mail, Clock, AlertCircle, Send, Paperclip,
   MessageSquare, Zap, FileText, CheckCircle2, Ticket, Loader2, Tag,
 } from "lucide-react";
-import { Field, Select, StatusBadge, PrimaryButton, Textarea, Input } from "@/components/ui/form";
-import { Button } from "@/components/ui/button";
+import { Field } from "@/components/ui/field";
+import { NativeSelect as Select } from "@/components/ui/select";
+import { FormTextarea as Textarea } from "@/components/ui/textarea";
+import { FormInput as Input } from "@/components/ui/input";
+import { StatusBadge } from "@/components/ui/badge";
+import { PrimaryButton, Button } from "@/components/ui/button";
 import { format, isPast } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import { cn } from "@/lib/utils";

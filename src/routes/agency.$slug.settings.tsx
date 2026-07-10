@@ -6,7 +6,9 @@ import { Save, Building2, Link2, Mail, Phone, FileText, Shield } from "lucide-re
 import { fetchAgencySettings, saveSettings } from "@/services/settings";
 import { useAgency } from "@/lib/agency-context";
 import { PageHeader } from "@/components/shell/PageHeader";
-import { Field, Input, PrimaryButton } from "@/components/ui/form";
+import { Field } from "@/components/ui/field";
+import { FormInput as Input } from "@/components/ui/input";
+import { PrimaryButton } from "@/components/ui/button";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";

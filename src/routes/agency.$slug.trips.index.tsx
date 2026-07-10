@@ -2,20 +2,7 @@ import { createFileRoute, Link, useNavigate, useParams } from "@tanstack/react-r
 import { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import {
-  Plus,
-  Plane,
-  MoreHorizontal,
-  Edit2,
-  Copy,
-  Trash2,
-  Eye,
-  Search,
-  Filter,
-  Archive,
-  Settings2,
-  ChevronDown,
-  AlertCircle,
-} from "lucide-react";
+  Plus, Plane, MoreHorizontal, Edit2, Copy, Trash2, Eye, Search, Filter, Archive, Settings2, ChevronDown, AlertCircle, } from "lucide-react";
 import { toast } from "sonner";
 
 import { format, parseISO } from "date-fns";
@@ -25,8 +12,9 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAgency } from "@/lib/agency-context";
 import { PageHeader, ModuleActionButton, EmptyState } from "@/components/shell/PageHeader";
 import { ModuleAdminPanel } from "@/components/shell/ModuleAdminPanel";
-import { Button } from "@/components/ui/button";
-import { StatusBadge, GhostButton, money, fmtDate } from "@/components/ui/form";
+import { Button, GhostButton } from "@/components/ui/button";
+import { StatusBadge } from "@/components/ui/badge";
+import { money, fmtDate } from "@/lib/formatters";
 import { DataTable, DataTableColumnHeader } from "@/components/ui/data-table";
 import { ColumnDef } from "@tanstack/react-table";
 import { NewTripWizard } from "@/components/trips/NewTripWizard";

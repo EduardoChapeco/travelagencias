@@ -16,7 +16,7 @@ import {
   MapPin,
   Lightbulb,
 } from "lucide-react";
-import { fmtDate } from "@/components/ui/form";
+import { fmtDate } from "@/lib/formatters";
 import { AppWidget } from "@/components/portal/TripPortalShared";
 
 // ─── Confirmation Items ───────────────────────────────────────────────────────

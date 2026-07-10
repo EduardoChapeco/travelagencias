@@ -1,5 +1,5 @@
 import { type Proposal } from "@/services/proposals";
-import { money, fmtDate } from "@/components/ui/form";
+import { money, fmtDate } from "@/lib/formatters";
 import { buildBaseViewModel } from "@/lib/adapters";
 import { Check, X, PhoneCall, Calendar, MapPin, Plane, Hotel } from "lucide-react";
 

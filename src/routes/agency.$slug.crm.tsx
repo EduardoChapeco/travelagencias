@@ -15,8 +15,18 @@ import {
 } from "lucide-react";
 import { useAgency } from "@/lib/agency-context";
 import { EmptyState } from "@/components/shell/PageHeader";
-import { Field, Input, Select, Textarea, PrimaryButton, GhostButton } from "@/components/ui/form";
-import { Select as RadixSelect, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Field } from "@/components/ui/field";
+import { FormInput as Input } from "@/components/ui/input";
+import {
+  NativeSelect as Select,
+  Select as RadixSelect,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { FormTextarea as Textarea } from "@/components/ui/textarea";
+import { PrimaryButton, GhostButton } from "@/components/ui/button";
 import { SearchableSelect } from "@/components/ui/searchable-select";
 import { SheetPage } from "@/components/ui/sheet";
 import { toast } from "sonner";

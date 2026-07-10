@@ -31,7 +31,8 @@ import { useAgency } from "@/lib/agency-context";
 import { EmptyState } from "@/components/shell/PageHeader";
 import { PageHeader, ModuleActionButton } from "@/components/shell/PageHeader";
 import { ModuleAdminPanel } from "@/components/shell/ModuleAdminPanel";
-import { PrimaryButton, GhostButton, StatusBadge } from "@/components/ui/form";
+import { PrimaryButton, GhostButton } from "@/components/ui/button";
+import { StatusBadge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
 import { NewSupplierWizard } from "@/components/suppliers/NewSupplierWizard";
 

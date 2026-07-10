@@ -3,7 +3,9 @@ import { useState } from "react";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { CheckCircle2, XCircle, Building2, Briefcase, Calendar, MapPin, Send } from "lucide-react";
 import { fetchCorporateRfp, updateCorporateRfpStatus } from "@/services/public";
-import { PrimaryButton, fmtDate, Textarea, GhostButton } from "@/components/ui/form";
+import { FormTextarea as Textarea } from "@/components/ui/textarea";
+import { PrimaryButton, GhostButton } from "@/components/ui/button";
+import { fmtDate } from "@/lib/formatters";
 import { toast } from "sonner";
 
 export const Route = createFileRoute("/p/corporate/approve")({

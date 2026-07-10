@@ -8,7 +8,10 @@ import {
   updateClientPassword,
 } from "@/services/client-area";
 import { PageHeader } from "@/components/shell/PageHeader";
-import { Field, Input, PrimaryButton, GhostButton, Select } from "@/components/ui/form";
+import { Field } from "@/components/ui/field";
+import { FormInput as Input } from "@/components/ui/input";
+import { NativeSelect as Select } from "@/components/ui/select";
+import { PrimaryButton, GhostButton } from "@/components/ui/button";
 import { FileUploader } from "@/components/uploads/FileUploader";
 import { useForm } from "react-hook-form";
 import { z } from "zod";

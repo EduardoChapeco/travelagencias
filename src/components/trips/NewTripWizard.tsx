@@ -13,7 +13,10 @@ import {
   DollarSign,
   Tag,
 } from "lucide-react";
-import { Field, Input, Select, PrimaryButton, GhostButton } from "@/components/ui/form";
+import { Field } from "@/components/ui/field";
+import { FormInput as Input } from "@/components/ui/input";
+import { NativeSelect as Select } from "@/components/ui/select";
+import { PrimaryButton, GhostButton } from "@/components/ui/button";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 import { createPortal } from "react-dom";

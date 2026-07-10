@@ -1,6 +1,6 @@
 import { type Proposal } from "@/services/proposals";
 import { Accordion, L, SMALL_INPUT } from "@/components/proposals/ProposalFormFields";
-import { money } from "@/components/ui/form";
+import { money } from "@/lib/formatters";
 import { DollarSign } from "lucide-react";
 
 interface Props {

@@ -12,7 +12,7 @@ import {
 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAgency } from "@/lib/agency-context";
-import { money } from "@/components/ui/form";
+import { money } from "@/lib/formatters";
 import { PageHeader } from "@/components/shell/PageHeader";
 import { useConfirm } from "@/hooks/use-confirm";
 

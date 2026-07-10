@@ -3,7 +3,10 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Trash2, Check } from "lucide-react";
-import { Field, Input, Select, Textarea } from "@/components/ui/form";
+import { Field } from "@/components/ui/field";
+import { FormInput as Input } from "@/components/ui/input";
+import { NativeSelect as Select } from "@/components/ui/select";
+import { FormTextarea as Textarea } from "@/components/ui/textarea";
 import { MultiFileUploader } from "@/components/uploads/MultiFileUploader";
 import { useConfirm } from "@/hooks/use-confirm";
 

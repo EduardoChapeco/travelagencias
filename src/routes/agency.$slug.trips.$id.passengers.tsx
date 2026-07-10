@@ -20,7 +20,8 @@ import {
 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAgency, getModuleName } from "@/lib/agency-context";
-import { fmtDate, StatusBadge } from "@/components/ui/form";
+import { StatusBadge } from "@/components/ui/badge";
+import { fmtDate } from "@/lib/formatters";
 import { NewPassengerSheet } from "@/components/trips/NewPassengerSheet";
 import { toast } from "sonner";
 import { useConfirm } from "@/hooks/use-confirm";

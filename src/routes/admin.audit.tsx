@@ -4,7 +4,8 @@ import { useState } from "react";
 import { Filter, ChevronLeft, ChevronRight, X, AlertCircle } from "lucide-react";
 import { fetchAdminAuditLogs } from "@/services/admin";
 import { PageHeader, EmptyState } from "@/components/shell/PageHeader";
-import { fmtDate, GhostButton } from "@/components/ui/form";
+import { GhostButton } from "@/components/ui/button";
+import { fmtDate } from "@/lib/formatters";
 
 export const Route = createFileRoute("/admin/audit")({
   head: () => ({ meta: [{ title: "Auditoria · Admin" }] }),

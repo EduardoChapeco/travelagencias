@@ -1,33 +1,17 @@
 import { createFileRoute, Link, useParams } from "@tanstack/react-router";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import {
-  ArrowLeft,
-  Check,
-  CheckCircle2,
-  Clock,
-  Send,
-  Users,
-  Building2,
-  MapPin,
-  DollarSign,
-  Edit,
-  AlertCircle,
-  CheckSquare,
-  Plus,
-} from "lucide-react";
+  ArrowLeft, Check, CheckCircle2, Clock, Send, Users, Building2, MapPin, DollarSign, Edit, AlertCircle, CheckSquare, Plus, } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAgency, getModuleName } from "@/lib/agency-context";
 import { toast } from "sonner";
 import { useState } from "react";
-import {
-  PrimaryButton,
-  GhostButton,
-  Textarea,
-  Input,
-  Select,
-  StatusBadge,
-  fmtDate,
-} from "@/components/ui/form";
+import { FormTextarea as Textarea } from "@/components/ui/textarea";
+import { FormInput as Input } from "@/components/ui/input";
+import { NativeSelect as Select } from "@/components/ui/select";
+import { PrimaryButton, GhostButton } from "@/components/ui/button";
+import { StatusBadge } from "@/components/ui/badge";
+import { fmtDate } from "@/lib/formatters";
 
 import { useConfirm } from "@/hooks/use-confirm";
 

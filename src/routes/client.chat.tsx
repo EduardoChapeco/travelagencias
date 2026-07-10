@@ -10,7 +10,7 @@ import {
 } from "@/services/client-area";
 import { toast } from "sonner";
 import { ClientShell } from "@/components/shell/ClientShell";
-import { fmtDate } from "@/components/ui/form";
+import { fmtDate } from "@/lib/formatters";
 
 export const Route = createFileRoute("/client/chat")({
   component: ClientChatRoute,

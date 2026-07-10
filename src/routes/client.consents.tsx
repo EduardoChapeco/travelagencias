@@ -3,7 +3,9 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { Shield, FileText, CheckCircle2, Clock, ShieldAlert, Check } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { PageHeader, EmptyState } from "@/components/shell/PageHeader";
-import { PrimaryButton, StatusBadge, fmtDate } from "@/components/ui/form";
+import { PrimaryButton } from "@/components/ui/button";
+import { StatusBadge } from "@/components/ui/badge";
+import { fmtDate } from "@/lib/formatters";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
 

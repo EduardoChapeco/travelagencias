@@ -1,23 +1,12 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import {
-  Building2,
-  Users,
-  Luggage,
-  Wallet,
-  TrendingUp,
-  BarChart3,
-  FileText,
-  AlertCircle,
-  Clock,
-  CheckCircle2,
-  ArrowUpRight,
-  Activity,
-} from "lucide-react";
+  Building2, Users, Luggage, Wallet, TrendingUp, BarChart3, FileText, AlertCircle, Clock, CheckCircle2, ArrowUpRight, Activity, } from "lucide-react";
 import { Bar, BarChart, CartesianGrid, XAxis, YAxis } from "recharts";
 import { fetchAdminOverview } from "@/services/admin";
 import { PageHeader } from "@/components/shell/PageHeader";
-import { fmtDate, money, StatusBadge } from "@/components/ui/form";
+import { StatusBadge } from "@/components/ui/badge";
+import { fmtDate, money } from "@/lib/formatters";
 import { ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/ui/chart";
 
 export const Route = createFileRoute("/admin/")({

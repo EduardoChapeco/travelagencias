@@ -8,7 +8,7 @@ import {
   Clock,
   ChevronRight,
 } from "lucide-react";
-import { fmtDate } from "@/components/ui/form";
+import { fmtDate } from "@/lib/formatters";
 import { type BoardingCard as Card, type ChecklistItem } from "@/services/boarding";
 
 export function CardView({

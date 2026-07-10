@@ -22,14 +22,11 @@ import {
 } from "lucide-react";
 import { fetchPlans, deletePlan, togglePlanActive, savePlan } from "@/services/admin";
 import { PageHeader, EmptyState } from "@/components/shell/PageHeader";
-import {
-  Field,
-  Input,
-  Textarea,
-  PrimaryButton,
-  GhostButton,
-  StatusBadge,
-} from "@/components/ui/form";
+import { Field } from "@/components/ui/field";
+import { FormInput as Input } from "@/components/ui/input";
+import { FormTextarea as Textarea } from "@/components/ui/textarea";
+import { PrimaryButton, GhostButton } from "@/components/ui/button";
+import { StatusBadge } from "@/components/ui/badge";
 import { useForm, useFieldArray } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";

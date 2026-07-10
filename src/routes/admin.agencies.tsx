@@ -2,7 +2,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery, queryOptions } from "@tanstack/react-query";
 import { fetchAdminAgencies, createAgencyAndInvite } from "@/services/admin";
 import { PageHeader, EmptyState } from "@/components/shell/PageHeader";
-import { fmtDate } from "@/components/ui/form";
+import { fmtDate } from "@/lib/formatters";
 
 import { useState } from "react";
 import { Plus, AlertCircle } from "lucide-react";

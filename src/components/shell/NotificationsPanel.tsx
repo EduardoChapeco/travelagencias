@@ -4,7 +4,7 @@ import { Bell, Check, X, Circle, Info, AlertTriangle, CheckCircle } from "lucide
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useAgency } from "@/lib/agency-context";
-import { fmtDate } from "@/components/ui/form";
+import { fmtDate } from "@/lib/formatters";
 import { toast } from "sonner";
 
 type Notif = {

@@ -2,7 +2,10 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useRef, useState, useMemo } from "react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
-import { Field, Input, PrimaryButton, GhostButton, StatusBadge } from "@/components/ui/form";
+import { Field } from "@/components/ui/field";
+import { FormInput as Input } from "@/components/ui/input";
+import { PrimaryButton, GhostButton } from "@/components/ui/button";
+import { StatusBadge } from "@/components/ui/badge";
 import { generateContractHash, generateContractPdf } from "@/lib/pdf-generator";
 import {
   Video,

@@ -2,15 +2,12 @@ import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { Square, AlertTriangle } from "lucide-react";
-import {
-  Field,
-  Input,
-  Select,
-  Textarea,
-  PrimaryButton,
-  GhostButton,
-  Sheet,
-} from "@/components/ui/form";
+import { Field } from "@/components/ui/field";
+import { FormInput as Input } from "@/components/ui/input";
+import { NativeSelect as Select } from "@/components/ui/select";
+import { FormTextarea as Textarea } from "@/components/ui/textarea";
+import { SimpleSheet as Sheet } from "@/components/ui/sheet";
+import { PrimaryButton, GhostButton } from "@/components/ui/button";
 import { fetchTripPassengersMin, createBoardingCard } from "@/services/boarding";
 
 export function NewCard({

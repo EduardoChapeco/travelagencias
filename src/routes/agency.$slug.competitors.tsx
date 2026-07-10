@@ -13,7 +13,8 @@ import {
   RefreshCw,
   Sparkles,
 } from "lucide-react";
-import { PrimaryButton, Input } from "@/components/ui/form";
+import { FormInput as Input } from "@/components/ui/input";
+import { PrimaryButton } from "@/components/ui/button";
 import { PageHeader } from "@/components/shell/PageHeader";
 
 export const Route = createFileRoute("/agency/$slug/competitors")({

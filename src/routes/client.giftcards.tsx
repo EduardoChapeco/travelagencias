@@ -2,7 +2,8 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { fetchClientGiftCards } from "@/services/client-area";
 import { PageHeader, EmptyState } from "@/components/shell/PageHeader";
-import { StatusBadge, money } from "@/components/ui/form";
+import { StatusBadge } from "@/components/ui/badge";
+import { money } from "@/lib/formatters";
 
 export const Route = createFileRoute("/client/giftcards")({
   head: ({ context }: any) => ({ meta: [{ title: `Gift cards · ${context?.brand?.platform_name || 'Turis'}` }] }),

@@ -2,26 +2,14 @@ import { createFileRoute, Link, useParams, useNavigate } from "@tanstack/react-r
 import { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import {
-  Search,
-  Filter,
-  Plus,
-  Link2,
-  Edit2,
-  Eye,
-  MoreHorizontal,
-  Copy,
-  Trash2,
-  PencilLine,
-  History,
-  Settings2,
-  ChevronDown,
-  AlertCircle,
-} from "lucide-react";
+  Search, Filter, Plus, Link2, Edit2, Eye, MoreHorizontal, Copy, Trash2, PencilLine, History, Settings2, ChevronDown, AlertCircle, } from "lucide-react";
 import { useAgency } from "@/lib/agency-context";
-import { Button } from "@/components/ui/button";
+import { Button, GhostButton } from "@/components/ui/button";
 import { ModuleAdminPanel } from "@/components/shell/ModuleAdminPanel";
 import { PageHeader, EmptyState, ModuleActionButton } from "@/components/shell/PageHeader";
-import { StatusBadge, money, fmtDate, GhostButton, Input } from "@/components/ui/form";
+import { FormInput as Input } from "@/components/ui/input";
+import { StatusBadge } from "@/components/ui/badge";
+import { money, fmtDate } from "@/lib/formatters";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import {
   fetchProposalsList,

@@ -13,7 +13,8 @@ import {
   RefreshCw,
   AlertCircle,
 } from "lucide-react";
-import { money, GhostButton } from "@/components/ui/form";
+import { GhostButton } from "@/components/ui/button";
+import { money } from "@/lib/formatters";
 import { cn } from "@/lib/utils";
 import { PageHeader } from "@/components/shell/PageHeader";
 

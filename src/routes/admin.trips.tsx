@@ -4,7 +4,10 @@ import { useState } from "react";
 import { Search, ChevronLeft, ChevronRight, AlertCircle } from "lucide-react";
 import { fetchAdminTrips } from "@/services/admin";
 import { PageHeader, EmptyState } from "@/components/shell/PageHeader";
-import { fmtDate, money, StatusBadge, Input, GhostButton } from "@/components/ui/form";
+import { FormInput as Input } from "@/components/ui/input";
+import { StatusBadge } from "@/components/ui/badge";
+import { GhostButton } from "@/components/ui/button";
+import { fmtDate, money } from "@/lib/formatters";
 import { useDebounce } from "@/hooks/use-debounce";
 
 export const Route = createFileRoute("/admin/trips")({

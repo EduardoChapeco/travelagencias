@@ -4,7 +4,8 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAgency } from "@/lib/agency-context";
 import { useState } from "react";
 import { TrendingUp, DollarSign, Landmark, Target, Eye, Search, Loader2, AlertCircle } from "lucide-react";
-import { money, GhostButton } from "@/components/ui/form";
+import { GhostButton } from "@/components/ui/button";
+import { money } from "@/lib/formatters";
 import { cn } from "@/lib/utils";
 import { PageHeader } from "@/components/shell/PageHeader";
 

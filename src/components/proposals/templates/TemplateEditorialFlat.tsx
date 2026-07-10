@@ -3,7 +3,7 @@
  * Layout Split (Meio a Meio) na capa, design limpo, tipografia Playfair
  */
 import { type Proposal } from "@/services/proposals";
-import { money, fmtDate } from "@/components/ui/form";
+import { money, fmtDate } from "@/lib/formatters";
 import { buildBaseViewModel } from "@/lib/adapters";
 import { Plane, Hotel, Compass, Check, X, PhoneCall } from "lucide-react";
 

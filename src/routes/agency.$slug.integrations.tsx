@@ -26,14 +26,11 @@ import {
 import { fetchApiKeys, saveApiKey, toggleApiKey, deleteApiKey, fetchOperators, saveOperator, deleteOperator, testOperatorConnection, fetchIntegrationCredentials, saveIntegrationCredential } from "@/services/settings";
 import { supabase } from "@/integrations/supabase/client";
 import { useAgency } from "@/lib/agency-context";
-import {
-  Field,
-  Input,
-  Select,
-  PrimaryButton,
-  GhostButton,
-  StatusBadge,
-} from "@/components/ui/form";
+import { Field } from "@/components/ui/field";
+import { FormInput as Input } from "@/components/ui/input";
+import { NativeSelect as Select } from "@/components/ui/select";
+import { PrimaryButton, GhostButton } from "@/components/ui/button";
+import { StatusBadge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 export const Route = createFileRoute("/agency/$slug/integrations")({

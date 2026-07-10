@@ -7,7 +7,8 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAgency, getModuleName } from "@/lib/agency-context";
 import { useConfirm } from "@/hooks/use-confirm";
 import { usePrompt } from "@/hooks/use-prompt";
-import { StatusBadge, fmtDate, money } from "@/components/ui/form";
+import { StatusBadge } from "@/components/ui/badge";
+import { fmtDate, money } from "@/lib/formatters";
 import { SearchableSelect } from "@/components/ui/searchable-select";
 import {
   fetchClient,

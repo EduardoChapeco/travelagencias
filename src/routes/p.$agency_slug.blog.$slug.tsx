@@ -2,7 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { fetchPublicBlogPost, submitBlogLead } from "@/services/public";
 import { ArrowLeft, Clock, Eye, Send, Share2, BookOpen } from "lucide-react";
 import { sanitizeHtml } from "@/lib/sanitize";
-import { fmtDate } from "@/components/ui/form";
+import { fmtDate } from "@/lib/formatters";
 import { useState } from "react";
 import { toast } from "sonner";
 import { useMutation } from "@tanstack/react-query";

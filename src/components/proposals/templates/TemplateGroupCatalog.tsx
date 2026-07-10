@@ -3,7 +3,7 @@
  * Focado em venda massiva (Catálogo de Grupos). Muita foto, botão de ação rápido, layout compacto.
  */
 import { type Proposal } from "@/services/proposals";
-import { money, fmtDate } from "@/components/ui/form";
+import { money, fmtDate } from "@/lib/formatters";
 import { buildBaseViewModel } from "@/lib/adapters";
 import { Users, MapPin, Calendar, Clock, Bus, CheckCircle2, Building2 } from "lucide-react";
 

@@ -7,7 +7,8 @@ import {
 } from "@/services/payment";
 import { Copy, CheckCircle2, AlertCircle, CreditCard, ExternalLink, QrCode } from "lucide-react";
 import { toast } from "sonner";
-import { PrimaryButton, Sheet } from "@/components/ui/form";
+import { SimpleSheet as Sheet } from "@/components/ui/sheet";
+import { PrimaryButton } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
 
 export const Route = createFileRoute("/m/payment/$token")({

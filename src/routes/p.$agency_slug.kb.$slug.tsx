@@ -3,7 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 import { fetchKbArticle, voteKbArticle } from "@/services/public";
 import { ArrowLeft, BookOpen, Info, ThumbsUp, ThumbsDown } from "lucide-react";
 import { sanitizeHtml } from "@/lib/sanitize";
-import { fmtDate } from "@/components/ui/form";
+import { fmtDate } from "@/lib/formatters";
 import { useState } from "react";
 import { useMutation } from "@tanstack/react-query";
 import { toast } from "sonner";

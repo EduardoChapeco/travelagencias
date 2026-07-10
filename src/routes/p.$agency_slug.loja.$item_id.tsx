@@ -2,7 +2,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { MapPin, ArrowLeft, CheckCircle2 } from "lucide-react";
-import { money } from "@/components/ui/form";
+import { money } from "@/lib/formatters";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";

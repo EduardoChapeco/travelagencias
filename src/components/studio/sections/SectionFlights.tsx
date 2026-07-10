@@ -16,7 +16,7 @@ import { useAgency } from "@/lib/agency-context";
 import { getAgencyMarkup, calculateMarkup } from "@/utils/pricing";
 import { infotravelSearchFlights } from "@/services/infotravel";
 import { toast } from "sonner";
-import { PrimaryButton } from "@/components/ui/form";
+import { PrimaryButton } from "@/components/ui/button";
 import {
   SupplierAutocomplete,
   type SupplierOption,

@@ -7,7 +7,7 @@ import {
   markAllNotificationsRead,
 } from "@/services/client-area";
 import { PageHeader, EmptyState } from "@/components/shell/PageHeader";
-import { GhostButton } from "@/components/ui/form";
+import { GhostButton } from "@/components/ui/button";
 
 export const Route = createFileRoute("/client/notifications")({
   head: ({ context }: any) => ({ meta: [{ title: `Notificações · ${context?.brand?.platform_name || 'Turis'}` }] }),

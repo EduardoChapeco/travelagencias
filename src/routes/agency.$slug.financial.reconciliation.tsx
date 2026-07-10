@@ -6,28 +6,13 @@ import { handleViewReceipt } from "@/utils/storage-helper";
 import { useAgency } from "@/lib/agency-context";
 import { toast } from "sonner";
 import {
-  CheckCircle,
-  XCircle,
-  Clock,
-  FileText,
-  AlertCircle,
-  Eye,
-  Check,
-  X,
-  CreditCard,
-  Building,
-  DollarSign,
-} from "lucide-react";
-import {
-  Field,
-  Input,
-  Select,
-  PrimaryButton,
-  GhostButton,
-  StatusBadge,
-  money,
-  fmtDate,
-} from "@/components/ui/form";
+  CheckCircle, XCircle, Clock, FileText, AlertCircle, Eye, Check, X, CreditCard, Building, DollarSign, } from "lucide-react";
+import { Field } from "@/components/ui/field";
+import { FormInput as Input } from "@/components/ui/input";
+import { NativeSelect as Select } from "@/components/ui/select";
+import { PrimaryButton, GhostButton } from "@/components/ui/button";
+import { StatusBadge } from "@/components/ui/badge";
+import { money, fmtDate } from "@/lib/formatters";
 
 export const Route = createFileRoute("/agency/$slug/financial/reconciliation")({
   head: ({ context }: any) => ({ meta: [{ title: `Conciliação Diária · ${context?.brand?.platform_name || 'Turis'}` }] }),

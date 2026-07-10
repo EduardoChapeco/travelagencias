@@ -8,14 +8,12 @@ import { useAgency } from "@/lib/agency-context";
 import { EmptyState, PageHeader, ModuleActionButton } from "@/components/shell/PageHeader";
 import { ModuleAdminPanel } from "@/components/shell/ModuleAdminPanel";
 import { Button } from "@/components/ui/button";
-import {
-  Field,
-  Input,
-  Select,
-  Textarea,
-  Sheet,
-  fmtDate,
-} from "@/components/ui/form";
+import { Field } from "@/components/ui/field";
+import { FormInput as Input } from "@/components/ui/input";
+import { NativeSelect as Select } from "@/components/ui/select";
+import { FormTextarea as Textarea } from "@/components/ui/textarea";
+import { SimpleSheet as Sheet } from "@/components/ui/sheet";
+import { fmtDate } from "@/lib/formatters";
 import { useDebounce } from "@/hooks/use-debounce";
 import { ClientFormSheet } from "@/components/clients/ClientFormSheet";
 import { Skeleton } from "@/components/ui/skeleton";

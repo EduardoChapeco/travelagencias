@@ -2,7 +2,7 @@ import { createFileRoute, useParams, useNavigate } from "@tanstack/react-router"
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
-import { PrimaryButton, GhostButton } from "@/components/ui/form";
+import { PrimaryButton, GhostButton } from "@/components/ui/button";
 
 export const Route = createFileRoute("/m/invite/$token")({
   head: ({ context }: any) => ({ meta: [{ title: `Aceitar convite · ${context?.brand?.platform_name || 'Turis'}` }] }),

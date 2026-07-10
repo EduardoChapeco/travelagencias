@@ -2,34 +2,14 @@ import React, { useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import {
-  X,
-  Check,
-  ChevronRight,
-  ChevronLeft,
-  Map,
-  Plane,
-  Plus,
-  Trash2,
-  Upload,
-  Hotel,
-  Star,
-  Video,
-  BedDouble,
-  DollarSign,
-  Info,
-  Layers,
-} from "lucide-react";
-import {
-  Field,
-  Input,
-  Select,
-  Textarea,
-  PrimaryButton,
-  GhostButton,
-  StatusBadge,
-  fmtDate,
-  money,
-} from "@/components/ui/form";
+  X, Check, ChevronRight, ChevronLeft, Map, Plane, Plus, Trash2, Upload, Hotel, Star, Video, BedDouble, DollarSign, Info, Layers, } from "lucide-react";
+import { Field } from "@/components/ui/field";
+import { FormInput as Input } from "@/components/ui/input";
+import { NativeSelect as Select } from "@/components/ui/select";
+import { FormTextarea as Textarea } from "@/components/ui/textarea";
+import { PrimaryButton, GhostButton } from "@/components/ui/button";
+import { StatusBadge } from "@/components/ui/badge";
+import { fmtDate, money } from "@/lib/formatters";
 import { SheetPage } from "@/components/ui/sheet";
 import { toast } from "sonner";
 import { useForm } from "react-hook-form";

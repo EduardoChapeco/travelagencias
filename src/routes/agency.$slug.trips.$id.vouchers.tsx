@@ -2,36 +2,16 @@ import { createFileRoute, Link, useParams } from "@tanstack/react-router";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
 import {
-  ArrowLeft,
-  Plus,
-  Ticket,
-  Download,
-  Plane,
-  Hotel,
-  Bus,
-  Umbrella,
-  Phone,
-  User,
-  MapPin,
-  ChevronDown,
-  ChevronRight,
-  Upload,
-  Trash2,
-  Edit2,
-  Eye,
-} from "lucide-react";
+  ArrowLeft, Plus, Ticket, Download, Plane, Hotel, Bus, Umbrella, Phone, User, MapPin, ChevronDown, ChevronRight, Upload, Trash2, Edit2, Eye, } from "lucide-react";
 import { toast } from "sonner";
 import { useConfirm } from "@/hooks/use-confirm";
 import { useAgency } from "@/lib/agency-context";
-import {
-  StatusBadge,
-  fmtDate,
-  Field,
-  Input,
-  Select,
-  GhostButton,
-  PrimaryButton,
-} from "@/components/ui/form";
+import { Field } from "@/components/ui/field";
+import { FormInput as Input } from "@/components/ui/input";
+import { NativeSelect as Select } from "@/components/ui/select";
+import { StatusBadge } from "@/components/ui/badge";
+import { GhostButton, PrimaryButton } from "@/components/ui/button";
+import { fmtDate } from "@/lib/formatters";
 import { processVoucherWithAI } from "@/lib/ocr-ai";
 // html2canvas is loaded on-demand — see getHtml2Canvas() below
 import { Instagram } from "lucide-react";

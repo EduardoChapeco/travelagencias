@@ -4,7 +4,7 @@ import { useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { fetchPublicDynamicPage, fetchPublicDynamicPageSeo } from "@/services/public";
 import { BlockRenderer, PortalBlock } from "@/components/portal/BlockRenderer";
-import { GhostButton } from "@/components/ui/form";
+import { GhostButton } from "@/components/ui/button";
 import { Link } from "@tanstack/react-router";
 import { ArrowLeft } from "lucide-react";
 

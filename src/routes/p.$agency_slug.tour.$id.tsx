@@ -3,15 +3,12 @@ import { useState, useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { fetchPublicTour, enrollPublicTour } from "@/services/public";
-import {
-  Field,
-  Input,
-  PrimaryButton,
-  Textarea,
-  Select,
-  GhostButton,
-  money,
-} from "@/components/ui/form";
+import { Field } from "@/components/ui/field";
+import { FormInput as Input } from "@/components/ui/input";
+import { FormTextarea as Textarea } from "@/components/ui/textarea";
+import { NativeSelect as Select } from "@/components/ui/select";
+import { PrimaryButton, GhostButton } from "@/components/ui/button";
+import { money } from "@/lib/formatters";
 import { cn } from "@/lib/utils";
 import {
   Check,

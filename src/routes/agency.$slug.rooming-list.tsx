@@ -28,7 +28,10 @@ import {
 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAgency } from "@/lib/agency-context";
-import { Input, PrimaryButton, GhostButton, StatusBadge, Field } from "@/components/ui/form";
+import { FormInput as Input } from "@/components/ui/input";
+import { Field } from "@/components/ui/field";
+import { PrimaryButton, GhostButton } from "@/components/ui/button";
+import { StatusBadge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
 import { PageHeader } from "@/components/shell/PageHeader";
 import type { Database } from "@/integrations/supabase/types";

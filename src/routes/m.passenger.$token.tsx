@@ -2,7 +2,9 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
-import { Field, Input, PrimaryButton } from "@/components/ui/form";
+import { Field } from "@/components/ui/field";
+import { FormInput as Input } from "@/components/ui/input";
+import { PrimaryButton } from "@/components/ui/button";
 
 export const Route = createFileRoute("/m/passenger/$token")({
   head: ({ context }: any) => ({ meta: [{ title: `Dados do passageiro · ${context?.brand?.platform_name || 'Turis'}` }] }),

@@ -2,27 +2,7 @@ import { createLazyFileRoute, useParams, useNavigate } from "@tanstack/react-rou
 import { useState, useRef } from "react";
 import { useQuery, useQueryClient, useMutation } from "@tanstack/react-query";
 import {
-  Plus,
-  UserPlus,
-  Trash2,
-  Sparkles,
-  Wand2,
-  Coins,
-  TrendingUp,
-  Target,
-  Landmark,
-  DollarSign,
-  Calendar,
-  Hotel,
-  BedDouble,
-  Users2,
-  CheckCircle2,
-  XCircle,
-  AlertTriangle,
-  Download,
-  FileText,
-  Layers,
-} from "lucide-react";
+  Plus, UserPlus, Trash2, Sparkles, Wand2, Coins, TrendingUp, Target, Landmark, DollarSign, Calendar, Hotel, BedDouble, Users2, CheckCircle2, XCircle, AlertTriangle, Download, FileText, Layers, } from "lucide-react";
 import { useConfirm } from "@/hooks/use-confirm";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
@@ -32,29 +12,16 @@ import ReactMarkdown from "react-markdown";
 import { FileUploader } from "@/components/uploads/FileUploader";
 import { MultiFileUploader } from "@/components/uploads/MultiFileUploader";
 import {
-  fetchRoomingListByTour,
-  createRoomRecord,
-  updateRoomRecord,
-  deleteRoomRecord,
-  allocatePassengerToRoom,
-  deallocatePassengerFromRoom,
-  ROOM_TYPE_LABEL,
-  ROOM_CAPACITY,
-  type RoomingPassenger,
-} from "@/services/rooming";
+  fetchRoomingListByTour, createRoomRecord, updateRoomRecord, deleteRoomRecord, allocatePassengerToRoom, deallocatePassengerFromRoom, ROOM_TYPE_LABEL, ROOM_CAPACITY, type RoomingPassenger, } from "@/services/rooming";
 import { PageHeader } from "@/components/shell/PageHeader";
-import {
-  Field,
-  Input,
-  Select,
-  PrimaryButton,
-  GhostButton,
-  Sheet,
-  StatusBadge,
-  fmtDate,
-  money,
-  Textarea,
-} from "@/components/ui/form";
+import { Field } from "@/components/ui/field";
+import { FormInput as Input } from "@/components/ui/input";
+import { NativeSelect as Select } from "@/components/ui/select";
+import { SimpleSheet as Sheet } from "@/components/ui/sheet";
+import { FormTextarea as Textarea } from "@/components/ui/textarea";
+import { PrimaryButton, GhostButton } from "@/components/ui/button";
+import { StatusBadge } from "@/components/ui/badge";
+import { fmtDate, money } from "@/lib/formatters";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { cn } from "@/lib/utils";
 import {

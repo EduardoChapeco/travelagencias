@@ -2,7 +2,11 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
-import { Field, Input, Select, Textarea, PrimaryButton } from "@/components/ui/form";
+import { Field } from "@/components/ui/field";
+import { FormInput as Input } from "@/components/ui/input";
+import { NativeSelect as Select } from "@/components/ui/select";
+import { FormTextarea as Textarea } from "@/components/ui/textarea";
+import { PrimaryButton } from "@/components/ui/button";
 import { ShieldCheck, Calendar, Users, MapPin, Sparkles, Heart, X, Plus } from "lucide-react";
 
 export const Route = createFileRoute("/m/lead/$lead_id")({

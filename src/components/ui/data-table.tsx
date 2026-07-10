@@ -18,7 +18,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 
-import { GhostButton } from "@/components/ui/form";
+import { GhostButton } from "@/components/ui/button";
 import {
   ChevronLeft,
   ChevronRight,

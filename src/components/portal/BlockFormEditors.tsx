@@ -28,7 +28,10 @@ import {
   Sparkles,
   ChevronDown,
 } from "lucide-react";
-import { Field, Input, Select, Textarea } from "@/components/ui/form";
+import { Field } from "@/components/ui/field";
+import { FormInput as Input } from "@/components/ui/input";
+import { NativeSelect as Select } from "@/components/ui/select";
+import { FormTextarea as Textarea } from "@/components/ui/textarea";
 import { FileUploader } from "@/components/uploads/FileUploader";
 import { MultiFileUploader } from "@/components/uploads/MultiFileUploader";
 import { type PortalBlock, type LegacyPortalBlock } from "@/lib/cms-types";

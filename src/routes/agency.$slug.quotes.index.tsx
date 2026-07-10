@@ -2,43 +2,16 @@ import { createFileRoute, Link, useParams, useNavigate } from "@tanstack/react-r
 import { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import {
-  Search,
-  Plus,
-  Sparkles,
-  Loader2,
-  Calendar,
-  Users,
-  Compass,
-  ArrowRight,
-  Brain,
-  Trash2,
-  BookOpen,
-  ShieldCheck,
-  UserCheck,
-  Zap,
-  Bell,
-  BellOff,
-  CheckCircle2,
-  XCircle,
-  ToggleLeft,
-  ToggleRight,
-  AlertTriangle,
-  TrendingDown,
-  Eye,
-} from "lucide-react";
+  Search, Plus, Sparkles, Loader2, Calendar, Users, Compass, ArrowRight, Brain, Trash2, BookOpen, ShieldCheck, UserCheck, Zap, Bell, BellOff, CheckCircle2, XCircle, ToggleLeft, ToggleRight, AlertTriangle, TrendingDown, Eye, } from "lucide-react";
 import { useAgency } from "@/lib/agency-context";
-import { Button } from "@/components/ui/button";
+import { Button, GhostButton, PrimaryButton } from "@/components/ui/button";
 import { PageHeader, EmptyState, ModuleActionButton } from "@/components/shell/PageHeader";
-import {
-  StatusBadge,
-  fmtDate,
-  GhostButton,
-  PrimaryButton,
-  Input,
-  Select,
-  Textarea,
-  Field,
-} from "@/components/ui/form";
+import { FormInput as Input } from "@/components/ui/input";
+import { NativeSelect as Select } from "@/components/ui/select";
+import { FormTextarea as Textarea } from "@/components/ui/textarea";
+import { Field } from "@/components/ui/field";
+import { StatusBadge } from "@/components/ui/badge";
+import { fmtDate } from "@/lib/formatters";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { useDebounce } from "@/hooks/use-debounce";

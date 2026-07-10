@@ -3,33 +3,11 @@ import { TabsList } from "@/components/ui/tabs";
 import { useState, useEffect } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import {
-  ArrowLeft,
-  MapPin,
-  CalendarDays,
-  ReceiptText,
-  Users,
-  Ticket,
-  FileSignature,
-  MoreHorizontal,
-  Copy,
-  Trash2,
-  Pencil,
-  Eye,
-  Send,
-  Plane,
-  Clock,
-  Hotel,
-  CheckCircle2,
-  Navigation,
-  Wifi,
-  RefreshCw,
-  Loader2,
-  Download,
-  AlertCircle,
-} from "lucide-react";
+  ArrowLeft, MapPin, CalendarDays, ReceiptText, Users, Ticket, FileSignature, MoreHorizontal, Copy, Trash2, Pencil, Eye, Send, Plane, Clock, Hotel, CheckCircle2, Navigation, Wifi, RefreshCw, Loader2, Download, AlertCircle, } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAgency, getModuleName } from "@/lib/agency-context";
-import { StatusBadge, fmtDate } from "@/components/ui/form";
+import { StatusBadge } from "@/components/ui/badge";
+import { fmtDate } from "@/lib/formatters";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
 import { useConfirm } from "@/hooks/use-confirm";

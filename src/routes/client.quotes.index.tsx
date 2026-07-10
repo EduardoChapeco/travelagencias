@@ -3,7 +3,8 @@ import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { PageHeader } from "@/components/shell/PageHeader";
 import { FileText, Clock, CheckCircle, XCircle } from "lucide-react";
-import { money, fmtDate, StatusBadge } from "@/components/ui/form";
+import { StatusBadge } from "@/components/ui/badge";
+import { money, fmtDate } from "@/lib/formatters";
 import { fetchClientAgencies } from "@/services/client-area";
 
 export const Route = createFileRoute("/client/quotes/")({

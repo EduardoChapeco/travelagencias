@@ -2,25 +2,17 @@ import { createFileRoute, Link, useParams } from "@tanstack/react-router";
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import {
-  Search,
-  Filter,
-  FileText,
-  Building2,
-  Calendar,
-  FileSignature,
-  ArrowRight,
-  User,
-  Settings2,
-  ChevronDown,
-  BookOpen,
-  AlertCircle,
-} from "lucide-react";
+  Search, Filter, FileText, Building2, Calendar, FileSignature, ArrowRight, User, Settings2, ChevronDown, BookOpen, AlertCircle, } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAgency } from "@/lib/agency-context";
 import { EmptyState } from "@/components/shell/PageHeader";
 import { PageHeader, ModuleActionButton } from "@/components/shell/PageHeader";
 import { ModuleAdminPanel } from "@/components/shell/ModuleAdminPanel";
-import { StatusBadge, money, fmtDate, GhostButton, Input, Select } from "@/components/ui/form";
+import { FormInput as Input } from "@/components/ui/input";
+import { NativeSelect as Select } from "@/components/ui/select";
+import { StatusBadge } from "@/components/ui/badge";
+import { GhostButton } from "@/components/ui/button";
+import { money, fmtDate } from "@/lib/formatters";
 import { cn } from "@/lib/utils";
 import { useDebounce } from "@/hooks/use-debounce";
 import { ContractClauseLibrary } from "@/components/contracts/ContractClauseLibrary";

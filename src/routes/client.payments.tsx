@@ -2,7 +2,8 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { fetchClientPayments } from "@/services/client-area";
 import { PageHeader, EmptyState } from "@/components/shell/PageHeader";
-import { money, fmtDate, StatusBadge } from "@/components/ui/form";
+import { StatusBadge } from "@/components/ui/badge";
+import { money, fmtDate } from "@/lib/formatters";
 
 export const Route = createFileRoute("/client/payments")({
   head: ({ context }: any) => ({ meta: [{ title: `Pagamentos · ${context?.brand?.platform_name || 'Turis'}` }] }),

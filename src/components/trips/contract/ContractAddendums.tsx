@@ -3,7 +3,10 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { Plus } from "lucide-react";
-import { PrimaryButton, GhostButton, StatusBadge, Input, Field } from "@/components/ui/form";
+import { FormInput as Input } from "@/components/ui/input";
+import { Field } from "@/components/ui/field";
+import { PrimaryButton, GhostButton } from "@/components/ui/button";
+import { StatusBadge } from "@/components/ui/badge";
 
 type Addendum = {
   id: string;

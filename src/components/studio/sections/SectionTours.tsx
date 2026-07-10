@@ -12,7 +12,7 @@ import { replaceAt } from "@/components/proposals/ProposalFormFields";
 import { useAgency } from "@/lib/agency-context";
 import { supabase } from "@/integrations/supabase/client";
 import { Search } from "lucide-react";
-import { PrimaryButton } from "@/components/ui/form";
+import { PrimaryButton } from "@/components/ui/button";
 import { toast } from "sonner";
 
 interface Props {

@@ -1,5 +1,5 @@
 import { Search } from "lucide-react";
-import { Input } from "@/components/ui/form";
+import { FormInput as Input } from "@/components/ui/input";
 
 type Props = {
   searchQuery: string;

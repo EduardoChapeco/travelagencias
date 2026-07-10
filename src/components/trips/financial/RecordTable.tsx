@@ -1,5 +1,6 @@
 import { Trash2, Check } from "lucide-react";
-import { StatusBadge, money, fmtDate } from "@/components/ui/form";
+import { StatusBadge } from "@/components/ui/badge";
+import { money, fmtDate } from "@/lib/formatters";
 import { type FinancialRecord } from "@/services/trips";
 
 export function RecordTable({

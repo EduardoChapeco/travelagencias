@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Plus, Trash2, Shield, ChevronDown, ChevronRight } from "lucide-react";
-import { money } from "@/components/ui/form";
+import { money } from "@/lib/formatters";
 
 export type Clause = {
   number: number;

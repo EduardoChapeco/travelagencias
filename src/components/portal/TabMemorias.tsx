@@ -1,5 +1,5 @@
 import { Camera, Image as ImageIcon, ShieldAlert } from "lucide-react";
-import { fmtDate } from "@/components/ui/form";
+import { fmtDate } from "@/lib/formatters";
 import { MultiFileUploader } from "@/components/uploads/MultiFileUploader";
 
 interface TabMemoriasProps {

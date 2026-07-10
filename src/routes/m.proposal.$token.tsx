@@ -4,7 +4,8 @@ import { useState, useEffect, useRef } from "react";
 import { toast } from "sonner";
 import { z } from "zod";
 import { supabase } from "@/integrations/supabase/client";
-import { money, fmtDate, PrimaryButton, GhostButton } from "@/components/ui/form";
+import { PrimaryButton, GhostButton } from "@/components/ui/button";
+import { money, fmtDate } from "@/lib/formatters";
 import {
   Calendar,
   Users,

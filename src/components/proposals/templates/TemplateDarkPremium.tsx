@@ -3,7 +3,7 @@
  * Focado em luxo, contraste, capa dramática e resumo flutuante
  */
 import { type Proposal } from "@/services/proposals";
-import { money, fmtDate } from "@/components/ui/form";
+import { money, fmtDate } from "@/lib/formatters";
 import { buildBaseViewModel } from "@/lib/adapters";
 import { Plane, Hotel, Car, Compass, Check, X, PhoneCall } from "lucide-react";
 

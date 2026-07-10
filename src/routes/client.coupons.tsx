@@ -2,7 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { fetchClientCoupons } from "@/services/client-area";
 import { PageHeader, EmptyState } from "@/components/shell/PageHeader";
-import { StatusBadge } from "@/components/ui/form";
+import { StatusBadge } from "@/components/ui/badge";
 
 export const Route = createFileRoute("/client/coupons")({
   head: ({ context }: any) => ({ meta: [{ title: `Cupons · ${context?.brand?.platform_name || 'Turis'}` }] }),

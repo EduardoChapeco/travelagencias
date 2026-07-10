@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from "react";
 import { X, Printer, Download, Image as ImageIcon, ToggleLeft, ToggleRight } from "lucide-react";
-import { money } from "@/components/ui/form";
+import { money } from "@/lib/formatters";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { cn } from "@/lib/utils";

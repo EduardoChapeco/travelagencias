@@ -5,7 +5,9 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAgency } from "@/lib/agency-context";
 import { toast } from "sonner";
 import { EmptyState } from "@/components/shell/PageHeader";
-import { StatusBadge, money, fmtDate, GhostButton } from "@/components/ui/form";
+import { StatusBadge } from "@/components/ui/badge";
+import { GhostButton } from "@/components/ui/button";
+import { money, fmtDate } from "@/lib/formatters";
 import { Plus } from "lucide-react";
 import { PageHeader, ModuleActionButton } from "@/components/shell/PageHeader";
 

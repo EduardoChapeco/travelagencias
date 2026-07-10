@@ -6,7 +6,11 @@ import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { useAgency } from "@/lib/agency-context";
 import { PageHeader } from "@/components/shell/PageHeader";
-import { PrimaryButton, GhostButton, Input, Sheet, Field, Select } from "@/components/ui/form";
+import { FormInput as Input } from "@/components/ui/input";
+import { SimpleSheet as Sheet } from "@/components/ui/sheet";
+import { Field } from "@/components/ui/field";
+import { NativeSelect as Select } from "@/components/ui/select";
+import { PrimaryButton, GhostButton } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
 export const Route = createFileRoute("/agency/$slug/bus-layouts/$id")({

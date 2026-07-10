@@ -25,15 +25,12 @@ import {
   Save,
   X,
 } from "lucide-react";
-import {
-  Field,
-  Input,
-  Select,
-  Textarea,
-  PrimaryButton,
-  GhostButton,
-  StatusBadge,
-} from "@/components/ui/form";
+import { Field } from "@/components/ui/field";
+import { FormInput as Input } from "@/components/ui/input";
+import { NativeSelect as Select } from "@/components/ui/select";
+import { FormTextarea as Textarea } from "@/components/ui/textarea";
+import { PrimaryButton, GhostButton } from "@/components/ui/button";
+import { StatusBadge } from "@/components/ui/badge";
 import { PageHeader, ModuleActionButton } from "@/components/shell/PageHeader";
 
 export const Route = createFileRoute("/agency/$slug/destination-intelligence")({

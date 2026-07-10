@@ -24,7 +24,10 @@ import {
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { useAgency } from "@/lib/agency-context";
-import { StatusBadge, Input, Select, PrimaryButton, GhostButton } from "@/components/ui/form";
+import { FormInput as Input } from "@/components/ui/input";
+import { NativeSelect as Select } from "@/components/ui/select";
+import { StatusBadge } from "@/components/ui/badge";
+import { PrimaryButton, GhostButton } from "@/components/ui/button";
 import { CMS_TEMPLATES, getTemplateById } from "@/lib/cms-templates";
 import { savePortalPageDraft } from "@/services/portal";
 import { SheetPage } from "@/components/ui/sheet";

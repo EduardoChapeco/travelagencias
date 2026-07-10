@@ -2,7 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { fetchBillingSummary } from "@/services/admin";
 import { PageHeader } from "@/components/shell/PageHeader";
-import { money } from "@/components/ui/form";
+import { money } from "@/lib/formatters";
 import { Skeleton } from "@/components/ui/skeleton";
 import { AlertCircle } from "lucide-react";
 

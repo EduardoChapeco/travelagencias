@@ -46,4 +46,30 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
 );
 Button.displayName = "Button";
 
-export { Button, buttonVariants };
+function PrimaryButton({ className, ...props }: React.ButtonHTMLAttributes<HTMLButtonElement>) {
+  return (
+    <Button
+      {...props}
+      variant="default"
+      className={cn(
+        "h-[39px] rounded-button px-[14px] text-xs font-bold uppercase tracking-wider text-primary-foreground transition-all hover:bg-foreground/90 disabled:cursor-not-allowed disabled:opacity-60",
+        className,
+      )}
+    />
+  );
+}
+
+function GhostButton({ className, ...props }: React.ButtonHTMLAttributes<HTMLButtonElement>) {
+  return (
+    <Button
+      {...props}
+      variant="outline"
+      className={cn(
+        "h-[39px] rounded-button border border-border-strong px-[14px] text-xs font-bold uppercase tracking-wider text-foreground bg-surface transition-all hover:bg-surface-alt disabled:cursor-not-allowed disabled:opacity-60",
+        className,
+      )}
+    />
+  );
+}
+
+export { Button, GhostButton, PrimaryButton, buttonVariants };

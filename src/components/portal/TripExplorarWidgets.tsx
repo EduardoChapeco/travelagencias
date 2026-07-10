@@ -1,5 +1,5 @@
 import { Plane, ShieldAlert, Globe, Heart, Map, Lightbulb } from "lucide-react";
-import { fmtDate } from "@/components/ui/form";
+import { fmtDate } from "@/lib/formatters";
 import { AppWidget } from "@/components/portal/TripPortalShared";
 
 // ─── Boarding-Pass Style Flight Card ─────────────────────────────────────────

@@ -7,7 +7,8 @@ import { useAgency } from "@/lib/agency-context";
 import { EmptyState } from "@/components/shell/PageHeader";
 import { ModuleAdminPanel } from "@/components/shell/ModuleAdminPanel";
 import { NewGroupTourWizard } from "@/components/group-tours/NewGroupTourWizard";
-import { StatusBadge, fmtDate, money } from "@/components/ui/form";
+import { StatusBadge } from "@/components/ui/badge";
+import { fmtDate, money } from "@/lib/formatters";
 import { PageHeader, ModuleActionButton } from "@/components/shell/PageHeader";
 
 export const Route = createFileRoute("/agency/$slug/group-tours/")({

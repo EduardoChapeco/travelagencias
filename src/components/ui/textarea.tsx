@@ -18,4 +18,18 @@ const Textarea = React.forwardRef<HTMLTextAreaElement, React.ComponentProps<"tex
 );
 Textarea.displayName = "Textarea";
 
-export { Textarea };
+const FormTextarea = React.forwardRef<HTMLTextAreaElement, React.ComponentProps<"textarea">>(
+  ({ className, ...props }, ref) => (
+    <Textarea
+      ref={ref}
+      {...props}
+      className={cn(
+        "w-full min-h-[85px] p-3 rounded-card border border-border bg-surface text-sm outline-none transition-colors focus:border-border-strong text-foreground placeholder:text-muted-foreground/60",
+        className,
+      )}
+    />
+  ),
+);
+FormTextarea.displayName = "FormTextarea";
+
+export { FormTextarea, Textarea };

@@ -14,7 +14,7 @@ import {
 } from "lucide-react";
 import { toast } from "sonner";
 import { useAgency } from "@/lib/agency-context";
-import { money } from "@/components/ui/form";
+import { money } from "@/lib/formatters";
 import { supabase } from "@/integrations/supabase/client";
 import {
   fetchTripSummary,

@@ -1,5 +1,6 @@
 import { CheckCircle } from "lucide-react";
-import { StatusBadge, money, fmtDate } from "@/components/ui/form";
+import { StatusBadge } from "@/components/ui/badge";
+import { money, fmtDate } from "@/lib/formatters";
 import { type PaymentInstallment } from "@/services/trips";
 import { handleViewReceipt } from "@/utils/storage-helper";
 

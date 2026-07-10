@@ -5,7 +5,12 @@ import { Save } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { useAgency } from "@/lib/agency-context";
-import { Field, Input, Select, Textarea, PrimaryButton, money } from "@/components/ui/form";
+import { Field } from "@/components/ui/field";
+import { FormInput as Input } from "@/components/ui/input";
+import { NativeSelect as Select } from "@/components/ui/select";
+import { FormTextarea as Textarea } from "@/components/ui/textarea";
+import { PrimaryButton } from "@/components/ui/button";
+import { money } from "@/lib/formatters";
 
 export const Route = createFileRoute("/agency/$slug/trips/$id/")({
   component: TripOverview,

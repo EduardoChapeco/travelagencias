@@ -3,30 +3,10 @@ import { Link, useParams } from "@tanstack/react-router";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import {
-  X,
-  Clock,
-  Users,
-  AlertTriangle,
-  Link as LinkIcon,
-  CheckSquare,
-  Square,
-  Pencil,
-  Check,
-  Hotel,
-  Bus,
-  UserCheck,
-  Phone,
-  Plane,
-  MapPin,
-  Upload,
-  Ticket,
-  Loader2,
-  Trash2,
-  Globe,
-  FileText,
-} from "lucide-react";
+  X, Clock, Users, AlertTriangle, Link as LinkIcon, CheckSquare, Square, Pencil, Check, Hotel, Bus, UserCheck, Phone, Plane, MapPin, Upload, Ticket, Loader2, Trash2, Globe, FileText, } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
-import { PrimaryButton, GhostButton, fmtDate } from "@/components/ui/form";
+import { PrimaryButton, GhostButton } from "@/components/ui/button";
+import { fmtDate } from "@/lib/formatters";
 import {
   type BoardingCard as Card,
   type ChecklistItem,

@@ -32,7 +32,8 @@ import {
   requestTripCancellation,
   addTripMemories,
 } from "@/services/client-area";
-import { fmtDate, StatusBadge } from "@/components/ui/form";
+import { StatusBadge } from "@/components/ui/badge";
+import { fmtDate } from "@/lib/formatters";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,

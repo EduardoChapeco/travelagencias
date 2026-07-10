@@ -12,7 +12,11 @@ import {
   User,
   Clock,
 } from "lucide-react";
-import { Field, Input, Select, Textarea, PrimaryButton, GhostButton } from "@/components/ui/form";
+import { Field } from "@/components/ui/field";
+import { FormInput as Input } from "@/components/ui/input";
+import { NativeSelect as Select } from "@/components/ui/select";
+import { FormTextarea as Textarea } from "@/components/ui/textarea";
+import { PrimaryButton, GhostButton } from "@/components/ui/button";
 import { SearchableSelect } from "@/components/ui/searchable-select";
 import { SheetPage } from "@/components/ui/sheet";
 import { toast } from "sonner";

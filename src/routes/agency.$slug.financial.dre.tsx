@@ -3,7 +3,7 @@ import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useAgency } from "@/lib/agency-context";
-import { money } from "@/components/ui/form";
+import { money } from "@/lib/formatters";
 import { PageHeader } from "@/components/shell/PageHeader";
 
 export const Route = createFileRoute("/agency/$slug/financial/dre")({

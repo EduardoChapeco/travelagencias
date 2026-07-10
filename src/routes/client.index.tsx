@@ -3,7 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 import { Plane, CreditCard, FileText, Gift, Shield } from "lucide-react";
 import { fetchClientDashboard } from "@/services/client-area";
 import { PageHeader } from "@/components/shell/PageHeader";
-import { money, fmtDate } from "@/components/ui/form";
+import { money, fmtDate } from "@/lib/formatters";
 
 export const Route = createFileRoute("/client/")({
   head: ({ context }: any) => ({ meta: [{ title: `Área do cliente · ${context?.brand?.platform_name || 'Turis'}` }] }),

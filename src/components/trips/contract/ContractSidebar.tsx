@@ -1,5 +1,5 @@
 import { AlertTriangle } from "lucide-react";
-import { money, fmtDate } from "@/components/ui/form";
+import { money, fmtDate } from "@/lib/formatters";
 
 type Client = {
   id: string;

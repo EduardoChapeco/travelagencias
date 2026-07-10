@@ -4,7 +4,10 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { BookOpen, Workflow, Settings2, Trash2, Edit2, Plus, ArrowLeft } from "lucide-react";
-import { Field, Input, Textarea, PrimaryButton, GhostButton } from "@/components/ui/form";
+import { Field } from "@/components/ui/field";
+import { FormInput as Input } from "@/components/ui/input";
+import { FormTextarea as Textarea } from "@/components/ui/textarea";
+import { PrimaryButton, GhostButton } from "@/components/ui/button";
 import { useConfirm } from "@/hooks/use-confirm";
 import { useAgency, DEFAULT_MODULE_NAMES } from "@/lib/agency-context";
 

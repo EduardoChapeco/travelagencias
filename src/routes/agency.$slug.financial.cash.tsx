@@ -3,32 +3,19 @@ import { useState } from "react";
 import { useQuery, useQueryClient, useMutation } from "@tanstack/react-query";
 import { handleViewReceipt } from "@/utils/storage-helper";
 import {
-  ArrowDownCircle,
-  ArrowUpCircle,
-  Lock,
-  Unlock,
-  FileText,
-  AlertCircle,
-  Coins,
-  Users,
-  Landmark,
-  Plus,
-} from "lucide-react";
+  ArrowDownCircle, ArrowUpCircle, Lock, Unlock, FileText, AlertCircle, Coins, Users, Landmark, Plus, } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { useAgency } from "@/lib/agency-context";
 import { EmptyState } from "@/components/shell/PageHeader";
 import { PageHeader, ModuleActionButton } from "@/components/shell/PageHeader";
-import {
-  Field,
-  Input,
-  Select,
-  Textarea,
-  PrimaryButton,
-  GhostButton,
-  Sheet,
-  money,
-} from "@/components/ui/form";
+import { Field } from "@/components/ui/field";
+import { FormInput as Input } from "@/components/ui/input";
+import { NativeSelect as Select } from "@/components/ui/select";
+import { FormTextarea as Textarea } from "@/components/ui/textarea";
+import { SimpleSheet as Sheet } from "@/components/ui/sheet";
+import { PrimaryButton, GhostButton } from "@/components/ui/button";
+import { money } from "@/lib/formatters";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
