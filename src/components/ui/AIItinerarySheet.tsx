@@ -1,6 +1,10 @@
 import { useState } from "react";
 
-import { Field, Input, PrimaryButton, GhostButton, Select, Textarea } from "./form";
+import { Field } from "@/components/ui/field";
+import { FormInput as Input } from "@/components/ui/input";
+import { FormTextarea as Textarea } from "@/components/ui/textarea";
+import { NativeSelect as Select } from "@/components/ui/select";
+import { PrimaryButton, GhostButton } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { Wand2, Link as LinkIcon, Sparkles } from "lucide-react";
@@ -140,7 +144,7 @@ Retorne **SOMENTE** um array JSON válido sem markdown em volta. A estrutura EXA
             <Textarea
               placeholder="Ex: 5 dias em Paris focado em alta gastronomia e moda..."
               value={topic}
-              onChange={(e) => setTopic(e.target.value)}
+              onChange={(e: any) => setTopic(e.target.value)}
               rows={3}
             />
           </Field>
@@ -152,7 +156,7 @@ Retorne **SOMENTE** um array JSON válido sem markdown em volta. A estrutura EXA
             <Input
               placeholder="https://viagemeturismo.com/roteiro-paris"
               value={url}
-              onChange={(e) => setUrl(e.target.value)}
+              onChange={(e: any) => setUrl(e.target.value)}
               type="url"
             />
           </Field>
@@ -165,7 +169,7 @@ Retorne **SOMENTE** um array JSON válido sem markdown em volta. A estrutura EXA
               min={1}
               max={30}
               value={daysCount}
-              onChange={(e) => setDaysCount(e.target.value)}
+              onChange={(e: any) => setDaysCount(e.target.value)}
             />
           </Field>
           <Field label="Tom e Estilo">

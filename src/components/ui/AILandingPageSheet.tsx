@@ -1,6 +1,9 @@
 import { useState } from "react";
 import { SheetPage } from "./sheet";
-import { Field, PrimaryButton, GhostButton, Textarea, Input } from "./form";
+import { Field } from "@/components/ui/field";
+import { FormInput as Input } from "@/components/ui/input";
+import { FormTextarea as Textarea } from "@/components/ui/textarea";
+import { PrimaryButton, GhostButton } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { Wand2, Copy } from "lucide-react";
@@ -99,7 +102,7 @@ export function AILandingPageSheet({
             <Textarea
               placeholder="Digite o objetivo da sua página..."
               value={topic}
-              onChange={(e) => setTopic(e.target.value)}
+              onChange={(e: any) => setTopic(e.target.value)}
               rows={4}
             />
           </Field>
@@ -114,7 +117,7 @@ export function AILandingPageSheet({
               type="url"
               placeholder="https://exemplo.com.br/landing-page"
               value={urlToClone}
-              onChange={(e) => setUrlToClone(e.target.value)}
+              onChange={(e: any) => setUrlToClone(e.target.value)}
             />
           </Field>
         )}
