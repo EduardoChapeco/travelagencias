@@ -207,86 +207,44 @@ export function StickyNotesCanvas({ renderNoteContent, onNoteFocusChange }: Stic
         ))
       )}
 
-      {/* ── Dock Inferior — macOS pill centralizado na base ─────────────────── */}
-      <div className="fixed bottom-5 left-1/2 -translate-x-1/2 z-30 pointer-events-auto">
-        <div className="flex items-center gap-1 px-4 py-2.5 rounded-full glass-dock shadow-[0_8px_32px_rgba(0,0,0,0.40)] text-white select-none">
-
-          {/* Atalhos dos módulos principais */}
-          <Link to={`/agency/${slug}/crm` as any}
-            className="flex items-center justify-center h-10 w-10 rounded-full hover:bg-white/12 text-white/65 hover:text-white transition-all cursor-pointer"
-            title="Clientes & CRM"
-          >
-            <Users className="w-[18px] h-[18px]" />
-          </Link>
-
-          <Link to={`/agency/${slug}/quotes` as any}
-            className="flex items-center justify-center h-10 w-10 rounded-full hover:bg-white/12 text-white/65 hover:text-white transition-all cursor-pointer"
-            title="Central de Cotações"
-          >
-            <Compass className="w-[18px] h-[18px]" />
-          </Link>
-
-          <Link to={`/agency/${slug}/trips` as any}
-            className="flex items-center justify-center h-10 w-10 rounded-full hover:bg-white/12 text-white/65 hover:text-white transition-all cursor-pointer"
-            title="Viagens & Embarques"
-          >
-            <Bus className="w-[18px] h-[18px]" />
-          </Link>
-
-          <Link to={`/agency/${slug}/financial` as any}
-            className="flex items-center justify-center h-10 w-10 rounded-full hover:bg-white/12 text-white/65 hover:text-white transition-all cursor-pointer"
-            title="Financeiro"
-          >
-            <Wallet className="w-[18px] h-[18px]" />
-          </Link>
-
-          <Link to={`/agency/${slug}/calendar` as any}
-            className="flex items-center justify-center h-10 w-10 rounded-full hover:bg-white/12 text-white/65 hover:text-white transition-all cursor-pointer"
-            title="Agenda & Compromissos"
-          >
-            <Calendar className="w-[18px] h-[18px]" />
-          </Link>
-
-          <Link to={`/agency/${slug}/inbox` as any}
-            className="flex items-center justify-center h-10 w-10 rounded-full hover:bg-white/12 text-white/65 hover:text-white transition-all cursor-pointer"
-            title="Mensagens & Chat"
-          >
-            <MessageSquare className="w-[18px] h-[18px]" />
-          </Link>
-
-          {/* Divisor */}
-          <div className="w-[1px] h-5 bg-white/12 mx-1" />
-
-          {/* Adicionar nota (apenas no modo editar) */}
-          {isEditable && (
-            <Button
-              onClick={() => addMutation.mutate()}
-              disabled={addMutation.isPending}
-              className="flex items-center justify-center h-10 w-10 rounded-full bg-brand/20 hover:bg-brand/35 text-brand border border-brand/25 transition-all cursor-pointer disabled:opacity-50"
-              title="Adicionar Nota"
-            >
-              <Plus className="w-[18px] h-[18px]" />
-            </Button>
-          )}
-
-          {/* Toggle modo organizar */}
+      {/* ── Controle de Lembretes do Dashboard (Top-Right) ─────────────────── */}
+      <div className="absolute top-6 right-6 flex items-center gap-2.5 z-20 pointer-events-auto">
+        {/* Adicionar nota (apenas no modo editar) */}
+        {isEditable && (
           <Button
-            onClick={() => setIsEditable(!isEditable)}
-            className={cn(
-              "flex items-center gap-1.5 h-10 px-4 rounded-full transition-all cursor-pointer text-[11px] font-black uppercase tracking-wider",
-              isEditable
-                ? "bg-emerald-500/20 hover:bg-emerald-500/30 text-emerald-300 border border-emerald-500/25"
-                : "bg-white/8 hover:bg-white/15 text-white/70 hover:text-white"
-            )}
-            title={isEditable ? "Concluir Organização" : "Organizar Lembretes"}
+            onClick={() => addMutation.mutate()}
+            disabled={addMutation.isPending}
+            className="flex items-center gap-1.5 h-9 px-3.5 rounded-full bg-white/8 hover:bg-white/15 text-white border border-white/10 transition-all cursor-pointer disabled:opacity-50 text-[11px] font-black uppercase tracking-wider"
+            title="Adicionar Nota"
           >
-            {isEditable ? (
-              <><CheckCircle className="w-3.5 h-3.5" /><span>Pronto</span></>
-            ) : (
-              <><Edit3 className="w-3.5 h-3.5" /><span>Organizar</span></>
-            )}
+            <Plus className="w-3.5 h-3.5" />
+            <span>Adicionar Nota</span>
           </Button>
-        </div>
+        )}
+
+        {/* Toggle modo organizar */}
+        <Button
+          onClick={() => setIsEditable(!isEditable)}
+          className={cn(
+            "flex items-center gap-1.5 h-9 px-4 rounded-full transition-all cursor-pointer text-[11px] font-black uppercase tracking-wider",
+            isEditable
+              ? "bg-emerald-500/20 hover:bg-emerald-500/30 text-emerald-300 border border-emerald-500/25"
+              : "bg-white/8 hover:bg-white/15 text-white/70 hover:text-white"
+          )}
+          title={isEditable ? "Concluir Organização" : "Organizar Lembretes"}
+        >
+          {isEditable ? (
+            <>
+              <CheckCircle className="w-3.5 h-3.5" />
+              <span>Concluir</span>
+            </>
+          ) : (
+            <>
+              <Edit3 className="w-3.5 h-3.5" />
+              <span>Organizar Lembretes</span>
+            </>
+          )}
+        </Button>
       </div>
     </div>
   );
