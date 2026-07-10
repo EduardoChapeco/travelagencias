@@ -1,6 +1,7 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
+import { Button } from "@/components/ui/button";
 
 export const Route = createFileRoute("/auth/confirm")({
   head: ({ context }: any) => ({ meta: [{ title: `Confirmação de Conta · ${context?.brand?.platform_name || 'Turis'}` }] }),
@@ -117,12 +118,12 @@ function ConfirmPage() {
             <p className="mt-3 text-sm text-muted-foreground">
               Sua conta foi ativada com sucesso. Agora vamos configurar a sua agência.
             </p>
-            <button
+            <Button
               onClick={handleContinue}
               className="mt-8 w-full rounded-full bg-primary px-4 py-2 text-sm font-medium text-primary-foreground hover:bg-primary/90"
             >
               Continuar para Login
-            </button>
+            </Button>
           </>
         )}
 

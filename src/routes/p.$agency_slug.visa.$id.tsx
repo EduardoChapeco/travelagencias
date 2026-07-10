@@ -6,7 +6,7 @@ import { fetchPublicLeadForm, submitPublicLeadForm } from "@/services/public";
 import { Field } from "@/components/ui/field";
 import { FormInput as Input } from "@/components/ui/input";
 import { FormTextarea as Textarea } from "@/components/ui/textarea";
-import { PrimaryButton } from "@/components/ui/button";
+import { PrimaryButton , Button } from "@/components/ui/button";
 
 export const Route = createFileRoute("/p/$agency_slug/visa/$id")({
   head: ({ context }: any) => ({ meta: [{ title: `Solicitação de visto · ${context?.brand?.platform_name || 'Turis'}` }] }),
@@ -99,12 +99,12 @@ function Page() {
           >
             Chamar no WhatsApp Agora
           </a>
-          <button
+          <Button
             onClick={() => setDoneLeadId(null)}
             className="text-xs font-semibold text-muted-foreground hover:text-foreground transition-colors underline"
           >
             Enviar nova resposta
-          </button>
+          </Button>
         </div>
       </div>
     );

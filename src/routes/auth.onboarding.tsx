@@ -4,7 +4,7 @@ import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { Field } from "@/components/ui/field";
 import { FormInput as Input } from "@/components/ui/input";
-import { PrimaryButton } from "@/components/ui/button";
+import { PrimaryButton , Button } from "@/components/ui/button";
 import { slugify } from "@/lib/slug";
 import { resolveSignedInAgency } from "@/lib/auth-routing";
 import { validateCNPJ, formatCNPJ, fetchCNPJData } from "@/lib/validations/document";
@@ -247,7 +247,7 @@ function Page() {
                     />
                   </Field>
                 </div>
-                <button
+                <Button
                   type="button"
                   onClick={handleCnpjLookup}
                   disabled={
@@ -256,7 +256,7 @@ function Page() {
                   className="mb-[2px] h-10 rounded-full border-none px-4 text-sm font-medium hover:glass bg-white/5 border-white/10 disabled:opacity-50 cursor-pointer"
                 >
                   {loadingCnpj ? "Buscando..." : "Buscar CNPJ"}
-                </button>
+                </Button>
               </div>
               <Field label="Razão social" error={errors.legalName?.message}>
                 <Input {...register("legalName")} />
@@ -339,14 +339,14 @@ function Page() {
 
           <div className="flex gap-3 pt-4 border-t border-border mt-6">
             {step > 1 && (
-              <button
+              <Button
                 type="button"
                 onClick={() => setStep(step - 1)}
                 className="rounded-full border-none px-4 py-2 text-sm font-medium hover:glass bg-white/5 border-white/10 cursor-pointer"
                 disabled={isSubmitting}
               >
                 Voltar
-              </button>
+              </Button>
             )}
             <PrimaryButton type="submit" disabled={isSubmitting} className="flex-1 cursor-pointer">
               {isSubmitting ? "Salvando…" : step === 3 ? "Finalizar e Entrar" : "Próximo"}

@@ -4,7 +4,7 @@ import { useQuery, useMutation } from "@tanstack/react-query";
 import { CheckCircle2, XCircle, Building2, Briefcase, Calendar, MapPin, Send } from "lucide-react";
 import { fetchCorporateRfp, updateCorporateRfpStatus } from "@/services/public";
 import { FormTextarea as Textarea } from "@/components/ui/textarea";
-import { PrimaryButton, GhostButton } from "@/components/ui/button";
+import { PrimaryButton, GhostButton , Button } from "@/components/ui/button";
 import { fmtDate } from "@/lib/formatters";
 import { toast } from "sonner";
 
@@ -126,12 +126,12 @@ function CorporateApprovePage() {
                       >
                         Confirmar Recusa
                       </GhostButton>
-                      <button
+                      <Button
                         onClick={() => setIsRejecting(false)}
                         className="text-sm text-muted-foreground hover:text-foreground font-medium"
                       >
                         Cancelar
-                      </button>
+                      </Button>
                     </div>
                   </div>
                 ) : (
@@ -143,12 +143,12 @@ function CorporateApprovePage() {
                     >
                       <CheckCircle2 className="h-5 w-5" /> Aprovar Orçamento
                     </PrimaryButton>
-                    <button
+                    <Button
                       onClick={() => setIsRejecting(true)}
                       className="flex-1 flex items-center justify-center gap-2 py-6 text-lg font-semibold border-none text-foreground rounded-[var(--radius-card)] hover:glass bg-white/5 border-white/10 transition-colors"
                     >
                       <XCircle className="h-5 w-5" /> Recusar
-                    </button>
+                    </Button>
                   </div>
                 )}
               </div>

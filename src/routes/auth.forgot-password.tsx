@@ -4,7 +4,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { Field } from "@/components/ui/field";
 import { FormInput as Input } from "@/components/ui/input";
-import { PrimaryButton } from "@/components/ui/button";
+import { PrimaryButton , Button } from "@/components/ui/button";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -54,12 +54,12 @@ function ForgotPage() {
         {sent ? (
           <div className="mt-8 rounded-full border-none glass bg-white/5 border-white/10 p-4 text-sm">
             Se o email existir, um link foi enviado.
-            <button
+            <Button
               onClick={() => navigate({ to: "/auth/login" })}
               className="mt-3 block text-xs font-medium underline"
             >
               Voltar para entrar
-            </button>
+            </Button>
           </div>
         ) : (
           <form onSubmit={handleSubmit(onSubmit)} className="mt-8 space-y-3">

@@ -6,6 +6,7 @@ import { fmtDate } from "@/lib/formatters";
 import { useState } from "react";
 import { toast } from "sonner";
 import { useMutation } from "@tanstack/react-query";
+import { Button } from "@/components/ui/button";
 
 export const Route = createFileRoute("/p/$agency_slug/blog/$slug")({
   loader: async ({ params: { agency_slug, slug } }) => {
@@ -107,7 +108,7 @@ function PublicBlogPage() {
             <span className="hidden sm:inline text-sm">{agency.name}</span>
           </a>
           <div className="flex items-center gap-3">
-            <button
+            <Button
               onClick={() => {
                 navigator.clipboard.writeText(window.location.href);
                 toast.success("Link copiado para compartilhar!");
@@ -115,7 +116,7 @@ function PublicBlogPage() {
               className="flex items-center gap-1.5 px-3 py-1.5 rounded-full border-none text-xs font-bold hover:glass-card border-none transition-colors"
             >
               <Share2 className="w-3 h-3" /> Compartilhar
-            </button>
+            </Button>
             <a
               href="#fale-conosco"
               className="flex items-center gap-1.5 px-4 py-1.5 rounded-full bg-foreground text-background text-xs font-bold hover:opacity-90 transition-opacity"
@@ -341,13 +342,13 @@ function LeadCaptureForm({ agencySlug, origin }: { agencySlug: string; origin: s
         </label>
       </div>
 
-      <button
+      <Button
         type="submit"
         disabled={submit.isPending}
         className="w-full h-14 rounded-[var(--radius-card)] bg-white text-black font-black uppercase tracking-wider hover:bg-white/90 transition-colors disabled:opacity-50"
       >
         {submit.isPending ? "Enviando..." : "Quero Falar com um Consultor"}
-      </button>
+      </Button>
     </form>
   );
 }

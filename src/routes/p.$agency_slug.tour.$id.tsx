@@ -7,7 +7,7 @@ import { Field } from "@/components/ui/field";
 import { FormInput as Input } from "@/components/ui/input";
 import { FormTextarea as Textarea } from "@/components/ui/textarea";
 import { NativeSelect as Select } from "@/components/ui/select";
-import { PrimaryButton, GhostButton } from "@/components/ui/button";
+import { PrimaryButton, GhostButton , Button } from "@/components/ui/button";
 import { money } from "@/lib/formatters";
 import { cn } from "@/lib/utils";
 import {
@@ -136,12 +136,12 @@ function Page() {
             ? q.error.message
             : "Não foi possível carregar os detalhes do pacote de viagem."}
         </p>
-        <button
+        <Button
           onClick={() => q.refetch()}
           className="mt-4 px-4 py-2 rounded-[var(--radius-card)] bg-gray-900 text-white font-bold text-xs shadow hover:bg-gray-800 transition-all cursor-pointer"
         >
           Tentar Novamente
-        </button>
+        </Button>
       </div>
     );
   }
@@ -665,7 +665,7 @@ function Page() {
                       {pricingTiers.map((tier: any, idx: number) => {
                         const isSelected = selectedPricingTier?.name === tier.name;
                         return (
-                          <button
+                          <Button
                             key={idx}
                             type="button"
                             onClick={() => setSelectedPricingTier(tier)}
@@ -687,7 +687,7 @@ function Page() {
                                 {tier.description}
                               </span>
                             )}
-                          </button>
+                          </Button>
                         );
                       })}
                     </div>
@@ -709,7 +709,7 @@ function Page() {
                       {extraOptions.map((ext: any, idx: number) => {
                         const isChecked = selectedExtras.some((x) => x.name === ext.name);
                         return (
-                          <button
+                          <Button
                             key={idx}
                             type="button"
                             onClick={() => {
@@ -741,7 +741,7 @@ function Page() {
                             <span className="text-xs font-mono font-bold text-emerald-700 shrink-0">
                               +{money(ext.price)}
                             </span>
-                          </button>
+                          </Button>
                         );
                       })}
                     </div>
@@ -769,7 +769,7 @@ function Page() {
                 )}
 
                 {/* Scroll button to Checkout */}
-                <button
+                <Button
                   type="button"
                   onClick={() => {
                     document
@@ -779,7 +779,7 @@ function Page() {
                   className="w-full flex h-11 items-center justify-center bg-[var(--color-brand)] text-[var(--color-brand-foreground)] rounded-[var(--radius-card)] font-bold uppercase tracking-wider text-xs transition-opacity hover:opacity-90 cursor-pointer shadow-none"
                 >
                   Reservar Agora
-                </button>
+                </Button>
               </div>
             </div>
           </div>
@@ -825,7 +825,7 @@ function Page() {
                       const isAssigned = assignedSeats.includes(cell.label);
                       const isSelected = selectedSeats.includes(cell.label);
                       return (
-                        <button
+                        <Button
                           key={idx}
                           type="button"
                           disabled={isAssigned}
@@ -840,7 +840,7 @@ function Page() {
                           )}
                         >
                           {cell.label}
-                        </button>
+                        </Button>
                       );
                     })}
                   </div>
@@ -1044,7 +1044,7 @@ function Page() {
               </label>
               <div className="flex items-center gap-2 border border-slate-200 bg-slate-50 rounded-[var(--radius-card)] px-4 py-3 text-xs font-mono select-all overflow-x-auto whitespace-nowrap">
                 <span>{pixKey}</span>
-                <button
+                <Button
                   type="button"
                   onClick={copyPix}
                   className="ml-auto text-slate-400 hover:text-slate-900 cursor-pointer p-1 shrink-0"
@@ -1054,7 +1054,7 @@ function Page() {
                   ) : (
                     <Copy className="w-4 h-4" />
                   )}
-                </button>
+                </Button>
               </div>
             </div>
 
@@ -1092,7 +1092,7 @@ function Page() {
                     <Check className="w-4 h-4 text-emerald-600 shrink-0" />
                     <span className="font-semibold">{uploadedFileName}</span>
                   </div>
-                  <button
+                  <Button
                     type="button"
                     onClick={() => {
                       setUploadedFile(null);
@@ -1101,7 +1101,7 @@ function Page() {
                     className="text-slate-500 hover:text-danger font-semibold"
                   >
                     Remover
-                  </button>
+                  </Button>
                 </div>
               )}
             </div>
@@ -1168,7 +1168,7 @@ function Page() {
               </div>
             </div>
 
-            <button
+            <Button
               onClick={() => {
                 setCheckoutStep("form");
                 setUploadedFile(null);
@@ -1181,7 +1181,7 @@ function Page() {
               className="w-full h-11 text-xs font-bold uppercase tracking-wider bg-slate-900 text-white rounded-[var(--radius-card)] cursor-pointer hover:bg-slate-800 shadow-none"
             >
               Comprar outra passagem
-            </button>
+            </Button>
           </div>
         )}
         {/* Bottom Sticky Mobile CTA Bar */}
@@ -1195,7 +1195,7 @@ function Page() {
                 {money(totalPrice)}
               </span>
             </div>
-            <button
+            <Button
               type="button"
               onClick={() => {
                 document
@@ -1205,7 +1205,7 @@ function Page() {
               className="px-6 h-10 bg-[var(--color-brand)] text-[var(--color-brand-foreground)] font-bold text-xs uppercase tracking-wider rounded-[var(--radius-card)] shadow-none active:scale-95 transition-transform"
             >
               Reservar
-            </button>
+            </Button>
           </div>
         )}
       </div>

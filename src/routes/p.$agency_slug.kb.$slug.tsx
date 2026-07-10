@@ -7,6 +7,7 @@ import { fmtDate } from "@/lib/formatters";
 import { useState } from "react";
 import { useMutation } from "@tanstack/react-query";
 import { toast } from "sonner";
+import { Button } from "@/components/ui/button";
 
 export const Route = createFileRoute("/p/$agency_slug/kb/$slug")({
   head: ({ params }) => ({ meta: [{ title: `Ajuda: ${params.slug}` }] }),
@@ -119,20 +120,20 @@ function PublicKnowledgeArticle() {
           <div className="mt-16 flex flex-col items-center justify-center p-8 glass bg-white/5 border-white/10/50 rounded-3xl border-none">
             <h3 className="text-base font-bold mb-5 text-foreground">Este artigo foi útil?</h3>
             <div className="flex gap-4">
-              <button
+              <Button
                 onClick={() => voteMutation.mutate({ articleId: article.id, isUpvote: true })}
                 disabled={voted !== null || voteMutation.isPending}
                 className={`flex items-center gap-2 px-8 py-3 rounded-full border text-sm font-bold transition-colors disabled:opacity-50 disabled:cursor-not-allowed ${voted === "up" ? "bg-success/20 text-success border-success/30" : "border-border glass-card border-none hover:glass bg-white/5 border-white/10 hover:border-brand/50"}`}
               >
                 <ThumbsUp className="w-4 h-4" /> Sim, ajudou
-              </button>
-              <button
+              </Button>
+              <Button
                 onClick={() => voteMutation.mutate({ articleId: article.id, isUpvote: false })}
                 disabled={voted !== null || voteMutation.isPending}
                 className={`flex items-center gap-2 px-8 py-3 rounded-full border text-sm font-bold transition-colors disabled:opacity-50 disabled:cursor-not-allowed ${voted === "down" ? "bg-destructive/20 text-destructive border-destructive/30" : "border-border glass-card border-none hover:glass bg-white/5 border-white/10 hover:border-brand/50"}`}
               >
                 <ThumbsDown className="w-4 h-4" /> Não ajudou
-              </button>
+              </Button>
             </div>
           </div>
 

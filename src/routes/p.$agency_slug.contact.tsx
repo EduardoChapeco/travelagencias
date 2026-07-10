@@ -11,6 +11,7 @@ import {
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { Button } from "@/components/ui/button";
 
 export const Route = createFileRoute("/p/$agency_slug/contact")({
   head: () => ({ meta: [{ title: "Fale Conosco" }] }),
@@ -352,13 +353,13 @@ function ContactPage() {
           )}
         </div>
 
-        <button
+        <Button
           type="submit"
           disabled={isSubmitting}
           className="w-full h-14 rounded-full bg-foreground text-background text-sm font-bold tracking-wide hover:opacity-90 transition-opacity flex items-center justify-center gap-2 disabled:opacity-50"
         >
           {isSubmitting ? "Enviando..." : "Solicitar Orçamento"} <ArrowRight className="w-4 h-4" />
-        </button>
+        </Button>
       </form>
     </div>
   );
