@@ -27,6 +27,7 @@ import {
 } from "@/lib/api/ai-chat.functions";
 import { ChatBlockRenderer } from "./ChatBlockRenderer";
 import { cn } from "@/lib/utils";
+import { Button } from "@/components/ui/button";
 
 type ChatMsg = {
   id: string;
@@ -273,14 +274,14 @@ export function AIChatPanel({
         <aside className="w-80 border-r border-white/10 flex flex-col p-5 bg-black/30 shrink-0">
           <div className="flex justify-between items-center mb-6">
             <h3 className="text-sm font-bold text-white uppercase tracking-wider">Histórico</h3>
-            <button
+            <Button
               onClick={handleNewConversation}
               className="flex items-center gap-1.5 h-8 px-3 rounded-full bg-white/10 hover:bg-white/20 text-white text-xs font-semibold transition-colors"
               title="Nova conversa"
             >
               <Plus className="w-3.5 h-3.5" />
               <span>Nova</span>
-            </button>
+            </Button>
           </div>
           <div className="flex-1 overflow-y-auto space-y-2.5 no-scrollbar">
             {conversationsQuery.isLoading ? (
@@ -322,13 +323,13 @@ export function AIChatPanel({
               <span className="text-sm font-semibold text-white">Conversa Ativa</span>
             </div>
             {onClose && (
-              <button
+              <Button
                 onClick={onClose}
                 className="h-8 w-8 rounded-full bg-white/5 flex items-center justify-center text-white/70 hover:text-white hover:bg-white/10 transition-colors"
                 aria-label="Fechar"
               >
                 <X className="h-4 w-4" />
-              </button>
+              </Button>
             )}
           </header>
 
@@ -351,7 +352,7 @@ export function AIChatPanel({
                       <ChatBlockRenderer messageId={m.id} content={m.content} context={m.context} />
                       {m.role === "assistant" && m.id && !m.id.startsWith("tmp-") && (
                         <div className="mt-1.5 flex items-center justify-end gap-1.5 opacity-0 group-hover:opacity-100 transition-opacity">
-                          <button
+                          <Button
                             onClick={() => handleFeedback(m.id, 1)}
                             disabled={feedbacks[m.id] !== undefined}
                             className={cn(
@@ -360,8 +361,8 @@ export function AIChatPanel({
                             )}
                           >
                             <ThumbsUp className="h-3 w-3" />
-                          </button>
-                          <button
+                          </Button>
+                          <Button
                             onClick={() => handleFeedback(m.id, -1)}
                             disabled={feedbacks[m.id] !== undefined}
                             className={cn(
@@ -370,7 +371,7 @@ export function AIChatPanel({
                             )}
                           >
                             <ThumbsDown className="h-3 w-3" />
-                          </button>
+                          </Button>
                         </div>
                       )}
                     </div>
@@ -416,13 +417,13 @@ export function AIChatPanel({
                         </div>
                       )}
                       <span className="truncate flex-1 font-medium">{file.name}</span>
-                      <button 
+                      <Button 
                         type="button"
                         onClick={() => setAttachments(prev => prev.filter((_, i) => i !== idx))}
                         className="absolute -top-1.5 -right-1.5 w-4 h-4 rounded-full bg-rose-500 hover:bg-rose-600 flex items-center justify-center text-white cursor-pointer shadow-lg"
                       >
                         <X className="w-2.5 h-2.5" />
-                      </button>
+                      </Button>
                     </div>
                   );
                 })}
@@ -461,14 +462,14 @@ export function AIChatPanel({
                 disabled={sending}
                 className="flex-1 resize-none bg-transparent text-sm outline-none text-white placeholder:text-white/30 disabled:opacity-50"
               />
-              <button
+              <Button
                 type="submit"
                 id="chat-send-btn"
                 className="flex h-8 w-8 items-center justify-center rounded-[var(--radius-card)] bg-brand text-white hover:bg-brand/90 transition-colors shrink-0 disabled:opacity-50 cursor-pointer"
                 disabled={(!input.trim() && attachments.length === 0) || sending}
               >
                 <Send className="h-4 w-4" />
-              </button>
+              </Button>
             </div>
           </form>
         </div>
@@ -516,31 +517,31 @@ export function AIChatPanel({
             </div>
             <div className="flex items-center gap-1 font-sans">
               {isEmbedded && onToggleCollapse && (
-                <button
+                <Button
                   onClick={onToggleCollapse}
                   className="rounded p-1 text-muted-foreground hover:bg-surface-alt hover:text-foreground"
                   aria-label="Recolher conversa"
                   title="Recolher conversa"
                 >
                   <ChevronDown className="h-3.5 w-3.5" />
-                </button>
+                </Button>
               )}
-              <button
+              <Button
                 onClick={handleNewConversation}
                 className="rounded p-1 text-muted-foreground hover:bg-surface-alt hover:text-foreground"
                 aria-label="Nova conversa"
                 title="Nova conversa"
               >
                 <RefreshCw className="h-3.5 w-3.5" />
-              </button>
+              </Button>
               {!isEmbedded && onClose && (
-                <button
+                <Button
                   onClick={onClose}
                   className="rounded p-1 text-muted-foreground hover:bg-surface-alt hover:text-foreground"
                   aria-label="Fechar"
                 >
                   <X className="h-4 w-4" />
-                </button>
+                </Button>
               )}
             </div>
           </header>
@@ -579,7 +580,7 @@ export function AIChatPanel({
                       <ChatBlockRenderer messageId={m.id} content={m.content} context={m.context} />
                       {m.role === "assistant" && m.id && !m.id.startsWith("tmp-") && (
                         <div className="mt-1 flex items-center justify-end gap-1.5 opacity-0 group-hover:opacity-100 transition-opacity">
-                          <button
+                          <Button
                             onClick={() => handleFeedback(m.id, 1)}
                             disabled={feedbacks[m.id] !== undefined}
                             className={cn(
@@ -591,8 +592,8 @@ export function AIChatPanel({
                             title="Resposta útil"
                           >
                             <ThumbsUp className="h-3 w-3" />
-                          </button>
-                          <button
+                          </Button>
+                          <Button
                             onClick={() => handleFeedback(m.id, -1)}
                             disabled={feedbacks[m.id] !== undefined}
                             className={cn(
@@ -604,7 +605,7 @@ export function AIChatPanel({
                             title="Resposta não útil"
                           >
                             <ThumbsDown className="h-3 w-3" />
-                          </button>
+                          </Button>
                         </div>
                       )}
                     </div>
@@ -652,13 +653,13 @@ export function AIChatPanel({
                     </div>
                   )}
                   <span className="truncate flex-1 font-medium">{file.name}</span>
-                  <button 
+                  <Button 
                     type="button"
                     onClick={() => setAttachments(prev => prev.filter((_, i) => i !== idx))}
                     className="absolute -top-1.5 -right-1.5 w-3.5 h-3.5 rounded-full bg-rose-500 hover:bg-rose-600 flex items-center justify-center text-white cursor-pointer shadow"
                   >
                     <X className="w-2 h-2" />
-                  </button>
+                  </Button>
                 </div>
               );
             })}
@@ -708,7 +709,7 @@ export function AIChatPanel({
             }}
             className="flex-1 resize-none bg-transparent text-sm outline-none placeholder:text-muted-foreground disabled:opacity-50"
           />
-          <button
+          <Button
             type="submit"
             id="chat-send-btn"
             className="flex h-7 w-7 items-center justify-center rounded-full bg-primary text-primary-foreground disabled:opacity-50 cursor-pointer"
@@ -716,7 +717,7 @@ export function AIChatPanel({
             aria-label="Enviar"
           >
             <Send className="h-3.5 w-3.5" />
-          </button>
+          </Button>
         </div>
       </form>
     </Container>

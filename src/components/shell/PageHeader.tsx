@@ -109,13 +109,13 @@ export function PageHeader({
                     )}
                   />
                   {search.value && (
-                    <button
+                    <Button
                       type="button"
                       onClick={() => search.onChange("")}
                       className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors cursor-pointer"
                     >
                       <X className="h-3.5 w-3.5" strokeWidth={2.5} />
-                    </button>
+                    </Button>
                   )}
                 </div>
               )}
@@ -126,7 +126,7 @@ export function PageHeader({
                   {filters.map((f) => {
                     const isActive = activeFilter === f.value;
                     return (
-                      <button
+                      <Button
                         key={f.value}
                         onClick={() => onFilterChange?.(f.value)}
                         className={cn(
@@ -147,7 +147,7 @@ export function PageHeader({
                             {f.count}
                           </span>
                         )}
-                      </button>
+                      </Button>
                     );
                   })}
                 </div>

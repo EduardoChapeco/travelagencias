@@ -6,6 +6,7 @@ import { ActionRegistry } from "@/lib/ai/ActionRegistry";
 import { useAgency } from "@/lib/agency-context";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
+import { Button } from "@/components/ui/button";
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Lead Card Component
@@ -180,20 +181,20 @@ export function ConfirmationCard({
       <div className="mt-3 flex items-center justify-end gap-2 border-t border-border/40 pt-2.5">
         {status === "pending" && (
           <>
-            <button
+            <Button
               onClick={handleCancel}
               className="flex h-7 items-center gap-1 rounded bg-surface-muted px-2.5 text-[11px] font-semibold text-muted-foreground hover:bg-surface-alt transition-colors"
             >
               <X className="h-3 w-3" />
               Cancelar
-            </button>
-            <button
+            </Button>
+            <Button
               onClick={handleConfirm}
               className="flex h-7 items-center gap-1 rounded bg-primary px-3 text-[11px] font-semibold text-primary-foreground hover:opacity-90 transition-colors"
             >
               <Check className="h-3 w-3" />
               Confirmar
-            </button>
+            </Button>
           </>
         )}
         {status === "executing" && (

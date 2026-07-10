@@ -4,6 +4,7 @@ import { useNavigate, useParams } from "@tanstack/react-router";
 import { Search, User, Briefcase, FileText, Ticket, Compass } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAgency } from "@/lib/agency-context";
+import { Button } from "@/components/ui/button";
 
 // Estilos via CSS modules ou globais em index.css (usaremos tailwind e estilos customizados)
 
@@ -138,12 +139,12 @@ export function CommandMenu() {
             {loading && (
               <div className="h-4 w-4 border-2 border-brand border-t-transparent rounded-full animate-spin ml-2"></div>
             )}
-            <button
+            <Button
               onClick={() => setOpen(false)}
               className="ml-2 text-[10px] font-medium px-1.5 py-0.5 bg-surface-alt rounded text-muted-foreground border border-border hover:bg-border transition-colors"
             >
               ESC
-            </button>
+            </Button>
           </div>
 
           <Command.List className="max-h-[300px] overflow-y-auto p-2">

@@ -6,6 +6,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAgency } from "@/lib/agency-context";
 import { fmtDate } from "@/lib/formatters";
 import { toast } from "sonner";
+import { Button } from "@/components/ui/button";
 
 type Notif = {
   id: string;
@@ -136,20 +137,20 @@ export function NotificationsPanel({ onClose }: { onClose: () => void }) {
         </div>
         <div className="flex items-center gap-1">
           {unreadCount > 0 && (
-            <button
+            <Button
               onClick={() => markAllRead.mutate()}
               title="Marcar todas como lidas"
               className="rounded p-1 text-muted-foreground hover:bg-surface hover:text-foreground"
             >
               <Check className="h-4 w-4" />
-            </button>
+            </Button>
           )}
-          <button
+          <Button
             onClick={onClose}
             className="rounded p-1 text-muted-foreground hover:bg-surface hover:text-foreground"
           >
             <X className="h-4 w-4" />
-          </button>
+          </Button>
         </div>
       </div>
 
@@ -213,13 +214,13 @@ export function NotificationsPanel({ onClose }: { onClose: () => void }) {
                 )}
               </div>
               {isUnread && (
-                <button
+                <Button
                   onClick={() => markRead.mutate(n.id)}
                   className="absolute right-2 top-2 rounded-full p-1 text-muted-foreground opacity-0 transition-opacity hover:bg-surface hover:text-foreground group-hover:opacity-100"
                   title="Marcar como lida"
                 >
                   <Circle className="h-3 w-3" />
-                </button>
+                </Button>
               )}
             </div>
           );
@@ -255,7 +256,7 @@ export function NotificationBadge({ minimal = false }: { minimal?: boolean }) {
 
   return (
     <div className="relative flex items-center">
-      <button
+      <Button
         onClick={() => setOpen(!open)}
         className={
           minimal
@@ -277,7 +278,7 @@ export function NotificationBadge({ minimal = false }: { minimal?: boolean }) {
             {q.data > 9 ? "9+" : q.data}
           </span>
         ) : null}
-      </button>
+      </Button>
 
       {open && <NotificationsPanel onClose={() => setOpen(false)} />}
     </div>

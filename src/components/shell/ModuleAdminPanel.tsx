@@ -7,7 +7,7 @@ import { BookOpen, Workflow, Settings2, Trash2, Edit2, Plus, ArrowLeft } from "l
 import { Field } from "@/components/ui/field";
 import { FormInput as Input } from "@/components/ui/input";
 import { FormTextarea as Textarea } from "@/components/ui/textarea";
-import { PrimaryButton, GhostButton } from "@/components/ui/button";
+import { PrimaryButton, GhostButton , Button } from "@/components/ui/button";
 import { useConfirm } from "@/hooks/use-confirm";
 import { useAgency, DEFAULT_MODULE_NAMES } from "@/lib/agency-context";
 
@@ -166,7 +166,7 @@ export function ModuleAdminPanel({
         {/* Navigation Tabs */}
         {!editingPlaybook && !isCreatingPlaybook && (
           <div className="flex items-center gap-1 rounded-2xl border border-border bg-surface p-0.5 text-xs self-start mb-2">
-            <button
+            <Button
               onClick={() => setActiveTab("kpis")}
               className={`rounded px-3.5 py-1.5 font-bold transition-all ${
                 activeTab === "kpis"
@@ -175,9 +175,9 @@ export function ModuleAdminPanel({
               }`}
             >
               <Workflow className="w-3.5 h-3.5 inline mr-1" /> KIs & Playbooks do Módulo
-            </button>
+            </Button>
             {role === "super_admin" && (
-              <button
+              <Button
                 onClick={() => setActiveTab("settings")}
                 className={`rounded px-3.5 py-1.5 font-bold transition-all ${
                   activeTab === "settings"
@@ -186,7 +186,7 @@ export function ModuleAdminPanel({
                 }`}
               >
                 <Settings2 className="w-3.5 h-3.5 inline mr-1" /> Configurações Avançadas
-              </button>
+              </Button>
             )}
           </div>
         )}
@@ -256,18 +256,18 @@ export function ModuleAdminPanel({
                             )}
                           </div>
                           <div className="flex gap-1.5 opacity-0 group-hover:opacity-100 transition-opacity">
-                            <button
+                            <Button
                               onClick={() => setEditingPlaybook(pb)}
                               className="p-1 hover:bg-surface-alt rounded text-muted-foreground hover:text-foreground transition-colors"
                             >
                               <Edit2 className="w-3.5 h-3.5" />
-                            </button>
-                            <button
+                            </Button>
+                            <Button
                               onClick={() => handleDeletePlaybook(pb.id)}
                               className="p-1 hover:bg-danger/10 rounded text-muted-foreground hover:text-danger transition-colors"
                             >
                               <Trash2 className="w-3.5 h-3.5" />
-                            </button>
+                            </Button>
                           </div>
                         </div>
 
@@ -493,12 +493,12 @@ function PlaybookForm({
   return (
     <div className="space-y-4">
       <div className="flex items-center gap-2 mb-2">
-        <button
+        <Button
           onClick={onClose}
           className="p-1 hover:bg-surface-alt rounded text-muted-foreground hover:text-foreground transition-colors cursor-pointer"
         >
           <ArrowLeft className="w-4 h-4" />
-        </button>
+        </Button>
         <span className="text-xs font-extrabold uppercase text-muted-foreground tracking-wider">
           {initialData ? "Editar Procedimento" : "Cadastrar Novo Procedimento"}
         </span>
@@ -545,14 +545,14 @@ function PlaybookForm({
                 key={idx}
                 className="bg-surface-alt/20 border border-border/80 rounded-[var(--radius-card)] p-3 relative space-y-2.5"
               >
-                <button
+                <Button
                   type="button"
                   onClick={() => removeStep(idx)}
                   disabled={steps.length === 1}
                   className="absolute right-2 top-2.5 text-muted-foreground hover:text-danger disabled:opacity-30 cursor-pointer"
                 >
                   <Trash2 className="w-3.5 h-3.5" />
-                </button>
+                </Button>
 
                 <div className="flex items-center gap-2.5">
                   <div className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-brand text-brand-foreground text-[10px] font-bold">

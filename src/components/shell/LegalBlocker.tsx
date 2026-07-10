@@ -2,6 +2,7 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useState } from "react";
 import ReactMarkdown from "react-markdown";
+import { Button } from "@/components/ui/button";
 
 export function LegalBlocker({ children }: { children: React.ReactNode }) {
   const qc = useQueryClient();
@@ -114,7 +115,7 @@ export function LegalBlocker({ children }: { children: React.ReactNode }) {
                 Uso do sistema, garantindo conformidade com a LGPD. Seu aceite será registrado com
                 trilha de auditoria inviolável.
               </p>
-              <button
+              <Button
                 onClick={() => acceptMutation.mutate(data.doc.id)}
                 disabled={
                   acceptMutation.isPending ||
@@ -123,7 +124,7 @@ export function LegalBlocker({ children }: { children: React.ReactNode }) {
                 className="inline-flex h-10 w-full sm:w-auto items-center justify-center rounded-full bg-brand px-8 text-sm font-medium text-brand-foreground transition-colors hover:bg-brand/90 disabled:opacity-50"
               >
                 {acceptMutation.isPending ? "Registrando..." : "Eu Li e Aceito"}
-              </button>
+              </Button>
             </div>
           </div>
         </div>

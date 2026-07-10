@@ -4,6 +4,7 @@ import { cn } from "@/lib/utils";
 import { Loader2, ChevronLeft, Sparkles } from "lucide-react";
 
 import { Tooltip, TooltipContent, TooltipTrigger, TooltipProvider } from "@/components/ui/tooltip";
+import { Button } from "@/components/ui/button";
 
 type Icon = ComponentType<{ className?: string; strokeWidth?: number }>;
 
@@ -200,13 +201,13 @@ export function DockNavigation({
         {/* Top: Back button when context mode is active */}
         <div className="flex md:flex-col items-center gap-2 flex-row w-full md:w-auto">
           {hasContext && showContextOnly && (
-            <button
+            <Button
               onClick={() => setShowContextOnly(false)}
               className="relative flex h-11 w-11 shrink-0 items-center justify-center rounded-full text-os-faint hover:text-os hover:bg-white/10 hover:rounded-2xl transition-all duration-200 cursor-pointer mb-2 border border-white/5"
               title="Voltar para o menu principal"
             >
               <ChevronLeft className="h-5 w-5" strokeWidth={2.5} />
-            </button>
+            </Button>
           )}
 
           {/* List items (contextual submenus or general modules) */}

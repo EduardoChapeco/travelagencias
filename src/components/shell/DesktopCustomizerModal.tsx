@@ -3,6 +3,7 @@ import { X, Image as ImageIcon } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
 import { useDesktopTheme } from "@/hooks/use-desktop-theme";
+import { Button } from "@/components/ui/button";
 
 export function DesktopCustomizerModal({
   open,
@@ -21,12 +22,12 @@ export function DesktopCustomizerModal({
   return (
     <div className="fixed inset-0 bg-black/40 backdrop-blur-sm z-50 flex items-center justify-center p-6 pointer-events-auto">
       <div className="w-full max-w-md glass dark:glass-dark rounded-[32px] border border-white/20 p-6 text-white flex flex-col gap-5 relative animate-fadeIn">
-        <button
+        <Button
           onClick={() => setOpen(false)}
           className="absolute top-4 right-4 p-2 rounded-full hover:bg-white/10 text-white/80 hover:text-white transition-colors cursor-pointer"
         >
           <X className="w-4 h-4" />
-        </button>
+        </Button>
 
         <div>
           <h3 className="text-lg font-bold">Personalizar Desktop</h3>
@@ -101,7 +102,7 @@ export function DesktopCustomizerModal({
           </div>
         </div>
 
-        <button
+        <Button
           onClick={async () => {
             try {
               await theme.saveTheme();
@@ -114,7 +115,7 @@ export function DesktopCustomizerModal({
           className="w-full py-3 rounded-full bg-white text-black hover:bg-zinc-200 text-sm font-semibold transition-colors cursor-pointer text-center mt-2"
         >
           Salvar Configurações
-        </button>
+        </Button>
       </div>
     </div>
   );

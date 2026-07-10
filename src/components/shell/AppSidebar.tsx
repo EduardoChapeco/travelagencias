@@ -49,6 +49,7 @@ import { Plus } from "lucide-react";
 import { Tooltip, TooltipContent, TooltipTrigger, TooltipProvider } from "@/components/ui/tooltip";
 
 import { NAVIGATION_MODULES, buildContext } from "@/lib/navigation.config";
+import { Button } from "@/components/ui/button";
 
 const HUB_ITEMS: SlimSidebarItem[] = NAVIGATION_MODULES.map((m) => ({
   label: m.label,
@@ -184,13 +185,13 @@ export function AppSidebar({
         items={visibleHubs}
         contextItems={contextItems as ContextItem[]}
         footer={
-          <button
+          <Button
               onClick={() => signOut().then(() => navigate({ to: "/auth/login", replace: true }))}
               className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full text-os-faint transition-all hover:bg-white/10 hover:text-os cursor-pointer"
               title="Sair da conta"
             >
             <LogOut className="h-[18px] w-[18px] shrink-0" strokeWidth={2} />
-          </button>
+          </Button>
         }
       />
     );
@@ -204,13 +205,13 @@ export function AppSidebar({
           <TooltipProvider delayDuration={80}>
             <Tooltip>
               <TooltipTrigger asChild>
-                <button
+                <Button
                   onClick={primaryAction.onClick}
                   disabled={primaryAction.disabled || primaryAction.loading}
                   className="h-14 w-14 rounded-full flex items-center justify-center bg-primary text-primary-foreground border border-white/10 hover:scale-[1.05] active:scale-[0.98] transition-all cursor-pointer shadow-[0_4px_12px_rgba(47,96,230,0.3)] disabled:opacity-50 shrink-0"
                 >
                   {primaryAction.icon || <Plus className="h-6 w-6" />}
-                </button>
+                </Button>
               </TooltipTrigger>
               <TooltipContent
                 side="right"
@@ -234,13 +235,13 @@ export function AppSidebar({
           items={visibleHubs}
           contextItems={contextItems as ContextItem[]}
           footer={
-            <button
+            <Button
               onClick={() => signOut().then(() => navigate({ to: "/auth/login", replace: true }))}
               className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full text-os-faint transition-all hover:bg-white/10 hover:text-os cursor-pointer"
               title="Sair da conta"
             >
               <LogOut className="h-[18px] w-[18px] shrink-0" strokeWidth={2} />
-            </button>
+            </Button>
           }
         />
       </div>

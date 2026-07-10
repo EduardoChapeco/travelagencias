@@ -23,6 +23,7 @@ import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { signOut } from "@/lib/auth";
 import { DockNavigation, type SlimSidebarItem } from "./DockNavigation";
+import { Button } from "@/components/ui/button";
 
 const items = [
   { to: "/admin", label: "Visão Geral", icon: LayoutDashboard, exact: true },
@@ -92,13 +93,13 @@ export function AdminShell() {
       <DockNavigation
         items={items as SlimSidebarItem[]}
         footer={
-          <button
+          <Button
             onClick={() => signOut().then(() => navigate({ to: "/auth/login", replace: true }))}
             className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full text-os-faint transition-all hover:bg-white/10 hover:text-os cursor-pointer"
             title="Sair da conta"
           >
             <LogOut className="h-[18px] w-[18px] shrink-0" strokeWidth={2} />
-          </button>
+          </Button>
         }
       />
       <main className="no-scrollbar min-w-0 flex-1 overflow-y-auto">

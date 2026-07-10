@@ -10,6 +10,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { cn } from "@/lib/utils";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { Tooltip, TooltipContent, TooltipTrigger, TooltipProvider } from "@/components/ui/tooltip";
+import { Button } from "@/components/ui/button";
 
 export function AIFloatingWidget({ inline = false }: { inline?: boolean }) {
   const { agency, isAgencyAdmin } = useAgency();
@@ -112,14 +113,14 @@ export function AIFloatingWidget({ inline = false }: { inline?: boolean }) {
                   </span>
                   <div className="flex flex-wrap gap-1.5 max-h-[80px] overflow-y-auto no-scrollbar">
                     {aiActions.map((act: any, idx: number) => (
-                      <button
+                      <Button
                         key={idx}
                         onClick={() => handleSuggestionClick(act.prompt)}
                         className="px-2.5 py-1 text-[11px] font-bold rounded-full bg-brand/20 hover:bg-brand/35 text-brand-light border border-brand/20 transition-all cursor-pointer truncate max-w-full"
                         title={act.prompt}
                       >
                         {act.label}
-                      </button>
+                      </Button>
                     ))}
                   </div>
                 </div>
@@ -140,7 +141,7 @@ export function AIFloatingWidget({ inline = false }: { inline?: boolean }) {
         <TooltipProvider delayDuration={80}>
           <Tooltip>
             <TooltipTrigger asChild>
-              <button
+              <Button
                 onClick={() => {
                   setIsOpen(!isOpen);
                   setSelectedPrompt("");
@@ -155,7 +156,7 @@ export function AIFloatingWidget({ inline = false }: { inline?: boolean }) {
                 ) : (
                   <Sparkles className="w-5 h-5 text-brand-light shrink-0" strokeWidth={2.2} />
                 )}
-              </button>
+              </Button>
             </TooltipTrigger>
             <TooltipContent
               side="right"
@@ -205,14 +206,14 @@ export function AIFloatingWidget({ inline = false }: { inline?: boolean }) {
                 </span>
                 <div className="flex flex-wrap gap-1.5 max-h-[80px] overflow-y-auto no-scrollbar">
                   {aiActions.map((act: any, idx: number) => (
-                    <button
+                    <Button
                       key={idx}
                       onClick={() => handleSuggestionClick(act.prompt)}
                       className="px-2.5 py-1 text-[11px] font-bold rounded-full bg-brand/20 hover:bg-brand/35 text-brand-light border border-brand/20 transition-all cursor-pointer truncate max-w-full"
                       title={act.prompt}
                     >
                       {act.label}
-                    </button>
+                    </Button>
                   ))}
                 </div>
               </div>
