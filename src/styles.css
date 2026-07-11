@@ -36,8 +36,12 @@
   --ds-sidebar-collapsed: 52px;
   --ds-sidebar-offset: 4px;
   --ds-sidebar-total: 60px;
-  --ds-header-height: 44px;
   --ds-ai-left: 8px;
+
+  /* Danger/Error default mapping */
+  --danger: var(--color-danger);
+  --danger-bg: var(--color-danger-bg);
+
 
   /* Semantic Layout Tokens (Canonical Architecture) */
   --shell-edge-gap: 12px;
@@ -61,6 +65,10 @@
   --os-glass-border-strong: rgba(255, 255, 255, 0.14);
   --os-sidebar-bg: rgba(0, 0, 0, 0.50);
   --os-sidebar-border: rgba(255, 255, 255, 0.07);
+
+  /* Dark mode danger mapping */
+  --danger: #f87171;
+  --danger-bg: rgba(248, 113, 113, 0.15);
 }
 
 @layer base {
@@ -383,6 +391,13 @@
   .text-os-faint { color: var(--os-text-faint); }
   .hover\:text-os:hover       { color: var(--os-text); }
   .hover\:text-os-muted:hover { color: var(--os-text-muted); }
+
+  /* Error / Danger card utilities */
+  .glass-error {
+    background: var(--danger-bg) !important;
+    border: 1px solid var(--danger) !important;
+    color: var(--danger) !important;
+  }
 }
 
 /* ── Print Styles ─────────────────────────────────────────────────────── */

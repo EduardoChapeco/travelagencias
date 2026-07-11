@@ -193,8 +193,8 @@ function ProposalsList() {
       <div className="flex-1 overflow-hidden px-4  md:pr-6 py-4 flex flex-col min-h-0 pb-24">
         {list.isLoading && <div className="text-sm text-muted-foreground">Carregando…</div>}
         {list.isError && (
-          <div className="p-4 rounded-[var(--radius-card)] border border-red-200 bg-red-50/50 text-xs text-red-800 flex items-center gap-2 m-2">
-            <AlertCircle className="h-4 w-4 text-red-650 shrink-0" />
+          <div className="p-4 rounded-[var(--radius-card)] glass-error text-xs flex items-center gap-2 m-2">
+            <AlertCircle className="h-4 w-4 shrink-0" />
             <span>Erro ao carregar lista de propostas. Verifique sua conexão ou permissões.</span>
           </div>
         )}

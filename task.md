@@ -2,8 +2,8 @@
 
 ## Status Geral
 
-- [x] **LOTE 0** — Reparar fixture E2E do AppShell ✅ 4/4 testes passando
-- [/] **LOTE 2B** — Formulários canônicos (por domínio)
+- [x] **LOTE 0** — Reparar fixture E2E do AppShell ✅ 11/11 testes passando
+- [x] **LOTE 2B** — Formulários canônicos (por domínio) ✅ 100% migrados
 - [ ] **LOTE 3** — Header, Toolbar, Busca, Filtros e Overlays
 - [ ] **LOTE 4** — Cards, Painéis, Tabelas, Kanban e Calendário
 - [ ] **LOTE 5** — Tokens, Tema e White-label
@@ -26,15 +26,15 @@
 ---
 
 ### LOTE 2B — Formulários canônicos (Alta Dívida)
-- [ ] `src/components/portal/BlockRenderer.tsx` (40 inputs, 4 selects, 4 textareas)
-- [ ] `src/components/vouchers/VoucherStudio.tsx` (27 inputs, 1 textarea)
-- [ ] `src/components/boarding/CardDetailPanel.tsx` (20 inputs, 3 selects, 2 textareas)
-- [ ] `src/routes/agency.$slug.inbox.tsx` (12 inputs, 2 selects, 2 textareas)
-- [ ] `src/components/portal/BlockFormEditors.tsx` (15 inputs)
-- [ ] `src/routes/agency.$slug.trips.$id.flights.tsx` (9 inputs, 5 selects)
-- [ ] `src/routes/agency.$slug.rooming-list.tsx` (10 inputs, 3 selects)
-- [ ] `src/routes/agency.$slug.trips.$id.passengers.tsx` (9 inputs, 3 selects, 1 textarea)
-- [ ] Compilar/Typecheck pós-migração E Executar Lote 0 Testes
+- [x] `src/components/portal/BlockRenderer.tsx` (40 inputs, 4 selects, 4 textareas)
+- [x] `src/components/vouchers/VoucherStudio.tsx` (27 inputs, 1 textarea)
+- [x] `src/components/boarding/CardDetailPanel.tsx` (20 inputs, 3 selects, 2 textareas)
+- [x] `src/routes/agency.$slug.inbox.tsx` (12 inputs, 2 selects, 2 textareas)
+- [x] `src/components/portal/BlockFormEditors.tsx` (15 inputs)
+- [x] `src/routes/agency.$slug.trips.$id.flights.tsx` (9 inputs, 5 selects)
+- [x] `src/routes/agency.$slug.rooming-list.tsx` (10 inputs, 3 selects)
+- [x] `src/routes/agency.$slug.trips.$id.passengers.tsx` (9 inputs, 3 selects, 1 textarea)
+- [x] Compilar/Typecheck pós-migração E Executar Lote 0 Testes
 
 ## LOTE 2B — Formulários Canônicos
 

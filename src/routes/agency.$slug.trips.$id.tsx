@@ -258,12 +258,12 @@ function TripLayout() {
 
   if (tripQ.isError) {
     return (
-      <div className="flex min-h-[400px] flex-col items-center justify-center p-8 text-center m-6 rounded-[var(--radius-card)] border border-red-200 bg-red-50/50">
-        <div className="h-10 w-10 rounded-full bg-red-100 flex items-center justify-center mb-4">
-          <AlertCircle className="h-5 w-5 text-red-600" />
+      <div className="flex min-h-[400px] flex-col items-center justify-center p-8 text-center m-6 rounded-[var(--radius-card)] glass-error">
+        <div className="h-10 w-10 rounded-full bg-white/10 flex items-center justify-center mb-4">
+          <AlertCircle className="h-5 w-5 shrink-0" />
         </div>
-        <h3 className="text-base font-bold text-red-800">Falha ao Carregar Viagem</h3>
-        <p className="text-xs text-red-600 mt-1 max-w-md">
+        <h3 className="text-base font-bold">Falha ao Carregar Viagem</h3>
+        <p className="text-xs opacity-80 mt-1 max-w-md">
           {tripQ.error instanceof Error ? tripQ.error.message : "Erro desconhecido"}
         </p>
       </div>

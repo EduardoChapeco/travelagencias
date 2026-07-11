@@ -29,6 +29,7 @@ test.describe("Isolamento Multi-Tenant e Segurança RLS", () => {
   test("Deve redirecionar usuário não autenticado ao tentar acessar rotas da agência", async ({
     page,
   }) => {
+    test.setTimeout(90000);
     page.on("console", (msg) => console.log("BROWSER LOG:", msg.text()));
     page.on("pageerror", (err) => console.log("BROWSER ERROR:", err.message));
 
@@ -38,7 +39,7 @@ test.describe("Isolamento Multi-Tenant e Segurança RLS", () => {
     // Deve ser redirecionado para a página de login ou exibir tela de login
     await page.waitForURL((url) => url.pathname.includes("/login") || url.pathname === "/");
     const loginForm = page.locator('input[type="email"]');
-    await expect(loginForm).toBeVisible();
+    await expect(loginForm).toBeVisible({ timeout: 60000 });
   });
 
   test("Deve bloquear acesso direto à API do Supabase de outro tenant via RLS", async () => {

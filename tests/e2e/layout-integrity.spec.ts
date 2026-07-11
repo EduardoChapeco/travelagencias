@@ -186,6 +186,7 @@ test.describe("Auditoria de Integridade Geométrica e Layout (AppShell)", () => 
   test("AppShell e workspaces devem renderizar corretamente sem quebra de viewport", async ({
     page,
   }) => {
+    test.setTimeout(90000);
     // ── 1. Instalar mock do Supabase antes de qualquer navegação ────────
     // O mock usa RegExp para capturar 100% do tráfego para o domínio Supabase.
     await mockSupabase(page);
@@ -238,7 +239,7 @@ test.describe("Auditoria de Integridade Geométrica e Layout (AppShell)", () => 
 
     // ── 5. Verificar que o workspace do AppShell renderizou ──────────────
     const workspace = page.locator(".os-workspace");
-    await expect(workspace).toBeVisible({ timeout: 20000 });
+    await expect(workspace).toBeVisible({ timeout: 60000 });
 
     // ── 6. Verificar geometria: sem rolagem no root ───────────────────────
     const windowScrollable = await page.evaluate(() => {

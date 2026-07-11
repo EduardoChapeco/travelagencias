@@ -606,8 +606,8 @@ Texto: "${aiText}"`;
       <div className="flex-1 overflow-hidden px-4  md:pr-6 py-4 flex flex-col min-h-0 pb-24">
         {activeTab === "quotes" ? (
           isQuotesError ? (
-            <div className="p-4 rounded-[var(--radius-card)] border border-red-200 bg-red-50/50 text-xs text-red-800 flex items-center gap-2 m-6">
-              <AlertTriangle className="h-4 w-4 text-red-650 shrink-0" />
+            <div className="p-4 rounded-[var(--radius-card)] glass-error text-xs flex items-center gap-2 m-6">
+              <AlertTriangle className="h-4 w-4 shrink-0" />
               <span>Erro ao obter workspace de cotações: {quotesError instanceof Error ? quotesError.message : "Erro desconhecido"}</span>
             </div>
           ) : isLoading ? (
@@ -719,8 +719,8 @@ Texto: "${aiText}"`;
         )
       ) : /* Tab: RAG Knowledge Management */
         isDocsError ? (
-          <div className="p-4 rounded-[var(--radius-card)] border border-red-200 bg-red-50/50 text-xs text-red-800 flex items-center gap-2 m-6">
-            <AlertTriangle className="h-4 w-4 text-red-650 shrink-0" />
+          <div className="p-4 rounded-[var(--radius-card)] glass-error text-xs flex items-center gap-2 m-6">
+            <AlertTriangle className="h-4 w-4 shrink-0" />
             <span>Erro ao carregar cérebro semântico: {docsError instanceof Error ? docsError.message : "Erro desconhecido"}</span>
           </div>
         ) : isDocsLoading ? (
@@ -816,8 +816,8 @@ Texto: "${aiText}"`;
         {activeTab === "rules" && (
           <div className="p-4 md:p-6 space-y-8">
             {(isRulesError || isCandidatesError) && (
-              <div className="p-4 rounded-[var(--radius-card)] border border-red-200 bg-red-50/50 text-xs text-red-800 flex items-center gap-2 mb-4">
-                <AlertTriangle className="h-4 w-4 text-red-650 shrink-0" />
+              <div className="p-4 rounded-[var(--radius-card)] glass-error text-xs flex items-center gap-2 mb-4">
+                <AlertTriangle className="h-4 w-4 shrink-0" />
                 <span>Erro ao carregar regras ou sugestões de regras.</span>
               </div>
             )}
@@ -995,8 +995,8 @@ Texto: "${aiText}"`;
         {activeTab === "promotions" && (
           <div className="p-4 md:p-6 space-y-8">
             {(isWatchersError || isPromotionsError) && (
-              <div className="p-4 rounded-[var(--radius-card)] border border-red-200 bg-red-50/50 text-xs text-red-800 flex items-center gap-2 mb-4">
-                <AlertTriangle className="h-4 w-4 text-red-650 shrink-0" />
+              <div className="p-4 rounded-[var(--radius-card)] glass-error text-xs flex items-center gap-2 mb-4">
+                <AlertTriangle className="h-4 w-4 shrink-0" />
                 <span>Erro ao carregar monitor de alertas e promoções.</span>
               </div>
             )}

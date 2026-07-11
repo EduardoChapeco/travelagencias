@@ -3,16 +3,16 @@ $css = Get-ChildItem 'src' -Recurse -Include '*.css' -File
 
 Write-Host '=== METRICAS DE DIVIDA — BASELINE LOTE 0 ==='
 
-$inputs = ($src | Select-String -Pattern '<input\s' | Measure-Object).Count
+$inputs = ($src | Select-String -Pattern '<input\s' -CaseSensitive | Measure-Object).Count
 Write-Host "input nativos: $inputs"
 
-$selects = ($src | Select-String -Pattern '<select\s' | Measure-Object).Count
+$selects = ($src | Select-String -Pattern '<select\s' -CaseSensitive | Measure-Object).Count
 Write-Host "select nativos: $selects"
 
-$textareas = ($src | Select-String -Pattern '<textarea\s' | Measure-Object).Count
+$textareas = ($src | Select-String -Pattern '<textarea\s' -CaseSensitive | Measure-Object).Count
 Write-Host "textarea nativos: $textareas"
 
-$buttons = ($src | Select-String -Pattern '<button\s' | Measure-Object).Count
+$buttons = ($src | Select-String -Pattern '<button\s' -CaseSensitive | Measure-Object).Count
 Write-Host "button nativos: $buttons"
 
 $inlineStyle = ($src | Select-String -Pattern 'style=\{\{' | Measure-Object).Count
