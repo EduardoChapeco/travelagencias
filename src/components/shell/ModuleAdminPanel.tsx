@@ -347,7 +347,7 @@ export function ModuleAdminPanel({
                   value={customName}
                   onChange={(e) => setCustomName(e.target.value)}
                   placeholder={`Padrão: ${DEFAULT_MODULE_NAMES[moduleKey] || moduleKey}`}
-                  className="text-xs h-9"
+                  
                 />
               </Field>
 
@@ -511,7 +511,7 @@ function PlaybookForm({
             value={title}
             onChange={(e) => setTitle(e.target.value)}
             placeholder="Ex: Como lidar com cancelamentos ou Dúvidas Frequentes"
-            className="text-xs h-9"
+            
           />
         </Field>
 
@@ -521,7 +521,7 @@ function PlaybookForm({
             value={description}
             onChange={(e) => setDescription(e.target.value)}
             placeholder="Breve resumo sobre quando aplicar este procedimento..."
-            className="text-xs resize-none"
+            className="resize-none"
           />
         </Field>
 
@@ -558,22 +558,22 @@ function PlaybookForm({
                   <div className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-brand text-brand-foreground text-[10px] font-bold">
                     {st.step_number}
                   </div>
-                  <input
+                  <Input
                     type="text"
                     required
                     value={st.title}
                     onChange={(e) => updateStep(idx, "title", e.target.value)}
                     placeholder={`Título da Etapa (ex: Enviar e-mail de alerta)`}
-                    className="flex-1 h-7 rounded-full border border-border bg-surface px-2 text-xs outline-none focus:border-brand text-foreground"
+                    className="flex-1 h-7 rounded-full px-2 focus:border-brand"
                   />
                 </div>
 
-                <textarea
+                <Textarea
                   rows={2}
                   value={st.description}
                   onChange={(e) => updateStep(idx, "description", e.target.value)}
                   placeholder="Diretrizes detalhadas para condução da etapa..."
-                  className="w-full rounded-full border border-border bg-surface px-2 py-1 text-xs outline-none focus:border-brand resize-none text-foreground"
+                  className="w-full rounded-full px-2 focus:border-brand resize-none"
                 />
               </div>
             ))}

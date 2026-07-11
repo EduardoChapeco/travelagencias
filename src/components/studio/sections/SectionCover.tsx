@@ -6,6 +6,8 @@ import { toast } from "sonner";
 import { useState } from "react";
 import { StudioUnsplashPicker } from "@/components/studio/StudioUnsplashPicker";
 import { Button } from "@/components/ui/button";
+import { FormInput as Input } from "@/components/ui/input";
+import { FormTextarea as Textarea } from "@/components/ui/textarea";
 
 interface SectionCoverProps {
   draft: Proposal;
@@ -68,9 +70,9 @@ export function SectionCover({ draft, save }: SectionCoverProps) {
               Imagem de Capa
             </span>
             <div className="flex gap-1.5">
-              <input
+              <Input
                 type="text"
-                className="w-full h-8 px-3 rounded-2xl border border-border/50 bg-surface-alt/50 text-xs outline-none transition-all hover:bg-surface focus:bg-surface focus:border-border-strong"
+                className="w-full border-border/50 bg-surface-alt/50 hover:bg-surface focus:bg-surface focus:border-border-strong"
                 placeholder="Cole URL..."
                 value={draft.cover_image_url ?? ""}
                 onChange={(e) => save({ cover_image_url: e.target.value })}
@@ -80,7 +82,7 @@ export function SectionCover({ draft, save }: SectionCoverProps) {
                 title="Upload"
               >
                 {uploadingCover ? "..." : <Image className="h-3.5 w-3.5" />}
-                <input
+                <Input
                   type="file"
                   accept="image/*"
                   className="hidden"
@@ -134,8 +136,8 @@ export function SectionCover({ draft, save }: SectionCoverProps) {
                     Fechar
                   </Button>
                 </div>
-                <textarea
-                  className="w-full p-2 text-xs rounded-2xl border border-border bg-surface outline-none focus:border-brand resize-none"
+                <Textarea
+                  className="w-full p-2 focus:border-brand resize-none"
                   rows={3}
                   value={aiPrompt}
                   onChange={(e) => setAiPrompt(e.target.value)}
@@ -279,16 +281,16 @@ export function SectionCover({ draft, save }: SectionCoverProps) {
               Foto do Consultor (URL)
             </span>
             <div className="flex gap-2">
-              <input
+              <Input
                 type="text"
-                className="w-full h-8 px-3 rounded-2xl border border-border/50 bg-surface-alt/50 text-xs outline-none transition-all hover:bg-surface focus:bg-surface focus:border-border-strong"
+                className="w-full border-border/50 bg-surface-alt/50 hover:bg-surface focus:bg-surface focus:border-border-strong"
                 placeholder="Cole a URL ou use o upload..."
                 value={draft.agent_photo_url ?? ""}
                 onChange={(e) => save({ agent_photo_url: e.target.value })}
               />
               <label className="flex h-8 shrink-0 items-center justify-center rounded-2xl border border-border/60 bg-surface px-3 text-xs font-semibold cursor-pointer hover:bg-surface-alt transition-colors">
                 {uploadingAgent ? "..." : <User className="h-4 w-4" />}
-                <input
+                <Input
                   type="file"
                   accept="image/*"
                   className="hidden"

@@ -7,6 +7,7 @@ import { Field } from "@/components/ui/field";
 import { FormInput as Input } from "@/components/ui/input";
 import { NativeSelect as Select } from "@/components/ui/select";
 import { PrimaryButton } from "@/components/ui/button";
+import { FormTextarea as Textarea } from "@/components/ui/textarea";
 
 // @ts-ignore: Route path may not be regenerated in routeTree yet
 export const Route = (createFileRoute as any)("/data-deletion")({
@@ -139,11 +140,11 @@ function DataDeletionPage() {
               </Field>
 
               <Field label="Motivo da Solicitação">
-                <textarea
+                <Textarea
                   rows={3}
                   value={reason}
                   onChange={(e) => setReason(e.target.value)}
-                  className="w-full text-xs glass bg-white/5 border-white/10 border-none/60 rounded-[var(--radius-card)] px-4 py-2.5 resize-none focus:ring-0 focus:border-brand/50 font-sans text-foreground"
+                  className="w-full glass bg-white/5 border-white/10 border-none/60 rounded-[var(--radius-card)] py-2.5 resize-none focus:ring-0 focus:border-brand/50 font-sans"
                 />
               </Field>
 
@@ -166,12 +167,12 @@ function DataDeletionPage() {
           </p>
 
           <form onSubmit={handleQuery} className="flex gap-2">
-            <input
+            <Input
               type="text"
               placeholder="Digite o código DEL-XXXX..."
               value={searchProtocol}
               onChange={(e) => setSearchProtocol(e.target.value)}
-              className="flex-1 h-9 px-3 rounded-[var(--radius-card)] border-none text-xs focus:outline-none focus:ring-1 focus:ring-brand glass-card border-none text-foreground placeholder-muted-foreground font-mono"
+              className="flex-1 rounded-[var(--radius-card)] border-none focus:ring-brand glass-card border-none placeholder-muted-foreground font-mono"
             />
             <PrimaryButton disabled={searching} className="h-9 px-4 shrink-0">
               {searching ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <ArrowRight className="h-4 w-4" />}

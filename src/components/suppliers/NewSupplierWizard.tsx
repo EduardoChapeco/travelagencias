@@ -320,7 +320,7 @@ export function NewSupplierWizard({
                       max="100"
                       step="0.01"
                       {...register("commission", { valueAsNumber: true })}
-                      className="text-2xl font-mono text-brand h-12"
+                      className="text-2xl font-mono text-brand"
                     />
                     <p className="text-[10px] text-muted-foreground mt-2 uppercase tracking-widest">
                       Esta taxa será usada como padrão para calcular a rentabilidade dos pacotes

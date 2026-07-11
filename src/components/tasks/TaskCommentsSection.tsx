@@ -120,7 +120,7 @@ export function TaskCommentsSection({ taskId, agencyId }: TaskCommentsSectionPro
           placeholder="Escreva um comentário... (Ctrl+Enter para enviar)"
           value={newComment}
           onChange={(e) => setNewComment(e.target.value)}
-          className="min-h-[56px] resize-none text-xs border-border/50 bg-[var(--surface-alt)]/20 focus:border-brand transition-colors rounded-[var(--radius-card)]"
+          className="min-h-[56px] resize-none border-border/50 bg-[var(--surface-alt)]/20 focus:border-brand rounded-[var(--radius-card)]"
           onKeyDown={(e) => {
             if (e.key === "Enter" && !e.shiftKey) {
               e.preventDefault();

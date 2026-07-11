@@ -252,7 +252,7 @@ function BrandPage() {
                   <label className="cursor-pointer my-2 flex flex-col items-center gap-1">
                     <Upload className="w-5 h-5 text-muted-foreground" />
                     <span className="text-[10px] text-muted-foreground">Upload</span>
-                    <input
+                    <Input
                       type="file"
                       accept="image/*"
                       className="hidden"
@@ -291,7 +291,7 @@ function BrandPage() {
                   <label className="cursor-pointer my-2 flex flex-col items-center gap-1 text-slate-400">
                     <Upload className="w-5 h-5 text-slate-500" />
                     <span className="text-[10px]">Upload</span>
-                    <input
+                    <Input
                       type="file"
                       accept="image/*"
                       className="hidden"
@@ -330,7 +330,7 @@ function BrandPage() {
                   <label className="cursor-pointer my-2 flex flex-col items-center gap-1">
                     <Upload className="w-5 h-5 text-muted-foreground" />
                     <span className="text-[10px] text-muted-foreground">Upload</span>
-                    <input
+                    <Input
                       type="file"
                       accept="image/*"
                       className="hidden"
@@ -609,18 +609,18 @@ function ColorPicker({ label, value, onChange }: ColorPickerProps) {
         {label}
       </span>
       <div className="relative flex items-center justify-center">
-        <input
+        <Input
           type="color"
           value={value}
           onChange={(e) => onChange(e.target.value)}
-          className="h-10 w-10 cursor-pointer rounded-full border-none bg-transparent shrink-0 shadow-none"
+          className="w-10 cursor-pointer rounded-full border-none shrink-0 shadow-none"
         />
       </div>
-      <input
+      <Input
         type="text"
         value={value}
         onChange={(e) => onChange(e.target.value)}
-        className="mt-2 h-7 w-full rounded-xs border-none glass-card border-none px-1 text-center font-mono text-[10px] uppercase outline-none focus:border-brand shrink-0"
+        className="mt-2 h-7 w-full rounded-xs border-none glass-card border-none px-1 text-center font-mono text-[10px] uppercase focus:border-brand shrink-0"
       />
     </div>
   );

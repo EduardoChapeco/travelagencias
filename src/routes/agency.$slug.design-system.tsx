@@ -965,7 +965,7 @@ function DesignSystemPage() {
                               value={el.title}
                               onChange={(e) => updateSandboxElement(el.id, "title", e.target.value)}
                               placeholder="Título"
-                              className="h-8 text-xs"
+                              
                             />
                           )}
 
@@ -976,7 +976,7 @@ function DesignSystemPage() {
                                 updateSandboxElement(el.id, "content", e.target.value)
                               }
                               placeholder="Conteúdo descritivo"
-                              className="min-h-[50px] text-xs p-2"
+                              className="min-h-[50px] p-2"
                             />
                           )}
 
@@ -987,7 +987,7 @@ function DesignSystemPage() {
                                 updateSandboxElement(el.id, "buttonText", e.target.value)
                               }
                               placeholder="Texto do botão"
-                              className="h-8 text-xs"
+                              
                             />
                           )}
 
@@ -998,7 +998,7 @@ function DesignSystemPage() {
                                 updateSandboxElement(el.id, "imageUrl", e.target.value)
                               }
                               placeholder="URL da Imagem"
-                              className="h-8 text-xs font-mono"
+                              className="font-mono"
                             />
                           )}
 

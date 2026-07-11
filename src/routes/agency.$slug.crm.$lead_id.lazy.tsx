@@ -421,7 +421,7 @@ function LeadDetailPage() {
                   <img src={lead.avatar_url} className="h-full w-full object-cover" />
                   <label className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 flex items-center justify-center cursor-pointer transition-opacity">
                     <Camera className="h-4 w-4 text-white" />
-                    <input
+                    <Input
                       type="file"
                       onChange={handlePhotoUpload}
                       accept="image/*"
@@ -432,7 +432,7 @@ function LeadDetailPage() {
               ) : (
                 <label className="h-12 w-12 rounded-full border border-dashed border-border hover:border-brand/60 flex items-center justify-center cursor-pointer group glass-card border-none">
                   <Camera className="h-5 w-5 text-muted-foreground group-hover:text-brand" />
-                  <input
+                  <Input
                     type="file"
                     onChange={handlePhotoUpload}
                     accept="image/*"
@@ -685,11 +685,11 @@ function LeadDetailPage() {
                       )}
                     </p>
                   </div>
-                  <input
+                  <Input
                     type="checkbox"
                     checked={lead.lgpd_accepted || false}
                     onChange={(e) => handleLgpdToggle(e.target.checked)}
-                    className="h-5 w-5 rounded border-border bg-white/5 text-brand focus:ring-brand cursor-pointer"
+                    className="h-5 w-5 rounded bg-white/5 text-brand focus:ring-brand cursor-pointer"
                   />
                 </div>
 
@@ -701,7 +701,7 @@ function LeadDetailPage() {
                     </label>
                     <Select
                       value={lead.stage_id}
-                      className="rounded-[var(--radius-card)] border-border bg-white/5 h-10 w-full text-xs"
+                      className="rounded-[var(--radius-card)] bg-white/5 w-full"
                       onChange={async (e) => {
                         const newStage = e.target.value;
                         if (newStage === lead.stage_id) return;
@@ -738,7 +738,7 @@ function LeadDetailPage() {
                     </label>
                     <Select
                       value={lead.owner_id || ""}
-                      className="rounded-[var(--radius-card)] border-border bg-white/5 h-10 w-full text-xs"
+                      className="rounded-[var(--radius-card)] bg-white/5 w-full"
                       onChange={async (e) => {
                         const val = e.target.value || null;
                         try {
@@ -800,7 +800,7 @@ function LeadDetailPage() {
                       placeholder="Nome da tag..."
                       value={newTagName}
                       onChange={(e) => setNewTagName(e.target.value)}
-                      className="h-8 text-xs rounded-[var(--radius-card)]"
+                      className="rounded-[var(--radius-card)]"
                     />
 
                     <div className="flex flex-wrap gap-1.5">
@@ -994,7 +994,7 @@ function LeadDetailPage() {
                           required
                           value={paxForm.full_name}
                           onChange={(e) => setPaxForm({ ...paxForm, full_name: e.target.value })}
-                          className="h-9 text-xs"
+                          
                         />
                       </Field>
                       <div className="grid grid-cols-2 gap-3">
@@ -1002,7 +1002,7 @@ function LeadDetailPage() {
                           <Input
                             value={paxForm.document}
                             onChange={(e) => setPaxForm({ ...paxForm, document: e.target.value })}
-                            className="h-9 text-xs"
+                            
                           />
                         </Field>
                         <Field label="Data de Nascimento">
@@ -1010,7 +1010,7 @@ function LeadDetailPage() {
                             type="date"
                             value={paxForm.birth_date}
                             onChange={(e) => setPaxForm({ ...paxForm, birth_date: e.target.value })}
-                            className="h-9 text-xs"
+                            
                           />
                         </Field>
                       </div>
@@ -1020,14 +1020,14 @@ function LeadDetailPage() {
                             type="email"
                             value={paxForm.email}
                             onChange={(e) => setPaxForm({ ...paxForm, email: e.target.value })}
-                            className="h-9 text-xs"
+                            
                           />
                         </Field>
                         <Field label="WhatsApp / Telefone">
                           <Input
                             value={paxForm.phone}
                             onChange={(e) => setPaxForm({ ...paxForm, phone: e.target.value })}
-                            className="h-9 text-xs"
+                            
                           />
                         </Field>
                       </div>
@@ -1035,7 +1035,7 @@ function LeadDetailPage() {
                         <Select
                           value={paxForm.relationship}
                           onChange={(e) => setPaxForm({ ...paxForm, relationship: e.target.value })}
-                          className="h-9 text-xs bg-background"
+                          
                         >
                           <option value="spouse">Cônjuge</option>
                           <option value="child">Filho(a)</option>
@@ -1109,7 +1109,7 @@ function LeadDetailPage() {
                           onChange={(e) =>
                             setMeetingForm({ ...meetingForm, title: e.target.value })
                           }
-                          className="h-9 text-xs"
+                          
                         />
                       </Field>
                       <Field label="Descrição / Notas">
@@ -1119,7 +1119,7 @@ function LeadDetailPage() {
                           onChange={(e) =>
                             setMeetingForm({ ...meetingForm, description: e.target.value })
                           }
-                          className="h-9 text-xs"
+                          
                         />
                       </Field>
                       <div className="grid grid-cols-2 gap-3">
@@ -1131,7 +1131,7 @@ function LeadDetailPage() {
                             onChange={(e) =>
                               setMeetingForm({ ...meetingForm, scheduled_at: e.target.value })
                             }
-                            className="h-9 text-xs"
+                            
                           />
                         </Field>
                         <Field label="Duração (minutos)">
@@ -1145,7 +1145,7 @@ function LeadDetailPage() {
                                 duration_minutes: parseInt(e.target.value) || 30,
                               })
                             }
-                            className="h-9 text-xs"
+                            
                           />
                         </Field>
                       </div>
@@ -1155,7 +1155,7 @@ function LeadDetailPage() {
                           onChange={(e) =>
                             setMeetingForm({ ...meetingForm, meeting_type: e.target.value })
                           }
-                          className="h-9 text-xs bg-background"
+                          
                         >
                           <option value="call">Chamada de Voz / Telefone</option>
                           <option value="video">Vídeochamada (Google Meet / Zoom)</option>
@@ -1339,7 +1339,7 @@ function LeadDetailPage() {
                     <span className="text-[10px] text-muted-foreground mt-0.5">
                       PDF, Imagens, Documentos de viagem
                     </span>
-                    <input
+                    <Input
                       type="file"
                       disabled={uploading}
                       onChange={handleFileUpload}
@@ -1456,7 +1456,7 @@ function LeadDetailPage() {
                     onChange={(e) =>
                       setClientPayload({ ...clientPayload, full_name: e.target.value })
                     }
-                    className="h-9 text-xs"
+                    
                   />
                 </Field>
                 <div className="grid grid-cols-2 gap-3">
@@ -1468,7 +1468,7 @@ function LeadDetailPage() {
                       onChange={(e) =>
                         setClientPayload({ ...clientPayload, document: e.target.value })
                       }
-                      className="h-9 text-xs"
+                      
                     />
                   </Field>
                   <Field label="Data de Nascimento">
@@ -1478,7 +1478,7 @@ function LeadDetailPage() {
                       onChange={(e) =>
                         setClientPayload({ ...clientPayload, birth_date: e.target.value })
                       }
-                      className="h-9 text-xs"
+                      
                     />
                   </Field>
                 </div>
@@ -1490,7 +1490,7 @@ function LeadDetailPage() {
                       onChange={(e) =>
                         setClientPayload({ ...clientPayload, email: e.target.value })
                       }
-                      className="h-9 text-xs"
+                      
                     />
                   </Field>
                   <Field label="WhatsApp / Telefone">
@@ -1499,7 +1499,7 @@ function LeadDetailPage() {
                       onChange={(e) =>
                         setClientPayload({ ...clientPayload, phone: e.target.value })
                       }
-                      className="h-9 text-xs"
+                      
                     />
                   </Field>
                 </div>
@@ -1511,18 +1511,18 @@ function LeadDetailPage() {
                   </span>
                   <div className="flex flex-wrap gap-4 text-xs">
                     <label className="flex items-center gap-2 cursor-pointer">
-                      <input
+                      <Input
                         type="checkbox"
                         checked={clientPayload.pcd}
                         onChange={(e) =>
                           setClientPayload({ ...clientPayload, pcd: e.target.checked })
                         }
-                        className="h-4 w-4 rounded border-border cursor-pointer"
+                        className="h-4 w-4 rounded cursor-pointer"
                       />
                       <span>PCD</span>
                     </label>
                     <label className="flex items-center gap-2 cursor-pointer">
-                      <input
+                      <Input
                         type="checkbox"
                         checked={clientPayload.reduced_mobility}
                         onChange={(e) =>
@@ -1531,18 +1531,18 @@ function LeadDetailPage() {
                             reduced_mobility: e.target.checked,
                           })
                         }
-                        className="h-4 w-4 rounded border-border cursor-pointer"
+                        className="h-4 w-4 rounded cursor-pointer"
                       />
                       <span>Mobilidade Reduzida</span>
                     </label>
                     <label className="flex items-center gap-2 cursor-pointer">
-                      <input
+                      <Input
                         type="checkbox"
                         checked={clientPayload.autism}
                         onChange={(e) =>
                           setClientPayload({ ...clientPayload, autism: e.target.checked })
                         }
-                        className="h-4 w-4 rounded border-border cursor-pointer"
+                        className="h-4 w-4 rounded cursor-pointer"
                       />
                       <span>Espectro Autista (TEA)</span>
                     </label>
@@ -1555,7 +1555,7 @@ function LeadDetailPage() {
                       onChange={(e) =>
                         setClientPayload({ ...clientPayload, health_notes: e.target.value })
                       }
-                      className="text-xs"
+                      
                     />
                   </Field>
                 </div>

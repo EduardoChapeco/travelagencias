@@ -4,6 +4,7 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { UploadCloud, Image as ImageIcon, Check, Loader2, X } from "lucide-react";
 import { useAgency } from "@/lib/agency-context";
 import { Button } from "@/components/ui/button";
+import { FormInput as Input } from "@/components/ui/input";
 
 export function MediaLibraryPicker({
   open,
@@ -82,7 +83,7 @@ export function MediaLibraryPicker({
           ) : (
             <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 gap-4">
               <label className="relative flex aspect-square cursor-pointer flex-col items-center justify-center rounded-[var(--radius-card)] border-2 border-dashed border-border hover:border-brand/50 hover:bg-surface-alt transition-colors">
-                <input
+                <Input
                   type="file"
                   accept="image/*"
                   className="hidden"

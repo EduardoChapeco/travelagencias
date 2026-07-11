@@ -15,6 +15,8 @@ import {
 } from "lucide-react";
 import { searchUnsplashPhoto } from "@/lib/unsplash";
 import { Button } from "@/components/ui/button";
+import { FormInput as Input } from "@/components/ui/input";
+import { NativeSelect as Select } from "@/components/ui/select";
 
 export const Route = createFileRoute("/builder/ai")({
   head: () => ({
@@ -293,17 +295,17 @@ function AISiteBuilder() {
               <label className="text-xs font-semibold text-muted-foreground">
                 Agência de Destino
               </label>
-              <select
+              <Select
                 value={selectedAgencyId}
                 onChange={(e) => setSelectedAgencyId(e.target.value)}
-                className="w-full h-9 px-3 rounded-[var(--radius-card)] border-none glass-card border-none text-xs font-medium focus:border-brand"
+                className="w-full rounded-[var(--radius-card)] border-none glass-card border-none font-medium focus:border-brand"
               >
                 {userAgencies.map((ua: any) => (
                   <option key={ua.agency_id} value={ua.agency_id}>
                     {ua.agencies.name}
                   </option>
                 ))}
-              </select>
+              </Select>
             </div>
           ) : (
             <div className="p-3 bg-destructive/5 border border-destructive/20 rounded-[var(--radius-card)] text-xs text-destructive flex gap-2">
@@ -427,13 +429,13 @@ function AISiteBuilder() {
 
         {/* Input Bar */}
         <div className="p-4 border-t border-border glass-card border-none shrink-0 flex gap-2">
-          <input
+          <Input
             type="text"
             placeholder="Descreva o site de viagens que você deseja criar..."
             value={input}
             onChange={(e) => setInput(e.target.value)}
             disabled={loading || !selectedAgencyId}
-            className="flex-1 h-10 px-4 rounded-[var(--radius-card)] border-none glass-card border-none text-xs focus:outline-none focus:border-brand disabled:opacity-50"
+            className="flex-1 rounded-[var(--radius-card)] border-none glass-card border-none focus:border-brand"
             onKeyDown={(e) => e.key === "Enter" && handleSend()}
           />
           <Button

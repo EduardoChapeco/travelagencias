@@ -9,6 +9,9 @@ import { Sparkles, Loader2, Search } from "lucide-react";
 import { toast } from "sonner";
 import { refineItineraryText } from "@/services/proposals";
 import { Button } from "@/components/ui/button";
+import { FormInput as Input } from "@/components/ui/input";
+import { NativeSelect as Select } from "@/components/ui/select";
+import { FormTextarea as Textarea } from "@/components/ui/textarea";
 
 interface Props {
   draft: Proposal;
@@ -98,9 +101,8 @@ export function SectionItinerary({ draft, save }: Props) {
             </div>
           </div>
           <L label="Descrição">
-            <textarea
-              className={SMALL_INPUT + " h-20 resize-none py-2 leading-relaxed"}
-              value={d.description}
+            <Textarea
+              className={SMALL_INPUT + " h-20 resize-none leading-relaxed"} value={d.description}
               placeholder="Descreva as atividades deste dia..."
               onChange={(e) => upd(i, { description: e.target.value })}
             />
@@ -122,16 +124,15 @@ export function SectionItinerary({ draft, save }: Props) {
           </div>
           <div className="mt-2">
             <L label="Layout das Imagens">
-              <select
-                className={SMALL_INPUT}
-                value={d.imageLayout || "auto"}
+              <Select
+                className={SMALL_INPUT} value={d.imageLayout || "auto"}
                 onChange={(e) => upd(i, { imageLayout: e.target.value })}
               >
                 <option value="auto">Automático (Baseado na qtde)</option>
                 <option value="none">Nenhuma Imagem</option>
                 <option value="single">Destaque Único</option>
                 <option value="stack">Mosaico (2 a 3)</option>
-              </select>
+              </Select>
             </L>
           </div>
           <div className="mt-2 space-y-2 border-t border-border/50 pt-3">
@@ -148,7 +149,7 @@ export function SectionItinerary({ draft, save }: Props) {
                 </Button>
                 <label className="flex h-6 cursor-pointer items-center justify-center rounded bg-brand/10 px-2 text-[10px] font-bold text-brand hover:bg-brand/20 transition-colors">
                   {uploadingImage === i ? "Enviando..." : "+ Fazer Upload"}
-                  <input
+                  <Input
                     type="file"
                     accept="image/*"
                     className="hidden"
@@ -211,9 +212,8 @@ export function SectionItinerary({ draft, save }: Props) {
             ) : (
               <div className="text-[10px] text-muted-foreground/60 italic">Nenhuma imagem. As URLs também podem ser coladas abaixo.</div>
             )}
-            <textarea
-              className={SMALL_INPUT + " h-10 resize-none py-1.5 text-xs"}
-              value={(d.images ?? []).join(",\n")}
+            <Textarea
+              className={SMALL_INPUT + " resize-none py-1.5 text-xs"} value={(d.images ?? []).join(",\n")}
               placeholder="Ou cole URLs de imagens aqui (separadas por vírgula)..."
               onChange={(e) => upd(i, { images: e.target.value.split(",").map(url => url.trim()).filter(Boolean) })}
             />

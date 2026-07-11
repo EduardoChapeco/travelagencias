@@ -612,7 +612,7 @@ function DestinationIntelligencePage() {
                   <Globe className="h-3.5 w-3.5" /> Visto & Entrada
                 </div>
                 <div className="flex items-center gap-2">
-                  <input
+                  <Input
                     type="checkbox"
                     id="visa_required"
                     checked={form.visa_required ?? false}

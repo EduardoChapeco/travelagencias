@@ -98,7 +98,7 @@ export function NewActivity({
       <Select
         value={type}
         onChange={(e) => setType(e.target.value)}
-        className="w-32 border-0 bg-transparent text-xs focus:ring-0 text-muted-foreground"
+        className="w-32 border-0 focus:ring-0"
       >
         {ACTIVITY_TYPES.map((t) => (
           <option key={t.v} value={t.v}>
@@ -112,7 +112,7 @@ export function NewActivity({
           placeholder="Registrar um comentário, ligação ou e-mail..."
           value={content}
           onChange={(e) => setContent(e.target.value)}
-          className="border-0 bg-transparent focus:ring-0 resize-none py-2 min-h-[38px] text-xs"
+          className="border-0 focus:ring-0 resize-none min-h-[38px]"
         />
       </div>
       <Button
@@ -240,7 +240,7 @@ function ActivityItem({ activity, onChanged }: { activity: Activity; onChanged: 
               rows={2}
               value={content}
               onChange={(e) => setContent(e.target.value)}
-              className="rounded-2xl border-border text-xs"
+              
             />
             <div className="flex justify-end gap-1.5">
               <Button

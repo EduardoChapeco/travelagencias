@@ -155,7 +155,7 @@ function ProposalsList() {
                   setPage(1);
                 }}
               >
-                <SelectTrigger className="h-7 text-[11px] font-semibold bg-transparent hover:bg-white/10 rounded-full text-os-muted hover:text-os border-white/10 px-2 cursor-pointer transition-colors focus:ring-0">
+                <SelectTrigger className="h-7 text-[11px] font-semibold hover:bg-white/10 rounded-full text-os-muted hover:text-os border-white/10 px-2 cursor-pointer focus:ring-0">
                   <SelectValue placeholder="Todos Status" />
                 </SelectTrigger>
                 <SelectContent>

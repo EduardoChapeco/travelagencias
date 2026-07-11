@@ -6,6 +6,7 @@ import { fetchAdminAuditLogs } from "@/services/admin";
 import { PageHeader, EmptyState } from "@/components/shell/PageHeader";
 import { GhostButton } from "@/components/ui/button";
 import { fmtDate } from "@/lib/formatters";
+import { NativeSelect as Select } from "@/components/ui/select";
 
 export const Route = createFileRoute("/admin/audit")({
   head: () => ({ meta: [{ title: "Auditoria · Admin" }] }),
@@ -51,13 +52,13 @@ function Page() {
           <div className="flex flex-wrap items-center gap-2">
             <div className="relative flex items-center">
               <Filter className="absolute left-2.5 h-3.5 w-3.5 text-muted-foreground" />
-              <select
+              <Select
                 value={filterAction}
                 onChange={(e) => {
                   setFilterAction(e.target.value);
                   setPage(1);
                 }}
-                className="h-9 w-40 rounded-full border-none glass-card border-none pl-8 pr-8 text-xs text-foreground focus:border-brand focus:outline-none"
+                className="w-40 rounded-full border-none glass-card border-none pl-8 pr-8 focus:border-brand"
               >
                 <option value="">Todas as Ações</option>
                 <option value="created_by_admin">created_by_admin</option>
@@ -68,23 +69,23 @@ function Page() {
                 </option>
                 <option value="superadmin_provisioned_trial">superadmin_provisioned_trial</option>
                 <option value="plan_updated">plan_updated</option>
-              </select>
+              </Select>
             </div>
 
             <div className="relative flex items-center">
               <Filter className="absolute left-2.5 h-3.5 w-3.5 text-muted-foreground" />
-              <select
+              <Select
                 value={filterEntity}
                 onChange={(e) => {
                   setFilterEntity(e.target.value);
                   setPage(1);
                 }}
-                className="h-9 w-40 rounded-full border-none glass-card border-none pl-8 pr-8 text-xs text-foreground focus:border-brand focus:outline-none"
+                className="w-40 rounded-full border-none glass-card border-none pl-8 pr-8 focus:border-brand"
               >
                 <option value="">Todas Entidades</option>
                 <option value="agency">agency</option>
                 <option value="agency_subscription">agency_subscription</option>
-              </select>
+              </Select>
             </div>
 
             {hasActiveFilters && (

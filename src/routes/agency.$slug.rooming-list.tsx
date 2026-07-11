@@ -63,6 +63,7 @@ import {
   exportRoomingListPdf,
 } from "@/lib/exportRoomingList";
 import { toast } from "sonner";
+import { NativeSelect as Select } from "@/components/ui/select";
 
 export const Route = createFileRoute("/agency/$slug/rooming-list")({
   head: ({ context }: any) => ({ meta: [{ title: `Rooming List · ${context?.brand?.platform_name || 'Turis'}` }] }),
@@ -711,57 +712,57 @@ function TourPanel({ tour, slug }: TourPanelProps) {
                 <form onSubmit={(e) => addRoomMutation.mutate(e)} className="space-y-3">
                   <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
                     <Field label="Número/Nome *">
-                      <input
+                      <Input
                         value={newRoom.room_number}
                         onChange={(e) => setNewRoom({ ...newRoom, room_number: e.target.value })}
                         placeholder="ex: 201 ou Master Suite"
-                        className="h-8 rounded border-none glass-card border-none px-2.5 text-xs text-foreground focus:border-brand focus:outline-none"
+                        className="rounded border-none glass-card border-none px-2.5 focus:border-brand"
                         required
                       />
                     </Field>
                     <Field label="Tipo *">
-                      <select
+                      <Select
                         value={newRoom.room_type}
                         onChange={(e) => setNewRoom({ ...newRoom, room_type: e.target.value })}
-                        className="h-8 rounded border-none glass-card border-none px-2.5 text-xs text-foreground focus:border-brand focus:outline-none"
+                        className="rounded border-none glass-card border-none px-2.5 focus:border-brand"
                       >
                         {Object.entries(ROOM_TYPE_LABEL).map(([v, l]) => (
                           <option key={v} value={v}>
                             {l}
                           </option>
                         ))}
-                      </select>
+                      </Select>
                     </Field>
                     <Field label="Hotel/Pousada">
-                      <input
+                      <Input
                         value={newRoom.hotel_name}
                         onChange={(e) => setNewRoom({ ...newRoom, hotel_name: e.target.value })}
                         placeholder="Nome do hotel"
-                        className="h-8 rounded border-none glass-card border-none px-2.5 text-xs text-foreground focus:border-brand focus:outline-none"
+                        className="rounded border-none glass-card border-none px-2.5 focus:border-brand"
                       />
                     </Field>
                     <Field label="Check-in">
-                      <input
+                      <Input
                         type="date"
                         value={newRoom.checkin_date}
                         onChange={(e) => setNewRoom({ ...newRoom, checkin_date: e.target.value })}
-                        className="h-8 rounded border-none glass-card border-none px-2.5 text-xs text-foreground focus:border-brand focus:outline-none"
+                        className="rounded border-none glass-card border-none px-2.5 focus:border-brand"
                       />
                     </Field>
                     <Field label="Check-out">
-                      <input
+                      <Input
                         type="date"
                         value={newRoom.checkout_date}
                         onChange={(e) => setNewRoom({ ...newRoom, checkout_date: e.target.value })}
-                        className="h-8 rounded border-none glass-card border-none px-2.5 text-xs text-foreground focus:border-brand focus:outline-none"
+                        className="rounded border-none glass-card border-none px-2.5 focus:border-brand"
                       />
                     </Field>
                     <Field label="Notas">
-                      <input
+                      <Input
                         value={newRoom.notes}
                         onChange={(e) => setNewRoom({ ...newRoom, notes: e.target.value })}
                         placeholder="Observações..."
-                        className="h-8 rounded border-none glass-card border-none px-2.5 text-xs text-foreground focus:border-brand focus:outline-none"
+                        className="rounded border-none glass-card border-none px-2.5 focus:border-brand"
                       />
                     </Field>
                   </div>
@@ -885,7 +886,7 @@ function TourPanel({ tour, slug }: TourPanelProps) {
 
                         {/* Dropdown helper to assign passenger quickly */}
                         {!isFull && (
-                          <select
+                          <Select
                             defaultValue=""
                             onChange={(e) => {
                               if (e.target.value) {
@@ -893,7 +894,7 @@ function TourPanel({ tour, slug }: TourPanelProps) {
                                 e.target.value = "";
                               }
                             }}
-                            className="w-full h-7 rounded border border-dashed border-brand/35 bg-transparent text-[10px] text-muted-foreground focus:outline-none focus:border-brand cursor-pointer px-1"
+                            className="w-full h-7 rounded border-dashed border-brand/35 text-[10px] focus:border-brand cursor-pointer px-1"
                           >
                             <option value="">+ Alocar Passageiro...</option>
                             {unallocated.map((p: any) => (
@@ -901,7 +902,7 @@ function TourPanel({ tour, slug }: TourPanelProps) {
                                 {p.passenger_name}
                               </option>
                             ))}
-                          </select>
+                          </Select>
                         )}
                       </div>
 
@@ -990,68 +991,68 @@ function TourPanel({ tour, slug }: TourPanelProps) {
                 </h4>
                 <form onSubmit={(e) => updateRoomMutation.mutate(e)} className="space-y-4">
                   <Field label="Número / Nome *">
-                    <input
+                    <Input
                       value={editingRoom.room_number}
                       onChange={(e) =>
                         setEditingRoom({ ...editingRoom, room_number: e.target.value })
                       }
-                      className="h-9 w-full rounded border-none glass-card border-none px-2.5 text-xs text-foreground focus:border-brand focus:outline-none"
+                      className="w-full rounded border-none glass-card border-none px-2.5 focus:border-brand"
                       required
                     />
                   </Field>
                   <div className="grid grid-cols-2 gap-3">
                     <Field label="Tipo *">
-                      <select
+                      <Select
                         value={editingRoom.room_type}
                         onChange={(e) =>
                           setEditingRoom({ ...editingRoom, room_type: e.target.value })
                         }
-                        className="h-9 w-full rounded border-none glass-card border-none px-2.5 text-xs text-foreground focus:border-brand focus:outline-none"
+                        className="w-full rounded border-none glass-card border-none px-2.5 focus:border-brand"
                       >
                         {Object.entries(ROOM_TYPE_LABEL).map(([v, l]) => (
                           <option key={v} value={v}>
                             {l}
                           </option>
                         ))}
-                      </select>
+                      </Select>
                     </Field>
                     <Field label="Hotel/Pousada">
-                      <input
+                      <Input
                         value={editingRoom.hotel_name || ""}
                         onChange={(e) =>
                           setEditingRoom({ ...editingRoom, hotel_name: e.target.value })
                         }
-                        className="h-9 w-full rounded border-none glass-card border-none px-2.5 text-xs text-foreground focus:border-brand focus:outline-none"
+                        className="w-full rounded border-none glass-card border-none px-2.5 focus:border-brand"
                       />
                     </Field>
                   </div>
                   <div className="grid grid-cols-2 gap-3">
                     <Field label="Check-in">
-                      <input
+                      <Input
                         type="date"
                         value={editingRoom.checkin_date || ""}
                         onChange={(e) =>
                           setEditingRoom({ ...editingRoom, checkin_date: e.target.value })
                         }
-                        className="h-9 w-full rounded border-none glass-card border-none px-2.5 text-xs text-foreground focus:border-brand focus:outline-none"
+                        className="w-full rounded border-none glass-card border-none px-2.5 focus:border-brand"
                       />
                     </Field>
                     <Field label="Check-out">
-                      <input
+                      <Input
                         type="date"
                         value={editingRoom.checkout_date || ""}
                         onChange={(e) =>
                           setEditingRoom({ ...editingRoom, checkout_date: e.target.value })
                         }
-                        className="h-9 w-full rounded border-none glass-card border-none px-2.5 text-xs text-foreground focus:border-brand focus:outline-none"
+                        className="w-full rounded border-none glass-card border-none px-2.5 focus:border-brand"
                       />
                     </Field>
                   </div>
                   <Field label="Notas / Obs.">
-                    <input
+                    <Input
                       value={editingRoom.notes || ""}
                       onChange={(e) => setEditingRoom({ ...editingRoom, notes: e.target.value })}
-                      className="h-9 w-full rounded border-none glass-card border-none px-2.5 text-xs text-foreground focus:border-brand focus:outline-none"
+                      className="w-full rounded border-none glass-card border-none px-2.5 focus:border-brand"
                       placeholder="Observações..."
                     />
                   </Field>

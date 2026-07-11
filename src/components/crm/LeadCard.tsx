@@ -13,6 +13,7 @@ import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import { type Lead } from "@/services/crm";
 import { Button } from "@/components/ui/button";
+import { NativeSelect as Select } from "@/components/ui/select";
 
 type LeadCardProps = {
   lead: Lead;
@@ -229,8 +230,8 @@ export function LeadCardView({
           onPointerDown={(e) => e.stopPropagation()}
         >
           {transferMode ? (
-            <select
-              className="text-[10px] h-6 rounded border border-border bg-background px-1 focus:outline-brand"
+            <Select
+              className="text-[10px] h-6 rounded px-1 focus:outline-brand"
               onChange={(e) => {
                 if (e.target.value && onTransfer) {
                   onTransfer(lead.id, e.target.value);
@@ -249,7 +250,7 @@ export function LeadCardView({
                     </option>
                   ),
               )}
-            </select>
+            </Select>
           ) : (
             <>
               {lead.phone && (

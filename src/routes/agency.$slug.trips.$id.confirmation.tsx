@@ -32,6 +32,8 @@ import {
 import { toast } from "sonner";
 import { logTripAudit } from "@/services/audit";
 import { Button } from "@/components/ui/button";
+import { FormInput as Input } from "@/components/ui/input";
+import { NativeSelect as Select } from "@/components/ui/select";
 
 export const Route = createFileRoute("/agency/$slug/trips/$id/confirmation")({
   head: ({ context }: any) => ({ meta: [{ title: `Confirmação de Reserva · ${context?.brand?.platform_name || 'Turis'}` }] }),
@@ -352,17 +354,17 @@ function TripConfirmationPage() {
               <label className="text-[10px] font-bold text-muted-foreground uppercase">
                 Tipo de Serviço
               </label>
-              <select
+              <Select
                 value={form.item_type}
                 onChange={(e) => setForm((f) => ({ ...f, item_type: e.target.value }))}
-                className="w-full text-xs border-none rounded-full px-2 py-2 glass-card border-none focus:outline-none focus:ring-1 focus:ring-brand"
+                className="w-full border-none rounded-full px-2 glass-card border-none focus:ring-brand"
               >
                 {Object.entries(ITEM_TYPE_LABELS).map(([k, v]) => (
                   <option key={k} value={k}>
                     {v}
                   </option>
                 ))}
-              </select>
+              </Select>
             </div>
 
             {/* Fornecedor */}
@@ -370,12 +372,12 @@ function TripConfirmationPage() {
               <label className="text-[10px] font-bold text-muted-foreground uppercase">
                 Fornecedor / Operadora *
               </label>
-              <input
+              <Input
                 type="text"
                 placeholder="Ex: LATAM Airlines, Sheraton"
                 value={form.provider_name}
                 onChange={(e) => setForm((f) => ({ ...f, provider_name: e.target.value }))}
-                className="w-full text-xs border-none rounded-full px-2 py-2 glass-card border-none focus:outline-none focus:ring-1 focus:ring-brand"
+                className="w-full border-none rounded-full px-2 glass-card border-none focus:ring-brand"
               />
             </div>
 
@@ -384,7 +386,7 @@ function TripConfirmationPage() {
               <label className="text-[10px] font-bold text-muted-foreground uppercase">
                 Código Localizador *
               </label>
-              <input
+              <Input
                 type="text"
                 placeholder="Ex: QPWO12"
                 value={form.locator_code}
@@ -394,7 +396,7 @@ function TripConfirmationPage() {
                     locator_code: e.target.value.toUpperCase(),
                   }))
                 }
-                className="w-full text-xs border-none rounded-full px-2 py-2 glass-card border-none font-mono tracking-widest focus:outline-none focus:ring-1 focus:ring-brand"
+                className="w-full border-none rounded-full px-2 glass-card border-none font-mono tracking-widest focus:ring-brand"
               />
             </div>
 
@@ -403,12 +405,12 @@ function TripConfirmationPage() {
               <label className="text-[10px] font-bold text-muted-foreground uppercase">
                 Detalhes da Reserva
               </label>
-              <input
+              <Input
                 type="text"
                 placeholder="Ex: Apartamento Duplo Vista Mar — Check-in 15h"
                 value={form.details}
                 onChange={(e) => setForm((f) => ({ ...f, details: e.target.value }))}
-                className="w-full text-xs border-none rounded-full px-2 py-2 glass-card border-none focus:outline-none focus:ring-1 focus:ring-brand"
+                className="w-full border-none rounded-full px-2 glass-card border-none focus:ring-brand"
               />
             </div>
 
@@ -417,11 +419,11 @@ function TripConfirmationPage() {
               <label className="text-[10px] font-bold text-muted-foreground uppercase">
                 Data de Utilização
               </label>
-              <input
+              <Input
                 type="date"
                 value={form.service_date}
                 onChange={(e) => setForm((f) => ({ ...f, service_date: e.target.value }))}
-                className="w-full text-xs border-none rounded-full px-2 py-2 glass-card border-none focus:outline-none focus:ring-1 focus:ring-brand"
+                className="w-full border-none rounded-full px-2 glass-card border-none focus:ring-brand"
               />
             </div>
 
@@ -430,12 +432,12 @@ function TripConfirmationPage() {
               <label className="text-[10px] font-bold text-muted-foreground uppercase">
                 Notas Internas (opcional)
               </label>
-              <input
+              <Input
                 type="text"
                 placeholder="Observações internas para a equipe da agência"
                 value={form.notes}
                 onChange={(e) => setForm((f) => ({ ...f, notes: e.target.value }))}
-                className="w-full text-xs border-none rounded-full px-2 py-2 glass-card border-none focus:outline-none focus:ring-1 focus:ring-brand"
+                className="w-full border-none rounded-full px-2 glass-card border-none focus:ring-brand"
               />
             </div>
           </div>

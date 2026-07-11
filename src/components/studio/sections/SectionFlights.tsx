@@ -17,6 +17,8 @@ import { getAgencyMarkup, calculateMarkup } from "@/utils/pricing";
 import { infotravelSearchFlights } from "@/services/infotravel";
 import { toast } from "sonner";
 import { PrimaryButton , Button } from "@/components/ui/button";
+import { FormInput as Input } from "@/components/ui/input";
+import { NativeSelect as Select } from "@/components/ui/select";
 import {
   SupplierAutocomplete,
   type SupplierOption,
@@ -178,9 +180,8 @@ export function SectionFlights({ draft, save }: Props) {
           </div>
           <div className="grid grid-cols-2 gap-2">
             <L label="Bagagem">
-              <select
-                className={SMALL_INPUT}
-                value={f.baggage_rules}
+              <Select
+                className={SMALL_INPUT} value={f.baggage_rules}
                 onChange={(e) => upd(i, { baggage_rules: e.target.value })}
               >
                 <option value="">Sem bagagem</option>
@@ -188,18 +189,17 @@ export function SectionFlights({ draft, save }: Props) {
                 <option value="23kg">23kg</option>
                 <option value="32kg">32kg</option>
                 <option value="2 volumes">2 volumes</option>
-              </select>
+              </Select>
             </L>
             <L label="Paradas">
-              <select
-                className={SMALL_INPUT}
-                value={f.stops}
+              <Select
+                className={SMALL_INPUT} value={f.stops}
                 onChange={(e) => upd(i, { stops: parseInt(e.target.value) })}
               >
                 <option value={0}>Direto</option>
                 <option value={1}>1 parada</option>
                 <option value={2}>2 paradas</option>
-              </select>
+              </Select>
             </L>
           </div>
           <div className="grid grid-cols-1 gap-2 mt-2 pt-2 border-t border-border/30">
@@ -247,9 +247,8 @@ export function SectionFlights({ draft, save }: Props) {
             <div className="space-y-3 flex-1 overflow-y-auto no-scrollbar pr-1">
               <div className="grid grid-cols-2 gap-2">
                 <L label="Origem (IATA)">
-                  <input
-                    className={SMALL_INPUT}
-                    value={searchParams.origin}
+                  <Input
+                    className={SMALL_INPUT} value={searchParams.origin}
                     onChange={(e) =>
                       setSearchParams({ ...searchParams, origin: e.target.value.toUpperCase() })
                     }
@@ -257,9 +256,8 @@ export function SectionFlights({ draft, save }: Props) {
                   />
                 </L>
                 <L label="Destino (IATA)">
-                  <input
-                    className={SMALL_INPUT}
-                    value={searchParams.destination}
+                  <Input
+                    className={SMALL_INPUT} value={searchParams.destination}
                     onChange={(e) =>
                       setSearchParams({
                         ...searchParams,
@@ -271,10 +269,9 @@ export function SectionFlights({ draft, save }: Props) {
                 </L>
                 <div className="col-span-2">
                   <L label="Data do Voo">
-                    <input
+                    <Input
                       type="date"
-                      className={SMALL_INPUT}
-                      value={searchParams.date}
+                      className={SMALL_INPUT} value={searchParams.date}
                       onChange={(e) => setSearchParams({ ...searchParams, date: e.target.value })}
                     />
                   </L>

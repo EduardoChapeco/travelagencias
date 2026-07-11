@@ -19,6 +19,7 @@ import { DataTable, DataTableColumnHeader } from "@/components/ui/data-table";
 import { ColumnDef } from "@tanstack/react-table";
 import { NewTripWizard } from "@/components/trips/NewTripWizard";
 import { infotravelImportBooking } from "@/services/infotravel";
+import { FormInput as Input } from "@/components/ui/input";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -624,12 +625,12 @@ function TripsList() {
                 <label className="text-[10px] uppercase tracking-wider font-bold text-muted-foreground block mb-1">
                   Localizador / ID da Reserva
                 </label>
-                <input
+                <Input
                   type="text"
                   value={bookingId}
                   onChange={(e) => setBookingId(e.target.value)}
                   placeholder="Ex: B-998877 ou localizador"
-                  className="h-9 w-full rounded-full border-none glass-card border-none px-3 text-xs outline-none focus:border-brand text-foreground"
+                  className="w-full rounded-full border-none glass-card border-none focus:border-brand"
                 />
                 <p className="text-[10px] text-muted-foreground mt-1.5 font-sans leading-relaxed">
                   Insira o ID de reserva para importar automaticamente os voos, hotéis, passageiros

@@ -221,8 +221,8 @@ function Layout() {
   return (
     <div className="min-h-screen bg-background flex flex-col" style={brandStyles}>
       {/* Top Navbar */}
-      <header className="sticky top-0 z-50 w-full border-b border-border/40 glass-card border-none/80 backdrop-blur-md">
-        <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-6">
+      <header className="sticky top-0 z-50 w-full border-b border-border glass-toolbar">
+        <div className="mx-auto flex min-h-[var(--ds-toolbar-height)] max-w-7xl items-center justify-between px-6">
           {/* Logo / Brand Name */}
           <div className={headerStyle === "minimal" ? "mx-auto" : "flex items-center gap-3"}>
             <Link to="/p/$agency_slug" params={{ agency_slug }} className="flex items-center gap-3">

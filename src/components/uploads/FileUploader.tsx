@@ -3,6 +3,7 @@ import { Upload, X, FileText, Loader2, Link2 } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
+import { FormInput as Input } from "@/components/ui/input";
 
 type Variant = "image" | "pdf" | "video" | "any";
 
@@ -168,7 +169,7 @@ export function FileUploader({
           >
             Selecionar arquivo
           </label>
-          <input
+          <Input
             ref={inputRef}
             id={inputId}
             type="file"
@@ -179,7 +180,7 @@ export function FileUploader({
           {allowExternalUrl && (
             <div className="mt-1 flex w-full max-w-xs items-center gap-1">
               <Link2 className="h-3 w-3 text-muted-foreground" />
-              <input
+              <Input
                 type="url"
                 placeholder="ou cole uma URL"
                 value={urlDraft}
@@ -190,7 +191,7 @@ export function FileUploader({
                     setUrlDraft("");
                   }
                 }}
-                className="h-7 w-full rounded border border-border bg-surface px-2 text-[11px] outline-none"
+                className="h-7 w-full rounded px-2 text-[11px]"
               />
             </div>
           )}

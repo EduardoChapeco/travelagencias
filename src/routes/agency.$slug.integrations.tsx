@@ -32,6 +32,7 @@ import { NativeSelect as Select } from "@/components/ui/select";
 import { PrimaryButton, GhostButton , Button } from "@/components/ui/button";
 import { StatusBadge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { FormTextarea as Textarea } from "@/components/ui/textarea";
 
 export const Route = createFileRoute("/agency/$slug/integrations")({
   head: ({ context }: any) => ({ meta: [{ title: `Integrações · ${context?.brand?.platform_name || 'Turis'}` }] }),
@@ -491,7 +492,7 @@ function WhatsAppTab({ agencyId }: { agencyId: string }) {
                   : "border-border hover:border-brand/40"
               }`}
             >
-              <input
+              <Input
                 type="radio"
                 className="sr-only"
                 name="provider"
@@ -785,7 +786,7 @@ function ApiKeysTab({ agencyId }: { agencyId: string }) {
                     {k.monthly_limit ? `/${k.monthly_limit}` : ""}
                   </td>
                   <td className="px-3 py-2.5 text-center">
-                    <input
+                    <Input
                       type="checkbox"
                       checked={k.is_active}
                       onChange={(e) => toggle(k.id, e.target.checked)}
@@ -890,7 +891,7 @@ function AiAgentSettingsSection({ agencyId }: { agencyId: string }) {
             Se ativado, o assistente responderá diretamente às mensagens recebidas via WhatsApp.
           </p>
         </div>
-        <input
+        <Input
           type="checkbox"
           checked={responderActive}
           onChange={(e) => setResponderActive(e.target.checked)}
@@ -912,12 +913,12 @@ function AiAgentSettingsSection({ agencyId }: { agencyId: string }) {
       </div>
 
       <Field label="Instruções e Regras de Negócio do Assistente">
-        <textarea
+        <Textarea
           rows={5}
           value={context}
           onChange={(e) => setContext(e.target.value)}
           placeholder="Ex: Somos uma agência focada em ecoturismo de luxo. Sempre chame o cliente pelo primeiro nome. Destaque que nossos pacotes incluem guias bilíngues..."
-          className="w-full text-xs glass bg-white/5 border-white/10 border-none/60 rounded-[var(--radius-card)] px-4 py-2.5 resize-none focus:ring-0 focus:border-brand/50 font-sans leading-relaxed text-foreground"
+          className="w-full glass bg-white/5 border-white/10 border-none/60 rounded-[var(--radius-card)] py-2.5 resize-none focus:ring-0 focus:border-brand/50 font-sans leading-relaxed"
         />
         <p className="text-[10px] text-muted-foreground mt-0.5 font-sans">
           Adicione diretrizes operacionais, regras de negócio ou ofertas exclusivas da sua agência.

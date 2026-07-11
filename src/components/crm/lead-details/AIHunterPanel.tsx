@@ -129,7 +129,7 @@ export function AIHunterPanel({ leadId, agencyId }: { leadId: string; agencyId: 
 
       // 0. Obter telefone do Lead
       const { data: lead } = await (supabase as any)
-        .from("crm_leads")
+        .from("leads")
         .select("phone")
         .eq("id", leadId)
         .maybeSingle();

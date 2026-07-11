@@ -3,6 +3,7 @@ import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { MessageCircle, Check, AlertCircle, Clock, Paperclip, Send } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { FormTextarea as Textarea } from "@/components/ui/textarea";
 
 type OmniMsg = {
   id: string;
@@ -360,8 +361,8 @@ export function OmnichannelChat({
 
       <div className="p-3 border-t border-border bg-surface flex items-end gap-2">
         <Paperclip className="h-5 w-5 text-muted-foreground mb-2.5 shrink-0" />
-        <textarea
-          className="w-full text-sm bg-surface-alt border border-border/60 rounded-[var(--radius-card)] px-4 py-2.5 max-h-32 min-h-[44px] resize-none focus:ring-0 focus:border-brand/50"
+        <Textarea
+          className="w-full border-border/60 rounded-[var(--radius-card)] py-2.5 max-h-32 min-h-[44px] resize-none focus:ring-0 focus:border-brand/50"
           placeholder="Digite uma mensagem..."
           rows={1}
           value={text}

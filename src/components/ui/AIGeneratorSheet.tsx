@@ -133,24 +133,24 @@ Contexto fornecido: ${context}`;
         {tab === "topic" ? (
           <div className="space-y-2">
             <label className="text-sm font-medium text-white/90">Sobre o que você quer escrever?</label>
-            <textarea
+            <Textarea
               placeholder="Ex: Roteiro de 5 dias em Paris para casais..."
               value={topic}
               onChange={(e) => setTopic(e.target.value)}
               rows={5}
-              className="w-full bg-white/5 border border-white/10 rounded-3xl p-4 text-white placeholder:text-white/30 focus:outline-none focus:ring-2 focus:ring-brand-light resize-none"
+              className="w-full bg-white/5 border-white/10 p-4 text-white placeholder:text-white/30 focus:ring-2 focus:ring-brand-light resize-none"
             />
           </div>
         ) : (
           <div className="space-y-4">
             <div className="space-y-2">
               <label className="text-sm font-medium text-white/90">URL do conteúdo base</label>
-              <input
+              <Input
                 placeholder="https://exemplo.com/materia-original"
                 value={url}
                 onChange={(e) => setUrl(e.target.value)}
                 type="url"
-                className="w-full h-12 bg-white/5 border border-white/10 rounded-full px-4 text-white placeholder:text-white/30 focus:outline-none focus:ring-2 focus:ring-brand-light"
+                className="w-full bg-white/5 border-white/10 rounded-full text-white placeholder:text-white/30 focus:ring-2 focus:ring-brand-light"
               />
             </div>
             
@@ -166,16 +166,16 @@ Contexto fornecido: ${context}`;
 
         <div className="space-y-2">
           <label className="text-sm font-medium text-white/90">Tom de Voz</label>
-          <select 
+          <Select 
             value={tone} 
             onChange={(e) => setTone(e.target.value)}
-            className="w-full h-12 bg-white/5 border border-white/10 rounded-full px-4 text-white focus:outline-none focus:ring-2 focus:ring-brand-light appearance-none"
+            className="w-full bg-white/5 border-white/10 rounded-full text-white focus:ring-2 focus:ring-brand-light appearance-none"
           >
             <option value="profissional e engajador" className="bg-neutral-900 text-white">Profissional e Engajador</option>
             <option value="descontraído e aventureiro" className="bg-neutral-900 text-white">Descontraído e Aventureiro</option>
             <option value="luxuoso e exclusivo" className="bg-neutral-900 text-white">Luxuoso e Exclusivo</option>
             <option value="didático e informativo" className="bg-neutral-900 text-white">Didático e Informativo</option>
-          </select>
+          </Select>
         </div>
       </form>
 

@@ -14,6 +14,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { Search } from "lucide-react";
 import { PrimaryButton , Button } from "@/components/ui/button";
 import { toast } from "sonner";
+import { FormInput as Input } from "@/components/ui/input";
 
 interface Props {
   draft: Proposal;
@@ -171,9 +172,8 @@ export function SectionTours({ draft, save }: Props) {
               <div className="flex gap-2 items-end">
                 <div className="flex-1">
                   <L label="Filtro de Busca">
-                    <input
-                      className={SMALL_INPUT}
-                      value={searchTerm}
+                    <Input
+                      className={SMALL_INPUT} value={searchTerm}
                       onChange={(e) => setSearchTerm(e.target.value)}
                       placeholder="Ex: Nordeste, Europa, Itália..."
                       onKeyDown={(e) => e.key === "Enter" && handleSearchPromotions()}

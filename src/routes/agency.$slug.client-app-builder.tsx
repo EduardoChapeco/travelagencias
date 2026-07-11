@@ -20,6 +20,7 @@ import { PrimaryButton , Button } from "@/components/ui/button";
 import { DraggableList, DraggableItem } from "@/components/ui/DraggableList";
 import { UniversalDevicePreview } from "@/components/ui/universal-device-preview";
 import { DeviceSelector } from "@/components/ui/DevicePreview";
+import { FormInput as Input } from "@/components/ui/input";
 
 export const Route = createFileRoute("/agency/$slug/client-app-builder")({
   head: ({ context }: any) => ({ meta: [{ title: `App do Cliente (Builder) · ${context?.brand?.platform_name || 'Turis'}` }] }),
@@ -154,7 +155,7 @@ function ClientAppBuilderPage() {
               <div>
                 <label className="text-xs font-semibold text-muted-foreground uppercase">Cor Primária</label>
                 <div className="flex items-center gap-3 mt-1">
-                  <input
+                  <Input
                     type="color"
                     value={settings.theme_colors.primary}
                     onChange={(e) =>
@@ -163,9 +164,9 @@ function ClientAppBuilderPage() {
                         theme_colors: { ...settings.theme_colors, primary: e.target.value },
                       })
                     }
-                    className="h-10 w-12 rounded cursor-pointer border-0 p-0"
+                    className="w-12 rounded cursor-pointer border-0 p-0"
                   />
-                  <input
+                  <Input
                     type="text"
                     value={settings.theme_colors.primary}
                     onChange={(e) =>
@@ -174,7 +175,7 @@ function ClientAppBuilderPage() {
                         theme_colors: { ...settings.theme_colors, primary: e.target.value },
                       })
                     }
-                    className="flex-1 h-10 px-3 rounded-full border-none bg-background text-sm uppercase"
+                    className="flex-1 rounded-full border-none uppercase"
                   />
                 </div>
               </div>

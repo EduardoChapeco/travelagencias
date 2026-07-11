@@ -879,7 +879,7 @@ function Page() {
                   required
                   value={form.passenger_name}
                   onChange={(e) => setForm({ ...form, passenger_name: e.target.value })}
-                  className="h-11 text-sm rounded-[var(--radius-card)]"
+                  className="rounded-[var(--radius-card)]"
                   placeholder="Nome completo do responsável"
                 />
               </Field>
@@ -891,7 +891,7 @@ function Page() {
                     required
                     value={form.email}
                     onChange={(e) => setForm({ ...form, email: e.target.value })}
-                    className="h-11 text-sm rounded-[var(--radius-card)]"
+                    className="rounded-[var(--radius-card)]"
                     placeholder="voce@exemplo.com"
                   />
                 </Field>
@@ -900,7 +900,7 @@ function Page() {
                     required
                     value={form.phone}
                     onChange={(e) => setForm({ ...form, phone: e.target.value })}
-                    className="h-11 text-sm rounded-[var(--radius-card)]"
+                    className="rounded-[var(--radius-card)]"
                     placeholder="(00) 90000-0000"
                   />
                 </Field>
@@ -911,7 +911,7 @@ function Page() {
                   required
                   value={form.passenger_cpf}
                   onChange={(e) => setForm({ ...form, passenger_cpf: e.target.value })}
-                  className="h-11 text-sm rounded-[var(--radius-card)]"
+                  className="rounded-[var(--radius-card)]"
                   placeholder="000.000.000-00"
                 />
               </Field>
@@ -934,7 +934,7 @@ function Page() {
                             return next;
                           });
                         }}
-                        className="h-10 text-xs rounded-[var(--radius-card)]"
+                        className="rounded-[var(--radius-card)]"
                         placeholder="Nome completo"
                       />
                     </Field>
@@ -946,7 +946,7 @@ function Page() {
                 <Textarea
                   value={form.notes}
                   onChange={(e) => setForm({ ...form, notes: e.target.value })}
-                  className="min-h-[80px] rounded-[var(--radius-card)] text-xs"
+                  className="min-h-[80px] rounded-[var(--radius-card)]"
                   placeholder="Alergias, restrições alimentares, solicitações especiais..."
                 />
               </Field>
@@ -963,7 +963,7 @@ function Page() {
                       : "border-slate-200 bg-slate-50/50",
                 )}
               >
-                <input
+                <Input
                   type="checkbox"
                   id="lgpd_consent"
                   checked={lgpdConsent}
@@ -1070,7 +1070,7 @@ function Page() {
                   <span className="text-xs text-slate-655 block font-semibold">
                     Arraste ou clique para enviar o PDF ou Imagem do Pix
                   </span>
-                  <input
+                  <Input
                     type="file"
                     accept="image/*,application/pdf"
                     className="absolute inset-0 opacity-0 cursor-pointer"

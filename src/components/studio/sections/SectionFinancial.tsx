@@ -2,6 +2,9 @@ import { type Proposal } from "@/services/proposals";
 import { Accordion, L, SMALL_INPUT } from "@/components/proposals/ProposalFormFields";
 import { money } from "@/lib/formatters";
 import { DollarSign } from "lucide-react";
+import { FormInput as Input } from "@/components/ui/input";
+import { NativeSelect as Select } from "@/components/ui/select";
+import { FormTextarea as Textarea } from "@/components/ui/textarea";
 
 interface Props {
   draft: Proposal;
@@ -43,16 +46,15 @@ export function SectionFinancial({ draft, save }: Props) {
         {/* Currency */}
         <div>
           <L label="Moeda">
-            <select
-              className={SMALL_INPUT}
-              value={draft.currency}
+            <Select
+              className={SMALL_INPUT} value={draft.currency}
               onChange={(e) => save({ currency: e.target.value })}
             >
               <option value="BRL">BRL – Real</option>
               <option value="USD">USD – Dólar</option>
               <option value="EUR">EUR – Euro</option>
               <option value="ARS">ARS – Peso Argentino</option>
-            </select>
+            </Select>
           </L>
         </div>
 
@@ -62,7 +64,7 @@ export function SectionFinancial({ draft, save }: Props) {
             Desconto Pix:{" "}
             <strong className="text-foreground">{draft.pix_discount_percent ?? 0}%</strong>
           </label>
-          <input
+          <Input
             type="range"
             min={0}
             max={20}
@@ -76,9 +78,8 @@ export function SectionFinancial({ draft, save }: Props) {
         {/* Installments */}
         <div className="grid grid-cols-2 gap-3">
           <L label="Cartão (máx. parcelas)">
-            <select
-              className={SMALL_INPUT}
-              value={draft.installments_card ?? 1}
+            <Select
+              className={SMALL_INPUT} value={draft.installments_card ?? 1}
               onChange={(e) => save({ installments_card: parseInt(e.target.value) })}
             >
               {Array.from({ length: 12 }, (_, i) => i + 1).map((n) => (
@@ -86,12 +87,11 @@ export function SectionFinancial({ draft, save }: Props) {
                   {n}x
                 </option>
               ))}
-            </select>
+            </Select>
           </L>
           <L label="Boleto (máx. parcelas)">
-            <select
-              className={SMALL_INPUT}
-              value={draft.installments_boleto ?? 1}
+            <Select
+              className={SMALL_INPUT} value={draft.installments_boleto ?? 1}
               onChange={(e) => save({ installments_boleto: parseInt(e.target.value) })}
             >
               {Array.from({ length: 6 }, (_, i) => i + 1).map((n) => (
@@ -99,23 +99,21 @@ export function SectionFinancial({ draft, save }: Props) {
                   {n}x
                 </option>
               ))}
-            </select>
+            </Select>
           </L>
         </div>
 
         {/* Validity & Notes */}
         <L label="Validade da proposta">
-          <input
+          <Input
             type="date"
-            className={SMALL_INPUT}
-            value={draft.valid_until ?? ""}
+            className={SMALL_INPUT} value={draft.valid_until ?? ""}
             onChange={(e) => save({ valid_until: e.target.value || null })}
           />
         </L>
         <L label="Observações gerais">
-          <textarea
-            className={SMALL_INPUT + " h-20 resize-none py-2 leading-relaxed"}
-            value={draft.terms ?? ""}
+          <Textarea
+            className={SMALL_INPUT + " h-20 resize-none leading-relaxed"} value={draft.terms ?? ""}
             placeholder="Condições de cancelamento, observações..."
             onChange={(e) => save({ terms: e.target.value })}
           />

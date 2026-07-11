@@ -26,6 +26,9 @@ import { NewPassengerSheet } from "@/components/trips/NewPassengerSheet";
 import { toast } from "sonner";
 import { useConfirm } from "@/hooks/use-confirm";
 import { Button } from "@/components/ui/button";
+import { FormInput as Input } from "@/components/ui/input";
+import { NativeSelect as Select } from "@/components/ui/select";
+import { FormTextarea as Textarea } from "@/components/ui/textarea";
 
 export const Route = createFileRoute("/agency/$slug/trips/$id/passengers")({
   head: ({ context }: any) => ({ meta: [{ title: `Passageiros · ${context?.brand?.platform_name || 'Turis'}` }] }),
@@ -591,30 +594,30 @@ function PassengersPage() {
                   {/* Document upload form inside the card */}
                   <div className="rounded-[var(--radius-card)] border border-dashed border-border/80 p-3 glass bg-white/5 border-white/10/5 flex flex-col gap-2">
                     <div className="grid grid-cols-2 gap-2">
-                      <select
+                      <Select
                         value={selectedDocType[p.id] || "passport"}
                         onChange={(e) =>
                           setSelectedDocType({ ...selectedDocType, [p.id]: e.target.value as any })
                         }
-                        className="h-8 rounded-full border-none glass-card border-none px-2 text-[10px] font-medium outline-none text-foreground"
+                        className="rounded-full border-none glass-card border-none px-2 text-[10px] font-medium"
                       >
                         <option value="passport">Passaporte</option>
                         <option value="visa">Visto</option>
                         <option value="ticket">Passagem</option>
                         <option value="other">Outro</option>
-                      </select>
-                      <input
+                      </Select>
+                      <Input
                         type="date"
                         value={expDates[p.id] || ""}
                         onChange={(e) => setExpDates({ ...expDates, [p.id]: e.target.value })}
                         placeholder="Vencimento"
-                        className="h-8 rounded-full border-none glass-card border-none px-2 text-[10px] outline-none text-foreground"
+                        className="rounded-full border-none glass-card border-none px-2 text-[10px]"
                       />
                     </div>
                     <label className="flex h-8 items-center justify-center gap-1.5 rounded-full border-none glass-card border-none cursor-pointer text-[10px] font-bold hover:glass bg-white/5 border-white/10 transition-colors">
                       <Upload className="h-3.5 w-3.5 text-muted-foreground" />
                       Anexar & Identificar Dados
-                      <input
+                      <Input
                         type="file"
                         accept="application/pdf,image/*"
                         className="hidden"
@@ -886,7 +889,7 @@ function DataConferencePanel({
                 </p>
                 <label className="flex h-9 items-center justify-center gap-1.5 rounded-[var(--radius-card)] bg-brand/10 px-4 text-xs font-bold text-brand hover:bg-brand/20 cursor-pointer transition-all">
                   <Upload className="h-4 w-4" /> Anexar Documento
-                  <input
+                  <Input
                     type="file"
                     accept="application/pdf,image/*"
                     className="hidden"
@@ -944,11 +947,11 @@ function DataConferencePanel({
               <label className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground block mb-1">
                 Nome Completo
               </label>
-              <input
+              <Input
                 type="text"
                 value={fullName}
                 onChange={(e) => setFullName(e.target.value)}
-                className="h-9 w-full rounded-[var(--radius-card)] border-none glass-card border-none px-3 text-xs outline-none focus:border-brand text-foreground font-medium"
+                className="w-full rounded-[var(--radius-card)] border-none glass-card border-none focus:border-brand font-medium"
               />
             </div>
 
@@ -956,15 +959,15 @@ function DataConferencePanel({
               <label className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground block mb-1">
                 Tipo de Passageiro
               </label>
-              <select
+              <Select
                 value={kind}
                 onChange={(e) => setKind(e.target.value)}
-                className="h-9 w-full rounded-[var(--radius-card)] border-none glass-card border-none px-3 text-xs outline-none focus:border-brand text-foreground"
+                className="w-full rounded-[var(--radius-card)] border-none glass-card border-none focus:border-brand"
               >
                 <option value="adult">Adulto</option>
                 <option value="child">Criança (CHD)</option>
                 <option value="infant">Infante (INF)</option>
-              </select>
+              </Select>
             </div>
 
             <div className="grid grid-cols-2 gap-4">
@@ -972,27 +975,27 @@ function DataConferencePanel({
                 <label className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground block mb-1">
                   Tipo Documento
                 </label>
-                <select
+                <Select
                   value={docType}
                   onChange={(e) => setDocType(e.target.value)}
-                  className="h-9 w-full rounded-[var(--radius-card)] border-none glass-card border-none px-3 text-xs outline-none focus:border-brand text-foreground"
+                  className="w-full rounded-[var(--radius-card)] border-none glass-card border-none focus:border-brand"
                 >
                   <option value="rg">RG</option>
                   <option value="cpf">CPF</option>
                   <option value="passport">Passaporte</option>
                   <option value="visa">Visto</option>
                   <option value="other">Outro</option>
-                </select>
+                </Select>
               </div>
               <div>
                 <label className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground block mb-1">
                   Número Documento
                 </label>
-                <input
+                <Input
                   type="text"
                   value={docNumber}
                   onChange={(e) => setDocNumber(e.target.value)}
-                  className="h-9 w-full rounded-[var(--radius-card)] border-none glass-card border-none px-3 text-xs outline-none focus:border-brand text-foreground font-mono"
+                  className="w-full rounded-[var(--radius-card)] border-none glass-card border-none focus:border-brand font-mono"
                 />
               </div>
             </div>
@@ -1002,23 +1005,23 @@ function DataConferencePanel({
                 <label className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground block mb-1">
                   Nascimento
                 </label>
-                <input
+                <Input
                   type="date"
                   value={birthDate}
                   onChange={(e) => setBirthDate(e.target.value)}
-                  className="h-9 w-full rounded-[var(--radius-card)] border-none glass-card border-none px-3 text-xs outline-none focus:border-brand text-foreground"
+                  className="w-full rounded-[var(--radius-card)] border-none glass-card border-none focus:border-brand"
                 />
               </div>
               <div>
                 <label className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground block mb-1">
                   Nacionalidade
                 </label>
-                <input
+                <Input
                   type="text"
                   value={nationality}
                   onChange={(e) => setNationality(e.target.value)}
                   placeholder="Ex: Brasileira"
-                  className="h-9 w-full rounded-[var(--radius-card)] border-none glass-card border-none px-3 text-xs outline-none focus:border-brand text-foreground"
+                  className="w-full rounded-[var(--radius-card)] border-none glass-card border-none focus:border-brand"
                 />
               </div>
             </div>
@@ -1028,22 +1031,22 @@ function DataConferencePanel({
                 <label className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground block mb-1">
                   Email
                 </label>
-                <input
+                <Input
                   type="email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  className="h-9 w-full rounded-[var(--radius-card)] border-none glass-card border-none px-3 text-xs outline-none focus:border-brand text-foreground"
+                  className="w-full rounded-[var(--radius-card)] border-none glass-card border-none focus:border-brand"
                 />
               </div>
               <div>
                 <label className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground block mb-1">
                   Telefone
                 </label>
-                <input
+                <Input
                   type="text"
                   value={phone}
                   onChange={(e) => setPhone(e.target.value)}
-                  className="h-9 w-full rounded-[var(--radius-card)] border-none glass-card border-none px-3 text-xs outline-none focus:border-brand text-foreground"
+                  className="w-full rounded-[var(--radius-card)] border-none glass-card border-none focus:border-brand"
                 />
               </div>
             </div>
@@ -1052,11 +1055,11 @@ function DataConferencePanel({
               <label className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground block mb-1">
                 Observações Operacionais
               </label>
-              <textarea
+              <Textarea
                 value={notes}
                 onChange={(e) => setNotes(e.target.value)}
                 placeholder="Ex: Necessita de cadeira de rodas para embarque"
-                className="h-20 w-full rounded-[var(--radius-card)] border-none glass-card border-none p-3 text-xs outline-none focus:border-brand text-foreground resize-none"
+                className="h-20 w-full rounded-[var(--radius-card)] border-none glass-card border-none p-3 focus:border-brand resize-none"
               />
             </div>
           </div>

@@ -7,6 +7,7 @@ import { FormInput as Input } from "@/components/ui/input";
 import { Field } from "@/components/ui/field";
 import { PrimaryButton, GhostButton , Button } from "@/components/ui/button";
 import { StatusBadge } from "@/components/ui/badge";
+import { FormTextarea as Textarea } from "@/components/ui/textarea";
 
 type Addendum = {
   id: string;
@@ -109,16 +110,16 @@ export function ContractAddendums({
               placeholder="Ex: Alteração de Data de Embarque ou Upgrade de Hotel"
               value={addendumTitle}
               onChange={(e) => setAddendumTitle(e.target.value)}
-              className="text-foreground"
+              
             />
           </Field>
           <Field label="Conteúdo do Acordo (Cláusulas Adicionais)">
-            <textarea
+            <Textarea
               rows={4}
               placeholder="Descreva detalhadamente o acordo complementar..."
               value={addendumContent}
               onChange={(e) => setAddendumContent(e.target.value)}
-              className="w-full rounded-full border border-input bg-surface p-2.5 text-xs outline-none focus:border-border-strong resize-none text-foreground"
+              className="w-full rounded-full p-2.5 focus:border-border-strong resize-none"
             />
           </Field>
           <div className="flex gap-2">

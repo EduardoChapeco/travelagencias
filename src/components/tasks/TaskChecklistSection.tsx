@@ -197,7 +197,7 @@ export function TaskChecklistSection({ taskId, agencyId, onChange }: TaskCheckli
             placeholder="Adicionar item de checklist..."
             value={newCheckItem}
             onChange={(e) => setNewCheckItem(e.target.value)}
-            className="flex-1 h-8 bg-transparent border-none text-xs outline-none px-0 focus-visible:ring-0 placeholder:text-muted-foreground/40"
+            className="flex-1 border-none px-0 focus-visible:ring-0 placeholder:text-muted-foreground/40"
           />
           {newCheckItem.trim() && (
             <Button

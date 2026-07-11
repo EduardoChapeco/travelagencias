@@ -120,11 +120,11 @@ Retorne EXATAMENTE UM JSON com as seguintes chaves precisas (sem markdown em vol
         className="relative flex items-center rounded-[var(--radius-card)] glass-card border-none border-none p-2"
       >
         <Search className="absolute left-5 w-5 h-5 text-muted-foreground" />
-        <input
+        <Input
           value={url}
           onChange={(e) => setUrl(e.target.value)}
           placeholder="https://www.agenciaconcorrente.com.br"
-          className="flex-1 bg-transparent px-12 py-3 outline-none text-sm placeholder:text-muted-foreground/60"
+          className="flex-1 px-12 py-3 placeholder:text-muted-foreground/60"
           type="url"
           required
         />

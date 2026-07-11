@@ -4,6 +4,9 @@ import { LifeBuoy, Plus, ExternalLink } from "lucide-react";
 import { fetchClientTickets, createClientTicket, fetchClientAgencies } from "@/services/client-area";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
+import { FormInput as Input } from "@/components/ui/input";
+import { NativeSelect as Select } from "@/components/ui/select";
+import { FormTextarea as Textarea } from "@/components/ui/textarea";
 
 export const Route = createFileRoute("/client/support")({
   component: ClientSupportRoute,
@@ -116,21 +119,21 @@ function ClientSupportRoute() {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="space-y-2">
                 <label className="text-xs font-semibold uppercase text-muted-foreground">Assunto</label>
-                <input
+                <Input
                   type="text"
                   value={title}
                   onChange={(e) => setTitle(e.target.value)}
-                  className="w-full h-10 bg-background border-none rounded-full px-3 text-sm focus:border-primary outline-none transition-colors"
+                  className="w-full border-none rounded-full focus:border-primary"
                   placeholder="Ex: Dúvida sobre o voo"
                   required
                 />
               </div>
               <div className="space-y-2">
                 <label className="text-xs font-semibold uppercase text-muted-foreground">Tipo</label>
-                <select
+                <Select
                   value={type}
                   onChange={(e) => setType(e.target.value)}
-                  className="w-full h-10 bg-background border-none rounded-full px-3 text-sm focus:border-primary outline-none transition-colors"
+                  className="w-full border-none rounded-full focus:border-primary"
                 >
                   <option value="general">Dúvida / Suporte Geral</option>
                   <option value="request">Alteração de Reserva</option>
@@ -138,16 +141,16 @@ function ClientSupportRoute() {
                   <option value="complaint">Reclamação</option>
                   <option value="flight_change">Mudança de Voo</option>
                   <option value="refund">Reembolso</option>
-                </select>
+                </Select>
               </div>
             </div>
             
             <div className="space-y-2">
               <label className="text-xs font-semibold uppercase text-muted-foreground">Descrição Detalhada</label>
-              <textarea
+              <Textarea
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
-                className="w-full bg-background border-none rounded-full px-3 py-2 text-sm focus:border-primary outline-none transition-colors resize-none h-32"
+                className="w-full border-none rounded-full focus:border-primary resize-none h-32"
                 placeholder="Descreva como podemos te ajudar..."
                 required
               />

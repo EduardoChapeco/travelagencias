@@ -150,7 +150,7 @@ function RfpDetailPage() {
             <Select
               value={rfp.status}
               onChange={(e) => updateMut.mutate({ status: e.target.value })}
-              className="h-9 w-48 text-xs font-medium"
+              className="w-48 font-medium"
             >
               <option value="new">Novo / Recebido</option>
               <option value="scoping">Definindo Escopo</option>
@@ -372,7 +372,7 @@ function RfpDetailPage() {
               </h3>
               <Textarea
                 placeholder="Anotações visíveis apenas para a agência..."
-                className="w-full h-40 text-sm resize-none border-transparent glass bg-white/5 border-white/10 focus:ring-1 focus:ring-brand"
+                className="w-full h-40 resize-none glass bg-white/5 border-white/10 focus:ring-brand"
               />
             </div>
           </div>

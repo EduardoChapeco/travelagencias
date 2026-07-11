@@ -38,6 +38,8 @@ import {
 import { toast } from "sonner";
 import { logTripAudit } from "@/services/audit";
 import { Button } from "@/components/ui/button";
+import { FormInput as Input } from "@/components/ui/input";
+import { NativeSelect as Select } from "@/components/ui/select";
 
 export const Route = createFileRoute("/agency/$slug/trips/$id/flights")({
   head: ({ context }: any) => ({ meta: [{ title: `Aéreos & Reconciliação · ${context?.brand?.platform_name || 'Turis'}` }] }),
@@ -396,31 +398,31 @@ function TripFlightsPage() {
                   <label className="text-[10px] font-bold text-muted-foreground uppercase">
                     Tipo de Versão
                   </label>
-                  <select
+                  <Select
                     value={itineraryType}
                     onChange={(e: any) => setItineraryType(e.target.value)}
-                    className="w-full text-xs border-none rounded-full px-2 py-2 glass-card border-none focus:outline-none focus:ring-1 focus:ring-brand"
+                    className="w-full border-none rounded-full px-2 glass-card border-none focus:ring-brand"
                   >
                     {Object.entries(ITINERARY_TYPE_LABELS).map(([k, v]) => (
                       <option key={k} value={k}>
                         {v}
                       </option>
                     ))}
-                  </select>
+                  </Select>
                 </div>
 
                 <div className="space-y-1">
                   <label className="text-[10px] font-bold text-muted-foreground uppercase">
                     Status Inicial
                   </label>
-                  <select
+                  <Select
                     value={itineraryStatus}
                     onChange={(e: any) => setItineraryStatus(e.target.value)}
-                    className="w-full text-xs border-none rounded-full px-2 py-2 glass-card border-none focus:outline-none focus:ring-1 focus:ring-brand"
+                    className="w-full border-none rounded-full px-2 glass-card border-none focus:ring-brand"
                   >
                     <option value="draft">Rascunho</option>
                     <option value="active">Ativo / Vigente (Arquiva anteriores)</option>
-                  </select>
+                  </Select>
                 </div>
               </div>
 
@@ -454,52 +456,52 @@ function TripFlightsPage() {
                         <label className="text-[9px] font-bold text-muted-foreground uppercase">
                           Cia Aérea (Cód) *
                         </label>
-                        <input
+                        <Input
                           type="text"
                           placeholder="Ex: LA, AD, G3"
                           value={seg.airline_code}
                           onChange={(e) => handleSegmentChange(idx, "airline_code", e.target.value)}
-                          className="w-full text-xs border-none rounded p-1.5 glass-card border-none font-mono"
+                          className="w-full border-none rounded p-1.5 glass-card border-none font-mono"
                         />
                       </div>
                       <div className="space-y-1">
                         <label className="text-[9px] font-bold text-muted-foreground uppercase">
                           Número do Voo *
                         </label>
-                        <input
+                        <Input
                           type="text"
                           placeholder="Ex: 3412"
                           value={seg.flight_number}
                           onChange={(e) =>
                             handleSegmentChange(idx, "flight_number", e.target.value)
                           }
-                          className="w-full text-xs border-none rounded p-1.5 glass-card border-none font-mono"
+                          className="w-full border-none rounded p-1.5 glass-card border-none font-mono"
                         />
                       </div>
                       <div className="space-y-1">
                         <label className="text-[9px] font-bold text-muted-foreground uppercase">
                           Origem (IATA) *
                         </label>
-                        <input
+                        <Input
                           type="text"
                           placeholder="Ex: GRU"
                           value={seg.origin_iata}
                           onChange={(e) => handleSegmentChange(idx, "origin_iata", e.target.value)}
-                          className="w-full text-xs border-none rounded p-1.5 glass-card border-none font-mono"
+                          className="w-full border-none rounded p-1.5 glass-card border-none font-mono"
                         />
                       </div>
                       <div className="space-y-1">
                         <label className="text-[9px] font-bold text-muted-foreground uppercase">
                           Destino (IATA) *
                         </label>
-                        <input
+                        <Input
                           type="text"
                           placeholder="Ex: MIA"
                           value={seg.destination_iata}
                           onChange={(e) =>
                             handleSegmentChange(idx, "destination_iata", e.target.value)
                           }
-                          className="w-full text-xs border-none rounded p-1.5 glass-card border-none font-mono"
+                          className="w-full border-none rounded p-1.5 glass-card border-none font-mono"
                         />
                       </div>
 
@@ -507,49 +509,49 @@ function TripFlightsPage() {
                         <label className="text-[9px] font-bold text-muted-foreground uppercase">
                           Partida *
                         </label>
-                        <input
+                        <Input
                           type="datetime-local"
                           value={seg.departure_at}
                           onChange={(e) => handleSegmentChange(idx, "departure_at", e.target.value)}
-                          className="w-full text-xs border-none rounded p-1.5 glass-card border-none"
+                          className="w-full border-none rounded p-1.5 glass-card border-none"
                         />
                       </div>
                       <div className="space-y-1">
                         <label className="text-[9px] font-bold text-muted-foreground uppercase">
                           Chegada *
                         </label>
-                        <input
+                        <Input
                           type="datetime-local"
                           value={seg.arrival_at}
                           onChange={(e) => handleSegmentChange(idx, "arrival_at", e.target.value)}
-                          className="w-full text-xs border-none rounded p-1.5 glass-card border-none"
+                          className="w-full border-none rounded p-1.5 glass-card border-none"
                         />
                       </div>
                       <div className="space-y-1">
                         <label className="text-[9px] font-bold text-muted-foreground uppercase">
                           Cabine
                         </label>
-                        <select
+                        <Select
                           value={seg.cabin}
                           onChange={(e) => handleSegmentChange(idx, "cabin", e.target.value)}
-                          className="w-full text-xs border-none rounded p-1.5 glass-card border-none"
+                          className="w-full border-none rounded p-1.5 glass-card border-none"
                         >
                           <option value="economy">Econômica</option>
                           <option value="premium_economy">Premium Economy</option>
                           <option value="business">Executiva</option>
                           <option value="first">Primeira Classe</option>
-                        </select>
+                        </Select>
                       </div>
                       <div className="space-y-1">
                         <label className="text-[9px] font-bold text-muted-foreground uppercase">
                           Franquia Bagagem
                         </label>
-                        <input
+                        <Input
                           type="text"
                           placeholder="Ex: 1x 23kg"
                           value={seg.baggage}
                           onChange={(e) => handleSegmentChange(idx, "baggage", e.target.value)}
-                          className="w-full text-xs border-none rounded p-1.5 glass-card border-none"
+                          className="w-full border-none rounded p-1.5 glass-card border-none"
                         />
                       </div>
 
@@ -557,28 +559,28 @@ function TripFlightsPage() {
                         <label className="text-[9px] font-bold text-muted-foreground uppercase">
                           Localizador Trecho
                         </label>
-                        <input
+                        <Input
                           type="text"
                           placeholder="Ex: PQLW12"
                           value={seg.record_locator}
                           onChange={(e) =>
                             handleSegmentChange(idx, "record_locator", e.target.value)
                           }
-                          className="w-full text-xs border-none rounded p-1.5 glass-card border-none font-mono"
+                          className="w-full border-none rounded p-1.5 glass-card border-none font-mono"
                         />
                       </div>
                       <div className="space-y-1">
                         <label className="text-[9px] font-bold text-muted-foreground uppercase">
                           Terminal
                         </label>
-                        <input
+                        <Input
                           type="text"
                           placeholder="Ex: Terminal 3"
                           value={seg.airport_terminal}
                           onChange={(e) =>
                             handleSegmentChange(idx, "airport_terminal", e.target.value)
                           }
-                          className="w-full text-xs border-none rounded p-1.5 glass-card border-none"
+                          className="w-full border-none rounded p-1.5 glass-card border-none"
                         />
                       </div>
                     </div>
@@ -952,10 +954,10 @@ function TripFlightsPage() {
                 <label className="text-[10px] font-bold text-muted-foreground uppercase">
                   Itinerário A (Referência)
                 </label>
-                <select
+                <Select
                   value={compareAId || ""}
                   onChange={(e) => setCompareAId(e.target.value || null)}
-                  className="w-full text-xs border-none rounded-full p-2 glass-card border-none"
+                  className="w-full border-none rounded-full p-2 glass-card border-none"
                 >
                   <option value="">Selecione...</option>
                   {itinerariesQ.data?.map((it) => (
@@ -964,17 +966,17 @@ function TripFlightsPage() {
                       {it.status === "active" ? "Vigente" : "Inativo"})
                     </option>
                   ))}
-                </select>
+                </Select>
               </div>
 
               <div className="space-y-1">
                 <label className="text-[10px] font-bold text-muted-foreground uppercase">
                   Itinerário B (Comparação)
                 </label>
-                <select
+                <Select
                   value={compareBId || ""}
                   onChange={(e) => setCompareBId(e.target.value || null)}
-                  className="w-full text-xs border-none rounded-full p-2 glass-card border-none"
+                  className="w-full border-none rounded-full p-2 glass-card border-none"
                 >
                   <option value="">Selecione...</option>
                   {itinerariesQ.data?.map((it) => (
@@ -983,7 +985,7 @@ function TripFlightsPage() {
                       {it.status === "active" ? "Vigente" : "Inativo"})
                     </option>
                   ))}
-                </select>
+                </Select>
               </div>
             </div>
 

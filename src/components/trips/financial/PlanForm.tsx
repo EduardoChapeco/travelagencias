@@ -112,11 +112,11 @@ export function PlanForm({
         </Field>
       </div>
       <div className="flex items-center gap-2 mt-2 px-1">
-        <input
+        <Input
           type="checkbox"
           id="is_third_party"
           {...register("is_third_party")}
-          className="rounded border-input text-primary focus:ring-primary"
+          className="rounded text-primary focus:ring-primary"
         />
         <label
           htmlFor="is_third_party"

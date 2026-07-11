@@ -11,6 +11,7 @@ import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Button } from "@/components/ui/button";
+import { FormInput as Input } from "@/components/ui/input";
 
 const agenciesQueryOptions = queryOptions({
   queryKey: ["admin-agencies"],
@@ -131,9 +132,9 @@ function Page() {
                     <label className="block text-xs font-medium text-muted-foreground">
                       Nome da Agência *
                     </label>
-                    <input
+                    <Input
                       {...register("name")}
-                      className="mt-1 w-full rounded-full border-none bg-background px-3 py-2 text-sm"
+                      className="mt-1 w-full rounded-full border-none"
                       placeholder="Ex: Viagens Inc."
                     />
                     {errors.name && (
@@ -144,9 +145,9 @@ function Page() {
                     <label className="block text-xs font-medium text-muted-foreground">
                       Slug (URL) *
                     </label>
-                    <input
+                    <Input
                       {...register("slug")}
-                      className="mt-1 w-full rounded-full border-none bg-background px-3 py-2 text-sm"
+                      className="mt-1 w-full rounded-full border-none"
                       placeholder="Ex: viagens-inc"
                     />
                     {errors.slug && (
@@ -157,10 +158,10 @@ function Page() {
                     <label className="block text-xs font-medium text-muted-foreground">
                       E-mail do Proprietário *
                     </label>
-                    <input
+                    <Input
                       type="email"
                       {...register("email")}
-                      className="mt-1 w-full rounded-full border-none bg-background px-3 py-2 text-sm"
+                      className="mt-1 w-full rounded-full border-none"
                       placeholder="dono@agencia.com"
                     />
                     {errors.email && (
@@ -172,18 +173,18 @@ function Page() {
                       <label className="block text-xs font-medium text-muted-foreground">
                         CNPJ
                       </label>
-                      <input
+                      <Input
                         {...register("cnpj")}
-                        className="mt-1 w-full rounded-full border-none bg-background px-3 py-2 text-sm"
+                        className="mt-1 w-full rounded-full border-none"
                       />
                     </div>
                     <div>
                       <label className="block text-xs font-medium text-muted-foreground">
                         Telefone
                       </label>
-                      <input
+                      <Input
                         {...register("phone")}
-                        className="mt-1 w-full rounded-full border-none bg-background px-3 py-2 text-sm"
+                        className="mt-1 w-full rounded-full border-none"
                       />
                     </div>
                   </div>
@@ -206,10 +207,10 @@ function Page() {
                       Link de Convite (Owner)
                     </label>
                     <div className="mt-1 flex items-center gap-2">
-                      <input
+                      <Input
                         readOnly
                         value={inviteUrl}
-                        className="flex-1 rounded-full border-none glass bg-white/5 border-white/10 px-3 py-2 font-mono text-xs text-muted-foreground"
+                        className="flex-1 rounded-full border-none glass bg-white/5 border-white/10 font-mono"
                       />
                       <Button
                         onClick={handleCopy}

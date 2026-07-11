@@ -12,6 +12,8 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Button } from "@/components/ui/button";
+import { FormInput as Input } from "@/components/ui/input";
+import { FormTextarea as Textarea } from "@/components/ui/textarea";
 
 export const Route = createFileRoute("/p/$agency_slug/contact")({
   head: () => ({ meta: [{ title: "Fale Conosco" }] }),
@@ -175,9 +177,9 @@ function ContactPage() {
             <label className="text-xs font-bold uppercase tracking-widest text-muted-foreground ml-2">
               Nome Completo *
             </label>
-            <input
+            <Input
               {...register("name")}
-              className="w-full h-12 px-4 rounded-[var(--radius-card)] border-none bg-background text-sm focus:border-foreground focus:ring-1 focus:ring-foreground outline-none transition-all"
+              className="w-full rounded-[var(--radius-card)] border-none focus:border-foreground focus:ring-foreground"
               placeholder="Como quer ser chamado?"
             />
             {errors.name && (
@@ -192,9 +194,9 @@ function ContactPage() {
               <label className="text-xs font-bold uppercase tracking-widest text-muted-foreground ml-2">
                 WhatsApp *
               </label>
-              <input
+              <Input
                 {...register("phone")}
-                className="w-full h-12 px-4 rounded-[var(--radius-card)] border-none bg-background text-sm focus:border-foreground focus:ring-1 focus:ring-foreground outline-none transition-all"
+                className="w-full rounded-[var(--radius-card)] border-none focus:border-foreground focus:ring-foreground"
                 placeholder="(11) 99999-9999"
               />
               {errors.phone && (
@@ -207,10 +209,10 @@ function ContactPage() {
               <label className="text-xs font-bold uppercase tracking-widest text-muted-foreground ml-2">
                 E-mail
               </label>
-              <input
+              <Input
                 type="email"
                 {...register("email")}
-                className="w-full h-12 px-4 rounded-[var(--radius-card)] border-none bg-background text-sm focus:border-foreground focus:ring-1 focus:ring-foreground outline-none transition-all"
+                className="w-full rounded-[var(--radius-card)] border-none focus:border-foreground focus:ring-foreground"
                 placeholder="seu@email.com"
               />
               {errors.email && (
@@ -225,9 +227,9 @@ function ContactPage() {
             <label className="text-xs font-bold uppercase tracking-widest text-muted-foreground ml-2">
               Destino dos Sonhos
             </label>
-            <input
+            <Input
               {...register("destination")}
-              className="w-full h-12 px-4 rounded-[var(--radius-card)] border-none bg-background text-sm focus:border-foreground focus:ring-1 focus:ring-foreground outline-none transition-all"
+              className="w-full rounded-[var(--radius-card)] border-none focus:border-foreground focus:ring-foreground"
               placeholder="Para onde você quer ir?"
             />
             {errors.destination && (
@@ -242,10 +244,10 @@ function ContactPage() {
               <label className="text-xs font-bold uppercase tracking-widest text-muted-foreground ml-2">
                 Ida Prevista
               </label>
-              <input
+              <Input
                 type="date"
                 {...register("travel_start")}
-                className="w-full h-12 px-4 rounded-[var(--radius-card)] border-none bg-background text-sm focus:border-foreground focus:ring-1 focus:ring-foreground outline-none transition-all"
+                className="w-full rounded-[var(--radius-card)] border-none focus:border-foreground focus:ring-foreground"
               />
               {errors.travel_start && (
                 <span className="text-[11px] font-semibold text-red-500 ml-2 block">
@@ -257,10 +259,10 @@ function ContactPage() {
               <label className="text-xs font-bold uppercase tracking-widest text-muted-foreground ml-2">
                 Retorno
               </label>
-              <input
+              <Input
                 type="date"
                 {...register("travel_end")}
-                className="w-full h-12 px-4 rounded-[var(--radius-card)] border-none bg-background text-sm focus:border-foreground focus:ring-1 focus:ring-foreground outline-none transition-all"
+                className="w-full rounded-[var(--radius-card)] border-none focus:border-foreground focus:ring-foreground"
               />
               {errors.travel_end && (
                 <span className="text-[11px] font-semibold text-red-500 ml-2 block">
@@ -275,11 +277,11 @@ function ContactPage() {
               <label className="text-xs font-bold uppercase tracking-widest text-muted-foreground ml-2">
                 Qtd. Pessoas
               </label>
-              <input
+              <Input
                 type="number"
                 min="1"
                 {...register("pax_count")}
-                className="w-full h-12 px-4 rounded-[var(--radius-card)] border-none bg-background text-sm focus:border-foreground focus:ring-1 focus:ring-foreground outline-none transition-all"
+                className="w-full rounded-[var(--radius-card)] border-none focus:border-foreground focus:ring-foreground"
               />
               {errors.pax_count && (
                 <span className="text-[11px] font-semibold text-red-500 ml-2 block">
@@ -291,12 +293,12 @@ function ContactPage() {
               <label className="text-xs font-bold uppercase tracking-widest text-muted-foreground ml-2">
                 Orçamento Est. (R$)
               </label>
-              <input
+              <Input
                 type="number"
                 min="0"
                 step="100"
                 {...register("estimated_value")}
-                className="w-full h-12 px-4 rounded-[var(--radius-card)] border-none bg-background text-sm focus:border-foreground focus:ring-1 focus:ring-foreground outline-none transition-all"
+                className="w-full rounded-[var(--radius-card)] border-none focus:border-foreground focus:ring-foreground"
                 placeholder="Ex: 15000"
               />
               {errors.estimated_value && (
@@ -311,10 +313,10 @@ function ContactPage() {
             <label className="text-xs font-bold uppercase tracking-widest text-muted-foreground ml-2">
               Detalhes Adicionais
             </label>
-            <textarea
+            <Textarea
               rows={4}
               {...register("notes")}
-              className="w-full px-4 py-3 rounded-[var(--radius-card)] border-none bg-background text-sm focus:border-foreground focus:ring-1 focus:ring-foreground outline-none transition-all resize-none"
+              className="w-full py-3 rounded-[var(--radius-card)] border-none focus:border-foreground focus:ring-foreground resize-none"
               placeholder="O que não pode faltar nessa viagem?"
             />
             {errors.notes && (
@@ -328,11 +330,11 @@ function ContactPage() {
         {/* LGPD Consent */}
         <div className="space-y-1.5">
           <div className="flex items-start gap-3 px-2">
-            <input
+            <Input
               type="checkbox"
               id="lgpd"
               {...register("lgpdAccepted")}
-              className="mt-1 h-5 w-5 rounded border-border text-foreground focus:ring-foreground transition-all cursor-pointer"
+              className="mt-1 h-5 w-5 rounded focus:ring-foreground cursor-pointer"
             />
             <label
               htmlFor="lgpd"

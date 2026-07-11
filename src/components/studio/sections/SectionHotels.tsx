@@ -18,6 +18,8 @@ import { StudioUnsplashPicker } from "@/components/studio/StudioUnsplashPicker";
 import { infotravelSearchHotels } from "@/services/infotravel";
 import { toast } from "sonner";
 import { PrimaryButton , Button } from "@/components/ui/button";
+import { FormInput as Input } from "@/components/ui/input";
+import { NativeSelect as Select } from "@/components/ui/select";
 import {
   SupplierAutocomplete,
   type SupplierOption,
@@ -179,9 +181,8 @@ export function SectionHotels({ draft, save }: Props) {
             </L>
           </div>
           <L label="Regime">
-            <select
-              className={SMALL_INPUT + " mb-2"}
-              value={h.meal_plan}
+            <Select
+              className={SMALL_INPUT + " mb-2"} value={h.meal_plan}
               onChange={(e) => upd(i, { meal_plan: e.target.value })}
             >
               {MEAL_PLANS.map((mp) => (
@@ -189,7 +190,7 @@ export function SectionHotels({ draft, save }: Props) {
                   {mp}
                 </option>
               ))}
-            </select>
+            </Select>
           </L>
 
           {/* Rooms */}
@@ -208,17 +209,15 @@ export function SectionHotels({ draft, save }: Props) {
             </div>
             {(h.rooms ?? []).map((r, ri) => (
               <div key={ri} className="flex items-center gap-2 mb-1">
-                <input
-                  className={SMALL_INPUT + " flex-1"}
-                  value={r.type}
+                <Input
+                  className={SMALL_INPUT + " flex-1"} value={r.type}
                   placeholder="Tipo do quarto"
                   onChange={(e) => updRoom(i, ri, { type: e.target.value })}
                 />
-                <input
+                <Input
                   type="number"
                   min={1}
-                  className={SMALL_INPUT + " w-14"}
-                  value={r.qty}
+                  className={SMALL_INPUT + " w-14"} value={r.qty}
                   onChange={(e) => updRoom(i, ri, { qty: parseInt(e.target.value) || 1 })}
                 />
                 <Button
@@ -323,37 +322,33 @@ export function SectionHotels({ draft, save }: Props) {
             <div className="space-y-3 flex-1 overflow-y-auto no-scrollbar pr-1">
               <div className="grid grid-cols-2 gap-2">
                 <L label="Cidade de Destino">
-                  <input
-                    className={SMALL_INPUT}
-                    value={searchParams.city}
+                  <Input
+                    className={SMALL_INPUT} value={searchParams.city}
                     onChange={(e) => setSearchParams({ ...searchParams, city: e.target.value })}
                     placeholder="Ex: Orlando"
                   />
                 </L>
                 <L label="Quartos">
-                  <input
+                  <Input
                     type="number"
                     min={1}
-                    className={SMALL_INPUT}
-                    value={searchParams.rooms}
+                    className={SMALL_INPUT} value={searchParams.rooms}
                     onChange={(e) =>
                       setSearchParams({ ...searchParams, rooms: parseInt(e.target.value) || 1 })
                     }
                   />
                 </L>
                 <L label="Check-in">
-                  <input
+                  <Input
                     type="date"
-                    className={SMALL_INPUT}
-                    value={searchParams.checkin}
+                    className={SMALL_INPUT} value={searchParams.checkin}
                     onChange={(e) => setSearchParams({ ...searchParams, checkin: e.target.value })}
                   />
                 </L>
                 <L label="Check-out">
-                  <input
+                  <Input
                     type="date"
-                    className={SMALL_INPUT}
-                    value={searchParams.checkout}
+                    className={SMALL_INPUT} value={searchParams.checkout}
                     onChange={(e) => setSearchParams({ ...searchParams, checkout: e.target.value })}
                   />
                 </L>

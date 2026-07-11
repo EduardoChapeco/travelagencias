@@ -385,11 +385,11 @@ function PlanEditor({
           </div>
           <div className="flex gap-4">
             <label className="flex items-center gap-2 text-sm">
-              <input type="checkbox" {...register("is_active")} />
+              <Input type="checkbox" {...register("is_active")} />
               Ativo
             </label>
             <label className="flex items-center gap-2 text-sm">
-              <input type="checkbox" {...register("is_featured")} />
+              <Input type="checkbox" {...register("is_featured")} />
               Destaque (badge)
             </label>
           </div>
@@ -408,7 +408,7 @@ function PlanEditor({
             <div className="space-y-2">
               {fields.map((field, i) => (
                 <div key={field.id} className="flex items-center gap-2">
-                  <input
+                  <Input
                     type="checkbox"
                     {...register(`features.${i}.included` as const)}
                     className="h-3.5 w-3.5"

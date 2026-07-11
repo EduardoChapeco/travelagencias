@@ -193,7 +193,7 @@ function QuickAddCard({
         value={title}
         onChange={(e) => setTitle(e.target.value)}
         placeholder="Título da tarefa..."
-        className="h-8 text-xs bg-surface-alt border-none"
+        className="border-none"
         onKeyDown={(e) => {
           if (e.key === "Enter") handleSubmit();
           if (e.key === "Escape") setOpen(false);
@@ -307,7 +307,7 @@ function KanbanColumn({
               ref={labelInputRef}
               value={labelValue}
               onChange={(e) => setLabelValue(e.target.value)}
-              className="h-6 text-xs font-bold border-none bg-surface-alt px-1 py-0"
+              className="h-6 font-bold border-none px-1 py-0"
               onBlur={handleRenameConfirm}
               onKeyDown={(e) => {
                 if (e.key === "Enter") handleRenameConfirm();

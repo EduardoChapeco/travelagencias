@@ -200,7 +200,7 @@ function RegisterPage() {
               <Input
                 placeholder="Seu nome completo"
                 {...register("fullName")}
-                className="h-11 text-xs rounded-[var(--radius-card)] glass-card border-none border-border focus:border-primary focus:ring-primary/10 text-foreground placeholder:text-muted-foreground/50 transition-all"
+                className="rounded-[var(--radius-card)] glass-card border-none focus:border-primary focus:ring-primary/10"
               />
             </Field>
 
@@ -210,7 +210,7 @@ function RegisterPage() {
                 placeholder="nome@suaagencia.com.br"
                 autoComplete="email"
                 {...register("email")}
-                className="h-11 text-xs rounded-[var(--radius-card)] glass-card border-none border-border focus:border-primary focus:ring-primary/10 text-foreground placeholder:text-muted-foreground/50 transition-all"
+                className="rounded-[var(--radius-card)] glass-card border-none focus:border-primary focus:ring-primary/10"
               />
             </Field>
 
@@ -220,7 +220,7 @@ function RegisterPage() {
                 autoComplete="new-password"
                 placeholder="Mínimo de 8 caracteres"
                 {...register("password")}
-                className="h-11 text-xs rounded-[var(--radius-card)] glass-card border-none border-border focus:border-primary focus:ring-primary/10 text-foreground placeholder:text-muted-foreground/50 transition-all"
+                className="rounded-[var(--radius-card)] glass-card border-none focus:border-primary focus:ring-primary/10"
               />
             </Field>
 
@@ -230,7 +230,7 @@ function RegisterPage() {
                 autoComplete="new-password"
                 placeholder="Repita sua senha"
                 {...register("confirmPassword")}
-                className="h-11 text-xs rounded-[var(--radius-card)] glass-card border-none border-border focus:border-primary focus:ring-primary/10 text-foreground placeholder:text-muted-foreground/50 transition-all"
+                className="rounded-[var(--radius-card)] glass-card border-none focus:border-primary focus:ring-primary/10"
               />
             </Field>
 

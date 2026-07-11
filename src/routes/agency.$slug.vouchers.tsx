@@ -13,6 +13,8 @@ import { GhostButton , Button } from "@/components/ui/button";
 import { fmtDate } from "@/lib/formatters";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
+import { FormInput as Input } from "@/components/ui/input";
+import { NativeSelect as Select } from "@/components/ui/select";
 
 export const Route = createFileRoute("/agency/$slug/vouchers")({
   head: ({ context }: any) => ({ meta: [{ title: `Vouchers & Conferência · ${context?.brand?.platform_name || 'Turis'}` }] }),
@@ -580,12 +582,12 @@ function VouchersPage() {
                           {/* PNR / Locator */}
                           <td className="px-4 py-3.5">
                             {isEditing ? (
-                              <input
+                              <Input
                                 value={editForm.ticket_code}
                                 onChange={(e) =>
                                   setEditForm({ ...editForm, ticket_code: e.target.value })
                                 }
-                                className="h-8 w-24 rounded border-none glass-card border-none px-2 text-xs font-mono font-bold focus:border-brand"
+                                className="w-24 rounded border-none glass-card border-none px-2 font-mono font-bold focus:border-brand"
                                 placeholder="Loc..."
                               />
                             ) : f.ticket_code ? (
@@ -611,10 +613,10 @@ function VouchersPage() {
                           {/* Seat */}
                           <td className="px-4 py-3.5 font-mono text-foreground font-semibold">
                             {isEditing ? (
-                              <input
+                              <Input
                                 value={editForm.seat}
                                 onChange={(e) => setEditForm({ ...editForm, seat: e.target.value })}
-                                className="h-8 w-16 rounded border-none glass-card border-none px-2 text-xs focus:border-brand"
+                                className="w-16 rounded border-none glass-card border-none px-2 focus:border-brand"
                                 placeholder="ex: 12A"
                               />
                             ) : (
@@ -625,17 +627,17 @@ function VouchersPage() {
                           {/* Status */}
                           <td className="px-4 py-3.5">
                             {isEditing ? (
-                              <select
+                              <Select
                                 value={editForm.status}
                                 onChange={(e) =>
                                   setEditForm({ ...editForm, status: e.target.value })
                                 }
-                                className="h-8 rounded border-none glass-card border-none px-2 text-xs focus:border-brand cursor-pointer"
+                                className="rounded border-none glass-card border-none px-2 focus:border-brand cursor-pointer"
                               >
                                 <option value="pending">Pendente</option>
                                 <option value="confirmed">Conferido</option>
                                 <option value="action_needed">Alteração / Atenção</option>
-                              </select>
+                              </Select>
                             ) : (
                               <StatusBadge
                                 tone={
@@ -658,12 +660,12 @@ function VouchersPage() {
                           {/* Notes */}
                           <td className="px-4 py-3.5 max-w-[150px] truncate">
                             {isEditing ? (
-                              <input
+                              <Input
                                 value={editForm.notes}
                                 onChange={(e) =>
                                   setEditForm({ ...editForm, notes: e.target.value })
                                 }
-                                className="h-8 w-full rounded border-none glass-card border-none px-2 text-xs focus:border-brand"
+                                className="w-full rounded border-none glass-card border-none px-2 focus:border-brand"
                                 placeholder="Notas..."
                               />
                             ) : (

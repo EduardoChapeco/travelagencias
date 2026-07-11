@@ -1,4 +1,5 @@
 import { ShieldCheck } from "lucide-react";
+import { FormInput as Input } from "@/components/ui/input";
 
 export function LeadAccessibilityCard({ lead }: { lead: any }) {
   return (
@@ -9,29 +10,29 @@ export function LeadAccessibilityCard({ lead }: { lead: any }) {
       <div className="space-y-3">
         <div className="flex flex-col gap-2 text-xs font-semibold text-foreground">
           <div className="flex items-center gap-2">
-            <input
+            <Input
               type="checkbox"
               disabled
               checked={lead.pcd || false}
-              className="h-4 w-4 rounded border-border"
+              className="h-4 w-4 rounded"
             />
             <span>PCD (Pessoa com Deficiência)</span>
           </div>
           <div className="flex items-center gap-2">
-            <input
+            <Input
               type="checkbox"
               disabled
               checked={lead.reduced_mobility || false}
-              className="h-4 w-4 rounded border-border"
+              className="h-4 w-4 rounded"
             />
             <span>Mobilidade Reduzida</span>
           </div>
           <div className="flex items-center gap-2">
-            <input
+            <Input
               type="checkbox"
               disabled
               checked={lead.autism || false}
-              className="h-4 w-4 rounded border-border"
+              className="h-4 w-4 rounded"
             />
             <span>Espectro Autista (TEA)</span>
           </div>

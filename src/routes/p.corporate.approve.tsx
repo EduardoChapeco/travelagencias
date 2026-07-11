@@ -55,7 +55,7 @@ function CorporateApprovePage() {
 
   return (
     <div className="min-h-screen bg-background flex flex-col font-sans">
-      <header className="h-16 border-b border-border glass-card border-none flex items-center px-6">
+      <header className="flex min-h-[var(--ds-toolbar-height)] border-b border-border glass-toolbar items-center px-6">
         <div className="font-bold tracking-tight text-foreground">
           {rfp.agency?.name || "Turis"} B2B
         </div>

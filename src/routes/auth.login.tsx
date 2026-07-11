@@ -187,7 +187,7 @@ function LoginPage() {
               placeholder="nome@suaagencia.com.br"
               autoComplete="email"
               {...register("email")}
-              className="h-11 text-xs rounded-[var(--radius-card)] bg-white/5 border-white/10 focus:border-white/30 text-white placeholder:text-white/30 transition-all font-medium"
+              className="rounded-[var(--radius-card)] bg-white/5 border-white/10 focus:border-white/30 text-white placeholder:text-white/30 font-medium"
             />
           </Field>
 
@@ -209,7 +209,7 @@ function LoginPage() {
               placeholder="••••••••"
               autoComplete="current-password"
               {...register("password")}
-              className="h-11 text-xs rounded-[var(--radius-card)] bg-white/5 border-white/10 focus:border-white/30 text-white placeholder:text-white/30 transition-all font-medium"
+              className="rounded-[var(--radius-card)] bg-white/5 border-white/10 focus:border-white/30 text-white placeholder:text-white/30 font-medium"
             />
             {errors.password?.message && (
               <p className="text-[10px] font-bold text-rose-300 mt-1">{errors.password.message}</p>

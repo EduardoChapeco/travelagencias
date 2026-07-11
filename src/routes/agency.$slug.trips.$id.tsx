@@ -12,6 +12,7 @@ import { fmtDate } from "@/lib/formatters";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
 import { useConfirm } from "@/hooks/use-confirm";
+import { FormInput as Input } from "@/components/ui/input";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -537,12 +538,12 @@ function TripLayout() {
               <label className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
                 Localizador da Reserva
               </label>
-              <input
+              <Input
                 type="text"
                 placeholder="Ex: 849372"
                 value={importBookingId}
                 onChange={(e) => setImportBookingId(e.target.value)}
-                className="h-10 w-full rounded-[var(--radius-card)] border-none glass-card border-none px-3 text-sm outline-none focus:border-brand text-foreground font-mono font-bold"
+                className="w-full rounded-[var(--radius-card)] border-none glass-card border-none focus:border-brand font-mono font-bold"
               />
             </div>
 

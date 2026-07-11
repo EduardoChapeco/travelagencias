@@ -10,6 +10,7 @@ import { toast } from "sonner";
 import { SimpleSheet as Sheet } from "@/components/ui/sheet";
 import { PrimaryButton , Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
+import { FormInput as Input } from "@/components/ui/input";
 
 export const Route = createFileRoute("/m/payment/$token")({
   head: ({ context }: any) => ({ meta: [{ title: `Meu Carnê Digital · ${context?.brand?.platform_name || 'Turis'}` }] }),
@@ -264,7 +265,7 @@ function Page() {
                         <span className="text-xs font-bold text-brand">
                           {isUploading ? "Enviando..." : "Selecionar Comprovante (Imagem/PDF)"}
                         </span>
-                        <input
+                        <Input
                           type="file"
                           accept="image/*,application/pdf"
                           className="hidden"

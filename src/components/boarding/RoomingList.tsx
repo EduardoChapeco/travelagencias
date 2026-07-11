@@ -4,6 +4,9 @@ import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { BedDouble, Plus, Trash2, Check, X, Users, Hotel } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { FormInput as Input } from "@/components/ui/input";
+import { NativeSelect as Select } from "@/components/ui/select";
+import { FormTextarea as Textarea } from "@/components/ui/textarea";
 
 // ─── Types ───────────────────────────────────────────────────────────────────
 
@@ -245,39 +248,39 @@ export function RoomingList({
               <label className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wider">
                 Nº Quarto
               </label>
-              <input
+              <Input
                 type="text"
                 value={roomNumber}
                 onChange={(e) => setRoomNumber(e.target.value)}
                 placeholder="101"
-                className="mt-0.5 h-7 w-full rounded border border-border bg-surface-alt px-2 text-xs outline-none focus:border-brand"
+                className="mt-0.5 h-7 w-full rounded px-2 focus:border-brand"
               />
             </div>
             <div>
               <label className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wider">
                 Tipo
               </label>
-              <select
+              <Select
                 value={roomType}
                 onChange={(e) => setRoomType(e.target.value)}
-                className="mt-0.5 h-7 w-full rounded border border-border bg-surface-alt px-2 text-xs outline-none focus:border-brand"
+                className="mt-0.5 h-7 w-full rounded px-2 focus:border-brand"
               >
                 {Object.entries(ROOM_TYPE_LABELS).map(([k, v]) => (
                   <option key={k} value={k}>
                     {v}
                   </option>
                 ))}
-              </select>
+              </Select>
             </div>
             <div>
               <label className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wider">
                 Hotel
               </label>
-              <input
+              <Input
                 type="text"
                 value={hotelName}
                 onChange={(e) => setHotelName(e.target.value)}
-                className="mt-0.5 h-7 w-full rounded border border-border bg-surface-alt px-2 text-xs outline-none focus:border-brand"
+                className="mt-0.5 h-7 w-full rounded px-2 focus:border-brand"
               />
             </div>
             <div className="grid grid-cols-2 gap-1">
@@ -285,22 +288,22 @@ export function RoomingList({
                 <label className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wider">
                   Check-in
                 </label>
-                <input
+                <Input
                   type="date"
                   value={checkinDate}
                   onChange={(e) => setCheckinDate(e.target.value)}
-                  className="mt-0.5 h-7 w-full rounded border border-border bg-surface-alt px-2 text-xs outline-none focus:border-brand"
+                  className="mt-0.5 h-7 w-full rounded px-2 focus:border-brand"
                 />
               </div>
               <div>
                 <label className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wider">
                   Check-out
                 </label>
-                <input
+                <Input
                   type="date"
                   value={checkoutDate}
                   onChange={(e) => setCheckoutDate(e.target.value)}
-                  className="mt-0.5 h-7 w-full rounded border border-border bg-surface-alt px-2 text-xs outline-none focus:border-brand"
+                  className="mt-0.5 h-7 w-full rounded px-2 focus:border-brand"
                 />
               </div>
             </div>
@@ -325,7 +328,7 @@ export function RoomingList({
             <div className="space-y-1">
               {passengers.map((p, i) => (
                 <div key={i} className="flex gap-1 items-center">
-                  <input
+                  <Input
                     type="text"
                     value={p.name}
                     onChange={(e) => {
@@ -334,9 +337,9 @@ export function RoomingList({
                       setPassengers(arr);
                     }}
                     placeholder="Nome completo"
-                    className="flex-1 h-7 rounded border border-border bg-surface-alt px-2 text-xs outline-none focus:border-brand"
+                    className="flex-1 h-7 rounded px-2 focus:border-brand"
                   />
-                  <input
+                  <Input
                     type="text"
                     value={p.document ?? ""}
                     onChange={(e) => {
@@ -345,16 +348,16 @@ export function RoomingList({
                       setPassengers(arr);
                     }}
                     placeholder="Doc"
-                    className="w-20 h-7 rounded border border-border bg-surface-alt px-2 text-xs outline-none focus:border-brand"
+                    className="w-20 h-7 rounded px-2 focus:border-brand"
                   />
-                  <select
+                  <Select
                     value={p.meal_plan ?? "BB"}
                     onChange={(e) => {
                       const arr = [...passengers];
                       arr[i] = { ...p, meal_plan: e.target.value };
                       setPassengers(arr);
                     }}
-                    className="w-14 h-7 rounded border border-border bg-surface-alt px-1 text-xs outline-none focus:border-brand"
+                    className="w-14 h-7 rounded px-1 focus:border-brand"
                     title="Regime de refeição"
                   >
                     <option value="BB">BB</option>
@@ -362,7 +365,7 @@ export function RoomingList({
                     <option value="FB">FB</option>
                     <option value="AI">AI</option>
                     <option value="RO">RO</option>
-                  </select>
+                  </Select>
                   {passengers.length > 1 && (
                     <Button
                       type="button"
@@ -381,11 +384,11 @@ export function RoomingList({
             <label className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wider">
               Observações
             </label>
-            <textarea
+            <Textarea
               value={notes}
               onChange={(e) => setNotes(e.target.value)}
               rows={2}
-              className="mt-0.5 w-full rounded border border-border bg-surface-alt px-2 py-1.5 text-xs outline-none focus:border-brand resize-none"
+              className="mt-0.5 w-full rounded px-2 py-1.5 focus:border-brand resize-none"
             />
           </div>
 

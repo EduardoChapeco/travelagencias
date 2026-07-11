@@ -5,6 +5,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { type Proposal } from "@/services/proposals";
 import { SheetPage } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
+import { FormTextarea as Textarea } from "@/components/ui/textarea";
 
 type Props = {
   draft: Proposal;
@@ -91,11 +92,11 @@ Não inclua crases markdown nem texto adicional.`;
             <label className="text-[10px] uppercase font-bold tracking-widest text-muted-foreground mb-2 block">
               Instruções para o Assistente
             </label>
-            <textarea
+            <Textarea
               rows={4}
               value={prompt}
               onChange={(e) => setPrompt(e.target.value)}
-              className="w-full rounded-[var(--radius-card)] border border-border bg-surface-alt/50 px-3 py-2 text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-amber-500/50 resize-none"
+              className="w-full rounded-[var(--radius-card)] bg-surface-alt/50 focus:ring-2 focus:ring-amber-500/50 resize-none"
               placeholder="Como o assistente deve reescrever esta proposta?"
             />
           </div>

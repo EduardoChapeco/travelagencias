@@ -4,6 +4,7 @@ import { cn } from "@/lib/utils";
 import { toast } from "sonner";
 import { useDesktopTheme } from "@/hooks/use-desktop-theme";
 import { Button } from "@/components/ui/button";
+import { FormInput as Input } from "@/components/ui/input";
 
 export function DesktopCustomizerModal({
   open,
@@ -38,7 +39,7 @@ export function DesktopCustomizerModal({
         <div className="space-y-2">
           <label className="text-[10px] font-black uppercase tracking-widest text-white/70">Papel de Parede (URL)</label>
           <div className="flex gap-2">
-            <input
+            <Input
               type="text"
               placeholder="Cole a URL de uma imagem..."
               value={customUrl || theme.wallpaper}
@@ -46,7 +47,7 @@ export function DesktopCustomizerModal({
                 setCustomUrl(e.target.value);
                 theme.setTheme({ wallpaper: e.target.value });
               }}
-              className="flex-1 bg-white/10 border border-white/20 rounded-full px-4 py-2 text-sm text-white placeholder:text-white/40 focus:outline-none focus:ring-2 focus:ring-white/50"
+              className="flex-1 bg-white/10 border-white/20 rounded-full text-white placeholder:text-white/40 focus:ring-2 focus:ring-white/50"
             />
           </div>
         </div>
@@ -58,13 +59,13 @@ export function DesktopCustomizerModal({
               <span className="text-white/80">Blur do Wallpaper</span>
               <span>{theme.blurIntensity}px</span>
             </div>
-            <input
+            <Input
               type="range"
               min="0"
               max="30"
               value={theme.blurIntensity}
               onChange={(e) => theme.setTheme({ blurIntensity: Number(e.target.value) })}
-              className="w-full h-1.5 bg-white/10 rounded-2xl appearance-none cursor-pointer accent-white"
+              className="w-full h-1.5 bg-white/10 appearance-none cursor-pointer accent-white"
             />
           </div>
 
@@ -73,13 +74,13 @@ export function DesktopCustomizerModal({
               <span className="text-white/80">Escurecimento de Fundo</span>
               <span>{theme.dimOpacity}%</span>
             </div>
-            <input
+            <Input
               type="range"
               min="0"
               max="80"
               value={theme.dimOpacity}
               onChange={(e) => theme.setTheme({ dimOpacity: Number(e.target.value) })}
-              className="w-full h-1.5 bg-white/10 rounded-2xl appearance-none cursor-pointer accent-white"
+              className="w-full h-1.5 bg-white/10 appearance-none cursor-pointer accent-white"
             />
           </div>
           
@@ -88,13 +89,13 @@ export function DesktopCustomizerModal({
               <span className="text-white/80">Transparência do Glass</span>
               <span>{theme.glassOpacity}%</span>
             </div>
-            <input
+            <Input
               type="range"
               min="5"
               max="60"
               value={theme.glassOpacity}
               onChange={(e) => theme.setTheme({ glassOpacity: Number(e.target.value) })}
-              className="w-full h-1.5 bg-white/10 rounded-2xl appearance-none cursor-pointer accent-white"
+              className="w-full h-1.5 bg-white/10 appearance-none cursor-pointer accent-white"
             />
             <p className="text-[10px] text-white/40">
               {theme.glassOpacity <= 15 ? "Blur intenso — wallpaper bem visível" : theme.glassOpacity <= 30 ? "Equilíbrio (recomendado)" : "Mais opaco"}

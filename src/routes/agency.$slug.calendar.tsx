@@ -281,7 +281,7 @@ function CalendarPage() {
               <Select
                 value={filterType}
                 onChange={(e: any) => setFilterType(e.target.value)}
-                className="h-7 text-[10px] bg-white/5 border-white/10 w-24 rounded-full text-white/90 outline-none px-2"
+                className="h-7 text-[10px] bg-white/5 border-white/10 w-24 rounded-full text-white/90 px-2"
               >
                 <option value="all">Tipos</option>
                 <option value="call">📞 Telefone</option>
@@ -294,7 +294,7 @@ function CalendarPage() {
                 <Select
                   value={filterUser}
                   onChange={(e: any) => setFilterUser(e.target.value)}
-                  className="h-7 text-[10px] bg-white/5 border-white/10 w-28 rounded-full text-white/90 outline-none px-2"
+                  className="h-7 text-[10px] bg-white/5 border-white/10 w-28 rounded-full text-white/90 px-2"
                 >
                   <option value="all">Agentes</option>
                   {usersQ.data.map((u: any) => (
@@ -645,7 +645,7 @@ function CalendarPage() {
                   required
                   value={meetingForm.lead_id}
                   onChange={(e) => setMeetingForm({ ...meetingForm, lead_id: e.target.value })}
-                  className="h-9 text-xs bg-background border-border/80 w-full"
+                  className="border-border/80 w-full"
                 >
                   <option value="">Selecione um lead...</option>
                   {leadsQ.data?.map((l) => (
@@ -662,7 +662,7 @@ function CalendarPage() {
                   placeholder="Ex: Reunião de Briefing"
                   value={meetingForm.title}
                   onChange={(e) => setMeetingForm({ ...meetingForm, title: e.target.value })}
-                  className="h-9 text-xs"
+                  
                 />
               </Field>
 
@@ -671,7 +671,7 @@ function CalendarPage() {
                   placeholder="Ex: Alinhar destinos preferidos e orçamento"
                   value={meetingForm.description}
                   onChange={(e) => setMeetingForm({ ...meetingForm, description: e.target.value })}
-                  className="h-9 text-xs"
+                  
                 />
               </Field>
 
@@ -684,7 +684,7 @@ function CalendarPage() {
                     onChange={(e) =>
                       setMeetingForm({ ...meetingForm, scheduled_at: e.target.value })
                     }
-                    className="h-9 text-xs"
+                    
                   />
                 </Field>
                 <Field label="Duração (minutos)">
@@ -698,7 +698,7 @@ function CalendarPage() {
                         duration_minutes: parseInt(e.target.value) || 30,
                       })
                     }
-                    className="h-9 text-xs"
+                    
                   />
                 </Field>
               </div>
@@ -707,7 +707,7 @@ function CalendarPage() {
                 <Select
                   value={meetingForm.meeting_type}
                   onChange={(e) => setMeetingForm({ ...meetingForm, meeting_type: e.target.value })}
-                  className="h-9 text-xs bg-background border-border/80"
+                  className="border-border/80"
                 >
                   <option value="call">📞 Chamada de Voz / Telefone</option>
                   <option value="video">💻 Vídeochamada (Meet / Zoom)</option>

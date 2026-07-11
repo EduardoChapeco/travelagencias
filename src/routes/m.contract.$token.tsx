@@ -27,6 +27,7 @@ import {
 } from "lucide-react";
 import JSZip from "jszip";
 import { cn } from "@/lib/utils";
+import { NativeSelect as Select } from "@/components/ui/select";
 
 export const Route = createFileRoute("/m/contract/$token")({
   head: ({ context }: any) => ({ meta: [{ title: `Assinar contrato · ${context?.brand?.platform_name || 'Turis'}` }] }),
@@ -1105,7 +1106,7 @@ function Page() {
                 <label className="text-xs font-bold text-brand uppercase tracking-wider block">
                   Quem está assinando este documento agora?
                 </label>
-                <select
+                <Select
                   value={selectedSignerIndex}
                   onChange={(e) => {
                     const val = e.target.value;
@@ -1121,7 +1122,7 @@ function Page() {
                       setDoc("");
                     }
                   }}
-                  className="w-full h-10 px-3 rounded-[var(--radius-card)] border-none glass-card border-none text-sm outline-none focus:border-brand text-foreground"
+                  className="w-full rounded-[var(--radius-card)] border-none glass-card border-none focus:border-brand"
                 >
                   <option value="">Selecione seu nome da lista...</option>
                   {pendingSigners.map((cl: any, idx: number) => (
@@ -1129,7 +1130,7 @@ function Page() {
                       {cl.name} ({cl.cpf || cl.document})
                     </option>
                   ))}
-                </select>
+                </Select>
               </div>
             )}
 
@@ -1202,7 +1203,7 @@ function Page() {
                         <span className="text-[10px] font-semibold text-muted-foreground">
                           Selecionar Frente
                         </span>
-                        <input
+                        <Input
                           type="file"
                           accept="image/*"
                           className="hidden"
@@ -1237,7 +1238,7 @@ function Page() {
                         <span className="text-[10px] font-semibold text-muted-foreground">
                           Selecionar Verso
                         </span>
-                        <input
+                        <Input
                           type="file"
                           accept="image/*"
                           className="hidden"
@@ -1406,7 +1407,7 @@ function Page() {
 
                             <label className="flex items-center justify-center px-3 h-9 rounded-full border border-dashed border-border glass-card border-none cursor-pointer hover:glass bg-white/5 border-white/10/25 transition-colors text-xs font-semibold text-muted-foreground gap-1.5">
                               <Upload className="h-4 w-4" /> Enviar Vídeo
-                              <input
+                              <Input
                                 type="file"
                                 accept="video/*"
                                 className="hidden"

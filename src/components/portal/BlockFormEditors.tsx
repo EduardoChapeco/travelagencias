@@ -955,9 +955,9 @@ export function BlockFormEditor({ block: blockItem, updateBlock, agencyId }: Pro
             <div className="grid grid-cols-2 gap-4">
               <Field label="Cor de Fundo">
                 <div className="flex gap-2 items-center">
-                  <input
+                  <Input
                     type="color"
-                    className="w-8 h-8 rounded cursor-pointer"
+                    className="w-8 rounded cursor-pointer"
                     value={block.bg_color || "#1E293B"}
                     onChange={(e) => updateBlock(block.id, { bg_color: e.target.value })}
                   />
@@ -969,9 +969,9 @@ export function BlockFormEditor({ block: blockItem, updateBlock, agencyId }: Pro
               </Field>
               <Field label="Cor do Texto">
                 <div className="flex gap-2 items-center">
-                  <input
+                  <Input
                     type="color"
-                    className="w-8 h-8 rounded cursor-pointer"
+                    className="w-8 rounded cursor-pointer"
                     value={block.text_color || "#FFFFFF"}
                     onChange={(e) => updateBlock(block.id, { text_color: e.target.value })}
                   />
@@ -1049,7 +1049,7 @@ export function BlockFormEditor({ block: blockItem, updateBlock, agencyId }: Pro
                 </div>
                 <div className="flex gap-2 items-center mt-2">
                   <Input
-                    className="flex-1 text-sm"
+                    className="flex-1"
                     placeholder="URL do link"
                     value={item.url || ""}
                     onChange={(e) => {
@@ -1059,7 +1059,7 @@ export function BlockFormEditor({ block: blockItem, updateBlock, agencyId }: Pro
                     }}
                   />
                   <label className="flex items-center gap-2 text-xs">
-                    <input
+                    <Input
                       type="checkbox"
                       checked={item.highlight || false}
                       onChange={(e) => {
@@ -2358,9 +2358,9 @@ export function BlockFormEditor({ block: blockItem, updateBlock, agencyId }: Pro
             {blockStyles.bg_type === "color" && (
               <Field label="Cor de Fundo">
                 <div className="flex gap-2 items-center">
-                  <input
+                  <Input
                     type="color"
-                    className="w-8 h-8 rounded cursor-pointer border border-border"
+                    className="w-8 rounded cursor-pointer"
                     value={blockStyles.bg_color || blockStyles.backgroundColor || "#ffffff"}
                     onChange={(e) =>
                       updateStyle({ bg_color: e.target.value, backgroundColor: e.target.value })
@@ -2571,9 +2571,9 @@ export function BlockFormEditor({ block: blockItem, updateBlock, agencyId }: Pro
 
             <Field label="Cor do Texto" hint="Ajuste para garantir legibilidade">
               <div className="flex gap-2 items-center">
-                <input
+                <Input
                   type="color"
-                  className="w-8 h-8 rounded cursor-pointer border border-border"
+                  className="w-8 rounded cursor-pointer"
                   value={blockStyles.text_color || "#000000"}
                   onChange={(e) =>
                     updateStyle({ text_color: e.target.value, textColor: e.target.value })
@@ -2625,7 +2625,7 @@ export function BlockFormEditor({ block: blockItem, updateBlock, agencyId }: Pro
           <div className="space-y-4">
             <Field label="Ativar Animação">
               <div className="flex items-center gap-2 py-1">
-                <input
+                <Input
                   type="checkbox"
                   checked={!!blockAnimation.enabled}
                   onChange={(e) => {
@@ -2638,7 +2638,7 @@ export function BlockFormEditor({ block: blockItem, updateBlock, agencyId }: Pro
                         : "none",
                     });
                   }}
-                  className="rounded border-border text-brand focus:ring-brand h-4 w-4"
+                  className="rounded text-brand focus:ring-brand h-4 w-4"
                 />
                 <span className="text-xs text-muted-foreground">Animar entrada da seção</span>
               </div>
@@ -2667,7 +2667,7 @@ export function BlockFormEditor({ block: blockItem, updateBlock, agencyId }: Pro
 
                 <Field label="Atraso (Delay em ms)">
                   <div className="flex gap-2 items-center">
-                    <input
+                    <Input
                       type="range"
                       min={0}
                       max={2000}
@@ -2688,7 +2688,7 @@ export function BlockFormEditor({ block: blockItem, updateBlock, agencyId }: Pro
 
                 <Field label="Duração (Duration em ms)">
                   <div className="flex gap-2 items-center">
-                    <input
+                    <Input
                       type="range"
                       min={200}
                       max={2000}
@@ -2725,11 +2725,11 @@ export function BlockFormEditor({ block: blockItem, updateBlock, agencyId }: Pro
           <div className="space-y-4">
             <Field label="Ocultar no Mobile">
               <div className="flex items-center gap-2 py-1">
-                <input
+                <Input
                   type="checkbox"
                   checked={!!blockResponsive.hideOnMobile}
                   onChange={(e) => updateResponsive({ hideOnMobile: e.target.checked })}
-                  className="rounded border-border text-brand focus:ring-brand h-4 w-4"
+                  className="rounded text-brand focus:ring-brand h-4 w-4"
                 />
                 <span className="text-xs text-muted-foreground">
                   Ocultar quando visualizado em celulares
@@ -2739,11 +2739,11 @@ export function BlockFormEditor({ block: blockItem, updateBlock, agencyId }: Pro
 
             <Field label="Ocultar no Tablet">
               <div className="flex items-center gap-2 py-1">
-                <input
+                <Input
                   type="checkbox"
                   checked={!!blockResponsive.hideOnTablet}
                   onChange={(e) => updateResponsive({ hideOnTablet: e.target.checked })}
-                  className="rounded border-border text-brand focus:ring-brand h-4 w-4"
+                  className="rounded text-brand focus:ring-brand h-4 w-4"
                 />
                 <span className="text-xs text-muted-foreground">
                   Ocultar quando visualizado em tablets
@@ -2922,9 +2922,9 @@ function SectionStyleEditor({ block, updateBlock, agencyId }: Props) {
       {styles.bg_type === "color" && (
         <Field label="Cor de Fundo">
           <div className="flex gap-2 items-center">
-            <input
+            <Input
               type="color"
-              className="w-8 h-8 rounded cursor-pointer border border-border"
+              className="w-8 rounded cursor-pointer"
               value={styles.bg_color || "#ffffff"}
               onChange={(e) => updateStyle({ bg_color: e.target.value })}
             />
@@ -2987,9 +2987,9 @@ function SectionStyleEditor({ block, updateBlock, agencyId }: Props) {
       {styles.bg_type !== "default" && (
         <Field label="Cor do Texto" hint="Ajuste para garantir legibilidade">
           <div className="flex gap-2 items-center">
-            <input
+            <Input
               type="color"
-              className="w-8 h-8 rounded cursor-pointer border border-border"
+              className="w-8 rounded cursor-pointer"
               value={styles.text_color || "#000000"}
               onChange={(e) => updateStyle({ text_color: e.target.value })}
             />
@@ -3214,11 +3214,11 @@ export function RegistryBlockFormEditor({
             return (
               <Field key={field.key} label={field.label}>
                 <div className="flex items-center gap-2">
-                  <input
+                  <Input
                     type="color"
                     value={(value as string) || "#ffffff"}
                     onChange={(e) => handleFieldChange(field.key, e.target.value)}
-                    className="w-10 h-10 rounded-2xl border border-border cursor-pointer"
+                    className="w-10 cursor-pointer"
                   />
                   <Input
                     value={(value as string) || ""}
@@ -3248,11 +3248,11 @@ export function RegistryBlockFormEditor({
             return (
               <Field key={field.key} label={field.label}>
                 <div className="flex items-center gap-2 py-1">
-                  <input
+                  <Input
                     type="checkbox"
                     checked={!!value}
                     onChange={(e) => handleFieldChange(field.key, e.target.checked)}
-                    className="rounded border-border text-brand focus:ring-brand h-4 w-4"
+                    className="rounded text-brand focus:ring-brand h-4 w-4"
                   />
                   <span className="text-xs text-muted-foreground">Ativo / Exibir</span>
                 </div>
@@ -3364,12 +3364,12 @@ function UnsplashPicker({ value, onChange }: { value: string; onChange: (url: st
       {open && (
         <div className="absolute z-50 right-4 w-72 p-4 rounded-3xl border border-border bg-surface shadow-none space-y-3 mt-2">
           <div className="flex gap-2">
-            <input
+            <Input
               type="text"
               placeholder="Ex: travel paradise, hotel, beach..."
               value={keyword}
               onChange={(e) => setKeyword(e.target.value)}
-              className="flex-1 px-3 py-1.5 text-xs rounded-2xl border border-border outline-none bg-surface"
+              className="flex-1 py-1.5"
               onKeyDown={(e) => e.key === "Enter" && search()}
             />
             <Button

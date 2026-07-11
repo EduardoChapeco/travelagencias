@@ -33,7 +33,7 @@ export function FilterBar({
 }: FilterBarProps) {
   return (
     <div 
-      className={cn("flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between pb-4 border-b border-border/60 mb-6", className)} 
+      className={cn("flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between min-h-[var(--ds-toolbar-height)] px-4 py-2 glass-section rounded-[var(--radius-card)] mb-6", className)} 
       {...props}
     >
       <div className="flex items-center gap-1 overflow-x-auto no-scrollbar max-w-full pb-1 sm:pb-0">
@@ -76,7 +76,7 @@ export function FilterBar({
               placeholder={searchPlaceholder}
               value={searchQuery ?? ""}
               onChange={(e) => onSearchChange(e.target.value)}
-              className="pl-9 h-9 text-xs w-full"
+              className="pl-9 w-full"
             />
           </div>
         )}

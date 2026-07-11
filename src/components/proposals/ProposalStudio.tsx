@@ -18,6 +18,7 @@ import { SectionIncludes } from "@/components/studio/sections/SectionIncludes";
 import { SectionFinancial } from "@/components/studio/sections/SectionFinancial";
 import { Accordion } from "@/components/proposals/ProposalFormFields";
 import { getProposalTemplate, PROPOSAL_TEMPLATES } from "@/components/proposals/templates";
+import { FormInput as Input } from "@/components/ui/input";
 
 interface ProposalStudioProps {
   draft: Proposal;
@@ -95,11 +96,11 @@ export function ProposalStudio({ draft, save, agency }: ProposalStudioProps) {
                   Disponível para clonagem
                 </span>
               </div>
-              <input
+              <Input
                 type="checkbox"
                 checked={!!draft.is_public_template}
                 onChange={(e) => save({ is_public_template: e.target.checked })}
-                className="h-4 w-4 rounded border-border text-brand focus:ring-brand cursor-pointer"
+                className="h-4 w-4 rounded text-brand focus:ring-brand cursor-pointer"
               />
             </div>
 

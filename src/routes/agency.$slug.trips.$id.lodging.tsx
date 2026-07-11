@@ -21,6 +21,8 @@ import {
 import { toast } from "sonner";
 import { logTripAudit } from "@/services/audit";
 import { Button } from "@/components/ui/button";
+import { FormInput as Input } from "@/components/ui/input";
+import { NativeSelect as Select } from "@/components/ui/select";
 
 export const Route = createFileRoute("/agency/$slug/trips/$id/lodging")({
   head: ({ context }: any) => ({ meta: [{ title: `Hospedagem · ${context?.brand?.platform_name || 'Turis'}` }] }),
@@ -222,12 +224,12 @@ function TripLodgingPage() {
               <label className="text-[10px] font-bold text-muted-foreground uppercase">
                 Nome do Hotel *
               </label>
-              <input
+              <Input
                 type="text"
                 placeholder="Ex: Copacabana Palace"
                 value={hotelName}
                 onChange={(e) => setHotelName(e.target.value)}
-                className="w-full text-xs border-none rounded p-2 glass-card border-none"
+                className="w-full border-none rounded p-2 glass-card border-none"
               />
             </div>
 
@@ -235,12 +237,12 @@ function TripLodgingPage() {
               <label className="text-[10px] font-bold text-muted-foreground uppercase">
                 Telefone do Hotel
               </label>
-              <input
+              <Input
                 type="text"
                 placeholder="+55 (21) 2548-7070"
                 value={hotelPhone}
                 onChange={(e) => setHotelPhone(e.target.value)}
-                className="w-full text-xs border-none rounded p-2 glass-card border-none"
+                className="w-full border-none rounded p-2 glass-card border-none"
               />
             </div>
 
@@ -248,12 +250,12 @@ function TripLodgingPage() {
               <label className="text-[10px] font-bold text-muted-foreground uppercase">
                 Endereço Completo
               </label>
-              <input
+              <Input
                 type="text"
                 placeholder="Av. Atlântica, 1702 - Copacabana"
                 value={hotelAddress}
                 onChange={(e) => setHotelAddress(e.target.value)}
-                className="w-full text-xs border-none rounded p-2 glass-card border-none"
+                className="w-full border-none rounded p-2 glass-card border-none"
               />
             </div>
 
@@ -261,11 +263,11 @@ function TripLodgingPage() {
               <label className="text-[10px] font-bold text-muted-foreground uppercase">
                 Data de Check-in
               </label>
-              <input
+              <Input
                 type="date"
                 value={hotelCheckin}
                 onChange={(e) => setHotelCheckin(e.target.value)}
-                className="w-full text-xs border-none rounded p-2 glass-card border-none"
+                className="w-full border-none rounded p-2 glass-card border-none"
               />
             </div>
 
@@ -273,11 +275,11 @@ function TripLodgingPage() {
               <label className="text-[10px] font-bold text-muted-foreground uppercase">
                 Data de Check-out
               </label>
-              <input
+              <Input
                 type="date"
                 value={hotelCheckout}
                 onChange={(e) => setHotelCheckout(e.target.value)}
-                className="w-full text-xs border-none rounded p-2 glass-card border-none"
+                className="w-full border-none rounded p-2 glass-card border-none"
               />
             </div>
 
@@ -285,12 +287,12 @@ function TripLodgingPage() {
               <label className="text-[10px] font-bold text-muted-foreground uppercase">
                 Acomodação / Notas
               </label>
-              <input
+              <Input
                 type="text"
                 placeholder="Ex: Quarto Duplo Standard Vista Mar, Café incluso"
                 value={roomType}
                 onChange={(e) => setRoomType(e.target.value)}
-                className="w-full text-xs border-none rounded p-2 glass-card border-none"
+                className="w-full border-none rounded p-2 glass-card border-none"
               />
             </div>
 
@@ -298,17 +300,17 @@ function TripLodgingPage() {
               <label className="text-[10px] font-bold text-muted-foreground uppercase">
                 Classificação (Estrelas)
               </label>
-              <select
+              <Select
                 value={stars}
                 onChange={(e) => setStars(Number(e.target.value))}
-                className="w-full text-xs border-none rounded p-2 glass-card border-none"
+                className="w-full border-none rounded p-2 glass-card border-none"
               >
                 <option value="1">1 Estrela</option>
                 <option value="2">2 Estrelas</option>
                 <option value="3">3 Estrelas</option>
                 <option value="4">4 Estrelas</option>
                 <option value="5">5 Estrelas</option>
-              </select>
+              </Select>
             </div>
           </div>
 

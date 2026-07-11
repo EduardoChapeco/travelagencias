@@ -249,7 +249,7 @@ export function ContractClauseLibrary({
                 placeholder="Ex: Condições de Cancelamento por Força Maior"
                 value={title}
                 onChange={(e) => setTitle(e.target.value)}
-                className="h-9 text-xs"
+                
               />
             </Field>
 
@@ -258,7 +258,7 @@ export function ContractClauseLibrary({
                 <Select
                   value={kind}
                   onChange={(e) => setKind(e.target.value as Clause["kind"])}
-                  className="h-9 text-xs"
+                  
                 >
                   {Object.entries(CLAUSE_KIND_LABELS).map(([k, label]) => (
                     <option key={k} value={k}>
@@ -272,7 +272,7 @@ export function ContractClauseLibrary({
                 <Select
                   value={isActive ? "active" : "inactive"}
                   onChange={(e) => setIsActive(e.target.value === "active")}
-                  className="h-9 text-xs"
+                  
                 >
                   <option value="active">Ativa (Visível ao Gerar)</option>
                   <option value="inactive">Inativa (Oculta)</option>
@@ -286,7 +286,7 @@ export function ContractClauseLibrary({
                 value={body}
                 onChange={(e) => setBody(e.target.value)}
                 rows={8}
-                className="text-xs resize-none"
+                className="resize-none"
               />
             </Field>
 

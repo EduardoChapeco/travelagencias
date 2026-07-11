@@ -257,7 +257,7 @@ export function TaskDetailDrawer({ task, open, onClose, onUpdated }: TaskDetailD
                 <Input
                   value={draft.title}
                   onChange={(e) => setDraft((d) => ({ ...d, title: e.target.value }))}
-                  className="text-base font-bold border-none bg-transparent focus-visible:ring-0 px-0 h-auto py-0.5 flex-1"
+                  className="font-bold border-none focus-visible:ring-0 px-0 h-auto py-0.5 flex-1"
                   placeholder="Título da tarefa..."
                 />
                 {isDirty && (
@@ -303,7 +303,7 @@ export function TaskDetailDrawer({ task, open, onClose, onUpdated }: TaskDetailD
                     value={draft.status}
                     onValueChange={(v) => setDraft((d) => ({ ...d, status: v as TaskStatus }))}
                   >
-                    <SelectTrigger className="h-8 text-xs font-semibold border-border/60 bg-[var(--surface-alt)]/40 rounded-2xl">
+                    <SelectTrigger className="font-semibold border-border/60 bg-[var(--surface-alt)]/40">
                       <div className="flex items-center gap-1.5">
                         <span className="h-2 w-2 rounded-full shrink-0" style={{ backgroundColor: statusDef.color }} />
                         <SelectValue />
@@ -311,7 +311,7 @@ export function TaskDetailDrawer({ task, open, onClose, onUpdated }: TaskDetailD
                     </SelectTrigger>
                     <SelectContent>
                       {Object.entries(TASK_STATUSES).map(([k, v]) => (
-                        <SelectItem key={k} value={k} className="text-xs">
+                        <SelectItem key={k} value={k} >
                           <div className="flex items-center gap-2">
                             <span className="h-2 w-2 rounded-full" style={{ backgroundColor: v.color }} />
                             {v.label}
@@ -331,7 +331,7 @@ export function TaskDetailDrawer({ task, open, onClose, onUpdated }: TaskDetailD
                     value={draft.priority}
                     onValueChange={(v) => setDraft((d) => ({ ...d, priority: v as TaskPriority }))}
                   >
-                    <SelectTrigger className="h-8 text-xs font-semibold border-border/60 bg-[var(--surface-alt)]/40 rounded-2xl">
+                    <SelectTrigger className="font-semibold border-border/60 bg-[var(--surface-alt)]/40">
                       <div className="flex items-center gap-1.5">
                         <span className="h-2 w-2 rounded-full shrink-0" style={{ backgroundColor: priorityDef.color }} />
                         <SelectValue />
@@ -339,7 +339,7 @@ export function TaskDetailDrawer({ task, open, onClose, onUpdated }: TaskDetailD
                     </SelectTrigger>
                     <SelectContent>
                       {Object.entries(TASK_PRIORITIES).map(([k, v]) => (
-                        <SelectItem key={k} value={k} className="text-xs">
+                        <SelectItem key={k} value={k} >
                           <div className="flex items-center gap-2">
                             <span className="h-2 w-2 rounded-full" style={{ backgroundColor: v.color }} />
                             {v.label}
@@ -355,11 +355,11 @@ export function TaskDetailDrawer({ task, open, onClose, onUpdated }: TaskDetailD
                   <label className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground flex items-center gap-1">
                     <Calendar className="h-3 w-3" /> Prazo
                   </label>
-                  <input
+                  <Input
                     type="date"
                     value={draft.due_date}
                     onChange={(e) => setDraft((d) => ({ ...d, due_date: e.target.value }))}
-                    className="h-8 w-full rounded-2xl border border-border/60 bg-[var(--surface-alt)]/40 text-xs px-2 font-semibold text-foreground outline-none focus:ring-1 focus:ring-brand transition-all"
+                    className="w-full border-border/60 bg-[var(--surface-alt)]/40 px-2 font-semibold focus:ring-brand"
                   />
                 </div>
 
@@ -436,7 +436,7 @@ export function TaskDetailDrawer({ task, open, onClose, onUpdated }: TaskDetailD
                   value={descValue}
                   onChange={(e) => setDescValue(e.target.value)}
                   placeholder="Adicione uma descrição detalhada da tarefa..."
-                  className="min-h-[80px] text-sm resize-none border-border/50 bg-[var(--surface-alt)]/20 focus:border-brand transition-colors rounded-[var(--radius-card)]"
+                  className="min-h-[80px] resize-none border-border/50 bg-[var(--surface-alt)]/20 focus:border-brand rounded-[var(--radius-card)]"
                 />
                 {descValue !== ((task.description as string) || "") && (
                   <div className="flex gap-2 pt-1.5 justify-end">

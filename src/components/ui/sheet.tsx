@@ -84,7 +84,7 @@ export function SheetPage({
         )}
         style={{ width }}
       >
-        <div className="flex h-14 shrink-0 items-center justify-between border-b border-border px-6">
+        <div className="flex min-h-[var(--ds-toolbar-height)] shrink-0 items-center justify-between border-b border-border px-6 glass-toolbar">
           <h2 className="text-base font-semibold">{title}</h2>
           <Button
             onClick={onClose}

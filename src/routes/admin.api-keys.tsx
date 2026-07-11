@@ -196,11 +196,11 @@ function Page() {
                       {k.monthly_limit ? ` / ${k.monthly_limit}` : " / ∞"}
                     </td>
                     <td className="px-4 py-3 text-center">
-                      <input
+                      <Input
                         type="checkbox"
                         checked={k.is_active}
                         onChange={(e) => toggle(k.id, e.target.checked)}
-                        className="rounded border-border text-brand focus:ring-brand h-4 w-4"
+                        className="rounded text-brand focus:ring-brand h-4 w-4"
                       />
                     </td>
                     <td className="px-4 py-3 text-right">

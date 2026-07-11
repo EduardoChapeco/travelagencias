@@ -1389,7 +1389,7 @@ Resuma de forma profissional e persuasiva (estilo consultor premium de turismo) 
                   
                   <div className="space-y-4">
                     <Field label={`Peso de Conforto (Hotelaria): ${comfortWeight}%`}>
-                      <input
+                      <Input
                         type="range"
                         min="0"
                         max="100"
@@ -1406,7 +1406,7 @@ Resuma de forma profissional e persuasiva (estilo consultor premium de turismo) 
                     </Field>
 
                     <Field label={`Peso de Preço (Orçamento): ${priceWeight}%`}>
-                      <input
+                      <Input
                         type="range"
                         min="0"
                         max="100"
@@ -1423,7 +1423,7 @@ Resuma de forma profissional e persuasiva (estilo consultor premium de turismo) 
                     </Field>
 
                     <Field label={`Peso de Logística (Conexões/Escalas): ${logisticsWeight}%`}>
-                      <input
+                      <Input
                         type="range"
                         min="0"
                         max="100"
@@ -1454,10 +1454,10 @@ Resuma de forma profissional e persuasiva (estilo consultor premium de turismo) 
                   </h3>
                   <div className="grid grid-cols-2 gap-4">
                     <Field label="Conexão Máxima (Horas)">
-                      <Input type="number" defaultValue={3} disabled className="h-8 text-xs opacity-70" />
+                      <Input type="number" defaultValue={3} disabled className="opacity-70" />
                     </Field>
                     <Field label="Categoria Mínima (Estrelas)">
-                      <Input type="number" defaultValue={3} disabled className="h-8 text-xs opacity-70" />
+                      <Input type="number" defaultValue={3} disabled className="opacity-70" />
                     </Field>
                   </div>
                   <span className="text-[9px] text-muted-foreground block leading-relaxed">

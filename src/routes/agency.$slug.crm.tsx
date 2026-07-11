@@ -210,7 +210,7 @@ function CRMPage() {
             activeTab !== "admin" ? (
               <div className="flex items-center gap-1">
                 <RadixSelect value={ownerFilter} onValueChange={setOwnerFilter}>
-                  <SelectTrigger className="h-7 text-[11px] font-semibold bg-transparent hover:bg-white/10 rounded-full text-os-muted hover:text-os border-white/10 px-2.5 cursor-pointer transition-colors focus:ring-0">
+                  <SelectTrigger className="h-7 text-[11px] font-semibold hover:bg-white/10 rounded-full text-os-muted hover:text-os border-white/10 px-2.5 cursor-pointer focus:ring-0">
                     <SelectValue placeholder="Responsáveis" />
                   </SelectTrigger>
                   <SelectContent>
@@ -227,7 +227,7 @@ function CRMPage() {
                 </RadixSelect>
 
                 <RadixSelect value={sourceFilter} onValueChange={setSourceFilter}>
-                  <SelectTrigger className="h-7 text-[11px] font-semibold bg-transparent hover:bg-white/10 rounded-full text-os-muted hover:text-os border-white/10 px-2.5 cursor-pointer transition-colors focus:ring-0">
+                  <SelectTrigger className="h-7 text-[11px] font-semibold hover:bg-white/10 rounded-full text-os-muted hover:text-os border-white/10 px-2.5 cursor-pointer focus:ring-0">
                     <SelectValue placeholder="Origens" />
                   </SelectTrigger>
                   <SelectContent>
@@ -885,7 +885,7 @@ function StageSettingsPanel({
                 </Button>
               </div>
 
-              <input
+              <Input
                 type="color"
                 value={s.color}
                 onChange={(e) =>
@@ -893,7 +893,7 @@ function StageSettingsPanel({
                     curr.map((x) => (x.id === s.id ? { ...x, color: e.target.value } : x)),
                   )
                 }
-                className="h-8 w-8 rounded-full cursor-pointer border-0 p-0"
+                className="w-8 rounded-full cursor-pointer border-0 p-0"
               />
 
               <Input

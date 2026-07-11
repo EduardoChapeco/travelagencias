@@ -151,7 +151,7 @@ export function ThreadView({ conversation, messages, onSendMessage, onAssignToMe
               }
             }}
             placeholder="Mensagem..." 
-            className="min-h-[44px] max-h-32 resize-none rounded-2xl bg-background border-none focus-visible:ring-1"
+            className="min-h-[44px] max-h-32 resize-none border-none"
             rows={1}
           />
           <Button onClick={handleSend} size="icon" className="shrink-0 mb-1 rounded-full h-11 w-11 bg-primary hover:bg-primary/90 text-primary-foreground">

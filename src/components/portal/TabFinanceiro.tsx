@@ -4,6 +4,7 @@ import { AppWidget } from "@/components/portal/TripPortalShared";
 import { toast } from "sonner";
 import { handleViewReceipt } from "@/utils/storage-helper";
 import { Button } from "@/components/ui/button";
+import { FormInput as Input } from "@/components/ui/input";
 
 interface TabFinanceiroProps {
   trip: any;
@@ -164,7 +165,7 @@ export function TabFinanceiro({
                             <div className="flex gap-2">
                               <label className="h-8 rounded border border-border bg-surface text-foreground text-xs font-bold px-3 py-1.5 flex items-center justify-center hover:bg-surface-alt transition-colors cursor-pointer">
                                 {uploadReceiptPending ? "Enviando..." : "Enviar Comprovante"}
-                                <input
+                                <Input
                                   type="file"
                                   accept="image/*,application/pdf"
                                   className="hidden"
@@ -211,7 +212,7 @@ export function TabFinanceiro({
                                 {inst.rejection_reason || "Verifique o arquivo e reenvie."}
                                 <label className="text-brand font-bold underline ml-1.5 cursor-pointer block mt-1">
                                   Tentar Novamente
-                                  <input
+                                  <Input
                                     type="file"
                                     accept="image/*,application/pdf"
                                     className="hidden"

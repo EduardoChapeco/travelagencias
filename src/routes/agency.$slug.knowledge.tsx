@@ -494,22 +494,22 @@ function PlaybookSheet({
                       <div className="flex h-6 w-6 items-center justify-center rounded-full bg-brand text-brand-foreground text-xs font-bold">
                         {st.step_number}
                       </div>
-                      <input
+                      <Input
                         type="text"
                         required
                         value={st.title}
                         onChange={(e) => updateStep(idx, "title", e.target.value)}
                         placeholder={`Título da Etapa ${st.step_number} (ex: Solicitar Multa)`}
-                        className="flex-1 h-8 rounded-full border-none glass-card border-none px-2.5 text-xs outline-none focus:border-border-strong text-foreground"
+                        className="flex-1 rounded-full border-none glass-card border-none px-2.5 focus:border-border-strong"
                       />
                     </div>
 
-                    <textarea
+                    <Textarea
                       rows={2}
                       value={st.description}
                       onChange={(e) => updateStep(idx, "description", e.target.value)}
                       placeholder="Instruções e playbooks específicos para esta etapa..."
-                      className="w-full rounded-full border-none glass-card border-none px-2.5 py-1.5 text-xs outline-none focus:border-border-strong resize-none text-foreground"
+                      className="w-full rounded-full border-none glass-card border-none px-2.5 py-1.5 focus:border-border-strong resize-none"
                     />
                   </div>
                 ))}
@@ -681,7 +681,7 @@ function ArticleSheet({
                   rows={8}
                   value={content}
                   onChange={(e) => setContent(e.target.value)}
-                  className="font-medium text-sm leading-relaxed"
+                  className="font-medium leading-relaxed"
                 />
               ) : (
                 <RichTextEditor value={content} onChange={setContent} />
@@ -690,11 +690,11 @@ function ArticleSheet({
 
             <div className="pt-4 border-t border-border mt-4">
               <label className="flex items-center gap-2 text-sm font-semibold cursor-pointer">
-                <input
+                <Input
                   type="checkbox"
                   checked={isInternal}
                   onChange={(e) => setIsInternal(e.target.checked)}
-                  className="w-4 h-4 rounded border-input"
+                  className="w-4 h-4 rounded"
                 />
                 Artigo apenas para uso interno (Agência)
               </label>

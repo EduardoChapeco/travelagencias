@@ -19,6 +19,7 @@ import {
 import { cn } from "@/lib/utils";
 import { ActionRegistry } from "@/lib/ai/ActionRegistry";
 import { Button } from "@/components/ui/button";
+import { NativeSelect as Select } from "@/components/ui/select";
 
 // @ts-ignore
 export const Route = createFileRoute("/agency/$slug/settings/ai-audit")({
@@ -177,10 +178,10 @@ function Page() {
         <div className="rounded-[var(--radius-card)] border-none glass-card border-none p-4 flex flex-wrap gap-4 items-center">
           <div className="flex flex-col gap-1 shrink-0">
             <span className="text-[10px] text-muted-foreground uppercase">Operador</span>
-            <select
+            <Select
               value={selectedUser}
               onChange={(e) => setSelectedUser(e.target.value)}
-              className="rounded-full border-none glass bg-white/5 border-white/10 px-2.5 py-1 text-xs outline-none text-foreground"
+              className="rounded-full border-none glass bg-white/5 border-white/10 px-2.5"
             >
               <option value="all">Todos os operadores</option>
               {members.map((m: any) => (
@@ -188,15 +189,15 @@ function Page() {
                   {m.name || m.email}
                 </option>
               ))}
-            </select>
+            </Select>
           </div>
 
           <div className="flex flex-col gap-1 shrink-0">
             <span className="text-[10px] text-muted-foreground uppercase">Ação</span>
-            <select
+            <Select
               value={selectedAction}
               onChange={(e) => setSelectedAction(e.target.value)}
-              className="rounded-full border-none glass bg-white/5 border-white/10 px-2.5 py-1 text-xs outline-none text-foreground cursor-pointer"
+              className="rounded-full border-none glass bg-white/5 border-white/10 px-2.5 cursor-pointer"
             >
               <option value="all">Todas as ações</option>
               <option value="ai_chat_message">Mensagem de Chat (IA)</option>
@@ -205,7 +206,7 @@ function Page() {
                   {action.name} (Tool)
                 </option>
               ))}
-            </select>
+            </Select>
           </div>
         </div>
 

@@ -44,6 +44,7 @@
   --shell-content-gutter: 16px;
   --shell-header-height: 44px;
   --shell-page-padding: 24px;
+  --ds-toolbar-height: 56px;
 
   /* Dock Navigation Tokens */
   --dock-collapsed-width: 60px;

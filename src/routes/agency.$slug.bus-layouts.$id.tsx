@@ -229,13 +229,13 @@ function BusLayoutEditorPage() {
               </Button>
               {cell.type === "seat" && (
                 <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-                  <input
+                  <Input
                     type="text"
                     value={cell.label}
                     onClick={(e) => e.stopPropagation()}
                     onMouseDown={(e) => e.stopPropagation()}
                     onChange={(e) => handleLabelChange(idx, e.target.value)}
-                    className="w-10 text-center bg-transparent font-mono text-sm focus:outline-none pointer-events-auto selection:bg-brand/20 font-bold text-brand"
+                    className="w-10 text-center font-mono pointer-events-auto selection:bg-brand/20 font-bold text-brand"
                     maxLength={4}
                   />
                 </div>

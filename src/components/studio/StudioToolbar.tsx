@@ -1,6 +1,7 @@
 import React from "react";
 import { ArrowLeft, Loader2, Check } from "lucide-react";
 import { Link } from "@tanstack/react-router";
+import { FormInput as Input } from "@/components/ui/input";
 
 interface StudioToolbarProps {
   title: string;
@@ -66,12 +67,12 @@ export function StudioToolbar({
             )}
           </div>
           {onTitleChange ? (
-            <input
+            <Input
               value={title}
               onChange={(e) => onTitleChange(e.target.value)}
               onBlur={(e) => onTitleBlur?.(e.target.value)}
               placeholder="Sem título"
-              className="bg-transparent text-sm font-bold text-foreground outline-none border-b border-transparent hover:border-border/50 focus:border-brand w-full max-w-md transition-all py-0.5"
+              className="font-bold border-b hover:border-border/50 focus:border-brand w-full max-w-md py-0.5"
             />
           ) : (
             <h1 className="text-sm font-bold text-foreground truncate">{title}</h1>

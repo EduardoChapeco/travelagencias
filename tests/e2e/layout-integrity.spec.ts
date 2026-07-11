@@ -196,7 +196,7 @@ test.describe("Auditoria de Integridade Geométrica e Layout (AppShell)", () => 
     // b) Setar localStorage com a sessão mockada via evaluate
     // c) Usar o router SPA (history.pushState) para navegar para a rota da agência
     //    sem fazer um novo request HTTP ao servidor (que não teria a sessão)
-    await page.goto("/auth/login", { waitUntil: "networkidle" });
+    await page.goto("/auth/login", { waitUntil: "domcontentloaded" });
 
     // ── 3. Setar sessão no localStorage após a página carregar ──────────
     // Usando page.evaluate (roda no browser após carregamento) garante

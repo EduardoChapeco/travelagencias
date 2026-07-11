@@ -20,6 +20,7 @@ import { TASK_STATUSES, TASK_PRIORITIES } from "@/lib/tasks/task.constants";
 import { cn } from "@/lib/utils";
 import { TaskDetailDrawer } from "../TaskDetailDrawer";
 import { Button } from "@/components/ui/button";
+import { FormInput as Input } from "@/components/ui/input";
 
 export function ListView({ filters }: { filters: TaskFiltersState }) {
   const qc = useQueryClient();
@@ -238,12 +239,12 @@ function StatusGroupSection({
         
         {/* Quick Add row inside card */}
         <form onSubmit={handleSubmit} className="p-2.5 bg-[var(--surface-alt)]/10 flex items-center gap-2">
-          <input
+          <Input
             type="text"
             placeholder={`+ Adicionar tarefa rápida em "${label}"...`}
             value={quickTitle}
             onChange={(e) => setQuickTitle(e.target.value)}
-            className="flex-1 h-8 bg-transparent border-none text-[11px] font-semibold outline-none text-foreground placeholder:text-muted-foreground/60 px-2"
+            className="flex-1 border-none text-[11px] font-semibold placeholder:text-muted-foreground/60 px-2"
           />
           {quickTitle.trim() && (
             <Button

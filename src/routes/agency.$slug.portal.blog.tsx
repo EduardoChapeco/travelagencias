@@ -468,15 +468,15 @@ function BlogSheet({
             </div>
 
             <Field label="Status">
-              <select
+              <Select
                 value={status}
                 onChange={(e) => setStatus(e.target.value)}
-                className="w-full h-9 px-2.5 rounded-full border border-input glass-card border-none text-sm outline-none focus:border-border-strong"
+                className="w-full px-2.5 rounded-full glass-card border-none focus:border-border-strong"
               >
                 <option value="draft">Rascunho</option>
                 <option value="published">Publicado</option>
                 <option value="scheduled">Agendado</option>
-              </select>
+              </Select>
             </Field>
 
             {status === "scheduled" && (

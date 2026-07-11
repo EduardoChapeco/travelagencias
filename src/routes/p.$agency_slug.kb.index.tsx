@@ -3,6 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 import { fetchPublicAgencyForKb, fetchKbArticles } from "@/services/public";
 import { ArrowLeft, BookOpen, Search, HelpCircle, ChevronRight } from "lucide-react";
 import { useState } from "react";
+import { FormInput as Input } from "@/components/ui/input";
 
 export const Route = createFileRoute("/p/$agency_slug/kb/")({
   head: () => ({ meta: [{ title: "Central de Ajuda" }] }),
@@ -72,12 +73,12 @@ function PublicKnowledgeBase() {
 
           <div className="relative max-w-xl mx-auto">
             <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
-            <input
+            <Input
               type="text"
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               placeholder="Digite sua dúvida..."
-              className="w-full h-14 pl-12 pr-6 rounded-full bg-background text-foreground text-lg placeholder:text-muted-foreground outline-none focus:ring-2 focus:ring-brand/50 transition-all border-none"
+              className="w-full pl-12 pr-6 rounded-full text-lg focus:ring-2 focus:ring-brand/50 border-none"
             />
           </div>
         </div>

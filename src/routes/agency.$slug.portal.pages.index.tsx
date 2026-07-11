@@ -728,13 +728,13 @@ function PagesPage() {
                 <span className="glass bg-white/5 border-white/10/70 border-r border-border px-3 text-[11px] font-bold text-muted-foreground/80 h-full flex items-center select-none">
                   /{agency?.slug}/
                 </span>
-                <input
+                <Input
                   type="text"
                   required
                   value={newPageSlug}
                   onChange={(e) => setNewPageSlug(slugify(e.target.value))}
                   placeholder="Ex: nova-promocao"
-                  className="flex-1 px-3 text-xs text-foreground placeholder:text-muted-foreground/50 outline-none h-full bg-transparent border-0"
+                  className="flex-1 h-full border-0"
                 />
               </div>
             </div>

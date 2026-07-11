@@ -24,6 +24,7 @@ import { PageHeader } from "@/components/shell/PageHeader";
 import { PrimaryButton, GhostButton , Button } from "@/components/ui/button";
 import { StatusBadge } from "@/components/ui/badge";
 import { SheetPage } from "@/components/ui/sheet";
+import { FormInput as Input } from "@/components/ui/input";
 
 export const Route = createFileRoute("/agency/$slug/billing")({
   head: ({ context }: any) => ({ meta: [{ title: `Assinatura & Planos · ${context?.brand?.platform_name || 'Turis'}` }] }),
@@ -565,12 +566,12 @@ function BillingPage() {
                         Número do Cartão
                       </label>
                       <div className="relative">
-                        <input
+                        <Input
                           type="text"
                           value={cardNumber}
                           onChange={(e) => setCardNumber(e.target.value)}
                           placeholder="4000 1234 5678 9010"
-                          className="h-9 w-full rounded-[var(--radius-card)] border-none glass-card border-none pl-9 pr-3 text-xs outline-none focus:border-brand text-foreground font-mono"
+                          className="w-full rounded-[var(--radius-card)] border-none glass-card border-none pl-9 pr-3 focus:border-brand font-mono"
                         />
                         <CreditCard className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                       </div>
@@ -584,12 +585,12 @@ function BillingPage() {
                       <label className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground mb-1 block">
                         Nome no Cartão
                       </label>
-                      <input
+                      <Input
                         type="text"
                         value={cardHolder}
                         onChange={(e) => setCardHolder(e.target.value)}
                         placeholder="AGENCIA DE TURISMO LTDA"
-                        className="h-9 w-full rounded-[var(--radius-card)] border-none glass-card border-none px-3 text-xs outline-none focus:border-brand text-foreground font-mono"
+                        className="w-full rounded-[var(--radius-card)] border-none glass-card border-none focus:border-brand font-mono"
                       />
                     </div>
                     <div className="grid grid-cols-2 gap-3">
@@ -597,24 +598,24 @@ function BillingPage() {
                         <label className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground mb-1 block">
                           Validade
                         </label>
-                        <input
+                        <Input
                           type="text"
                           value={cardExpiry}
                           onChange={(e) => setCardExpiry(e.target.value)}
                           placeholder="MM/AA"
-                          className="h-9 w-full rounded-[var(--radius-card)] border-none glass-card border-none px-3 text-xs text-center outline-none focus:border-brand text-foreground font-mono"
+                          className="w-full rounded-[var(--radius-card)] border-none glass-card border-none text-center focus:border-brand font-mono"
                         />
                       </div>
                       <div>
                         <label className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground mb-1 block">
                           CVV
                         </label>
-                        <input
+                        <Input
                           type="text"
                           value={cardCvc}
                           onChange={(e) => setCardCvc(e.target.value)}
                           placeholder="123"
-                          className="h-9 w-full rounded-[var(--radius-card)] border-none glass-card border-none px-3 text-xs text-center outline-none focus:border-brand text-foreground font-mono"
+                          className="w-full rounded-[var(--radius-card)] border-none glass-card border-none text-center focus:border-brand font-mono"
                         />
                       </div>
                     </div>

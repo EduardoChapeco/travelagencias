@@ -1,5 +1,6 @@
 import { AlertCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { FormTextarea as Textarea } from "@/components/ui/textarea";
 
 interface CancelModalProps {
   cancelReason: string;
@@ -44,10 +45,10 @@ export function CancelModal({
             <label className="text-xs font-bold uppercase tracking-widest text-muted-foreground">
               Motivo do Cancelamento
             </label>
-            <textarea
+            <Textarea
               value={cancelReason}
               onChange={(e) => onReasonChange(e.target.value)}
-              className="w-full rounded-2xl border border-border bg-background p-4 text-sm resize-none h-24 focus:ring-1 focus:ring-danger focus:border-danger outline-none"
+              className="w-full p-4 resize-none h-24 focus:ring-danger focus:border-danger"
               placeholder="Por favor, explique o motivo..."
             />
           </div>

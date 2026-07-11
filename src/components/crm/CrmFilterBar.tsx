@@ -1,5 +1,6 @@
 import { Search } from "lucide-react";
 import { FormInput as Input } from "@/components/ui/input";
+import { NativeSelect as Select } from "@/components/ui/select";
 
 type Props = {
   searchQuery: string;
@@ -21,20 +22,20 @@ export function CrmFilterBar({
   users,
 }: Props) {
   return (
-    <div className="flex flex-wrap items-center gap-3 pb-3">
+    <div className="flex flex-wrap items-center gap-3 min-h-[var(--ds-toolbar-height)] px-4 py-2 glass-section rounded-[var(--radius-card)] mb-6">
       <div className="relative w-64">
         <Search className="absolute left-3 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-muted-foreground" />
         <Input
           placeholder="Buscar por nome ou e-mail..."
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
-          className="pl-9 h-9 text-xs"
+          className="pl-9"
         />
       </div>
-      <select
+      <Select
         value={ownerFilter}
         onChange={(e) => setOwnerFilter(e.target.value)}
-        className="h-9 w-48 rounded-full border border-border bg-surface px-3 text-xs text-foreground focus:border-brand focus:outline-none"
+        className="w-48 rounded-full focus:border-brand"
       >
         <option value="">Todos os Responsáveis</option>
         {users?.map(
@@ -45,11 +46,11 @@ export function CrmFilterBar({
               </option>
             ),
         )}
-      </select>
-      <select
+      </Select>
+      <Select
         value={sourceFilter}
         onChange={(e) => setSourceFilter(e.target.value)}
-        className="h-9 w-40 rounded-full border border-border bg-surface px-3 text-xs text-foreground focus:border-brand focus:outline-none"
+        className="w-40 rounded-full focus:border-brand"
       >
         <option value="">Todas as Origens</option>
         <option value="whatsapp">WhatsApp / Telefone</option>
@@ -57,7 +58,7 @@ export function CrmFilterBar({
         <option value="website">Site / Landing Page</option>
         <option value="referral">Indicação</option>
         <option value="walkin">Presencial</option>
-      </select>
+      </Select>
     </div>
   );
 }

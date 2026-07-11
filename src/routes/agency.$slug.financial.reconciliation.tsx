@@ -13,6 +13,7 @@ import { NativeSelect as Select } from "@/components/ui/select";
 import { PrimaryButton, GhostButton , Button } from "@/components/ui/button";
 import { StatusBadge } from "@/components/ui/badge";
 import { money, fmtDate } from "@/lib/formatters";
+import { FormTextarea as Textarea } from "@/components/ui/textarea";
 
 export const Route = createFileRoute("/agency/$slug/financial/reconciliation")({
   head: ({ context }: any) => ({ meta: [{ title: `Conciliação Diária · ${context?.brand?.platform_name || 'Turis'}` }] }),
@@ -246,7 +247,7 @@ function ReconciliationPage() {
           placeholder="Filtrar por passageiro, código ou viagem..."
           value={filterQuery}
           onChange={(e) => setFilterQuery(e.target.value)}
-          className="max-w-md h-9 text-xs"
+          className="max-w-md"
         />
 
         <div className="flex items-center gap-3 bg-amber-500/5 border border-amber-500/20 px-3 py-2 rounded-[var(--radius-card)] text-xs text-amber-800">
@@ -412,7 +413,7 @@ function ReconciliationPage() {
                 <label className="text-xs font-bold text-muted-foreground uppercase tracking-wide block mb-1.5">
                   Destinar ao Caixa / Conta Bancária *
                 </label>
-                <select
+                <Select
                   value={selectedRegisterId}
                   onChange={(e) => {
                     const regId = e.target.value;
@@ -423,7 +424,7 @@ function ReconciliationPage() {
                     );
                     setSelectedSessionId(sess ? String(sess.id) : "");
                   }}
-                  className="w-full h-10 rounded-[var(--radius-card)] border-none bg-background px-3 text-xs text-foreground outline-none"
+                  className="w-full rounded-[var(--radius-card)] border-none"
                   required
                 >
                   <option value="">Selecione a conta de depósito...</option>
@@ -432,7 +433,7 @@ function ReconciliationPage() {
                       {r.name} ({r.type === "bank_account" ? "Conta Digital" : "Caixa Físico"})
                     </option>
                   ))}
-                </select>
+                </Select>
               </div>
 
               {selectedRegisterId && !selectedSessionId && (
@@ -498,11 +499,11 @@ function ReconciliationPage() {
               </p>
 
               <Field label="Justificativa / Motivo da Recusa *">
-                <textarea
+                <Textarea
                   value={rejectionReason}
                   onChange={(e) => setRejectionReason(e.target.value)}
                   placeholder="Ex: Valor do Pix divergente, comprovante cortado, ou de outra data..."
-                  className="w-full rounded-[var(--radius-card)] border-none bg-background p-3 text-xs outline-none focus:border-brand h-20 resize-none text-foreground"
+                  className="w-full rounded-[var(--radius-card)] border-none p-3 focus:border-brand h-20 resize-none"
                   required
                 />
               </Field>

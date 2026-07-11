@@ -26,6 +26,7 @@ import { fmtDate } from "@/lib/formatters";
 import { toast } from "sonner";
 import { useState } from "react";
 import { useConfirm } from "@/hooks/use-confirm";
+import { NativeSelect as Select } from "@/components/ui/select";
 
 export const Route = createFileRoute("/admin/agencies/$id")({
   head: () => ({ meta: [{ title: "Detalhe da agência · Admin" }] }),
@@ -414,10 +415,10 @@ function DangerZone({ agency, priv, subscription, plans }: any) {
           <div className="space-y-4">
             <div className="space-y-1.5">
               <label className="text-xs font-semibold text-foreground">Forçar Troca de Plano</label>
-              <select
+              <Select
                 disabled={busy}
                 onChange={handleChangePlan}
-                className="w-full rounded-full border-none glass-card border-none px-3 py-1.5 text-xs text-foreground focus:border-brand focus:outline-none"
+                className="w-full rounded-full border-none glass-card border-none py-1.5 focus:border-brand"
                 defaultValue=""
               >
                 <option value="" disabled>
@@ -428,7 +429,7 @@ function DangerZone({ agency, priv, subscription, plans }: any) {
                     {p.name} {p.id === subscription.plan_id ? "(Atual)" : ""}
                   </option>
                 ))}
-              </select>
+              </Select>
             </div>
 
             <div className="space-y-1.5 pt-2 border-t border-danger/10">

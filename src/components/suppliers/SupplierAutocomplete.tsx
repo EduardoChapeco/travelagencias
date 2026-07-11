@@ -3,6 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Search, Star, MapPin, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { FormInput as Input } from "@/components/ui/input";
 
 // ─── Types ───────────────────────────────────────────────────────────────────
 
@@ -135,7 +136,7 @@ export function SupplierAutocomplete({
       ) : (
         <div className="relative">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground pointer-events-none" />
-          <input
+          <Input
             ref={inputRef}
             type="text"
             value={search}
@@ -145,7 +146,7 @@ export function SupplierAutocomplete({
             }}
             onFocus={() => setIsOpen(true)}
             placeholder={placeholder}
-            className="w-full pl-9 pr-3 py-2 text-sm border border-border rounded-full bg-background focus:outline-none focus:ring-2 focus:ring-brand/30 focus:border-brand transition-colors"
+            className="w-full pl-9 pr-3 rounded-full focus:ring-2 focus:ring-brand/30 focus:border-brand"
           />
           {isFetching && (
             <div className="absolute right-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 border-2 border-brand border-t-transparent rounded-full animate-spin" />

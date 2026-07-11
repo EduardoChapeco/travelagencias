@@ -6,6 +6,7 @@ import { useLayoutStore, type PrimaryActionConfig } from "@/hooks/use-layout-sto
 import { useRouterState } from "@tanstack/react-router";
 import { useAgency } from "@/lib/agency-context";
 import { Button } from "@/components/ui/button";
+import { FormInput as Input } from "@/components/ui/input";
 
 export type ToolbarFilter = {
   label: string;
@@ -96,23 +97,16 @@ export function PageHeader({
                     className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground/60 pointer-events-none"
                     strokeWidth={2.2}
                   />
-                  <input
+                  <Input
                     type="text"
                     value={search.value}
                     onChange={(e) => search.onChange(e.target.value)}
                     placeholder={search.placeholder ?? "Buscar..."}
-                    className={cn(
-                      "w-full h-8 rounded-full bg-surface-alt/50 border border-border/50",
-                      "pl-9 pr-9 text-[12px] font-semibold text-foreground placeholder:text-muted-foreground/60",
-                      "focus:outline-none focus:ring-1 focus:ring-primary/50 focus:bg-surface-alt",
-                      "transition-all duration-150"
-                    )}
-                  />
-                  {search.value && (
+                    className={cn( "w-full rounded-full bg-surface-alt/50 border-border/50", "pl-9 pr-9 text-[12px] font-semibold placeholder:text-muted-foreground/60", "focus:outline-none focus:ring-primary/50 focus:bg-surface-alt", "transition-all duration-150" )} /> {search.value && (
                     <Button
                       type="button"
                       onClick={() => search.onChange("")}
-                      className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors cursor-pointer"
+                      className="absolute right-3 top-1/2 -translate-y-1/2 hover:text-foreground cursor-pointer"
                     >
                       <X className="h-3.5 w-3.5" strokeWidth={2.5} />
                     </Button>

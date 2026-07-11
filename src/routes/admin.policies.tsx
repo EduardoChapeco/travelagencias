@@ -190,7 +190,7 @@ function Page() {
                   <Input
                     value={activeDoc.version}
                     onChange={(e) => updateDoc("version", e.target.value)}
-                    className="w-24 font-mono text-xs"
+                    className="w-24 font-mono"
                     placeholder="1.0.0"
                   />
                 </Field>

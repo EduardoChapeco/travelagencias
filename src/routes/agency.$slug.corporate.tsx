@@ -118,13 +118,13 @@ function CorporatePage() {
           }}
           actions={
             <div className="flex items-center gap-1">
-              <select
+              <Select
                 value={statusFilter}
                 onChange={(e) => {
                   setStatusFilter(e.target.value);
                   setPage(1);
                 }}
-                className="h-7 text-[11px] font-semibold bg-transparent hover:bg-white/5 rounded-full text-white/70 hover:text-white outline-none px-2.5 cursor-pointer transition-colors"
+                className="h-7 text-[11px] font-semibold hover:bg-white/5 rounded-full text-white/70 hover:text-white px-2.5 cursor-pointer"
               >
                 <option value="all" className="bg-neutral-900 text-white">Todos os Status</option>
                 <option value="pending" className="bg-neutral-900 text-white">Pendente</option>
@@ -132,7 +132,7 @@ function CorporatePage() {
                 <option value="sent_for_approval" className="bg-neutral-900 text-white">Aguardando</option>
                 <option value="approved" className="bg-neutral-900 text-white">Aprovado</option>
                 <option value="rejected" className="bg-neutral-900 text-white">Recusado</option>
-              </select>
+              </Select>
 
               {isAgencyAdmin && (
                 <Button

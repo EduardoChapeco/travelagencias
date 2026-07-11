@@ -9,25 +9,7 @@ import { FormInput as Input } from "@/components/ui/input";
 import { NativeSelect as Select } from "@/components/ui/select";
 import { money } from "@/lib/formatters";
 import { Button } from "@/components/ui/button";
-
-function getAgentPct(rule: any, monthlyBilling: number): number {
-  if (!rule) {
-    if (monthlyBilling >= 100000) return 7;
-    if (monthlyBilling >= 50000) return 5;
-    return 3;
-  }
-  if (rule.commission_type === "fixed") {
-    return rule.fixed_pct || 0;
-  }
-  let pct = 3;
-  const ranges = rule.scale_ranges || [];
-  for (const range of ranges) {
-    if (monthlyBilling >= (range.min || 0) && (range.max === null || monthlyBilling <= range.max)) {
-      pct = range.pct || 0;
-    }
-  }
-  return pct;
-}
+import { getAgentPct } from "@/utils/pricing";
 
 export function CommissionSection({
   tripId,

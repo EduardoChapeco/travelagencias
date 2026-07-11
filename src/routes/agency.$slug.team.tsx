@@ -187,7 +187,7 @@ function TeamPage() {
                       <Select
                         value={m.role}
                         onChange={(e) => changeRole(m.user_id, e.target.value)}
-                        className="h-7 text-xs"
+                        className="h-7"
                       >
                         <option value="agency_admin">Admin</option>
                         <option value="agent">Agente</option>
@@ -456,7 +456,7 @@ function AgentCommissionSheet({
                           onChange={(e) =>
                             handleRangeChange(index, "min", parseFloat(e.target.value) || 0)
                           }
-                          className="h-8 text-xs px-2"
+                          className="px-2"
                         />
                       </div>
                       <div>
@@ -475,7 +475,7 @@ function AgentCommissionSheet({
                               e.target.value === "" ? null : parseFloat(e.target.value),
                             )
                           }
-                          className="h-8 text-xs px-2"
+                          className="px-2"
                         />
                       </div>
                       <div>
@@ -491,7 +491,7 @@ function AgentCommissionSheet({
                           onChange={(e) =>
                             handleRangeChange(index, "pct", parseFloat(e.target.value) || 0)
                           }
-                          className="h-8 text-xs px-2"
+                          className="px-2"
                         />
                       </div>
                     </div>

@@ -32,6 +32,8 @@ import { InstallmentTable } from "@/components/trips/financial/InstallmentTable"
 import { PlanForm } from "@/components/trips/financial/PlanForm";
 import { AddRecordSheet } from "@/components/trips/financial/AddRecordSheet";
 import { Button } from "@/components/ui/button";
+import { FormInput as Input } from "@/components/ui/input";
+import { NativeSelect as Select } from "@/components/ui/select";
 
 export const Route = createFileRoute("/agency/$slug/trips/$id/financial")({
   head: ({ context }: any) => ({ meta: [{ title: `Financeiro da Viagem · ${context?.brand?.platform_name || 'Turis'}` }] }),
@@ -486,7 +488,7 @@ function TripFinancial() {
                       </div>
                     </>
                   )}
-                  <input
+                  <Input
                     ref={fileInputRef}
                     type="file"
                     accept="application/pdf,image/*"
@@ -547,10 +549,10 @@ function TripFinancial() {
                     <label className="text-xs font-bold text-muted-foreground uppercase tracking-wide block mb-1.5">
                       Vincular \u00e0 parcela (opcional)
                     </label>
-                    <select
+                    <Select
                       value={ocrTargetInstId ?? ""}
                       onChange={(e) => setOcrTargetInstId(e.target.value || null)}
-                      className="w-full h-9 rounded-[var(--radius-card)] border-none bg-background px-3 text-xs text-foreground outline-none"
+                      className="w-full rounded-[var(--radius-card)] border-none"
                     >
                       <option value="">Salvar sem vincular a parcela</option>
                       {planQ.data
@@ -562,7 +564,7 @@ function TripFinancial() {
                             {money(inst.amount)}
                           </option>
                         ))}
-                    </select>
+                    </Select>
                   </div>
 
                   <div className="flex gap-2 pt-1">

@@ -4,6 +4,7 @@ import { cn } from "@/lib/utils";
 import { useAgency } from "@/lib/agency-context";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
+import { FormTextarea as Textarea } from "@/components/ui/textarea";
 
 export type NoteData = {
   id: string;
@@ -433,13 +434,13 @@ export function StickyNote({
       <div className="flex-1 min-h-0 flex flex-col relative">
         {isEditable ? (
           <>
-            <textarea
+            <Textarea
               value={text}
               onChange={handleTextChange}
               onBlur={handleTextBlur}
               onFocus={() => onFocusChange && onFocusChange(true)}
               placeholder="Digite sua anotação... Use @ para vincular clientes, viagens ou contratos."
-              className="flex-1 w-full bg-transparent border-none outline-none resize-none text-xs font-semibold leading-relaxed placeholder:text-black/35 dark:placeholder:text-white/35 text-inherit focus:ring-0"
+              className="flex-1 w-full border-none resize-none font-semibold leading-relaxed placeholder:text-black/35 dark:placeholder:text-white/35 text-inherit focus:ring-0"
             />
             {/* Autocomplete Dropdown */}
             {showAutocomplete && searchResults.length > 0 && (

@@ -50,11 +50,10 @@ export function NumField({
       <span className="mb-1 block text-[10px] uppercase tracking-wide text-muted-foreground">
         {label}
       </span>
-      <input
+      <Input
         type="number"
         min={0}
-        className={SMALL_INPUT}
-        value={v}
+        className={SMALL_INPUT} value={v}
         onChange={(e) => setV(e.target.value)}
         onBlur={() => onSave(parseInt(v) || 0)}
       />
@@ -82,10 +81,9 @@ export function TextField({
       <span className="mb-1 block text-[10px] uppercase tracking-wide text-muted-foreground">
         {label}
       </span>
-      <input
+      <Input
         type={type}
-        className={SMALL_INPUT}
-        value={v}
+        className={SMALL_INPUT} value={v}
         placeholder={placeholder}
         onChange={(e) => setV(e.target.value)}
         onBlur={() => onSave(v)}
@@ -108,11 +106,10 @@ export function Inp({
   const [v, setV] = useState(value);
   useEffect(() => setV(value ?? ""), [value]);
   return (
-    <input
+    <Input
       type={type}
       placeholder={ph}
-      className={SMALL_INPUT}
-      value={v}
+      className={SMALL_INPUT} value={v}
       onChange={(e) => setV(e.target.value)}
       onBlur={() => onChange(v)}
     />
@@ -129,13 +126,13 @@ export function Sel({
   options: Array<[string, string]>;
 }) {
   return (
-    <select className={SMALL_INPUT} value={value} onChange={(e) => onChange(e.target.value)}>
+    <Select className={SMALL_INPUT} value={value} onChange={(e) => onChange(e.target.value)}>
       {options.map(([v, l]) => (
         <option key={v} value={v}>
           {l}
         </option>
       ))}
-    </select>
+    </Select>
   );
 }
 
@@ -168,6 +165,8 @@ export function Card({ children, onRemove }: { children: React.ReactNode; onRemo
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
+import { FormInput as Input } from "@/components/ui/input";
+import { NativeSelect as Select } from "@/components/ui/select";
 
 export function FileUploadList({
   agencyId,
@@ -217,7 +216,7 @@ export function FileUploadList({
       </div>
       <label className="text-[11px] text-primary hover:underline cursor-pointer">
         {uploading ? "Enviando…" : "+ adicionar imagens"}
-        <input
+        <Input
           type="file"
           multiple
           accept="image/*"
@@ -271,9 +270,8 @@ export function TagsEditor({
           </span>
         ))}
       </div>
-      <input
-        className={SMALL_INPUT}
-        placeholder={placeholder}
+      <Input
+        className={SMALL_INPUT} placeholder={placeholder}
         value={v}
         onChange={(e) => setV(e.target.value)}
         onKeyDown={(e) => {

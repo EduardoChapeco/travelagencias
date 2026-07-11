@@ -9,6 +9,7 @@ import {
 } from "@/components/proposals/ProposalFormFields";
 import { Users, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { FormInput as Input } from "@/components/ui/input";
 
 interface Props {
   draft: Proposal;
@@ -55,9 +56,8 @@ export function SectionTravelers({ draft, save }: Props) {
             <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-surface-alt text-[10px] font-bold text-muted-foreground">
               {i + 1}
             </span>
-            <input
-              className={SMALL_INPUT + " flex-1"}
-              value={name}
+            <Input
+              className={SMALL_INPUT + " flex-1"} value={name}
               placeholder="Nome completo"
               onChange={(e) => {
                 const arr = [...((draft as any).pax_names ?? [])];

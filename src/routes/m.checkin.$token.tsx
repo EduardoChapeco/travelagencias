@@ -17,6 +17,8 @@ import {
 import { toast } from "sonner";
 import { getLastName, getAirlineCheckinUrl } from "@/utils/airline-deeplinks";
 import { Button } from "@/components/ui/button";
+import { NativeSelect as Select } from "@/components/ui/select";
+import { FormTextarea as Textarea } from "@/components/ui/textarea";
 
 export const Route = createFileRoute("/m/checkin/$token")({
   head: ({ context }: any) => ({ meta: [{ title: `Meu Embarque · ${context?.brand?.platform_name || 'Turis'}` }] }),
@@ -236,17 +238,17 @@ function MobileCheckinPage() {
             <label className="text-[10px] uppercase font-bold text-muted-foreground tracking-widest flex items-center gap-1.5">
               <Users className="w-3.5 h-3.5" /> Passageiro para Check-in
             </label>
-            <select
+            <Select
               value={selectedPassengerId}
               onChange={(e) => setSelectedPassengerId(e.target.value)}
-              className="w-full text-sm border-none rounded-[var(--radius-card)] px-3 py-2 glass-card border-none focus:outline-none focus:ring-1 focus:ring-brand font-medium text-foreground"
+              className="w-full border-none rounded-[var(--radius-card)] glass-card border-none focus:ring-brand font-medium"
             >
               {details.passengers.map((p) => (
                 <option key={p.id} value={p.id}>
                   {p.full_name}
                 </option>
               ))}
-            </select>
+            </Select>
           </div>
         )}
 
@@ -523,12 +525,12 @@ function MobileCheckinPage() {
               <label className="text-[10px] uppercase font-bold text-muted-foreground tracking-wider block">
                 Detalhes adicionais (opcional)
               </label>
-              <textarea
+              <Textarea
                 value={emergencyComment}
                 onChange={(e) => setEmergencyComment(e.target.value)}
                 placeholder="Ex: Novo portão, previsão de novo voo..."
                 rows={3}
-                className="w-full text-xs border-none rounded-[var(--radius-card)] p-2.5 glass-card border-none focus:outline-none focus:ring-1 focus:ring-rose-500 font-medium text-foreground resize-none"
+                className="w-full border-none rounded-[var(--radius-card)] p-2.5 glass-card border-none focus:ring-rose-500 font-medium resize-none"
               />
               <div className="flex gap-2">
                 <Button

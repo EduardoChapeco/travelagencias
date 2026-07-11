@@ -425,7 +425,7 @@ function CashPage() {
                   </Button>
                   <label className="h-7 px-2.5 rounded-full border border-white/15 bg-white/5 hover:bg-white/10 text-[11px] font-semibold text-white/90 transition-all cursor-pointer flex items-center gap-1">
                     <FileText className="h-3 w-3" /> OCR
-                    <input
+                    <Input
                       type="file"
                       accept="image/*,application/pdf"
                       className="hidden"
@@ -463,7 +463,7 @@ function CashPage() {
               <Select
                 value={selectedRegId || registers[0]?.id}
                 onChange={(e) => setSelectedRegId(e.target.value)}
-                className="h-9 text-xs min-w-[200px]"
+                className="min-w-[200px]"
               >
                 {registers.map((r) => (
                   <option key={r.id} value={r.id}>

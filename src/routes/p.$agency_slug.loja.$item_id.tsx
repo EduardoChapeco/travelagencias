@@ -226,7 +226,7 @@ function PublicStoreItemDetail() {
                       placeholder="Nome completo" 
                       value={formName}
                       onChange={(e) => setFormName(e.target.value)}
-                      className="bg-background"
+                      
                     />
                   </div>
                   
@@ -237,7 +237,7 @@ function PublicStoreItemDetail() {
                       placeholder="seu@email.com" 
                       value={formEmail}
                       onChange={(e) => setFormEmail(e.target.value)}
-                      className="bg-background"
+                      
                     />
                   </div>
                   
@@ -247,7 +247,7 @@ function PublicStoreItemDetail() {
                       placeholder="(11) 99999-9999" 
                       value={formPhone}
                       onChange={(e) => setFormPhone(e.target.value)}
-                      className="bg-background"
+                      
                     />
                   </div>
                   
@@ -255,7 +255,7 @@ function PublicStoreItemDetail() {
                     <label className="text-xs font-semibold text-muted-foreground uppercase tracking-widest">Observações (opcional)</label>
                     <Textarea 
                       placeholder="Alguma dúvida ou detalhe específico?" 
-                      className="min-h-[80px] bg-background resize-none"
+                      className="min-h-[80px] resize-none"
                       value={formNotes}
                       onChange={(e) => setFormNotes(e.target.value)}
                     />

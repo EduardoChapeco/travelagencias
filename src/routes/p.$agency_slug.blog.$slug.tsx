@@ -7,6 +7,7 @@ import { useState } from "react";
 import { toast } from "sonner";
 import { useMutation } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
+import { FormInput as Input } from "@/components/ui/input";
 
 export const Route = createFileRoute("/p/$agency_slug/blog/$slug")({
   loader: async ({ params: { agency_slug, slug } }) => {
@@ -310,28 +311,28 @@ function LeadCaptureForm({ agencySlug, origin }: { agencySlug: string; origin: s
           {(submit.error as Error).message}
         </div>
       )}
-      <input
+      <Input
         required
         value={name}
         onChange={(e) => setName(e.target.value)}
         placeholder="Seu nome"
-        className="w-full h-14 px-5 rounded-[var(--radius-card)] bg-white/10 border border-white/20 text-white placeholder:text-white/40 outline-none focus:border-white/50 transition-colors"
+        className="w-full px-5 rounded-[var(--radius-card)] bg-white/10 border-white/20 text-white placeholder:text-white/40 focus:border-white/50"
       />
-      <input
+      <Input
         required
         value={contact}
         onChange={(e) => setContact(e.target.value)}
         placeholder="Seu WhatsApp ou E-mail"
-        className="w-full h-14 px-5 rounded-[var(--radius-card)] bg-white/10 border border-white/20 text-white placeholder:text-white/40 outline-none focus:border-white/50 transition-colors"
+        className="w-full px-5 rounded-[var(--radius-card)] bg-white/10 border-white/20 text-white placeholder:text-white/40 focus:border-white/50"
       />
 
       <div className="flex items-start gap-3 px-1">
-        <input
+        <Input
           type="checkbox"
           id="lgpd"
           checked={lgpdAccepted}
           onChange={(e) => setLgpdAccepted(e.target.checked)}
-          className="mt-1 h-4 w-4 rounded border-white/20 bg-white/10 text-brand focus:ring-brand transition-all cursor-pointer"
+          className="mt-1 h-4 w-4 rounded border-white/20 bg-white/10 text-brand focus:ring-brand cursor-pointer"
         />
         <label
           htmlFor="lgpd"

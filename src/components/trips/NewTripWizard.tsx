@@ -256,7 +256,7 @@ export function NewTripWizard({
       <div className="absolute inset-0 bg-overlay" onClick={onClose} />
       <div className="relative flex h-full flex-col bg-surface border-l border-border transition-transform duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] w-[clamp(480px,45vw,700px)]">
         {/* Header */}
-        <div className="flex h-14 shrink-0 items-center justify-between border-b border-border px-6">
+        <div className="flex min-h-[var(--ds-toolbar-height)] shrink-0 items-center justify-between border-b border-border px-6 glass-toolbar">
           <div>
             <h2 className="text-base font-semibold">Novo Roteiro de Viagem</h2>
             <p className="text-[11px] text-muted-foreground">

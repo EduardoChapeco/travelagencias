@@ -5,6 +5,8 @@ import { FileText, AlertTriangle, Trash2, FileUp } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useConfirm } from "@/hooks/use-confirm";
 import { Button } from "@/components/ui/button";
+import { FormInput as Input } from "@/components/ui/input";
+import { NativeSelect as Select } from "@/components/ui/select";
 
 const DOC_TYPES: { value: string; label: string }[] = [
   { value: "passport", label: "Passaporte" },
@@ -184,26 +186,26 @@ export function DocumentsPanel({ clientId, agencyId }: { clientId: string; agenc
                   <label className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground block mb-1">
                     Tipo
                   </label>
-                  <select
+                  <Select
                     value={form.doc_type}
                     onChange={(e) => setForm({ ...form, doc_type: e.target.value })}
-                    className="h-9 w-full rounded-full border border-border bg-background px-2 text-xs outline-none text-foreground"
+                    className="w-full rounded-full px-2"
                   >
                     {DOC_TYPES.map((t) => (
                       <option key={t.value} value={t.value}>
                         {t.label}
                       </option>
                     ))}
-                  </select>
+                  </Select>
                 </div>
                 <div>
                   <label className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground block mb-1">
                     Número
                   </label>
-                  <input
+                  <Input
                     value={form.doc_number}
                     onChange={(e) => setForm({ ...form, doc_number: e.target.value })}
-                    className="h-9 w-full rounded-full border border-border bg-background px-2 text-xs outline-none text-foreground"
+                    className="w-full rounded-full px-2"
                     placeholder="Ex: AB123456"
                   />
                 </div>
@@ -211,22 +213,22 @@ export function DocumentsPanel({ clientId, agencyId }: { clientId: string; agenc
                   <label className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground block mb-1">
                     Emissão
                   </label>
-                  <input
+                  <Input
                     type="date"
                     value={form.issued_at}
                     onChange={(e) => setForm({ ...form, issued_at: e.target.value })}
-                    className="h-9 w-full rounded-full border border-border bg-background px-2 text-xs outline-none text-foreground"
+                    className="w-full rounded-full px-2"
                   />
                 </div>
                 <div>
                   <label className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground block mb-1">
                     Vencimento
                   </label>
-                  <input
+                  <Input
                     type="date"
                     value={form.expires_at}
                     onChange={(e) => setForm({ ...form, expires_at: e.target.value })}
-                    className="h-9 w-full rounded-full border border-border bg-background px-2 text-xs outline-none text-foreground"
+                    className="w-full rounded-full px-2"
                   />
                 </div>
               </div>

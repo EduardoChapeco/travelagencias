@@ -326,6 +326,9 @@ export function BlockRenderer({
 
 import { type BuilderBinding } from "@/types/builder-core";
 import { Button } from "@/components/ui/button";
+import { FormInput as Input } from "@/components/ui/input";
+import { NativeSelect as Select } from "@/components/ui/select";
+import { FormTextarea as Textarea } from "@/components/ui/textarea";
 
 function BoundBlockWrapper({
   block,
@@ -1454,14 +1457,14 @@ function NewsletterBlock({
             onSubmit={handleNewsSubmit}
             className="flex flex-col sm:flex-row gap-2 w-full max-w-md mt-4"
           >
-            <input
+            <Input
               type="email"
               required
               disabled={loading}
               value={emailInput}
               onChange={(e) => setEmailInput(e.target.value)}
               placeholder={block.placeholder || "Seu melhor e-mail"}
-              className="flex-1 h-11 px-4 rounded-3xl border border-border bg-surface text-xs text-foreground placeholder:text-muted-foreground/50 focus:border-brand/60 focus:ring-1 focus:ring-brand/60 outline-none transition-colors"
+              className="flex-1"
             />
             <Button
               type="submit"
@@ -1606,11 +1609,11 @@ function PendingContractsWidgetBlock({
               <label className="text-[10px] uppercase font-bold text-muted-foreground">
                 E-mail
               </label>
-              <input
+              <Input
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="w-full mt-0.5 rounded-2xl border border-border bg-surface px-3 py-1.5 text-xs outline-none focus:border-brand"
+                className="w-full mt-0.5 py-1.5 focus:border-brand"
                 placeholder="seu@email.com"
               />
             </div>
@@ -1618,11 +1621,11 @@ function PendingContractsWidgetBlock({
               <label className="text-[10px] uppercase font-bold text-muted-foreground">
                 Documento (CPF ou CNPJ)
               </label>
-              <input
+              <Input
                 type="text"
                 value={document}
                 onChange={(e) => setDocument(e.target.value)}
-                className="w-full mt-0.5 rounded-2xl border border-border bg-surface px-3 py-1.5 text-xs outline-none focus:border-brand"
+                className="w-full mt-0.5 py-1.5 focus:border-brand"
                 placeholder="000.000.000-00"
               />
             </div>
@@ -1809,32 +1812,32 @@ function SupportTicketBlock({ block, agencySlug }: { block: any; agencySlug: str
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="space-y-1">
             <label className="text-sm font-medium">Email para Contato *</label>
-            <input
+            <Input
               required
               type="email"
               value={f.email}
               onChange={(e) => setF({ ...f, email: e.target.value })}
-              className="w-full rounded-3xl border border-border bg-surface-alt px-4 py-3 text-sm focus:border-brand outline-none"
+              className="w-full py-3 focus:border-brand"
               placeholder="seu@email.com"
             />
           </div>
           <div className="space-y-1">
             <label className="text-sm font-medium">Assunto *</label>
-            <input
+            <Input
               required
               value={f.subject}
               onChange={(e) => setF({ ...f, subject: e.target.value })}
-              className="w-full rounded-3xl border border-border bg-surface-alt px-4 py-3 text-sm focus:border-brand outline-none"
+              className="w-full py-3 focus:border-brand"
               placeholder="Ex: Dúvida sobre reserva"
             />
           </div>
           <div className="space-y-1">
             <label className="text-sm font-medium">Descrição *</label>
-            <textarea
+            <Textarea
               required
               value={f.description}
               onChange={(e) => setF({ ...f, description: e.target.value })}
-              className="w-full rounded-3xl border border-border bg-surface-alt px-4 py-3 text-sm focus:border-brand outline-none resize-y"
+              className="w-full py-3 focus:border-brand resize-y"
               placeholder="Descreva o problema com detalhes..."
               rows={4}
             />
@@ -2126,42 +2129,42 @@ function ContactBlock({ block, agencySlug }: { block: any; agencySlug: string })
         <form onSubmit={handleSubmit} className="max-w-xl mx-auto space-y-4 text-left">
           <div className="space-y-1">
             <label className="text-sm font-medium text-foreground">Nome completo *</label>
-            <input
+            <Input
               required
               value={f.name}
               onChange={(e) => setF({ ...f, name: e.target.value })}
-              className="w-full rounded-3xl border border-border bg-surface px-4 py-3 text-sm outline-none focus:border-brand"
+              className="w-full py-3 focus:border-brand"
               placeholder="Como quer ser chamado?"
             />
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div className="space-y-1">
               <label className="text-sm font-medium text-foreground">Email</label>
-              <input
+              <Input
                 type="email"
                 value={f.email}
                 onChange={(e) => setF({ ...f, email: e.target.value })}
-                className="w-full rounded-3xl border border-border bg-surface px-4 py-3 text-sm outline-none focus:border-brand"
+                className="w-full py-3 focus:border-brand"
                 placeholder="seu@email.com"
               />
             </div>
             <div className="space-y-1">
               <label className="text-sm font-medium text-foreground">WhatsApp *</label>
-              <input
+              <Input
                 required
                 value={f.phone}
                 onChange={(e) => setF({ ...f, phone: e.target.value })}
-                className="w-full rounded-3xl border border-border bg-surface px-4 py-3 text-sm outline-none focus:border-brand"
+                className="w-full py-3 focus:border-brand"
                 placeholder="(00) 00000-0000"
               />
             </div>
           </div>
           <div className="space-y-1">
             <label className="text-sm font-medium text-foreground">Como podemos ajudar?</label>
-            <textarea
+            <Textarea
               value={f.notes}
               onChange={(e) => setF({ ...f, notes: e.target.value })}
-              className="w-full rounded-3xl border border-border bg-surface px-4 py-3 text-sm outline-none focus:border-brand resize-y"
+              className="w-full py-3 focus:border-brand resize-y"
               placeholder="Descreva o que você busca..."
               rows={3}
             />
@@ -2913,21 +2916,21 @@ function AgencyVouchersBlock({
 
         {!searched ? (
           <form onSubmit={handleSearch} className="space-y-3">
-            <input
+            <Input
               type="email"
               required
               placeholder="Seu e-mail cadastrado"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className="w-full h-11 px-4 rounded-3xl border border-border bg-surface-alt text-xs text-foreground focus:border-brand focus:ring-1 focus:ring-brand outline-none"
+              className="w-full focus:border-brand focus:ring-brand"
             />
-            <input
+            <Input
               type="text"
               required
               placeholder="CPF ou Documento"
               value={document}
               onChange={(e) => setDocument(e.target.value)}
-              className="w-full h-11 px-4 rounded-3xl border border-border bg-surface-alt text-xs text-foreground focus:border-brand focus:ring-1 focus:ring-brand outline-none"
+              className="w-full focus:border-brand focus:ring-brand"
             />
             <Button
               type="submit"
@@ -3163,21 +3166,21 @@ function LeadCaptureCallbackBlock({ block, agencySlug }: { block: any; agencySlu
           </div>
         ) : (
           <form onSubmit={handleSubmit} className="flex flex-col sm:flex-row gap-2 w-full mt-2">
-            <input
+            <Input
               type="text"
               required
               placeholder="Seu nome"
               value={name}
               onChange={(e) => setName(e.target.value)}
-              className="w-full sm:flex-1 h-10 px-3 rounded-2xl border border-border bg-surface text-xs text-foreground focus:border-brand focus:ring-1 focus:ring-brand outline-none"
+              className="w-full sm:flex-1 focus:border-brand focus:ring-brand"
             />
-            <input
+            <Input
               type="tel"
               required
               placeholder="(00) 00000-0000"
               value={phone}
               onChange={(e) => setPhone(e.target.value)}
-              className="w-full sm:flex-1 h-10 px-3 rounded-2xl border border-border bg-surface text-xs text-foreground focus:border-brand focus:ring-1 focus:ring-brand outline-none"
+              className="w-full sm:flex-1 focus:border-brand focus:ring-brand"
             />
             <Button
               type="submit"
@@ -3557,61 +3560,61 @@ function CorporateRfpFormBlock({ block, agencySlug }: { block: any; agencySlug: 
           </div>
         ) : (
           <form onSubmit={handleSubmit} className="space-y-3">
-            <input
+            <Input
               type="text"
               required
               placeholder="Razão Social ou Nome Fantasia"
               value={f.company_name}
               onChange={(e) => setF({ ...f, company_name: e.target.value })}
-              className="w-full h-10 px-3 rounded-2xl border border-border bg-surface-alt text-xs text-foreground outline-none focus:border-brand"
+              className="w-full focus:border-brand"
             />
-            <input
+            <Input
               type="text"
               required
               placeholder="CNPJ"
               value={f.cnpj}
               onChange={(e) => setF({ ...f, cnpj: e.target.value })}
-              className="w-full h-10 px-3 rounded-2xl border border-border bg-surface-alt text-xs text-foreground outline-none focus:border-brand"
+              className="w-full focus:border-brand"
             />
             <div className="grid grid-cols-2 gap-2">
-              <input
+              <Input
                 type="text"
                 required
                 placeholder="Contato"
                 value={f.requester_name}
                 onChange={(e) => setF({ ...f, requester_name: e.target.value })}
-                className="w-full h-10 px-3 rounded-2xl border border-border bg-surface-alt text-xs text-foreground outline-none focus:border-brand"
+                className="w-full focus:border-brand"
               />
-              <input
+              <Input
                 type="tel"
                 required
                 placeholder="WhatsApp"
                 value={f.phone}
                 onChange={(e) => setF({ ...f, phone: e.target.value })}
-                className="w-full h-10 px-3 rounded-2xl border border-border bg-surface-alt text-xs text-foreground outline-none focus:border-brand"
+                className="w-full focus:border-brand"
               />
             </div>
-            <input
+            <Input
               type="email"
               required
               placeholder="E-mail corporativo"
               value={f.email}
               onChange={(e) => setF({ ...f, email: e.target.value })}
-              className="w-full h-10 px-3 rounded-2xl border border-border bg-surface-alt text-xs text-foreground outline-none focus:border-brand"
+              className="w-full focus:border-brand"
             />
-            <input
+            <Input
               type="text"
               required
               placeholder="Destino desejado"
               value={f.destination}
               onChange={(e) => setF({ ...f, destination: e.target.value })}
-              className="w-full h-10 px-3 rounded-2xl border border-border bg-surface-alt text-xs text-foreground outline-none focus:border-brand"
+              className="w-full focus:border-brand"
             />
-            <textarea
+            <Textarea
               placeholder="Detalhes adicionais (Datas, preferências de hotéis, etc.)"
               value={f.details}
               onChange={(e) => setF({ ...f, details: e.target.value })}
-              className="w-full px-3 py-2 rounded-2xl border border-border bg-surface-alt text-xs text-foreground outline-none focus:border-brand resize-y"
+              className="w-full focus:border-brand resize-y"
               rows={2}
             />
             <Button
@@ -3691,33 +3694,33 @@ function ClientDocumentUploadBlock({ block, agencyId }: { block: any; agencyId?:
           </div>
         ) : (
           <form onSubmit={handleUploadSubmit} className="space-y-3">
-            <input
+            <Input
               type="text"
               required
               placeholder="Seu Nome Completo"
               value={clientName}
               onChange={(e) => setClientName(e.target.value)}
-              className="w-full h-10 px-3 rounded-2xl border border-border bg-surface-alt text-xs text-foreground outline-none focus:border-brand"
+              className="w-full focus:border-brand"
             />
-            <input
+            <Input
               type="text"
               required
               placeholder="Seu CPF (apenas números)"
               value={clientCpf}
               onChange={(e) => setClientCpf(e.target.value)}
-              className="w-full h-10 px-3 rounded-2xl border border-border bg-surface-alt text-xs text-foreground outline-none focus:border-brand"
+              className="w-full focus:border-brand"
             />
             <div className="space-y-2">
               <label className="text-[10px] font-bold text-muted-foreground uppercase">
                 Link da foto do documento
               </label>
-              <input
+              <Input
                 type="text"
                 required
                 placeholder="Ex: Link do Google Drive, Dropbox ou mídia pública"
                 value={fileUrl}
                 onChange={(e) => setFileUrl(e.target.value)}
-                className="w-full h-10 px-3 rounded-2xl border border-border bg-surface-alt text-xs text-foreground outline-none focus:border-brand"
+                className="w-full focus:border-brand"
               />
             </div>
 
@@ -3782,13 +3785,13 @@ function BiolinkNewsletterBoxBlock({ block, agencySlug }: { block: any; agencySl
           onSubmit={handleSub}
           className="flex gap-1.5 w-full bg-surface border border-border p-1 rounded-2xl"
         >
-          <input
+          <Input
             type="email"
             required
             placeholder={block.placeholder || "Inscreva seu melhor e-mail..."}
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            className="flex-1 px-3 bg-transparent text-xs text-foreground placeholder:text-muted-foreground/50 border-0 outline-none"
+            className="flex-1 border-0"
           />
           <Button
             type="submit"
@@ -3896,12 +3899,12 @@ function VisaCheckerBlock({ block }: { block: any }) {
               <label className="text-[9px] uppercase font-bold text-muted-foreground">
                 Nacionalidade
               </label>
-              <input
+              <Input
                 type="text"
                 required
                 value={origin}
                 onChange={(e) => setOrigin(e.target.value)}
-                className="w-full mt-1 h-10 px-3 rounded-2xl border border-border bg-surface text-xs outline-none focus:border-brand"
+                className="w-full mt-1 focus:border-brand"
                 placeholder="Ex: Brasil"
               />
             </div>
@@ -3909,12 +3912,12 @@ function VisaCheckerBlock({ block }: { block: any }) {
               <label className="text-[9px] uppercase font-bold text-muted-foreground">
                 País de Destino
               </label>
-              <input
+              <Input
                 type="text"
                 required
                 value={dest}
                 onChange={(e) => setDest(e.target.value)}
-                className="w-full mt-1 h-10 px-3 rounded-2xl border border-border bg-surface text-xs outline-none focus:border-brand"
+                className="w-full mt-1 focus:border-brand"
                 placeholder="Ex: Japão"
               />
             </div>
@@ -4109,17 +4112,17 @@ function InsuranceSimulatorBlock({ block, agencySlug }: { block: any; agencySlug
               <label className="text-[10px] uppercase font-bold text-muted-foreground">
                 Destino / Região
               </label>
-              <select
+              <Select
                 value={region}
                 onChange={(e) => setRegion(e.target.value)}
-                className="w-full h-10 px-3 rounded-2xl border border-border bg-surface text-xs outline-none focus:border-brand"
+                className="w-full focus:border-brand"
               >
                 <option value="Europe">Europa (Schengen obrigatório)</option>
                 <option value="NorthAmerica">América do Norte / EUA</option>
                 <option value="SouthAmerica">América do Sul</option>
                 <option value="AsiaAfrica">Ásia, África & Oriente Médio</option>
                 <option value="Oceania">Oceania</option>
-              </select>
+              </Select>
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
@@ -4127,24 +4130,24 @@ function InsuranceSimulatorBlock({ block, agencySlug }: { block: any; agencySlug
                 <label className="text-[10px] uppercase font-bold text-muted-foreground">
                   Dias de Viagem
                 </label>
-                <input
+                <Input
                   type="number"
                   min={1}
                   value={days}
                   onChange={(e) => setDays(Number(e.target.value) || 1)}
-                  className="w-full h-10 px-3 rounded-2xl border border-border bg-surface text-xs outline-none focus:border-brand"
+                  className="w-full focus:border-brand"
                 />
               </div>
               <div>
                 <label className="text-[10px] uppercase font-bold text-muted-foreground">
                   Passageiros
                 </label>
-                <input
+                <Input
                   type="number"
                   min={1}
                   value={paxCount}
                   onChange={(e) => setPaxCount(Number(e.target.value) || 1)}
-                  className="w-full h-10 px-3 rounded-2xl border border-border bg-surface text-xs outline-none focus:border-brand"
+                  className="w-full focus:border-brand"
                 />
               </div>
             </div>
@@ -4218,12 +4221,12 @@ function InsuranceSimulatorBlock({ block, agencySlug }: { block: any; agencySlug
               <label className="text-[10px] uppercase font-bold text-muted-foreground">
                 Seu Nome Completo
               </label>
-              <input
+              <Input
                 type="text"
                 required
                 value={name}
                 onChange={(e) => setName(e.target.value)}
-                className="w-full h-10 px-3 rounded-2xl border border-border bg-surface text-xs outline-none focus:border-brand"
+                className="w-full focus:border-brand"
                 placeholder="Ex: Ana Silva"
               />
             </div>
@@ -4231,12 +4234,12 @@ function InsuranceSimulatorBlock({ block, agencySlug }: { block: any; agencySlug
               <label className="text-[10px] uppercase font-bold text-muted-foreground">
                 E-mail
               </label>
-              <input
+              <Input
                 type="email"
                 required
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="w-full h-10 px-3 rounded-2xl border border-border bg-surface text-xs outline-none focus:border-brand"
+                className="w-full focus:border-brand"
                 placeholder="Ex: ana@email.com"
               />
             </div>
@@ -4244,12 +4247,12 @@ function InsuranceSimulatorBlock({ block, agencySlug }: { block: any; agencySlug
               <label className="text-[10px] uppercase font-bold text-muted-foreground">
                 WhatsApp
               </label>
-              <input
+              <Input
                 type="tel"
                 required
                 value={phone}
                 onChange={(e) => setPhone(e.target.value)}
-                className="w-full h-10 px-3 rounded-2xl border border-border bg-surface text-xs outline-none focus:border-brand"
+                className="w-full focus:border-brand"
                 placeholder="(00) 00000-0000"
               />
             </div>
@@ -4357,29 +4360,29 @@ function ReviewsSubmissionFormBlock({ block, agencyId }: { block: any; agencyId?
             </div>
 
             <div className="grid grid-cols-2 gap-2">
-              <input
+              <Input
                 type="text"
                 required
                 placeholder="Seu nome"
                 value={name}
                 onChange={(e) => setName(e.target.value)}
-                className="w-full h-10 px-3 rounded-2xl border border-border bg-surface-alt text-xs text-foreground outline-none focus:border-brand"
+                className="w-full focus:border-brand"
               />
-              <input
+              <Input
                 type="text"
                 placeholder="Ex: Viajei para Gramado"
                 value={role}
                 onChange={(e) => setRole(e.target.value)}
-                className="w-full h-10 px-3 rounded-2xl border border-border bg-surface-alt text-xs text-foreground outline-none focus:border-brand"
+                className="w-full focus:border-brand"
               />
             </div>
 
-            <textarea
+            <Textarea
               required
               placeholder="Descreva brevemente como foi sua experiência..."
               value={text}
               onChange={(e) => setText(e.target.value)}
-              className="w-full px-3 py-2 rounded-2xl border border-border bg-surface-alt text-xs text-foreground outline-none focus:border-brand resize-y"
+              className="w-full focus:border-brand resize-y"
               rows={3}
             />
 
@@ -4532,12 +4535,12 @@ function CustomPackageLeadBuilderBlock({ block, agencySlug }: { block: any; agen
               <label className="text-[10px] uppercase font-bold text-muted-foreground">
                 Destino Desejado
               </label>
-              <input
+              <Input
                 type="text"
                 required
                 value={dest}
                 onChange={(e) => setDest(e.target.value)}
-                className="w-full h-10 px-3 rounded-2xl border border-border bg-surface text-xs outline-none focus:border-brand"
+                className="w-full focus:border-brand"
                 placeholder="Ex: Egito ou Fernando de Noronha"
               />
             </div>
@@ -4546,23 +4549,23 @@ function CustomPackageLeadBuilderBlock({ block, agencySlug }: { block: any; agen
                 <label className="text-[10px] uppercase font-bold text-muted-foreground">
                   Previsão de Partida
                 </label>
-                <input
+                <Input
                   type="date"
                   value={date}
                   onChange={(e) => setDate(e.target.value)}
-                  className="w-full h-10 px-3 rounded-2xl border border-border bg-surface text-xs outline-none focus:border-brand"
+                  className="w-full focus:border-brand"
                 />
               </div>
               <div className="space-y-1">
                 <label className="text-[10px] uppercase font-bold text-muted-foreground">
                   Duração (dias)
                 </label>
-                <input
+                <Input
                   type="number"
                   min={1}
                   value={days}
                   onChange={(e) => setDays(Number(e.target.value) || 7)}
-                  className="w-full h-10 px-3 rounded-2xl border border-border bg-surface text-xs outline-none focus:border-brand"
+                  className="w-full focus:border-brand"
                 />
               </div>
             </div>
@@ -4584,27 +4587,27 @@ function CustomPackageLeadBuilderBlock({ block, agencySlug }: { block: any; agen
                 <label className="text-[10px] uppercase font-bold text-muted-foreground">
                   Nº Passageiros
                 </label>
-                <input
+                <Input
                   type="number"
                   min={1}
                   value={adults}
                   onChange={(e) => setAdults(Number(e.target.value) || 2)}
-                  className="w-full h-10 px-3 rounded-2xl border border-border bg-surface text-xs outline-none focus:border-brand"
+                  className="w-full focus:border-brand"
                 />
               </div>
               <div className="space-y-1">
                 <label className="text-[10px] uppercase font-bold text-muted-foreground">
                   Hospedagem Preferida
                 </label>
-                <select
+                <Select
                   value={hotelStars}
                   onChange={(e) => setHotelStars(e.target.value)}
-                  className="w-full h-10 px-3 rounded-2xl border border-border bg-surface text-xs outline-none focus:border-brand"
+                  className="w-full focus:border-brand"
                 >
                   <option value="3">Padrão 3 estrelas</option>
                   <option value="4">Premium 4 estrelas</option>
                   <option value="5">Luxo 5 estrelas</option>
-                </select>
+                </Select>
               </div>
             </div>
 
@@ -4655,12 +4658,12 @@ function CustomPackageLeadBuilderBlock({ block, agencySlug }: { block: any; agen
               <label className="text-[10px] uppercase font-bold text-muted-foreground">
                 Seu Nome
               </label>
-              <input
+              <Input
                 type="text"
                 required
                 value={name}
                 onChange={(e) => setName(e.target.value)}
-                className="w-full h-10 px-3 rounded-2xl border border-border bg-surface text-xs outline-none focus:border-brand"
+                className="w-full focus:border-brand"
                 placeholder="Ex: Carlos Santos"
               />
             </div>
@@ -4668,12 +4671,12 @@ function CustomPackageLeadBuilderBlock({ block, agencySlug }: { block: any; agen
               <label className="text-[10px] uppercase font-bold text-muted-foreground">
                 E-mail
               </label>
-              <input
+              <Input
                 type="email"
                 required
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="w-full h-10 px-3 rounded-2xl border border-border bg-surface text-xs outline-none focus:border-brand"
+                className="w-full focus:border-brand"
                 placeholder="Ex: carlos@email.com"
               />
             </div>
@@ -4681,12 +4684,12 @@ function CustomPackageLeadBuilderBlock({ block, agencySlug }: { block: any; agen
               <label className="text-[10px] uppercase font-bold text-muted-foreground">
                 WhatsApp
               </label>
-              <input
+              <Input
                 type="tel"
                 required
                 value={phone}
                 onChange={(e) => setPhone(e.target.value)}
-                className="w-full h-10 px-3 rounded-2xl border border-border bg-surface text-xs outline-none focus:border-brand"
+                className="w-full focus:border-brand"
                 placeholder="(00) 00000-0000"
               />
             </div>
@@ -4936,16 +4939,16 @@ function CurrencyCalculatorBlock({ block }: { block: any }) {
           <div className="flex gap-2 items-center">
             <div className="flex-1">
               <label className="text-[9px] uppercase font-bold text-muted-foreground">De</label>
-              <select
+              <Select
                 value={fromCur}
                 onChange={(e) => setFromCur(e.target.value)}
-                className="w-full mt-0.5 h-10 px-2 rounded-2xl border border-border bg-surface text-xs font-bold outline-none"
+                className="w-full mt-0.5 px-2 font-bold"
               >
                 <option value="USD">USD - Dólar</option>
                 <option value="EUR">EUR - Euro</option>
                 <option value="GBP">GBP - Libra</option>
                 <option value="BRL">BRL - Real</option>
-              </select>
+              </Select>
             </div>
 
             <Button
@@ -4958,26 +4961,26 @@ function CurrencyCalculatorBlock({ block }: { block: any }) {
 
             <div className="flex-1">
               <label className="text-[9px] uppercase font-bold text-muted-foreground">Para</label>
-              <select
+              <Select
                 value={toCur}
                 onChange={(e) => setToCur(e.target.value)}
-                className="w-full mt-0.5 h-10 px-2 rounded-2xl border border-border bg-surface text-xs font-bold outline-none"
+                className="w-full mt-0.5 px-2 font-bold"
               >
                 <option value="BRL">BRL - Real</option>
                 <option value="USD">USD - Dólar</option>
                 <option value="EUR">EUR - Euro</option>
                 <option value="GBP">GBP - Libra</option>
-              </select>
+              </Select>
             </div>
           </div>
 
           <div>
             <label className="text-[9px] uppercase font-bold text-muted-foreground">Valor</label>
-            <input
+            <Input
               type="text"
               value={amount}
               onChange={(e) => setAmount(e.target.value.replace(/[^0-9.]/g, ""))}
-              className="w-full mt-0.5 h-10 px-3 rounded-2xl border border-border bg-surface text-xs font-bold outline-none focus:border-brand"
+              className="w-full mt-0.5 font-bold focus:border-brand"
               placeholder="100"
             />
           </div>
@@ -5053,13 +5056,13 @@ function InteractiveFlightTrackerBlock({ block }: { block: any }) {
         </p>
 
         <form onSubmit={handleSearch} className="flex gap-2 mb-3">
-          <input
+          <Input
             type="text"
             required
             placeholder="Ex: AD2412, LA3120"
             value={code}
             onChange={(e) => setCode(e.target.value)}
-            className="flex-1 h-10 px-3 rounded-2xl border border-border bg-surface text-xs font-mono font-bold uppercase tracking-wider outline-none focus:border-brand"
+            className="flex-1 font-mono font-bold uppercase tracking-wider focus:border-brand"
           />
           <Button
             type="submit"

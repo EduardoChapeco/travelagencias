@@ -5,6 +5,8 @@ import { useScrollAnimation, useParallax, useCountUp } from "@/hooks/use-scroll-
 import { renderIconByName } from "@/components/portal/BlockRenderer";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
+import { FormInput as Input } from "@/components/ui/input";
+import { FormTextarea as Textarea } from "@/components/ui/textarea";
 import {
   Star,
   Quote,
@@ -388,27 +390,27 @@ export function NewSectionsRenderer({
                     <label className="text-xs font-bold text-muted-foreground">DESTINO</label>
                     <div className="flex items-center gap-1.5 border border-border rounded-3xl p-2.5">
                       <MapPin className="h-4 w-4 text-brand" />
-                      <input
+                      <Input
                         type="text"
                         placeholder="Para onde vamos?"
-                        className="w-full text-sm outline-none bg-transparent"
+                        className="w-full"
                       />
                     </div>
                   </div>
                   <div className="text-left space-y-1">
                     <label className="text-xs font-bold text-muted-foreground">IDA</label>
                     <div className="flex items-center gap-1.5 border border-border rounded-3xl p-2.5">
-                      <input type="date" className="w-full text-sm outline-none bg-transparent" />
+                      <Input type="date" className="w-full" />
                     </div>
                   </div>
                   <div className="text-left space-y-1">
                     <label className="text-xs font-bold text-muted-foreground">PASSAGEIROS</label>
                     <div className="flex items-center gap-1.5 border border-border rounded-3xl p-2.5">
-                      <input
+                      <Input
                         type="number"
                         min={1}
                         defaultValue={1}
-                        className="w-full text-sm outline-none bg-transparent"
+                        className="w-full"
                       />
                     </div>
                   </div>
@@ -992,10 +994,10 @@ export function NewSectionsRenderer({
 
               {/* Form replacement div */}
               <div className="space-y-2">
-                <input
+                <Input
                   type="email"
                   placeholder="Seu melhor e-mail"
-                  className="w-full text-xs p-3 rounded-3xl border border-border outline-none bg-surface"
+                  className="w-full p-3"
                 />
                 <Button
                   onClick={() => toast.success("Inscrito com sucesso!")}
@@ -2212,12 +2214,12 @@ export function NewSectionsRenderer({
           </div>
 
           <div className="flex flex-col sm:flex-row gap-3 max-w-md mx-auto">
-            <input
+            <Input
               type="email"
               placeholder={config.placeholder || "Digite seu e-mail"}
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className="flex-1 p-3 rounded-3xl border border-border outline-none bg-surface text-sm"
+              className="flex-1 p-3"
             />
             <Button
               onClick={handleSubscribe}
@@ -2300,22 +2302,22 @@ export function NewSectionsRenderer({
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="space-y-1">
                   <label className="text-xs font-bold text-muted-foreground">Nome Completo *</label>
-                  <input
+                  <Input
                     type="text"
                     placeholder="Seu nome"
                     value={form.name}
                     onChange={(e) => setForm({ ...form, name: e.target.value })}
-                    className="w-full text-xs p-3 rounded-3xl border border-border outline-none bg-surface"
+                    className="w-full p-3"
                   />
                 </div>
                 <div className="space-y-1">
                   <label className="text-xs font-bold text-muted-foreground">E-mail *</label>
-                  <input
+                  <Input
                     type="email"
                     placeholder="Seu e-mail"
                     value={form.email}
                     onChange={(e) => setForm({ ...form, email: e.target.value })}
-                    className="w-full text-xs p-3 rounded-3xl border border-border outline-none bg-surface"
+                    className="w-full p-3"
                   />
                 </div>
               </div>
@@ -2325,24 +2327,24 @@ export function NewSectionsRenderer({
                   <label className="text-xs font-bold text-muted-foreground">
                     WhatsApp / Telefone
                   </label>
-                  <input
+                  <Input
                     type="tel"
                     placeholder="Seu fone com DDD"
                     value={form.phone}
                     onChange={(e) => setForm({ ...form, phone: e.target.value })}
-                    className="w-full text-xs p-3 rounded-3xl border border-border outline-none bg-surface"
+                    className="w-full p-3"
                   />
                 </div>
                 <div className="space-y-1">
                   <label className="text-xs font-bold text-muted-foreground">
                     Destino de Interesse
                   </label>
-                  <input
+                  <Input
                     type="text"
                     placeholder="Ex: Paris, Caribe, etc"
                     value={form.subject}
                     onChange={(e) => setForm({ ...form, subject: e.target.value })}
-                    className="w-full text-xs p-3 rounded-3xl border border-border outline-none bg-surface"
+                    className="w-full p-3"
                   />
                 </div>
               </div>
@@ -2351,12 +2353,12 @@ export function NewSectionsRenderer({
                 <label className="text-xs font-bold text-muted-foreground">
                   Mensagem / Preferências de Viagem *
                 </label>
-                <textarea
+                <Textarea
                   rows={4}
                   placeholder="Conte-nos detalhes sobre sua viagem..."
                   value={form.message}
                   onChange={(e) => setForm({ ...form, message: e.target.value })}
-                  className="w-full text-xs p-3 rounded-3xl border border-border outline-none bg-surface resize-none"
+                  className="w-full p-3 resize-none"
                 />
               </div>
 
@@ -2537,10 +2539,10 @@ export function NewSectionsRenderer({
                 {config.ctaTitle}
               </h3>
               <div className="flex flex-col sm:flex-row gap-3 max-w-sm mx-auto pt-2">
-                <input
+                <Input
                   type="email"
                   placeholder="Seu e-mail"
-                  className="flex-1 p-2.5 rounded-3xl border-none outline-none bg-white text-black text-xs"
+                  className="flex-1 p-2.5 border-none text-black"
                 />
                 <Button
                   onClick={() => toast.success("Inscrito!")}

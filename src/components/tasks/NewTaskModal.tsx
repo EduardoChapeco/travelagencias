@@ -131,7 +131,7 @@ export function NewTaskModal({ open, onClose, defaultStatus = "todo", onCreated 
               placeholder="Ex: Preparar documentação da viagem..."
               value={title}
               onChange={(e) => setTitle(e.target.value)}
-              className="h-10 text-sm bg-[var(--surface-alt)] border-border/60"
+              className="bg-[var(--surface-alt)] border-border/60"
             />
           </div>
 
@@ -145,7 +145,7 @@ export function NewTaskModal({ open, onClose, defaultStatus = "todo", onCreated 
               value={description}
               onChange={(e) => setDescription(e.target.value)}
               rows={3}
-              className="text-sm resize-none bg-[var(--surface-alt)] border-border/60"
+              className="resize-none bg-[var(--surface-alt)] border-border/60"
             />
           </div>
 
@@ -156,12 +156,12 @@ export function NewTaskModal({ open, onClose, defaultStatus = "todo", onCreated 
                 Status
               </label>
               <Select value={status} onValueChange={(v) => setStatus(v as TaskStatus)}>
-                <SelectTrigger className="h-9 text-xs bg-[var(--surface-alt)] border-border/60">
+                <SelectTrigger className="bg-[var(--surface-alt)] border-border/60">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
                   {Object.entries(TASK_STATUSES).map(([key, cfg]) => (
-                    <SelectItem key={key} value={key} className="text-xs">
+                    <SelectItem key={key} value={key} >
                       <div className="flex items-center gap-2">
                         <span
                           className="w-2 h-2 rounded-full shrink-0"
@@ -181,12 +181,12 @@ export function NewTaskModal({ open, onClose, defaultStatus = "todo", onCreated 
                 Prioridade
               </label>
               <Select value={priority} onValueChange={(v) => setPriority(v as TaskPriority)}>
-                <SelectTrigger className="h-9 text-xs bg-[var(--surface-alt)] border-border/60">
+                <SelectTrigger className="bg-[var(--surface-alt)] border-border/60">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
                   {Object.entries(TASK_PRIORITIES).map(([key, cfg]) => (
-                    <SelectItem key={key} value={key} className="text-xs">
+                    <SelectItem key={key} value={key} >
                       <div className="flex items-center gap-2">
                         <span
                           className="w-2 h-2 rounded-full shrink-0"
@@ -209,15 +209,15 @@ export function NewTaskModal({ open, onClose, defaultStatus = "todo", onCreated 
                 Responsável
               </label>
               <Select value={assignedTo || "__none"} onValueChange={(v) => setAssignedTo(v === "__none" ? "" : v)}>
-                <SelectTrigger className="h-9 text-xs bg-[var(--surface-alt)] border-border/60">
+                <SelectTrigger className="bg-[var(--surface-alt)] border-border/60">
                   <SelectValue placeholder="Sem responsável" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="__none" className="text-xs text-muted-foreground">
+                  <SelectItem value="__none" >
                     Sem responsável
                   </SelectItem>
                   {teamMembers.map((m) => (
-                    <SelectItem key={m.id} value={m.id} className="text-xs">
+                    <SelectItem key={m.id} value={m.id} >
                       {m.full_name || "Sem nome"}
                     </SelectItem>
                   ))}
@@ -234,7 +234,7 @@ export function NewTaskModal({ open, onClose, defaultStatus = "todo", onCreated 
                 type="date"
                 value={dueDate}
                 onChange={(e) => setDueDate(e.target.value)}
-                className="h-9 text-xs bg-[var(--surface-alt)] border-border/60"
+                className="bg-[var(--surface-alt)] border-border/60"
               />
             </div>
           </div>
@@ -246,19 +246,19 @@ export function NewTaskModal({ open, onClose, defaultStatus = "todo", onCreated 
                 Tipo de Tarefa
               </label>
               <Select value={sourceType} onValueChange={setSourceType}>
-                <SelectTrigger className="h-9 text-xs bg-[var(--surface-alt)] border-border/60">
+                <SelectTrigger className="bg-[var(--surface-alt)] border-border/60">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="manual" className="text-xs">Manual / Geral</SelectItem>
-                  <SelectItem value="suporte" className="text-xs">Suporte ao Cliente</SelectItem>
-                  <SelectItem value="embarque" className="text-xs">Operações de Embarque</SelectItem>
-                  <SelectItem value="crm" className="text-xs">Negociação Comercial</SelectItem>
-                  <SelectItem value="trip" className="text-xs">Gestão de Viagem</SelectItem>
-                  <SelectItem value="ticket" className="text-xs">Emissão de Passagem</SelectItem>
-                  <SelectItem value="lead" className="text-xs">Pré-venda / Prospecção</SelectItem>
-                  <SelectItem value="agenda" className="text-xs">Evento da Agenda</SelectItem>
-                  <SelectItem value="system" className="text-xs">Rotina de Sistema</SelectItem>
+                  <SelectItem value="manual" >Manual / Geral</SelectItem>
+                  <SelectItem value="suporte" >Suporte ao Cliente</SelectItem>
+                  <SelectItem value="embarque" >Operações de Embarque</SelectItem>
+                  <SelectItem value="crm" >Negociação Comercial</SelectItem>
+                  <SelectItem value="trip" >Gestão de Viagem</SelectItem>
+                  <SelectItem value="ticket" >Emissão de Passagem</SelectItem>
+                  <SelectItem value="lead" >Pré-venda / Prospecção</SelectItem>
+                  <SelectItem value="agenda" >Evento da Agenda</SelectItem>
+                  <SelectItem value="system" >Rotina de Sistema</SelectItem>
                 </SelectContent>
               </Select>
             </div>

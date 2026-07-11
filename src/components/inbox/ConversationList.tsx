@@ -6,6 +6,7 @@ import { ptBR } from "date-fns/locale";
 import { Sparkles, MessageCircle, Mail } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
+import { FormInput as Input } from "@/components/ui/input";
 
 interface ConversationListProps {
   conversations: any[];
@@ -38,10 +39,10 @@ export function ConversationList({ conversations, selectedId, onSelect, isLoadin
     <div className="w-[350px] border-r border-border h-full flex flex-col bg-card">
       <div className="p-3 border-b border-border bg-surface sticky top-0 z-10">
         <div className="relative">
-          <input 
+          <Input 
             type="text" 
             placeholder="Buscar contatos ou telefones..." 
-            className="w-full h-9 pl-3 pr-4 rounded-full border border-input bg-background text-sm focus:outline-none focus:ring-1 focus:ring-primary"
+            className="w-full pl-3 pr-4 rounded-full focus:ring-primary"
           />
         </div>
       </div>

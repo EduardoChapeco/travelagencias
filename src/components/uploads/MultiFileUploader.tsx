@@ -3,6 +3,7 @@ import { Upload, X, Loader2, Plus } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
+import { FormInput as Input } from "@/components/ui/input";
 
 type Props = {
   values: string[];
@@ -131,7 +132,7 @@ export function MultiFileUploader({
               {busy ? <Loader2 className="h-5 w-5 animate-spin" /> : <Plus className="h-5 w-5" />}
               <span className="text-[10px]">Adicionar</span>
             </label>
-            <input
+            <Input
               ref={inputRef}
               id={inputId}
               type="file"

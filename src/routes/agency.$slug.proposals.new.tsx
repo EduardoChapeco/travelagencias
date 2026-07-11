@@ -321,7 +321,7 @@ function NewProposal() {
               Arraste um PDF/Imagem aqui ou clique para selecionar. O sistema extrairá voos, hotéis
               e o itinerário completo automaticamente.
             </p>
-            <input
+            <Input
               type="file"
               accept="application/pdf,image/*"
               className="hidden"

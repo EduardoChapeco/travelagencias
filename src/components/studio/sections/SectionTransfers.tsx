@@ -9,6 +9,7 @@ import {
 } from "@/components/proposals/ProposalFormFields";
 import { replaceAt } from "@/components/proposals/ProposalFormFields";
 import { useAgency } from "@/lib/agency-context";
+import { NativeSelect as Select } from "@/components/ui/select";
 import {
   SupplierAutocomplete,
   type SupplierOption,
@@ -80,21 +81,19 @@ export function SectionTransfers({ draft, save }: Props) {
               <Inp value={t.date} onChange={(v) => upd(i, { date: v })} type="date" ph="" />
             </L>
             <L label="Tipo">
-              <select
-                className={SMALL_INPUT}
-                value={t.type}
+              <Select
+                className={SMALL_INPUT} value={t.type}
                 onChange={(e) => upd(i, { type: e.target.value as "private" | "shared" })}
               >
                 <option value="private">Privativo</option>
                 <option value="shared">Compartilhado</option>
-              </select>
+              </Select>
             </L>
           </div>
           <div className="grid grid-cols-2 gap-2">
             <L label="Veículo">
-              <select
-                className={SMALL_INPUT}
-                value={t.vehicle}
+              <Select
+                className={SMALL_INPUT} value={t.vehicle}
                 onChange={(e) => upd(i, { vehicle: e.target.value })}
               >
                 <option value="Van">Van</option>
@@ -103,7 +102,7 @@ export function SectionTransfers({ draft, save }: Props) {
                 <option value="Minibus">Minibus</option>
                 <option value="Ônibus">Ônibus</option>
                 <option value="Barco">Barco</option>
-              </select>
+              </Select>
             </L>
             <L label="Notas">
               <Inp value={t.notes} onChange={(v) => upd(i, { notes: v })} ph="Obs." />

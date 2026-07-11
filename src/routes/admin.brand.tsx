@@ -127,11 +127,11 @@ function Page() {
               </Field>
               <Field label="Cor primária global" error={errors.primary_color?.message}>
                 <div className="flex items-center gap-2">
-                  <input
+                  <Input
                     type="color"
                     value={primaryColor || "#18181b"}
                     onChange={(e) => setValue("primary_color", e.target.value)}
-                    className="h-9 w-12 cursor-pointer rounded border-none bg-transparent"
+                    className="w-12 cursor-pointer rounded border-none"
                   />
                   <Input
                     {...register("primary_color")}

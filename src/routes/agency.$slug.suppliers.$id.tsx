@@ -285,7 +285,7 @@ function TabContacts({ supplierId, agencyId }: { supplierId: string; agencyId: s
             </Field>
             <Field label="Contato principal">
               <label className="flex items-center gap-2 mt-2 cursor-pointer">
-                <input
+                <Input
                   type="checkbox"
                   checked={form.is_primary}
                   onChange={(e) => setForm((f) => ({ ...f, is_primary: e.target.checked }))}
@@ -749,7 +749,7 @@ function TabFiles({ supplierId, agencyId }: { supplierId: string; agencyId: stri
           )}{" "}
           Upload
         </GhostButton>
-        <input
+        <Input
           ref={fileRef}
           type="file"
           accept=".pdf,.jpg,.jpeg,.png,.xlsx,.xls,.docx"

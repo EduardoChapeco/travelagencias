@@ -12,6 +12,7 @@ import { toast } from "sonner";
 import { ClientShell } from "@/components/shell/ClientShell";
 import { fmtDate } from "@/lib/formatters";
 import { Button } from "@/components/ui/button";
+import { FormInput as Input } from "@/components/ui/input";
 
 export const Route = createFileRoute("/client/chat")({
   component: ClientChatRoute,
@@ -240,10 +241,10 @@ function ClientChatRoute() {
         {/* INPUT AREA */}
         <div className="p-3 bg-white border-t border-border">
           <div className="flex items-center gap-2 bg-zinc-100 rounded-full pr-1.5 pl-4 py-1.5 border border-transparent focus-within:border-border focus-within:bg-white focus-within:shadow-none transition-all">
-            <input
+            <Input
               type="text"
               placeholder="Digite sua mensagem..."
-              className="flex-1 bg-transparent text-sm outline-none placeholder:text-muted-foreground"
+              className="flex-1"
               value={inputText}
               onChange={(e) => setInputText(e.target.value)}
               onKeyDown={(e) => e.key === "Enter" && handleSend()}

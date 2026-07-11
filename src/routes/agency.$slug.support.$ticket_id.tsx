@@ -507,7 +507,7 @@ function TicketAdvancedRoute() {
                 value={metaDraft.loc_codes}
                 onChange={(e) => { setMetaDraft(d => ({ ...d, loc_codes: e.target.value })); setMetaDirty(true); }}
                 placeholder="Ex: ABCD12, EFGH34"
-                className="text-xs"
+                
               />
             </Field>
             <Field label="Passageiros Afetados — separar por vírgula">
@@ -515,7 +515,7 @@ function TicketAdvancedRoute() {
                 value={metaDraft.passenger_names}
                 onChange={(e) => { setMetaDraft(d => ({ ...d, passenger_names: e.target.value })); setMetaDirty(true); }}
                 placeholder="Ex: João Silva, Maria Santos"
-                className="text-xs"
+                
               />
             </Field>
             <Field label="Cia Aérea / Operador">
@@ -523,7 +523,7 @@ function TicketAdvancedRoute() {
                 value={metaDraft.cia_aerea}
                 onChange={(e) => { setMetaDraft(d => ({ ...d, cia_aerea: e.target.value })); setMetaDirty(true); }}
                 placeholder="Ex: LATAM"
-                className="text-xs"
+                
               />
             </Field>
           </div>
@@ -537,7 +537,7 @@ function TicketAdvancedRoute() {
                 value={metaDraft.extra_cost}
                 onChange={(e) => { setMetaDraft(d => ({ ...d, extra_cost: e.target.value })); setMetaDirty(true); }}
                 placeholder="0.00"
-                className="text-xs"
+                
               />
             </Field>
             <Field label="Multa Fornecedor (BRL)">
@@ -546,7 +546,7 @@ function TicketAdvancedRoute() {
                 value={metaDraft.supplier_penalty}
                 onChange={(e) => { setMetaDraft(d => ({ ...d, supplier_penalty: e.target.value })); setMetaDirty(true); }}
                 placeholder="0.00"
-                className="text-xs"
+                
               />
             </Field>
             <Field label="Status Reembolso">

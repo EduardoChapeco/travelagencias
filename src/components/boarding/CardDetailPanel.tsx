@@ -14,6 +14,9 @@ import {
   updateBoardingCardChecklist,
 } from "@/services/boarding";
 import { RoomingList } from "./RoomingList";
+import { FormInput as Input } from "@/components/ui/input";
+import { NativeSelect as Select } from "@/components/ui/select";
+import { FormTextarea as Textarea } from "@/components/ui/textarea";
 
 export function CardDetailPanel({
   card,
@@ -578,7 +581,7 @@ export function CardDetailPanel({
               >
                 <Upload className="h-3 w-3" /> Upload Bilhete
               </Button>
-              <input
+              <Input
                 ref={ticketFileRef}
                 type="file"
                 accept=".pdf,.jpg,.jpeg,.png"
@@ -857,7 +860,7 @@ export function CardDetailPanel({
                       <label className="text-[11px] text-muted-foreground font-medium">
                         Localizador da Reserva
                       </label>
-                      <input
+                      <Input
                         type="text"
                         value={pnr}
                         onChange={(e) => {
@@ -865,14 +868,14 @@ export function CardDetailPanel({
                           setEditDirty(true);
                         }}
                         placeholder="ABC123"
-                        className="mt-1 h-8 w-full rounded-full border border-border bg-surface-alt px-2.5 text-xs outline-none focus:border-border-strong text-foreground"
+                        className="mt-1 w-full rounded-full px-2.5 focus:border-border-strong"
                       />
                     </div>
                     <div>
                       <label className="text-[11px] text-muted-foreground font-medium">
                         Cia / Operadora
                       </label>
-                      <input
+                      <Input
                         type="text"
                         value={airline}
                         onChange={(e) => {
@@ -880,7 +883,7 @@ export function CardDetailPanel({
                           setEditDirty(true);
                         }}
                         placeholder="LATAM, GOL…"
-                        className="mt-1 h-8 w-full rounded-full border border-border bg-surface-alt px-2.5 text-xs outline-none focus:border-border-strong text-foreground"
+                        className="mt-1 w-full rounded-full px-2.5 focus:border-border-strong"
                       />
                     </div>
                   </div>
@@ -983,14 +986,14 @@ export function CardDetailPanel({
                     <label className="text-[11px] text-muted-foreground font-medium">
                       Data de Embarque
                     </label>
-                    <input
+                    <Input
                       type="date"
                       value={departureDate}
                       onChange={(e) => {
                         setDepartureDate(e.target.value);
                         setEditDirty(true);
                       }}
-                      className="mt-1 h-8 w-full rounded-full border border-border bg-surface-alt px-2.5 text-xs outline-none focus:border-border-strong text-foreground"
+                      className="mt-1 w-full rounded-full px-2.5 focus:border-border-strong"
                     />
                   </div>
                   <div className="grid grid-cols-2 gap-3 mt-2">
@@ -998,21 +1001,21 @@ export function CardDetailPanel({
                       <label className="text-[11px] text-muted-foreground font-medium">
                         Reunião de Briefing
                       </label>
-                      <input
+                      <Input
                         type="datetime-local"
                         value={briefingDate ? briefingDate.slice(0, 16) : ""}
                         onChange={(e) => {
                           setBriefingDate(e.target.value);
                           setEditDirty(true);
                         }}
-                        className="mt-1 h-8 w-full rounded-full border border-border bg-surface-alt px-2.5 text-xs outline-none focus:border-border-strong text-foreground"
+                        className="mt-1 w-full rounded-full px-2.5 focus:border-border-strong"
                       />
                     </div>
                     <div>
                       <label className="text-[11px] text-muted-foreground font-medium">
                         Link da Reunião
                       </label>
-                      <input
+                      <Input
                         type="text"
                         value={briefingUrl}
                         onChange={(e) => {
@@ -1020,15 +1023,15 @@ export function CardDetailPanel({
                           setEditDirty(true);
                         }}
                         placeholder="https://meet.google.com/..."
-                        className="mt-1 h-8 w-full rounded-full border border-border bg-surface-alt px-2.5 text-xs outline-none focus:border-border-strong text-foreground"
+                        className="mt-1 w-full rounded-full px-2.5 focus:border-border-strong"
                       />
                     </div>
                   </div>
                   <div className="mt-4 pt-4 border-t border-border/50">
                     <label className="flex items-start gap-2 cursor-pointer text-xs font-semibold text-foreground">
-                      <input
+                      <Input
                         type="checkbox"
-                        className="h-4 w-4 mt-0.5 rounded border-border text-brand focus:ring-brand"
+                        className="h-4 w-4 mt-0.5 rounded text-brand focus:ring-brand"
                         checked={tags.includes("auto_dispatch_enabled")}
                         onChange={(e) => {
                           const newTags = e.target.checked
@@ -1060,7 +1063,7 @@ export function CardDetailPanel({
                       <label className="text-[11px] text-muted-foreground font-medium">
                         Destino
                       </label>
-                      <input
+                      <Input
                         type="text"
                         value={destination}
                         onChange={(e) => {
@@ -1068,26 +1071,26 @@ export function CardDetailPanel({
                           setEditDirty(true);
                         }}
                         placeholder="ex: Cancún, México"
-                        className="mt-1 h-8 w-full rounded-full border border-border bg-surface-alt px-2.5 text-xs outline-none focus:border-border-strong text-foreground"
+                        className="mt-1 w-full rounded-full px-2.5 focus:border-border-strong"
                       />
                     </div>
                     <div>
                       <label className="text-[11px] text-muted-foreground font-medium">Tipo</label>
-                      <select
+                      <Select
                         value={destinationType}
                         onChange={(e) => {
                           setDestinationType(e.target.value);
                           setEditDirty(true);
                         }}
-                        className="mt-1 h-8 w-full rounded-full border border-border bg-surface-alt px-2.5 text-xs outline-none focus:border-border-strong text-foreground"
+                        className="mt-1 w-full rounded-full px-2.5 focus:border-border-strong"
                       >
                         <option value="national">Nacional</option>
                         <option value="international">Internacional</option>
-                      </select>
+                      </Select>
                     </div>
                     <div>
                       <label className="text-[11px] text-muted-foreground font-medium">Hotel</label>
-                      <input
+                      <Input
                         type="text"
                         value={hotelName}
                         onChange={(e) => {
@@ -1095,14 +1098,14 @@ export function CardDetailPanel({
                           setEditDirty(true);
                         }}
                         placeholder="Nome do hotel"
-                        className="mt-1 h-8 w-full rounded-full border border-border bg-surface-alt px-2.5 text-xs outline-none focus:border-border-strong text-foreground"
+                        className="mt-1 w-full rounded-full px-2.5 focus:border-border-strong"
                       />
                     </div>
                     <div>
                       <label className="text-[11px] text-muted-foreground font-medium">
                         Telefone Hotel
                       </label>
-                      <input
+                      <Input
                         type="text"
                         value={hotelPhone}
                         onChange={(e) => {
@@ -1110,42 +1113,42 @@ export function CardDetailPanel({
                           setEditDirty(true);
                         }}
                         placeholder="+1 555 000 0000"
-                        className="mt-1 h-8 w-full rounded-full border border-border bg-surface-alt px-2.5 text-xs outline-none focus:border-border-strong text-foreground"
+                        className="mt-1 w-full rounded-full px-2.5 focus:border-border-strong"
                       />
                     </div>
                     <div>
                       <label className="text-[11px] text-muted-foreground font-medium">
                         Check-in Hotel
                       </label>
-                      <input
+                      <Input
                         type="date"
                         value={hotelCheckin}
                         onChange={(e) => {
                           setHotelCheckin(e.target.value);
                           setEditDirty(true);
                         }}
-                        className="mt-1 h-8 w-full rounded-full border border-border bg-surface-alt px-2.5 text-xs outline-none focus:border-border-strong text-foreground"
+                        className="mt-1 w-full rounded-full px-2.5 focus:border-border-strong"
                       />
                     </div>
                     <div>
                       <label className="text-[11px] text-muted-foreground font-medium">
                         Check-out Hotel
                       </label>
-                      <input
+                      <Input
                         type="date"
                         value={hotelCheckout}
                         onChange={(e) => {
                           setHotelCheckout(e.target.value);
                           setEditDirty(true);
                         }}
-                        className="mt-1 h-8 w-full rounded-full border border-border bg-surface-alt px-2.5 text-xs outline-none focus:border-border-strong text-foreground"
+                        className="mt-1 w-full rounded-full px-2.5 focus:border-border-strong"
                       />
                     </div>
                     <div>
                       <label className="text-[11px] text-muted-foreground font-medium">
                         Empresa de Transfer
                       </label>
-                      <input
+                      <Input
                         type="text"
                         value={transferProvider}
                         onChange={(e) => {
@@ -1153,28 +1156,28 @@ export function CardDetailPanel({
                           setEditDirty(true);
                         }}
                         placeholder="ex: GiraTur Transfer"
-                        className="mt-1 h-8 w-full rounded-full border border-border bg-surface-alt px-2.5 text-xs outline-none focus:border-border-strong text-foreground"
+                        className="mt-1 w-full rounded-full px-2.5 focus:border-border-strong"
                       />
                     </div>
                     <div>
                       <label className="text-[11px] text-muted-foreground font-medium">
                         Horário Transfer
                       </label>
-                      <input
+                      <Input
                         type="datetime-local"
                         value={transferTime ? transferTime.slice(0, 16) : ""}
                         onChange={(e) => {
                           setTransferTime(e.target.value);
                           setEditDirty(true);
                         }}
-                        className="mt-1 h-8 w-full rounded-full border border-border bg-surface-alt px-2.5 text-xs outline-none focus:border-border-strong text-foreground"
+                        className="mt-1 w-full rounded-full px-2.5 focus:border-border-strong"
                       />
                     </div>
                     <div>
                       <label className="text-[11px] text-muted-foreground font-medium">
                         Nome do Guia
                       </label>
-                      <input
+                      <Input
                         type="text"
                         value={guideName}
                         onChange={(e) => {
@@ -1182,14 +1185,14 @@ export function CardDetailPanel({
                           setEditDirty(true);
                         }}
                         placeholder="ex: Carlos Matos"
-                        className="mt-1 h-8 w-full rounded-full border border-border bg-surface-alt px-2.5 text-xs outline-none focus:border-border-strong text-foreground"
+                        className="mt-1 w-full rounded-full px-2.5 focus:border-border-strong"
                       />
                     </div>
                     <div>
                       <label className="text-[11px] text-muted-foreground font-medium">
                         Telefone Guia
                       </label>
-                      <input
+                      <Input
                         type="text"
                         value={guidePhone}
                         onChange={(e) => {
@@ -1197,14 +1200,14 @@ export function CardDetailPanel({
                           setEditDirty(true);
                         }}
                         placeholder="55 99999-0000"
-                        className="mt-1 h-8 w-full rounded-full border border-border bg-surface-alt px-2.5 text-xs outline-none focus:border-border-strong text-foreground"
+                        className="mt-1 w-full rounded-full px-2.5 focus:border-border-strong"
                       />
                     </div>
                     <div className="col-span-2">
                       <label className="text-[11px] text-muted-foreground font-medium">
                         📞 Telefone de Emergência
                       </label>
-                      <input
+                      <Input
                         type="text"
                         value={emergencyPhone}
                         onChange={(e) => {
@@ -1212,7 +1215,7 @@ export function CardDetailPanel({
                           setEditDirty(true);
                         }}
                         placeholder="0800 123 456"
-                        className="mt-1 h-8 w-full rounded-full border border-border bg-surface-alt px-2.5 text-xs outline-none focus:border-border-strong text-foreground"
+                        className="mt-1 w-full rounded-full px-2.5 focus:border-border-strong"
                       />
                     </div>
                   </div>
@@ -1256,7 +1259,7 @@ export function CardDetailPanel({
                       ))}
                   </div>
                   <div className="flex gap-2">
-                    <input
+                    <Input
                       type="text"
                       value={newTag}
                       onChange={(e) => setNewTag(e.target.value)}
@@ -1267,7 +1270,7 @@ export function CardDetailPanel({
                         }
                       }}
                       placeholder="Nova tag personalizada…"
-                      className="h-8 flex-1 rounded-full border border-border bg-surface px-2.5 text-xs outline-none focus:border-border-strong text-foreground"
+                      className="flex-1 rounded-full px-2.5 focus:border-border-strong"
                     />
                     <Button
                       type="button"
@@ -1335,7 +1338,7 @@ export function CardDetailPanel({
                 ))}
               </div>
               <div className="mt-3 flex gap-2">
-                <input
+                <Input
                   type="text"
                   value={newItem}
                   onChange={(e) => setNewItem(e.target.value)}
@@ -1346,7 +1349,7 @@ export function CardDetailPanel({
                     }
                   }}
                   placeholder="Novo item…"
-                  className="h-8 flex-1 rounded-full border border-border bg-surface px-2.5 text-xs outline-none focus:border-border-strong text-foreground"
+                  className="flex-1 rounded-full px-2.5 focus:border-border-strong"
                 />
                 <Button
                   type="button"
@@ -1368,7 +1371,7 @@ export function CardDetailPanel({
                   {notes || "Nenhuma observação cadastrada."}
                 </p>
               ) : (
-                <textarea
+                <Textarea
                   value={notes}
                   onChange={(e) => {
                     setNotes(e.target.value);
@@ -1376,7 +1379,7 @@ export function CardDetailPanel({
                   }}
                   placeholder="Observações internas sobre este embarque…"
                   rows={3}
-                  className="w-full rounded-full border border-border bg-surface-alt px-3 py-2 text-xs outline-none focus:border-border-strong resize-none text-foreground"
+                  className="w-full rounded-full focus:border-border-strong resize-none"
                 />
               )}
             </div>
@@ -1426,41 +1429,41 @@ export function CardDetailPanel({
                 <div className="rounded-[var(--radius-card)] border border-border p-3 space-y-3 bg-surface-alt/20 text-xs">
                   <div className="font-semibold text-foreground">Abrir Novo Chamado</div>
                   <div className="space-y-2">
-                    <input
+                    <Input
                       type="text"
                       value={ticketTitle}
                       onChange={(e) => setTicketTitle(e.target.value)}
                       placeholder="Título do chamado (ex: Atraso no voo)"
-                      className="h-8 w-full rounded-full border border-border bg-surface px-2.5 text-xs outline-none focus:border-border-strong text-foreground"
+                      className="w-full rounded-full px-2.5 focus:border-border-strong"
                     />
-                    <textarea
+                    <Textarea
                       rows={2}
                       value={ticketDesc}
                       onChange={(e) => setTicketDesc(e.target.value)}
                       placeholder="Descrição / Detalhes..."
-                      className="w-full rounded-full border border-border bg-surface px-2.5 py-1 text-xs outline-none focus:border-border-strong resize-none text-foreground"
+                      className="w-full rounded-full px-2.5 focus:border-border-strong resize-none"
                     />
                     <div className="grid grid-cols-2 gap-2">
-                      <select
+                      <Select
                         value={ticketType}
                         onChange={(e) => setTicketType(e.target.value)}
-                        className="h-8 rounded-full border border-border bg-surface text-xs px-2 text-foreground"
+                        className="rounded-full px-2"
                       >
                         <option value="trip">Viagem</option>
                         <option value="financial">Financeiro</option>
                         <option value="complaint">Reclamação</option>
                         <option value="refund">Reembolso</option>
-                      </select>
-                      <select
+                      </Select>
+                      <Select
                         value={ticketPriority}
                         onChange={(e) => setTicketPriority(e.target.value)}
-                        className="h-8 rounded-full border border-border bg-surface text-xs px-2 text-foreground"
+                        className="rounded-full px-2"
                       >
                         <option value="low">Baixa</option>
                         <option value="medium">Média</option>
                         <option value="high">Alta</option>
                         <option value="urgent">Urgente</option>
-                      </select>
+                      </Select>
                     </div>
                   </div>
                   <div className="flex gap-2 justify-end">

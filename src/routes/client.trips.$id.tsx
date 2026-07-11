@@ -1178,7 +1178,7 @@ function ClientTripDetail() {
                   placeholder="Seu Nome Completo"
                   value={typedName}
                   onChange={(e) => setTypedName(e.target.value)}
-                  className="glass-card border-none font-serif italic text-sm border-border focus:border-brand rounded-[var(--radius-card)]"
+                  className="glass-card border-none font-serif italic focus:border-brand rounded-[var(--radius-card)]"
                 />
               </div>
             </div>

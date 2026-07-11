@@ -24,7 +24,7 @@ const FormTextarea = React.forwardRef<HTMLTextAreaElement, React.ComponentProps<
       ref={ref}
       {...props}
       className={cn(
-        "w-full min-h-[85px] p-3 rounded-card border border-border bg-surface text-sm outline-none transition-colors focus:border-border-strong text-foreground placeholder:text-muted-foreground/60",
+        "w-full min-h-[85px] p-3 rounded-card border border-border bg-surface text-sm outline-none transition-colors focus:border-border-strong focus:ring-2 focus:ring-ring/10 disabled:cursor-not-allowed disabled:opacity-60 text-foreground placeholder:text-muted-foreground/60",
         className,
       )}
     />

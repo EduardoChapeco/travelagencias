@@ -17,6 +17,7 @@ import { GhostButton } from "@/components/ui/button";
 import { money } from "@/lib/formatters";
 import { cn } from "@/lib/utils";
 import { PageHeader } from "@/components/shell/PageHeader";
+import { FormInput as Input } from "@/components/ui/input";
 
 export const Route = createFileRoute("/agency/$slug/financial/ledger")({
   head: ({ context }: any) => ({ meta: [{ title: `Livro-Razão Contábil · ${context?.brand?.platform_name || 'Turis'}` }] }),
@@ -178,7 +179,7 @@ export function LedgerDashboard() {
           <div className="flex flex-wrap items-center gap-2">
             {/* Search by account code */}
             <div className="relative">
-              <input
+              <Input
                 type="text"
                 placeholder="Conta (ex: 1.1.01)..."
                 value={accountCode}
@@ -186,14 +187,14 @@ export function LedgerDashboard() {
                   setAccountCode(e.target.value);
                   setPage(1);
                 }}
-                className="h-8 rounded-full border-none glass-card border-none pl-8 pr-3 text-xs text-foreground placeholder:text-muted-foreground focus:outline-hidden focus:ring-1 focus:ring-ring w-[160px]"
+                className="rounded-full border-none glass-card border-none pl-8 pr-3 focus:outline-hidden focus:ring-ring w-[160px]"
               />
               <Search className="w-3.5 h-3.5 text-muted-foreground absolute left-2.5 top-1/2 -translate-y-1/2" />
             </div>
 
             {/* Search by description */}
             <div className="relative">
-              <input
+              <Input
                 type="text"
                 placeholder="Descrição do lançamento..."
                 value={search}
@@ -201,7 +202,7 @@ export function LedgerDashboard() {
                   setSearch(e.target.value);
                   setPage(1);
                 }}
-                className="h-8 rounded-full border-none glass-card border-none pl-8 pr-3 text-xs text-foreground placeholder:text-muted-foreground focus:outline-hidden focus:ring-1 focus:ring-ring w-[200px]"
+                className="rounded-full border-none glass-card border-none pl-8 pr-3 focus:outline-hidden focus:ring-ring w-[200px]"
               />
               <Search className="w-3.5 h-3.5 text-muted-foreground absolute left-2.5 top-1/2 -translate-y-1/2" />
             </div>

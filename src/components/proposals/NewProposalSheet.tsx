@@ -127,9 +127,9 @@ function ClientCombobox({
           {/* Search input */}
           <div className="flex items-center gap-2 border-b border-border px-3 py-2">
             <Search className="h-3.5 w-3.5 shrink-0 text-muted-foreground" />
-            <input
+            <Input
               autoFocus
-              className="flex-1 bg-transparent text-xs outline-none placeholder:text-muted-foreground"
+              className="flex-1"
               placeholder="Buscar por nome..."
               value={query}
               onChange={(e) => setQuery(e.target.value)}
@@ -178,21 +178,21 @@ function ClientCombobox({
               <div className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground mb-2">
                 Novo cliente
               </div>
-              <input
+              <Input
                 autoFocus
-                className="w-full h-8 rounded border border-border bg-surface-alt px-2 text-xs outline-none focus:border-brand"
+                className="w-full rounded px-2 focus:border-brand"
                 placeholder="Nome completo *"
                 value={quickName}
                 onChange={(e) => setQuickName(e.target.value)}
               />
-              <input
-                className="w-full h-8 rounded border border-border bg-surface-alt px-2 text-xs outline-none focus:border-brand"
+              <Input
+                className="w-full rounded px-2 focus:border-brand"
                 placeholder="Email"
                 value={quickEmail}
                 onChange={(e) => setQuickEmail(e.target.value)}
               />
-              <input
-                className="w-full h-8 rounded border border-border bg-surface-alt px-2 text-xs outline-none focus:border-brand"
+              <Input
+                className="w-full rounded px-2 focus:border-brand"
                 placeholder="WhatsApp / Telefone"
                 value={quickPhone}
                 onChange={(e) => setQuickPhone(e.target.value)}
@@ -285,9 +285,9 @@ function LeadCombobox({
         <div className="absolute z-50 mt-1 w-full rounded-2xl border border-border bg-surface">
           <div className="flex items-center gap-2 border-b border-border px-3 py-2">
             <Search className="h-3.5 w-3.5 shrink-0 text-muted-foreground" />
-            <input
+            <Input
               autoFocus
-              className="flex-1 bg-transparent text-xs outline-none placeholder:text-muted-foreground"
+              className="flex-1"
               placeholder="Buscar lead por nome..."
               value={query}
               onChange={(e) => setQuery(e.target.value)}
@@ -604,7 +604,7 @@ export function NewProposalSheet({
               Arraste um PDF/Imagem ou clique para selecionar. A IA extrairá e preencherá tudo
               automaticamente.
             </p>
-            <input
+            <Input
               type="file"
               accept="application/pdf,image/*"
               className="hidden"

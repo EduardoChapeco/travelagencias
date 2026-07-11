@@ -2,6 +2,8 @@ import { useState } from "react";
 import { Plus, Trash2, Shield, ChevronDown, ChevronRight } from "lucide-react";
 import { money } from "@/lib/formatters";
 import { Button } from "@/components/ui/button";
+import { FormInput as Input } from "@/components/ui/input";
+import { FormTextarea as Textarea } from "@/components/ui/textarea";
 
 export type Clause = {
   number: number;
@@ -48,13 +50,13 @@ export function ContractEditor({
       {/* Package summary */}
       <div className="rounded-2xl border border-border bg-surface p-5">
         <h2 className="mb-3 text-sm font-semibold">Resumo do Pacote</h2>
-        <textarea
+        <Textarea
           rows={4}
           readOnly={!isEditable}
           value={packageSummary}
           onChange={(e) => setPackageSummary(e.target.value)}
           placeholder="Descreva o pacote contratado: destino, datas, serviços incluídos…"
-          className="w-full rounded-full border border-input bg-surface p-2.5 text-sm outline-none focus:border-border-strong resize-none disabled:opacity-60 text-foreground"
+          className="w-full rounded-full p-2.5 focus:border-border-strong resize-none disabled:opacity-60"
         />
       </div>
 
@@ -95,7 +97,7 @@ export function ContractEditor({
                 </Button>
               )}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
-                <input
+                <Input
                   readOnly={!isEditable}
                   placeholder="Nome Completo"
                   value={c.name || ""}
@@ -104,9 +106,9 @@ export function ContractEditor({
                     nd[i].name = e.target.value;
                     setClientData(nd);
                   }}
-                  className="w-full h-8 px-2 rounded border border-input bg-surface text-xs outline-none focus:border-border-strong text-foreground disabled:opacity-60"
+                  className="w-full px-2 rounded focus:border-border-strong disabled:opacity-60"
                 />
-                <input
+                <Input
                   readOnly={!isEditable}
                   placeholder="CPF / CNPJ / Passaporte"
                   value={c.cpf || c.document || ""}
@@ -116,9 +118,9 @@ export function ContractEditor({
                     nd[i].document = e.target.value;
                     setClientData(nd);
                   }}
-                  className="w-full h-8 px-2 rounded border border-input bg-surface text-xs outline-none focus:border-border-strong text-foreground disabled:opacity-60"
+                  className="w-full px-2 rounded focus:border-border-strong disabled:opacity-60"
                 />
-                <input
+                <Input
                   readOnly={!isEditable}
                   placeholder="Email"
                   value={c.email || ""}
@@ -127,9 +129,9 @@ export function ContractEditor({
                     nd[i].email = e.target.value;
                     setClientData(nd);
                   }}
-                  className="w-full h-8 px-2 rounded border border-input bg-surface text-xs outline-none focus:border-border-strong text-foreground disabled:opacity-60"
+                  className="w-full px-2 rounded focus:border-border-strong disabled:opacity-60"
                 />
-                <input
+                <Input
                   readOnly={!isEditable}
                   placeholder="Telefone"
                   value={c.phone || ""}
@@ -138,9 +140,9 @@ export function ContractEditor({
                     nd[i].phone = e.target.value;
                     setClientData(nd);
                   }}
-                  className="w-full h-8 px-2 rounded border border-input bg-surface text-xs outline-none focus:border-border-strong text-foreground disabled:opacity-60"
+                  className="w-full px-2 rounded focus:border-border-strong disabled:opacity-60"
                 />
-                <input
+                <Input
                   readOnly={!isEditable}
                   placeholder="Endereço"
                   value={c.address || ""}
@@ -149,7 +151,7 @@ export function ContractEditor({
                     nd[i].address = e.target.value;
                     setClientData(nd);
                   }}
-                  className="col-span-1 md:col-span-2 w-full h-8 px-2 rounded border border-input bg-surface text-xs outline-none focus:border-border-strong text-foreground disabled:opacity-60"
+                  className="col-span-1 md:col-span-2 w-full px-2 rounded focus:border-border-strong disabled:opacity-60"
                 />
               </div>
             </div>
@@ -171,13 +173,13 @@ export function ContractEditor({
             </span>
           )}
         </div>
-        <textarea
+        <Textarea
           rows={3}
           readOnly={!isEditable}
           value={paymentTerms}
           onChange={(e) => setPaymentTerms(e.target.value)}
           placeholder="Ex: 50% na assinatura via Pix, saldo 30 dias antes do embarque…"
-          className="w-full rounded-full border border-input bg-surface p-2.5 text-sm outline-none focus:border-border-strong resize-none disabled:opacity-60 text-foreground"
+          className="w-full rounded-full p-2.5 focus:border-border-strong resize-none disabled:opacity-60"
         />
       </div>
 
@@ -225,18 +227,18 @@ export function ContractEditor({
 
           {editingCustom && (
             <div className="mt-3 rounded-full border border-border p-3 space-y-2 bg-surface-alt/10">
-              <input
+              <Input
                 placeholder="Seção (ex: Responsabilidade)"
                 value={newClause.section}
                 onChange={(e) => setNewClause({ ...newClause, section: e.target.value })}
-                className="w-full h-8 px-2 rounded border border-input bg-surface text-xs outline-none focus:border-border-strong text-foreground"
+                className="w-full px-2 rounded focus:border-border-strong"
               />
-              <textarea
+              <Textarea
                 rows={3}
                 placeholder="Texto da cláusula…"
                 value={newClause.clause_text}
                 onChange={(e) => setNewClause({ ...newClause, clause_text: e.target.value })}
-                className="w-full p-2 rounded border border-input bg-surface text-xs outline-none focus:border-border-strong resize-none text-foreground"
+                className="w-full p-2 rounded focus:border-border-strong resize-none"
               />
               <div className="flex gap-2">
                 <Button

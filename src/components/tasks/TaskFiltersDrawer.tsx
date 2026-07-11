@@ -233,7 +233,7 @@ export function TaskFiltersDrawer({
                   onChange={(e) =>
                     setLocalFilters((prev) => ({ ...prev, due_date_from: e.target.value || undefined }))
                   }
-                  className="h-8 text-xs bg-surface-alt border-border/60"
+                  className="border-border/60"
                 />
               </div>
               <div className="space-y-1">
@@ -244,7 +244,7 @@ export function TaskFiltersDrawer({
                   onChange={(e) =>
                     setLocalFilters((prev) => ({ ...prev, due_date_to: e.target.value || undefined }))
                   }
-                  className="h-8 text-xs bg-surface-alt border-border/60"
+                  className="border-border/60"
                 />
               </div>
             </div>

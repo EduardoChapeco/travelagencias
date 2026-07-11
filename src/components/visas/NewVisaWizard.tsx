@@ -365,7 +365,7 @@ export function NewVisaWizard({
                         <Input
                           value={doc.title}
                           onChange={(e) => updateDocTitle(idx, e.target.value)}
-                          className="h-8 text-sm bg-surface"
+                          
                           placeholder="Nome do documento"
                         />
                         <p className="text-[10px] text-muted-foreground mt-1 truncate">

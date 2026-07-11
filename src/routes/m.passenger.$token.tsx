@@ -204,7 +204,7 @@ function Page() {
                   : "border-border glass-card border-none"
             }`}
           >
-            <input
+            <Input
               type="checkbox"
               id="lgpd_passenger_check"
               checked={lgpdConsent}

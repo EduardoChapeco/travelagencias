@@ -2,6 +2,7 @@ import React, { useState, useRef, useEffect } from "react";
 import { MessageSquare, X, Send, Bot, User, CheckCircle2 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
+import { FormInput as Input } from "@/components/ui/input";
 
 export function AILandingAgent({ agencySlug, blocks }: { agencySlug: string; blocks: any[] }) {
   const [isOpen, setIsOpen] = useState(false);
@@ -149,13 +150,13 @@ export function AILandingAgent({ agencySlug, blocks }: { agencySlug: string; blo
           {/* Input Area */}
           <div className="border-t border-border bg-surface p-3">
             <form onSubmit={sendMessage} className="relative flex items-center">
-              <input
+              <Input
                 type="text"
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
                 disabled={isLoading || isConverted}
                 placeholder={isConverted ? "Atendimento transferido..." : "Digite sua mensagem..."}
-                className="w-full rounded-full border border-border bg-surface-alt py-2.5 pl-4 pr-12 text-sm outline-none focus:border-brand disabled:opacity-50"
+                className="w-full rounded-full py-2.5 pl-4 pr-12 focus:border-brand"
               />
               <Button
                 type="submit"

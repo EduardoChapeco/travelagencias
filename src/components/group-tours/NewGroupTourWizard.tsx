@@ -653,7 +653,7 @@ export function NewGroupTourWizard({
                         placeholder="Nome da acomodação (ex: Quarto Individual)"
                         value={newTierName}
                         onChange={(e) => setNewTierName(e.target.value)}
-                        className="text-xs"
+                        
                       />
                     </div>
                     <div>
@@ -664,7 +664,7 @@ export function NewGroupTourWizard({
                         onChange={(e) =>
                           setNewTierPrice(e.target.value === "" ? "" : Number(e.target.value))
                         }
-                        className="text-xs font-mono"
+                        className="font-mono"
                       />
                     </div>
                   </div>
@@ -673,7 +673,7 @@ export function NewGroupTourWizard({
                       placeholder="Descrição complementar (ex: Privativo para 1 adulto)"
                       value={newTierDesc}
                       onChange={(e) => setNewTierDesc(e.target.value)}
-                      className="text-xs flex-1"
+                      className="flex-1"
                     />
                     <GhostButton
                       type="button"
@@ -764,7 +764,7 @@ export function NewGroupTourWizard({
                         placeholder="Nome do opcional (ex: Seguro Viagem Premium)"
                         value={newExtraName}
                         onChange={(e) => setNewExtraName(e.target.value)}
-                        className="text-xs"
+                        
                       />
                     </div>
                     <div>
@@ -775,7 +775,7 @@ export function NewGroupTourWizard({
                         onChange={(e) =>
                           setNewExtraPrice(e.target.value === "" ? "" : Number(e.target.value))
                         }
-                        className="text-xs font-mono"
+                        className="font-mono"
                       />
                     </div>
                   </div>
@@ -784,7 +784,7 @@ export function NewGroupTourWizard({
                       placeholder="Descrição complementar (ex: Cobertura médica nacional)"
                       value={newExtraDesc}
                       onChange={(e) => setNewExtraDesc(e.target.value)}
-                      className="text-xs flex-1"
+                      className="flex-1"
                     />
                     <GhostButton
                       type="button"
@@ -874,10 +874,10 @@ export function NewGroupTourWizard({
                   />
                 </Field>
                 <label className="flex items-center gap-2 text-sm mt-8">
-                  <input
+                  <Input
                     type="checkbox"
                     {...register("hasFlights")}
-                    className="rounded border-border text-brand focus:ring-brand"
+                    className="rounded text-brand focus:ring-brand"
                   />
                   Incluir Voos no Pacote Base
                 </label>
@@ -1128,7 +1128,7 @@ export function NewGroupTourWizard({
                                 { shouldValidate: true },
                               )
                             }
-                            className="font-semibold text-sm"
+                            className="font-semibold"
                           />
                           <Textarea
                             placeholder="Descrição rica das atividades do dia..."
@@ -1270,7 +1270,7 @@ export function NewGroupTourWizard({
                   </h4>
 
                   <div className="flex items-center gap-3">
-                    <input type="checkbox" id="isPublic" {...register("isPublic")} />
+                    <Input type="checkbox" id="isPublic" {...register("isPublic")} />
                     <label
                       htmlFor="isPublic"
                       className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"

@@ -53,6 +53,9 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { generateOmnichannelReply } from "@/lib/api/ai-chat.functions";
+import { FormInput as Input } from "@/components/ui/input";
+import { NativeSelect as Select } from "@/components/ui/select";
+import { FormTextarea as Textarea } from "@/components/ui/textarea";
 
 // Supabase client sem tipagem forte para bypassar tabelas novas em compilacao
 const db = supabase as any;
@@ -162,7 +165,7 @@ function InboxModule() {
     queryFn: async () => {
       if (crmSearchType === "lead") {
         const { data, error } = await db
-          .from("crm_leads")
+          .from("leads")
           .select("id, name, email, phone")
           .eq("agency_id", agency!.id)
           .ilike("name", `%${crmSearchQuery}%`)
@@ -360,11 +363,11 @@ function InboxModule() {
     queryKey: ["inbox-matched-lead", selectedId, matchedContactEmail, matchedContactPhone, explicitLeadId],
     queryFn: async () => {
       if (explicitLeadId) {
-        const { data } = await db.from("crm_leads").select("*").eq("id", explicitLeadId).maybeSingle();
+        const { data } = await db.from("leads").select("*").eq("id", explicitLeadId).maybeSingle();
         if (data) return data;
       }
       if (!matchedContactEmail && !matchedContactPhone) return null;
-      let q = db.from("crm_leads").select("*").eq("agency_id", agency!.id);
+      let q = db.from("leads").select("*").eq("agency_id", agency!.id);
       if (matchedContactEmail) {
         q = q.eq("email", matchedContactEmail);
       } else {
@@ -442,7 +445,7 @@ function InboxModule() {
     queryKey: ["inbox-lead-insights", (matchedLead as any)?.id],
     queryFn: async () => {
       const { data } = await db
-        .from("crm_leads")
+        .from("leads")
         .select("general_profile, general_sentiment, generalized_objections")
         .eq("id", (matchedLead as any)!.id)
         .maybeSingle();
@@ -716,7 +719,7 @@ function InboxModule() {
       if (!stageId) throw new Error("Crie pelo menos um funil/etapa no CRM primeiro");
 
       const contact = (selectedConversation.contacts || {}) as any;
-      const { error } = await db.from("crm_leads").insert({
+      const { error } = await db.from("leads").insert({
         agency_id: agency.id,
         name: contact.name || "Lead via Inbox",
         phone: contact.phone || "",
@@ -771,7 +774,7 @@ function InboxModule() {
         selectedId ? "hidden md:flex" : "flex"
       )}>
         {/* Header & Connection button */}
-        <div className="p-4 border-b border-border flex items-center justify-between shrink-0 glass-card border-none">
+        <div className="flex min-h-[var(--ds-toolbar-height)] items-center justify-between px-4 shrink-0 glass-toolbar border-b border-border">
           <h2 className="text-xs font-bold text-foreground flex items-center gap-1.5 uppercase tracking-wider">
             <Mail className="w-4 h-4 text-brand" />
             Inbox Central
@@ -788,7 +791,7 @@ function InboxModule() {
               </Button>
             </SheetTrigger>
             <SheetContent side="left" className="p-0 w-80 glass-card border-none border-r border-border">
-              <SheetHeader className="p-4 border-b border-border">
+              <SheetHeader className="flex min-h-[var(--ds-toolbar-height)] items-center justify-between px-4 border-b border-border glass-toolbar">
                 <SheetTitle className="text-sm font-bold uppercase tracking-wider flex items-center gap-1.5">
                   <Settings2 className="w-4 h-4 text-brand" />
                   Conexões de Mensageria
@@ -1007,24 +1010,24 @@ function InboxModule() {
                             }} className="space-y-3">
                               <div className="space-y-1">
                                 <label className="text-[10px] font-bold text-muted-foreground uppercase">E-mail Comercial *</label>
-                                <input
+                                <Input
                                   type="email"
                                   required
                                   placeholder="exemplo@gmail.com"
                                   value={gmailAddress}
                                   onChange={(e) => setGmailAddress(e.target.value)}
-                                  className="w-full h-8 px-2.5 rounded glass-card border-none border-none text-xs outline-none focus:ring-1 focus:ring-brand text-foreground"
+                                  className="w-full px-2.5 rounded glass-card border-none border-none focus:ring-brand"
                                 />
                               </div>
                               <div className="space-y-1">
                                 <label className="text-[10px] font-bold text-muted-foreground uppercase">Resend API Key *</label>
-                                <input
+                                <Input
                                   type="password"
                                   required
                                   placeholder="re_..."
                                   value={resendApiKey}
                                   onChange={(e) => setResendApiKey(e.target.value)}
-                                  className="w-full h-8 px-2.5 rounded glass-card border-none border-none text-xs outline-none focus:ring-1 focus:ring-brand text-foreground"
+                                  className="w-full px-2.5 rounded glass-card border-none border-none focus:ring-brand"
                                 />
                               </div>
                               <Button
@@ -1142,38 +1145,38 @@ function InboxModule() {
                         }} className="space-y-3">
                           <div className="space-y-1">
                             <label className="text-[10px] font-bold text-muted-foreground uppercase">Provedor</label>
-                            <select
+                            <Select
                               value={waProvider}
                               onChange={(e) => setWaProvider(e.target.value as any)}
-                              className="w-full h-8 px-2 rounded glass-card border-none border-none text-xs outline-none focus:ring-1 focus:ring-brand text-foreground"
+                              className="w-full px-2 rounded glass-card border-none border-none focus:ring-brand"
                             >
                               <option value="meta_official">WhatsApp Cloud (Oficial)</option>
                               <option value="evolution_api">Evolution API (Instância)</option>
-                            </select>
+                            </Select>
                           </div>
 
                           {waProvider === "meta_official" ? (
                             <>
                               <div className="space-y-1">
                                 <label className="text-[10px] font-bold text-muted-foreground uppercase">Phone Number ID *</label>
-                                <input
+                                <Input
                                   type="text"
                                   required
                                   placeholder="Digite o ID da linha..."
                                   value={waPhoneId}
                                   onChange={(e) => setWaPhoneId(e.target.value)}
-                                  className="w-full h-8 px-2.5 rounded glass-card border-none border-none text-xs outline-none focus:ring-1 focus:ring-brand text-foreground"
+                                  className="w-full px-2.5 rounded glass-card border-none border-none focus:ring-brand"
                                 />
                               </div>
                               <div className="space-y-1">
                                 <label className="text-[10px] font-bold text-muted-foreground uppercase">Access Token *</label>
-                                <input
+                                <Input
                                   type="password"
                                   required
                                   placeholder="EAA..."
                                   value={waToken}
                                   onChange={(e) => setWaToken(e.target.value)}
-                                  className="w-full h-8 px-2.5 rounded glass-card border-none border-none text-xs outline-none focus:ring-1 focus:ring-brand text-foreground"
+                                  className="w-full px-2.5 rounded glass-card border-none border-none focus:ring-brand"
                                 />
                               </div>
                             </>
@@ -1181,24 +1184,24 @@ function InboxModule() {
                             <>
                               <div className="space-y-1">
                                 <label className="text-[10px] font-bold text-muted-foreground uppercase">URL do Servidor *</label>
-                                <input
+                                <Input
                                   type="url"
                                   required
                                   placeholder="https://sua-evolution.com"
                                   value={evolutionUrl}
                                   onChange={(e) => setEvolutionUrl(e.target.value)}
-                                  className="w-full h-8 px-2.5 rounded glass-card border-none border-none text-xs outline-none focus:ring-1 focus:ring-brand text-foreground"
+                                  className="w-full px-2.5 rounded glass-card border-none border-none focus:ring-brand"
                                 />
                               </div>
                               <div className="space-y-1">
                                 <label className="text-[10px] font-bold text-muted-foreground uppercase">Global API Key *</label>
-                                <input
+                                <Input
                                   type="password"
                                   required
                                   placeholder="Chave de acesso..."
                                   value={evolutionKey}
                                   onChange={(e) => setEvolutionKey(e.target.value)}
-                                  className="w-full h-8 px-2.5 rounded glass-card border-none border-none text-xs outline-none focus:ring-1 focus:ring-brand text-foreground"
+                                  className="w-full px-2.5 rounded glass-card border-none border-none focus:ring-brand"
                                 />
                               </div>
                             </>
@@ -1254,24 +1257,24 @@ function InboxModule() {
                         }} className="space-y-3">
                           <div className="space-y-1">
                             <label className="text-[10px] font-bold text-muted-foreground uppercase">Instagram Account ID *</label>
-                            <input
+                            <Input
                               type="text"
                               required
                               placeholder="Digite o ID da conta..."
                               value={instaAccountId}
                               onChange={(e) => setInstaAccountId(e.target.value)}
-                              className="w-full h-8 px-2.5 rounded glass-card border-none border-none text-xs outline-none focus:ring-1 focus:ring-brand text-foreground"
+                              className="w-full px-2.5 rounded glass-card border-none border-none focus:ring-brand"
                             />
                           </div>
                           <div className="space-y-1">
                             <label className="text-[10px] font-bold text-muted-foreground uppercase">Meta Page Access Token *</label>
-                            <input
+                            <Input
                               type="password"
                               required
                               placeholder="EAA..."
                               value={instaToken}
                               onChange={(e) => setInstaToken(e.target.value)}
-                              className="w-full h-8 px-2.5 rounded glass-card border-none border-none text-xs outline-none focus:ring-1 focus:ring-brand text-foreground"
+                              className="w-full px-2.5 rounded glass-card border-none border-none focus:ring-brand"
                             />
                           </div>
                           <Button
@@ -1292,11 +1295,11 @@ function InboxModule() {
         </div>
 
         {/* Toolbar & Search */}
-        <div className="px-4 py-2 border-b border-border/60 glass-card border-none/50 space-y-2 shrink-0">
+        <div className="p-4 border-b border-border glass-section space-y-3 shrink-0">
           <div className="relative">
-            <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground" />
-            <input
-              className="w-full h-8 pl-8 pr-3 rounded bg-[var(--surface-alt)] border-none text-xs outline-none focus:ring-1 focus:ring-brand text-foreground"
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground" />
+            <Input
+              className="w-full pl-9 pr-3 h-10 rounded-[var(--radius-card)] bg-black/10 border border-white/10 focus:ring-brand transition-colors text-sm"
               placeholder="Buscar por contatos..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
@@ -1304,13 +1307,13 @@ function InboxModule() {
           </div>
 
           {/* Dynamic channels filter & Meus */}
-          <div className="flex items-center gap-1.5 overflow-x-auto no-scrollbar py-0.5">
+          <div className="flex items-center gap-1.5 overflow-x-auto no-scrollbar pb-1">
             <Button
               onClick={() => setFilterChannel(null)}
-              className={`flex items-center gap-1.5 rounded-full px-2.5 py-1 text-[10px] font-bold uppercase transition-colors whitespace-nowrap border ${
+              className={`flex h-8 items-center gap-1.5 rounded-full px-3 text-[10px] font-bold uppercase transition-colors whitespace-nowrap border ${
                 filterChannel === null
                   ? "bg-brand/10 text-brand border-brand/25"
-                  : "glass-card border-none text-muted-foreground border-border hover:text-foreground"
+                  : "bg-black/20 text-muted-foreground border-white/10 hover:text-foreground hover:bg-black/40"
               }`}
             >
               <Inbox className="h-3 w-3" />
@@ -1323,7 +1326,7 @@ function InboxModule() {
                 className={`flex items-center gap-1.5 rounded-full px-2.5 py-1 text-[10px] font-bold uppercase transition-colors whitespace-nowrap border ${
                   filterChannel === "whatsapp"
                     ? "bg-green-500/10 text-green-600 border-green-500/25"
-                    : "glass-card border-none text-muted-foreground border-border hover:text-foreground"
+                    : "bg-black/20 text-muted-foreground border-white/10 hover:text-foreground hover:bg-black/40"
                 }`}
               >
                 <Phone className="h-3 w-3" />
@@ -1337,7 +1340,7 @@ function InboxModule() {
                 className={`flex items-center gap-1.5 rounded-full px-2.5 py-1 text-[10px] font-bold uppercase transition-colors whitespace-nowrap border ${
                   filterChannel === "email"
                     ? "bg-blue-500/10 text-blue-600 border-blue-500/25"
-                    : "glass-card border-none text-muted-foreground border-border hover:text-foreground"
+                    : "bg-black/20 text-muted-foreground border-white/10 hover:text-foreground hover:bg-black/40"
                 }`}
               >
                 <Mail className="h-3 w-3" />
@@ -1352,7 +1355,7 @@ function InboxModule() {
                 className={`flex items-center gap-1.5 rounded-full px-2.5 py-1 text-[10px] font-bold uppercase transition-colors whitespace-nowrap border ${
                   filterChannel === "instagram"
                     ? "bg-pink-500/10 text-pink-600 border-pink-500/25"
-                    : "glass-card border-none text-muted-foreground border-border hover:text-foreground"
+                    : "bg-black/20 text-muted-foreground border-white/10 hover:text-foreground hover:bg-black/40"
                 }`}
               >
                 <Instagram className="h-3 w-3" />
@@ -1365,7 +1368,7 @@ function InboxModule() {
               className={`ml-auto flex items-center gap-1 rounded-full px-2.5 py-1 text-[10px] font-bold uppercase transition-colors border ${
                 mySessionsOnly
                   ? "bg-brand/10 text-brand border-brand/25"
-                  : "glass-card border-none text-muted-foreground border-border hover:text-foreground"
+                  : "bg-black/20 text-muted-foreground border-white/10 hover:text-foreground hover:bg-black/40"
               }`}
             >
               Meus
@@ -1461,7 +1464,7 @@ function InboxModule() {
         {selectedId ? (
           <div className="flex flex-1 flex-col h-full overflow-hidden">
             {/* Thread Header */}
-            <div className="flex items-center gap-3 border-b border-border px-4 py-3 glass-card border-none shrink-0">
+            <div className="flex items-center gap-3 border-b border-border px-4 min-h-[var(--ds-toolbar-height)] glass-toolbar shrink-0">
               <Button
                 onClick={() => setSelectedId(null)}
                 className="md:hidden flex h-8 w-8 items-center justify-center rounded-full border-none glass-card border-none text-muted-foreground hover:text-foreground transition-colors cursor-pointer"
@@ -1596,16 +1599,31 @@ function InboxModule() {
             </div>
 
             {/* Input & Sending Actions */}
-            <div className="border-t border-border p-3 glass-card border-none shrink-0">
+            <div className="border-t border-border p-4 glass-section shrink-0">
+              {reply && aiSuggestion && (
+                <div className="mb-3 flex items-start gap-2 rounded-[var(--radius-card)] border border-brand/20 bg-brand/5 p-3 text-xs text-brand relative">
+                  <Sparkles className="mt-0.5 h-3.5 w-3.5 shrink-0" />
+                  <div className="flex-1 leading-relaxed">
+                    <p className="font-bold mb-1 uppercase tracking-wider text-[9px]">Sugestão da IA</p>
+                    <p>{aiSuggestion}</p>
+                  </div>
+                  <Button
+                    onClick={() => setAiSuggestion(null)}
+                    className="absolute top-2 right-2 h-5 w-5 rounded-full hover:bg-brand/10 text-brand flex items-center justify-center p-0 border-none cursor-pointer"
+                  >
+                    <X className="h-3 w-3" />
+                  </Button>
+                </div>
+              )}
               <div className="flex items-end gap-2">
                 <Button
+                  className="flex h-10 w-10 shrink-0 items-center justify-center rounded-[var(--radius-card)] border border-border glass-card border-none hover:bg-white/10 text-muted-foreground hover:text-foreground transition-colors cursor-pointer"
                   onClick={() => fileInputRef.current?.click()}
-                  className="flex h-10 w-10 shrink-0 items-center justify-center rounded-[var(--radius-card)] border-none glass-card border-none hover:glass bg-white/5 border-white/10 text-muted-foreground hover:text-foreground transition-colors cursor-pointer"
                   title="Anexar arquivo"
                 >
                   <Paperclip className="h-4 w-4" />
                 </Button>
-                <input type="file" ref={fileInputRef} onChange={handleAttachmentUpload} className="hidden" />
+                <Input type="file" ref={fileInputRef} onChange={handleAttachmentUpload} className="hidden" />
 
                 <Button
                   onClick={recording ? stopRecording : startRecording}
@@ -1613,14 +1631,14 @@ function InboxModule() {
                     "flex h-10 w-10 shrink-0 items-center justify-center rounded-[var(--radius-card)] border transition-all cursor-pointer",
                     recording
                       ? "bg-red-500 border-red-500 text-white animate-pulse"
-                      : "border-border glass-card border-none hover:glass bg-white/5 border-white/10 text-muted-foreground hover:text-foreground"
+                      : "border-border glass-card border-none hover:bg-white/10 text-muted-foreground hover:text-foreground"
                   )}
                   title={recording ? "Parar gravação" : "Gravar mensagem de voz"}
                 >
                   <Mic className="h-4 w-4" />
                 </Button>
 
-                <textarea
+                <Textarea
                   value={reply}
                   onChange={(e) => setReply(e.target.value)}
                   onKeyDown={(e) => {
@@ -1632,7 +1650,7 @@ function InboxModule() {
                   placeholder={recording ? "Gravando áudio..." : "Digite uma mensagem…"}
                   rows={2}
                   disabled={recording}
-                  className="flex-1 resize-none rounded-[var(--radius-card)] border-none glass bg-white/5 border-white/10 px-3 py-2.5 text-sm outline-none focus:border-brand text-foreground"
+                  className="flex-1 resize-none rounded-[var(--radius-card)] border border-white/10 bg-black/10 py-2.5 focus:border-brand text-sm h-10 min-h-0"
                 />
                 
                 <Button
@@ -1665,7 +1683,7 @@ function InboxModule() {
       {selectedId && showDetails && (
         <aside className="fixed inset-y-0 right-0 z-40 flex w-full flex-col border-l border-border glass-card border-none overflow-y-auto no-scrollbar md:relative md:w-80 md:z-0 md:flex md:shadow-none shadow-2xl h-full">
           {/* Header */}
-          <div className="flex items-center justify-between border-b border-border px-4 py-3 shrink-0">
+          <div className="flex items-center justify-between border-b border-border px-4 min-h-[var(--ds-toolbar-height)] glass-toolbar shrink-0">
             <h3 className="text-[10px] font-extrabold uppercase tracking-wider text-muted-foreground">
               Painel do Cliente
             </h3>
@@ -1783,12 +1801,12 @@ function InboxModule() {
                         </Button>
                       </div>
 
-                      <input
+                      <Input
                         type="text"
                         value={crmSearchQuery}
                         onChange={(e) => setCrmSearchQuery(e.target.value)}
                         placeholder="Buscar por nome (min. 3 letras)..."
-                        className="w-full text-xs h-8 px-2.5 rounded border-none glass-card border-none text-foreground outline-none focus:border-brand"
+                        className="w-full px-2.5 rounded border-none glass-card border-none focus:border-brand"
                       />
 
                       {crmSearchQuery.length > 2 && crmSearchResults.length === 0 && (
@@ -1954,10 +1972,10 @@ function InboxModule() {
                   <div className="p-3 border-none rounded-[var(--radius-card)] glass bg-white/5 border-white/10/40 space-y-3">
                     <div className="flex items-center justify-between gap-2">
                       <span className="text-[10px] font-bold text-foreground">Tipo de Doc:</span>
-                      <select
+                      <Select
                         value={docTypeToUpload}
                         onChange={(e) => setDocTypeToUpload(e.target.value)}
-                        className="h-7 text-[11px] rounded border-none glass-card border-none px-1 outline-none text-foreground"
+                        className="h-7 text-[11px] rounded border-none glass-card border-none px-1"
                       >
                         <option value="rg">RG</option>
                         <option value="cpf">CPF</option>
@@ -1965,10 +1983,10 @@ function InboxModule() {
                         <option value="cnh">CNH</option>
                         <option value="visa">Visto</option>
                         <option value="other">Outro</option>
-                      </select>
+                      </Select>
                     </div>
                     <div className="relative">
-                      <input type="file" id="client-doc-inbox-upload" onChange={handleDocUpload} disabled={uploadingDoc} className="hidden" />
+                      <Input type="file" id="client-doc-inbox-upload" onChange={handleDocUpload} disabled={uploadingDoc} className="hidden" />
                       <Button
                         onClick={() => document.getElementById("client-doc-inbox-upload")?.click()}
                         disabled={uploadingDoc}
@@ -2022,12 +2040,12 @@ function InboxModule() {
                         {savingNotes ? "Salvando..." : "Salvar"}
                       </Button>
                     </div>
-                    <textarea
+                    <Textarea
                       value={contactNotes}
                       onChange={(e) => setContactNotes(e.target.value)}
                       placeholder="Escreva notas importantes sobre este contato..."
                       rows={10}
-                      className="w-full text-xs p-2.5 border-none rounded-[var(--radius-card)] glass-card border-none outline-none focus:border-brand resize-none leading-relaxed text-foreground"
+                      className="w-full p-2.5 border-none rounded-[var(--radius-card)] glass-card border-none focus:border-brand resize-none leading-relaxed"
                     />
                   </div>
                 ) : (

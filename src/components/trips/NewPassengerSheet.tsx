@@ -145,10 +145,10 @@ export function NewPassengerSheet({
           </div>
 
           <label className="flex items-center gap-3 rounded-[var(--radius-card)] border border-brand/20 bg-brand/5 p-4 cursor-pointer hover:border-brand/40 transition-colors">
-            <input
+            <Input
               type="checkbox"
               {...register("isLead")}
-              className="h-4 w-4 rounded border-brand/30 bg-surface text-brand focus:ring-brand"
+              className="h-4 w-4 rounded border-brand/30 text-brand focus:ring-brand"
             />
             <div className="flex flex-col">
               <span className="text-sm font-bold text-foreground">Passageiro Principal (Lead)</span>

@@ -27,6 +27,8 @@ import { cn } from "@/lib/utils";
 import { toast } from "sonner";
 import { updateBoardingCardChecklist } from "@/services/boarding";
 import { Button } from "@/components/ui/button";
+import { FormInput as Input } from "@/components/ui/input";
+import { NativeSelect as Select } from "@/components/ui/select";
 
 export const Route = createFileRoute("/agency/$slug/trips/$id/boarding")({
   head: ({ context }: any) => ({ meta: [{ title: `Check-in & Embarque · ${context?.brand?.platform_name || 'Turis'}` }] }),
@@ -341,19 +343,19 @@ function TripBoardingPage() {
                       </div>
 
                       <div className="flex items-center gap-3">
-                        <select
+                        <Select
                           value={card.status}
                           onChange={(e) =>
                             updateStatusMut.mutate({ cardId: card.id, status: e.target.value })
                           }
-                          className="text-xs border-none rounded px-2 py-1 glass-card border-none cursor-pointer text-muted-foreground hover:text-foreground font-medium"
+                          className="border-none rounded px-2 glass-card border-none cursor-pointer hover:text-foreground font-medium"
                         >
                           {Object.entries(STAGE_CONFIG).map(([val, conf]) => (
                             <option key={val} value={val}>
                               {conf.label}
                             </option>
                           ))}
-                        </select>
+                        </Select>
 
                         <StatusBadge tone={st.tone}>{st.label}</StatusBadge>
                       </div>
@@ -546,14 +548,14 @@ function TripBoardingPage() {
                     </div>
 
                     <div className="flex gap-2">
-                      <input
+                      <Input
                         type="url"
                         placeholder="https://..."
                         value={overrideUrls[seg.id] ?? ""}
                         onChange={(e) =>
                           setOverrideUrls({ ...overrideUrls, [seg.id]: e.target.value })
                         }
-                        className="flex-1 text-xs border-none rounded-[var(--radius-card)] px-2.5 py-2 bg-background focus:outline-none focus:ring-1 focus:ring-brand font-medium text-foreground"
+                        className="flex-1 border-none rounded-[var(--radius-card)] px-2.5 focus:ring-brand font-medium"
                       />
                       <Button
                         onClick={() =>

@@ -371,7 +371,7 @@ function TourDetailPage() {
           <Select
             value={t.status}
             onChange={(e) => updateStatus(e.target.value)}
-            className="h-8 text-xs shrink-0 glass-card border-none text-foreground border-none rounded-full px-2 focus:border-brand"
+            className="shrink-0 glass-card border-none border-none rounded-full px-2 focus:border-brand"
           >
             <option value="draft">Rascunho</option>
             <option value="open">Aberta / Inscrições</option>
@@ -504,7 +504,7 @@ function TourDetailPage() {
                         ? `${window.location.origin}/p/${agency?.slug}/tour/${t.id}`
                         : `/p/${agency?.slug}/tour/${t.id}`
                     }
-                    className="glass bg-white/5 border-white/10 font-mono text-xs"
+                    className="glass bg-white/5 border-white/10 font-mono"
                     onClick={(e) => (e.target as HTMLInputElement).select()}
                   />
                 </Field>
@@ -647,26 +647,26 @@ function TourDetailPage() {
                             {money(Number(e.total_paid))}
                           </td>
                           <td className="px-3 py-2.5">
-                            <select
+                            <Select
                               value={e.segment_type || "bus"}
                               onChange={(ev) => updatePassengerSegment(e.id, ev.target.value)}
-                              className="bg-white text-gray-900 border-none rounded-[var(--radius-card)] text-xs px-2 py-1 outline-none focus:border-brand transition-colors cursor-pointer"
+                              className="text-gray-900 border-none rounded-[var(--radius-card)] px-2 focus:border-brand cursor-pointer"
                             >
                               <option value="bus">🚌 Ônibus</option>
                               <option value="flight">✈️ Aéreo</option>
                               <option value="cruise">🚢 Cruzeiro</option>
                               <option value="land_only">🏨 Terrestre</option>
-                            </select>
+                            </Select>
                           </td>
                           <td className="px-3 py-2.5">
-                            <select
+                            <Select
                               value={e.payment_routing || "agency"}
                               onChange={(ev) => updatePassengerRouting(e.id, ev.target.value)}
-                              className="bg-white text-gray-900 border-none rounded-[var(--radius-card)] text-xs px-2 py-1 outline-none focus:border-brand transition-colors cursor-pointer"
+                              className="text-gray-900 border-none rounded-[var(--radius-card)] px-2 focus:border-brand cursor-pointer"
                             >
                               <option value="agency">🏢 Agência</option>
                               <option value="operator">🚢 Operadora</option>
-                            </select>
+                            </Select>
                           </td>
                           <td className="px-3 py-2.5">
                             <StatusBadge
@@ -1836,7 +1836,7 @@ function HotelPricingTabContent({ tour, onUpdate }: { tour: any; onUpdate: () =>
                   value={tierName}
                   onChange={(e) => setTierName(e.target.value)}
                   placeholder="Ex: Quarto Casal Premium"
-                  className="h-8 text-xs"
+                  
                 />
               </Field>
               <Field label="Preço por pessoa *">
@@ -1847,7 +1847,7 @@ function HotelPricingTabContent({ tour, onUpdate }: { tour: any; onUpdate: () =>
                     setTierPrice(e.target.value === "" ? "" : Number(e.target.value))
                   }
                   placeholder="Valor em R$"
-                  className="h-8 text-xs font-mono"
+                  className="font-mono"
                 />
               </Field>
               <Field label="Descrição (Opcional)">
@@ -1855,7 +1855,7 @@ function HotelPricingTabContent({ tour, onUpdate }: { tour: any; onUpdate: () =>
                   value={tierDesc}
                   onChange={(e) => setTierDesc(e.target.value)}
                   placeholder="Ex: Vista para a montanha"
-                  className="h-8 text-xs"
+                  
                 />
               </Field>
               <PrimaryButton onClick={handleAddTier} className="w-full h-8 text-xs">
@@ -1921,7 +1921,7 @@ function HotelPricingTabContent({ tour, onUpdate }: { tour: any; onUpdate: () =>
                   value={extraName}
                   onChange={(e) => setExtraName(e.target.value)}
                   placeholder="Ex: Passeio de Maria Fumaça"
-                  className="h-8 text-xs"
+                  
                 />
               </Field>
               <Field label="Valor do serviço *">
@@ -1932,7 +1932,7 @@ function HotelPricingTabContent({ tour, onUpdate }: { tour: any; onUpdate: () =>
                     setExtraPrice(e.target.value === "" ? "" : Number(e.target.value))
                   }
                   placeholder="Valor em R$"
-                  className="h-8 text-xs font-mono"
+                  className="font-mono"
                 />
               </Field>
               <Field label="Descrição (Opcional)">
@@ -1940,7 +1940,7 @@ function HotelPricingTabContent({ tour, onUpdate }: { tour: any; onUpdate: () =>
                   value={extraDesc}
                   onChange={(e) => setExtraDesc(e.target.value)}
                   placeholder="Ex: Inclui transfer + ingresso"
-                  className="h-8 text-xs"
+                  
                 />
               </Field>
               <PrimaryButton onClick={handleAddExtra} className="w-full h-8 text-xs">
@@ -2741,20 +2741,20 @@ function EditTour({
 
         <div className="flex items-center gap-4 py-2 border-t border-b border-border/40">
           <label className="flex items-center gap-2 text-xs font-semibold text-foreground cursor-pointer select-none">
-            <input
+            <Input
               type="checkbox"
               checked={overbookingAllowed}
               onChange={(e) => setOverbookingAllowed(e.target.checked)}
-              className="rounded border-border text-brand focus:ring-brand h-4 w-4"
+              className="rounded text-brand focus:ring-brand h-4 w-4"
             />
             Permitir Overbooking
           </label>
           <label className="flex items-center gap-2 text-xs font-semibold text-foreground cursor-pointer select-none">
-            <input
+            <Input
               type="checkbox"
               checked={waitlistEnabled}
               onChange={(e) => setWaitlistEnabled(e.target.checked)}
-              className="rounded border-border text-brand focus:ring-brand h-4 w-4"
+              className="rounded text-brand focus:ring-brand h-4 w-4"
             />
             Ativar Lista de Espera
           </label>
@@ -3597,7 +3597,7 @@ function RoomingListManager({
                       />
                     ))}
                     {!isFull && (
-                      <select
+                      <Select
                         defaultValue=""
                         onChange={(e) => {
                           if (e.target.value) {
@@ -3605,7 +3605,7 @@ function RoomingListManager({
                             e.target.value = "";
                           }
                         }}
-                        className="w-full mt-1 h-8 rounded-[var(--radius-card)] border border-dashed border-brand/30 bg-transparent text-xs text-muted-foreground focus:outline-none focus:border-brand cursor-pointer"
+                        className="w-full mt-1 rounded-[var(--radius-card)] border-dashed border-brand/30 focus:border-brand cursor-pointer"
                       >
                         <option value="">+ Alocar passageiro...</option>
                         {unallocated.map((p) => (
@@ -3613,7 +3613,7 @@ function RoomingListManager({
                             {p.passenger_name}
                           </option>
                         ))}
-                      </select>
+                      </Select>
                     )}
                   </div>
 

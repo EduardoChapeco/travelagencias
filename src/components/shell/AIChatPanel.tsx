@@ -28,6 +28,8 @@ import {
 import { ChatBlockRenderer } from "./ChatBlockRenderer";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
+import { FormInput as Input } from "@/components/ui/input";
+import { FormTextarea as Textarea } from "@/components/ui/textarea";
 
 type ChatMsg = {
   id: string;
@@ -312,7 +314,7 @@ export function AIChatPanel({
         </aside>
 
         <div className="flex-1 flex flex-col relative bg-zinc-900/40">
-          <header className="flex h-14 items-center justify-between border-b border-white/10 px-5 shrink-0">
+          <header className="flex min-h-[var(--ds-toolbar-height)] items-center justify-between border-b border-white/10 px-5 shrink-0 glass-toolbar">
             <div className="flex items-center gap-2">
               <Sparkles
                 className={cn(
@@ -430,7 +432,7 @@ export function AIChatPanel({
               </div>
             )}
             <div className="flex items-end gap-2 rounded-2xl border border-white/10 bg-white/5 px-4 py-3 focus-within:border-white/20">
-              <input 
+              <Input 
                 type="file" 
                 multiple 
                 className="hidden" 
@@ -448,7 +450,7 @@ export function AIChatPanel({
               >
                 <Paperclip className="h-4 w-4" />
               </label>
-              <textarea
+              <Textarea
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
                 onKeyDown={(e) => {
@@ -460,7 +462,7 @@ export function AIChatPanel({
                 placeholder="Pergunte alguma coisa…"
                 rows={1}
                 disabled={sending}
-                className="flex-1 resize-none bg-transparent text-sm outline-none text-white placeholder:text-white/30 disabled:opacity-50"
+                className="flex-1 resize-none text-white placeholder:text-white/30"
               />
               <Button
                 type="submit"
@@ -489,7 +491,7 @@ export function AIChatPanel({
     >
       {!isCollapsed && (
         <>
-          <header className="flex h-12 items-center justify-between border-b border-border px-3 shrink-0">
+          <header className="flex min-h-[var(--ds-toolbar-height)] items-center justify-between border-b border-border px-3 shrink-0 glass-toolbar">
             <div className="flex items-center gap-2">
               <Sparkles
                 className={cn(
@@ -666,7 +668,7 @@ export function AIChatPanel({
           </div>
         )}
         <div className="flex items-end gap-2 rounded-full border border-border bg-surface px-2 py-1.5 focus-within:border-border-strong">
-          <input 
+          <Input 
             type="file" 
             multiple 
             className="hidden" 
@@ -684,7 +686,7 @@ export function AIChatPanel({
           >
             <Paperclip className="h-3.5 h-3.5" />
           </label>
-          <textarea
+          <Textarea
             value={input}
             onChange={(e) => setInput(e.target.value)}
             onKeyDown={(e) => {
@@ -707,7 +709,7 @@ export function AIChatPanel({
                 onFocusExpand();
               }
             }}
-            className="flex-1 resize-none bg-transparent text-sm outline-none placeholder:text-muted-foreground disabled:opacity-50"
+            className="flex-1 resize-none"
           />
           <Button
             type="submit"

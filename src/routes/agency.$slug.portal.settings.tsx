@@ -385,13 +385,13 @@ function PortalSettingsPage() {
                         value={link.label}
                         onChange={(e) => updateNavLink("nav_links", i, "label", e.target.value)}
                         placeholder="Início"
-                        className="text-xs"
+                        
                       />
                       <Input
                         value={link.url}
                         onChange={(e) => updateNavLink("nav_links", i, "url", e.target.value)}
                         placeholder="/"
-                        className="text-xs font-mono"
+                        className="font-mono"
                       />
                       <Button
                         type="button"
@@ -439,13 +439,13 @@ function PortalSettingsPage() {
                         value={link.label}
                         onChange={(e) => updateNavLink("footer_links", i, "label", e.target.value)}
                         placeholder="Política de Privacidade"
-                        className="text-xs"
+                        
                       />
                       <Input
                         value={link.url}
                         onChange={(e) => updateNavLink("footer_links", i, "url", e.target.value)}
                         placeholder="/privacidade"
-                        className="text-xs font-mono"
+                        className="font-mono"
                       />
                       <Button
                         type="button"
@@ -537,7 +537,7 @@ function PortalSettingsPage() {
                 label="Script personalizado (HTML livre)"
                 hint="Injetado dentro da tag <head>. Use com cuidado. Apenas para tags de chat, Hotjar, etc."
               >
-                <textarea
+                <Textarea
                   value={form.custom_head_script}
                   onChange={(e) => set("custom_head_script", e.target.value)}
                   rows={6}

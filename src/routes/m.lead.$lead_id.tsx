@@ -253,7 +253,7 @@ function PublicLeadFormPage() {
                   value={form.destination ?? ""}
                   onChange={(e) => setForm({ ...form, destination: e.target.value })}
                   placeholder="Para onde você deseja ir?"
-                  className="rounded-[var(--radius-card)] h-10"
+                  className="rounded-[var(--radius-card)]"
                 />
               </Field>
 
@@ -268,7 +268,7 @@ function PublicLeadFormPage() {
                     setForm({ ...form, custom_fields: custom });
                   }}
                   placeholder="Ex: Julho/2026, Outubro, Final do ano"
-                  className="rounded-[var(--radius-card)] h-10"
+                  className="rounded-[var(--radius-card)]"
                 />
               </Field>
 
@@ -277,7 +277,7 @@ function PublicLeadFormPage() {
                   required
                   value={form.interest_type ?? ""}
                   onChange={(e) => setForm({ ...form, interest_type: e.target.value })}
-                  className="rounded-[var(--radius-card)] h-10"
+                  className="rounded-[var(--radius-card)]"
                 >
                   <option value="">Selecione uma opção...</option>
                   {INTEREST_OPTIONS.map((opt) => (
@@ -300,7 +300,7 @@ function PublicLeadFormPage() {
                     type="date"
                     value={form.travel_start ?? ""}
                     onChange={(e) => setForm({ ...form, travel_start: e.target.value })}
-                    className="rounded-[var(--radius-card)] h-10"
+                    className="rounded-[var(--radius-card)]"
                   />
                 </Field>
                 <Field label="Retorno Previsto">
@@ -308,7 +308,7 @@ function PublicLeadFormPage() {
                     type="date"
                     value={form.travel_end ?? ""}
                     onChange={(e) => setForm({ ...form, travel_end: e.target.value })}
-                    className="rounded-[var(--radius-card)] h-10"
+                    className="rounded-[var(--radius-card)]"
                   />
                 </Field>
               </div>
@@ -329,7 +329,7 @@ function PublicLeadFormPage() {
                     onChange={(e) =>
                       setForm({ ...form, pax_adults: parseInt(e.target.value) || 1 })
                     }
-                    className="rounded-[var(--radius-card)] h-10"
+                    className="rounded-[var(--radius-card)]"
                   />
                 </Field>
                 <Field label="Crianças">
@@ -340,7 +340,7 @@ function PublicLeadFormPage() {
                     onChange={(e) =>
                       setForm({ ...form, pax_children: parseInt(e.target.value) || 0 })
                     }
-                    className="rounded-[var(--radius-card)] h-10"
+                    className="rounded-[var(--radius-card)]"
                   />
                 </Field>
                 <Field label="Bebês">
@@ -351,7 +351,7 @@ function PublicLeadFormPage() {
                     onChange={(e) =>
                       setForm({ ...form, pax_infants: parseInt(e.target.value) || 0 })
                     }
-                    className="rounded-[var(--radius-card)] h-10"
+                    className="rounded-[var(--radius-card)]"
                   />
                 </Field>
               </div>
@@ -364,7 +364,7 @@ function PublicLeadFormPage() {
                     value={paxAgesStr}
                     onChange={(e) => setPaxAgesStr(e.target.value)}
                     placeholder="Separe por vírgulas"
-                    className="rounded-[var(--radius-card)] h-10"
+                    className="rounded-[var(--radius-card)]"
                   />
                 </Field>
               )}
@@ -472,7 +472,7 @@ function PublicLeadFormPage() {
                       placeholder="Nome do acompanhante"
                       value={paxForm.full_name}
                       onChange={(e) => setPaxForm({ ...paxForm, full_name: e.target.value })}
-                      className="h-9 text-xs"
+                      
                     />
                   </Field>
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
@@ -481,7 +481,7 @@ function PublicLeadFormPage() {
                         placeholder="Apenas números"
                         value={paxForm.document}
                         onChange={(e) => setPaxForm({ ...paxForm, document: e.target.value })}
-                        className="h-9 text-xs"
+                        
                       />
                     </Field>
                     <Field label="Data de Nascimento">
@@ -489,7 +489,7 @@ function PublicLeadFormPage() {
                         type="date"
                         value={paxForm.birth_date}
                         onChange={(e) => setPaxForm({ ...paxForm, birth_date: e.target.value })}
-                        className="h-9 text-xs"
+                        
                       />
                     </Field>
                   </div>
@@ -497,7 +497,7 @@ function PublicLeadFormPage() {
                     <Select
                       value={paxForm.relationship}
                       onChange={(e) => setPaxForm({ ...paxForm, relationship: e.target.value })}
-                      className="h-9 text-xs bg-background"
+                      
                     >
                       <option value="spouse">Cônjuge</option>
                       <option value="child">Filho(a)</option>
@@ -543,29 +543,29 @@ function PublicLeadFormPage() {
 
               <div className="flex flex-col gap-2.5 text-xs font-semibold text-foreground">
                 <label className="flex items-center gap-2 cursor-pointer">
-                  <input
+                  <Input
                     type="checkbox"
                     checked={form.pcd || false}
                     onChange={(e) => setForm({ ...form, pcd: e.target.checked })}
-                    className="h-4 w-4 rounded border-border text-brand focus:ring-brand cursor-pointer"
+                    className="h-4 w-4 rounded text-brand focus:ring-brand cursor-pointer"
                   />
                   <span>PCD (Pessoa com Deficiência)</span>
                 </label>
                 <label className="flex items-center gap-2 cursor-pointer">
-                  <input
+                  <Input
                     type="checkbox"
                     checked={form.reduced_mobility || false}
                     onChange={(e) => setForm({ ...form, reduced_mobility: e.target.checked })}
-                    className="h-4 w-4 rounded border-border text-brand focus:ring-brand cursor-pointer"
+                    className="h-4 w-4 rounded text-brand focus:ring-brand cursor-pointer"
                   />
                   <span>Mobilidade Reduzida</span>
                 </label>
                 <label className="flex items-center gap-2 cursor-pointer">
-                  <input
+                  <Input
                     type="checkbox"
                     checked={form.autism || false}
                     onChange={(e) => setForm({ ...form, autism: e.target.checked })}
-                    className="h-4 w-4 rounded border-border text-brand focus:ring-brand cursor-pointer"
+                    className="h-4 w-4 rounded text-brand focus:ring-brand cursor-pointer"
                   />
                   <span>Espectro Autista (TEA)</span>
                 </label>
@@ -600,12 +600,12 @@ function PublicLeadFormPage() {
 
             {/* LGPD Acceptance */}
             <div className="glass-card border-none border-none rounded-[var(--radius-card)] p-5 space-y-3 flex items-start gap-4">
-              <input
+              <Input
                 type="checkbox"
                 required
                 checked={form.lgpd_accepted || false}
                 onChange={(e) => setForm({ ...form, lgpd_accepted: e.target.checked })}
-                className="h-5 w-5 rounded border-border bg-background text-brand focus:ring-brand mt-0.5 cursor-pointer"
+                className="h-5 w-5 rounded text-brand focus:ring-brand mt-0.5 cursor-pointer"
                 id="lgpd_agree"
               />
               <label

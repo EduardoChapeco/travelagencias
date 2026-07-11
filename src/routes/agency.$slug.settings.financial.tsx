@@ -529,10 +529,10 @@ function FinancialSettingsPage() {
               </Field>
 
               <Field label="Vendedor / Agente *">
-                <select
+                <Select
                   value={selectedSeller}
                   onChange={(e) => setSelectedSeller(e.target.value)}
-                  className="w-full h-10 rounded-[var(--radius-card)] border-none bg-background px-3 text-xs text-foreground outline-none"
+                  className="w-full rounded-[var(--radius-card)] border-none"
                   required
                 >
                   <option value="">Selecione o vendedor...</option>
@@ -541,20 +541,20 @@ function FinancialSettingsPage() {
                       {s.name}
                     </option>
                   ))}
-                </select>
+                </Select>
               </Field>
 
               <div className="grid grid-cols-2 gap-3">
                 <Field label="Modo de Escala *">
-                  <select
+                  <Select
                     value={tierMode}
                     onChange={(e) => setTierMode(e.target.value as "integral" | "progressive")}
-                    className="w-full h-10 rounded-[var(--radius-card)] border-none bg-background px-3 text-xs text-foreground outline-none"
+                    className="w-full rounded-[var(--radius-card)] border-none"
                     required
                   >
                     <option value="progressive">Progressiva (por fatias)</option>
                     <option value="integral">Integral (alíquota cheia)</option>
-                  </select>
+                  </Select>
                 </Field>
 
                 <Field label="Vigência inicial *">

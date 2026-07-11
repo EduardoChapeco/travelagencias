@@ -729,7 +729,7 @@ function Page() {
                           <div key={key} className="flex items-center gap-3">
                             <div className="w-20 text-xs font-medium">{DAYS[i]}</div>
                             <label className="flex items-center gap-1.5 text-xs text-muted-foreground">
-                              <input
+                              <Input
                                 type="checkbox"
                                 checked={h.closed}
                                 onChange={(e) => setHours(key, "closed", e.target.checked)}
@@ -743,14 +743,14 @@ function Page() {
                                   type="time"
                                   value={h.open}
                                   onChange={(e) => setHours(key, "open", e.target.value)}
-                                  className="w-28 text-xs"
+                                  className="w-28"
                                 />
                                 <span className="text-xs text-muted-foreground">até</span>
                                 <Input
                                   type="time"
                                   value={h.close}
                                   onChange={(e) => setHours(key, "close", e.target.value)}
-                                  className="w-28 text-xs"
+                                  className="w-28"
                                 />
                               </>
                             )}
