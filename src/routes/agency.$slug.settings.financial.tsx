@@ -18,7 +18,13 @@ import {
 import { PageHeader, ModuleActionButton } from "@/components/shell/PageHeader";
 import { Field } from "@/components/ui/field";
 import { FormInput as Input } from "@/components/ui/input";
-import { NativeSelect as Select } from "@/components/ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { PrimaryButton, GhostButton , Button } from "@/components/ui/button";
 import { StatusBadge } from "@/components/ui/badge";
 
@@ -294,9 +300,9 @@ function FinancialSettingsPage() {
                   Carregando períodos contábeis...
                 </div>
               ) : (
-                <div className="overflow-hidden rounded-[var(--radius-card)] border-none bg-white">
+                <div className="overflow-hidden rounded-[var(--radius-card)] border-none glass-card">
                   <table className="w-full text-xs text-left">
-                    <thead className="bg-gray-50 border-b border-border text-[10px] uppercase font-bold text-gray-500">
+                    <thead className="glass bg-white/5 border-b border-white/10 text-[10px] uppercase font-bold text-muted-foreground">
                       <tr>
                         <th className="px-4 py-3">Mês / Ano</th>
                         <th className="px-4 py-3">Status</th>
@@ -395,7 +401,7 @@ function FinancialSettingsPage() {
                   Carregando planos de comissão...
                 </div>
               ) : (plansQ.data || []).length === 0 ? (
-                <div className="text-center py-10 border border-dashed border-border rounded-[var(--radius-card)] text-xs text-muted-foreground bg-white">
+                <div className="text-center py-10 border border-dashed border-border rounded-[var(--radius-card)] text-xs text-muted-foreground glass bg-white/5">
                   Nenhum plano de comissão configurado na agência. Clique em "Novo Plano" para
                   parametrizar.
                 </div>
@@ -404,12 +410,12 @@ function FinancialSettingsPage() {
                   {(plansQ.data || []).map((plan) => (
                     <div
                       key={plan.id}
-                      className="border-none bg-white rounded-[var(--radius-card)] overflow-hidden shadow-xs"
+                      className="border-none glass-card rounded-[var(--radius-card)] overflow-hidden text-white"
                     >
                       {/* Card header */}
-                      <div className="flex items-center justify-between px-4 py-3 bg-gray-50/50 border-b border-border">
+                      <div className="flex items-center justify-between px-4 py-3 bg-white/5 border-b border-white/10">
                         <div>
-                          <strong className="text-xs text-gray-900 block">{plan.name}</strong>
+                          <strong className="text-xs text-white block">{plan.name}</strong>
                           <span className="text-[10px] text-muted-foreground">
                             Vendedor: <strong>{plan.seller_name}</strong>
                           </span>
@@ -502,17 +508,17 @@ function FinancialSettingsPage() {
       {/* New Plan Modal Overlay */}
       {showPlanModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4 animate-in fade-in duration-200">
-          <div className="w-full max-w-md bg-white border-none rounded-[var(--radius-card)] overflow-hidden shadow-none">
-            <div className="flex items-center justify-between px-5 py-4 border-b border-border bg-gray-50/50">
+          <div className="w-full max-w-md glass dark:glass-dark rounded-[var(--radius-card)] border border-white/10 overflow-hidden shadow-none text-white">
+            <div className="flex items-center justify-between px-5 py-4 border-b border-white/10 bg-white/5">
               <div className="flex items-center gap-2">
                 <Percent className="w-5 h-5 text-brand" />
-                <h3 className="font-bold text-foreground text-sm uppercase tracking-wider">
+                <h3 className="font-bold text-white text-sm uppercase tracking-wider">
                   Criar Novo Plano de Comissão
                 </h3>
               </div>
               <Button
                 onClick={() => setShowPlanModal(false)}
-                className="p-1 rounded hover:bg-gray-100"
+                className="p-1 rounded hover:bg-white/10 text-white"
               >
                 <X className="w-4 h-4" />
               </Button>
@@ -531,16 +537,18 @@ function FinancialSettingsPage() {
               <Field label="Vendedor / Agente *">
                 <Select
                   value={selectedSeller}
-                  onChange={(e) => setSelectedSeller(e.target.value)}
-                  className="w-full rounded-[var(--radius-card)] border-none"
-                  required
+                  onValueChange={setSelectedSeller}
                 >
-                  <option value="">Selecione o vendedor...</option>
-                  {sellersQ.data?.map((s: any) => (
-                    <option key={s.id} value={s.id}>
-                      {s.name}
-                    </option>
-                  ))}
+                  <SelectTrigger className="w-full bg-white/5 rounded-full border-none">
+                    <SelectValue placeholder="Selecione o vendedor..." />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {sellersQ.data?.map((s: any) => (
+                      <SelectItem key={s.id} value={s.id}>
+                        {s.name}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
                 </Select>
               </Field>
 
@@ -548,12 +556,15 @@ function FinancialSettingsPage() {
                 <Field label="Modo de Escala *">
                   <Select
                     value={tierMode}
-                    onChange={(e) => setTierMode(e.target.value as "integral" | "progressive")}
-                    className="w-full rounded-[var(--radius-card)] border-none"
-                    required
+                    onValueChange={(val) => setTierMode(val as "integral" | "progressive")}
                   >
-                    <option value="progressive">Progressiva (por fatias)</option>
-                    <option value="integral">Integral (alíquota cheia)</option>
+                    <SelectTrigger className="w-full bg-white/5 rounded-full border-none">
+                      <SelectValue placeholder="Selecione o modo..." />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="progressive">Progressiva (por fatias)</SelectItem>
+                      <SelectItem value="integral">Integral (alíquota cheia)</SelectItem>
+                    </SelectContent>
                   </Select>
                 </Field>
 

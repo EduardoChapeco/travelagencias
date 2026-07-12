@@ -123,7 +123,7 @@ function Column({
       )}
       style={{ borderTop: `4px solid ${stage.color || "#9ca3af"}` }}
     >
-      <div className="flex flex-col justify-center border-b border-border/40 bg-white/5 px-5 py-4 rounded-t-3xl">
+      <div className="flex flex-col justify-center border-b border-border/40 bg-white/5 px-5 py-4 rounded-t-[var(--radius-card)]">
         <div className="flex items-center justify-between mb-0.5">
           <div className="flex items-center gap-2">
             <span

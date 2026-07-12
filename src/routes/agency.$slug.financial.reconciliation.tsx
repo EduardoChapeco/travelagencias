@@ -370,17 +370,17 @@ function ReconciliationPage() {
       {/* Approve / Conciliation Drawer Modal */}
       {selectedReceipt && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4 animate-in fade-in duration-200">
-          <div className="w-full max-w-md bg-white border-none rounded-[var(--radius-card)] overflow-hidden shadow-none">
-            <div className="flex items-center justify-between px-5 py-4 border-b border-border bg-gray-50/50">
+          <div className="w-full max-w-md glass dark:glass-dark rounded-[var(--radius-card)] border border-white/10 overflow-hidden shadow-none text-white">
+            <div className="flex items-center justify-between px-5 py-4 border-b border-white/10 bg-white/5">
               <div className="flex items-center gap-2">
-                <CheckCircle className="w-5 h-5 text-emerald-600" />
-                <h3 className="font-bold text-foreground text-sm uppercase tracking-wider">
+                <CheckCircle className="w-5 h-5 text-emerald-450" />
+                <h3 className="font-bold text-white text-sm uppercase tracking-wider">
                   Aprovar Comprovante
                 </h3>
               </div>
               <Button
                 onClick={() => setSelectedReceipt(null)}
-                className="p-1 rounded hover:bg-gray-100"
+                className="p-1 rounded hover:bg-white/10 text-white"
               >
                 <X className="w-4 h-4" />
               </Button>
@@ -475,17 +475,17 @@ function ReconciliationPage() {
       {/* Reject Drawer Modal */}
       {rejectReceipt && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4 animate-in fade-in duration-200">
-          <div className="w-full max-w-md bg-white border-none rounded-[var(--radius-card)] overflow-hidden shadow-none">
-            <div className="flex items-center justify-between px-5 py-4 border-b border-border bg-gray-50/50">
+          <div className="w-full max-w-md glass dark:glass-dark rounded-[var(--radius-card)] border border-white/10 overflow-hidden shadow-none text-white">
+            <div className="flex items-center justify-between px-5 py-4 border-b border-white/10 bg-white/5">
               <div className="flex items-center gap-2">
-                <XCircle className="w-5 h-5 text-rose-600" />
-                <h3 className="font-bold text-foreground text-sm uppercase tracking-wider">
+                <XCircle className="w-5 h-5 text-rose-450" />
+                <h3 className="font-bold text-white text-sm uppercase tracking-wider">
                   Recusar Comprovante
                 </h3>
               </div>
               <Button
                 onClick={() => setRejectReceipt(null)}
-                className="p-1 rounded hover:bg-gray-100"
+                className="p-1 rounded hover:bg-white/10 text-white"
               >
                 <X className="w-4 h-4" />
               </Button>
