@@ -7,7 +7,13 @@ import { useAgency } from "@/lib/agency-context";
 import { Button, GhostButton, PrimaryButton } from "@/components/ui/button";
 import { PageHeader, EmptyState, ModuleActionButton } from "@/components/shell/PageHeader";
 import { FormInput as Input } from "@/components/ui/input";
-import { NativeSelect as Select } from "@/components/ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { FormTextarea as Textarea } from "@/components/ui/textarea";
 import { Field } from "@/components/ui/field";
 import { StatusBadge } from "@/components/ui/badge";
@@ -1267,24 +1273,34 @@ Texto: "${aiText}"`;
               {/* Manual overrides / details */}
               <div className="grid grid-cols-2 gap-4">
                 <Field label="Cliente Vinculado">
-                  <Select value={clientId} onChange={(e) => setClientId(e.target.value)}>
-                    <option value="">— Sem cliente —</option>
-                    {clients.map((c) => (
-                      <option key={c.id} value={c.id}>
-                        {c.full_name}
-                      </option>
-                    ))}
+                  <Select value={clientId || "none"} onValueChange={(val) => setClientId(val === "none" ? "" : val)}>
+                    <SelectTrigger className="w-full bg-white/5 rounded-full border-none">
+                      <SelectValue placeholder="Sem cliente" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="none">Sem cliente</SelectItem>
+                      {clients.map((c) => (
+                        <SelectItem key={c.id} value={c.id}>
+                          {c.full_name}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
                   </Select>
                 </Field>
 
                 <Field label="Negociação / Lead (Opcional)">
-                  <Select value={leadId} onChange={(e) => setLeadId(e.target.value)}>
-                    <option value="">— Sem lead associado —</option>
-                    {leads.map((l) => (
-                      <option key={l.id} value={l.id}>
-                        {l.name}
-                      </option>
-                    ))}
+                  <Select value={leadId || "none"} onValueChange={(val) => setLeadId(val === "none" ? "" : val)}>
+                    <SelectTrigger className="w-full bg-white/5 rounded-full border-none">
+                      <SelectValue placeholder="Sem lead associado" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="none">Sem lead associado</SelectItem>
+                      {leads.map((l) => (
+                        <SelectItem key={l.id} value={l.id}>
+                          {l.name}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
                   </Select>
                 </Field>
 
@@ -1406,28 +1422,38 @@ Texto: "${aiText}"`;
                 <Field label="Categoria de Conhecimento">
                   <Select
                     value={knowledgeCategory}
-                    onChange={(e) => setKnowledgeCategory(e.target.value)}
+                    onValueChange={setKnowledgeCategory}
                   >
-                    <option value="gateway_rules">Regras de Conexão (Gateway)</option>
-                    <option value="destinations">Informações de Destino</option>
-                    <option value="guidelines">Políticas Internas / Agência</option>
-                    <option value="hotel_reviews">Qualidade & Críticas de Hotéis</option>
+                    <SelectTrigger className="w-full bg-white/5 rounded-full border-none">
+                      <SelectValue placeholder="Selecione a categoria..." />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="gateway_rules">Regras de Conexão (Gateway)</SelectItem>
+                      <SelectItem value="destinations">Informações de Destino</SelectItem>
+                      <SelectItem value="guidelines">Políticas Internas / Agência</SelectItem>
+                      <SelectItem value="hotel_reviews">Qualidade & Críticas de Hotéis</SelectItem>
+                    </SelectContent>
                   </Select>
                 </Field>
 
                 <Field label="Escopo de Distribuição">
                   <Select
                     value={knowledgeScope}
-                    onChange={(e) => setKnowledgeScope(e.target.value as "global" | "agency")}
+                    onValueChange={(val) => setKnowledgeScope(val as "global" | "agency")}
                   >
-                    <option value="agency">Minha Agência (Isolado)</option>
-                    {isSuperAdmin ? (
-                      <option value="global">Cérebro Global VibeTour (Sistema Inteiro)</option>
-                    ) : (
-                      <option value="global" disabled>
-                        Cérebro Global VibeTour (Requer Admin Global)
-                      </option>
-                    )}
+                    <SelectTrigger className="w-full bg-white/5 rounded-full border-none">
+                      <SelectValue placeholder="Selecione o escopo..." />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="agency">Minha Agência (Isolado)</SelectItem>
+                      {isSuperAdmin ? (
+                        <SelectItem value="global">Cérebro Global VibeTour (Sistema Inteiro)</SelectItem>
+                      ) : (
+                        <SelectItem value="global" disabled>
+                          Cérebro Global VibeTour (Requer Admin Global)
+                        </SelectItem>
+                      )}
+                    </SelectContent>
                   </Select>
                 </Field>
 
@@ -1504,10 +1530,15 @@ Texto: "${aiText}"`;
                 </Field>
 
                 <Field label="Tipo de Produto Monitorado">
-                  <Select value={watcherType} onChange={(e) => setWatcherType(e.target.value as "flight" | "hotel" | "package")}>
-                    <option value="package">Pacote Completo (Voo + Hotel)</option>
-                    <option value="flight">Apenas Voo</option>
-                    <option value="hotel">Apenas Hotel</option>
+                  <Select value={watcherType} onValueChange={(val) => setWatcherType(val as "flight" | "hotel" | "package")}>
+                    <SelectTrigger className="w-full bg-white/5 rounded-full border-none">
+                      <SelectValue placeholder="Selecione o tipo..." />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="package">Pacote Completo (Voo + Hotel)</SelectItem>
+                      <SelectItem value="flight">Apenas Voo</SelectItem>
+                      <SelectItem value="hotel">Apenas Hotel</SelectItem>
+                    </SelectContent>
                   </Select>
                 </Field>
 
@@ -1547,12 +1578,17 @@ Texto: "${aiText}"`;
                 <Field label="Avaliação Mínima do Hotel (estrelas)">
                   <Select
                     value={String(watcherMinRating)}
-                    onChange={(e) => setWatcherMinRating(Number(e.target.value))}
+                    onValueChange={(val) => setWatcherMinRating(Number(val))}
                   >
-                    <option value="0">Qualquer</option>
-                    <option value="3">3 estrelas ou mais</option>
-                    <option value="4">4 estrelas ou mais</option>
-                    <option value="5">5 estrelas</option>
+                    <SelectTrigger className="w-full bg-white/5 rounded-full border-none">
+                      <SelectValue placeholder="Selecione a avaliação..." />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="0">Qualquer</SelectItem>
+                      <SelectItem value="3">3 estrelas ou mais</SelectItem>
+                      <SelectItem value="4">4 estrelas ou mais</SelectItem>
+                      <SelectItem value="5">5 estrelas</SelectItem>
+                    </SelectContent>
                   </Select>
                 </Field>
               </div>

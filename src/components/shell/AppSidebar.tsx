@@ -216,7 +216,7 @@ export function AppSidebar({
               <TooltipContent
                 side="right"
                 sideOffset={12}
-                className="rounded-[var(--radius-card)] px-3 py-1.5 text-xs font-semibold bg-black/80 backdrop-blur-md text-white border border-white/10"
+                className="rounded-[var(--radius-card)] px-3 py-1.5 text-xs font-semibold bg-black/80 backdrop-blur-md text-os border border-white/10"
               >
                 {primaryAction.label}
               </TooltipContent>

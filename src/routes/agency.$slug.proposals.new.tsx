@@ -4,14 +4,20 @@ import { useQuery } from "@tanstack/react-query";
 import { ArrowLeft, Upload, Sparkles, Loader2 } from "lucide-react";
 import { toast } from "sonner";
 import { z } from "zod";
-import { useForm } from "react-hook-form";
+import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { supabase } from "@/integrations/supabase/client";
 import { useAgency } from "@/lib/agency-context";
 import { cn } from "@/lib/utils";
 import { Field } from "@/components/ui/field";
 import { FormInput as Input } from "@/components/ui/input";
-import { NativeSelect as Select } from "@/components/ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { FormTextarea as Textarea } from "@/components/ui/textarea";
 import { PrimaryButton, GhostButton , Button } from "@/components/ui/button";
 import {
@@ -72,6 +78,7 @@ function NewProposal() {
     handleSubmit,
     setValue,
     watch,
+    control,
     formState: { errors, isSubmitting },
   } = useForm<ProposalFormData>({
     resolver: zodResolver(proposalSchema) as any,
@@ -367,24 +374,48 @@ function NewProposal() {
         </Field>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
           <Field label="Cliente" error={errors.client_id?.message}>
-            <Select {...register("client_id")}>
-              <option value="">— selecionar —</option>
-              {(clientsQ.data ?? []).map((c) => (
-                <option key={c.id} value={c.id}>
-                  {c.full_name}
-                </option>
-              ))}
-            </Select>
+            <Controller
+              control={control}
+              name="client_id"
+              render={({ field }) => (
+                <Select value={field.value || undefined} onValueChange={field.onChange}>
+                  <SelectTrigger className="w-full bg-white/5 rounded-full border-none">
+                    <SelectValue placeholder="Selecionar cliente..." />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {(clientsQ.data ?? []).map((c) => (
+                      <SelectItem key={c.id} value={c.id}>
+                        {c.full_name}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              )}
+            />
           </Field>
           <Field label="Lead (CRM)" error={errors.lead_id?.message}>
-            <Select {...register("lead_id")}>
-              <option value="">— nenhum —</option>
-              {(leadsQ.data ?? []).map((l) => (
-                <option key={l.id} value={l.id}>
-                  {l.name}
-                </option>
-              ))}
-            </Select>
+            <Controller
+              control={control}
+              name="lead_id"
+              render={({ field }) => (
+                <Select
+                  value={field.value || "none"}
+                  onValueChange={(val) => field.onChange(val === "none" ? "" : val)}
+                >
+                  <SelectTrigger className="w-full bg-white/5 rounded-full border-none">
+                    <SelectValue placeholder="Nenhum" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="none">Nenhum</SelectItem>
+                    {(leadsQ.data ?? []).map((l) => (
+                      <SelectItem key={l.id} value={l.id}>
+                        {l.name}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              )}
+            />
           </Field>
         </div>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
@@ -408,11 +439,22 @@ function NewProposal() {
         </div>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
           <Field label="Moeda" error={errors.currency?.message}>
-            <Select {...register("currency")}>
-              <option value="BRL">BRL — Real</option>
-              <option value="USD">USD — Dólar</option>
-              <option value="EUR">EUR — Euro</option>
-            </Select>
+            <Controller
+              control={control}
+              name="currency"
+              render={({ field }) => (
+                <Select value={field.value || undefined} onValueChange={field.onChange}>
+                  <SelectTrigger className="w-full bg-white/5 rounded-full border-none">
+                    <SelectValue placeholder="Selecione a moeda..." />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="BRL">BRL — Real</SelectItem>
+                    <SelectItem value="USD">USD — Dólar</SelectItem>
+                    <SelectItem value="EUR">EUR — Euro</SelectItem>
+                  </SelectContent>
+                </Select>
+              )}
+            />
           </Field>
           <Field label="Válida até" error={errors.valid_until?.message}>
             <Input type="date" {...register("valid_until")} />

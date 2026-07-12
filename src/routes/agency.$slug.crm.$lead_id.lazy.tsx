@@ -18,7 +18,13 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useAgency } from "@/lib/agency-context";
 import { Field } from "@/components/ui/field";
 import { FormInput as Input } from "@/components/ui/input";
-import { NativeSelect as Select } from "@/components/ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { FormTextarea as Textarea } from "@/components/ui/textarea";
 import { PrimaryButton, GhostButton , Button } from "@/components/ui/button";
 import { fmtDate, money } from "@/lib/formatters";
@@ -701,9 +707,7 @@ function LeadDetailPage() {
                     </label>
                     <Select
                       value={lead.stage_id}
-                      className="rounded-[var(--radius-card)] bg-white/5 w-full"
-                      onChange={async (e) => {
-                        const newStage = e.target.value;
+                      onValueChange={async (newStage) => {
                         if (newStage === lead.stage_id) return;
                         const fromName = stage?.name ?? "—";
                         const toName = stagesQ.data?.find((s) => s.id === newStage)?.name ?? "—";
@@ -725,11 +729,16 @@ function LeadDetailPage() {
                         }
                       }}
                     >
-                      {stagesQ.data?.map((s) => (
-                        <option key={s.id} value={s.id}>
-                          {s.name}
-                        </option>
-                      ))}
+                      <SelectTrigger className="w-full bg-white/5 rounded-full border-none">
+                        <SelectValue placeholder="Selecione o estágio..." />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {stagesQ.data?.map((s) => (
+                          <SelectItem key={s.id} value={s.id}>
+                            {s.name}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
                     </Select>
                   </div>
                   <div>
@@ -737,12 +746,11 @@ function LeadDetailPage() {
                       Responsável / Dono
                     </label>
                     <Select
-                      value={lead.owner_id || ""}
-                      className="rounded-[var(--radius-card)] bg-white/5 w-full"
-                      onChange={async (e) => {
-                        const val = e.target.value || null;
+                      value={lead.owner_id || "unassigned"}
+                      onValueChange={async (val) => {
+                        const ownerId = val === "unassigned" ? null : val;
                         try {
-                          await transferLead(lead.id, val);
+                          await transferLead(lead.id, ownerId);
                           qc.invalidateQueries({ queryKey: ["lead", lead_id] });
                           qc.invalidateQueries({ queryKey: ["leads", agency?.id] });
                           qc.invalidateQueries({ queryKey: ["lead-activities", lead_id] });
@@ -752,12 +760,17 @@ function LeadDetailPage() {
                         }
                       }}
                     >
-                      <option value="">Não atribuído</option>
-                      {usersQ.data?.map((u: any) => (
-                        <option key={u.user_id} value={u.user_id}>
-                          {u.user_name} ({u.role})
-                        </option>
-                      ))}
+                      <SelectTrigger className="w-full bg-white/5 rounded-full border-none">
+                        <SelectValue placeholder="Não atribuído" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="unassigned">Não atribuído</SelectItem>
+                        {usersQ.data?.map((u: any) => (
+                          <SelectItem key={u.user_id} value={u.user_id}>
+                            {u.user_name} ({u.role})
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
                     </Select>
                   </div>
                 </div>
@@ -1034,16 +1047,20 @@ function LeadDetailPage() {
                       <Field label="Relação / Parentesco">
                         <Select
                           value={paxForm.relationship}
-                          onChange={(e) => setPaxForm({ ...paxForm, relationship: e.target.value })}
-                          
+                          onValueChange={(val) => setPaxForm({ ...paxForm, relationship: val })}
                         >
-                          <option value="spouse">Cônjuge</option>
-                          <option value="child">Filho(a)</option>
-                          <option value="parent">Pai/Mãe</option>
-                          <option value="sibling">Irmão/Irmã</option>
-                          <option value="friend">Amigo(a)</option>
-                          <option value="relative">Familiar / Outro Relacionamento</option>
-                          <option value="other">Outro</option>
+                          <SelectTrigger className="w-full bg-white/5 rounded-full border-none">
+                            <SelectValue placeholder="Selecione o parentesco..." />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="spouse">Cônjuge</SelectItem>
+                            <SelectItem value="child">Filho(a)</SelectItem>
+                            <SelectItem value="parent">Pai/Mãe</SelectItem>
+                            <SelectItem value="sibling">Irmão/Irmã</SelectItem>
+                            <SelectItem value="friend">Amigo(a)</SelectItem>
+                            <SelectItem value="relative">Familiar / Outro Relacionamento</SelectItem>
+                            <SelectItem value="other">Outro</SelectItem>
+                          </SelectContent>
                         </Select>
                       </Field>
                       <PrimaryButton type="submit" className="w-full text-xs h-9">
@@ -1152,15 +1169,19 @@ function LeadDetailPage() {
                       <Field label="Tipo de Evento">
                         <Select
                           value={meetingForm.meeting_type}
-                          onChange={(e) =>
-                            setMeetingForm({ ...meetingForm, meeting_type: e.target.value })
+                          onValueChange={(val) =>
+                            setMeetingForm({ ...meetingForm, meeting_type: val })
                           }
-                          
                         >
-                          <option value="call">Chamada de Voz / Telefone</option>
-                          <option value="video">Vídeochamada (Google Meet / Zoom)</option>
-                          <option value="in_person">Reunião Presencial</option>
-                          <option value="whatsapp">Follow-up via WhatsApp</option>
+                          <SelectTrigger className="w-full bg-white/5 rounded-full border-none">
+                            <SelectValue placeholder="Selecione o tipo..." />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="call">Chamada de Voz / Telefone</SelectItem>
+                            <SelectItem value="video">Vídeochamada (Google Meet / Zoom)</SelectItem>
+                            <SelectItem value="in_person">Reunião Presencial</SelectItem>
+                            <SelectItem value="whatsapp">Follow-up via WhatsApp</SelectItem>
+                          </SelectContent>
                         </Select>
                       </Field>
                       <PrimaryButton type="submit" className="w-full text-xs h-9">
