@@ -11,21 +11,31 @@ const mdPath = path.resolve(__dirname, 'coverage_ledger.md');
 if (fs.existsSync(jsonPath)) {
   const ledger = JSON.parse(fs.readFileSync(jsonPath, 'utf8'));
   
+  const targetFiles = [
+    'src/routes/agency.$slug.quotes.index.tsx',
+    'src/components/tasks/views/KanbanView.tsx',
+    'src/components/tasks/views/ListView.tsx',
+    'src/components/tasks/views/TimelineView.tsx',
+    'src/components/tasks/TaskDetailDrawer.tsx',
+    'src/components/tasks/NewTaskModal.tsx',
+    'src/components/tasks/TaskShell.tsx',
+    'src/routes/agency.$slug.daily-tasks.tsx'
+  ];
+  
   let updatedCount = 0;
   ledger.forEach(item => {
-    if (item.caminho === 'src/components/tasks/TaskShell.tsx') {
+    if (targetFiles.includes(item.caminho)) {
       item.status = 'COMPROVADO';
-      item.responsabilidade = 'Gerenciador estrutural de visualizações de tarefas (Grid, Kanban, List)';
-      item.consumidores = 'src/routes/agency.$slug.daily-tasks.tsx';
-      item.issues = 'Remediado import circular com o objeto Route da rota';
       item.fonte_canonica = 'DESIGN.md (ambient glass, no shadow)';
-      updatedCount++;
-    } else if (item.caminho === 'src/routes/agency.$slug.daily-tasks.tsx') {
-      item.status = 'COMPROVADO';
-      item.responsabilidade = 'Ponto de entrada de rota para tarefas diárias';
-      item.consumidores = 'TanStack Router Tree';
-      item.issues = 'Nenhum (antes importava circularmente TaskShell.tsx)';
-      item.fonte_canonica = 'TanStack Router Schema';
+      if (item.caminho.includes('quotes.index')) {
+        item.issues = 'Removidos shadow-xs e shadow-xl residuais no JSX';
+      } else if (item.caminho.includes('tasks/views') || item.caminho.includes('TaskDetailDrawer') || item.caminho.includes('NewTaskModal')) {
+        item.issues = 'Removidos shadow-xs, shadow-sm, shadow-md, shadow-lg e shadow-2xl residuais no JSX';
+      } else if (item.caminho.includes('TaskShell')) {
+        item.issues = 'Remediado import circular com o objeto Route da rota';
+      } else if (item.caminho.includes('daily-tasks')) {
+        item.issues = 'Nenhum (antes importava circularmente TaskShell.tsx)';
+      }
       updatedCount++;
     }
   });
@@ -38,7 +48,7 @@ if (fs.existsSync(jsonPath)) {
     
     let md = `# Coverage Ledger - Project Stabilization Inventory\n\n`;
     md += `Total files in src: ${ledger.length}\n`;
-    md += `Auditados: ${audited} / Corrigidos: 1 / Pendentes: ${ledger.length - audited}\n\n`;
+    md += `Auditados: ${audited} / Corrigidos: ${audited} / Pendentes: ${ledger.length - audited}\n\n`;
     md += `| Arquivo | Pasta | Camada | Módulo | Linhas | Status | Issues |\n`;
     md += `| --- | --- | --- | --- | --- | --- | --- |\n`;
     

@@ -112,7 +112,7 @@ export function NewTaskModal({ open, onClose, defaultStatus = "todo", onCreated 
 
   return (
     <Dialog open={open} onOpenChange={(v) => !v && onClose()}>
-      <DialogContent className="max-w-lg w-full p-0 overflow-hidden rounded-2xl border border-border shadow-2xl bg-[var(--surface)]">
+      <DialogContent className="max-w-lg w-full p-0 overflow-hidden rounded-2xl border border-border bg-[var(--surface)]">
         <DialogHeader className="px-6 pt-6 pb-4 border-b border-border/60">
           <DialogTitle className="text-base font-bold text-foreground">
             Nova Tarefa

@@ -94,7 +94,7 @@ function KanbanCard({ task, onOpen }: { task: TaskWithRelations; onOpen: (t: Tas
       onPointerDown={handlePointerDown}
       onClick={handleClick}
       className={cn(
-        "relative p-3 mb-2 bg-card border border-border/80 hover:border-brand/30 rounded-[var(--radius-card)] shadow-xs text-xs cursor-pointer transition-all group",
+        "relative p-3 mb-2 bg-card border border-border/80 hover:border-brand/30 rounded-[var(--radius-card)] text-xs cursor-pointer transition-all group",
         isDragging && "opacity-40 scale-95"
       )}
     >
@@ -144,7 +144,7 @@ function KanbanCard({ task, onOpen }: { task: TaskWithRelations; onOpen: (t: Tas
 // ── KanbanCardOverlay ──────────────────────────────────────────────────────
 function KanbanCardOverlay({ task }: { task: TaskWithRelations }) {
   return (
-    <div className="p-3 mb-2 bg-card border border-brand/30 rounded-[var(--radius-card)] shadow-lg text-xs cursor-grabbing rotate-2 scale-105 opacity-95">
+    <div className="p-3 mb-2 bg-card border border-brand/30 rounded-[var(--radius-card)] text-xs cursor-grabbing rotate-2 scale-105 opacity-95">
       <div className="font-semibold mb-1 text-foreground line-clamp-2">{task.title}</div>
     </div>
   );
@@ -283,7 +283,7 @@ function KanbanColumn({
       ref={setColRef}
       style={colStyle}
       className={cn(
-        "flex flex-col flex-shrink-0 w-[280px] bg-surface border border-border/80 rounded-[var(--radius-card)] h-full shadow-xs transition-opacity",
+        "flex flex-col flex-shrink-0 w-[280px] bg-surface border border-border/80 rounded-[var(--radius-card)] h-full transition-opacity",
         isColDragging && "opacity-40"
       )}
     >
@@ -348,7 +348,7 @@ function KanbanColumn({
                 <MoreHorizontal className="w-3.5 h-3.5" />
               </Button>
             </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" className="w-44 rounded-[var(--radius-card)] border border-border shadow-md text-xs">
+            <DropdownMenuContent align="end" className="w-44 rounded-[var(--radius-card)] border border-border text-xs">
               <DropdownMenuItem onClick={handleRenameStart} className="text-xs gap-2 cursor-pointer">
                 <Pencil className="w-3.5 h-3.5" />
                 Renomear coluna
@@ -817,7 +817,7 @@ export function KanbanView({
                         Adicionar Coluna
                       </Button>
                     </DropdownMenuTrigger>
-                    <DropdownMenuContent align="end" className="w-56 rounded-[var(--radius-card)] border border-border shadow-md">
+                    <DropdownMenuContent align="end" className="w-56 rounded-[var(--radius-card)] border border-border">
                       {inactiveStatuses.map((s) => (
                         <DropdownMenuItem
                           key={s}
@@ -847,7 +847,7 @@ export function KanbanView({
           >
             {activeTask ? <KanbanCardOverlay task={activeTask} /> : null}
             {activeColumnId && (
-              <div className="flex-shrink-0 w-[280px] bg-surface border border-brand/30 rounded-[var(--radius-card)] shadow-xl opacity-90 h-24 p-3">
+              <div className="flex-shrink-0 w-[280px] bg-surface border border-brand/30 rounded-[var(--radius-card)] opacity-90 h-24 p-3">
                 <div className="flex items-center gap-2">
                   <div
                     className="w-2.5 h-2.5 rounded-full"

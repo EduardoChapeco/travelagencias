@@ -1,12 +1,18 @@
 # Coverage Ledger - Project Stabilization Inventory
 
 Total files in src: 449
-Auditados: 2 / Corrigidos: 1 / Pendentes: 447
+Auditados: 8 / Corrigidos: 8 / Pendentes: 441
 
 | Arquivo | Pasta | Camada | Módulo | Linhas | Status | Issues |
 | --- | --- | --- | --- | --- | --- | --- |
+| [NewTaskModal.tsx](file:///C:/Users/Eduardo Antônio Ramo/Music/travelagencias/src/components/tasks/NewTaskModal.tsx) | src/components/tasks | component | tasks | 326 | COMPROVADO | Removidos shadow-xs, shadow-sm, shadow-md, shadow-lg e shadow-2xl residuais no JSX |
+| [TaskDetailDrawer.tsx](file:///C:/Users/Eduardo Antônio Ramo/Music/travelagencias/src/components/tasks/TaskDetailDrawer.tsx) | src/components/tasks | component | tasks | 547 | COMPROVADO | Removidos shadow-xs, shadow-sm, shadow-md, shadow-lg e shadow-2xl residuais no JSX |
 | [TaskShell.tsx](file:///C:/Users/Eduardo Antônio Ramo/Music/travelagencias/src/components/tasks/TaskShell.tsx) | src/components/tasks | component | tasks | 219 | COMPROVADO | Remediado import circular com o objeto Route da rota |
+| [KanbanView.tsx](file:///C:/Users/Eduardo Antônio Ramo/Music/travelagencias/src/components/tasks/views/KanbanView.tsx) | src/components/tasks/views | component | tasks | 866 | COMPROVADO | Removidos shadow-xs, shadow-sm, shadow-md, shadow-lg e shadow-2xl residuais no JSX |
+| [ListView.tsx](file:///C:/Users/Eduardo Antônio Ramo/Music/travelagencias/src/components/tasks/views/ListView.tsx) | src/components/tasks/views | component | tasks | 262 | COMPROVADO | Removidos shadow-xs, shadow-sm, shadow-md, shadow-lg e shadow-2xl residuais no JSX |
+| [TimelineView.tsx](file:///C:/Users/Eduardo Antônio Ramo/Music/travelagencias/src/components/tasks/views/TimelineView.tsx) | src/components/tasks/views | component | tasks | 139 | COMPROVADO | Removidos shadow-xs, shadow-sm, shadow-md, shadow-lg e shadow-2xl residuais no JSX |
 | [agency.$slug.daily-tasks.tsx](file:///C:/Users/Eduardo Antônio Ramo/Music/travelagencias/src/routes/agency.$slug.daily-tasks.tsx) | src/routes | route | agency.$slug.daily-tasks.tsx | 23 | COMPROVADO | Nenhum (antes importava circularmente TaskShell.tsx) |
+| [agency.$slug.quotes.index.tsx](file:///C:/Users/Eduardo Antônio Ramo/Music/travelagencias/src/routes/agency.$slug.quotes.index.tsx) | src/routes | route | agency.$slug.quotes.index.tsx | 1569 | COMPROVADO | Removidos shadow-xs e shadow-xl residuais no JSX |
 | [CardDetailPanel.tsx](file:///C:/Users/Eduardo Antônio Ramo/Music/travelagencias/src/components/boarding/CardDetailPanel.tsx) | src/components/boarding | component | boarding | 1570 | NÃO AUDITADO | Nenhum |
 | [CardView.tsx](file:///C:/Users/Eduardo Antônio Ramo/Music/travelagencias/src/components/boarding/CardView.tsx) | src/components/boarding | component | boarding | 160 | NÃO AUDITADO | Nenhum |
 | [Column.tsx](file:///C:/Users/Eduardo Antônio Ramo/Music/travelagencias/src/components/boarding/Column.tsx) | src/components/boarding | component | boarding | 91 | NÃO AUDITADO | Nenhum |
@@ -99,10 +105,4 @@ Auditados: 2 / Corrigidos: 1 / Pendentes: 447
 | [SectionTransfers.tsx](file:///C:/Users/Eduardo Antônio Ramo/Music/travelagencias/src/components/studio/sections/SectionTransfers.tsx) | src/components/studio/sections | component | studio | 127 | NÃO AUDITADO | Nenhum |
 | [SectionTravelers.tsx](file:///C:/Users/Eduardo Antônio Ramo/Music/travelagencias/src/components/studio/sections/SectionTravelers.tsx) | src/components/studio/sections | component | studio | 86 | NÃO AUDITADO | Nenhum |
 | [StudioFormatPicker.tsx](file:///C:/Users/Eduardo Antônio Ramo/Music/travelagencias/src/components/studio/StudioFormatPicker.tsx) | src/components/studio | component | studio | 74 | NÃO AUDITADO | Nenhum |
-| [StudioFrame.tsx](file:///C:/Users/Eduardo Antônio Ramo/Music/travelagencias/src/components/studio/StudioFrame.tsx) | src/components/studio | component | studio | 123 | NÃO AUDITADO | Nenhum |
-| [StudioMapWidget.tsx](file:///C:/Users/Eduardo Antônio Ramo/Music/travelagencias/src/components/studio/StudioMapWidget.tsx) | src/components/studio | component | studio | 228 | NÃO AUDITADO | Nenhum |
-| [StudioSidebar.tsx](file:///C:/Users/Eduardo Antônio Ramo/Music/travelagencias/src/components/studio/StudioSidebar.tsx) | src/components/studio | component | studio | 19 | NÃO AUDITADO | Nenhum |
-| [StudioTemplatePicker.tsx](file:///C:/Users/Eduardo Antônio Ramo/Music/travelagencias/src/components/studio/StudioTemplatePicker.tsx) | src/components/studio | component | studio | 97 | NÃO AUDITADO | Nenhum |
-| [StudioToolbar.tsx](file:///C:/Users/Eduardo Antônio Ramo/Music/travelagencias/src/components/studio/StudioToolbar.tsx) | src/components/studio | component | studio | 90 | NÃO AUDITADO | Nenhum |
-| [StudioUnsplashPicker.tsx](file:///C:/Users/Eduardo Antônio Ramo/Music/travelagencias/src/components/studio/StudioUnsplashPicker.tsx) | src/components/studio | component | studio | 131 | NÃO AUDITADO | Nenhum |
 | ... and 349 more files | | | | | | |

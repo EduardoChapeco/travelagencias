@@ -709,7 +709,7 @@ Texto: "${aiText}"`;
             {filteredDocs.map((doc: any) => (
               <div
                 key={doc.id}
-                className="rounded border-none glass-card border-none p-4 flex flex-col justify-between shadow-xs hover:border-brand/40 transition-colors"
+                className="rounded border-none glass-card border-none p-4 flex flex-col justify-between hover:border-brand/40 transition-colors"
               >
                 <div>
                   <div className="flex items-center justify-between gap-2 mb-2">
@@ -1160,7 +1160,7 @@ Texto: "${aiText}"`;
           onClick={() => setNewOpen(false)}
         >
           <div
-            className="h-full w-full max-w-2xl overflow-y-auto border-l border-border glass-card border-none p-6 shadow-xl flex flex-col justify-between"
+            className="h-full w-full max-w-2xl overflow-y-auto border-l border-border glass-card border-none p-6 flex flex-col justify-between"
             onClick={(e) => e.stopPropagation()}
           >
             <div>
@@ -1334,7 +1334,7 @@ Texto: "${aiText}"`;
           onClick={() => setNewKnowledgeOpen(false)}
         >
           <div
-            className="h-full w-full max-w-2xl overflow-y-auto border-l border-border glass-card border-none p-6 shadow-xl flex flex-col justify-between"
+            className="h-full w-full max-w-2xl overflow-y-auto border-l border-border glass-card border-none p-6 flex flex-col justify-between"
             onClick={(e) => e.stopPropagation()}
           >
             <div>
@@ -1445,7 +1445,7 @@ Texto: "${aiText}"`;
           onClick={() => setWatcherOpen(false)}
         >
           <div
-            className="h-full w-full max-w-lg overflow-y-auto border-l border-border glass-card border-none p-6 shadow-xl flex flex-col justify-between"
+            className="h-full w-full max-w-lg overflow-y-auto border-l border-border glass-card border-none p-6 flex flex-col justify-between"
             onClick={(e) => e.stopPropagation()}
           >
             <div>

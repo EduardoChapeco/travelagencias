@@ -152,7 +152,7 @@ function StatusGroupSection({
       </div>
 
       {/* Table Container */}
-      <div className="border border-border/50 bg-[var(--surface)] rounded-[var(--radius-card)] overflow-hidden shadow-xs">
+      <div className="border border-border/50 bg-[var(--surface)] rounded-[var(--radius-card)] overflow-hidden">
         {tasks.length > 0 && (
           <div className="overflow-x-auto">
             <table className="w-full border-collapse text-left">
@@ -249,7 +249,7 @@ function StatusGroupSection({
           {quickTitle.trim() && (
             <Button
               type="submit"
-              className="h-7 px-3 rounded bg-brand text-white ds-meta font-bold hover:bg-brand/90 cursor-pointer shadow-xs transition-colors shrink-0"
+              className="h-7 px-3 rounded bg-brand text-white ds-meta font-bold hover:bg-brand/90 cursor-pointer transition-colors shrink-0"
             >
               Adicionar
             </Button>

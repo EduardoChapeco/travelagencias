@@ -113,7 +113,7 @@ export function TimelineView({ filters }: { filters: TaskFiltersState }) {
                         <div key={dayIdx} className="h-full w-full flex items-center justify-center relative">
                           {isTaskDay && (
                             <div 
-                              className="absolute inset-y-2 inset-x-0 rounded-full border shadow-sm transition-all"
+                              className="absolute inset-y-2 inset-x-0 rounded-full border transition-all"
                               style={{ 
                                 backgroundColor: `${priorityCfg.color}15`, 
                                 borderColor: `${priorityCfg.color}40`,

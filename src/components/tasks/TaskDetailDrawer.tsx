@@ -246,7 +246,7 @@ export function TaskDetailDrawer({ task, open, onClose, onUpdated }: TaskDetailD
         <div className="absolute inset-0" onClick={handleClose} />
         <div
           className={cn(
-            "relative w-full max-w-3xl h-[85vh] sm:h-[80vh] flex flex-col bg-[var(--surface)] border border-border/80 shadow-2xl rounded-2xl overflow-hidden transition-all duration-300 transform",
+            "relative w-full max-w-3xl h-[85vh] sm:h-[80vh] flex flex-col bg-[var(--surface)] border border-border/80 rounded-2xl overflow-hidden transition-all duration-300 transform",
             open ? "translate-y-0 opacity-100" : "translate-y-12 opacity-0"
           )}
         >
@@ -526,7 +526,7 @@ export function TaskDetailDrawer({ task, open, onClose, onUpdated }: TaskDetailD
                 className={cn(
                   "h-8 text-xs gap-1.5 transition-all",
                   isDirty
-                    ? "bg-brand hover:bg-brand/90 text-white shadow-sm shadow-brand/20"
+                    ? "bg-brand hover:bg-brand/90 text-white"
                     : "opacity-50 cursor-not-allowed"
                 )}
               >
