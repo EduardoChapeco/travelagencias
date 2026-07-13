@@ -1,6 +1,8 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
+import { PAYABLE_STATUS_MAP } from "@/lib/constants/status";
+import { StatusBadge } from "@/components/ui/badge";
 import {
   Building2,
   TrendingUp,
@@ -54,19 +56,7 @@ type ThirdPartyInstallment = {
   } | null;
 };
 
-const STATUS_LABEL: Record<string, string> = {
-  pending: "Pendente",
-  paid: "Pago",
-  cancelled: "Cancelado",
-  partial: "Parcial",
-};
 
-const STATUS_COLOR: Record<string, string> = {
-  pending: "bg-amber-100 text-amber-700 border-amber-200",
-  paid: "bg-emerald-100 text-emerald-700 border-emerald-200",
-  cancelled: "bg-red-100 text-red-700 border-red-200",
-  partial: "bg-blue-100 text-blue-700 border-blue-200",
-};
 
 // ─── Component ────────────────────────────────────────────────────────────────
 
@@ -213,7 +203,7 @@ function OperatorsFinancial() {
                   </span>
                 </div>
                 <p className="text-2xl font-extrabold text-foreground">{money(totalVolume, "BRL")}</p>
-                <p className="text-[11px] text-muted-foreground mt-0.5">
+                <p className="ds-meta text-muted-foreground mt-0.5">
                   Soma de todos os lançamentos via operadoras
                 </p>
               </div>
@@ -226,7 +216,7 @@ function OperatorsFinancial() {
                   </span>
                 </div>
                 <p className="text-2xl font-extrabold text-emerald-600">{money(totalPaid, "BRL")}</p>
-                <p className="text-[11px] text-muted-foreground mt-0.5">
+                <p className="ds-meta text-muted-foreground mt-0.5">
                   Parcelas confirmadas como pagas
                 </p>
               </div>
@@ -239,7 +229,7 @@ function OperatorsFinancial() {
                   </span>
                 </div>
                 <p className="text-2xl font-extrabold text-amber-600">{money(totalPending, "BRL")}</p>
-                <p className="text-[11px] text-muted-foreground mt-0.5">
+                <p className="ds-meta text-muted-foreground mt-0.5">
                   Parcelas pendentes via operadoras
                 </p>
               </div>
@@ -264,7 +254,7 @@ function OperatorsFinancial() {
               ) : (
                 <table className="w-full border-collapse text-left text-xs">
                   <thead>
-                    <tr className="border-b border-border glass bg-white/5 border-white/10 font-semibold text-muted-foreground uppercase tracking-widest text-[10px]">
+                    <tr className="border-b border-border glass bg-white/5 border-white/10 font-semibold text-muted-foreground uppercase tracking-widest ds-meta">
                       <th className="p-4">Viagem / Destino</th>
                       <th className="p-4">Descrição</th>
                       <th className="p-4">Tipo</th>
@@ -280,7 +270,7 @@ function OperatorsFinancial() {
                             {r.trip?.title ?? "Viagem não vinculada"}
                           </div>
                           {r.trip?.destination && (
-                            <div className="text-[10px] text-muted-foreground uppercase tracking-wide mt-0.5">
+                            <div className="ds-meta text-muted-foreground uppercase tracking-wide mt-0.5">
                               {r.trip.destination}
                             </div>
                           )}
@@ -289,7 +279,7 @@ function OperatorsFinancial() {
                           {r.description ?? r.notes ?? "—"}
                         </td>
                         <td className="p-4">
-                          <span className="rounded-full border px-2 py-0.5 text-[10px] font-semibold border-border text-muted-foreground">
+                          <span className="rounded-full border px-2 py-0.5 ds-meta font-semibold border-border text-muted-foreground">
                             {r.type === "income" ? "Receita" : "Custo"}
                           </span>
                         </td>
@@ -297,11 +287,9 @@ function OperatorsFinancial() {
                           {money(r.amount_brl ?? r.amount, r.currency ?? "BRL")}
                         </td>
                         <td className="p-4">
-                          <span
-                            className={`rounded-full border px-2 py-0.5 text-[10px] font-semibold ${STATUS_COLOR[r.status] ?? "bg-muted text-muted-foreground border-border"}`}
-                          >
-                            {STATUS_LABEL[r.status] ?? r.status}
-                          </span>
+                          <StatusBadge tone={PAYABLE_STATUS_MAP[r.status]?.tone ?? "neutral"}>
+                            {PAYABLE_STATUS_MAP[r.status]?.label ?? r.status}
+                          </StatusBadge>
                         </td>
                       </tr>
                     ))}
@@ -332,7 +320,7 @@ function OperatorsFinancial() {
               ) : (
                 <table className="w-full border-collapse text-left text-xs">
                   <thead>
-                    <tr className="border-b border-border glass bg-white/5 border-white/10 font-semibold text-muted-foreground uppercase tracking-widest text-[10px]">
+                    <tr className="border-b border-border glass bg-white/5 border-white/10 font-semibold text-muted-foreground uppercase tracking-widest ds-meta">
                       <th className="p-4">Viagem</th>
                       <th className="p-4">Parcela</th>
                       <th className="p-4">Vencimento</th>
@@ -350,7 +338,7 @@ function OperatorsFinancial() {
                             {i.plan?.trip?.title ?? "—"}
                           </div>
                           {i.plan?.trip?.destination && (
-                            <div className="text-[10px] text-muted-foreground uppercase tracking-wide mt-0.5">
+                            <div className="ds-meta text-muted-foreground uppercase tracking-wide mt-0.5">
                               {i.plan.trip.destination}
                             </div>
                           )}
@@ -370,11 +358,9 @@ function OperatorsFinancial() {
                           {money(i.amount, "BRL")}
                         </td>
                         <td className="p-4">
-                          <span
-                            className={`rounded-full border px-2 py-0.5 text-[10px] font-semibold ${STATUS_COLOR[i.status] ?? "bg-muted text-muted-foreground border-border"}`}
-                          >
-                            {STATUS_LABEL[i.status] ?? i.status}
-                          </span>
+                          <StatusBadge tone={PAYABLE_STATUS_MAP[i.status]?.tone ?? "neutral"}>
+                            {PAYABLE_STATUS_MAP[i.status]?.label ?? i.status}
+                          </StatusBadge>
                         </td>
                         <td className="p-4 text-muted-foreground whitespace-nowrap">
                           {i.paid_at
@@ -390,7 +376,7 @@ function OperatorsFinancial() {
           )}
 
           {/* ── Disclaimer ────────────────────────────────────────────── */}
-          <div className="flex items-start gap-2 rounded-[var(--radius-card)] border-none glass-card border-none p-4 text-[11px] text-muted-foreground">
+          <div className="flex items-start gap-2 rounded-[var(--radius-card)] border-none glass-card border-none p-4 ds-meta text-muted-foreground">
             <ExternalLink className="h-3.5 w-3.5 shrink-0 mt-0.5 text-muted-foreground" />
             <span>
               Os valores acima <strong>não entram no fluxo de caixa contábil da agência</strong>.

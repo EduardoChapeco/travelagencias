@@ -194,7 +194,7 @@ function ActivityItem({ activity, onChanged }: { activity: Activity; onChanged: 
 
       <div className="flex flex-col gap-1 bg-surface-alt/15 hover:bg-surface-alt/25 border border-border/30 rounded-[var(--radius-card)] p-3.5 transition-colors">
         <div className="flex items-center justify-between">
-          <div className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
+          <div className="ds-label-caps tracking-wider text-muted-foreground">
             {ACTIVITY_TYPES.find((t) => t.v === activity.type)?.label ??
               (activity.type === "stage_change" ? "Mudança de Estágio" : activity.type)}
             <span className="mx-2 opacity-50">•</span>

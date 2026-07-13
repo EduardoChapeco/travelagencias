@@ -12,6 +12,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Button } from "@/components/ui/button";
 import { FormInput as Input } from "@/components/ui/input";
+import { SheetPage } from "@/components/ui/sheet";
 
 const agenciesQueryOptions = queryOptions({
   queryKey: ["admin-agencies"],
@@ -103,29 +104,25 @@ function Page() {
         <div className="mt-4 flex flex-col items-center justify-center py-8 px-4 text-center rounded-[var(--radius-card)] border border-red-200 bg-red-50/60 max-w-xl mx-auto">
           <AlertCircle className="h-5 w-5 text-red-600 mb-1.5" />
           <h3 className="text-xs font-bold text-red-800">Falha ao Carregar Agências</h3>
-          <p className="text-[11px] text-red-600 mt-0.5">
+          <p className="ds-meta text-red-600 mt-0.5">
             {q.error instanceof Error ? q.error.message : "Erro de conexão."}
           </p>
         </div>
       )}
 
       {open && (
-        <div
-          className="fixed inset-0 z-[100] flex justify-end bg-background/80 backdrop-blur-sm"
-          onClick={() => {
+        <SheetPage
+          isOpen={true}
+          onClose={() => {
             setOpen(false);
             setInviteUrl(null);
             reset();
           }}
+          title="Provisionar Nova Agência"
+          width="clamp(480px, 45vw, 640px)"
         >
-          <div
-            className="flex h-full w-full max-w-md flex-col overflow-y-auto border-l border-border glass-card border-none animate-in slide-in-from-right duration-300"
-            onClick={(e) => e.stopPropagation()}
-          >
-            <div className="border-b border-border glass bg-white/5 border-white/10/30 p-6 shrink-0">
-              <h2 className="text-xl font-bold text-foreground">Provisionar Nova Agência</h2>
-            </div>
-            <div className="p-6 overflow-y-auto">
+          <div className="flex h-full flex-col">
+            <div className="p-6 overflow-y-auto flex-1">
               {!inviteUrl ? (
                 <form onSubmit={handleSubmit(handleCreate)} className="mt-4 flex flex-col gap-4">
                   <div>
@@ -234,7 +231,7 @@ function Page() {
               )}
             </div>
           </div>
-        </div>
+        </SheetPage>
       )}
       {q.isLoading && (
         <div className="mt-6 flex flex-col gap-2">

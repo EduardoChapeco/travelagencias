@@ -23,7 +23,12 @@ import {
   RefreshCw,
   Settings2,
   AlertCircle,
+  Trash2,
+  Clock,
+  Calendar as CalendarIcon,
+  Search,
 } from "lucide-react";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { supabase } from "@/integrations/supabase/client";
 import { useAgency } from "@/lib/agency-context";
 import { useConfirm } from "@/hooks/use-confirm";
@@ -265,7 +270,7 @@ function CalendarPage() {
               </Button>
               <Button
                 onClick={handleToday}
-                className="h-7 px-3 border border-white/10 hover:border-white/20 bg-white/5 text-[10px] font-bold rounded-full transition-colors cursor-pointer text-white/90"
+                className="h-7 px-3 border border-white/10 hover:border-white/20 bg-white/5 ds-meta font-bold rounded-full transition-colors cursor-pointer text-white/90"
               >
                 Hoje
               </Button>
@@ -281,7 +286,7 @@ function CalendarPage() {
               <Select
                 value={filterType}
                 onChange={(e: any) => setFilterType(e.target.value)}
-                className="h-7 text-[10px] bg-white/5 border-white/10 w-24 rounded-full text-white/90 px-2"
+                className="h-7 ds-meta bg-white/5 border-white/10 w-24 rounded-full text-white/90 px-2"
               >
                 <option value="all">Tipos</option>
                 <option value="call">📞 Telefone</option>
@@ -294,7 +299,7 @@ function CalendarPage() {
                 <Select
                   value={filterUser}
                   onChange={(e: any) => setFilterUser(e.target.value)}
-                  className="h-7 text-[10px] bg-white/5 border-white/10 w-28 rounded-full text-white/90 px-2"
+                  className="h-7 ds-meta bg-white/5 border-white/10 w-28 rounded-full text-white/90 px-2"
                 >
                   <option value="all">Agentes</option>
                   {usersQ.data.map((u: any) => (
@@ -343,7 +348,7 @@ function CalendarPage() {
             {WEEKDAYS.map((day) => (
               <div
                 key={day}
-                className="py-2.5 text-center text-[10px] font-extrabold uppercase tracking-wider text-muted-foreground border-r border-border/40 last:border-r-0"
+                className="py-2.5 text-center ds-meta font-extrabold uppercase tracking-wider text-muted-foreground border-r border-border/40 last:border-r-0"
               >
                 {day}
               </div>
@@ -366,7 +371,7 @@ function CalendarPage() {
                 >
                   <div className="flex items-center justify-between">
                     <span
-                       className={`text-[10px] font-bold h-5 w-5 flex items-center justify-center rounded-full ${
+                       className={`ds-meta font-bold h-5 w-5 flex items-center justify-center rounded-full ${
                         today
                           ? "bg-brand text-brand-foreground font-black"
                           : isCurrentMonth
@@ -450,37 +455,27 @@ function CalendarPage() {
         </div>
       </div>
 
-      {selectedMeeting && (
-        <div
-          className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm"
-          onPointerDown={() => setSelectedMeeting(null)}
-        >
-          <div
-            className="w-full max-w-md glass-card border-none border-none rounded-[var(--radius-card)] p-6 space-y-4"
-            onPointerDown={(e) => e.stopPropagation()}
-          >
-            <div className="flex items-start justify-between border-b border-border/40 pb-3">
-              <div>
-                <h3 className="text-sm font-bold text-foreground">{selectedMeeting.title}</h3>
-                <span
-                  className={`text-[10px] font-extrabold uppercase px-1.5 py-0.5 rounded border inline-block mt-1.5 ${MEETING_TYPE_COLORS[selectedMeeting.meeting_type]}`}
-                >
-                  {MEETING_TYPE_LABELS[selectedMeeting.meeting_type] ||
-                    selectedMeeting.meeting_type}
-                </span>
-              </div>
-              <Button
-                onClick={() => setSelectedMeeting(null)}
-                className="text-muted-foreground hover:text-foreground p-1 cursor-pointer"
+      <Dialog 
+        open={!!selectedMeeting} 
+        onOpenChange={(open) => !open && setSelectedMeeting(null)}
+      >
+        <DialogContent className="max-w-md p-0 overflow-hidden border-none/10">
+          <DialogHeader className="px-6 py-4 border-b border-border/40">
+            <DialogTitle className="text-sm font-bold text-foreground">
+              {selectedMeeting?.title}
+              <span
+                className={`ds-meta font-extrabold uppercase px-1.5 py-0.5 rounded border inline-block ml-2 align-middle ${selectedMeeting ? MEETING_TYPE_COLORS[selectedMeeting.meeting_type] : ""}`}
               >
-                <X className="h-4 w-4" />
-              </Button>
-            </div>
-
+                {selectedMeeting ? (MEETING_TYPE_LABELS[selectedMeeting.meeting_type] ||
+                  selectedMeeting.meeting_type) : ""}
+              </span>
+            </DialogTitle>
+          </DialogHeader>
+          <div className="p-6">
             <div className="space-y-3.5 text-xs">
-              {selectedMeeting.description && (
+              {selectedMeeting?.description && (
                 <div className="space-y-1">
-                  <span className="text-[10px] uppercase font-bold text-muted-foreground block">
+                  <span className="ds-meta uppercase font-bold text-muted-foreground block">
                     Notas / Descrição
                   </span>
                   <p className="glass bg-white/5 border-white/10/20 p-2.5 rounded-[var(--radius-card)] border-none/50 text-foreground/80 leading-relaxed">
@@ -491,11 +486,11 @@ function CalendarPage() {
 
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-0.5">
-                  <span className="text-[10px] uppercase font-bold text-muted-foreground block">
+                  <span className="ds-meta uppercase font-bold text-muted-foreground block">
                     Data & Hora
                   </span>
                   <span className="font-bold text-foreground">
-                    {new Date(selectedMeeting.scheduled_at).toLocaleString("pt-BR", {
+                    {selectedMeeting && new Date(selectedMeeting.scheduled_at).toLocaleString("pt-BR", {
                       day: "2-digit",
                       month: "long",
                       hour: "2-digit",
@@ -504,25 +499,25 @@ function CalendarPage() {
                   </span>
                 </div>
                 <div className="space-y-0.5">
-                  <span className="text-[10px] uppercase font-bold text-muted-foreground block">
+                  <span className="ds-meta uppercase font-bold text-muted-foreground block">
                     Duração
                   </span>
                   <span className="font-bold text-foreground">
-                    {selectedMeeting.duration_minutes} minutos
+                    {selectedMeeting?.duration_minutes} minutos
                   </span>
                 </div>
               </div>
 
               <div className="glass bg-white/5 border-white/10/10 border-none p-3.5 rounded-[var(--radius-card)] flex items-center justify-between gap-4">
                 <div>
-                  <span className="text-[10px] uppercase font-bold text-muted-foreground block">
+                  <span className="ds-meta uppercase font-bold text-muted-foreground block">
                     Lead Associado
                   </span>
                   <span className="font-extrabold text-foreground text-sm block mt-0.5">
-                    {selectedMeeting.leads?.name || "Não informado"}
+                    {selectedMeeting?.leads?.name || "Não informado"}
                   </span>
                 </div>
-                {selectedMeeting.lead_id && (
+                {selectedMeeting?.lead_id && (
                   <Link
                     to="/agency/$slug/crm/$lead_id"
                     params={{ slug, lead_id: selectedMeeting.lead_id }}
@@ -547,12 +542,12 @@ function CalendarPage() {
                     }
                   }}
                   className={`flex-1 h-9 rounded-[var(--radius-card)] font-bold text-xs uppercase border transition-colors flex items-center justify-center gap-1.5 cursor-pointer ${
-                    selectedMeeting.google_event_id
+                    selectedMeeting?.google_event_id
                       ? "bg-success/5 text-success border-success/25 cursor-default"
                       : "glass-card border-none border-border hover:border-brand/40 text-muted-foreground hover:text-foreground"
                   }`}
                 >
-                  {selectedMeeting.google_event_id ? (
+                  {selectedMeeting?.google_event_id ? (
                     "✓ Sincronizado com Google"
                   ) : (
                     <>
@@ -585,14 +580,14 @@ function CalendarPage() {
               </Button>
             </div>
           </div>
-        </div>
-      )}
+        </DialogContent>
+      </Dialog>
 
-      {newEventOpen && (
-        <div
-          className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm"
-          onPointerDown={() => setNewEventOpen(false)}
-        >
+      <Dialog open={newEventOpen} onOpenChange={setNewEventOpen}>
+        <DialogContent className="max-w-md p-0 overflow-hidden border-none/10 max-h-[90vh] flex flex-col">
+          <DialogHeader className="px-6 py-4 border-b border-border/40">
+            <DialogTitle className="text-sm font-bold text-foreground">Novo Compromisso</DialogTitle>
+          </DialogHeader>
           <form
             onSubmit={async (e) => {
               e.preventDefault();
@@ -625,19 +620,8 @@ function CalendarPage() {
                 toast.error("Falha ao agendar compromisso.");
               }
             }}
-            className="w-full max-w-md glass-card border-none border-none rounded-[var(--radius-card)] p-6 space-y-4 max-h-[90vh] overflow-y-auto"
-            onPointerDown={(e) => e.stopPropagation()}
+            className="p-6 space-y-4 overflow-y-auto"
           >
-            <div className="flex items-center justify-between border-b border-border/40 pb-3">
-              <h3 className="text-sm font-bold text-foreground">Novo Compromisso</h3>
-              <Button
-                type="button"
-                onClick={() => setNewEventOpen(false)}
-                className="text-muted-foreground hover:text-foreground p-1 cursor-pointer"
-              >
-                <X className="h-4 w-4" />
-              </Button>
-            </div>
 
             <div className="space-y-3">
               <Field label="Associar ao Lead *">
@@ -725,13 +709,16 @@ function CalendarPage() {
               >
                 Cancelar
               </GhostButton>
-              <PrimaryButton type="submit" className="h-8 text-xs font-bold px-4">
-                Agendar Evento
+              <PrimaryButton
+                type="submit"
+                disabled={!meetingForm.title || !meetingForm.scheduled_at || !meetingForm.lead_id}
+              >
+                Agendar
               </PrimaryButton>
             </div>
           </form>
-        </div>
-      )}
+        </DialogContent>
+      </Dialog>
       <ConfirmDialog />
       {adminPanelOpen && agency && (
         <ModuleAdminPanel

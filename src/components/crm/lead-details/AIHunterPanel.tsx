@@ -253,7 +253,7 @@ export function AIHunterPanel({ leadId, agencyId }: { leadId: string; agencyId: 
 
   const Tag = ({ label, cls }: { label: string; cls: string }) => (
     <span
-      className={`inline-flex items-center px-2.5 py-1 rounded-full text-[11px] font-semibold border ${cls}`}
+      className={`inline-flex items-center px-2.5 py-1 rounded-full ds-meta font-semibold border ${cls}`}
     >
       {label}
     </span>
@@ -279,11 +279,11 @@ export function AIHunterPanel({ leadId, agencyId }: { leadId: string; agencyId: 
       {/* Bloco de Criação de Cotação por IA */}
       <div className="rounded-[var(--radius-card)] border border-brand/20 bg-brand/[0.02] p-5 space-y-4">
         <div className="flex items-center justify-between">
-          <div className="flex items-center gap-2 text-brand text-xs font-bold uppercase tracking-widest">
+          <div className="flex items-center gap-2 text-brand ds-label-caps">
             <Sparkles className="h-4 w-4" /> Sugestão de Proposta
           </div>
           {createdProposal && (
-            <span className="text-[10px] font-extrabold uppercase bg-success/10 text-success border border-success/20 px-2 py-0.5 rounded">
+            <span className="ds-meta font-extrabold uppercase bg-success/10 text-success border border-success/20 px-2 py-0.5 rounded">
               Cotação #{createdProposal.number} Criada
             </span>
           )}
@@ -358,11 +358,11 @@ export function AIHunterPanel({ leadId, agencyId }: { leadId: string; agencyId: 
         <div className="space-y-4">
           {insights.general_profile && (
             <div className="rounded-[var(--radius-card)] border border-brand/20 bg-brand/5 p-5 space-y-2">
-              <div className="flex items-center gap-2 text-brand text-xs font-bold uppercase tracking-widest">
+              <div className="flex items-center gap-2 text-brand ds-label-caps">
                 <Bot className="h-4 w-4" /> Perfil Comportamental
               </div>
               <p className="text-sm text-foreground leading-relaxed">{insights.general_profile}</p>
-              <p className="text-[10px] text-muted-foreground">
+              <p className="ds-meta text-muted-foreground">
                 Atualizado em {new Date(insights.updated_at).toLocaleString("pt-BR")}
               </p>
             </div>
@@ -404,7 +404,7 @@ export function AIHunterPanel({ leadId, agencyId }: { leadId: string; agencyId: 
                 className="rounded-[var(--radius-card)] border border-border/80 bg-surface p-5 space-y-3"
               >
                 <div
-                  className={`flex items-center gap-2 ${color} text-xs font-bold uppercase tracking-widest`}
+                  className={`flex items-center gap-2 ${color} ds-label-caps`}
                 >
                   {icon} {title}
                 </div>
@@ -421,7 +421,7 @@ export function AIHunterPanel({ leadId, agencyId }: { leadId: string; agencyId: 
 
           {insights.next_best_action && (
             <div className="rounded-[var(--radius-card)] border border-success/30 bg-success/5 p-5 space-y-2">
-              <div className="flex items-center gap-2 text-success text-xs font-bold uppercase tracking-widest">
+              <div className="flex items-center gap-2 text-success ds-label-caps">
                 <Sparkles className="h-4 w-4" /> Próxima Melhor Ação (NBA)
               </div>
               <p className="text-sm text-foreground font-medium leading-relaxed">

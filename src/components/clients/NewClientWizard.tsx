@@ -188,7 +188,7 @@ export function NewClientWizard({
             className={`flex items-center gap-2 ${i === step ? "opacity-100" : "opacity-40"}`}
           >
             <div
-              className={`flex h-6 w-6 items-center justify-center rounded-full text-[11px] font-bold ${
+              className={`flex h-6 w-6 items-center justify-center rounded-full ds-meta font-bold ${
                 i < step
                   ? "bg-success text-success-foreground"
                   : i === step
@@ -325,7 +325,7 @@ export function NewClientWizard({
                           t.trim() && (
                             <span
                               key={i}
-                              className="bg-surface-alt border border-border px-2 py-0.5 rounded text-[10px] font-bold text-muted-foreground uppercase tracking-wider"
+                              className="bg-surface-alt border border-border px-2 py-0.5 rounded ds-meta font-bold text-muted-foreground uppercase tracking-wider"
                             >
                               {t.trim()}
                             </span>
@@ -404,7 +404,7 @@ export function NewClientWizard({
                               t.trim() && (
                                 <span
                                   key={i}
-                                  className="bg-brand/10 text-brand border border-brand/20 px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider"
+                                  className="bg-brand/10 text-brand border border-brand/20 px-2 py-0.5 rounded ds-label-caps tracking-wider"
                                 >
                                   {t.trim()}
                                 </span>

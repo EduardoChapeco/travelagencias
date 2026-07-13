@@ -223,14 +223,14 @@ function BrandPage() {
         <div className="space-y-6">
           {/* Card: Logo & Assets */}
           <div className="rounded-full border-none glass-card border-none p-5 space-y-4">
-            <h3 className="text-xs font-bold uppercase tracking-wider text-muted-foreground flex items-center gap-2">
+            <h3 className="ds-label-caps tracking-wider text-muted-foreground flex items-center gap-2">
               <ImageIcon className="w-4 h-4 text-brand" /> Ativos Visuais
             </h3>
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               {/* Logo Principal Dropzone */}
               <div className="flex flex-col items-center justify-between p-4 rounded-full border border-dashed border-border glass bg-white/5 border-white/10/10 hover:border-brand/40 transition-colors text-center relative group min-h-[140px]">
-                <span className="text-[10px] font-bold text-muted-foreground uppercase">
+                <span className="ds-meta font-bold text-muted-foreground uppercase">
                   Logo Principal
                 </span>
                 {form.logo_url ? (
@@ -251,7 +251,7 @@ function BrandPage() {
                 ) : (
                   <label className="cursor-pointer my-2 flex flex-col items-center gap-1">
                     <Upload className="w-5 h-5 text-muted-foreground" />
-                    <span className="text-[10px] text-muted-foreground">Upload</span>
+                    <span className="ds-meta text-muted-foreground">Upload</span>
                     <Input
                       type="file"
                       accept="image/*"
@@ -269,7 +269,7 @@ function BrandPage() {
 
               {/* Logo Branco Dropzone */}
               <div className="flex flex-col items-center justify-between p-4 rounded-full border border-dashed border-border bg-slate-950 text-center relative group min-h-[140px]">
-                <span className="text-[10px] font-bold text-slate-400 uppercase">
+                <span className="ds-meta font-bold text-slate-400 uppercase">
                   Logo p/ Fundo Escuro
                 </span>
                 {form.logo_white_url ? (
@@ -290,7 +290,7 @@ function BrandPage() {
                 ) : (
                   <label className="cursor-pointer my-2 flex flex-col items-center gap-1 text-slate-400">
                     <Upload className="w-5 h-5 text-slate-500" />
-                    <span className="text-[10px]">Upload</span>
+                    <span className="ds-meta">Upload</span>
                     <Input
                       type="file"
                       accept="image/*"
@@ -308,7 +308,7 @@ function BrandPage() {
 
               {/* Favicon Dropzone */}
               <div className="flex flex-col items-center justify-between p-4 rounded-full border border-dashed border-border glass bg-white/5 border-white/10/10 hover:border-brand/40 transition-colors text-center relative group min-h-[140px]">
-                <span className="text-[10px] font-bold text-muted-foreground uppercase">
+                <span className="ds-meta font-bold text-muted-foreground uppercase">
                   Favicon
                 </span>
                 {form.favicon_url ? (
@@ -329,7 +329,7 @@ function BrandPage() {
                 ) : (
                   <label className="cursor-pointer my-2 flex flex-col items-center gap-1">
                     <Upload className="w-5 h-5 text-muted-foreground" />
-                    <span className="text-[10px] text-muted-foreground">Upload</span>
+                    <span className="ds-meta text-muted-foreground">Upload</span>
                     <Input
                       type="file"
                       accept="image/*"
@@ -349,7 +349,7 @@ function BrandPage() {
 
           {/* Card: Colors */}
           <div className="rounded-full border-none glass-card border-none p-5 space-y-4">
-            <h3 className="text-xs font-bold uppercase tracking-wider text-muted-foreground flex items-center gap-2">
+            <h3 className="ds-label-caps tracking-wider text-muted-foreground flex items-center gap-2">
               <Palette className="w-4 h-4 text-brand" /> Cores da Identidade
             </h3>
 
@@ -389,7 +389,7 @@ function BrandPage() {
 
           {/* Card: Typography */}
           <div className="rounded-full border-none glass-card border-none p-5 space-y-4">
-            <h3 className="text-xs font-bold uppercase tracking-wider text-muted-foreground flex items-center gap-2">
+            <h3 className="ds-label-caps tracking-wider text-muted-foreground flex items-center gap-2">
               <Type className="w-4 h-4 text-brand" /> Tipografia
             </h3>
 
@@ -424,7 +424,7 @@ function BrandPage() {
 
           {/* Card: Links & Channels */}
           <div className="rounded-full border-none glass-card border-none p-5 space-y-4">
-            <h3 className="text-xs font-bold uppercase tracking-wider text-muted-foreground flex items-center gap-2">
+            <h3 className="ds-label-caps tracking-wider text-muted-foreground flex items-center gap-2">
               <ExternalLink className="w-4 h-4 text-brand" /> Links & Canais de Atendimento
             </h3>
 
@@ -457,7 +457,7 @@ function BrandPage() {
         {/* Right Side: Interactive Mockup Live Preview */}
         <div className="space-y-6">
           <div className="rounded-full border-none glass-card border-none p-5 flex flex-col h-full space-y-4 shadow-none">
-            <h3 className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
+            <h3 className="ds-label-caps tracking-wider text-muted-foreground">
               Mockup de Pré-visualização Instantânea
             </h3>
 
@@ -498,7 +498,7 @@ function BrandPage() {
                   <span>Sobre</span>
                   <span>Blog</span>
                   <Button
-                    className="px-3 py-1 rounded-xs text-[10px] font-bold text-white transition-colors"
+                    className="px-3 py-1 rounded-xs ds-meta font-bold text-white transition-colors"
                     style={{ backgroundColor: "var(--brand-primary)" }}
                   >
                     Contato
@@ -512,7 +512,7 @@ function BrandPage() {
                 style={{ backgroundColor: "var(--brand-primary)", color: "var(--brand-bg)" }}
               >
                 <span
-                  className="text-[10px] font-bold uppercase tracking-widest px-2.5 py-0.5 rounded-full"
+                  className="ds-label-caps px-2.5 py-0.5 rounded-full"
                   style={{ backgroundColor: "var(--brand-secondary)", color: "#111827" }}
                 >
                   Agência Premium
@@ -532,12 +532,12 @@ function BrandPage() {
                 </p>
                 <div className="flex gap-2.5">
                   <Button
-                    className="px-4 py-2 rounded-full text-[10px] font-bold transition-all shadow-none"
+                    className="px-4 py-2 rounded-full ds-meta font-bold transition-all shadow-none"
                     style={{ backgroundColor: "var(--brand-secondary)", color: "#111827" }}
                   >
                     Falar no WhatsApp
                   </Button>
-                  <Button className="px-4 py-2 rounded-full border border-white/40 text-[10px] font-bold bg-white/10 hover:bg-white/20 transition-all text-white">
+                  <Button className="px-4 py-2 rounded-full border border-white/40 ds-meta font-bold bg-white/10 hover:bg-white/20 transition-all text-white">
                     Explorar Viagens
                   </Button>
                 </div>
@@ -550,7 +550,7 @@ function BrandPage() {
                   style={{ backgroundColor: "var(--brand-bg)", color: "var(--brand-text)" }}
                 >
                   <h4
-                    className="text-xs font-bold uppercase tracking-wider"
+                    className="ds-label-caps tracking-wider"
                     style={{
                       fontFamily: "var(--brand-heading-font)",
                       color: "var(--brand-accent)",
@@ -559,7 +559,7 @@ function BrandPage() {
                     Ecoturismo
                   </h4>
                   <p
-                    className="text-[10px] text-muted-foreground"
+                    className="ds-meta text-muted-foreground"
                     style={{ fontFamily: "var(--brand-body-font)" }}
                   >
                     Trilhas, rios preservados e imersão total na natureza intocada brasileira.
@@ -571,7 +571,7 @@ function BrandPage() {
                   style={{ backgroundColor: "var(--brand-bg)", color: "var(--brand-text)" }}
                 >
                   <h4
-                    className="text-xs font-bold uppercase tracking-wider"
+                    className="ds-label-caps tracking-wider"
                     style={{
                       fontFamily: "var(--brand-heading-font)",
                       color: "var(--brand-primary)",
@@ -580,7 +580,7 @@ function BrandPage() {
                     Resorts VIP
                   </h4>
                   <p
-                    className="text-[10px] text-muted-foreground"
+                    className="ds-meta text-muted-foreground"
                     style={{ fontFamily: "var(--brand-body-font)" }}
                   >
                     Conforto supremo à beira mar com tudo incluso para você e sua família.
@@ -605,7 +605,7 @@ interface ColorPickerProps {
 function ColorPicker({ label, value, onChange }: ColorPickerProps) {
   return (
     <div className="flex flex-col items-center p-2.5 rounded-full border-none glass bg-white/5 border-white/10/10 hover:glass bg-white/5 border-white/10/25 transition-all text-center">
-      <span className="text-[10px] font-bold text-muted-foreground uppercase mb-2 block truncate w-full">
+      <span className="ds-meta font-bold text-muted-foreground uppercase mb-2 block truncate w-full">
         {label}
       </span>
       <div className="relative flex items-center justify-center">
@@ -620,7 +620,7 @@ function ColorPicker({ label, value, onChange }: ColorPickerProps) {
         type="text"
         value={value}
         onChange={(e) => onChange(e.target.value)}
-        className="mt-2 h-7 w-full rounded-xs border-none glass-card border-none px-1 text-center font-mono text-[10px] uppercase focus:border-brand shrink-0"
+        className="mt-2 h-7 w-full rounded-xs border-none glass-card border-none px-1 text-center font-mono ds-meta uppercase focus:border-brand shrink-0"
       />
     </div>
   );

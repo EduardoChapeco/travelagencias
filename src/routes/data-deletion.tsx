@@ -187,7 +187,7 @@ function DataDeletionPage() {
               </div>
               <div className="flex items-center justify-between text-xs">
                 <span className="font-semibold text-muted-foreground">Status da Solicitação:</span>
-                <span className="font-bold text-brand uppercase tracking-wider text-[10px] bg-brand/10 px-2 py-0.5 rounded">
+                <span className="font-bold text-brand uppercase tracking-wider ds-meta bg-brand/10 px-2 py-0.5 rounded">
                   {searchResult.status}
                 </span>
               </div>

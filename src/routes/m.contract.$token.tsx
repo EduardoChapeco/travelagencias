@@ -721,7 +721,7 @@ function Page() {
 
       <section className="mb-6 overflow-hidden rounded-[var(--radius-card)] glass-card border-none ring-1 ring-border/50 print:ring-0 print:border-0 print:bg-transparent print:shadow-none print:mb-8">
         <div className="border-b border-border/50 glass bg-white/5 border-white/10/30 px-5 py-3 print:bg-transparent print:px-0 print:py-1 print:border-black">
-          <h2 className="text-xs font-bold uppercase tracking-widest text-muted-foreground print:text-black print:text-[10px]">
+          <h2 className="ds-label-caps text-muted-foreground print:text-black print:ds-meta">
             Contratante(s) / Pagante(s)
           </h2>
         </div>
@@ -765,17 +765,17 @@ function Page() {
         </div>
 
         <div className="border-b border-t border-border/50 glass bg-white/5 border-white/10/30 px-5 py-3 print:bg-transparent print:px-0 print:py-1 print:border-black print:mt-6">
-          <h2 className="text-xs font-bold uppercase tracking-widest text-muted-foreground print:text-black print:text-[10px]">
+          <h2 className="ds-label-caps text-muted-foreground print:text-black print:ds-meta">
             Resumo Executivo
           </h2>
         </div>
         <div className="p-5 print:p-0 print:pt-4">
-          <p className="whitespace-pre-line text-sm leading-relaxed text-foreground/80 print:text-black print:text-[11px]">
+          <p className="whitespace-pre-line text-sm leading-relaxed text-foreground/80 print:text-black print:ds-meta">
             {c.package_summary || "—"}
           </p>
           <div className="mt-5 grid grid-cols-2 gap-4 rounded-[var(--radius-card)] glass bg-white/5 border-white/10/30 p-4 print:bg-transparent print:border print:border-black print:p-3 print:mt-4">
             <div>
-              <div className="text-[10px] font-semibold uppercase tracking-widest text-muted-foreground print:text-black print:text-[9px]">
+              <div className="ds-meta font-semibold uppercase tracking-widest text-muted-foreground print:text-black print:text-[9px]">
                 Valor total
               </div>
               <div className="mt-1 font-mono text-base font-semibold print:text-black print:text-sm">
@@ -786,7 +786,7 @@ function Page() {
               </div>
             </div>
             <div>
-              <div className="text-[10px] font-semibold uppercase tracking-widest text-muted-foreground print:text-black print:text-[9px]">
+              <div className="ds-meta font-semibold uppercase tracking-widest text-muted-foreground print:text-black print:text-[9px]">
                 Pagamento
               </div>
               <div className="mt-1 text-sm font-medium print:text-black print:text-xs">{c.payment_terms || "—"}</div>
@@ -797,15 +797,15 @@ function Page() {
 
       <section className="mb-8 overflow-hidden rounded-[var(--radius-card)] glass-card border-none ring-1 ring-border/50 print:ring-0 print:border-0 print:bg-transparent print:shadow-none print:mb-8 print:break-inside-avoid">
         <div className="border-b border-border/50 glass bg-white/5 border-white/10/30 px-5 py-3 flex items-center justify-between print:bg-transparent print:px-0 print:py-1 print:border-black">
-          <h2 className="text-xs font-bold uppercase tracking-widest text-muted-foreground print:text-black print:text-[10px]">
+          <h2 className="ds-label-caps text-muted-foreground print:text-black print:ds-meta">
             Termos e Cláusulas
           </h2>
           {readConfirmed ? (
-            <span className="text-[10px] font-bold text-success flex items-center gap-1 no-print">
+            <span className="ds-meta font-bold text-success flex items-center gap-1 no-print">
               <Check className="h-3.5 w-3.5" /> Lido
             </span>
           ) : (
-            <span className="text-[10px] font-medium text-warning flex items-center gap-1 animate-pulse no-print">
+            <span className="ds-meta font-medium text-warning flex items-center gap-1 animate-pulse no-print">
               <Eye className="h-3.5 w-3.5" /> Role para ler tudo
             </span>
           )}
@@ -816,7 +816,7 @@ function Page() {
           className="max-h-[500px] overflow-y-auto p-5 space-y-5 no-scrollbar scroll-smooth print:max-h-none print:overflow-visible print:p-0 print:pt-4"
         >
           {all.map((cl) => (
-            <div key={cl.number} className="text-xs leading-relaxed text-foreground/80 print:text-black print:text-[11px] print:break-inside-avoid print:mb-4">
+            <div key={cl.number} className="text-xs leading-relaxed text-foreground/80 print:text-black print:ds-meta print:break-inside-avoid print:mb-4">
               <span className="font-bold text-foreground print:text-black">
                 Cláusula {cl.number} — {cl.section}:{" "}
               </span>
@@ -842,7 +842,7 @@ function Page() {
                   <h2 className="text-sm md:text-base font-extrabold text-success uppercase tracking-wider font-sans print:text-black print:text-xs">
                     Certificado de Conformidade Legal
                   </h2>
-                  <p className="text-[10px] md:text-xs text-muted-foreground font-sans mt-0.5 print:text-black">
+                  <p className="ds-meta md:text-xs text-muted-foreground font-sans mt-0.5 print:text-black">
                     Assinatura eletrônica autenticada e criptografada via Turis Trust Hub.
                   </p>
                 </div>
@@ -868,7 +868,7 @@ function Page() {
                       <div className="font-extrabold text-sm text-foreground print:text-black print:text-xs">
                         {sig.signer_name}
                       </div>
-                      <div className="space-y-1 text-muted-foreground text-[11px] print:text-black">
+                      <div className="space-y-1 text-muted-foreground ds-meta print:text-black">
                         <div>Doc: {sig.signer_document}</div>
                         <div>
                           IP:{" "}
@@ -900,7 +900,7 @@ function Page() {
                               className="h-11 w-11 rounded-full object-cover border border-success/30 ring-2 ring-success/10 print:h-10 print:w-10 print:ring-0 print:border-black"
                             />
                             <div>
-                              <span className="text-[10px] font-bold text-success block print:text-black">
+                              <span className="ds-meta font-bold text-success block print:text-black">
                                 Selfie Auditada
                               </span>
                               <span className="text-[9px] text-muted-foreground block font-sans print:text-black">
@@ -909,7 +909,7 @@ function Page() {
                             </div>
                           </div>
                         ) : (
-                          <div className="text-muted-foreground text-[10px] print:text-black">Sem selfie arquivada</div>
+                          <div className="text-muted-foreground ds-meta print:text-black">Sem selfie arquivada</div>
                         )}
                       </div>
                       <div className="text-[9px] font-mono leading-none break-all text-muted-foreground glass-card border-none/80 p-2 rounded border-none/20 mt-2 print:bg-transparent print:border-black print:text-black">
@@ -932,7 +932,7 @@ function Page() {
                           className="max-h-16 object-contain bg-white"
                         />
                       ) : (
-                        <span className="text-muted-foreground text-[10px] print:text-black">Sem rubrica eletrônica</span>
+                        <span className="text-muted-foreground ds-meta print:text-black">Sem rubrica eletrônica</span>
                       )}
                     </div>
                   </div>
@@ -970,7 +970,7 @@ function Page() {
                   {auditTrail.map((log) => (
                     <div
                       key={log.id}
-                      className="flex items-start justify-between text-[11px] py-2 border-b border-border/30 last:border-0 hover:bg-success-bg/5 px-2 rounded-[var(--radius-card)] transition-colors print:border-black/10 print:py-1 print:px-0 print:text-black"
+                      className="flex items-start justify-between ds-meta py-2 border-b border-border/30 last:border-0 hover:bg-success-bg/5 px-2 rounded-[var(--radius-card)] transition-colors print:border-black/10 print:py-1 print:px-0 print:text-black"
                     >
                       <div className="flex items-start gap-2.5">
                         <span className="inline-block mt-0.5 rounded-full bg-success/15 text-success p-0.5 print:hidden">
@@ -986,13 +986,13 @@ function Page() {
                                   ? "Contrato Assinado"
                                   : log.action}
                           </div>
-                          <div className="text-[10px] text-muted-foreground font-mono mt-0.5">
+                          <div className="ds-meta text-muted-foreground font-mono mt-0.5">
                             IP: {log.metadata?.ip || "0.0.0.0"} •{" "}
                             {log.metadata?.user_agent?.slice(0, 60)}...
                           </div>
                         </div>
                       </div>
-                      <div className="text-right text-[10px] text-muted-foreground shrink-0">
+                      <div className="text-right ds-meta text-muted-foreground shrink-0">
                         <div>{new Date(log.created_at).toLocaleString("pt-BR")}</div>
                         <div className="font-mono text-[9px] opacity-75 mt-0.5">
                           Bloco: {log.row_hash?.slice(0, 12)}...
@@ -1033,7 +1033,7 @@ function Page() {
           {addendums.length > 0 && (
             <section className="overflow-hidden rounded-[var(--radius-card)] glass-card border-none ring-1 ring-border/50">
               <div className="border-b border-border/50 glass bg-white/5 border-white/10/30 px-5 py-3">
-                <h2 className="text-xs font-bold uppercase tracking-widest text-muted-foreground">
+                <h2 className="ds-label-caps text-muted-foreground">
                   Aditivos e Retificações de Contrato
                 </h2>
               </div>
@@ -1056,7 +1056,7 @@ function Page() {
                       </p>
 
                       {adSigned ? (
-                        <div className="text-[10px] text-muted-foreground font-mono pt-2 border-t border-border/20 flex flex-col gap-1">
+                        <div className="ds-meta text-muted-foreground font-mono pt-2 border-t border-border/20 flex flex-col gap-1">
                           <div>Assinado em: {new Date(ad.signed_at).toLocaleString("pt-BR")}</div>
                           {ad.signatures?.[0] && (
                             <>
@@ -1068,7 +1068,7 @@ function Page() {
                         </div>
                       ) : (
                         <div className="pt-3 border-t border-border/20 space-y-3 no-print">
-                          <div className="text-[10px] text-warning font-semibold font-sans">
+                          <div className="ds-meta text-warning font-semibold font-sans">
                             Este aditivo requer sua assinatura eletrônica.
                           </div>
 
@@ -1096,7 +1096,7 @@ function Page() {
           id="interactive-signature-form"
         >
           <div className="border-b border-border/50 glass bg-white/5 border-white/10/30 px-5 py-3">
-            <h2 className="text-xs font-bold uppercase tracking-widest text-muted-foreground">
+            <h2 className="ds-label-caps text-muted-foreground">
               Verificação e Assinatura Legal
             </h2>
           </div>
@@ -1167,7 +1167,7 @@ function Page() {
                 <div className="flex items-center gap-2">
                   <div
                     className={cn(
-                      "flex h-5 w-5 items-center justify-center rounded-full text-[10px] font-bold",
+                      "flex h-5 w-5 items-center justify-center rounded-full ds-meta font-bold",
                       documentFront && documentBack
                         ? "bg-success text-white"
                         : "bg-brand text-brand-foreground",
@@ -1192,7 +1192,7 @@ function Page() {
                         <Button
                           type="button"
                           onClick={() => setDocumentFront(null)}
-                          className="absolute -top-1.5 -right-1.5 rounded-full bg-danger p-1 text-white text-[10px] w-5 h-5 flex items-center justify-center"
+                          className="absolute -top-1.5 -right-1.5 rounded-full bg-danger p-1 text-white ds-meta w-5 h-5 flex items-center justify-center"
                         >
                           x
                         </Button>
@@ -1200,7 +1200,7 @@ function Page() {
                     ) : (
                       <label className="flex flex-col items-center justify-center h-24 rounded-[var(--radius-card)] border border-dashed border-border glass-card border-none cursor-pointer hover:glass bg-white/5 border-white/10/25 transition-colors">
                         <Upload className="h-4 w-4 text-muted-foreground mb-1" />
-                        <span className="text-[10px] font-semibold text-muted-foreground">
+                        <span className="ds-meta font-semibold text-muted-foreground">
                           Selecionar Frente
                         </span>
                         <Input
@@ -1227,7 +1227,7 @@ function Page() {
                         <Button
                           type="button"
                           onClick={() => setDocumentBack(null)}
-                          className="absolute -top-1.5 -right-1.5 rounded-full bg-danger p-1 text-white text-[10px] w-5 h-5 flex items-center justify-center"
+                          className="absolute -top-1.5 -right-1.5 rounded-full bg-danger p-1 text-white ds-meta w-5 h-5 flex items-center justify-center"
                         >
                           x
                         </Button>
@@ -1235,7 +1235,7 @@ function Page() {
                     ) : (
                       <label className="flex flex-col items-center justify-center h-24 rounded-[var(--radius-card)] border border-dashed border-border glass-card border-none cursor-pointer hover:glass bg-white/5 border-white/10/25 transition-colors">
                         <Upload className="h-4 w-4 text-muted-foreground mb-1" />
-                        <span className="text-[10px] font-semibold text-muted-foreground">
+                        <span className="ds-meta font-semibold text-muted-foreground">
                           Selecionar Verso
                         </span>
                         <Input
@@ -1258,7 +1258,7 @@ function Page() {
                 <div className="flex items-center gap-2">
                   <div
                     className={cn(
-                      "flex h-5 w-5 items-center justify-center rounded-full text-[10px] font-bold",
+                      "flex h-5 w-5 items-center justify-center rounded-full ds-meta font-bold",
                       selfie ? "bg-success text-white" : "bg-brand text-brand-foreground",
                     )}
                   >
@@ -1299,7 +1299,7 @@ function Page() {
                     </div>
                   ) : (
                     <div className="flex flex-col items-start gap-2">
-                      <div className="text-[10px] text-muted-foreground">
+                      <div className="ds-meta text-muted-foreground">
                         Tire uma foto nítida do seu rosto para autenticidade da assinatura.
                       </div>
                       <GhostButton
@@ -1337,7 +1337,7 @@ function Page() {
                     <span className="text-xs font-bold text-success block font-sans">
                       Correspondência Biométrica Confirmada
                     </span>
-                    <span className="text-[10px] text-success/80 font-sans block">
+                    <span className="ds-meta text-success/80 font-sans block">
                       Rosto verificado contra o documento oficial enviado (Confiança 98.4%)
                     </span>
                   </div>
@@ -1349,7 +1349,7 @@ function Page() {
                 <div className="flex items-center gap-2">
                   <div
                     className={cn(
-                      "flex h-5 w-5 items-center justify-center rounded-full text-[10px] font-bold",
+                      "flex h-5 w-5 items-center justify-center rounded-full ds-meta font-bold",
                       videoKyc ? "bg-success text-white" : "bg-brand text-brand-foreground",
                     )}
                   >
@@ -1375,7 +1375,7 @@ function Page() {
                             setVideoKyc(null);
                             setVideoBlob(null);
                           }}
-                          className="absolute -top-1.5 -right-1.5 rounded-full bg-danger p-1 text-white text-[10px] w-5 h-5 flex items-center justify-center"
+                          className="absolute -top-1.5 -right-1.5 rounded-full bg-danger p-1 text-white ds-meta w-5 h-5 flex items-center justify-center"
                         >
                           x
                         </Button>
@@ -1430,7 +1430,7 @@ function Page() {
                 <div className="flex items-center gap-2">
                   <div
                     className={cn(
-                      "flex h-5 w-5 items-center justify-center rounded-full text-[10px] font-bold",
+                      "flex h-5 w-5 items-center justify-center rounded-full ds-meta font-bold",
                       readConfirmed ? "bg-success text-white" : "bg-brand text-brand-foreground",
                     )}
                   >
@@ -1442,11 +1442,11 @@ function Page() {
                 </div>
                 <div className="pl-7">
                   {readConfirmed ? (
-                    <span className="text-[10px] font-bold text-success flex items-center gap-1 font-sans">
+                    <span className="ds-meta font-bold text-success flex items-center gap-1 font-sans">
                       <Check className="h-3.5 w-3.5" /> Leitura Confirmada
                     </span>
                   ) : (
-                    <span className="text-[10px] font-medium text-warning flex items-center gap-1 animate-pulse font-sans">
+                    <span className="ds-meta font-medium text-warning flex items-center gap-1 animate-pulse font-sans">
                       <Eye className="h-3.5 w-3.5" /> Role a caixa de termos acima até o final para
                       liberar a assinatura.
                     </span>
@@ -1486,7 +1486,7 @@ function Page() {
                     <span className="text-xs font-bold text-foreground font-sans">
                       Assinatura Bloqueada
                     </span>
-                    <p className="text-[10px] text-muted-foreground mt-0.5 max-w-[280px] font-sans leading-relaxed">
+                    <p className="ds-meta text-muted-foreground mt-0.5 max-w-[280px] font-sans leading-relaxed">
                       Por favor, conclua todas as etapas de verificação (KYC) e confirme a leitura
                       das cláusulas acima para desbloquear.
                     </p>
@@ -1497,7 +1497,7 @@ function Page() {
                   <Button
                     type="button"
                     onClick={clearSig}
-                    className="absolute bottom-2 right-2 rounded-full glass-card border-none px-2.5 py-1.5 text-[10px] font-semibold text-muted-foreground hover:text-danger transition-colors border-none/40 font-sans"
+                    className="absolute bottom-2 right-2 rounded-full glass-card border-none px-2.5 py-1.5 ds-meta font-semibold text-muted-foreground hover:text-danger transition-colors border-none/40 font-sans"
                   >
                     Limpar Canvas
                   </Button>
@@ -1520,7 +1520,7 @@ function Page() {
               >
                 {signing ? "Processando Chancelas…" : "Li, concordo e assino o contrato"}
               </PrimaryButton>
-              <p className="mt-3 text-center text-[10px] text-muted-foreground font-sans">
+              <p className="mt-3 text-center ds-meta text-muted-foreground font-sans">
                 Ao clicar no botão acima, você concorda com a validade jurídica desta assinatura
                 digital, atrelada ao seu IP, Dispositivo e biometria facial/vídeo, nos termos da MP
                 2.200-2/2001.
@@ -1638,7 +1638,7 @@ function AdendumSignerPanel({
 
   return (
     <div className="space-y-3 glass-card border-none p-3 rounded-[var(--radius-card)] border-none/80 no-print">
-      <div className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">
+      <div className="ds-label-caps text-muted-foreground">
         Desenhe sua assinatura no quadro abaixo para assinar este aditivo
       </div>
       <div className="relative overflow-hidden rounded border-none/80 glass bg-white/5 border-white/10/5">

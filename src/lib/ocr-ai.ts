@@ -63,3 +63,72 @@ export async function processVoucherWithAI(
     reader.readAsDataURL(file);
   });
 }
+
+export interface PassengerAIResult {
+  full_name?: string;
+  document_number?: string;
+  expiration_date?: string;
+  birth_date?: string;
+  nationality?: string;
+  raw_extracted_text?: string;
+}
+
+/**
+ * Processa um arquivo (PDF ou Imagem) contendo documento de passageiro (passaporte, etc)
+ * enviando o conteúdo binário em base64 para a Edge Function de OCR de passageiro.
+ */
+export async function processPassengerWithAI(
+  fileBase64: string,
+  mimeType: string,
+  agencyId?: string,
+): Promise<PassengerAIResult> {
+  const { data, error } = await supabase.functions.invoke("ai-orchestrator", {
+    body: {
+      action: "completion",
+      feature: "ocr_passenger",
+      file_base64: fileBase64,
+      mime: mimeType,
+      agency_id: agencyId,
+    },
+  });
+
+  if (error) {
+    throw new Error("A Inteligência Artificial não conseguiu processar o documento. " + error.message);
+  }
+
+  let parsedResult = data.result;
+  if (typeof parsedResult === "string") {
+    try {
+      const cleaned = parsedResult.replace(/\`\`\`json/gi, "").replace(/\`\`\`/g, "").trim();
+      parsedResult = JSON.parse(cleaned);
+    } catch (e) {
+      console.warn("Falha no parse fallback de OCR Passenger:", e);
+    }
+  }
+
+
+  return parsedResult as PassengerAIResult;
+}
+
+export async function processBoletoWithAI(
+  fileBase64: string,
+  mimeType: string,
+  agencyId?: string,
+): Promise<any> {
+  const { data, error } = await supabase.functions.invoke("ai-orchestrator", {
+    body: {
+      action: "completion",
+      feature: "ocr_boleto",
+      file_base64: fileBase64,
+      mime: mimeType,
+      agency_id: agencyId,
+    },
+  });
+
+  if (error) {
+    throw new Error(error.message || "Erro retornado pela Edge Function de OCR de Boleto");
+  }
+
+  return data?.result ?? data;
+}
+

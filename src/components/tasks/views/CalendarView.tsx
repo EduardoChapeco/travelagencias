@@ -100,7 +100,7 @@ export function CalendarView({ filters }: { filters: TaskFiltersState }) {
       </div>
 
       {/* Dias da Semana */}
-      <div className="grid grid-cols-7 gap-2 text-center text-xs font-bold uppercase tracking-wider text-[var(--muted-foreground)] mb-2 shrink-0">
+      <div className="grid grid-cols-7 gap-2 text-center ds-label-caps tracking-wider text-[var(--muted-foreground)] mb-2 shrink-0">
         <div>Dom</div>
         <div>Seg</div>
         <div>Ter</div>
@@ -142,7 +142,7 @@ export function CalendarView({ filters }: { filters: TaskFiltersState }) {
                     <div
                       key={task.id}
                       onClick={() => setSelectedTask(task)}
-                      className="text-[10px] px-1.5 py-0.5 rounded-full font-semibold truncate border text-[var(--foreground)] cursor-pointer hover:brightness-95 transition-all"
+                      className="ds-meta px-1.5 py-0.5 rounded-full font-semibold truncate border text-[var(--foreground)] cursor-pointer hover:brightness-95 transition-all"
                       style={{ 
                         borderColor: `${priorityCfg.color}20`,
                         backgroundColor: `${priorityCfg.color}08`,

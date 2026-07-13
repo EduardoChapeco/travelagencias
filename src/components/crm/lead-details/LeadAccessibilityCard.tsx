@@ -38,7 +38,7 @@ export function LeadAccessibilityCard({ lead }: { lead: any }) {
           </div>
         </div>
         <div className="pt-2 border-t border-border/40">
-          <span className="text-[10px] uppercase font-bold text-muted-foreground block mb-1">
+          <span className="ds-meta uppercase font-bold text-muted-foreground block mb-1">
             Notas de Saúde / Restrições
           </span>
           <p className="text-xs text-foreground/80 leading-relaxed bg-surface-alt/30 p-2.5 rounded-2xl border border-border/40">

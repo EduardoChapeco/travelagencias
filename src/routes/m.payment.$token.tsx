@@ -142,7 +142,7 @@ function Page() {
 
       <section className="mb-8 grid grid-cols-2 gap-4">
         <div className="rounded-[var(--radius-card)] border-none/50 glass-card border-none p-5 text-center ">
-          <div className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">
+          <div className="ds-label-caps text-muted-foreground">
             Total Pago
           </div>
           <div className="mt-2 text-lg font-bold text-success">
@@ -150,7 +150,7 @@ function Page() {
           </div>
         </div>
         <div className="rounded-[var(--radius-card)] border-none/50 glass-card border-none p-5 text-center ">
-          <div className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">
+          <div className="ds-label-caps text-muted-foreground">
             Restante
           </div>
           <div className="mt-2 text-lg font-bold text-foreground">
@@ -186,16 +186,16 @@ function Page() {
                 className={`w-[calc(100%-3rem)] md:w-[calc(50%-2rem)] rounded-[var(--radius-card)] border glass-card border-none p-4  transition-all hover: ${isPaid ? "border-success/30 bg-success/5" : isOverdue ? "border-danger/40 bg-danger/5" : "border-border/50 hover:border-brand/40"}`}
               >
                 <div className="flex items-center justify-between mb-2">
-                  <div className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">
+                  <div className="ds-label-caps text-muted-foreground">
                     Parcela {index + 1}
                   </div>
                   {isPaid ? (
-                    <span className="text-[10px] font-bold uppercase tracking-widest text-success">
+                    <span className="ds-label-caps text-success">
                       Quitada
                     </span>
                   ) : (
                     <span
-                      className={`text-[10px] font-bold uppercase tracking-widest ${isOverdue ? "text-danger" : "text-warning"}`}
+                      className={`ds-label-caps ${isOverdue ? "text-danger" : "text-warning"}`}
                     >
                       {isOverdue ? "Atrasada" : "Pendente"}
                     </span>
@@ -206,7 +206,7 @@ function Page() {
                     <div className="text-lg font-bold text-foreground">
                       {inst.amount.toLocaleString("pt-BR", { style: "currency", currency: "BRL" })}
                     </div>
-                    <div className="text-[11px] font-medium text-muted-foreground mt-0.5">
+                    <div className="ds-meta font-medium text-muted-foreground mt-0.5">
                       Vence em: {new Date(inst.due_date).toLocaleDateString("pt-BR")}
                     </div>
                   </div>
@@ -246,7 +246,7 @@ function Page() {
                   <div className="mb-4 text-xs font-semibold uppercase tracking-widest text-muted-foreground">
                     PIX Copia e Cola
                   </div>
-                  <div className="break-all rounded-full glass-card border-none p-3 font-mono text-[10px] text-foreground ring-1 ring-border ">
+                  <div className="break-all rounded-full glass-card border-none p-3 font-mono ds-meta text-foreground ring-1 ring-border ">
                     {selectedInst.external_link}
                   </div>
                   <PrimaryButton
@@ -257,7 +257,7 @@ function Page() {
                   </PrimaryButton>
 
                   <div className="mt-6 border-t border-border/50 pt-4 text-left">
-                    <label className="block text-[10px] font-bold uppercase tracking-wider text-muted-foreground mb-2">
+                    <label className="block ds-label-caps tracking-wider text-muted-foreground mb-2">
                       Enviar Comprovante de Pagamento
                     </label>
                     <div className="space-y-2">

@@ -49,7 +49,7 @@ function TermsPage() {
       <main className="flex-1 max-w-3xl mx-auto py-12 px-6 w-full">
         <div className="space-y-8">
           <div>
-            <span className="text-[10px] font-bold text-brand uppercase tracking-wider bg-brand/10 px-2 py-1 rounded">
+            <span className="ds-meta font-bold text-brand uppercase tracking-wider bg-brand/10 px-2 py-1 rounded">
               Contrato de Adesão Digital
             </span>
             <h1 className="text-3xl font-black text-foreground mt-3 tracking-tight">Termos de Uso</h1>

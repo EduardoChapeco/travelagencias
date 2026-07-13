@@ -119,7 +119,7 @@ export function NewCard({
           />
         </Field>
         <div className="rounded-2xl border border-border bg-surface-alt/40 p-3">
-          <div className="mb-1.5 text-[11px] font-semibold text-muted-foreground">
+          <div className="mb-1.5 ds-meta font-semibold text-muted-foreground">
             {passengersList.length > 0
               ? `Checklist gerado de ${passengersList.length} passageiros reais:`
               : "Checklist padrão gerado automaticamente:"}
@@ -129,13 +129,13 @@ export function NewCard({
               passengersList.map((p, i) => (
                 <div
                   key={i}
-                  className="flex items-center gap-1.5 text-[11px] text-muted-foreground font-medium"
+                  className="flex items-center gap-1.5 ds-meta text-muted-foreground font-medium"
                 >
                   <Square className="h-3 w-3 text-brand" /> {p.full_name}
                 </div>
               ))
             ) : (
-              <div className="flex items-center gap-1.5 text-[11px] text-muted-foreground">
+              <div className="flex items-center gap-1.5 ds-meta text-muted-foreground">
                 <AlertTriangle className="h-3 w-3 text-warning" /> Sem passageiros na viagem. Usando
                 checklist genérico.
               </div>

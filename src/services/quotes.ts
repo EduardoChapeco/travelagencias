@@ -453,3 +453,55 @@ export async function createQuoteSnapshot(
   }
 }
 
+/**
+ * Exclui uma cotação pelo ID.
+ * Centralizado no serviço para remover chamada direta ao supabase da rota.
+ */
+export async function deleteQuoteRequest(id: string): Promise<void> {
+  const { error } = await supabase.from("quote_requests").delete().eq("id", id);
+  if (error) throw error;
+}
+
+/**
+ * Obtém o papel (role) do usuário autenticado dentro da agência.
+ * Centralizado aqui para evitar chamadas duplicadas ao supabase.auth nas rotas.
+ */
+export async function getCurrentUserRole(agencyId: string): Promise<string> {
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) return "agent";
+  const { data } = await supabase
+    .from("user_roles")
+    .select("role")
+    .eq("user_id", user.id)
+    .eq("agency_id", agencyId)
+    .maybeSingle();
+  return data?.role || "agent";
+}
+
+/**
+ * Obtém o ID do usuário autenticado atual.
+ * Centralizado para evitar chamadas dispersas ao supabase.auth nas rotas.
+ */
+export async function getCurrentUserId(): Promise<string> {
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) throw new Error("Sessão expirada");
+  return user.id;
+}
+
+/**
+ * Invoca a Edge Function `ai-orchestrator` com prompt e sistema.
+ * Centralizado para remover chamada direta a supabase.functions nas rotas.
+ */
+export async function invokeAiOrchestrator(
+  prompt: string,
+  systemPrompt: string,
+  modelPreference: "smart" | "fast" = "smart",
+): Promise<string> {
+  const { data, error } = await supabase.functions.invoke("ai-orchestrator", {
+    body: { action: "completion", prompt, systemPrompt, modelPreference },
+  });
+  if (error) throw error;
+  return data?.result || "";
+}
+
+

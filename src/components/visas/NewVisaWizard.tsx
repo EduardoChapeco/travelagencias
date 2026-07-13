@@ -228,7 +228,7 @@ export function NewVisaWizard({
             className={`flex items-center gap-2 ${i === step ? "opacity-100" : "opacity-40"}`}
           >
             <div
-              className={`flex h-6 w-6 items-center justify-center rounded-full text-[11px] font-bold ${
+              className={`flex h-6 w-6 items-center justify-center rounded-full ds-meta font-bold ${
                 i < step
                   ? "bg-success text-success-foreground"
                   : i === step
@@ -368,7 +368,7 @@ export function NewVisaWizard({
                           
                           placeholder="Nome do documento"
                         />
-                        <p className="text-[10px] text-muted-foreground mt-1 truncate">
+                        <p className="ds-meta text-muted-foreground mt-1 truncate">
                           {(doc.file.size / 1024).toFixed(1)} KB - {doc.file.name}
                         </p>
                       </div>
@@ -413,7 +413,7 @@ export function NewVisaWizard({
 
                 {documents.length > 0 && (
                   <div className="mt-5 pt-5 border-t border-border">
-                    <div className="text-xs font-bold uppercase tracking-widest text-muted-foreground mb-3">
+                    <div className="ds-label-caps text-muted-foreground mb-3">
                       Documentos Anexados
                     </div>
                     <div className="flex flex-wrap gap-2">

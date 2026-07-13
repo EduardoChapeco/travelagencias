@@ -303,7 +303,7 @@ export function AIChatPanel({
                   )}
                 >
                   <div className="flex justify-between items-start gap-2 mb-1.5">
-                    <span className="text-[10px] uppercase tracking-wider text-white/40">Chat ID: {c.conversation_id.slice(0, 8)}</span>
+                    <span className="ds-label-caps text-white/40">Chat ID: {c.conversation_id.slice(0, 8)}</span>
                     <span className="text-[9px] text-white/40">{new Date(c.created_at).toLocaleDateString("pt-BR")}</span>
                   </div>
                   <p className="text-xs line-clamp-2 leading-relaxed text-white/80">{c.content}</p>
@@ -347,7 +347,7 @@ export function AIChatPanel({
               <div className="space-y-5">
                 {messages.map((m) => (
                   <div key={m.id}>
-                    <div className="text-[10px] uppercase tracking-wide text-white/40">
+                    <div className="ds-meta uppercase tracking-wide text-white/40">
                       {m.role === "user" ? "Você" : "Assistente"}
                     </div>
                     <div className="mt-1 relative group">
@@ -401,7 +401,7 @@ export function AIChatPanel({
                     <div 
                       key={idx} 
                       className={cn(
-                        "relative flex items-center gap-2 p-2 rounded-[var(--radius-card)] glass border border-white/15 text-white text-[11px] font-semibold shadow-md transition-all hover:scale-105 hover:z-10 cursor-pointer max-w-[140px] shrink-0",
+                        "relative flex items-center gap-2 p-2 rounded-[var(--radius-card)] glass border border-white/15 text-white ds-meta font-semibold shadow-md transition-all hover:scale-105 hover:z-10 cursor-pointer max-w-[140px] shrink-0",
                         rotClass
                       )}
                     >
@@ -506,7 +506,7 @@ export function AIChatPanel({
               <span className="text-sm font-semibold">Assistente Turis</span>
               <span
                 className={cn(
-                  "inline-flex items-center rounded-full px-1.5 py-0.5 text-[10px] font-medium transition-colors",
+                  "inline-flex items-center rounded-full px-1.5 py-0.5 ds-meta font-medium transition-colors",
                   aiStatus === "online"
                     ? "bg-emerald-50 text-emerald-700 border border-emerald-200"
                     : aiStatus === "offline"
@@ -575,7 +575,7 @@ export function AIChatPanel({
               <div className="space-y-4">
                 {messages.map((m) => (
                   <div key={m.id}>
-                    <div className="text-[10px] uppercase tracking-wide text-muted-foreground">
+                    <div className="ds-meta uppercase tracking-wide text-muted-foreground">
                       {m.role === "user" ? "Você" : "Assistente"}
                     </div>
                     <div className="mt-1 relative group">
@@ -637,7 +637,7 @@ export function AIChatPanel({
                 <div 
                   key={idx} 
                   className={cn(
-                    "relative flex items-center gap-1.5 p-1.5 rounded-2xl border border-border bg-surface-alt text-[10px] shadow-sm transition-all hover:scale-105 hover:z-10 cursor-pointer max-w-[120px] shrink-0",
+                    "relative flex items-center gap-1.5 p-1.5 rounded-2xl border border-border bg-surface-alt ds-meta shadow-sm transition-all hover:scale-105 hover:z-10 cursor-pointer max-w-[120px] shrink-0",
                     rotClass
                   )}
                 >

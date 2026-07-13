@@ -113,7 +113,7 @@ export function ProposalHistorySheet({
   return (
     <SheetPage isOpen={isOpen} onClose={onClose} title="Histórico da Cotação" width="540px">
       <div className="mb-6">
-        <span className="block text-[10px] uppercase tracking-wider text-muted-foreground font-semibold">
+        <span className="block ds-label-caps text-muted-foreground font-semibold">
           Cotação Selecionada
         </span>
         <h3 className="text-sm font-bold text-foreground mt-0.5 truncate flex items-center gap-1.5">
@@ -130,7 +130,7 @@ export function ProposalHistorySheet({
       ) : error ? (
         <div className="rounded-2xl border border-danger/20 bg-danger/5 p-4 text-center">
           <p className="text-xs text-danger font-medium">Erro ao carregar histórico</p>
-          <p className="text-[11px] text-muted-foreground mt-1">
+          <p className="ds-meta text-muted-foreground mt-1">
             {(error as any)?.message || "Ocorreu um erro ao buscar o log de atividades."}
           </p>
         </div>
@@ -138,7 +138,7 @@ export function ProposalHistorySheet({
         <div className="flex flex-col items-center justify-center py-20 text-center border border-dashed border-border rounded-[var(--radius-card)] bg-surface-alt/20">
           <History className="h-8 w-8 text-muted-foreground/60 mb-2.5" />
           <span className="text-xs font-semibold text-foreground">Sem histórico registrado</span>
-          <span className="text-[11px] text-muted-foreground mt-1 max-w-[240px]">
+          <span className="ds-meta text-muted-foreground mt-1 max-w-[240px]">
             Nenhuma ação ou visualização foi gravada para esta cotação até o momento.
           </span>
         </div>
@@ -181,23 +181,23 @@ export function ProposalHistorySheet({
                   <span className="text-xs font-bold text-foreground group-hover:text-brand transition-colors">
                     {config.label}
                   </span>
-                  <span className="flex items-center gap-1 text-[10px] text-muted-foreground">
+                  <span className="flex items-center gap-1 ds-meta text-muted-foreground">
                     <Clock className="h-3 w-3" />
                     {formattedDate}
                   </span>
                 </div>
 
                 {/* Actor & Description */}
-                <div className="mt-1 flex items-center gap-1.5 text-[11px] text-muted-foreground">
+                <div className="mt-1 flex items-center gap-1.5 ds-meta text-muted-foreground">
                   <User className="h-3 w-3 text-muted-foreground/80" />
                   <span className="font-medium text-foreground/80">{actorName}</span>
-                  <span className="text-[10px] text-muted-foreground/60">•</span>
+                  <span className="ds-meta text-muted-foreground/60">•</span>
                   <span>{config.desc}</span>
                 </div>
 
                 {/* Extra Details Box */}
                 {extraDetails.length > 0 && (
-                  <div className="mt-2.5 rounded-2xl border border-border/55 bg-surface-alt/30 p-2.5 text-[10px] space-y-1">
+                  <div className="mt-2.5 rounded-2xl border border-border/55 bg-surface-alt/30 p-2.5 ds-meta space-y-1">
                     <span className="block font-bold text-[9px] uppercase tracking-wider text-muted-foreground/80 mb-1">
                       Detalhes do Evento
                     </span>

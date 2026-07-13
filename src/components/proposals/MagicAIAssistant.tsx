@@ -89,7 +89,7 @@ Não inclua crases markdown nem texto adicional.`;
           </p>
 
           <div>
-            <label className="text-[10px] uppercase font-bold tracking-widest text-muted-foreground mb-2 block">
+            <label className="ds-meta uppercase font-bold tracking-widest text-muted-foreground mb-2 block">
               Instruções para o Assistente
             </label>
             <Textarea

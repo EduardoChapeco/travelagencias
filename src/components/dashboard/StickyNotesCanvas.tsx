@@ -214,7 +214,7 @@ export function StickyNotesCanvas({ renderNoteContent, onNoteFocusChange }: Stic
           <Button
             onClick={() => addMutation.mutate()}
             disabled={addMutation.isPending}
-            className="flex items-center gap-1.5 h-9 px-3.5 rounded-full bg-white/8 hover:bg-white/15 text-white border border-white/10 transition-all cursor-pointer disabled:opacity-50 text-[11px] font-black uppercase tracking-wider"
+            className="flex items-center gap-1.5 h-9 px-3.5 rounded-full bg-white/8 hover:bg-white/15 text-white border border-white/10 transition-all cursor-pointer disabled:opacity-50 ds-meta font-black uppercase tracking-wider"
             title="Adicionar Nota"
           >
             <Plus className="w-3.5 h-3.5" />
@@ -226,7 +226,7 @@ export function StickyNotesCanvas({ renderNoteContent, onNoteFocusChange }: Stic
         <Button
           onClick={() => setIsEditable(!isEditable)}
           className={cn(
-            "flex items-center gap-1.5 h-9 px-4 rounded-full transition-all cursor-pointer text-[11px] font-black uppercase tracking-wider",
+            "flex items-center gap-1.5 h-9 px-4 rounded-full transition-all cursor-pointer ds-meta font-black uppercase tracking-wider",
             isEditable
               ? "bg-emerald-500/20 hover:bg-emerald-500/30 text-emerald-300 border border-emerald-500/25"
               : "bg-white/8 hover:bg-white/15 text-white/70 hover:text-white"

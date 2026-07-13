@@ -2,6 +2,7 @@
  * exportBoardingListXlsx
  * Exporta a lista de embarque (boarding cards) em Excel (.xlsx) ou CSV.
  */
+import { BOARDING_STATUS_MAP } from "./constants/status";
 
 export interface BoardingExportCard {
   pnr?: string | null;
@@ -24,12 +25,7 @@ export interface BoardingExportCard {
   notes?: string | null;
 }
 
-const BOARDING_STATUS_LABEL: Record<string, string> = {
-  pending: "Pendente",
-  action_needed: "Atenção",
-  checked_in: "Check-in Emitido",
-  completed: "Embarcado",
-};
+
 
 export async function exportBoardingListXlsx(
   cards: BoardingExportCard[],
@@ -67,7 +63,7 @@ export async function exportBoardingListXlsx(
       Guia: card.guide_name ?? "—",
       "Telefone Guia": card.guide_phone ?? "—",
       Checklist: checklistStr,
-      Status: BOARDING_STATUS_LABEL[card.status] ?? card.status,
+      Status: BOARDING_STATUS_MAP[card.status]?.label ?? card.status,
       Alertas: (card.alerts ?? []).join("; ") || "—",
       Observações: card.notes ?? "—",
     };

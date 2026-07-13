@@ -68,7 +68,7 @@ export function SectionIncludes({ draft, save }: Props) {
         type="button"
         onClick={handleAISuggestions}
         disabled={loading}
-        className="w-full flex items-center justify-center gap-2 py-2.5 px-4 rounded-[var(--radius-card)] border border-brand/20 bg-brand/5 text-brand text-xs font-bold uppercase tracking-wider hover:bg-brand/10 active:scale-[0.98] transition-all disabled:opacity-50"
+        className="w-full flex items-center justify-center gap-2 py-2.5 px-4 rounded-[var(--radius-card)] border border-brand/20 bg-brand/5 text-brand ds-label-caps tracking-wider hover:bg-brand/10 active:scale-[0.98] transition-all disabled:opacity-50"
       >
         {loading ? (
           <Loader2 className="h-4 w-4 animate-spin" />

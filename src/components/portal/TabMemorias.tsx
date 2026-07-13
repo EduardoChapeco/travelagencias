@@ -92,7 +92,7 @@ export function TabMemorias({
                     className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                   />
                   <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-end p-3">
-                    <span className="text-[10px] text-white font-medium">
+                    <span className="ds-meta text-white font-medium">
                       {fmtDate(m.created_at)}
                     </span>
                   </div>

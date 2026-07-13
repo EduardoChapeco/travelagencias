@@ -130,16 +130,16 @@ function Column({
               className="h-2.5 w-2.5 rounded-full ring-2 ring-surface"
               style={{ background: stage.color }}
             />
-            <span className="text-[11px] font-extrabold uppercase tracking-widest text-foreground">
+            <span className="ds-meta font-extrabold uppercase tracking-widest text-foreground">
               {stage.name}
             </span>
           </div>
-          <span className="flex h-5 min-w-[20px] items-center justify-center rounded-full bg-white/10 px-1.5 text-[10px] font-bold text-white/85 border border-white/5">
+          <span className="flex h-5 min-w-[20px] items-center justify-center rounded-full bg-white/10 px-1.5 ds-meta font-bold text-white/85 border border-white/5">
             {leads.length}
           </span>
         </div>
         {totalValue > 0 && (
-          <div className="text-[10px] font-medium text-muted-foreground mt-0.5 ml-4.5">
+          <div className="ds-meta font-medium text-muted-foreground mt-0.5 ml-4.5">
             Total:{" "}
             <span className="text-foreground font-bold">
               R$ {totalValue.toLocaleString("pt-BR", { minimumFractionDigits: 2 })}
@@ -161,7 +161,7 @@ function Column({
             />
           ))}
           {leads.length === 0 && (
-            <div className="flex h-24 items-center justify-center rounded-2xl border border-dashed border-border/60 bg-surface-alt/10 text-[10px] font-bold uppercase tracking-widest text-muted-foreground transition-colors hover:border-brand/30">
+            <div className="flex h-24 items-center justify-center rounded-2xl border border-dashed border-border/60 bg-surface-alt/10 ds-label-caps text-muted-foreground transition-colors hover:border-brand/30">
               Solte leads aqui
             </div>
           )}
@@ -196,12 +196,12 @@ function MobileStageAccordion({
             <span className="text-xs font-extrabold uppercase tracking-widest text-foreground">
               {stage.name}
             </span>
-            <span className="flex h-5 min-w-[20px] items-center justify-center rounded-full bg-white/10 px-1.5 text-[10px] font-bold text-white/85 border border-white/5">
+            <span className="flex h-5 min-w-[20px] items-center justify-center rounded-full bg-white/10 px-1.5 ds-meta font-bold text-white/85 border border-white/5">
               {leads.length}
             </span>
           </div>
           {totalValue > 0 && (
-            <div className="text-[10px] font-medium text-muted-foreground mt-0.5 ml-4">
+            <div className="ds-meta font-medium text-muted-foreground mt-0.5 ml-4">
               Total:{" "}
               <span className="text-foreground font-bold">
                 R$ {totalValue.toLocaleString("pt-BR", { minimumFractionDigits: 2 })}
@@ -209,7 +209,7 @@ function MobileStageAccordion({
             </div>
           )}
         </div>
-        <span className="text-muted-foreground text-[10px] font-bold uppercase tracking-wider">
+        <span className="text-muted-foreground ds-label-caps tracking-wider">
           {expanded ? "Recolher ▲" : "Expandir ▼"}
         </span>
       </Button>
@@ -227,7 +227,7 @@ function MobileStageAccordion({
             />
           ))}
           {leads.length === 0 && (
-            <div className="py-6 text-center text-[10px] font-bold uppercase tracking-widest text-muted-foreground border border-dashed border-border/40 rounded-2xl">
+            <div className="py-6 text-center ds-label-caps text-muted-foreground border border-dashed border-border/40 rounded-2xl">
               Sem leads neste estágio
             </div>
           )}

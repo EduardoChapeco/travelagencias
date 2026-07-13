@@ -137,17 +137,17 @@ export function SectionItinerary({ draft, save }: Props) {
           </div>
           <div className="mt-2 space-y-2 border-t border-border/50 pt-3">
             <div className="flex items-center justify-between">
-              <span className="block text-[10px] uppercase tracking-wide text-muted-foreground">Galeria do Dia</span>
+              <span className="block ds-meta uppercase tracking-wide text-muted-foreground">Galeria do Dia</span>
               <div className="flex gap-2">
                 <Button
                   type="button"
                   onClick={() => setShowUnsplash(showUnsplash === i ? null : i)}
-                  className="flex h-6 items-center justify-center rounded border border-border/60 bg-surface px-2 text-[10px] hover:bg-surface-alt transition-colors"
+                  className="flex h-6 items-center justify-center rounded border border-border/60 bg-surface px-2 ds-meta hover:bg-surface-alt transition-colors"
                   title="Buscar no Unsplash"
                 >
                   <Search className="h-3 w-3 mr-1" /> Buscar
                 </Button>
-                <label className="flex h-6 cursor-pointer items-center justify-center rounded bg-brand/10 px-2 text-[10px] font-bold text-brand hover:bg-brand/20 transition-colors">
+                <label className="flex h-6 cursor-pointer items-center justify-center rounded bg-brand/10 px-2 ds-meta font-bold text-brand hover:bg-brand/20 transition-colors">
                   {uploadingImage === i ? "Enviando..." : "+ Fazer Upload"}
                   <Input
                     type="file"
@@ -166,12 +166,12 @@ export function SectionItinerary({ draft, save }: Props) {
             {showUnsplash === i && (
               <div className="rounded-2xl border border-border bg-surface p-3 mb-2">
                 <div className="flex items-center justify-between mb-2">
-                  <span className="text-[10px] uppercase tracking-wide font-semibold">
+                  <span className="ds-meta uppercase tracking-wide font-semibold">
                     Buscar imagem para o dia
                   </span>
                   <Button
                     onClick={() => setShowUnsplash(null)}
-                    className="text-muted-foreground hover:text-foreground text-[10px]"
+                    className="text-muted-foreground hover:text-foreground ds-meta"
                   >
                     Fechar
                   </Button>
@@ -210,7 +210,7 @@ export function SectionItinerary({ draft, save }: Props) {
                 ))}
               </div>
             ) : (
-              <div className="text-[10px] text-muted-foreground/60 italic">Nenhuma imagem. As URLs também podem ser coladas abaixo.</div>
+              <div className="ds-meta text-muted-foreground/60 italic">Nenhuma imagem. As URLs também podem ser coladas abaixo.</div>
             )}
             <Textarea
               className={SMALL_INPUT + " resize-none py-1.5 text-xs"} value={(d.images ?? []).join(",\n")}
@@ -223,7 +223,7 @@ export function SectionItinerary({ draft, save }: Props) {
               type="button"
               onClick={() => refineWithAI(i)}
               disabled={refining === i}
-              className="flex items-center gap-1.5 text-[10px] font-semibold text-brand hover:text-brand/80 disabled:opacity-60 transition-all"
+              className="flex items-center gap-1.5 ds-meta font-semibold text-brand hover:text-brand/80 disabled:opacity-60 transition-all"
             >
               {refining === i ? (
                 <Loader2 className="h-3 w-3 animate-spin" />

@@ -58,7 +58,7 @@ export function ClientStoreWidget({ agencyId, themeColor }: { agencyId: string; 
                   Sem imagem
                 </div>
               )}
-              <span className="absolute top-2 right-2 bg-black/70 text-white text-[10px] px-2 py-1 rounded font-bold backdrop-blur-sm">
+              <span className="absolute top-2 right-2 bg-black/70 text-white ds-meta px-2 py-1 rounded font-bold backdrop-blur-sm">
                 R$ {tour.base_price ? tour.base_price.toFixed(2) : "0,00"}
               </span>
             </div>

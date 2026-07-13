@@ -116,7 +116,7 @@ Gere um objeto JSON contendo exatamente as seguintes chaves. Não inclua nenhuma
           <Brain className="h-4 w-4 text-brand" />
           Análise de Perfil
         </div>
-        <div className="text-[10px] font-bold text-brand opacity-70">BETA</div>
+        <div className="ds-meta font-bold text-brand opacity-70">BETA</div>
       </Button>
 
       {open && (
@@ -147,7 +147,7 @@ Gere um objeto JSON contendo exatamente as seguintes chaves. Não inclua nenhuma
           {analysis && (
             <div className="pt-4 space-y-4">
               <div className="rounded-[var(--radius-card)] bg-surface border border-border p-4">
-                <div className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground mb-2">
+                <div className="ds-label-caps tracking-wider text-muted-foreground mb-2">
                   Resumo
                 </div>
                 <p className="text-sm leading-relaxed text-foreground">{analysis.summary}</p>
@@ -162,7 +162,7 @@ Gere um objeto JSON contendo exatamente as seguintes chaves. Não inclua nenhuma
                       : "border-danger/30 bg-danger/5"
                 }`}
               >
-                <div className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground mb-1">
+                <div className="ds-label-caps tracking-wider text-muted-foreground mb-1">
                   Score de Retenção
                 </div>
                 <div
@@ -179,7 +179,7 @@ Gere um objeto JSON contendo exatamente as seguintes chaves. Não inclua nenhuma
               </div>
 
               <div className="space-y-2">
-                <div className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
+                <div className="ds-label-caps tracking-wider text-muted-foreground">
                   Sugestões do Assistente
                 </div>
                 {analysis.suggestions.map((s: string, i: number) => (
@@ -191,7 +191,7 @@ Gere um objeto JSON contendo exatamente as seguintes chaves. Não inclua nenhuma
               </div>
 
               <div className="rounded-[var(--radius-card)] border border-brand/30 bg-brand/5 p-4">
-                <div className="text-[10px] font-bold uppercase tracking-wider text-brand mb-1">
+                <div className="ds-label-caps tracking-wider text-brand mb-1">
                   Próxima ação recomendada
                 </div>
                 <p className="text-sm font-semibold text-foreground">{analysis.nextAction}</p>

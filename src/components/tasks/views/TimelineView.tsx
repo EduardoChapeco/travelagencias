@@ -67,7 +67,7 @@ export function TimelineView({ filters }: { filters: TaskFiltersState }) {
       <div className="flex-1 overflow-auto">
         <div className="min-w-[800px] border rounded-[var(--radius-card)] overflow-hidden">
           {/* Header do Grid */}
-          <div className="grid grid-cols-12 border-b bg-[var(--surface-alt)]/50 shrink-0 text-center font-bold text-[10px] uppercase tracking-wider text-[var(--muted-foreground)]">
+          <div className="grid grid-cols-12 border-b bg-[var(--surface-alt)]/50 shrink-0 text-center font-bold ds-label-caps text-[var(--muted-foreground)]">
             <div className="col-span-4 p-3 border-r text-left">Tarefa</div>
             <div className="col-span-8 p-3 gap-1" style={{ display: "grid", gridTemplateColumns: "repeat(14, minmax(0, 1fr))" }}>
               {timelineDays.map((day, idx) => (

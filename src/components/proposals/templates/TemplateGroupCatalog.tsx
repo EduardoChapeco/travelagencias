@@ -46,7 +46,7 @@ export default function TemplateGroupCatalog({ proposal: p, agency }: TemplatePr
         </div>
 
         <div className="absolute bottom-12 left-12 max-w-xl text-white">
-          <div className="inline-flex items-center gap-2 bg-red-600 px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest mb-4">
+          <div className="inline-flex items-center gap-2 bg-red-600 px-3 py-1 rounded-full ds-meta font-black uppercase tracking-widest mb-4">
             <Users className="w-3 h-3" /> Excursão em Grupo
           </div>
           <h1
@@ -119,7 +119,7 @@ export default function TemplateGroupCatalog({ proposal: p, agency }: TemplatePr
             style={{ borderColor: brand }}
           >
             <div className="text-center mb-6 border-b border-slate-100 pb-6">
-              <div className="text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-1">
+              <div className="ds-label-caps text-slate-400 mb-1">
                 A partir de
               </div>
               <div className="text-5xl font-black tracking-tighter text-slate-900">

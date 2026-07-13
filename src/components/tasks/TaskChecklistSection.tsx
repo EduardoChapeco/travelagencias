@@ -139,7 +139,7 @@ export function TaskChecklistSection({ taskId, agencyId, onChange }: TaskCheckli
   return (
     <div className="space-y-2">
       <div className="flex items-center justify-between">
-        <label className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground flex items-center gap-1">
+        <label className="ds-label-caps tracking-wider text-muted-foreground flex items-center gap-1">
           <CheckCircle2 className="h-3 w-3" /> Checklist
           {checklist.length > 0 && (
             <span className="ml-1 font-mono text-[9px] bg-surface-alt border border-border/40 px-1.5 py-0.5 rounded text-muted-foreground">
@@ -202,7 +202,7 @@ export function TaskChecklistSection({ taskId, agencyId, onChange }: TaskCheckli
           {newCheckItem.trim() && (
             <Button
               type="submit"
-              className="h-6 px-2 text-[10px] font-bold bg-brand text-white rounded hover:bg-brand/90 transition-colors"
+              className="h-6 px-2 ds-meta font-bold bg-brand text-white rounded hover:bg-brand/90 transition-colors"
             >
               <Plus className="h-3 w-3" />
             </Button>

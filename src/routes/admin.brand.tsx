@@ -212,7 +212,7 @@ function Page() {
         {/* PREVIEW */}
         <aside className="h-fit rounded-[var(--radius-card)] border-none glass-card border-none overflow-hidden sticky top-4">
           <div className="border-b border-border px-4 py-3">
-            <div className="text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">
+            <div className="ds-meta font-semibold uppercase tracking-wide text-muted-foreground">
               Prévia do produto
             </div>
           </div>
@@ -225,7 +225,7 @@ function Page() {
             </div>
             <div className="text-xs text-muted-foreground">{tagline}</div>
             {logoUrl && <img src={logoUrl} alt="logo" className="h-10 object-contain" />}
-            <div className="space-y-1 text-[11px]">
+            <div className="space-y-1 ds-meta">
               <div className="flex justify-between">
                 <span className="text-muted-foreground">Suporte</span>
                 <span className="font-medium">{supportEmail}</span>

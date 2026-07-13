@@ -37,7 +37,7 @@ export function DesktopCustomizerModal({
 
         {/* Wallpaper Custom URL */}
         <div className="space-y-2">
-          <label className="text-[10px] font-black uppercase tracking-widest text-white/70">Papel de Parede (URL)</label>
+          <label className="ds-meta font-black uppercase tracking-widest text-white/70">Papel de Parede (URL)</label>
           <div className="flex gap-2">
             <Input
               type="text"
@@ -97,7 +97,7 @@ export function DesktopCustomizerModal({
               onChange={(e) => theme.setTheme({ glassOpacity: Number(e.target.value) })}
               className="w-full h-1.5 bg-white/10 appearance-none cursor-pointer accent-white"
             />
-            <p className="text-[10px] text-white/40">
+            <p className="ds-meta text-white/40">
               {theme.glassOpacity <= 15 ? "Blur intenso — wallpaper bem visível" : theme.glassOpacity <= 30 ? "Equilíbrio (recomendado)" : "Mais opaco"}
             </p>
           </div>

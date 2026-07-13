@@ -192,7 +192,7 @@ Contexto fornecido: ${context}`;
           type="submit" 
           disabled={loading} 
           onClick={handleGenerate}
-          className="h-12 flex-1 rounded-full bg-brand text-white font-semibold shadow-lg shadow-brand/30 hover:scale-[1.02] transition-transform flex items-center justify-center gap-2"
+          className="h-12 flex-1 rounded-full bg-brand text-white font-semibold hover:scale-[1.02] transition-transform flex items-center justify-center gap-2"
         >
           <Wand2 className="w-4 h-4" />
           {loading ? "Processando..." : "Gerar"}

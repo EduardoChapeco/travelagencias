@@ -350,7 +350,7 @@ export function ExportPdfButton({ proposal }: Props) {
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end" className="w-56">
-          <DropdownMenuLabel className="text-[10px] uppercase tracking-wide text-muted-foreground font-normal pb-1">
+          <DropdownMenuLabel className="ds-meta uppercase tracking-wide text-muted-foreground font-normal pb-1">
             Exportar via Navegador
           </DropdownMenuLabel>
           <DropdownMenuItem onClick={exportPdf} className="cursor-pointer">
@@ -366,7 +366,7 @@ export function ExportPdfButton({ proposal }: Props) {
             Imagem JPEG (Comprimida)
           </DropdownMenuItem>
           <DropdownMenuSeparator />
-          <DropdownMenuLabel className="text-[10px] uppercase tracking-wide text-muted-foreground font-normal pb-1">
+          <DropdownMenuLabel className="ds-meta uppercase tracking-wide text-muted-foreground font-normal pb-1">
             Exportar via Servidor
           </DropdownMenuLabel>
           <DropdownMenuItem onClick={exportServerPdf} className="cursor-pointer" disabled={busy}>

@@ -5,7 +5,8 @@ import { supabase } from "@/integrations/supabase/client";
 import { Plus } from "lucide-react";
 import { FormInput as Input } from "@/components/ui/input";
 import { Field } from "@/components/ui/field";
-import { PrimaryButton, GhostButton , Button } from "@/components/ui/button";
+import { PrimaryButton, GhostButton, Button } from "@/components/ui/button";
+import { CONTRACT_STATUS_MAP } from "@/lib/constants/status";
 import { StatusBadge } from "@/components/ui/badge";
 import { FormTextarea as Textarea } from "@/components/ui/textarea";
 
@@ -19,23 +20,7 @@ type Addendum = {
   signed_at?: string | null;
 };
 
-const STATUS_LABEL: Record<string, string> = {
-  draft: "Rascunho",
-  sent: "Enviado",
-  viewed: "Visualizado",
-  pending_signature: "Aguardando assinatura",
-  signed: "Assinado",
-  cancelled: "Cancelado",
-};
 
-const STATUS_TONE: Record<string, "neutral" | "info" | "warning" | "success" | "danger"> = {
-  draft: "neutral",
-  sent: "info",
-  viewed: "warning",
-  pending_signature: "warning",
-  signed: "success",
-  cancelled: "danger",
-};
 
 export function ContractAddendums({
   contractId,
@@ -159,14 +144,14 @@ export function ContractAddendums({
             >
               <div className="flex items-center justify-between">
                 <span className="font-bold text-foreground">{ad.title}</span>
-                <StatusBadge tone={STATUS_TONE[ad.status] || "neutral"}>
-                  {STATUS_LABEL[ad.status] || ad.status}
+                <StatusBadge tone={CONTRACT_STATUS_MAP[ad.status]?.tone ?? "neutral"}>
+                  {CONTRACT_STATUS_MAP[ad.status]?.label ?? ad.status}
                 </StatusBadge>
               </div>
               <p className="text-foreground/80 leading-relaxed whitespace-pre-wrap font-medium">
                 {ad.content}
               </p>
-              <div className="flex items-center justify-between text-[10px] text-muted-foreground border-t border-border/30 pt-2 font-mono">
+              <div className="flex items-center justify-between ds-meta text-muted-foreground border-t border-border/30 pt-2 font-mono">
                 <span>Criado: {new Date(ad.created_at).toLocaleDateString("pt-BR")}</span>
                 {ad.signed_at && (
                   <span className="text-success font-semibold">

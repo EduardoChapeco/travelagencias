@@ -31,7 +31,7 @@ export default function TemplateExecutivo({ proposal: p, agency }: TemplateProps
           <div className="text-2xl font-bold tracking-tight text-slate-900">{vm.agency.name}</div>
         )}
         <div className="text-right">
-          <div className="text-[10px] font-bold uppercase tracking-widest text-slate-400">
+          <div className="ds-label-caps text-slate-400">
             Proposta Comercial
           </div>
           <div className="text-2xl font-bold text-slate-900">#{p.number}</div>
@@ -58,7 +58,7 @@ export default function TemplateExecutivo({ proposal: p, agency }: TemplateProps
       <div className="border border-slate-200 rounded-[var(--radius-card)] p-8 mb-16 break-inside-avoid">
         <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
           <div>
-            <div className="text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-1">
+            <div className="ds-label-caps text-slate-400 mb-1">
               Aos cuidados de
             </div>
             <div className="font-semibold text-slate-900">
@@ -66,13 +66,13 @@ export default function TemplateExecutivo({ proposal: p, agency }: TemplateProps
             </div>
           </div>
           <div>
-            <div className="text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-1">
+            <div className="ds-label-caps text-slate-400 mb-1">
               Destino
             </div>
             <div className="font-semibold text-slate-900">{p.destination || "—"}</div>
           </div>
           <div>
-            <div className="text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-1">
+            <div className="ds-label-caps text-slate-400 mb-1">
               Período
             </div>
             <div className="font-semibold text-slate-900">
@@ -81,7 +81,7 @@ export default function TemplateExecutivo({ proposal: p, agency }: TemplateProps
             </div>
           </div>
           <div>
-            <div className="text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-1">
+            <div className="ds-label-caps text-slate-400 mb-1">
               Passageiros
             </div>
             <div className="font-semibold text-slate-900">
@@ -102,7 +102,7 @@ export default function TemplateExecutivo({ proposal: p, agency }: TemplateProps
               {p.flights!.map((f, i) => (
                 <div key={i} className="border border-slate-200 rounded-[var(--radius-card)] p-5 break-inside-avoid">
                   <div className="flex justify-between items-center mb-4">
-                    <span className="text-xs font-bold uppercase tracking-widest text-slate-500">
+                    <span className="ds-label-caps text-slate-500">
                       {f.airline || "Cia Aérea"}
                     </span>
                     <span className="text-xs font-mono text-slate-500 bg-slate-100 px-2 py-1 rounded">
@@ -118,7 +118,7 @@ export default function TemplateExecutivo({ proposal: p, agency }: TemplateProps
                     </div>
                     <div className="flex-1 px-8 flex flex-col items-center">
                       <div className="w-full h-px bg-slate-200 mb-1" />
-                      <div className="text-[10px] text-slate-400 uppercase font-bold tracking-widest">
+                      <div className="ds-meta text-slate-400 uppercase font-bold tracking-widest">
                         {f.stops === 0 ? "Direto" : `${f.stops} paradas`}
                       </div>
                     </div>
@@ -161,13 +161,13 @@ export default function TemplateExecutivo({ proposal: p, agency }: TemplateProps
                         <div className="text-lg font-bold text-slate-900">{h.name}</div>
                         <div className="text-sm text-slate-500">{h.city}</div>
                       </div>
-                      <div className="bg-slate-100 px-3 py-1 rounded text-[10px] font-bold uppercase tracking-widest text-slate-600">
+                      <div className="bg-slate-100 px-3 py-1 rounded ds-label-caps text-slate-600">
                         {h.meal_plan || "SH"}
                       </div>
                     </div>
                     <div className="grid grid-cols-2 gap-4 mt-6">
                       <div>
-                        <div className="text-[10px] font-bold uppercase tracking-widest text-slate-400">
+                        <div className="ds-label-caps text-slate-400">
                           Check-in
                         </div>
                         <div className="text-sm font-semibold text-slate-700">
@@ -175,7 +175,7 @@ export default function TemplateExecutivo({ proposal: p, agency }: TemplateProps
                         </div>
                       </div>
                       <div>
-                        <div className="text-[10px] font-bold uppercase tracking-widest text-slate-400">
+                        <div className="ds-label-caps text-slate-400">
                           Check-out
                         </div>
                         <div className="text-sm font-semibold text-slate-700">
@@ -246,7 +246,7 @@ export default function TemplateExecutivo({ proposal: p, agency }: TemplateProps
 
             <div className="flex flex-col md:flex-row justify-between items-start gap-12">
               <div className="flex-1">
-                <div className="text-[10px] uppercase font-bold tracking-widest text-slate-400 mb-2">
+                <div className="ds-meta uppercase font-bold tracking-widest text-slate-400 mb-2">
                   Valor da Proposta
                 </div>
                 <div
@@ -268,7 +268,7 @@ export default function TemplateExecutivo({ proposal: p, agency }: TemplateProps
 
               <div className="w-full md:w-[45%] space-y-4">
                 <div className="bg-white/10 border border-white/20 rounded-[var(--radius-card)] p-5">
-                  <div className="text-[10px] uppercase font-bold tracking-widest text-slate-400 mb-2">
+                  <div className="ds-meta uppercase font-bold tracking-widest text-slate-400 mb-2">
                     Cartão de Crédito
                   </div>
                   <div className="text-lg font-semibold text-white">
@@ -281,10 +281,10 @@ export default function TemplateExecutivo({ proposal: p, agency }: TemplateProps
                   style={{ borderColor: brand === "#0f172a" ? "#38bdf8" : brand }}
                 >
                   <div className="flex justify-between items-start mb-2">
-                    <div className="text-[10px] uppercase font-bold tracking-widest text-slate-500">
+                    <div className="ds-meta uppercase font-bold tracking-widest text-slate-500">
                       À vista (PIX)
                     </div>
-                    <div className="bg-emerald-100 text-emerald-700 px-2 py-0.5 rounded text-[10px] font-bold">
+                    <div className="bg-emerald-100 text-emerald-700 px-2 py-0.5 rounded ds-meta font-bold">
                       -{vm.totals.descontoPixPercentual}%
                     </div>
                   </div>
@@ -295,7 +295,7 @@ export default function TemplateExecutivo({ proposal: p, agency }: TemplateProps
           </div>
 
           {p.terms && (
-            <div className="mt-6 text-[10px] text-slate-500 text-justify leading-relaxed">
+            <div className="mt-6 ds-meta text-slate-500 text-justify leading-relaxed">
               {p.terms}
             </div>
           )}

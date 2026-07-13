@@ -104,7 +104,7 @@ function Page() {
         <div className="mt-4 flex flex-col items-center justify-center py-8 px-4 text-center rounded-[var(--radius-card)] border border-red-200 bg-red-50/60 max-w-xl mx-auto">
           <AlertCircle className="h-5 w-5 text-red-600 mb-1.5" />
           <h3 className="text-xs font-bold text-red-800">Falha ao Carregar Auditoria</h3>
-          <p className="text-[11px] text-red-600 mt-0.5">
+          <p className="ds-meta text-red-600 mt-0.5">
             {q.error instanceof Error ? q.error.message : "Erro de conexão."}
           </p>
         </div>
@@ -143,10 +143,10 @@ function Page() {
                   <td className="px-3 py-2.5 text-xs text-muted-foreground">
                     {fmtDate(e.created_at)}
                   </td>
-                  <td className="px-3 py-2.5 font-mono text-[11px] font-semibold text-foreground/80">
+                  <td className="px-3 py-2.5 font-mono ds-meta font-semibold text-foreground/80">
                     {e.action}
                     {e.entity_type && (
-                      <div className="text-[10px] text-muted-foreground mt-0.5">
+                      <div className="ds-meta text-muted-foreground mt-0.5">
                         {e.entity_type}
                       </div>
                     )}
@@ -162,10 +162,10 @@ function Page() {
                     {e.actor_name ? (
                       <span className="text-foreground">{e.actor_name}</span>
                     ) : (
-                      <span className="font-mono text-[10px]">{e.actor_type ?? "—"}</span>
+                      <span className="font-mono ds-meta">{e.actor_type ?? "—"}</span>
                     )}
                   </td>
-                  <td className="px-3 py-2.5 font-mono text-[10px] text-muted-foreground">
+                  <td className="px-3 py-2.5 font-mono ds-meta text-muted-foreground">
                     {e.ip_address ?? "—"}
                   </td>
                 </tr>

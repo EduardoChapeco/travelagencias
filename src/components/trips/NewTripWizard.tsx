@@ -23,6 +23,7 @@ import { createPortal } from "react-dom";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { SheetPage } from "@/components/ui/sheet";
 
 const STEPS = ["Destino e Datas", "Passageiros", "Financeiro e Status", "Revisão"];
 
@@ -251,26 +252,18 @@ export function NewTripWizard({
 
   const selectedClient = clientsQ.data?.find((c) => c.id === watchClientId);
 
-  return createPortal(
-    <div className="fixed inset-0 z-50 flex justify-end">
-      <div className="absolute inset-0 bg-overlay" onClick={onClose} />
-      <div className="relative flex h-full flex-col bg-surface border-l border-border transition-transform duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] w-[clamp(480px,45vw,700px)]">
-        {/* Header */}
-        <div className="flex min-h-[var(--ds-toolbar-height)] shrink-0 items-center justify-between border-b border-border px-6 glass-toolbar">
-          <div>
-            <h2 className="text-base font-semibold">Novo Roteiro de Viagem</h2>
-            <p className="text-[11px] text-muted-foreground">
-              Gestão completa de viagens, orçamentos e passageiros.
-            </p>
-          </div>
-          <Button
-            type="button"
-            onClick={onClose}
-            className="flex h-8 w-8 items-center justify-center rounded-full text-muted-foreground hover:bg-surface-alt hover:text-foreground transition-colors"
-          >
-            <X className="h-4 w-4" />
-          </Button>
-        </div>
+  return (
+    <SheetPage
+      isOpen={true}
+      onClose={onClose}
+      title="Novo Roteiro de Viagem"
+      contentClassName="flex flex-col flex-1 min-h-0 overflow-hidden"
+    >
+      <div className="px-6 pt-4 pb-2 shrink-0">
+        <p className="text-xs text-muted-foreground">
+          Gestão completa de viagens, orçamentos e passageiros.
+        </p>
+      </div>
 
         {/* Stepper */}
         <div className="flex items-center gap-1 border-b border-border bg-surface-alt/30 px-6 py-3">
@@ -279,7 +272,7 @@ export function NewTripWizard({
               <div className={cn("flex items-center gap-2", i !== step && "opacity-40")}>
                 <div
                   className={cn(
-                    "flex h-6 w-6 items-center justify-center rounded-full text-[11px] font-bold",
+                    "flex h-6 w-6 items-center justify-center rounded-full ds-meta font-bold",
                     i < step
                       ? "bg-success text-success-foreground"
                       : i === step
@@ -492,7 +485,7 @@ export function NewTripWizard({
                       <div className="flex items-center gap-2">
                         <Tag className="h-4 w-4 text-muted-foreground" />
                         <span className="text-muted-foreground">Status:</span>
-                        <span className="font-medium text-foreground uppercase tracking-widest text-[10px] bg-surface-alt px-2 py-0.5 rounded">
+                        <span className="font-medium text-foreground uppercase tracking-widest ds-meta bg-surface-alt px-2 py-0.5 rounded">
                           {watchStatus}
                         </span>
                       </div>
@@ -549,8 +542,6 @@ export function NewTripWizard({
             </div>
           </div>
         </form>
-      </div>
-    </div>,
-    document.body,
+    </SheetPage>
   );
 }

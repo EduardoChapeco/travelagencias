@@ -25,7 +25,7 @@ interface Props {
 function Row({ label, value }: { label: string; value?: string | null }) {
   if (!value) return null;
   return (
-    <div className="flex gap-2 text-[11px] leading-snug">
+    <div className="flex gap-2 ds-meta leading-snug">
       <span className="shrink-0 w-28 font-semibold text-slate-500 uppercase tracking-wide">
         {label}
       </span>
@@ -143,7 +143,7 @@ export default function TemplateVoucherEmbarqueA4({
               {agency.name}
             </div>
           )}
-          <div className="text-[10px] text-slate-400 mt-0.5">Guia de Embarque</div>
+          <div className="ds-meta text-slate-400 mt-0.5">Guia de Embarque</div>
         </div>
         <div className="text-right">
           <div
@@ -153,7 +153,7 @@ export default function TemplateVoucherEmbarqueA4({
             {v.destination ?? "—"}
           </div>
           {v.general_locator && (
-            <div className="text-[10px] font-mono mt-0.5 text-slate-500">
+            <div className="ds-meta font-mono mt-0.5 text-slate-500">
               LOC: <span className="font-bold text-slate-700">{v.general_locator}</span>
             </div>
           )}
@@ -173,9 +173,9 @@ export default function TemplateVoucherEmbarqueA4({
                   {p.name}
                 </span>
                 {p.document && (
-                  <span className="text-[10px] text-slate-400">Doc: {p.document}</span>
+                  <span className="ds-meta text-slate-400">Doc: {p.document}</span>
                 )}
-                {p.seat && <span className="text-[10px] text-slate-400">Assento: {p.seat}</span>}
+                {p.seat && <span className="ds-meta text-slate-400">Assento: {p.seat}</span>}
               </div>
             ))}
           </div>
@@ -194,7 +194,7 @@ export default function TemplateVoucherEmbarqueA4({
                 >
                   {f.origin ?? "—"} → {f.destination ?? "—"}
                 </span>
-                <span className="text-[10px] font-bold bg-slate-200 text-slate-600 px-2 py-0.5 rounded-full">
+                <span className="ds-meta font-bold bg-slate-200 text-slate-600 px-2 py-0.5 rounded-full">
                   {f.class ?? "Economy"}
                 </span>
               </div>
@@ -240,7 +240,7 @@ export default function TemplateVoucherEmbarqueA4({
       {v.transfers && v.transfers.length > 0 && (
         <Section title="Transfers">
           {v.transfers.map((t, i) => (
-            <div key={i} className="flex gap-3 text-[11px] items-start mb-1">
+            <div key={i} className="flex gap-3 ds-meta items-start mb-1">
               <span className="shrink-0 font-bold text-slate-500">{t.type ?? "Transfer"}</span>
               <span className="flex-1">
                 {t.origin} → {t.destination}
@@ -267,10 +267,10 @@ export default function TemplateVoucherEmbarqueA4({
       {v.emergency_contacts && v.emergency_contacts.length > 0 && (
         <Section title="Contatos de Emergência">
           {v.emergency_contacts.map((c: any, i: number) => (
-            <div key={i} className="flex gap-4 text-[11px] mb-1">
+            <div key={i} className="flex gap-4 ds-meta mb-1">
               <span className="font-bold w-32 shrink-0">{c.name}</span>
               <span className="text-slate-500">{c.phone}</span>
-              {c.role && <span className="text-slate-400 text-[10px]">{c.role}</span>}
+              {c.role && <span className="text-slate-400 ds-meta">{c.role}</span>}
             </div>
           ))}
         </Section>
@@ -288,28 +288,28 @@ export default function TemplateVoucherEmbarqueA4({
             </div>
             
             <div className="grid grid-cols-2 md:grid-cols-4 gap-x-4 gap-y-2.5">
-              <div className="flex items-start gap-1.5 text-[11px]">
+              <div className="flex items-start gap-1.5 ds-meta">
                 <Languages className="h-3.5 w-3.5 text-slate-400 shrink-0 mt-0.5" />
                 <div>
                   <span className="block font-bold text-slate-500 uppercase tracking-wide text-[9px]">Idioma</span>
                   <span className="text-slate-800 font-medium">{dest.language || "Português"}</span>
                 </div>
               </div>
-              <div className="flex items-start gap-1.5 text-[11px]">
+              <div className="flex items-start gap-1.5 ds-meta">
                 <DollarSign className="h-3.5 w-3.5 text-slate-400 shrink-0 mt-0.5" />
                 <div>
                   <span className="block font-bold text-slate-500 uppercase tracking-wide text-[9px]">Moeda</span>
                   <span className="text-slate-800 font-medium">{dest.currency || "Real (BRL)"}</span>
                 </div>
               </div>
-              <div className="flex items-start gap-1.5 text-[11px]">
+              <div className="flex items-start gap-1.5 ds-meta">
                 <Plug className="h-3.5 w-3.5 text-slate-400 shrink-0 mt-0.5" />
                 <div>
                   <span className="block font-bold text-slate-500 uppercase tracking-wide text-[9px]">Tomada</span>
                   <span className="text-slate-800 font-medium">{dest.plug_type || "Tipo N / C"}</span>
                 </div>
               </div>
-              <div className="flex items-start gap-1.5 text-[11px]">
+              <div className="flex items-start gap-1.5 ds-meta">
                 <Clock className="h-3.5 w-3.5 text-slate-400 shrink-0 mt-0.5" />
                 <div>
                   <span className="block font-bold text-slate-500 uppercase tracking-wide text-[9px]">Fuso Horário</span>
@@ -318,7 +318,7 @@ export default function TemplateVoucherEmbarqueA4({
               </div>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-2 border-t border-slate-100 pt-2 text-[11px]">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-2 border-t border-slate-100 pt-2 ds-meta">
               {dest.visa_required != null && (
                 <div>
                   <span className="block font-bold text-slate-500 uppercase tracking-wide text-[9px]">Visto Necessário?</span>
@@ -363,7 +363,7 @@ export default function TemplateVoucherEmbarqueA4({
       {/* OBSERVAÇÕES */}
       {v.observations && (
         <Section title="Observações">
-          <p className="text-[11px] text-slate-600 leading-relaxed whitespace-pre-wrap">
+          <p className="ds-meta text-slate-600 leading-relaxed whitespace-pre-wrap">
             {v.observations}
           </p>
         </Section>
@@ -372,7 +372,7 @@ export default function TemplateVoucherEmbarqueA4({
       {/* FOOTER */}
       <div className="mt-auto pt-4 border-t border-slate-100 flex flex-col gap-2">
         {companyProfile && (
-          <div className="grid grid-cols-2 md:grid-cols-3 gap-2 text-[10px] text-slate-500 font-medium pb-2 border-b border-slate-100/30">
+          <div className="grid grid-cols-2 md:grid-cols-3 gap-2 ds-meta text-slate-500 font-medium pb-2 border-b border-slate-100/30">
             {companyProfile.cnpj && <div>CNPJ: {companyProfile.cnpj}</div>}
             {companyProfile.phone && <div>Tel: {companyProfile.phone}</div>}
             {companyProfile.email && <div>E-mail: {companyProfile.email}</div>}

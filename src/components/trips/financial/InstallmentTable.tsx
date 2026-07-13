@@ -5,12 +5,7 @@ import { type PaymentInstallment } from "@/services/trips";
 import { handleViewReceipt } from "@/utils/storage-helper";
 import { Button } from "@/components/ui/button";
 
-const INST_STATUS_TONE: Record<string, "success" | "warning" | "danger" | "neutral"> = {
-  paid: "success",
-  pending: "neutral",
-  late: "danger",
-  waived: "neutral",
-};
+import { PAYABLE_STATUS_MAP } from "@/lib/constants/status";
 
 export function InstallmentTable({
   installments,
@@ -45,14 +40,8 @@ export function InstallmentTable({
             <td className="py-2 font-mono pr-3 text-foreground">#{inst.number}</td>
             <td className="py-2 pr-3 text-muted-foreground font-mono">{fmtDate(inst.due_date)}</td>
             <td className="py-2 pr-3 flex flex-col gap-0.5">
-              <StatusBadge tone={INST_STATUS_TONE[inst.status] ?? "neutral"}>
-                {inst.status === "paid"
-                  ? "Pago"
-                  : inst.status === "late"
-                    ? "Atrasado"
-                    : inst.status === "waived"
-                      ? "Isento"
-                      : "Pendente"}
+              <StatusBadge tone={PAYABLE_STATUS_MAP[inst.status]?.tone ?? "neutral"}>
+                {PAYABLE_STATUS_MAP[inst.status]?.label ?? inst.status}
               </StatusBadge>
               {inst.status !== "paid" && inst.receipt_status === "pending" && (
                 <span className="text-[9px] text-amber-700 bg-amber-50 px-1 py-0.5 rounded font-semibold w-fit">
@@ -66,7 +55,7 @@ export function InstallmentTable({
             <td className="py-2 text-right font-mono font-semibold text-foreground">
               {money(inst.amount, currency)}
               {inst.late_fee > 0 && (
-                <div className="text-[10px] text-danger">
+                <div className="ds-meta text-danger">
                   +{money(inst.late_fee, currency)} juros
                 </div>
               )}
@@ -75,7 +64,7 @@ export function InstallmentTable({
               {inst.status !== "paid" && inst.receipt_url && (
                 <Button
                   onClick={() => handleViewReceipt(inst.receipt_url!)}
-                  className="inline-block mr-2 text-[10px] text-brand hover:underline font-bold align-middle bg-transparent border-0 p-0 cursor-pointer"
+                  className="inline-block mr-2 ds-meta text-brand hover:underline font-bold align-middle bg-transparent border-0 p-0 cursor-pointer"
                 >
                   Ver Recibo
                 </Button>
@@ -83,7 +72,7 @@ export function InstallmentTable({
               {inst.status === "pending" || inst.status === "late" ? (
                 <Button
                   onClick={() => onMarkPaid(inst.id)}
-                  className="inline-flex items-center gap-1 rounded px-2 py-1 text-[11px] font-medium text-success hover:bg-success-bg cursor-pointer align-middle"
+                  className="inline-flex items-center gap-1 rounded px-2 py-1 ds-meta font-medium text-success hover:bg-success-bg cursor-pointer align-middle"
                 >
                   <CheckCircle className="h-3.5 w-3.5" />
                   Pago

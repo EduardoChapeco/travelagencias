@@ -85,7 +85,7 @@ export function ConversationList({ conversations, selectedId, onSelect, isLoadin
                       </div>
                     </div>
                   </div>
-                  <div className="text-[10px] text-muted-foreground flex-shrink-0 ml-2 whitespace-nowrap">
+                  <div className="ds-meta text-muted-foreground flex-shrink-0 ml-2 whitespace-nowrap">
                     {conv.last_message_at ? formatDistanceToNow(new Date(conv.last_message_at), { addSuffix: true, locale: ptBR }) : ""}
                   </div>
                 </div>
@@ -96,18 +96,18 @@ export function ConversationList({ conversations, selectedId, onSelect, isLoadin
 
                 <div className="flex items-center gap-2 pl-10 mt-1 flex-wrap">
                   {conv.ai_mode && (
-                    <Badge variant="outline" className="text-[10px] h-5 px-1.5 border-none bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200">
+                    <Badge variant="outline" className="ds-meta h-5 px-1.5 border-none bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200">
                       <Sparkles className="w-3 h-3 mr-1" />
                       IA Ativa
                     </Badge>
                   )}
                   {conv.status === 'open' && (
-                    <Badge variant="outline" className="text-[10px] h-5 px-1.5 bg-green-100 text-green-800 border-none">
+                    <Badge variant="outline" className="ds-meta h-5 px-1.5 bg-green-100 text-green-800 border-none">
                       Aberto
                     </Badge>
                   )}
                   {conv.status === 'pending' && (
-                    <Badge variant="outline" className="text-[10px] h-5 px-1.5 bg-amber-100 text-amber-800 border-none">
+                    <Badge variant="outline" className="ds-meta h-5 px-1.5 bg-amber-100 text-amber-800 border-none">
                       Pendente
                     </Badge>
                   )}

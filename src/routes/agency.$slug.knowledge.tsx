@@ -11,7 +11,7 @@ import { PageHeader, EmptyState, ModuleActionButton } from "@/components/shell/P
 import { Field } from "@/components/ui/field";
 import { FormInput as Input } from "@/components/ui/input";
 import { FormTextarea as Textarea } from "@/components/ui/textarea";
-import { SimpleSheet as Sheet } from "@/components/ui/sheet";
+import { SimpleSheet as Sheet, SheetPage } from "@/components/ui/sheet";
 import { PrimaryButton, GhostButton , Button } from "@/components/ui/button";
 import { StatusBadge } from "@/components/ui/badge";
 import { RichTextEditor } from "@/components/ui/RichTextEditor";
@@ -117,7 +117,7 @@ function KnowledgePage() {
 
       {/* ARTICLES TAB */}
       {tab === "articles" && (
-        <div className="flex-1 overflow-y-auto px-4  md:pr-6 py-4 min-h-0 flex flex-col gap-4 pb-24">
+        <div className="flex-1 min-h-0 page-content page-section dock-offset">
           {q.isLoading && <div className="text-sm text-muted-foreground">Carregando…</div>}
           {filtered.length === 0 && !q.isLoading && (
             <EmptyState
@@ -135,7 +135,7 @@ function KnowledgePage() {
               >
                 <div>
                   <div className="flex items-center justify-between mb-2">
-                    <span className="text-[10px] font-semibold text-brand tracking-widest uppercase">
+                    <span className="ds-meta font-semibold text-brand tracking-widest uppercase">
                       {a.is_internal ? "Interno" : "Público"}
                     </span>
                     {a.ai_generated_at && (
@@ -152,7 +152,7 @@ function KnowledgePage() {
                   </p>
                 </div>
 
-                <div className="flex items-center justify-between pt-4 border-t border-border/40 text-[10px] font-bold text-muted-foreground uppercase tracking-wider mt-auto">
+                <div className="flex items-center justify-between pt-4 border-t border-border/40 ds-meta font-bold text-muted-foreground uppercase tracking-wider mt-auto">
                   {a.category ?? "Geral"}
                   {!a.is_internal && (
                     <span className="flex items-center gap-1">
@@ -163,7 +163,7 @@ function KnowledgePage() {
                 {a.tags?.length > 0 && (
                   <div className="mt-2 flex flex-wrap gap-1">
                     {a.tags.map((t: string) => (
-                      <span key={t} className="rounded glass bg-white/5 border-white/10 px-1.5 py-0.5 text-[10px]">
+                      <span key={t} className="rounded glass bg-white/5 border-white/10 px-1.5 py-0.5 ds-meta">
                         {t}
                       </span>
                     ))}
@@ -177,7 +177,7 @@ function KnowledgePage() {
 
       {/* PLAYBOOKS TAB */}
       {tab === "playbooks" && (
-        <div className="flex-1 overflow-y-auto px-4  md:pr-6 py-4 min-h-0 flex flex-col gap-4 pb-24">
+        <div className="flex-1 min-h-0 page-content page-section dock-offset">
           {playbooksQ.isLoading && <div className="text-sm text-muted-foreground">Carregando…</div>}
           {filteredPlaybooks.length === 0 && !playbooksQ.isLoading && (
             <EmptyState
@@ -196,7 +196,7 @@ function KnowledgePage() {
                 <div>
                   <div className="flex items-start justify-between gap-2">
                     <Workflow className="h-4 w-4 text-brand" />
-                    <span className="text-[10px] bg-brand/10 text-brand px-1.5 py-0.5 rounded font-semibold uppercase">
+                    <span className="ds-meta bg-brand/10 text-brand px-1.5 py-0.5 rounded font-semibold uppercase">
                       {pb.category || "Geral"}
                     </span>
                   </div>
@@ -218,7 +218,7 @@ function KnowledgePage() {
                     {pb.description}
                   </p>
                 </div>
-                <div className="mt-4 pt-3 border-t border-border/50 flex items-center justify-between text-[11px] text-muted-foreground">
+                <div className="mt-4 pt-3 border-t border-border/50 flex items-center justify-between ds-meta text-muted-foreground">
                   <span className="flex items-center gap-1">
                     <ClipboardList className="w-3.5 h-3.5 text-muted-foreground" />
                     {pb.steps?.length || 0} etapas definidas
@@ -231,11 +231,11 @@ function KnowledgePage() {
       )}
 
       {viewing && (
-        <Sheet onClose={() => setViewing(null)} title={viewing.title}>
-          <div className="whitespace-pre-wrap text-sm">
+        <SheetPage isOpen={true} onClose={() => setViewing(null)} title={viewing.title} width="clamp(480px, 45vw, 720px)">
+          <div className="whitespace-pre-wrap text-sm px-6 py-5">
             {viewing.content ?? <span className="text-muted-foreground">Sem conteúdo.</span>}
           </div>
-        </Sheet>
+        </SheetPage>
       )}
 
       {(open || editing) && agency && (
@@ -256,20 +256,20 @@ function KnowledgePage() {
       )}
 
       {viewingPlaybook && (
-        <Sheet onClose={() => setViewingPlaybook(null)} title={viewingPlaybook.title}>
-          <div className="space-y-4 py-2">
+        <SheetPage isOpen={true} onClose={() => setViewingPlaybook(null)} title={viewingPlaybook.title} width="clamp(480px, 45vw, 720px)">
+          <div className="space-y-4 py-2 px-6">
             <p className="text-sm text-muted-foreground leading-relaxed">
               {viewingPlaybook.description}
             </p>
             <div className="mt-6 space-y-4">
-              <h4 className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
+              <h4 className="ds-label-caps tracking-wider text-muted-foreground">
                 Fluxo de Etapas
               </h4>
               {viewingPlaybook.steps?.length > 0 ? (
                 <div className="space-y-3 pl-2 border-l-2 border-brand/20">
                   {viewingPlaybook.steps.map((st: any, idx: number) => (
                     <div key={st.id || idx} className="relative pl-6 pb-2">
-                      <div className="absolute -left-[17px] top-0.5 flex h-5 w-5 items-center justify-center rounded-full bg-brand text-brand-foreground text-[10px] font-bold">
+                      <div className="absolute -left-[17px] top-0.5 flex h-5 w-5 items-center justify-center rounded-full bg-brand text-brand-foreground ds-meta font-bold">
                         {st.step_number}
                       </div>
                       <div className="font-semibold text-sm text-foreground">{st.title}</div>
@@ -286,7 +286,7 @@ function KnowledgePage() {
               )}
             </div>
           </div>
-        </Sheet>
+        </SheetPage>
       )}
 
       {(playbookOpen || editingPlaybook) && agency && (
@@ -409,26 +409,15 @@ function PlaybookSheet({
   }
 
   return (
-    <div className="fixed inset-0 z-50 flex justify-end bg-overlay" onClick={onClose}>
-      <div
-        className="flex h-full w-full max-w-2xl flex-col border-l border-border glass-card border-none"
-        onClick={(e) => e.stopPropagation()}
-      >
-        <div className="flex items-center justify-between border-b border-border px-6 py-4">
-          <h2 className="text-base font-semibold tracking-tight">
-            {initialData ? "Editar Playbook" : "Novo Playbook"}
-          </h2>
-          <Button
-            type="button"
-            onClick={onClose}
-            className="flex h-8 w-8 items-center justify-center rounded-full border-none hover:glass bg-white/5 border-white/10 text-muted-foreground hover:text-foreground transition-colors cursor-pointer"
-          >
-            x
-          </Button>
-        </div>
-
-        <div className="flex-1 overflow-y-auto px-6 py-5">
-          <form id="playbook-form" onSubmit={submit} className="space-y-4">
+    <SheetPage
+      isOpen={true}
+      onClose={onClose}
+      title={initialData ? "Editar Playbook" : "Novo Playbook"}
+      width="clamp(480px, 45vw, 720px)"
+      contentClassName="flex-1 overflow-y-auto px-6 py-5 no-scrollbar"
+    >
+      <div className="flex h-full flex-col">
+        <form id="playbook-form" onSubmit={submit} className="space-y-4">
             <Field label="Título do Playbook *">
               <Input
                 required
@@ -447,7 +436,7 @@ function PlaybookSheet({
                 />
               </Field>
               <div className="flex items-end pb-1">
-                <span className="text-[10px] text-muted-foreground glass bg-white/5 border-white/10 border-none rounded px-2 py-1 leading-normal">
+                <span className="ds-meta text-muted-foreground glass bg-white/5 border-white/10 border-none rounded px-2 py-1 leading-normal">
                   Dica: Playbooks ajudam a IA a responder o cliente com base nos playbooks do dia a
                   dia da agência.
                 </span>
@@ -526,8 +515,7 @@ function PlaybookSheet({
             {submitting ? "Salvando…" : initialData ? "Salvar alterações" : "Criar Playbook"}
           </PrimaryButton>
         </div>
-      </div>
-    </div>
+    </SheetPage>
   );
 }
 
@@ -602,38 +590,27 @@ function ArticleSheet({
       : null;
 
   return (
-    <div className="fixed inset-0 z-50 flex justify-end bg-overlay" onClick={onClose}>
-      <div
-        className="flex h-full w-full max-w-2xl flex-col border-l border-border glass-card border-none"
-        onClick={(e) => e.stopPropagation()}
-      >
-        <div className="flex items-center justify-between border-b border-border px-6 py-4">
-          <h2 className="text-base font-semibold tracking-tight">
-            {initialData ? "Editar Artigo" : "Novo Artigo"}
-          </h2>
-          <div className="flex items-center gap-2">
-            {previewUrl && (
-              <a
-                href={previewUrl}
-                target="_blank"
-                rel="noreferrer"
-                className="flex h-8 items-center gap-1.5 rounded-full border-none px-2.5 text-xs font-medium hover:glass bg-white/5 border-white/10"
-              >
-                Ver publicado
-              </a>
-            )}
-            <Button
-              type="button"
-              onClick={onClose}
-              className="flex h-8 w-8 items-center justify-center rounded-full border-none hover:glass bg-white/5 border-white/10"
+    <SheetPage
+      isOpen={true}
+      onClose={onClose}
+      title={initialData ? "Editar Artigo" : "Novo Artigo"}
+      width="clamp(480px, 45vw, 720px)"
+      contentClassName="flex-1 overflow-y-auto px-6 py-5 no-scrollbar"
+    >
+      <div className="flex h-full flex-col">
+        {previewUrl && (
+          <div className="mb-4 flex justify-end">
+            <a
+              href={previewUrl}
+              target="_blank"
+              rel="noreferrer"
+              className="flex h-8 w-max items-center gap-1.5 rounded-full border-none px-3 text-xs font-medium hover:glass bg-white/5 border-white/10 transition-colors"
             >
-              x
-            </Button>
+              Ver publicado
+            </a>
           </div>
-        </div>
-
-        <div className="flex-1 overflow-y-auto px-6 py-5">
-          <form id="kb-form" onSubmit={submit} className="space-y-4">
+        )}
+        <form id="article-form" onSubmit={submit} className="space-y-4">
             <Field label="Título *">
               <Input required value={title} onChange={(e) => setTitle(e.target.value)} />
             </Field>
@@ -698,23 +675,21 @@ function ArticleSheet({
                 />
                 Artigo apenas para uso interno (Agência)
               </label>
-              <p className="text-[11px] text-muted-foreground mt-1 ml-6">
+              <p className="ds-meta text-muted-foreground mt-1 ml-6">
                 Se desmarcado, o artigo ficará disponível publicamente no portal do cliente (Base de
                 Conhecimento).
               </p>
             </div>
           </form>
-        </div>
-
-        <div className="border-t border-border px-6 py-4 flex items-center justify-end gap-2">
+        <div className="border-t border-border px-6 py-4 flex items-center justify-end gap-2 mt-auto">
           <GhostButton type="button" onClick={onClose}>
             Cancelar
           </GhostButton>
-          <PrimaryButton type="submit" form="kb-form" disabled={submitting}>
+          <PrimaryButton type="submit" form="article-form" disabled={submitting}>
             {submitting ? "Salvando…" : initialData ? "Salvar alterações" : "Criar artigo"}
           </PrimaryButton>
         </div>
       </div>
-    </div>
+    </SheetPage>
   );
 }

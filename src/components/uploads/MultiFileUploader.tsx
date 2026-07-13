@@ -94,7 +94,7 @@ export function MultiFileUploader({
       {label && (
         <div className="mb-1 flex items-center justify-between">
           <div className="text-xs font-medium text-muted-foreground">{label}</div>
-          <div className="text-[11px] text-muted-foreground">
+          <div className="ds-meta text-muted-foreground">
             {values.length}/{max}
           </div>
         </div>
@@ -130,7 +130,7 @@ export function MultiFileUploader({
               className="flex aspect-square cursor-pointer flex-col items-center justify-center gap-1 rounded-full border-2 border-dashed border-border text-muted-foreground hover:bg-surface-alt"
             >
               {busy ? <Loader2 className="h-5 w-5 animate-spin" /> : <Plus className="h-5 w-5" />}
-              <span className="text-[10px]">Adicionar</span>
+              <span className="ds-meta">Adicionar</span>
             </label>
             <Input
               ref={inputRef}

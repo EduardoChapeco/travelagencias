@@ -174,7 +174,7 @@ function ContactPage() {
 
         <div className="space-y-4 rounded-3xl border-none glass-card border-none p-6 md:p-8">
           <div className="space-y-1.5">
-            <label className="text-xs font-bold uppercase tracking-widest text-muted-foreground ml-2">
+            <label className="ds-label-caps text-muted-foreground ml-2">
               Nome Completo *
             </label>
             <Input
@@ -183,7 +183,7 @@ function ContactPage() {
               placeholder="Como quer ser chamado?"
             />
             {errors.name && (
-              <span className="text-[11px] font-semibold text-red-500 ml-2 block">
+              <span className="ds-meta font-semibold text-red-500 ml-2 block">
                 {errors.name.message}
               </span>
             )}
@@ -191,7 +191,7 @@ function ContactPage() {
 
           <div className="grid md:grid-cols-2 gap-4">
             <div className="space-y-1.5">
-              <label className="text-xs font-bold uppercase tracking-widest text-muted-foreground ml-2">
+              <label className="ds-label-caps text-muted-foreground ml-2">
                 WhatsApp *
               </label>
               <Input
@@ -200,13 +200,13 @@ function ContactPage() {
                 placeholder="(11) 99999-9999"
               />
               {errors.phone && (
-                <span className="text-[11px] font-semibold text-red-500 ml-2 block">
+                <span className="ds-meta font-semibold text-red-500 ml-2 block">
                   {errors.phone.message}
                 </span>
               )}
             </div>
             <div className="space-y-1.5">
-              <label className="text-xs font-bold uppercase tracking-widest text-muted-foreground ml-2">
+              <label className="ds-label-caps text-muted-foreground ml-2">
                 E-mail
               </label>
               <Input
@@ -216,7 +216,7 @@ function ContactPage() {
                 placeholder="seu@email.com"
               />
               {errors.email && (
-                <span className="text-[11px] font-semibold text-red-500 ml-2 block">
+                <span className="ds-meta font-semibold text-red-500 ml-2 block">
                   {errors.email.message}
                 </span>
               )}
@@ -224,7 +224,7 @@ function ContactPage() {
           </div>
 
           <div className="space-y-1.5 pt-4">
-            <label className="text-xs font-bold uppercase tracking-widest text-muted-foreground ml-2">
+            <label className="ds-label-caps text-muted-foreground ml-2">
               Destino dos Sonhos
             </label>
             <Input
@@ -233,7 +233,7 @@ function ContactPage() {
               placeholder="Para onde você quer ir?"
             />
             {errors.destination && (
-              <span className="text-[11px] font-semibold text-red-500 ml-2 block">
+              <span className="ds-meta font-semibold text-red-500 ml-2 block">
                 {errors.destination.message}
               </span>
             )}
@@ -241,7 +241,7 @@ function ContactPage() {
 
           <div className="grid md:grid-cols-2 gap-4">
             <div className="space-y-1.5">
-              <label className="text-xs font-bold uppercase tracking-widest text-muted-foreground ml-2">
+              <label className="ds-label-caps text-muted-foreground ml-2">
                 Ida Prevista
               </label>
               <Input
@@ -250,13 +250,13 @@ function ContactPage() {
                 className="w-full rounded-[var(--radius-card)] border-none focus:border-foreground focus:ring-foreground"
               />
               {errors.travel_start && (
-                <span className="text-[11px] font-semibold text-red-500 ml-2 block">
+                <span className="ds-meta font-semibold text-red-500 ml-2 block">
                   {errors.travel_start.message}
                 </span>
               )}
             </div>
             <div className="space-y-1.5">
-              <label className="text-xs font-bold uppercase tracking-widest text-muted-foreground ml-2">
+              <label className="ds-label-caps text-muted-foreground ml-2">
                 Retorno
               </label>
               <Input
@@ -265,7 +265,7 @@ function ContactPage() {
                 className="w-full rounded-[var(--radius-card)] border-none focus:border-foreground focus:ring-foreground"
               />
               {errors.travel_end && (
-                <span className="text-[11px] font-semibold text-red-500 ml-2 block">
+                <span className="ds-meta font-semibold text-red-500 ml-2 block">
                   {errors.travel_end.message}
                 </span>
               )}
@@ -274,7 +274,7 @@ function ContactPage() {
 
           <div className="grid md:grid-cols-2 gap-4">
             <div className="space-y-1.5">
-              <label className="text-xs font-bold uppercase tracking-widest text-muted-foreground ml-2">
+              <label className="ds-label-caps text-muted-foreground ml-2">
                 Qtd. Pessoas
               </label>
               <Input
@@ -284,13 +284,13 @@ function ContactPage() {
                 className="w-full rounded-[var(--radius-card)] border-none focus:border-foreground focus:ring-foreground"
               />
               {errors.pax_count && (
-                <span className="text-[11px] font-semibold text-red-500 ml-2 block">
+                <span className="ds-meta font-semibold text-red-500 ml-2 block">
                   {errors.pax_count.message}
                 </span>
               )}
             </div>
             <div className="space-y-1.5">
-              <label className="text-xs font-bold uppercase tracking-widest text-muted-foreground ml-2">
+              <label className="ds-label-caps text-muted-foreground ml-2">
                 Orçamento Est. (R$)
               </label>
               <Input
@@ -302,7 +302,7 @@ function ContactPage() {
                 placeholder="Ex: 15000"
               />
               {errors.estimated_value && (
-                <span className="text-[11px] font-semibold text-red-500 ml-2 block">
+                <span className="ds-meta font-semibold text-red-500 ml-2 block">
                   {errors.estimated_value.message}
                 </span>
               )}
@@ -310,7 +310,7 @@ function ContactPage() {
           </div>
 
           <div className="space-y-1.5 pt-4">
-            <label className="text-xs font-bold uppercase tracking-widest text-muted-foreground ml-2">
+            <label className="ds-label-caps text-muted-foreground ml-2">
               Detalhes Adicionais
             </label>
             <Textarea
@@ -320,7 +320,7 @@ function ContactPage() {
               placeholder="O que não pode faltar nessa viagem?"
             />
             {errors.notes && (
-              <span className="text-[11px] font-semibold text-red-500 ml-2 block">
+              <span className="ds-meta font-semibold text-red-500 ml-2 block">
                 {errors.notes.message}
               </span>
             )}
@@ -349,7 +349,7 @@ function ContactPage() {
             </label>
           </div>
           {errors.lgpdAccepted && (
-            <span className="text-[11px] font-semibold text-red-500 ml-2 block">
+            <span className="ds-meta font-semibold text-red-500 ml-2 block">
               {errors.lgpdAccepted.message}
             </span>
           )}

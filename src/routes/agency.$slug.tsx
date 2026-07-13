@@ -117,7 +117,7 @@ function BlockedWrapper({ children }: { children: React.ReactNode }) {
           <div className="flex justify-center gap-3">
             <Button
               onClick={() => window.location.reload()}
-              className="h-10 rounded-[var(--radius-card)] bg-zinc-800 px-6 text-xs font-bold uppercase tracking-wider text-white hover:bg-zinc-700 transition-all cursor-pointer"
+              className="h-10 rounded-[var(--radius-card)] bg-zinc-800 px-6 ds-label-caps tracking-wider text-white hover:bg-zinc-700 transition-all cursor-pointer"
             >
               Tentar Novamente
             </Button>

@@ -164,7 +164,7 @@ function TeamPage() {
         ) : (
           <div className="overflow-hidden rounded-[var(--radius-card)] border-none mb-6 glass-card border-none">
             <table className="w-full text-sm">
-              <thead className="glass bg-white/5 border-white/10/40 text-left text-[11px] uppercase text-muted-foreground">
+              <thead className="glass bg-white/5 border-white/10/40 text-left ds-meta uppercase text-muted-foreground">
                 <tr>
                   <th className="px-3 py-2">Nome</th>
                   <th className="px-3 py-2">Papel</th>
@@ -234,7 +234,7 @@ function TeamPage() {
         ) : (
           <div className="overflow-hidden rounded-[var(--radius-card)] border-none">
             <table className="w-full text-sm">
-              <thead className="glass bg-white/5 border-white/10/40 text-left text-[11px] uppercase text-muted-foreground">
+              <thead className="glass bg-white/5 border-white/10/40 text-left ds-meta uppercase text-muted-foreground">
                 <tr>
                   <th className="px-3 py-2">Email</th>
                   <th className="px-3 py-2">Papel</th>
@@ -446,7 +446,7 @@ function AgentCommissionSheet({
                   >
                     <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 flex-1">
                       <div>
-                        <label className="text-[10px] text-muted-foreground font-semibold uppercase block">
+                        <label className="ds-meta text-muted-foreground font-semibold uppercase block">
                           Min (R$)
                         </label>
                         <Input
@@ -460,7 +460,7 @@ function AgentCommissionSheet({
                         />
                       </div>
                       <div>
-                        <label className="text-[10px] text-muted-foreground font-semibold uppercase block">
+                        <label className="ds-meta text-muted-foreground font-semibold uppercase block">
                           Max (R$)
                         </label>
                         <Input
@@ -479,7 +479,7 @@ function AgentCommissionSheet({
                         />
                       </div>
                       <div>
-                        <label className="text-[10px] text-muted-foreground font-semibold uppercase block">
+                        <label className="ds-meta text-muted-foreground font-semibold uppercase block">
                           Taxa (%)
                         </label>
                         <Input

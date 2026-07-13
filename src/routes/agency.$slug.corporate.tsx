@@ -11,6 +11,13 @@ import { PageHeader, ModuleActionButton } from "@/components/shell/PageHeader";
 import { ModuleAdminPanel } from "@/components/shell/ModuleAdminPanel";
 import { NativeSelect as Select } from "@/components/ui/select";
 import { FormInput as Input } from "@/components/ui/input";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { CORPORATE_STATUS_MAP } from "@/lib/constants/status";
 import { PrimaryButton, GhostButton , Button } from "@/components/ui/button";
 import { StatusBadge } from "@/components/ui/badge";
 import { fmtDate } from "@/lib/formatters";
@@ -37,13 +44,7 @@ type RFP = {
   client?: { full_name: string };
 };
 
-const STATUS_MAP: Record<string, { label: string; tone: any }> = {
-  pending: { label: "Pendente", tone: "neutral" },
-  quoting: { label: "Em cotação", tone: "warning" },
-  sent_for_approval: { label: "Aguardando Aprovação", tone: "primary" },
-  approved: { label: "Aprovado", tone: "success" },
-  rejected: { label: "Recusado", tone: "danger" },
-};
+
 
 function CorporatePage() {
   const { agency, isAgencyAdmin } = useAgency();
@@ -124,7 +125,7 @@ function CorporatePage() {
                   setStatusFilter(e.target.value);
                   setPage(1);
                 }}
-                className="h-7 text-[11px] font-semibold hover:bg-white/5 rounded-full text-white/70 hover:text-white px-2.5 cursor-pointer"
+                className="h-7 ds-meta font-semibold hover:bg-white/5 rounded-full text-white/70 hover:text-white px-2.5 cursor-pointer"
               >
                 <option value="all" className="bg-neutral-900 text-white">Todos os Status</option>
                 <option value="pending" className="bg-neutral-900 text-white">Pendente</option>
@@ -155,7 +156,7 @@ function CorporatePage() {
           }
         />
 
-      <div className="flex-1 overflow-y-auto px-4  md:pr-6 py-4 min-h-0 flex flex-col gap-4 pb-24">
+      <div className="page-content page-section dock-offset min-h-0">
         {!rfpsQ.isLoading && rfps.length === 0 && (
           <EmptyState
             title="Nenhuma requisição corporativa"
@@ -167,7 +168,7 @@ function CorporatePage() {
           {rfps.map((rfp) => (
             <div
               key={rfp.id}
-              className="rounded-full border-none glass-card border-none p-5 flex flex-col gap-3 hover:border-brand/50 transition-colors"
+              className="rounded-[var(--radius-card)] glass-card p-5 flex flex-col gap-3 hover:border-brand/50 transition-colors"
             >
               <div
                 onClick={() =>
@@ -187,12 +188,12 @@ function CorporatePage() {
                     {rfp.client?.full_name}
                   </div>
                 </div>
-                <StatusBadge tone={STATUS_MAP[rfp.status]?.tone || "neutral"}>
-                  {STATUS_MAP[rfp.status]?.label || rfp.status}
+                <StatusBadge tone={CORPORATE_STATUS_MAP[rfp.status]?.tone || "neutral"}>
+                  {CORPORATE_STATUS_MAP[rfp.status]?.label || rfp.status}
                 </StatusBadge>
               </div>
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-2 p-3 glass bg-white/5 border-white/10 rounded-[var(--radius-card)] text-xs">
+              <div className="grid grid-cols-2 gap-x-4 gap-y-2.5 mt-2 border-t border-border/40 pt-3 text-xs">
                 <div>
                   <div className="text-muted-foreground mb-0.5">Solicitante</div>
                   <div className="font-medium truncate" title={rfp.requester_email}>
@@ -239,7 +240,7 @@ function CorporatePage() {
                     to="/p/corporate/approve"
                     search={{ token: rfp.approval_token }}
                     target="_blank"
-                    className="text-[10px] text-muted-foreground hover:underline"
+                    className="ds-meta text-muted-foreground hover:underline"
                   >
                     Abrir link do cliente
                   </Link>

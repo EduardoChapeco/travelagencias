@@ -9,8 +9,9 @@ import { useAgency } from "@/lib/agency-context";
 import { Field } from "@/components/ui/field";
 import { FormInput as Input } from "@/components/ui/input";
 import { NativeSelect as Select } from "@/components/ui/select";
-import { StatusBadge } from "@/components/ui/badge";
 import { GhostButton, PrimaryButton , Button } from "@/components/ui/button";
+import { SheetPage } from "@/components/ui/sheet";
+import { StatusBadge } from "@/components/ui/badge";
 import { fmtDate } from "@/lib/formatters";
 import { processVoucherWithAI } from "@/lib/ocr-ai";
 // html2canvas is loaded on-demand — see getHtml2Canvas() below
@@ -319,7 +320,7 @@ function TripVouchers() {
 
   // ── List mode ─────────────────────────────────────────────────────────────────
   return (
-    <div className="flex-1 overflow-y-auto px-4 md:px-6 py-5 min-h-0">
+    <div className="page-content dock-offset">
       <ConfirmDialog />
       <div className="mb-6 flex items-center justify-between">
         <h2 className="text-lg font-semibold tracking-tight">Vouchers & Guias</h2>
@@ -367,7 +368,7 @@ function TripVouchers() {
             <div className="mb-3 flex items-center justify-between">
               <div className="flex items-center gap-2">
                 <Ticket className="h-4 w-4 text-muted-foreground" />
-                <span className="text-[10px] uppercase tracking-wide text-muted-foreground">
+                <span className="ds-meta uppercase tracking-wide text-muted-foreground">
                   {TEMPLATE_LABELS[v.template] ?? v.template}
                 </span>
               </div>
@@ -390,7 +391,7 @@ function TripVouchers() {
             )}
 
             {/* Summary */}
-            <div className="flex gap-3 text-[11px] text-muted-foreground">
+            <div className="flex gap-3 ds-meta text-muted-foreground">
               {v.passengers.length > 0 && (
                 <span className="flex items-center gap-0.5">
                   <User className="h-3 w-3" />
@@ -457,15 +458,13 @@ function TripVouchers() {
       </div>
 
       {storyVoucher && trip && (
-        <div
-          className="fixed inset-0 z-[100] flex justify-end bg-black/80 backdrop-blur-sm"
-          onClick={() => setStoryVoucher(null)}
+        <SheetPage
+          isOpen={true}
+          onClose={() => setStoryVoucher(null)}
+          title="Gerador de Story 9:16"
+          width="clamp(480px, 45vw, 640px)"
+          contentClassName="p-6 overflow-y-auto flex flex-col items-center gap-4"
         >
-          <div
-            className="relative flex h-full w-full max-w-md flex-col overflow-y-auto items-center gap-4 border-l border-border glass-card border-none p-6 animate-in slide-in-from-right duration-300"
-            onClick={(e) => e.stopPropagation()}
-          >
-            <h3 className="text-xl font-bold tracking-tight">Gerador de Story 9:16</h3>
             <p className="text-sm text-muted-foreground text-center">
               Faça o download desta imagem em alta resolução e envie pro seu cliente postar nas
               redes sociais.
@@ -541,7 +540,7 @@ function TripVouchers() {
                   </div>
 
                   <div className="mt-auto pt-6 text-center">
-                    <p className="text-[10px] uppercase tracking-widest text-white/50 mb-1">
+                    <p className="ds-meta uppercase tracking-widest text-white/50 mb-1">
                       Planejado com perfeição por
                     </p>
                     <p className="text-xs font-bold text-white/80">@{agency?.slug}</p>
@@ -549,15 +548,13 @@ function TripVouchers() {
                 </div>
               </div>
             </div>
-
-            <div className="flex w-full justify-between items-center mt-2">
+            <div className="flex w-full justify-between items-center mt-auto pt-4">
               <GhostButton onClick={() => setStoryVoucher(null)}>Fechar</GhostButton>
               <PrimaryButton onClick={downloadStory} disabled={generatingStory}>
                 {generatingStory ? "Gerando..." : "Baixar Imagem 9:16"}
               </PrimaryButton>
             </div>
-          </div>
-        </div>
+        </SheetPage>
       )}
     </div>
   );

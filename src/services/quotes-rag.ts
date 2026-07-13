@@ -215,3 +215,25 @@ export async function ingestKnowledgeDocument(
 
   return { documentId: doc.id };
 }
+
+/**
+ * Lista todos os documentos de conhecimento ordenados por criação descrescente.
+ * Isolado aqui para evitar chamada direta ao supabase nas rotas.
+ */
+export async function fetchKnowledgeDocs(): Promise<any[]> {
+  const { data, error } = await supabase
+    .from("knowledge_documents")
+    .select("*")
+    .order("created_at", { ascending: false });
+  if (error) throw error;
+  return data || [];
+}
+
+/**
+ * Exclui um documento de conhecimento pelo ID.
+ */
+export async function deleteKnowledgeDoc(id: string): Promise<void> {
+  const { error } = await supabase.from("knowledge_documents").delete().eq("id", id);
+  if (error) throw error;
+}
+

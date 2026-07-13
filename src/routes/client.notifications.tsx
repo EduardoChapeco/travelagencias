@@ -60,7 +60,7 @@ function Page() {
               <div className="flex-1">
                 <div className="font-medium">{n.title}</div>
                 {n.body && <p className="mt-1 text-sm text-muted-foreground">{n.body}</p>}
-                <div className="mt-2 text-[11px] text-muted-foreground">
+                <div className="mt-2 ds-meta text-muted-foreground">
                   {new Date(n.created_at).toLocaleString("pt-BR")}
                 </div>
               </div>

@@ -103,7 +103,7 @@ function PublicBlogPage() {
             className="flex items-center gap-2 text-foreground font-bold hover:opacity-80 transition-opacity"
           >
             <ArrowLeft className="w-4 h-4" />
-            <div className="w-6 h-6 rounded bg-foreground text-background flex items-center justify-center text-[10px] uppercase tracking-widest">
+            <div className="w-6 h-6 rounded bg-foreground text-background flex items-center justify-center ds-meta uppercase tracking-widest">
               {agency.name.charAt(0)}
             </div>
             <span className="hidden sm:inline text-sm">{agency.name}</span>
@@ -133,7 +133,7 @@ function PublicBlogPage() {
           {/* Post Header */}
           <div className="mb-10 text-center">
             {post.category && (
-              <span className="inline-block px-3 py-1 mb-6 text-[10px] font-black uppercase tracking-widest text-brand bg-brand/10 rounded-full">
+              <span className="inline-block px-3 py-1 mb-6 ds-meta font-black uppercase tracking-widest text-brand bg-brand/10 rounded-full">
                 {post.category}
               </span>
             )}
@@ -221,7 +221,7 @@ function PublicBlogPage() {
                       {r.title}
                     </h4>
                     {r.published_at && (
-                      <div className="text-[11px] text-muted-foreground uppercase tracking-wide mt-2">
+                      <div className="ds-meta text-muted-foreground uppercase tracking-wide mt-2">
                         {fmtDate(r.published_at)}
                       </div>
                     )}

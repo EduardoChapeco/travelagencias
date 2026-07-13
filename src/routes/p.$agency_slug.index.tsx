@@ -302,7 +302,7 @@ function HomePage() {
                         : "A Confirmar"}
                     </div>
                     {/* Destination badge */}
-                    <div className="absolute bottom-3 left-3 flex items-center gap-1 rounded-full bg-background/90 backdrop-blur-sm px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider">
+                    <div className="absolute bottom-3 left-3 flex items-center gap-1 rounded-full bg-background/90 backdrop-blur-sm px-2.5 py-1 ds-label-caps tracking-wider">
                       <MapPin className="h-2.5 w-2.5" style={{ color: brandColor }} />
                       {t.destination}
                     </div>
@@ -313,7 +313,7 @@ function HomePage() {
                     </h3>
                     <div className="mt-auto pt-4 border-t border-border/50 flex items-end justify-between">
                       <div>
-                        <span className="text-[10px] uppercase tracking-widest text-muted-foreground font-bold">
+                        <span className="ds-meta uppercase tracking-widest text-muted-foreground font-bold">
                           A partir de
                         </span>
                         <div
@@ -505,7 +505,7 @@ function HomePage() {
                         <Mail className="h-4 w-4" />
                       </div>
                       <div>
-                        <div className="text-[10px] uppercase tracking-wider text-muted-foreground/70">
+                        <div className="ds-label-caps text-muted-foreground/70">
                           Email
                         </div>
                         <div className="font-medium">{company.email}</div>
@@ -518,7 +518,7 @@ function HomePage() {
                         <Phone className="h-4 w-4" />
                       </div>
                       <div>
-                        <div className="text-[10px] uppercase tracking-wider text-muted-foreground/70">
+                        <div className="ds-label-caps text-muted-foreground/70">
                           Telefone
                         </div>
                         <div className="font-medium">{company.phone}</div>
@@ -536,7 +536,7 @@ function HomePage() {
                         <MessageCircle className="h-4 w-4 group-hover:text-green-500 transition-colors" />
                       </div>
                       <div>
-                        <div className="text-[10px] uppercase tracking-wider text-muted-foreground/70">
+                        <div className="ds-label-caps text-muted-foreground/70">
                           WhatsApp
                         </div>
                         <div className="font-medium">{company.whatsapp}</div>
@@ -554,7 +554,7 @@ function HomePage() {
                         <Globe className="h-4 w-4" />
                       </div>
                       <div>
-                        <div className="text-[10px] uppercase tracking-wider text-muted-foreground/70">
+                        <div className="ds-label-caps text-muted-foreground/70">
                           Website
                         </div>
                         <div className="font-medium flex items-center gap-1">
@@ -569,7 +569,7 @@ function HomePage() {
                         <MapPin className="h-4 w-4" />
                       </div>
                       <div>
-                        <div className="text-[10px] uppercase tracking-wider text-muted-foreground/70">
+                        <div className="ds-label-caps text-muted-foreground/70">
                           Endereço
                         </div>
                         <div className="font-medium">
@@ -626,7 +626,7 @@ function HomePage() {
                             {labels[day]}
                             {isToday && (
                               <span
-                                className="ml-2 text-[10px] font-bold uppercase tracking-widest"
+                                className="ml-2 ds-label-caps"
                                 style={{ color: brandColor }}
                               >
                                 hoje
@@ -634,7 +634,7 @@ function HomePage() {
                             )}
                           </span>
                           {h.closed ? (
-                            <span className="text-xs font-bold uppercase tracking-widest text-muted-foreground/50">
+                            <span className="ds-label-caps text-muted-foreground/50">
                               Fechado
                             </span>
                           ) : (

@@ -20,31 +20,31 @@ export function LeadCard({ data }: { data: any }) {
       </div>
       <div className="grid grid-cols-2 gap-x-2 gap-y-1.5 text-xs">
         <div>
-          <span className="text-[10px] text-muted-foreground block uppercase">Nome</span>
+          <span className="ds-meta text-muted-foreground block uppercase">Nome</span>
           <span className="font-medium text-foreground truncate block">{data.name}</span>
         </div>
         <div>
-          <span className="text-[10px] text-muted-foreground block uppercase">Destino</span>
+          <span className="ds-meta text-muted-foreground block uppercase">Destino</span>
           <span className="font-medium text-foreground truncate block">{data.destination}</span>
         </div>
         {data.phone && (
           <div className="col-span-2">
-            <span className="text-[10px] text-muted-foreground block uppercase">Telefone</span>
+            <span className="ds-meta text-muted-foreground block uppercase">Telefone</span>
             <span className="font-medium text-foreground block">{data.phone}</span>
           </div>
         )}
         {data.email && (
           <div className="col-span-2">
-            <span className="text-[10px] text-muted-foreground block uppercase">E-mail</span>
+            <span className="ds-meta text-muted-foreground block uppercase">E-mail</span>
             <span className="font-medium text-foreground block truncate">{data.email}</span>
           </div>
         )}
         {data.notes && (
           <div className="col-span-2 border-t border-border/40 pt-1.5 mt-1">
-            <span className="text-[10px] text-muted-foreground block uppercase">
+            <span className="ds-meta text-muted-foreground block uppercase">
               Notas de Viagem
             </span>
-            <p className="text-[11px] text-muted-foreground line-clamp-2 mt-0.5">{data.notes}</p>
+            <p className="ds-meta text-muted-foreground line-clamp-2 mt-0.5">{data.notes}</p>
           </div>
         )}
       </div>
@@ -183,14 +183,14 @@ export function ConfirmationCard({
           <>
             <Button
               onClick={handleCancel}
-              className="flex h-7 items-center gap-1 rounded bg-surface-muted px-2.5 text-[11px] font-semibold text-muted-foreground hover:bg-surface-alt transition-colors"
+              className="flex h-7 items-center gap-1 rounded bg-surface-muted px-2.5 ds-meta font-semibold text-muted-foreground hover:bg-surface-alt transition-colors"
             >
               <X className="h-3 w-3" />
               Cancelar
             </Button>
             <Button
               onClick={handleConfirm}
-              className="flex h-7 items-center gap-1 rounded bg-primary px-3 text-[11px] font-semibold text-primary-foreground hover:opacity-90 transition-colors"
+              className="flex h-7 items-center gap-1 rounded bg-primary px-3 ds-meta font-semibold text-primary-foreground hover:opacity-90 transition-colors"
             >
               <Check className="h-3 w-3" />
               Confirmar
@@ -198,13 +198,13 @@ export function ConfirmationCard({
           </>
         )}
         {status === "executing" && (
-          <div className="flex items-center gap-1.5 text-[11px] text-muted-foreground">
+          <div className="flex items-center gap-1.5 ds-meta text-muted-foreground">
             <Loader2 className="h-3 w-3 animate-spin" />
             Executando ação comercial...
           </div>
         )}
         {status === "confirmed" && (
-          <div className="flex w-full items-center gap-1.5 rounded bg-emerald-500/10 border border-emerald-500/20 px-2 py-1 text-[11px] text-emerald-600 font-medium">
+          <div className="flex w-full items-center gap-1.5 rounded bg-emerald-500/10 border border-emerald-500/20 px-2 py-1 ds-meta text-emerald-600 font-medium">
             <Check className="h-3.5 w-3.5 shrink-0" />
             <span className="truncate">
               {outcomeMessage || "Ação confirmada e registrada com sucesso."}
@@ -212,7 +212,7 @@ export function ConfirmationCard({
           </div>
         )}
         {status === "cancelled" && (
-          <div className="flex w-full items-center gap-1.5 rounded bg-surface-muted border border-border/40 px-2 py-1 text-[11px] text-muted-foreground font-medium">
+          <div className="flex w-full items-center gap-1.5 rounded bg-surface-muted border border-border/40 px-2 py-1 ds-meta text-muted-foreground font-medium">
             <X className="h-3.5 w-3.5 shrink-0" />
             <span>Operação cancelada pelo operador.</span>
           </div>

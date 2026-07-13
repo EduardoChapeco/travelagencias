@@ -100,7 +100,7 @@ function PublicKnowledgeArticle() {
                 <BookOpen className="w-5 h-5" />
               </div>
               <div>
-                <span className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">
+                <span className="ds-meta font-black uppercase tracking-widest text-muted-foreground">
                   {article.category || "Guia Geral"}
                 </span>
                 <div className="text-xs font-semibold text-muted-foreground flex items-center gap-1">

@@ -691,7 +691,7 @@ export function CardDetailPanel({
             {/* Proposta Original Vincular */}
             {card.proposal_details && (
               <div className="rounded-2xl border border-border bg-surface p-4 space-y-3">
-                <div className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">
+                <div className="ds-label-caps text-muted-foreground">
                   Proposta Original
                 </div>
                 <div className="text-xs font-bold text-foreground">
@@ -701,7 +701,7 @@ export function CardDetailPanel({
                 {/* Voos da Proposta */}
                 {card.proposal_details.flights && card.proposal_details.flights.length > 0 && (
                   <div className="space-y-2 border-t border-border/40 pt-2">
-                    <div className="text-[10px] font-semibold text-muted-foreground">
+                    <div className="ds-meta font-semibold text-muted-foreground">
                       Voos Propostos:
                     </div>
                     {card.proposal_details.flights.map((f: any, idx: number) => (
@@ -713,7 +713,7 @@ export function CardDetailPanel({
                           <div className="font-semibold text-foreground">
                             {f.origin} ➔ {f.destination}
                           </div>
-                          <div className="text-[10px] text-muted-foreground font-mono">
+                          <div className="ds-meta text-muted-foreground font-mono">
                             {f.airline} · {f.flight_number || "Sem nº"} ·{" "}
                             {f.date ? new Date(f.date).toLocaleDateString("pt-BR") : "S/Data"}
                           </div>
@@ -728,7 +728,7 @@ export function CardDetailPanel({
                               "Dados do voo importados! Clique em 'Salvar alterações' no topo para registrar.",
                             );
                           }}
-                          className="h-6 rounded bg-brand/10 text-brand text-[10px] font-bold px-2 hover:bg-brand/20 transition-colors shrink-0"
+                          className="h-6 rounded bg-brand/10 text-brand ds-meta font-bold px-2 hover:bg-brand/20 transition-colors shrink-0"
                         >
                           Importar
                         </Button>
@@ -740,7 +740,7 @@ export function CardDetailPanel({
                 {/* Hotéis da Proposta */}
                 {card.proposal_details.hotels && card.proposal_details.hotels.length > 0 && (
                   <div className="space-y-2 border-t border-border/40 pt-2">
-                    <div className="text-[10px] font-semibold text-muted-foreground">
+                    <div className="ds-meta font-semibold text-muted-foreground">
                       Hotéis Propostos:
                     </div>
                     {card.proposal_details.hotels.map((h: any, idx: number) => (
@@ -751,7 +751,7 @@ export function CardDetailPanel({
                         <div className="font-semibold text-foreground">
                           {h.name} ({h.city})
                         </div>
-                        <div className="text-[10px] text-muted-foreground font-mono">
+                        <div className="ds-meta text-muted-foreground font-mono">
                           Check-in:{" "}
                           {h.checkin ? new Date(h.checkin).toLocaleDateString("pt-BR") : "—"} ·
                           Check-out:{" "}
@@ -778,7 +778,7 @@ export function CardDetailPanel({
 
             {!isEditing ? (
               <div className="space-y-4">
-                <div className="text-[10px] font-bold uppercase tracking-widest text-brand border-b border-border pb-2">
+                <div className="ds-label-caps text-brand border-b border-border pb-2">
                   Dados do Voo & Briefing
                 </div>
                 <div className="space-y-2.5 text-xs">
@@ -832,14 +832,14 @@ export function CardDetailPanel({
 
                 {tags.length > 0 && (
                   <div className="pt-2">
-                    <div className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground mb-2">
+                    <div className="ds-label-caps text-muted-foreground mb-2">
                       Tags / Alertas
                     </div>
                     <div className="flex flex-wrap gap-1.5">
                       {tags.map((tag) => (
                         <span
                           key={tag}
-                          className="rounded-full bg-warning/10 border border-warning/30 text-warning px-2 py-0.5 text-[11px] font-semibold"
+                          className="rounded-full bg-warning/10 border border-warning/30 text-warning px-2 py-0.5 ds-meta font-semibold"
                         >
                           {tag}
                         </span>
@@ -852,12 +852,12 @@ export function CardDetailPanel({
               <>
                 {/* Edição inline: PNR, Cia, Data */}
                 <div className="space-y-3">
-                  <div className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">
+                  <div className="ds-label-caps text-muted-foreground">
                     Dados do Voo
                   </div>
                   <div className="grid grid-cols-2 gap-3">
                     <div>
-                      <label className="text-[11px] text-muted-foreground font-medium">
+                      <label className="ds-meta text-muted-foreground font-medium">
                         Localizador da Reserva
                       </label>
                       <Input
@@ -872,7 +872,7 @@ export function CardDetailPanel({
                       />
                     </div>
                     <div>
-                      <label className="text-[11px] text-muted-foreground font-medium">
+                      <label className="ds-meta text-muted-foreground font-medium">
                         Cia / Operadora
                       </label>
                       <Input
@@ -934,7 +934,7 @@ export function CardDetailPanel({
                               href={link.url}
                               target="_blank"
                               rel="noreferrer"
-                              className={`inline-flex items-center gap-1 text-[11px] font-semibold border rounded px-2.5 py-1 transition-colors ${link.color}`}
+                              className={`inline-flex items-center gap-1 ds-meta font-semibold border rounded px-2.5 py-1 transition-colors ${link.color}`}
                               title={`Abrir ${link.label}`}
                             >
                               <Globe className="h-3 w-3" />
@@ -947,10 +947,10 @@ export function CardDetailPanel({
 
                   {/* Botões de Emergência (Fase 7) */}
                   <div className="mt-3 p-3 rounded-2xl border border-red-200 bg-red-50/50 space-y-2">
-                    <div className="flex items-center gap-1.5 text-red-700 font-bold text-xs uppercase tracking-wider">
+                    <div className="flex items-center gap-1.5 text-red-700 font-bold ds-label-caps">
                       <AlertTriangle className="h-4 w-4" /> Emergência no Aeroporto
                     </div>
-                    <p className="text-[10px] text-red-600">
+                    <p className="ds-meta text-red-600">
                       Seu voo atrasou ou foi cancelado? Clique abaixo para alertar nossa agência
                       instantaneamente.
                     </p>
@@ -963,7 +963,7 @@ export function CardDetailPanel({
                             triggerEmergency.mutate("delay");
                           }
                         }}
-                        className="flex-1 py-1.5 px-3 rounded bg-red-600 hover:bg-red-700 text-white text-[11px] font-bold shadow-none transition-colors disabled:opacity-50"
+                        className="flex-1 py-1.5 px-3 rounded bg-red-600 hover:bg-red-700 text-white ds-meta font-bold shadow-none transition-colors disabled:opacity-50"
                       >
                         Meu Voo Atrasou
                       </Button>
@@ -975,7 +975,7 @@ export function CardDetailPanel({
                             triggerEmergency.mutate("cancellation");
                           }
                         }}
-                        className="flex-1 py-1.5 px-3 rounded border border-red-600 hover:bg-red-100 text-red-700 text-[11px] font-bold shadow-none transition-colors disabled:opacity-50 bg-white"
+                        className="flex-1 py-1.5 px-3 rounded border border-red-600 hover:bg-red-100 text-red-700 ds-meta font-bold shadow-none transition-colors disabled:opacity-50 bg-white"
                       >
                         Voo Cancelado
                       </Button>
@@ -983,7 +983,7 @@ export function CardDetailPanel({
                   </div>
 
                   <div>
-                    <label className="text-[11px] text-muted-foreground font-medium">
+                    <label className="ds-meta text-muted-foreground font-medium">
                       Data de Embarque
                     </label>
                     <Input
@@ -998,7 +998,7 @@ export function CardDetailPanel({
                   </div>
                   <div className="grid grid-cols-2 gap-3 mt-2">
                     <div>
-                      <label className="text-[11px] text-muted-foreground font-medium">
+                      <label className="ds-meta text-muted-foreground font-medium">
                         Reunião de Briefing
                       </label>
                       <Input
@@ -1012,7 +1012,7 @@ export function CardDetailPanel({
                       />
                     </div>
                     <div>
-                      <label className="text-[11px] text-muted-foreground font-medium">
+                      <label className="ds-meta text-muted-foreground font-medium">
                         Link da Reunião
                       </label>
                       <Input
@@ -1043,7 +1043,7 @@ export function CardDetailPanel({
                       />
                       <div>
                         <div>Disparo Automático (Liberar embarque automático)</div>
-                        <div className="text-[10px] text-muted-foreground font-medium mt-0.5 leading-tight">
+                        <div className="ds-meta text-muted-foreground font-medium mt-0.5 leading-tight">
                           Se ativado, o sistema liberará os vouchers e localizadores automaticamente
                           assim que a IA/OCR conciliar o pagamento. Desative para revisão manual
                           (erros de loc, pendências).
@@ -1055,12 +1055,12 @@ export function CardDetailPanel({
 
                 {/* Operational edit fields */}
                 <div className="space-y-3 pt-3 border-t border-border">
-                  <div className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">
+                  <div className="ds-label-caps text-muted-foreground">
                     Dados Operacionais
                   </div>
                   <div className="grid grid-cols-2 gap-3">
                     <div className="col-span-2">
-                      <label className="text-[11px] text-muted-foreground font-medium">
+                      <label className="ds-meta text-muted-foreground font-medium">
                         Destino
                       </label>
                       <Input
@@ -1075,7 +1075,7 @@ export function CardDetailPanel({
                       />
                     </div>
                     <div>
-                      <label className="text-[11px] text-muted-foreground font-medium">Tipo</label>
+                      <label className="ds-meta text-muted-foreground font-medium">Tipo</label>
                       <Select
                         value={destinationType}
                         onChange={(e) => {
@@ -1089,7 +1089,7 @@ export function CardDetailPanel({
                       </Select>
                     </div>
                     <div>
-                      <label className="text-[11px] text-muted-foreground font-medium">Hotel</label>
+                      <label className="ds-meta text-muted-foreground font-medium">Hotel</label>
                       <Input
                         type="text"
                         value={hotelName}
@@ -1102,7 +1102,7 @@ export function CardDetailPanel({
                       />
                     </div>
                     <div>
-                      <label className="text-[11px] text-muted-foreground font-medium">
+                      <label className="ds-meta text-muted-foreground font-medium">
                         Telefone Hotel
                       </label>
                       <Input
@@ -1117,7 +1117,7 @@ export function CardDetailPanel({
                       />
                     </div>
                     <div>
-                      <label className="text-[11px] text-muted-foreground font-medium">
+                      <label className="ds-meta text-muted-foreground font-medium">
                         Check-in Hotel
                       </label>
                       <Input
@@ -1131,7 +1131,7 @@ export function CardDetailPanel({
                       />
                     </div>
                     <div>
-                      <label className="text-[11px] text-muted-foreground font-medium">
+                      <label className="ds-meta text-muted-foreground font-medium">
                         Check-out Hotel
                       </label>
                       <Input
@@ -1145,7 +1145,7 @@ export function CardDetailPanel({
                       />
                     </div>
                     <div>
-                      <label className="text-[11px] text-muted-foreground font-medium">
+                      <label className="ds-meta text-muted-foreground font-medium">
                         Empresa de Transfer
                       </label>
                       <Input
@@ -1160,7 +1160,7 @@ export function CardDetailPanel({
                       />
                     </div>
                     <div>
-                      <label className="text-[11px] text-muted-foreground font-medium">
+                      <label className="ds-meta text-muted-foreground font-medium">
                         Horário Transfer
                       </label>
                       <Input
@@ -1174,7 +1174,7 @@ export function CardDetailPanel({
                       />
                     </div>
                     <div>
-                      <label className="text-[11px] text-muted-foreground font-medium">
+                      <label className="ds-meta text-muted-foreground font-medium">
                         Nome do Guia
                       </label>
                       <Input
@@ -1189,7 +1189,7 @@ export function CardDetailPanel({
                       />
                     </div>
                     <div>
-                      <label className="text-[11px] text-muted-foreground font-medium">
+                      <label className="ds-meta text-muted-foreground font-medium">
                         Telefone Guia
                       </label>
                       <Input
@@ -1204,7 +1204,7 @@ export function CardDetailPanel({
                       />
                     </div>
                     <div className="col-span-2">
-                      <label className="text-[11px] text-muted-foreground font-medium">
+                      <label className="ds-meta text-muted-foreground font-medium">
                         📞 Telefone de Emergência
                       </label>
                       <Input
@@ -1223,14 +1223,14 @@ export function CardDetailPanel({
 
                 {/* Tags */}
                 <div>
-                  <div className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground mb-2">
+                  <div className="ds-label-caps text-muted-foreground mb-2">
                     Tags / Alertas
                   </div>
                   <div className="flex flex-wrap gap-1.5 mb-2">
                     {tags.map((tag) => (
                       <span
                         key={tag}
-                        className="flex items-center gap-1 rounded-full bg-warning/10 border border-warning/30 text-warning px-2 py-0.5 text-[11px] font-semibold"
+                        className="flex items-center gap-1 rounded-full bg-warning/10 border border-warning/30 text-warning px-2 py-0.5 ds-meta font-semibold"
                       >
                         {tag}
                         <Button
@@ -1252,7 +1252,7 @@ export function CardDetailPanel({
                           key={tag}
                           type="button"
                           onClick={() => addTag(tag)}
-                          className="rounded-full border border-border bg-surface-alt px-2 py-0.5 text-[10px] text-muted-foreground hover:border-warning hover:text-warning transition-colors"
+                          className="rounded-full border border-border bg-surface-alt px-2 py-0.5 ds-meta text-muted-foreground hover:border-warning hover:text-warning transition-colors"
                         >
                           + {tag}
                         </Button>
@@ -1299,12 +1299,12 @@ export function CardDetailPanel({
             {/* CHECKLIST */}
             <div>
               <div className="flex items-center justify-between mb-2">
-                <h3 className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">
+                <h3 className="ds-label-caps text-muted-foreground">
                   Checklist operacional
                 </h3>
                 {checklist.length > 0 && (
                   <span
-                    className={`text-[11px] font-semibold ${
+                    className={`ds-meta font-semibold ${
                       done === checklist.length ? "text-success" : "text-warning"
                     }`}
                   >
@@ -1363,7 +1363,7 @@ export function CardDetailPanel({
 
             {/* Notas livres */}
             <div>
-              <div className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground mb-1.5">
+              <div className="ds-label-caps text-muted-foreground mb-1.5">
                 Notas do Operador
               </div>
               {!isEditing ? (
@@ -1411,14 +1411,14 @@ export function CardDetailPanel({
             {/* Suporte / Chamados */}
             <div className="rounded-2xl border border-border bg-surface p-4 space-y-3">
               <div className="flex items-center justify-between">
-                <div className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">
+                <div className="ds-label-caps text-muted-foreground">
                   Chamados de Suporte
                 </div>
                 {!showTicketForm && (
                   <Button
                     type="button"
                     onClick={() => setShowTicketForm(true)}
-                    className="text-[10px] font-bold text-primary hover:underline bg-transparent border-none p-0 cursor-pointer"
+                    className="ds-meta font-bold text-primary hover:underline bg-transparent border-none p-0 cursor-pointer"
                   >
                     + Abrir Chamado
                   </Button>
@@ -1491,7 +1491,7 @@ export function CardDetailPanel({
               )}
 
               {ticketsQ.isLoading && (
-                <p className="text-[10px] text-muted-foreground">Carregando chamados...</p>
+                <p className="ds-meta text-muted-foreground">Carregando chamados...</p>
               )}
 
               {ticketsQ.data && ticketsQ.data.length > 0 ? (
@@ -1526,7 +1526,7 @@ export function CardDetailPanel({
                   ))}
                 </div>
               ) : (
-                <p className="text-[10px] text-muted-foreground">
+                <p className="ds-meta text-muted-foreground">
                   Nenhum chamado de suporte aberto para esta viagem.
                 </p>
               )}
@@ -1534,18 +1534,18 @@ export function CardDetailPanel({
 
             {/* Atividades Timeline */}
             <div className="rounded-2xl border border-border bg-surface p-4 space-y-3">
-              <div className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">
+              <div className="ds-label-caps text-muted-foreground">
                 Atividades / Histórico
               </div>
 
               {activitiesQ.isLoading && (
-                <p className="text-[10px] text-muted-foreground">Carregando histórico...</p>
+                <p className="ds-meta text-muted-foreground">Carregando histórico...</p>
               )}
 
               {activitiesQ.data && activitiesQ.data.length > 0 ? (
                 <div className="relative border-l border-border/60 pl-3.5 space-y-3.5 ml-1.5 max-h-52 overflow-y-auto">
                   {activitiesQ.data.map((act: any) => (
-                    <div key={act.id} className="relative text-[10px] text-foreground/80">
+                    <div key={act.id} className="relative ds-meta text-foreground/80">
                       <div className="absolute -left-[20px] top-0.5 h-2.5 w-2.5 rounded-full bg-brand ring-4 ring-surface" />
                       <div className="font-semibold text-foreground">{act.description}</div>
                       <div className="text-[9px] text-muted-foreground mt-0.5 font-mono">
@@ -1555,7 +1555,7 @@ export function CardDetailPanel({
                   ))}
                 </div>
               ) : (
-                <p className="text-[10px] text-muted-foreground">
+                <p className="ds-meta text-muted-foreground">
                   Nenhuma atividade registrada ainda.
                 </p>
               )}

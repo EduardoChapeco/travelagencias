@@ -48,7 +48,7 @@ function Page() {
                 key={tab.path}
                 type="button"
                 onClick={() => navigate({ to: tab.path as any })}
-                className={`inline-flex items-center justify-center h-7 px-3 text-[11px] font-semibold rounded-full transition-all cursor-pointer whitespace-nowrap ${
+                className={`inline-flex items-center justify-center h-7 px-3 ds-meta font-semibold rounded-full transition-all cursor-pointer whitespace-nowrap ${
                   active
                     ? "bg-white/10 text-white border border-white/5 shadow-xs"
                     : "text-white/60 hover:text-white"

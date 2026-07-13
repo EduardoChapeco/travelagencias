@@ -12,8 +12,8 @@ import {
   deleteFlightItinerary,
   compareItineraries,
   ITINERARY_TYPE_LABELS,
-  ITINERARY_STATUS_LABELS,
 } from "@/services/flight-reconciliation";
+import { FLIGHT_ITINERARY_STATUS_MAP, FLIGHT_SEGMENT_STATUS_MAP } from "@/lib/constants/status";
 import type { FlightItinerary, FlightSegment } from "@/services/flight-reconciliation";
 import {
   Plane,
@@ -33,8 +33,10 @@ import {
   Briefcase,
   Layers,
   ChevronRight,
+  FileText,
   AlertTriangle,
 } from "lucide-react";
+import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { toast } from "sonner";
 import { logTripAudit } from "@/services/audit";
 import { Button } from "@/components/ui/button";
@@ -298,14 +300,14 @@ function TripFlightsPage() {
   // ────────────────────────────────────────────────────────────────────
 
   return (
-    <div className="flex-1 overflow-y-auto p-4 md:p-6 space-y-6 max-w-5xl">
+    <div className="page-content page-section dock-offset max-w-5xl">
       {/* Header */}
       <div className="rounded-[var(--radius-card)] border-none glass-card border-none p-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div className="flex items-start gap-3">
           <Plane className="h-4 w-4 text-brand mt-0.5 shrink-0" />
           <div>
             <p className="text-xs font-semibold text-foreground">Aéreos & Reconciliação</p>
-            <p className="text-[11px] text-muted-foreground mt-0.5">
+            <p className="ds-meta text-muted-foreground mt-0.5">
               Versionamento e controle de itinerários de voo. Compare alterações e defina o
               itinerário vigente.
             </p>
@@ -316,7 +318,7 @@ function TripFlightsPage() {
         <div className="flex glass bg-white/5 border-white/10 p-0.5 rounded-[var(--radius-card)] border-none shrink-0 self-start sm:self-center">
           <Button
             onClick={() => setActiveTab("itineraries")}
-            className={`px-3 py-1 text-[11px] font-semibold rounded-full transition-colors cursor-pointer ${
+            className={`px-3 py-1 ds-meta font-semibold rounded-full transition-colors cursor-pointer ${
               activeTab === "itineraries"
                 ? "glass-card border-none text-foreground shadow-none"
                 : "text-muted-foreground hover:text-foreground"
@@ -326,7 +328,7 @@ function TripFlightsPage() {
           </Button>
           <Button
             onClick={() => setActiveTab("boarding_cards")}
-            className={`px-3 py-1 text-[11px] font-semibold rounded-full transition-colors cursor-pointer ${
+            className={`px-3 py-1 ds-meta font-semibold rounded-full transition-colors cursor-pointer ${
               activeTab === "boarding_cards"
                 ? "glass-card border-none text-foreground shadow-none"
                 : "text-muted-foreground hover:text-foreground"
@@ -341,7 +343,7 @@ function TripFlightsPage() {
         <>
           {/* Summary action buttons */}
           <div className="flex justify-between items-center gap-3">
-            <h2 className="text-xs font-bold uppercase tracking-widest text-muted-foreground flex items-center gap-1">
+            <h2 className="ds-label-caps text-muted-foreground flex items-center gap-1">
               <Layers className="h-3.5 w-3.5" /> Versões de Itinerários (
               {itinerariesQ.data?.length || 0})
             </h2>
@@ -382,7 +384,7 @@ function TripFlightsPage() {
           {showAddForm && (
             <div className="rounded-[var(--radius-card)] border-none glass-card border-none p-5 space-y-4 animate-in fade-in duration-300">
               <div className="flex items-center justify-between border-b border-border pb-3">
-                <h3 className="text-xs font-bold uppercase tracking-widest text-foreground">
+                <h3 className="ds-label-caps text-foreground">
                   Registrar Nova Versão de Itinerário
                 </h3>
                 <Button
@@ -395,7 +397,7 @@ function TripFlightsPage() {
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div className="space-y-1">
-                  <label className="text-[10px] font-bold text-muted-foreground uppercase">
+                  <label className="ds-meta font-bold text-muted-foreground uppercase">
                     Tipo de Versão
                   </label>
                   <Select
@@ -412,7 +414,7 @@ function TripFlightsPage() {
                 </div>
 
                 <div className="space-y-1">
-                  <label className="text-[10px] font-bold text-muted-foreground uppercase">
+                  <label className="ds-meta font-bold text-muted-foreground uppercase">
                     Status Inicial
                   </label>
                   <Select
@@ -428,7 +430,7 @@ function TripFlightsPage() {
 
               {/* Dynamic segment items */}
               <div className="space-y-4 pt-2">
-                <h4 className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
+                <h4 className="ds-label-caps tracking-wider text-muted-foreground">
                   Trechos de Voo ({segments.length})
                 </h4>
 
@@ -650,20 +652,23 @@ function TripFlightsPage() {
                       <span className="font-mono text-xs font-bold glass bg-white/5 border-white/10 border-none px-2 py-0.5 rounded text-foreground">
                         V{it.version}
                       </span>
+                      <StatusBadge tone={FLIGHT_ITINERARY_STATUS_MAP[it.status]?.tone ?? "neutral"}>
+                        {FLIGHT_ITINERARY_STATUS_MAP[it.status]?.label ?? it.status}
+                      </StatusBadge>
                       <span className="text-xs font-bold text-foreground">
                         {ITINERARY_TYPE_LABELS[it.type] || it.type}
                       </span>
                       {it.status === "active" && (
                         <>
-                          <span className="inline-flex items-center gap-1 rounded bg-emerald-50 px-1.5 py-0.5 text-[10px] font-bold text-emerald-700 border border-emerald-200">
+                          <span className="inline-flex items-center gap-1 rounded bg-emerald-50 px-1.5 py-0.5 ds-meta font-bold text-emerald-700 border border-emerald-200">
                             <Check className="h-3 w-3" /> Vigente / Confirmado
                           </span>
                           {isItinerarySynced(it) ? (
-                            <span className="inline-flex items-center gap-1 rounded bg-blue-50 px-1.5 py-0.5 text-[10px] font-bold text-blue-700 border border-blue-200">
+                            <span className="inline-flex items-center gap-1 rounded bg-blue-50 px-1.5 py-0.5 ds-meta font-bold text-blue-700 border border-blue-200">
                               <CheckCircle2 className="h-3 w-3 text-blue-500" /> Sincronizado
                             </span>
                           ) : (
-                            <span className="inline-flex items-center gap-1 rounded bg-amber-50 px-1.5 py-0.5 text-[10px] font-bold text-amber-700 border border-amber-200 animate-pulse">
+                            <span className="inline-flex items-center gap-1 rounded bg-amber-50 px-1.5 py-0.5 ds-meta font-bold text-amber-700 border border-amber-200 animate-pulse">
                               <AlertTriangle className="h-3 w-3 text-amber-500" /> Desatualizado
                             </span>
                           )}
@@ -710,16 +715,16 @@ function TripFlightsPage() {
                             className="flex items-start justify-between flex-wrap gap-4 text-xs"
                           >
                             <div className="flex items-start gap-3 min-w-0">
-                              <div className="shrink-0 h-7 w-7 rounded glass bg-white/5 border-white/10 border-none flex items-center justify-center font-bold font-mono text-[10px] text-muted-foreground mt-0.5">
+                              <div className="shrink-0 h-7 w-7 rounded glass bg-white/5 border-white/10 border-none flex items-center justify-center font-bold font-mono ds-meta text-muted-foreground mt-0.5">
                                 {idx + 1}
                               </div>
                               <div className="min-w-0">
                                 <div className="flex items-center gap-2">
-                                  <span className="font-mono font-bold bg-brand/10 text-brand px-1.5 py-0.5 rounded text-[10px]">
+                                  <span className="font-mono font-bold bg-brand/10 text-brand px-1.5 py-0.5 rounded ds-meta">
                                     {seg.airline_code} {seg.flight_number}
                                   </span>
                                   {seg.record_locator && (
-                                    <span className="font-mono text-muted-foreground text-[10px] glass bg-white/5 border-white/10 px-1.5 py-0.5 rounded border-none">
+                                    <span className="font-mono text-muted-foreground ds-meta glass bg-white/5 border-white/10 px-1.5 py-0.5 rounded border-none">
                                       LOC: {seg.record_locator}
                                     </span>
                                   )}
@@ -731,7 +736,7 @@ function TripFlightsPage() {
                                   <span className="font-mono">{seg.destination_iata}</span>
                                 </div>
 
-                                <div className="text-[11px] text-muted-foreground mt-1 flex gap-3 flex-wrap">
+                                <div className="ds-meta text-muted-foreground mt-1 flex gap-3 flex-wrap">
                                   {seg.cabin && (
                                     <span className="flex items-center gap-1">
                                       <Briefcase className="h-3 w-3" />{" "}
@@ -755,11 +760,11 @@ function TripFlightsPage() {
                                   Partida: {new Date(seg.departure_at).toLocaleString("pt-BR")}
                                 </span>
                               </div>
-                              <div className="text-[11px] text-muted-foreground mt-1">
+                              <div className="ds-meta text-muted-foreground mt-1">
                                 Chegada: {new Date(seg.arrival_at).toLocaleString("pt-BR")}
                               </div>
                               {seg.airport_terminal && (
-                                <div className="text-[10px] text-muted-foreground mt-0.5 glass bg-white/5 border-white/10 px-1 rounded inline-block">
+                                <div className="ds-meta text-muted-foreground mt-0.5 glass bg-white/5 border-white/10 px-1 rounded inline-block">
                                   {seg.airport_terminal}
                                 </div>
                               )}
@@ -799,7 +804,7 @@ function TripFlightsPage() {
 
           {cards.length > 0 && (
             <section className="space-y-3">
-              <h2 className="text-xs font-bold uppercase tracking-widest text-muted-foreground">
+              <h2 className="ds-label-caps text-muted-foreground">
                 Cartões de Embarque Cadastrados ({cards.length})
               </h2>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -841,7 +846,7 @@ function TripFlightsPage() {
                       )}
 
                       {/* Detalhes */}
-                      <div className="grid grid-cols-2 gap-x-4 gap-y-1.5 text-[11px] text-muted-foreground">
+                      <div className="grid grid-cols-2 gap-x-4 gap-y-1.5 ds-meta text-muted-foreground">
                         {card.flight_date && (
                           <span className="flex items-center gap-1">
                             <Calendar className="h-3 w-3" />
@@ -874,7 +879,7 @@ function TripFlightsPage() {
                           {card.alerts.map((a: any, i: any) => (
                             <div
                               key={i}
-                              className="flex items-center gap-1.5 text-[11px] text-warning"
+                              className="flex items-center gap-1.5 ds-meta text-warning"
                             >
                               <AlertCircle className="h-3 w-3 shrink-0" />
                               {a}
@@ -886,7 +891,7 @@ function TripFlightsPage() {
                       {/* Bilhetes individuais */}
                       {cardTickets.length > 0 && (
                         <div className="border-t border-border pt-2 space-y-1.5">
-                          <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">
+                          <p className="ds-label-caps text-muted-foreground">
                             Bilhetes ({cardTickets.length})
                           </p>
                           {cardTickets.map((t: any) => {
@@ -897,7 +902,7 @@ function TripFlightsPage() {
                             return (
                               <div
                                 key={t.id}
-                                className="flex items-center justify-between gap-2 text-[11px]"
+                                className="flex items-center justify-between gap-2 ds-meta"
                               >
                                 <div className="flex items-center gap-2 text-foreground">
                                   <User className="h-3 w-3 text-muted-foreground" />
@@ -913,6 +918,9 @@ function TripFlightsPage() {
                                     </span>
                                   )}
                                 </div>
+                                <StatusBadge tone={FLIGHT_SEGMENT_STATUS_MAP[t.status]?.tone ?? "neutral"}>
+                                  {FLIGHT_SEGMENT_STATUS_MAP[t.status]?.label ?? t.status}
+                                </StatusBadge>
                                 <StatusBadge tone={ts.tone}>{ts.label}</StatusBadge>
                               </div>
                             );
@@ -929,9 +937,9 @@ function TripFlightsPage() {
       )}
 
       {/* ── Modal de Comparação (Diff) ── */}
-      {showDiffModal && (
-        <div className="fixed inset-0 z-50 bg-background/80 backdrop-blur-sm flex items-center justify-center p-4">
-          <div className="glass-card border-none rounded-[var(--radius-card)] border-none shadow-none max-w-4xl w-full max-h-[85vh] flex flex-col">
+      <Dialog open={showDiffModal} onOpenChange={setShowDiffModal}>
+        <DialogContent className="max-w-4xl p-0 overflow-hidden border-none/10 max-h-[85vh] bg-background">
+          <div className="flex flex-col h-full w-full">
             {/* Modal Header */}
             <div className="p-4 border-b border-border/60 flex items-center justify-between">
               <div className="flex items-center gap-2">
@@ -940,18 +948,12 @@ function TripFlightsPage() {
                   Comparação de Itinerários Aéreos
                 </h3>
               </div>
-              <Button
-                onClick={() => setShowDiffModal(false)}
-                className="text-muted-foreground hover:text-foreground cursor-pointer"
-              >
-                <X className="h-4 w-4" />
-              </Button>
             </div>
 
             {/* Selects selector */}
             <div className="p-4 glass bg-white/5 border-white/10/20 border-b border-border/60 grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div className="space-y-1">
-                <label className="text-[10px] font-bold text-muted-foreground uppercase">
+                <label className="ds-meta font-bold text-muted-foreground uppercase">
                   Itinerário A (Referência)
                 </label>
                 <Select
@@ -970,7 +972,7 @@ function TripFlightsPage() {
               </div>
 
               <div className="space-y-1">
-                <label className="text-[10px] font-bold text-muted-foreground uppercase">
+                <label className="ds-meta font-bold text-muted-foreground uppercase">
                   Itinerário B (Comparação)
                 </label>
                 <Select
@@ -1035,7 +1037,7 @@ function TripFlightsPage() {
                           className="rounded-[var(--radius-card)] border-none glass-card border-none overflow-hidden"
                         >
                           <div className="p-3 border-b border-border glass bg-white/5 border-white/10/20 flex items-center gap-2">
-                            <span className="h-5 w-5 rounded glass bg-white/5 border-white/10 border-none flex items-center justify-center font-bold text-[10px] font-mono text-muted-foreground">
+                            <span className="h-5 w-5 rounded glass bg-white/5 border-white/10 border-none flex items-center justify-center font-bold ds-meta font-mono text-muted-foreground">
                               {diff.segment_order}
                             </span>
                             <span className="text-xs font-bold text-foreground">
@@ -1053,7 +1055,7 @@ function TripFlightsPage() {
                               {origSeg ? (
                                 <div className="space-y-2 text-xs">
                                   <div className="flex items-center gap-2">
-                                    <span className="font-mono font-bold glass bg-white/5 border-white/10 border-none px-1.5 py-0.5 rounded text-[10px]">
+                                    <span className="font-mono font-bold glass bg-white/5 border-white/10 border-none px-1.5 py-0.5 rounded ds-meta">
                                       {origSeg.airline_code} {origSeg.flight_number}
                                     </span>
                                   </div>
@@ -1071,7 +1073,7 @@ function TripFlightsPage() {
                                       Chegada:{" "}
                                       {new Date(origSeg.arrival_at).toLocaleString("pt-BR")}
                                     </p>
-                                    <p className="text-[10px]">
+                                    <p className="ds-meta">
                                       Bagagem: {origSeg.baggage || "Não informada"}
                                     </p>
                                   </div>
@@ -1094,7 +1096,7 @@ function TripFlightsPage() {
                                   {/* Compare and Highlight */}
                                   <div className="flex items-center gap-2">
                                     <span
-                                      className={`font-mono font-bold px-1.5 py-0.5 rounded text-[10px] ${
+                                      className={`font-mono font-bold px-1.5 py-0.5 rounded ds-meta ${
                                         diff.airline_changed || diff.flight_number_changed
                                           ? "bg-amber-100 text-amber-800 border border-amber-300"
                                           : "glass bg-white/5 border-white/10 border-none"
@@ -1148,7 +1150,7 @@ function TripFlightsPage() {
                                       {new Date(compSeg.departure_at).toLocaleString("pt-BR")}
                                       {diff.departure_changed &&
                                         diff.departure_delta_minutes !== 0 && (
-                                          <span className="text-[10px] font-bold text-amber-600 ml-1.5">
+                                          <span className="ds-meta font-bold text-amber-600 ml-1.5">
                                             ({diff.departure_delta_minutes > 0 ? "+" : ""}
                                             {diff.departure_delta_minutes} min)
                                           </span>
@@ -1164,14 +1166,14 @@ function TripFlightsPage() {
                                       Chegada:{" "}
                                       {new Date(compSeg.arrival_at).toLocaleString("pt-BR")}
                                       {diff.arrival_changed && diff.arrival_delta_minutes !== 0 && (
-                                        <span className="text-[10px] font-bold text-amber-600 ml-1.5">
+                                        <span className="ds-meta font-bold text-amber-600 ml-1.5">
                                           ({diff.arrival_delta_minutes > 0 ? "+" : ""}
                                           {diff.arrival_delta_minutes} min)
                                         </span>
                                       )}
                                     </p>
                                     <p
-                                      className={`text-[10px] ${diff.baggage_changed ? "text-amber-600 bg-amber-50 font-bold px-1 rounded inline-block" : ""}`}
+                                      className={`ds-meta ${diff.baggage_changed ? "text-amber-600 bg-amber-50 font-bold px-1 rounded inline-block" : ""}`}
                                     >
                                       Bagagem: {compSeg.baggage || "Não informada"}
                                     </p>
@@ -1202,8 +1204,8 @@ function TripFlightsPage() {
               </Button>
             </div>
           </div>
-        </div>
-      )}
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

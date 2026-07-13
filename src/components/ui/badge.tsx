@@ -29,7 +29,7 @@ function Badge({ className, variant, ...props }: BadgeProps) {
 }
 
 export interface StatusBadgeProps extends React.HTMLAttributes<HTMLSpanElement> {
-  tone?: "neutral" | "success" | "warning" | "danger" | "info";
+  tone?: "neutral" | "success" | "warning" | "danger" | "info" | "primary";
 }
 
 function StatusBadge({
@@ -44,12 +44,13 @@ function StatusBadge({
     warning: "bg-amber-650 text-white",
     danger: "bg-rose-650 text-white",
     info: "bg-blue-650 text-white",
+    primary: "bg-brand text-white",
   };
 
   return (
     <span
       className={cn(
-        "status-badge inline-flex items-center rounded-badge px-2.5 py-0.5 text-[10px] font-extrabold uppercase tracking-widest border-none text-shadow-none",
+        "status-badge inline-flex items-center rounded-badge px-2.5 py-0.5 ds-meta font-extrabold uppercase tracking-widest border-none text-shadow-none",
         tones[tone],
         className,
       )}

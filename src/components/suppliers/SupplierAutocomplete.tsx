@@ -182,7 +182,7 @@ export function SupplierAutocomplete({
                     className="w-full text-left px-4 py-3 hover:bg-surface-alt transition-colors border-b border-border/50 last:border-0"
                   >
                     <div className="flex items-center gap-2">
-                      <span className="text-[10px] bg-brand/10 text-brand rounded px-1.5 py-0.5 font-semibold shrink-0">
+                      <span className="ds-meta bg-brand/10 text-brand rounded px-1.5 py-0.5 font-semibold shrink-0">
                         {KIND_LABEL[supplier.kind] ?? supplier.kind}
                       </span>
                       <span className="text-sm font-medium text-foreground">{supplier.name}</span>
@@ -196,7 +196,7 @@ export function SupplierAutocomplete({
                     {(supplier.city || supplier.commission_rate > 0) && (
                       <div className="flex items-center gap-3 mt-1">
                         {supplier.city && (
-                          <span className="text-[10px] text-muted-foreground flex items-center gap-0.5">
+                          <span className="ds-meta text-muted-foreground flex items-center gap-0.5">
                             <MapPin className="h-2.5 w-2.5" />
                             {supplier.city}
                             {supplier.country &&
@@ -205,7 +205,7 @@ export function SupplierAutocomplete({
                           </span>
                         )}
                         {supplier.commission_rate > 0 && (
-                          <span className="text-[10px] text-green-600 font-semibold">
+                          <span className="ds-meta text-green-600 font-semibold">
                             {supplier.commission_rate}% comissão
                           </span>
                         )}

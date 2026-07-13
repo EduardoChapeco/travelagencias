@@ -597,7 +597,7 @@ function TourDetailPage() {
                     </Button>
                   ))}
                 </div>
-                <div className="text-[11px] text-muted-foreground font-mono">
+                <div className="ds-meta text-muted-foreground font-mono">
                   Filtrados:{" "}
                   <strong>
                     {
@@ -612,7 +612,7 @@ function TourDetailPage() {
 
               <div className="overflow-x-auto rounded border-none">
                 <table className="w-full text-sm">
-                  <thead className="glass bg-white/5 border-white/10/40 text-left text-[11px] uppercase text-muted-foreground">
+                  <thead className="glass bg-white/5 border-white/10/40 text-left ds-meta uppercase text-muted-foreground">
                     <tr>
                       <th className="px-3 py-2">Passageiro</th>
                       <th className="px-3 py-2">CPF</th>
@@ -702,7 +702,7 @@ function TourDetailPage() {
                                       enrollmentId: e.id,
                                     })
                                   }
-                                  className="inline-flex h-7 px-2.5 items-center justify-center rounded bg-brand/5 text-brand hover:bg-brand/10 text-[10px] font-bold transition-all cursor-pointer"
+                                  className="inline-flex h-7 px-2.5 items-center justify-center rounded bg-brand/5 text-brand hover:bg-brand/10 ds-meta font-bold transition-all cursor-pointer"
                                 >
                                   Recibo
                                 </Button>
@@ -728,7 +728,7 @@ function TourDetailPage() {
                                 <Button
                                   onClick={() => approveEnrollment.mutate(e)}
                                   disabled={approveEnrollment.isPending || cancelEnrollment.isPending}
-                                  className="inline-flex h-7 px-2.5 items-center justify-center rounded bg-emerald-500/10 text-emerald-600 hover:bg-emerald-500/20 text-[10px] font-bold transition-all cursor-pointer disabled:opacity-50"
+                                  className="inline-flex h-7 px-2.5 items-center justify-center rounded bg-emerald-500/10 text-emerald-600 hover:bg-emerald-500/20 ds-meta font-bold transition-all cursor-pointer disabled:opacity-50"
                                 >
                                   Aprovar
                                 </Button>
@@ -742,7 +742,7 @@ function TourDetailPage() {
                                     });
                                   }}
                                   disabled={approveEnrollment.isPending || cancelEnrollment.isPending}
-                                  className="inline-flex h-7 px-2.5 items-center justify-center rounded bg-rose-500/10 text-rose-600 hover:bg-rose-500/20 text-[10px] font-bold transition-all cursor-pointer disabled:opacity-50"
+                                  className="inline-flex h-7 px-2.5 items-center justify-center rounded bg-rose-500/10 text-rose-600 hover:bg-rose-500/20 ds-meta font-bold transition-all cursor-pointer disabled:opacity-50"
                                 >
                                   Rejeitar
                                 </Button>
@@ -765,7 +765,7 @@ function TourDetailPage() {
             <div className="lg:col-span-2 space-y-6">
               <div className="bg-white border-none rounded-[var(--radius-card)] p-5 grid grid-cols-1 sm:grid-cols-3 gap-4">
                 <div className="p-3 bg-gray-50 rounded-[var(--radius-card)]">
-                  <span className="text-[10px] text-muted-foreground uppercase font-bold">
+                  <span className="ds-meta text-muted-foreground uppercase font-bold">
                     Faturamento Bruto
                   </span>
                   <strong className="block text-lg mt-1 font-mono text-gray-900">
@@ -773,7 +773,7 @@ function TourDetailPage() {
                   </strong>
                 </div>
                 <div className="p-3 bg-gray-50 rounded-[var(--radius-card)]">
-                  <span className="text-[10px] text-muted-foreground uppercase font-bold">
+                  <span className="ds-meta text-muted-foreground uppercase font-bold">
                     Custos Operacionais
                   </span>
                   <strong className="block text-lg mt-1 font-mono text-rose-600">
@@ -781,7 +781,7 @@ function TourDetailPage() {
                   </strong>
                 </div>
                 <div className="p-3 bg-[#e8f3f1] rounded-[var(--radius-card)]">
-                  <span className="text-[10px] text-teal-800 uppercase font-bold">
+                  <span className="ds-meta text-teal-800 uppercase font-bold">
                     Resultado Líquido
                   </span>
                   <strong className="block text-lg mt-1 font-mono text-teal-700">
@@ -794,16 +794,16 @@ function TourDetailPage() {
               <div className="bg-white border-none rounded-[var(--radius-card)] overflow-hidden">
                 <div className="px-5 py-4 border-b border-border flex justify-between items-center bg-gray-50/50">
                   <div>
-                    <h4 className="text-xs font-bold uppercase tracking-wider text-gray-700">
+                    <h4 className="ds-label-caps tracking-wider text-gray-700">
                       Custos da Viagem (Rateio & Margem)
                     </h4>
-                    <p className="text-[10px] text-muted-foreground">
+                    <p className="ds-meta text-muted-foreground">
                       Listagem de despesas fixas da excursão e taxas por passageiro.
                     </p>
                   </div>
                   <GhostButton
                     onClick={() => setAddCostSheet(true)}
-                    className="h-7 text-[10px] font-bold"
+                    className="h-7 ds-meta font-bold"
                   >
                     + Novo Custo
                   </GhostButton>
@@ -831,7 +831,7 @@ function TourDetailPage() {
                       >
                         <div>
                           <div className="font-semibold text-gray-800">{cost.description}</div>
-                          <div className="text-[10px] text-muted-foreground mt-0.5">
+                          <div className="ds-meta text-muted-foreground mt-0.5">
                             {cost.type === "fixed"
                               ? "Custo Fixo"
                               : `Variável (${money(Number(cost.amount))} x ${pCount} pax)`}
@@ -859,7 +859,7 @@ function TourDetailPage() {
                         <div className="font-semibold text-amber-800">
                           Orçamento Ads da Campanha (Google/Meta)
                         </div>
-                        <div className="text-[10px] text-amber-700 mt-0.5">
+                        <div className="ds-meta text-amber-700 mt-0.5">
                           Custo de captação integrado
                         </div>
                       </div>
@@ -878,19 +878,19 @@ function TourDetailPage() {
                   <Landmark className="w-5 h-5 text-gray-400" />
                   <GhostButton
                     onClick={() => setVaultSheet(true)}
-                    className="h-6 text-[10px] font-bold"
+                    className="h-6 ds-meta font-bold"
                   >
                     Ajustar Saldo
                   </GhostButton>
                 </div>
                 <div>
-                  <span className="text-[10px] text-muted-foreground uppercase font-bold block">
+                  <span className="ds-meta text-muted-foreground uppercase font-bold block">
                     Poupança do Grupo (Vault)
                   </span>
                   <strong className="text-xl font-mono text-gray-900 block mt-1">
                     {money(Number((t as any).target_poupanca_balance) || 0)}
                   </strong>
-                  <p className="text-[10px] text-muted-foreground mt-2 leading-relaxed">
+                  <p className="ds-meta text-muted-foreground mt-2 leading-relaxed">
                     Saldos e parcelas de grupos terrestres ficam retidos nesta conta garantidora até
                     o encerramento do evento pós-retorno.
                   </p>
@@ -903,13 +903,13 @@ function TourDetailPage() {
                   <Target className="w-5 h-5 text-gray-400" />
                   <GhostButton
                     onClick={() => setAdsSheet(true)}
-                    className="h-6 text-[10px] font-bold"
+                    className="h-6 ds-meta font-bold"
                   >
                     Lançar Gastos Ads
                   </GhostButton>
                 </div>
                 <div>
-                  <span className="text-[10px] text-muted-foreground uppercase font-bold block">
+                  <span className="ds-meta text-muted-foreground uppercase font-bold block">
                     Desempenho Marketing
                   </span>
                   <div className="grid grid-cols-2 gap-2 mt-2">
@@ -1381,7 +1381,7 @@ function FlyersTabContent({ tour, agency }: { tour: any; agency: any }) {
         </h4>
 
         <div className="space-y-3">
-          <label className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider block">
+          <label className="ds-meta font-bold text-muted-foreground uppercase tracking-wider block">
             Tema de Cores
           </label>
           <div className="grid grid-cols-2 gap-2">
@@ -1407,7 +1407,7 @@ function FlyersTabContent({ tour, agency }: { tour: any; agency: any }) {
                 key={th.id}
                 type="button"
                 onClick={() => setSelectedTheme(th.id as any)}
-                className={`p-2 rounded-[var(--radius-card)] border text-[11px] font-medium text-left flex items-center gap-2 cursor-pointer transition-all ${
+                className={`p-2 rounded-[var(--radius-card)] border ds-meta font-medium text-left flex items-center gap-2 cursor-pointer transition-all ${
                   selectedTheme === th.id
                     ? "border-brand bg-brand/5 font-bold shadow-xs"
                     : "border-border hover:bg-slate-50 text-slate-650"
@@ -1477,7 +1477,7 @@ function FlyersTabContent({ tour, agency }: { tour: any; agency: any }) {
           >
             <Sparkles className="h-4 w-4 text-brand" /> Criar Apresentação no Studio
           </Button>
-          <span className="text-[10px] text-muted-foreground block mt-2 text-center">
+          <span className="ds-meta text-muted-foreground block mt-2 text-center">
             Será gerado um material comercial no Studio onde poderá diagramar novos slides e exportar em PDF.
           </span>
         </div>
@@ -1773,7 +1773,7 @@ function HotelPricingTabContent({ tour, onUpdate }: { tour: any; onUpdate: () =>
           />
 
           <div className="space-y-1.5">
-            <label className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider block">
+            <label className="ds-meta font-bold text-muted-foreground uppercase tracking-wider block">
               Amenidades
             </label>
             <div className="flex flex-wrap gap-1.5">
@@ -1787,7 +1787,7 @@ function HotelPricingTabContent({ tour, onUpdate }: { tour: any; onUpdate: () =>
                       const next = isSel ? amenities.filter((x) => x !== am) : [...amenities, am];
                       setAmenities(next);
                     }}
-                    className={`px-2 py-1 rounded-full text-[10px] font-semibold border transition-all cursor-pointer ${
+                    className={`px-2 py-1 rounded-full ds-meta font-semibold border transition-all cursor-pointer ${
                       isSel
                         ? "bg-brand/10 border-brand text-brand"
                         : "bg-slate-50 border-border text-muted-foreground hover:border-slate-350"
@@ -1819,7 +1819,7 @@ function HotelPricingTabContent({ tour, onUpdate }: { tour: any; onUpdate: () =>
             </div>
             <GhostButton
               onClick={handlePopulateDefaultTiers}
-              className="h-7 text-[10px] border border-brand/20 text-brand"
+              className="h-7 ds-meta border border-brand/20 text-brand"
             >
               Gerar Padrão
             </GhostButton>
@@ -1828,7 +1828,7 @@ function HotelPricingTabContent({ tour, onUpdate }: { tour: any; onUpdate: () =>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             {/* CRUD form */}
             <div className="p-4 border-none rounded-[var(--radius-card)] bg-slate-50/50 space-y-3 self-start">
-              <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest block">
+              <span className="ds-meta font-bold text-muted-foreground uppercase tracking-widest block">
                 Cadastrar Tarifa
               </span>
               <Field label="Nome do quarto *">
@@ -1876,7 +1876,7 @@ function HotelPricingTabContent({ tour, onUpdate }: { tour: any; onUpdate: () =>
                         {t.name}
                       </strong>
                       {t.description && (
-                        <span className="text-[10px] text-muted-foreground truncate block">
+                        <span className="ds-meta text-muted-foreground truncate block">
                           {t.description}
                         </span>
                       )}
@@ -1913,7 +1913,7 @@ function HotelPricingTabContent({ tour, onUpdate }: { tour: any; onUpdate: () =>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             {/* CRUD form */}
             <div className="p-4 border-none rounded-[var(--radius-card)] bg-slate-50/50 space-y-3 self-start">
-              <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest block">
+              <span className="ds-meta font-bold text-muted-foreground uppercase tracking-widest block">
                 Cadastrar Opcional
               </span>
               <Field label="Nome do serviço *">
@@ -1961,7 +1961,7 @@ function HotelPricingTabContent({ tour, onUpdate }: { tour: any; onUpdate: () =>
                         {e.name}
                       </strong>
                       {e.description && (
-                        <span className="text-[10px] text-muted-foreground truncate block">
+                        <span className="ds-meta text-muted-foreground truncate block">
                           {e.description}
                         </span>
                       )}
@@ -1993,7 +1993,7 @@ function HotelPricingTabContent({ tour, onUpdate }: { tour: any; onUpdate: () =>
 function Stat({ label, value }: { label: string; value: string }) {
   return (
     <div className="rounded border-none glass-card border-none p-3">
-      <div className="text-[10px] uppercase tracking-wide text-muted-foreground">{label}</div>
+      <div className="ds-meta uppercase tracking-wide text-muted-foreground">{label}</div>
       <div className="mt-1 text-base font-semibold">{value}</div>
     </div>
   );
@@ -2160,7 +2160,7 @@ function ItineraryEditor({
               <Wand2 className="h-4 w-4" />{" "}
               {aiGenerating ? "Minerando e Redigindo Roteiro..." : "Gerar Itinerário Completo"}
             </PrimaryButton>
-            <p className="text-[10px] text-muted-foreground text-center">
+            <p className="ds-meta text-muted-foreground text-center">
               Isso irá sobrescrever os dias atuais do roteiro.
             </p>
           </div>
@@ -2383,7 +2383,7 @@ function BusSeatManager({
     <div className="flex flex-col md:flex-row gap-6">
       <div className="flex-1 glass-card border-none border-none rounded-[var(--radius-card)] p-8 overflow-x-auto">
         <div className="min-w-max mx-auto">
-          <div className="h-10 mb-6 border-b-2 border-dashed border-border/50 rounded-t-[3rem] glass bg-white/5 border-white/10/20 flex items-end justify-center pb-2 text-[10px] font-bold uppercase tracking-widest text-muted-foreground">
+          <div className="h-10 mb-6 border-b-2 border-dashed border-border/50 rounded-t-[3rem] glass bg-white/5 border-white/10/20 flex items-end justify-center pb-2 ds-label-caps text-muted-foreground">
             Motorista
           </div>
           <div
@@ -2433,10 +2433,10 @@ function BusSeatManager({
             <div className="font-bold flex items-center gap-1">
               ⚠️ Inconsistência de Assentos
             </div>
-            <p className="text-[11px] text-amber-700 leading-snug font-medium">
+            <p className="ds-meta text-amber-700 leading-snug font-medium">
               Os seguintes passageiros estão alocados em poltronas que não existem no layout selecionado:
             </p>
-            <ul className="list-disc pl-4 space-y-1 font-semibold text-[10px] text-amber-800">
+            <ul className="list-disc pl-4 space-y-1 font-semibold ds-meta text-amber-800">
               {orphans.map((p) => (
                 <li key={p.id}>
                   {p.passenger_name} ({p.seat_number})
@@ -2454,7 +2454,7 @@ function BusSeatManager({
                 toast.success("Assentos inconsistentes liberados!");
                 onChange();
               }}
-              className="mt-2 w-full text-center py-1.5 bg-amber-600 hover:bg-amber-700 text-white font-bold rounded-[var(--radius-card)] text-[10px] transition-colors cursor-pointer"
+              className="mt-2 w-full text-center py-1.5 bg-amber-600 hover:bg-amber-700 text-white font-bold rounded-[var(--radius-card)] ds-meta transition-colors cursor-pointer"
             >
               Liberar Assentos
             </Button>
@@ -2463,7 +2463,7 @@ function BusSeatManager({
 
         {selectedSeat ? (
           <div className="bg-brand/5 border border-brand/20 rounded p-5">
-            <div className="text-[10px] font-bold uppercase tracking-widest text-brand mb-1">
+            <div className="ds-label-caps text-brand mb-1">
               Poltrona {selectedSeat.label}
             </div>
             <h4 className="text-sm font-semibold mb-4">Gerenciar Assento</h4>
@@ -2494,7 +2494,7 @@ function BusSeatManager({
         )}
 
         <div className="glass-card border-none border-none rounded p-5">
-          <div className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground mb-3">
+          <div className="ds-label-caps text-muted-foreground mb-3">
             Resumo de Ocupação
           </div>
           <div className="flex justify-between items-center text-sm mb-2">
@@ -2883,7 +2883,7 @@ function EditTour({
                 </div>
               ))}
               {includes.length === 0 && (
-                <div className="text-[10px] text-muted-foreground italic">Nenhum item incluso.</div>
+                <div className="ds-meta text-muted-foreground italic">Nenhum item incluso.</div>
               )}
             </div>
           </div>
@@ -2937,7 +2937,7 @@ function EditTour({
                 </div>
               ))}
               {excludes.length === 0 && (
-                <div className="text-[10px] text-muted-foreground italic">
+                <div className="ds-meta text-muted-foreground italic">
                   Nenhum item excluído.
                 </div>
               )}
@@ -3353,19 +3353,19 @@ function RoomingListManager({
         {/* Summary KPIs */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
           <div className="rounded-[var(--radius-card)] border-none glass-card border-none p-4 text-center">
-            <div className="text-[10px] font-bold text-muted-foreground uppercase tracking-wide mb-1">
+            <div className="ds-meta font-bold text-muted-foreground uppercase tracking-wide mb-1">
               Quartos
             </div>
             <div className="text-2xl font-black text-foreground">{rooms.length}</div>
           </div>
           <div className="rounded-[var(--radius-card)] border-none glass-card border-none p-4 text-center">
-            <div className="text-[10px] font-bold text-muted-foreground uppercase tracking-wide mb-1">
+            <div className="ds-meta font-bold text-muted-foreground uppercase tracking-wide mb-1">
               Leitos
             </div>
             <div className="text-2xl font-black text-foreground">{totalBeds}</div>
           </div>
           <div className="rounded-[var(--radius-card)] border-none glass-card border-none p-4 text-center">
-            <div className="text-[10px] font-bold text-muted-foreground uppercase tracking-wide mb-1">
+            <div className="ds-meta font-bold text-muted-foreground uppercase tracking-wide mb-1">
               Alocados
             </div>
             <div className="text-2xl font-black text-brand">{totalOccupied}</div>
@@ -3373,7 +3373,7 @@ function RoomingListManager({
           <div
             className={`rounded-[var(--radius-card)] border p-4 text-center ${unallocated.length === 0 ? "border-success/30 bg-success/5" : "border-warning/30 bg-warning/5"}`}
           >
-            <div className="text-[10px] font-bold text-muted-foreground uppercase tracking-wide mb-1">
+            <div className="ds-meta font-bold text-muted-foreground uppercase tracking-wide mb-1">
               Sem Quarto
             </div>
             <div
@@ -3387,11 +3387,11 @@ function RoomingListManager({
         {/* Passageiros Sem Quarto (Droppable List) */}
         <DroppableUnallocated>
           <div className="flex items-center justify-between mb-3">
-            <h4 className="text-xs font-bold uppercase tracking-wider text-muted-foreground flex items-center gap-1.5">
+            <h4 className="ds-label-caps tracking-wider text-muted-foreground flex items-center gap-1.5">
               <Users2 className="h-3.5 w-3.5 text-brand" /> Passageiros Sem Quarto (
               {unallocated.length})
             </h4>
-            <span className="text-[10px] text-muted-foreground font-semibold">
+            <span className="ds-meta text-muted-foreground font-semibold">
               Arrastar passageiro para o quarto
             </span>
           </div>
@@ -3541,7 +3541,7 @@ function RoomingListManager({
                         <div className="font-bold text-sm text-foreground">
                           Quarto {room.room_number}
                         </div>
-                        <div className="text-[10px] text-muted-foreground">
+                        <div className="ds-meta text-muted-foreground">
                           {ROOM_TYPE_LABEL[room.room_type] ?? room.room_type}
                         </div>
                       </div>
@@ -3568,11 +3568,11 @@ function RoomingListManager({
                   {/* Occupancy bar */}
                   <div className="px-4 pt-3 pb-1">
                     <div className="flex items-center justify-between mb-1.5">
-                      <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-wide">
+                      <span className="ds-meta font-bold text-muted-foreground uppercase tracking-wide">
                         Ocupação
                       </span>
                       <span
-                        className={`text-[10px] font-bold ${isFull ? "text-success" : "text-foreground"}`}
+                        className={`ds-meta font-bold ${isFull ? "text-success" : "text-foreground"}`}
                       >
                         {roomPax.length}/{cap}
                       </span>
@@ -3619,7 +3619,7 @@ function RoomingListManager({
 
                   {/* Hotel / dates */}
                   {(room.hotel_name || room.checkin_date) && (
-                    <div className="px-4 pb-3 border-t border-border/50 pt-2 flex flex-wrap gap-2 text-[10px] text-muted-foreground font-medium">
+                    <div className="px-4 pb-3 border-t border-border/50 pt-2 flex flex-wrap gap-2 ds-meta text-muted-foreground font-medium">
                       {room.hotel_name && (
                         <span className="flex items-center gap-1">
                           <Hotel className="h-2.5 w-2.5" />

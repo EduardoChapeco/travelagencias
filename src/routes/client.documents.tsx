@@ -33,7 +33,7 @@ function ClientDocumentsPage() {
         <div>
           <div className="mb-3 flex items-center gap-2">
             <span className="h-1.5 w-1.5 rounded-full bg-brand" />
-            <h3 className="text-xs font-bold uppercase tracking-wider text-muted-foreground/80">
+            <h3 className="ds-label-caps tracking-wider text-muted-foreground/80">
               Contratos
             </h3>
           </div>
@@ -89,7 +89,7 @@ function ClientDocumentsPage() {
         <div>
           <div className="mb-3 flex items-center gap-2">
             <span className="h-1.5 w-1.5 rounded-full bg-brand" />
-            <h3 className="text-xs font-bold uppercase tracking-wider text-muted-foreground/80">
+            <h3 className="ds-label-caps tracking-wider text-muted-foreground/80">
               Vouchers emitidos
             </h3>
           </div>

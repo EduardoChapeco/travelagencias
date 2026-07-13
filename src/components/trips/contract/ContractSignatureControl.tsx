@@ -64,7 +64,7 @@ export function ContractSignatureControl({
                       .join(", ")
                   : (contract.client_data as any)?.name || "Cliente Contratante"}
               </div>
-              <div className="text-[10px] text-muted-foreground font-mono">
+              <div className="ds-meta text-muted-foreground font-mono">
                 {Array.isArray(contract.client_data)
                   ? contract.client_data
                       .map((c: any) => c.cpf || c.document)
@@ -77,15 +77,15 @@ export function ContractSignatureControl({
             </div>
             <div>
               {contract.status === "signed" ? (
-                <span className="inline-flex items-center gap-1 rounded bg-success/15 px-2 py-0.5 text-[10px] font-bold text-success">
+                <span className="inline-flex items-center gap-1 rounded bg-success/15 px-2 py-0.5 ds-meta font-bold text-success">
                   Assinado
                 </span>
               ) : contract.status === "cancelled" ? (
-                <span className="inline-flex items-center gap-1 rounded bg-danger/15 px-2 py-0.5 text-[10px] font-bold text-danger">
+                <span className="inline-flex items-center gap-1 rounded bg-danger/15 px-2 py-0.5 ds-meta font-bold text-danger">
                   Cancelado
                 </span>
               ) : (
-                <span className="inline-flex items-center gap-1 rounded bg-warning/15 px-2 py-0.5 text-[10px] font-bold text-warning animate-pulse">
+                <span className="inline-flex items-center gap-1 rounded bg-warning/15 px-2 py-0.5 ds-meta font-bold text-warning animate-pulse">
                   Aguardando
                 </span>
               )}
@@ -93,7 +93,7 @@ export function ContractSignatureControl({
           </div>
 
           {/* Rastreamento Comportamental do Cliente */}
-          <div className="mt-4 border-t border-border/40 pt-3 space-y-2.5 text-[10px] text-muted-foreground">
+          <div className="mt-4 border-t border-border/40 pt-3 space-y-2.5 ds-meta text-muted-foreground">
             <div className="text-[9px] font-bold uppercase tracking-wider text-muted-foreground/80">
               Engajamento do Cliente
             </div>
@@ -152,7 +152,7 @@ export function ContractSignatureControl({
             contract.signatures.map((sig, i) => (
               <div
                 key={i}
-                className="mt-3 border-t border-border/40 pt-2.5 space-y-2 text-[10px] text-muted-foreground"
+                className="mt-3 border-t border-border/40 pt-2.5 space-y-2 ds-meta text-muted-foreground"
               >
                 <div className="flex items-center justify-between">
                   <span>
@@ -204,7 +204,7 @@ export function ContractSignatureControl({
         </h3>
 
         {isLoadingAudit && (
-          <p className="text-[10px] text-muted-foreground">Carregando auditoria...</p>
+          <p className="ds-meta text-muted-foreground">Carregando auditoria...</p>
         )}
 
         {auditChain && auditChain.length > 0 ? (
@@ -233,7 +233,7 @@ export function ContractSignatureControl({
               }
 
               return (
-                <div key={audit.id} className="relative text-[10px] text-foreground font-medium">
+                <div key={audit.id} className="relative ds-meta text-foreground font-medium">
                   {/* Bullet */}
                   <div className="absolute -left-[22px] top-0.5 flex h-4 w-4 items-center justify-center rounded-full bg-surface ring-2 ring-border/50">
                     {icon}
@@ -251,7 +251,7 @@ export function ContractSignatureControl({
           </div>
         ) : (
           !isLoadingAudit && (
-            <p className="text-[10px] text-muted-foreground">
+            <p className="ds-meta text-muted-foreground">
               Nenhum evento registrado no livro razão.
             </p>
           )

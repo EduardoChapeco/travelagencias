@@ -372,13 +372,13 @@ function PublicProposalView() {
             )}
             <div>
               <div className="text-sm font-bold leading-tight">{p.agency?.name ?? "Agência"}</div>
-              <div className="text-[10px] text-muted-foreground uppercase tracking-wider font-semibold">
+              <div className="ds-meta text-muted-foreground uppercase tracking-wider font-semibold">
                 Proposta #{p.number}
               </div>
             </div>
           </div>
           <span
-            className="rounded-full px-3 py-1 text-[10px] font-bold uppercase tracking-wider"
+            className="rounded-full px-3 py-1 ds-label-caps tracking-wider"
             style={{ background: `${brand}15`, color: brand }}
           >
             {p.status === "draft"
@@ -441,7 +441,7 @@ function PublicProposalView() {
               </div>
             ) : (
               <div className="space-y-3">
-                <h3 className="text-xs font-bold uppercase tracking-wider text-muted-foreground text-center">
+                <h3 className="ds-label-caps tracking-wider text-muted-foreground text-center">
                   Decidir Proposta
                 </h3>
                 <DecideActions
@@ -456,7 +456,7 @@ function PublicProposalView() {
 
           {/* Quick Info Box / Action Box */}
           <div className="rounded-[var(--radius-card)] border-none glass-card border-none p-5 space-y-3">
-            <h4 className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
+            <h4 className="ds-label-caps tracking-wider text-muted-foreground">
               Resumo da Viagem
             </h4>
             <div className="text-xs text-muted-foreground space-y-1">
@@ -472,7 +472,7 @@ function PublicProposalView() {
               </div>
             </div>
             {p.valid_until && (
-              <div className="rounded-[var(--radius-card)] bg-amber-500/15 p-2.5 text-[10px] text-amber-700 dark:text-amber-500 font-medium">
+              <div className="rounded-[var(--radius-card)] bg-amber-500/15 p-2.5 ds-meta text-amber-700 dark:text-amber-500 font-medium">
                 Condições de tarifas garantidas até {fmtDate(p.valid_until)}.
               </div>
             )}
@@ -504,14 +504,14 @@ function DecideActions({
             : "Confirmar recusa desta proposta de viagem?"}
         </p>
         <div className="flex items-center justify-center gap-2">
-          <GhostButton type="button" onClick={() => setConfirm(null)} className="h-8 text-[11px]">
+          <GhostButton type="button" onClick={() => setConfirm(null)} className="h-8 ds-meta">
             Voltar
           </GhostButton>
           <PrimaryButton
             type="button"
             onClick={() => onDecide(confirm)}
             disabled={pending}
-            className="h-8 text-[11px] font-bold"
+            className="h-8 ds-meta font-bold"
             style={{ background: brand, color: brandFg }}
           >
             {pending ? "Enviando…" : "Confirmar"}

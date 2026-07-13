@@ -80,7 +80,7 @@ export function DataTable<TData, TValue>({
                     return (
                       <TableHead
                         key={header.id}
-                        className="text-xs uppercase tracking-wider text-muted-foreground"
+                        className="ds-label-caps text-muted-foreground"
                       >
                         {header.isPlaceholder
                           ? null

@@ -22,7 +22,9 @@ import {
   Clock,
   Calendar,
   History,
+  X,
 } from "lucide-react";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { fetchApiKeys, saveApiKey, toggleApiKey, deleteApiKey, fetchOperators, saveOperator, deleteOperator, testOperatorConnection, fetchIntegrationCredentials, saveIntegrationCredential } from "@/services/settings";
 import { supabase } from "@/integrations/supabase/client";
 import { useAgency } from "@/lib/agency-context";
@@ -763,7 +765,7 @@ function ApiKeysTab({ agencyId }: { agencyId: string }) {
           </div>
         ) : (
           <table className="w-full text-sm">
-            <thead className="glass bg-white/5 border-white/10/40 border-b border-border text-[11px] uppercase tracking-wide text-muted-foreground">
+            <thead className="glass bg-white/5 border-white/10/40 border-b border-border ds-meta uppercase tracking-wide text-muted-foreground">
               <tr>
                 <th className="px-3 py-2 text-left">Serviço</th>
                 <th className="px-3 py-2 text-left">Identificação</th>
@@ -887,7 +889,7 @@ function AiAgentSettingsSection({ agencyId }: { agencyId: string }) {
       <div className="flex items-center justify-between rounded-[var(--radius-card)] border-none glass bg-white/5 border-white/10/10 p-3.5">
         <div>
           <label className="text-xs font-bold text-foreground">Respostas Automáticas Ativas</label>
-          <p className="text-[10px] text-muted-foreground font-sans">
+          <p className="ds-meta text-muted-foreground font-sans">
             Se ativado, o assistente responderá diretamente às mensagens recebidas via WhatsApp.
           </p>
         </div>
@@ -906,7 +908,7 @@ function AiAgentSettingsSection({ agencyId }: { agencyId: string }) {
             <option value="conversion">Foco em Conversão e Vendas</option>
             <option value="retention">Foco em Retenção e Suporte</option>
           </Select>
-          <p className="text-[10px] text-muted-foreground mt-0.5 font-sans">
+          <p className="ds-meta text-muted-foreground mt-0.5 font-sans">
             Ajusta o estilo de comunicação e os objetivos comerciais do assistente virtual.
           </p>
         </Field>
@@ -920,7 +922,7 @@ function AiAgentSettingsSection({ agencyId }: { agencyId: string }) {
           placeholder="Ex: Somos uma agência focada em ecoturismo de luxo. Sempre chame o cliente pelo primeiro nome. Destaque que nossos pacotes incluem guias bilíngues..."
           className="w-full glass bg-white/5 border-white/10 border-none/60 rounded-[var(--radius-card)] py-2.5 resize-none focus:ring-0 focus:border-brand/50 font-sans leading-relaxed"
         />
-        <p className="text-[10px] text-muted-foreground mt-0.5 font-sans">
+        <p className="ds-meta text-muted-foreground mt-0.5 font-sans">
           Adicione diretrizes operacionais, regras de negócio ou ofertas exclusivas da sua agência.
         </p>
       </Field>
@@ -1351,7 +1353,7 @@ function InfotravelTab({ agencyId }: { agencyId: string }) {
                     <div className="font-semibold text-sm text-foreground truncate">
                       {op.operator_name}
                     </div>
-                    <div className="text-[11px] text-muted-foreground font-sans flex flex-wrap items-center gap-x-2 gap-y-1 mt-0.5">
+                    <div className="ds-meta text-muted-foreground font-sans flex flex-wrap items-center gap-x-2 gap-y-1 mt-0.5">
                       {op.is_active ? (
                         <span className="text-emerald-600 font-semibold">● Ativa</span>
                       ) : (
@@ -1390,7 +1392,7 @@ function InfotravelTab({ agencyId }: { agencyId: string }) {
                       handleTestConnection(op.operator_id);
                     }}
                     disabled={testingId === op.operator_id}
-                    className="flex items-center gap-1 px-2.5 py-1.5 rounded-[var(--radius-card)] border-none text-[11px] font-semibold text-muted-foreground hover:border-brand/40 hover:text-brand transition-all disabled:opacity-50 cursor-pointer"
+                    className="flex items-center gap-1 px-2.5 py-1.5 rounded-[var(--radius-card)] border-none ds-meta font-semibold text-muted-foreground hover:border-brand/40 hover:text-brand transition-all disabled:opacity-50 cursor-pointer"
                   >
                     {testingId === op.operator_id ? (
                       <RefreshCw className="h-3 w-3 animate-spin" />
@@ -1406,7 +1408,7 @@ function InfotravelTab({ agencyId }: { agencyId: string }) {
                       setAddingNew(false);
                       setEditingOperatorId(op.operator_id);
                     }}
-                    className="flex items-center gap-1 px-2.5 py-1.5 rounded-[var(--radius-card)] border-none text-[11px] font-semibold text-muted-foreground hover:border-brand/40 hover:text-brand transition-all cursor-pointer"
+                    className="flex items-center gap-1 px-2.5 py-1.5 rounded-[var(--radius-card)] border-none ds-meta font-semibold text-muted-foreground hover:border-brand/40 hover:text-brand transition-all cursor-pointer"
                   >
                     Editar
                   </Button>
@@ -1416,7 +1418,7 @@ function InfotravelTab({ agencyId }: { agencyId: string }) {
                       e.stopPropagation();
                       handleDeleteOperator(op.operator_id, op.operator_name);
                     }}
-                    className="flex items-center gap-1 px-2.5 py-1.5 rounded-[var(--radius-card)] border border-danger/20 text-[11px] font-semibold text-danger/70 hover:bg-danger/10 hover:text-danger transition-all cursor-pointer"
+                    className="flex items-center gap-1 px-2.5 py-1.5 rounded-[var(--radius-card)] border border-danger/20 ds-meta font-semibold text-danger/70 hover:bg-danger/10 hover:text-danger transition-all cursor-pointer"
                   >
                     <Trash2 className="h-3 w-3" />
                   </Button>
@@ -1425,7 +1427,7 @@ function InfotravelTab({ agencyId }: { agencyId: string }) {
 
               {selectedOperatorId === op.operator_id && (
                 <div className="mt-2 pt-2 border-t border-border/50">
-                  <span className="text-[10px] text-brand font-semibold uppercase tracking-wider">
+                  <span className="ds-meta text-brand font-semibold uppercase tracking-wider">
                     ✓ Operadora selecionada para sincronização
                   </span>
                 </div>
@@ -1500,7 +1502,7 @@ function InfotravelTab({ agencyId }: { agencyId: string }) {
                 Verifica viagens com embarque nos próximos 30 dias. Atualiza status, vouchers e
                 bilhetes emitidos.
               </p>
-              <div className="rounded-[var(--radius-card)] glass bg-white/5 border-white/10/40 p-3 border-none/40 text-[11px] text-muted-foreground leading-normal font-sans">
+              <div className="rounded-[var(--radius-card)] glass bg-white/5 border-white/10/40 p-3 border-none/40 ds-meta text-muted-foreground leading-normal font-sans">
                 <Clock className="inline h-3.5 w-3.5 mr-1 text-brand shrink-0 align-text-bottom" />
                 O sistema realiza esta atualização automaticamente a cada 4 horas.
               </div>
@@ -1525,7 +1527,7 @@ function InfotravelTab({ agencyId }: { agencyId: string }) {
               Processamento (Últimos 10)
             </h4>
             {jobsQuery.isFetching && (
-              <span className="flex items-center gap-1 text-[10px] text-brand font-bold animate-pulse">
+              <span className="flex items-center gap-1 ds-meta text-brand font-bold animate-pulse">
                 <RefreshCw className="h-3 w-3 animate-spin" /> Atualizando...
               </span>
             )}
@@ -1542,7 +1544,7 @@ function InfotravelTab({ agencyId }: { agencyId: string }) {
               </div>
             ) : (
               <table className="w-full text-sm">
-                <thead className="glass bg-white/5 border-white/10/40 border-b border-border text-[10px] uppercase tracking-wider text-muted-foreground font-bold">
+                <thead className="glass bg-white/5 border-white/10/40 border-b border-border ds-label-caps text-muted-foreground font-bold">
                   <tr>
                     <th className="px-4 py-2.5 text-left">Data de Execução</th>
                     <th className="px-4 py-2.5 text-left">Tipo de Ação</th>
@@ -1579,15 +1581,15 @@ function InfotravelTab({ agencyId }: { agencyId: string }) {
                         </td>
                         <td className="px-4 py-3 text-center">
                           {job.status === "running" ? (
-                            <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[10px] font-bold bg-brand/10 text-brand animate-pulse border border-brand/20">
+                            <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded ds-meta font-bold bg-brand/10 text-brand animate-pulse border border-brand/20">
                               <RefreshCw className="h-3 w-3 animate-spin" /> PROCESSANDO
                             </span>
                           ) : job.status === "completed" ? (
-                            <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-500/10 text-emerald-600 border border-emerald-500/20">
+                            <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded ds-meta font-bold bg-emerald-500/10 text-emerald-600 border border-emerald-500/20">
                               FINALIZADO
                             </span>
                           ) : (
-                            <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[10px] font-bold bg-danger/10 text-danger border border-danger/20">
+                            <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded ds-meta font-bold bg-danger/10 text-danger border border-danger/20">
                               NÃO CONCLUÍDO
                             </span>
                           )}
@@ -1600,7 +1602,7 @@ function InfotravelTab({ agencyId }: { agencyId: string }) {
                             <Button
                               type="button"
                               onClick={() => setErrorDetailsJobId(job.id)}
-                              className="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[10px] font-bold bg-danger/10 text-danger border border-danger/20 hover:bg-danger/20 cursor-pointer transition-all"
+                              className="inline-flex items-center gap-1 px-2 py-0.5 rounded ds-meta font-bold bg-danger/10 text-danger border border-danger/20 hover:bg-danger/20 cursor-pointer transition-all"
                             >
                               <AlertCircle className="h-3 w-3" /> {errorCount} ocorrência(s)
                             </Button>
@@ -1623,34 +1625,27 @@ function InfotravelTab({ agencyId }: { agencyId: string }) {
       </div>
 
       {/* Modal de Detalhes de Erros */}
-      {errorDetailsJobId && selectedJobForError && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4">
-          <div className="w-full max-w-2xl rounded-[var(--radius-card)] border-none glass-card border-none shadow-2xl p-6 flex flex-col max-h-[80vh] overflow-hidden">
-            <div className="flex items-center justify-between border-b border-border/80 pb-3 mb-4">
-              <h3 className="text-md font-bold text-foreground flex items-center gap-1.5 text-danger">
-                <AlertCircle className="h-5 w-5" /> Relatório de Ocorrências no Processamento
-              </h3>
-              <Button
-                type="button"
-                onClick={() => setErrorDetailsJobId(null)}
-                className="text-xs text-muted-foreground hover:text-foreground font-semibold glass bg-white/5 border-white/10 px-3 py-1.5 rounded-[var(--radius-card)] cursor-pointer"
-              >
-                Fechar
-              </Button>
-            </div>
+      <Dialog open={!!errorDetailsJobId && !!selectedJobForError} onOpenChange={(open) => !open && setErrorDetailsJobId(null)}>
+        <DialogContent className="max-w-2xl p-0 overflow-hidden border-none/10 max-h-[80vh] bg-background">
+          <DialogHeader className="px-6 py-4 border-b border-border/80">
+            <DialogTitle className="text-md font-bold text-foreground flex items-center gap-1.5 text-danger">
+              <AlertCircle className="h-5 w-5" /> Relatório de Ocorrências no Processamento
+            </DialogTitle>
+          </DialogHeader>
 
-            <div className="flex-1 overflow-y-auto space-y-3 pr-1">
+          <div className="p-6 pt-2 flex flex-col h-full overflow-hidden">
+            <div className="flex-1 overflow-y-auto space-y-3 pr-1 no-scrollbar">
               <p className="text-xs text-muted-foreground mb-2">
                 Ocorrências registradas durante o processamento das reservas com a operadora
                 parceira:
               </p>
-              {Array.isArray(selectedJobForError.errors_log) &&
+              {selectedJobForError && Array.isArray(selectedJobForError.errors_log) &&
                 selectedJobForError.errors_log.map((log: any, idx: number) => (
                   <div
                     key={idx}
                     className="p-3.5 rounded-[var(--radius-card)] border border-danger/20 bg-danger/5 text-xs font-mono space-y-1"
                   >
-                    <div className="flex justify-between items-center text-[10px] text-danger/80 border-b border-danger/10 pb-1.5 mb-1.5">
+                    <div className="flex justify-between items-center ds-meta text-danger/80 border-b border-danger/10 pb-1.5 mb-1.5">
                       <span className="font-bold uppercase">
                         {log.booking_id ? `Reserva #${log.booking_id}` : "Ocorrência Geral"}
                       </span>
@@ -1675,8 +1670,8 @@ function InfotravelTab({ agencyId }: { agencyId: string }) {
               </Button>
             </div>
           </div>
-        </div>
-      )}
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

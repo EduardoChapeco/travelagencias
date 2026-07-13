@@ -116,7 +116,7 @@ export function TabContatos({ trip, voucher }: TabContatosProps) {
                 >
                   <Lightbulb className="h-3.5 w-3.5" /> Carregar Informações do Destino
                 </Button>
-                <p className="text-[10px] text-muted-foreground">
+                <p className="ds-meta text-muted-foreground">
                   A IA analisa seu destino e rotas de conexão.
                 </p>
               </div>
@@ -143,7 +143,7 @@ export function TabContatos({ trip, voucher }: TabContatosProps) {
                       <span className="text-2xl">{country.flag}</span>
                       <div className="flex-1 min-w-0">
                         <div className="font-bold text-sm text-foreground">{country.country}</div>
-                        <div className="text-[10px] text-muted-foreground">
+                        <div className="ds-meta text-muted-foreground">
                           {country.currency} · {country.timezone} · {country.voltage}
                         </div>
                       </div>
@@ -220,7 +220,7 @@ export function TabContatos({ trip, voucher }: TabContatosProps) {
                           {country.key_rules.slice(0, 3).map((rule: string, ri: number) => (
                             <li
                               key={ri}
-                              className="flex items-start gap-1.5 text-[10px] text-muted-foreground"
+                              className="flex items-start gap-1.5 ds-meta text-muted-foreground"
                             >
                               <span className="text-warning mt-0.5 shrink-0">⚠</span> {rule}
                             </li>

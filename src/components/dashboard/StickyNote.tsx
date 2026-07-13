@@ -403,7 +403,7 @@ export function StickyNote({
                               key={member.user_id}
                               onClick={() => handleAssignAgent(member.user_id)}
                               className={cn(
-                                "px-2.5 py-1.5 rounded-lg hover:bg-brand/10 hover:text-brand text-left cursor-pointer text-[10px] font-black truncate w-full",
+                                "px-2.5 py-1.5 rounded-lg hover:bg-brand/10 hover:text-brand text-left cursor-pointer ds-meta font-black truncate w-full",
                                 note.assigned_profile_id === member.user_id && "text-brand bg-brand/5"
                               )}
                             >

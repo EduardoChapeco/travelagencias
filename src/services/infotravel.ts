@@ -169,6 +169,29 @@ export async function infotravelImportBooking(
   return data as NormalizedBooking;
 }
 
+// ── Criação e Sincronização de Reservas (Trips) ───────────────────────────
+export async function infotravelCreateBooking(
+  agencyId: string,
+  tripId: string,
+): Promise<any> {
+  return await invokeConnector("create_booking", agencyId, { tripId });
+}
+
+export async function infotravelSyncBooking(
+  agencyId: string,
+  tripId: string,
+): Promise<any> {
+  return await invokeConnector("run_periodic_sync", agencyId, { tripId });
+}
+
+export async function infotravelImportToTrip(
+  agencyId: string,
+  bookingId: string,
+  tripId: string,
+): Promise<any> {
+  return await invokeConnector("import_booking", agencyId, { bookingId, tripId });
+}
+
 // ── Teste de Conexão ───────────────────────────────────────────────────────
 export async function infotravelTestConnection(agencyId: string): Promise<boolean> {
   try {

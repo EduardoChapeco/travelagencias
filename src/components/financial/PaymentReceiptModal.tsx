@@ -283,7 +283,7 @@ export function PaymentReceiptModal({ isOpen, onClose, data }: PaymentReceiptMod
             <h3 className="text-xs font-bold text-slate-800 uppercase tracking-wider">
               Recibo de Pagamento
             </h3>
-            <p className="text-[10px] text-muted-foreground mt-0.5 font-medium">
+            <p className="ds-meta text-muted-foreground mt-0.5 font-medium">
               Ref: {receiptDetails.receiptId.slice(0, 8).toUpperCase()}
             </p>
           </div>
@@ -292,7 +292,7 @@ export function PaymentReceiptModal({ isOpen, onClose, data }: PaymentReceiptMod
             {/* Layout switch */}
             <Button
               onClick={() => setIsThermal(!isThermal)}
-              className="flex items-center gap-1.5 text-[10px] font-bold text-slate-600 hover:text-slate-900 transition-colors"
+              className="flex items-center gap-1.5 ds-meta font-bold text-slate-600 hover:text-slate-900 transition-colors"
             >
               <span>Layout Térmico (80mm)</span>
               {isThermal ? (
@@ -339,7 +339,7 @@ export function PaymentReceiptModal({ isOpen, onClose, data }: PaymentReceiptMod
                   <h4 className="font-extrabold text-sm tracking-tight">
                     {receiptDetails.agencyName}
                   </h4>
-                  <p className="text-[10px] text-slate-700">Comprovante de Inscrição</p>
+                  <p className="ds-meta text-slate-700">Comprovante de Inscrição</p>
                 </div>
 
                 <div>--------------------------------</div>
@@ -363,14 +363,14 @@ export function PaymentReceiptModal({ isOpen, onClose, data }: PaymentReceiptMod
                     <span className="text-slate-600">Pagador:</span>
                     <div className="font-bold">{receiptDetails.payerName}</div>
                     {receiptDetails.payerCpf && (
-                      <div className="text-[10px] font-mono">CPF: {receiptDetails.payerCpf}</div>
+                      <div className="ds-meta font-mono">CPF: {receiptDetails.payerCpf}</div>
                     )}
                   </div>
                   <div>
                     <span className="text-slate-600">Referente a:</span>
                     <div className="font-bold text-xs">{receiptDetails.tripTitle}</div>
                     {receiptDetails.seatNumber && (
-                      <div className="text-[10px]">Poltrona: {receiptDetails.seatNumber}</div>
+                      <div className="ds-meta">Poltrona: {receiptDetails.seatNumber}</div>
                     )}
                   </div>
                 </div>
@@ -391,7 +391,7 @@ export function PaymentReceiptModal({ isOpen, onClose, data }: PaymentReceiptMod
                 {receiptDetails.description && (
                   <>
                     <div>--------------------------------</div>
-                    <div className="text-left text-[10px] normal-case bg-slate-50 p-1.5 rounded">
+                    <div className="text-left ds-meta normal-case bg-slate-50 p-1.5 rounded">
                       <span className="font-bold uppercase block text-[8px] text-slate-500 mb-0.5">
                         Obs:
                       </span>
@@ -440,7 +440,7 @@ export function PaymentReceiptModal({ isOpen, onClose, data }: PaymentReceiptMod
                       <h4 className="font-bold text-sm text-slate-800 leading-tight">
                         {receiptDetails.agencyName}
                       </h4>
-                      <span className="text-[10px] text-muted-foreground font-semibold">
+                      <span className="ds-meta text-muted-foreground font-semibold">
                         Agência Credenciada
                       </span>
                     </div>
@@ -450,7 +450,7 @@ export function PaymentReceiptModal({ isOpen, onClose, data }: PaymentReceiptMod
                     <h5 className="text-xs font-black text-slate-900 tracking-wider uppercase">
                       Recibo de Pagamento
                     </h5>
-                    <div className="font-mono text-[10px] text-slate-400 mt-1">
+                    <div className="font-mono ds-meta text-slate-400 mt-1">
                       Nº {receiptDetails.receiptId.slice(0, 8).toUpperCase()}
                     </div>
                   </div>
@@ -484,7 +484,7 @@ export function PaymentReceiptModal({ isOpen, onClose, data }: PaymentReceiptMod
                       {receiptDetails.payerName}
                     </strong>
                     {receiptDetails.payerCpf && (
-                      <span className="text-[10px] font-mono text-slate-500">
+                      <span className="ds-meta font-mono text-slate-500">
                         CPF: {receiptDetails.payerCpf}
                       </span>
                     )}
@@ -498,7 +498,7 @@ export function PaymentReceiptModal({ isOpen, onClose, data }: PaymentReceiptMod
                       {receiptDetails.tripTitle}
                     </strong>
                     {receiptDetails.seatNumber && (
-                      <span className="text-[10px] text-slate-500 font-medium">
+                      <span className="ds-meta text-slate-500 font-medium">
                         Poltrona Reservada: {receiptDetails.seatNumber}
                       </span>
                     )}
@@ -522,8 +522,8 @@ export function PaymentReceiptModal({ isOpen, onClose, data }: PaymentReceiptMod
                 </div>
 
                 {receiptDetails.description && (
-                  <div className="border border-slate-100 bg-slate-50/50 rounded-[var(--radius-card)] p-4 text-[11px] text-slate-600 leading-relaxed">
-                    <strong className="text-slate-800 block font-semibold mb-1 text-[10px] uppercase">
+                  <div className="border border-slate-100 bg-slate-50/50 rounded-[var(--radius-card)] p-4 ds-meta text-slate-600 leading-relaxed">
+                    <strong className="text-slate-800 block font-semibold mb-1 ds-meta uppercase">
                       Observações do Agente
                     </strong>
                     {receiptDetails.description}
@@ -542,7 +542,7 @@ export function PaymentReceiptModal({ isOpen, onClose, data }: PaymentReceiptMod
                       <span className="text-[9px] text-slate-400 font-bold uppercase tracking-wider block">
                         Autenticação de Transação
                       </span>
-                      <code className="text-[10px] font-mono text-slate-600 block mt-0.5">
+                      <code className="ds-meta font-mono text-slate-600 block mt-0.5">
                         {authCode}
                       </code>
                       <span className="text-[9px] text-muted-foreground block font-medium mt-0.5">
@@ -553,7 +553,7 @@ export function PaymentReceiptModal({ isOpen, onClose, data }: PaymentReceiptMod
 
                   {/* Sign field */}
                   <div className="text-center w-48 border-t border-slate-300 pt-1.5 mt-4 sm:mt-0">
-                    <span className="text-[10px] font-semibold text-slate-500 block">
+                    <span className="ds-meta font-semibold text-slate-500 block">
                       Assinatura Operacional
                     </span>
                     <span className="text-[9px] text-slate-400 block mt-0.5">

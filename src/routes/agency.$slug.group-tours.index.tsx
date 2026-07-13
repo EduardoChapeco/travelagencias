@@ -82,7 +82,7 @@ function GroupToursPage() {
           }
         />
 
-      <div className="flex-1 overflow-y-auto px-4  md:pr-6 py-4 flex flex-col gap-4 pb-24">
+      <div className="page-content page-section dock-offset">
         {q.isLoading && <div className="text-sm text-muted-foreground animate-pulse p-4">Carregando excursões…</div>}
         {q.isError && (
           <div className="p-4 rounded-[var(--radius-card)] glass-error text-xs flex items-center gap-2 m-2">
@@ -116,7 +116,7 @@ function GroupToursPage() {
                       <div className="text-xs text-muted-foreground flex items-center gap-1">
                         {t.destination ?? "—"}
                         {t.bus_layout_id && (
-                          <span className="ml-2 flex items-center gap-1 rounded-full bg-brand/10 px-1.5 py-0.5 text-[10px] font-bold text-brand">
+                          <span className="ml-2 flex items-center gap-1 rounded-full bg-brand/10 px-1.5 py-0.5 ds-meta font-bold text-brand">
                             <svg
                               className="h-3 w-3"
                               fill="none"

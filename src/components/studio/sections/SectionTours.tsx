@@ -213,7 +213,7 @@ export function SectionTours({ draft, save }: Props) {
                         <h4 className="text-xs font-bold text-foreground truncate group-hover:text-brand transition-colors">
                           {promo.title}
                         </h4>
-                        <p className="text-[10px] text-muted-foreground font-sans truncate">
+                        <p className="ds-meta text-muted-foreground font-sans truncate">
                           {promo.destination || "Vários destinos"}
                         </p>
                         {promo.departure_date && (
@@ -232,7 +232,7 @@ export function SectionTours({ draft, save }: Props) {
                         <Button
                           type="button"
                           onClick={() => importPromotion(promo)}
-                          className="px-2.5 py-1 text-[10px] bg-primary text-primary-foreground font-semibold rounded hover:bg-primary/95 transition-all cursor-pointer"
+                          className="px-2.5 py-1 ds-meta bg-primary text-primary-foreground font-semibold rounded hover:bg-primary/95 transition-all cursor-pointer"
                         >
                           Selecionar
                         </Button>

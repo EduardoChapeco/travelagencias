@@ -128,27 +128,27 @@ function Page() {
         {/* 1. Metrics Overview */}
         <div className="grid gap-4 grid-cols-2 md:grid-cols-4">
           <div className="rounded-[var(--radius-card)] border-none glass-card border-none p-4 flex flex-col justify-between shadow-xs">
-            <span className="text-[10px] text-muted-foreground uppercase font-semibold">
+            <span className="ds-meta text-muted-foreground uppercase font-semibold">
               Total de Interações
             </span>
             <div className="flex items-baseline gap-2 mt-2">
               <span className="text-2xl font-bold text-foreground">{totalCalls}</span>
-              <span className="text-[10px] text-muted-foreground">mensagens/ações</span>
+              <span className="ds-meta text-muted-foreground">mensagens/ações</span>
             </div>
           </div>
           <div className="rounded-[var(--radius-card)] border-none glass-card border-none p-4 flex flex-col justify-between shadow-xs">
-            <span className="text-[10px] text-muted-foreground uppercase font-semibold">
+            <span className="ds-meta text-muted-foreground uppercase font-semibold">
               Ferramentas Executadas
             </span>
             <div className="flex items-baseline gap-2 mt-2">
               <span className="text-2xl font-bold text-foreground text-brand">
                 {toolExecutions}
               </span>
-              <span className="text-[10px] text-muted-foreground">actions</span>
+              <span className="ds-meta text-muted-foreground">actions</span>
             </div>
           </div>
           <div className="rounded-[var(--radius-card)] border-none glass-card border-none p-4 flex flex-col justify-between shadow-xs">
-            <span className="text-[10px] text-muted-foreground uppercase font-semibold">
+            <span className="ds-meta text-muted-foreground uppercase font-semibold">
               Falhas / Erros
             </span>
             <div className="flex items-baseline gap-2 mt-2">
@@ -160,16 +160,16 @@ function Page() {
               >
                 {failedCalls}
               </span>
-              <span className="text-[10px] text-muted-foreground">exceções</span>
+              <span className="ds-meta text-muted-foreground">exceções</span>
             </div>
           </div>
           <div className="rounded-[var(--radius-card)] border-none glass-card border-none p-4 flex flex-col justify-between shadow-xs">
-            <span className="text-[10px] text-muted-foreground uppercase font-semibold">
+            <span className="ds-meta text-muted-foreground uppercase font-semibold">
               Isolamento Multi-Tenant
             </span>
             <div className="flex items-baseline gap-1 mt-2 text-emerald-600">
               <Shield className="h-5 w-5" />
-              <span className="text-xs font-bold uppercase tracking-wider">Ativo (RLS)</span>
+              <span className="ds-label-caps tracking-wider">Ativo (RLS)</span>
             </div>
           </div>
         </div>
@@ -177,7 +177,7 @@ function Page() {
         {/* 2. Filter Controls */}
         <div className="rounded-[var(--radius-card)] border-none glass-card border-none p-4 flex flex-wrap gap-4 items-center">
           <div className="flex flex-col gap-1 shrink-0">
-            <span className="text-[10px] text-muted-foreground uppercase">Operador</span>
+            <span className="ds-meta text-muted-foreground uppercase">Operador</span>
             <Select
               value={selectedUser}
               onChange={(e) => setSelectedUser(e.target.value)}
@@ -193,7 +193,7 @@ function Page() {
           </div>
 
           <div className="flex flex-col gap-1 shrink-0">
-            <span className="text-[10px] text-muted-foreground uppercase">Ação</span>
+            <span className="ds-meta text-muted-foreground uppercase">Ação</span>
             <Select
               value={selectedAction}
               onChange={(e) => setSelectedAction(e.target.value)}
@@ -214,7 +214,7 @@ function Page() {
         <div className="rounded-[var(--radius-card)] border-none glass-card border-none overflow-hidden shadow-xs">
           <div className="border-b border-border glass bg-white/5 border-white/10 px-4 py-3 flex items-center justify-between">
             <span className="text-xs font-bold text-foreground">Fluxo de Eventos</span>
-            <span className="text-[10px] text-muted-foreground">
+            <span className="ds-meta text-muted-foreground">
               Mostrando os últimos 100 registros
             </span>
           </div>
@@ -251,14 +251,14 @@ function Page() {
                       <div className="flex items-center gap-2">
                         <span
                           className={cn(
-                            "px-2 py-0.5 rounded-full font-mono text-[10px] font-bold uppercase",
+                            "px-2 py-0.5 rounded-full font-mono ds-label-caps",
                             isMsg ? "bg-muted text-muted-foreground" : "bg-brand/10 text-brand",
                           )}
                         >
                           {log.action}
                         </span>
                         <span className="font-semibold text-foreground">{operatorName}</span>
-                        <span className="text-[10px] text-muted-foreground">
+                        <span className="ds-meta text-muted-foreground">
                           {new Date(log.created_at).toLocaleString("pt-BR")}
                         </span>
                       </div>
@@ -266,11 +266,11 @@ function Page() {
                       {/* Right: triggers */}
                       <div className="flex items-center gap-2">
                         {isFailed ? (
-                          <span className="flex items-center gap-0.5 text-[10px] text-rose-500 font-bold bg-rose-500/10 px-1.5 py-0.5 rounded">
+                          <span className="flex items-center gap-0.5 ds-meta text-rose-500 font-bold bg-rose-500/10 px-1.5 py-0.5 rounded">
                             <ShieldAlert className="h-3 w-3" /> Falha
                           </span>
                         ) : (
-                          <span className="flex items-center gap-0.5 text-[10px] text-emerald-600 font-bold bg-emerald-500/10 px-1.5 py-0.5 rounded">
+                          <span className="flex items-center gap-0.5 ds-meta text-emerald-600 font-bold bg-emerald-500/10 px-1.5 py-0.5 rounded">
                             Sucesso
                           </span>
                         )}
@@ -301,7 +301,7 @@ function Page() {
 
                     {/* Expanded details container (JSON Payload) */}
                     {isExpanded && (
-                      <div className="mt-3 rounded border-none/60 glass-card border-none-muted p-3 font-mono text-[10px] text-muted-foreground overflow-x-auto space-y-2">
+                      <div className="mt-3 rounded border-none/60 glass-card border-none-muted p-3 font-mono ds-meta text-muted-foreground overflow-x-auto space-y-2">
                         <div>
                           <span className="text-foreground font-semibold block uppercase text-[9px] mb-1">
                             Metadados e Payload da Ação:

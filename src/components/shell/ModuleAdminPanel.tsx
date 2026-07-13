@@ -221,7 +221,7 @@ export function ModuleAdminPanel({
                   </div>
                   <PrimaryButton
                     onClick={() => setIsCreatingPlaybook(true)}
-                    className="h-8 text-[11px] font-bold gap-1 rounded-2xl"
+                    className="h-8 ds-meta font-bold gap-1 rounded-2xl"
                   >
                     <Plus className="w-3.5 h-3.5" /> Novo Playbook
                   </PrimaryButton>
@@ -250,7 +250,7 @@ export function ModuleAdminPanel({
                             </span>
                             <h4 className="text-xs font-bold text-foreground mt-1.5">{pb.title}</h4>
                             {pb.description && (
-                              <p className="text-[11px] text-muted-foreground mt-1 line-clamp-2 leading-relaxed">
+                              <p className="ds-meta text-muted-foreground mt-1 line-clamp-2 leading-relaxed">
                                 {pb.description}
                               </p>
                             )}
@@ -271,7 +271,7 @@ export function ModuleAdminPanel({
                           </div>
                         </div>
 
-                        <div className="mt-3 pt-2.5 border-t border-border/50 flex items-center justify-between text-[10px] text-muted-foreground">
+                        <div className="mt-3 pt-2.5 border-t border-border/50 flex items-center justify-between ds-meta text-muted-foreground">
                           <span>{pb.steps?.length || 0} etapas definidas</span>
                           <span className="font-mono text-[9px]">
                             Atualizado em {new Date(pb.updated_at).toLocaleDateString("pt-BR")}
@@ -310,12 +310,12 @@ export function ModuleAdminPanel({
                               <span className="text-xs font-bold text-foreground block">
                                 {art.title}
                               </span>
-                              <span className="text-[10px] text-muted-foreground">
+                              <span className="ds-meta text-muted-foreground">
                                 {art.is_internal ? "Apenas Interno" : "Visível no Portal"}
                               </span>
                             </div>
                           </div>
-                          <span className="text-[10px] font-mono text-muted-foreground">
+                          <span className="ds-meta font-mono text-muted-foreground">
                             {art.views || 0} visualizações
                           </span>
                         </div>
@@ -336,7 +336,7 @@ export function ModuleAdminPanel({
             >
               <div>
                 <h4 className="text-xs font-bold text-foreground">Identificação do Módulo</h4>
-                <p className="text-[11px] text-muted-foreground mt-1 leading-relaxed">
+                <p className="ds-meta text-muted-foreground mt-1 leading-relaxed">
                   Personalize o nome deste módulo no menu lateral, cabeçalhos e fluxos do sistema.
                   Deixe em branco para usar o nome padrão.
                 </p>
@@ -533,7 +533,7 @@ function PlaybookForm({
             <GhostButton
               type="button"
               onClick={addStep}
-              className="h-7 text-[10px] font-bold cursor-pointer"
+              className="h-7 ds-meta font-bold cursor-pointer"
             >
               + Adicionar Etapa
             </GhostButton>
@@ -555,7 +555,7 @@ function PlaybookForm({
                 </Button>
 
                 <div className="flex items-center gap-2.5">
-                  <div className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-brand text-brand-foreground text-[10px] font-bold">
+                  <div className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-brand text-brand-foreground ds-meta font-bold">
                     {st.step_number}
                   </div>
                   <Input

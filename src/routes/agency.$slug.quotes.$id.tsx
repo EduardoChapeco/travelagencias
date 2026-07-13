@@ -627,7 +627,7 @@ Resuma de forma profissional e persuasiva (estilo consultor premium de turismo) 
       {/* Header Info */}
       <div className="border-b border-border glass-card border-none px-4 md:px-6 py-4 shrink-0 grid grid-cols-1 md:grid-cols-4 gap-4 items-center">
         <div>
-          <span className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
+          <span className="ds-label-caps tracking-wider text-muted-foreground">
             Destino Alvo
           </span>
           <div className="flex items-center gap-1.5 text-sm font-semibold text-foreground mt-0.5">
@@ -637,7 +637,7 @@ Resuma de forma profissional e persuasiva (estilo consultor premium de turismo) 
         </div>
 
         <div>
-          <span className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
+          <span className="ds-label-caps tracking-wider text-muted-foreground">
             Datas e Período
           </span>
           <div className="flex items-center gap-1.5 text-xs font-medium text-foreground mt-0.5">
@@ -649,7 +649,7 @@ Resuma de forma profissional e persuasiva (estilo consultor premium de turismo) 
         </div>
 
         <div>
-          <span className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
+          <span className="ds-label-caps tracking-wider text-muted-foreground">
             Ocupação / Viajantes
           </span>
           <div className="flex items-center gap-1.5 text-xs font-medium text-foreground mt-0.5">
@@ -662,7 +662,7 @@ Resuma de forma profissional e persuasiva (estilo consultor premium de turismo) 
         </div>
 
         <div>
-          <span className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
+          <span className="ds-label-caps tracking-wider text-muted-foreground">
             Orçamento Esperado
           </span>
           <div className="flex items-center gap-1.5 text-xs font-semibold text-success mt-0.5">
@@ -677,13 +677,13 @@ Resuma de forma profissional e persuasiva (estilo consultor premium de turismo) 
         {/* Left Side: Scenarios Control */}
         <div className="w-80 border-r border-border glass bg-white/5 border-white/10/25 flex flex-col overflow-y-auto p-4 shrink-0">
           <div className="flex items-center justify-between mb-4 pb-2 border-b border-border">
-            <h3 className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
+            <h3 className="ds-label-caps tracking-wider text-muted-foreground">
               1. Cenários de Busca
             </h3>
             {quote.scenarios.length === 0 && (
               <Button
                 onClick={() => createScenariosMut.mutate()}
-                className="text-[10px] font-bold text-brand hover:underline"
+                className="ds-meta font-bold text-brand hover:underline"
               >
                 Gerar Padrões
               </Button>
@@ -692,12 +692,12 @@ Resuma de forma profissional e persuasiva (estilo consultor premium de turismo) 
 
           {quote.scenarios.length === 0 ? (
             <div className="text-center py-8 px-2 border border-dashed border-border rounded">
-              <p className="text-[11px] text-muted-foreground">
+              <p className="ds-meta text-muted-foreground">
                 Nenhum cenário configurado para esta cotação.
               </p>
               <PrimaryButton
                 onClick={() => createScenariosMut.mutate()}
-                className="mt-3 h-8 text-[10px] w-full"
+                className="mt-3 h-8 ds-meta w-full"
               >
                 Configurar Cenários Padrão
               </PrimaryButton>
@@ -718,7 +718,7 @@ Resuma de forma profissional e persuasiva (estilo consultor premium de turismo) 
                         <h4 className="text-xs font-bold text-foreground leading-snug">
                           {sc.name}
                         </h4>
-                        <p className="text-[10px] text-muted-foreground mt-1 leading-relaxed">
+                        <p className="ds-meta text-muted-foreground mt-1 leading-relaxed">
                           {sc.reason}
                         </p>
                       </div>
@@ -747,7 +747,7 @@ Resuma de forma profissional e persuasiva (estilo consultor premium de turismo) 
                           })
                         }
                         disabled={searching !== null}
-                        className="h-7 text-[10px] justify-center px-1"
+                        className="h-7 ds-meta justify-center px-1"
                       >
                         {searching === `${sc.id}-flight` ? (
                           <Loader2 className="h-3 w-3 animate-spin text-brand" />
@@ -768,7 +768,7 @@ Resuma de forma profissional e persuasiva (estilo consultor premium de turismo) 
                           })
                         }
                         disabled={searching !== null}
-                        className="h-7 text-[10px] justify-center px-1"
+                        className="h-7 ds-meta justify-center px-1"
                       >
                         {searching === `${sc.id}-hotel` ? (
                           <Loader2 className="h-3 w-3 animate-spin text-brand" />
@@ -790,7 +790,7 @@ Resuma de forma profissional e persuasiva (estilo consultor premium de turismo) 
                           })
                         }
                         disabled={searching !== null}
-                        className="h-7 text-[10px] justify-center px-1"
+                        className="h-7 ds-meta justify-center px-1"
                       >
                         {searching === `${sc.id}-transfer` ? (
                           <Loader2 className="h-3 w-3 animate-spin text-brand" />
@@ -812,7 +812,7 @@ Resuma de forma profissional e persuasiva (estilo consultor premium de turismo) 
                           })
                         }
                         disabled={searching !== null}
-                        className="h-7 text-[10px] justify-center px-1"
+                        className="h-7 ds-meta justify-center px-1"
                       >
                         {searching === `${sc.id}-activity` ? (
                           <Loader2 className="h-3 w-3 animate-spin text-brand" />
@@ -837,13 +837,13 @@ Resuma de forma profissional e persuasiva (estilo consultor premium de turismo) 
                 <AlertTriangle className="h-4 w-4 text-warning shrink-0 mt-0.5" />
                 <div>
                   <p className="text-xs font-semibold text-warning">GDS não conectado</p>
-                  <p className="text-[10px] text-muted-foreground mt-0.5 leading-relaxed">
+                  <p className="ds-meta text-muted-foreground mt-0.5 leading-relaxed">
                     As credenciais do Infotravel não foram configuradas para esta agência. As buscas precisam de conexão com o GDS para retornar disponibilidades e preços reais.
                   </p>
                   <Link
                     to="/agency/$slug/integrations"
                     params={{ slug }}
-                    className="inline-flex items-center gap-1 text-[10px] font-bold text-warning hover:underline mt-1.5"
+                    className="inline-flex items-center gap-1 ds-meta font-bold text-warning hover:underline mt-1.5"
                   >
                     Configurar Integração <ChevronRight className="h-3 w-3" />
                   </Link>
@@ -853,7 +853,7 @@ Resuma de forma profissional e persuasiva (estilo consultor premium de turismo) 
           )}
 
           {/* Info Section */}
-          <div className="mt-8 bg-info-bg/10 border border-info/20 rounded p-3 text-[11px] leading-relaxed text-info">
+          <div className="mt-8 bg-info-bg/10 border border-info/20 rounded p-3 ds-meta leading-relaxed text-info">
             <span className="font-semibold block mb-1">Regras de Validação do Destino</span>
             Ao salvar ofertas de voos e hotéis, o sistema valida automaticamente conexões apertadas
             e pernoites logísticos como Jericoacoara via Fortaleza.
@@ -930,7 +930,7 @@ Resuma de forma profissional e persuasiva (estilo consultor premium de turismo) 
                                 <StatusBadge tone="danger">Rejeitado</StatusBadge>
                               )}
                             </div>
-                            <span className="text-[10px] font-medium text-muted-foreground">
+                            <span className="ds-meta font-medium text-muted-foreground">
                               Scorecard
                             </span>
                           </div>
@@ -966,7 +966,7 @@ Resuma de forma profissional e persuasiva (estilo consultor premium de turismo) 
                         <div className="p-4 space-y-4">
                           {/* Warnings / Flags */}
                           {hasWarnings && (
-                            <div className="bg-danger-bg/20 border border-danger/30 text-danger text-[11px] rounded p-2.5 space-y-1">
+                            <div className="bg-danger-bg/20 border border-danger/30 text-danger ds-meta rounded p-2.5 space-y-1">
                               <span className="font-bold flex items-center gap-1">
                                 <AlertTriangle className="h-3.5 w-3.5 shrink-0" />
                                 Avisos Logísticos
@@ -984,10 +984,10 @@ Resuma de forma profissional e persuasiva (estilo consultor premium de turismo) 
                           {/* Score dimensions */}
                           {card && (
                             <div className="space-y-1.5 border-b border-border/80 pb-3">
-                              <span className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground block">
+                              <span className="ds-label-caps tracking-wider text-muted-foreground block">
                                 Métricas de Conforto
                               </span>
-                              <div className="grid grid-cols-3 gap-2 text-center text-[10px]">
+                              <div className="grid grid-cols-3 gap-2 text-center ds-meta">
                                 <div className="glass bg-white/5 border-white/10 rounded p-1">
                                   <span className="block text-muted-foreground font-semibold">
                                     Voos
@@ -1017,7 +1017,7 @@ Resuma de forma profissional e persuasiva (estilo consultor premium de turismo) 
                           )}
 
                           {/* AI explanation panel */}
-                          <div className="glass bg-white/5 border-white/10/40 border-none/60 rounded p-3 text-[11px]">
+                          <div className="glass bg-white/5 border-white/10/40 border-none/60 rounded p-3 ds-meta">
                             <span className="font-bold text-foreground flex items-center gap-1">
                               <Sparkles className="h-3.5 w-3.5 text-brand" />
                               Consultoria Digital
@@ -1044,7 +1044,7 @@ Resuma de forma profissional e persuasiva (estilo consultor premium de turismo) 
                                   )
                                 }
                                 disabled={explaining === cand.id}
-                                className="text-[10px] text-brand font-bold uppercase tracking-wider flex items-center gap-1 disabled:opacity-50"
+                                className="ds-meta text-brand font-bold uppercase tracking-wider flex items-center gap-1 disabled:opacity-50"
                               >
                                 {explaining === cand.id ? (
                                   <Loader2 className="h-3 w-3 animate-spin" />
@@ -1173,7 +1173,7 @@ Resuma de forma profissional e persuasiva (estilo consultor premium de turismo) 
                       <span className="text-xs font-bold text-muted-foreground uppercase tracking-wider">
                         Matriz de Calor (Heatmap)
                       </span>
-                      <span className="text-[10px] text-muted-foreground font-semibold">
+                      <span className="ds-meta text-muted-foreground font-semibold">
                         Versão: #{simulationRuns[0].version} (
                         {new Date(simulationRuns[0].createdAt).toLocaleString("pt-BR")})
                       </span>
@@ -1258,7 +1258,7 @@ Resuma de forma profissional e persuasiva (estilo consultor premium de turismo) 
                         </tbody>
                       </table>
                     </div>
-                    <span className="text-[10px] text-muted-foreground mt-4 leading-relaxed">
+                    <span className="ds-meta text-muted-foreground mt-4 leading-relaxed">
                       💡 Clique em qualquer nota na matriz para ver os pontos fortes e objeções
                       detalhadas da persona sobre aquele pacote.
                     </span>
@@ -1273,7 +1273,7 @@ Resuma de forma profissional e persuasiva (estilo consultor premium de turismo) 
                     {selectedResult ? (
                       <div className="space-y-4">
                         <div>
-                          <span className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
+                          <span className="ds-label-caps tracking-wider text-muted-foreground">
                             Alternativa Selecionada
                           </span>
                           <p className="text-xs font-semibold text-foreground mt-0.5">
@@ -1283,7 +1283,7 @@ Resuma de forma profissional e persuasiva (estilo consultor premium de turismo) 
 
                         <div className="grid grid-cols-2 gap-4">
                           <div>
-                            <span className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
+                            <span className="ds-label-caps tracking-wider text-muted-foreground">
                               Persona
                             </span>
                             <p className="text-xs font-bold text-brand uppercase tracking-wide mt-0.5">
@@ -1291,14 +1291,14 @@ Resuma de forma profissional e persuasiva (estilo consultor premium de turismo) 
                             </p>
                           </div>
                           <div>
-                            <span className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
+                            <span className="ds-label-caps tracking-wider text-muted-foreground">
                               Nota / Confiança
                             </span>
                             <div className="flex items-baseline gap-1 mt-0.5">
                               <span className="text-sm font-bold text-foreground">
                                 {selectedResult.score}
                               </span>
-                              <span className="text-[10px] text-muted-foreground">
+                              <span className="ds-meta text-muted-foreground">
                                 (conf: {(selectedResult.confidence * 100).toFixed(0)}%)
                               </span>
                             </div>
@@ -1306,7 +1306,7 @@ Resuma de forma profissional e persuasiva (estilo consultor premium de turismo) 
                         </div>
 
                         <div className="border-t border-border/80 pt-3">
-                          <span className="text-[10px] font-bold uppercase tracking-wider text-success block mb-1">
+                          <span className="ds-label-caps tracking-wider text-success block mb-1">
                             Pontos Fortes
                           </span>
                           {selectedResult.strengths?.length > 0 ? (
@@ -1323,7 +1323,7 @@ Resuma de forma profissional e persuasiva (estilo consultor premium de turismo) 
                         </div>
 
                         <div className="border-t border-border/80 pt-3">
-                          <span className="text-[10px] font-bold uppercase tracking-wider text-danger block mb-1">
+                          <span className="ds-label-caps tracking-wider text-danger block mb-1">
                             Objeções de Compra
                           </span>
                           {selectedResult.objections?.length > 0 ? (
@@ -1369,7 +1369,7 @@ Resuma de forma profissional e persuasiva (estilo consultor premium de turismo) 
                     <Sliders className="h-4 w-4 text-brand" />
                     Revisar Regras e Pesos de Scoring
                   </h2>
-                  <p className="text-[10px] text-muted-foreground mt-1 leading-normal">
+                  <p className="ds-meta text-muted-foreground mt-1 leading-normal">
                     Ajuste os pesos que o motor contábil e de IA utilizam para pontuar e classificar cada alternativa de viagem.
                   </p>
                 </div>
@@ -1383,7 +1383,7 @@ Resuma de forma profissional e persuasiva (estilo consultor premium de turismo) 
 
               <div className="space-y-6">
                 <div className="glass bg-white/5 border-white/10/40 border-none/50 rounded-[var(--radius-card)] p-4 space-y-4">
-                  <h3 className="text-xs font-bold uppercase tracking-wider text-foreground">
+                  <h3 className="ds-label-caps tracking-wider text-foreground">
                     Pesos de Scoring (Soma deve ser 100%)
                   </h3>
                   
@@ -1440,7 +1440,7 @@ Resuma de forma profissional e persuasiva (estilo consultor premium de turismo) 
                     </Field>
                   </div>
 
-                  <div className="text-[10px] text-muted-foreground flex justify-between pt-2">
+                  <div className="ds-meta text-muted-foreground flex justify-between pt-2">
                     <span>Soma Total: {comfortWeight + priceWeight + logisticsWeight}%</span>
                     {comfortWeight + priceWeight + logisticsWeight !== 100 && (
                       <span className="text-warning font-semibold">Ajustando pesos automaticamente...</span>
@@ -1449,7 +1449,7 @@ Resuma de forma profissional e persuasiva (estilo consultor premium de turismo) 
                 </div>
 
                 <div className="glass bg-white/5 border-white/10/40 border-none/50 rounded-[var(--radius-card)] p-4 space-y-3">
-                  <h3 className="text-xs font-bold uppercase tracking-wider text-foreground">
+                  <h3 className="ds-label-caps tracking-wider text-foreground">
                     Restrições Logísticas Ativas
                   </h3>
                   <div className="grid grid-cols-2 gap-4">

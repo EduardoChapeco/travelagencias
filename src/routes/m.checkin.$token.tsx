@@ -235,7 +235,7 @@ function MobileCheckinPage() {
         {/* Passenger Selector */}
         {details.passengers.length > 1 && (
           <div className="bg-background border-none/60 rounded-[var(--radius-card)] p-4 space-y-2">
-            <label className="text-[10px] uppercase font-bold text-muted-foreground tracking-widest flex items-center gap-1.5">
+            <label className="ds-meta uppercase font-bold text-muted-foreground tracking-widest flex items-center gap-1.5">
               <Users className="w-3.5 h-3.5" /> Passageiro para Check-in
             </label>
             <Select
@@ -269,21 +269,21 @@ function MobileCheckinPage() {
                 key={reac.itinerary_id}
                 className="space-y-3 glass-card border-none border-none/40 rounded-[var(--radius-card)] p-3"
               >
-                <div className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
+                <div className="ds-label-caps tracking-wider text-muted-foreground">
                   Proposta Alternativa (V{reac.version})
                 </div>
                 <div className="space-y-2">
                   {reac.segments.map((seg, sIdx) => (
                     <div key={seg.id} className="text-xs space-y-1 border-l-2 border-brand/40 pl-2">
                       <div className="font-semibold flex items-center gap-1">
-                        <span className="font-mono text-[10px] bg-brand/10 text-brand px-1 py-0.5 rounded">
+                        <span className="font-mono ds-meta bg-brand/10 text-brand px-1 py-0.5 rounded">
                           {seg.airline_code} {seg.flight_number}
                         </span>
                         <span>
                           {seg.origin_iata} → {seg.destination_iata}
                         </span>
                       </div>
-                      <div className="text-[10px] text-muted-foreground">
+                      <div className="ds-meta text-muted-foreground">
                         Partida: {new Date(seg.departure_at).toLocaleString("pt-BR")}
                       </div>
                     </div>
@@ -309,7 +309,7 @@ function MobileCheckinPage() {
 
         {/* Flight Segments List (E-Checkin) */}
         <div className="space-y-3">
-          <h2 className="text-xs font-bold uppercase tracking-widest text-muted-foreground">
+          <h2 className="ds-label-caps text-muted-foreground">
             Voos & e-Check-in
           </h2>
 
@@ -350,11 +350,11 @@ function MobileCheckinPage() {
 
                     <div className="grid grid-cols-2 gap-4 border-y border-border/40 py-3">
                       <div>
-                        <div className="text-[10px] uppercase font-bold text-muted-foreground tracking-wider">
+                        <div className="ds-meta uppercase font-bold text-muted-foreground tracking-wider">
                           Origem
                         </div>
                         <div className="font-bold text-sm">{seg.origin_iata}</div>
-                        <div className="text-[10px] text-muted-foreground">
+                        <div className="ds-meta text-muted-foreground">
                           {new Date(seg.departure_at).toLocaleTimeString("pt-BR", {
                             hour: "2-digit",
                             minute: "2-digit",
@@ -368,11 +368,11 @@ function MobileCheckinPage() {
                         </div>
                       </div>
                       <div>
-                        <div className="text-[10px] uppercase font-bold text-muted-foreground tracking-wider">
+                        <div className="ds-meta uppercase font-bold text-muted-foreground tracking-wider">
                           Destino
                         </div>
                         <div className="font-bold text-sm">{seg.destination_iata}</div>
-                        <div className="text-[10px] text-muted-foreground">
+                        <div className="ds-meta text-muted-foreground">
                           {new Date(seg.arrival_at).toLocaleTimeString("pt-BR", {
                             hour: "2-digit",
                             minute: "2-digit",
@@ -426,7 +426,7 @@ function MobileCheckinPage() {
         {/* Interactive Checklist */}
         <div>
           <div className="flex justify-between items-end mb-3">
-            <h2 className="text-xs font-bold uppercase tracking-widest text-muted-foreground">
+            <h2 className="ds-label-caps text-muted-foreground">
               Etapas Necessárias
             </h2>
             <span className="text-xs font-bold text-brand">
@@ -482,7 +482,7 @@ function MobileCheckinPage() {
         {isAllDone && (
           <div className="bg-success/10 border border-success/20 rounded-[var(--radius-card)] p-5 text-center">
             <h3 className="font-bold text-success text-xs mb-1">Tudo Pronto!</h3>
-            <p className="text-[11px] text-success/80 font-medium">
+            <p className="ds-meta text-success/80 font-medium">
               Sua documentação e check-in estão finalizados. Boa viagem!
             </p>
           </div>
@@ -494,7 +494,7 @@ function MobileCheckinPage() {
             <AlertOctagon className="w-4 h-4 shrink-0 animate-pulse" />
             <span>Precisa de Ajuda Urgente?</span>
           </div>
-          <p className="text-[11px] text-muted-foreground leading-relaxed">
+          <p className="ds-meta text-muted-foreground leading-relaxed">
             Se o seu voo sofreu alterações no aeroporto, reporte à agência imediatamente para
             assistência operacional rápida.
           </p>
@@ -522,7 +522,7 @@ function MobileCheckinPage() {
 
           {emergencyType && (
             <div className="space-y-3 pt-3 border-t border-border/40">
-              <label className="text-[10px] uppercase font-bold text-muted-foreground tracking-wider block">
+              <label className="ds-meta uppercase font-bold text-muted-foreground tracking-wider block">
                 Detalhes adicionais (opcional)
               </label>
               <Textarea

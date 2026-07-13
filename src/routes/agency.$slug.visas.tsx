@@ -164,7 +164,7 @@ function VisasPage() {
               <Link
                 to="/agency/$slug/visas-catalog"
                 params={{ slug }}
-                className="h-7 px-2.5 flex items-center gap-1.5 rounded-full border border-white/15 text-white/60 hover:text-white hover:bg-white/10 transition-colors cursor-pointer text-[11px] font-semibold"
+                className="h-7 px-2.5 flex items-center gap-1.5 rounded-full border border-white/15 text-white/60 hover:text-white hover:bg-white/10 transition-colors cursor-pointer ds-meta font-semibold"
               >
                 <FileText className="w-3.5 h-3.5" /> Catálogo
               </Link>
@@ -252,7 +252,7 @@ function StageColumn({ stage, items }: { stage: VisaStage; items: Visa[] }) {
         <div className="flex items-center gap-2">
           <div className="h-3 w-3 rounded-full" style={{ backgroundColor: stage.color }} />
           <h3 className="font-semibold text-sm">{stage.name}</h3>
-          <span className="flex h-5 w-5 items-center justify-center rounded-full glass-card border-none text-[10px] font-medium text-muted-foreground border-none">
+          <span className="flex h-5 w-5 items-center justify-center rounded-full glass-card border-none ds-meta font-medium text-muted-foreground border-none">
             {items.length}
           </span>
         </div>

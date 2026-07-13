@@ -89,7 +89,7 @@ const SMALL =
 function Lbl({ label, children }: { label: string; children: React.ReactNode }) {
   return (
     <div className="flex flex-col gap-0.5">
-      <span className="text-[10px] uppercase tracking-wider font-semibold text-muted-foreground">
+      <span className="ds-label-caps font-semibold text-muted-foreground">
         {label}
       </span>
       {children}
@@ -164,7 +164,7 @@ export function VoucherStudio({
   const renderSidebarContent = () => (
     <>
       {draft.source_type === "operator_pdf" && (
-        <div className="rounded-2xl border border-amber-200 bg-amber-50/50 p-3 text-[11px] text-amber-800 leading-normal space-y-1">
+        <div className="rounded-2xl border border-amber-200 bg-amber-50/50 p-3 ds-meta text-amber-800 leading-normal space-y-1">
           <span className="font-semibold block">Leitura de Documento & Modo de Contingência</span>
           <p>
             O comprovante da operadora foi anexado com sucesso. Caso o leitor digital de documentos
@@ -385,7 +385,7 @@ export function VoucherStudio({
                   flights.filter((_, x) => x !== i),
                 )
               }
-              className="text-[10px] text-danger hover:underline"
+              className="ds-meta text-danger hover:underline"
             >
               Remover voo
             </Button>
@@ -519,7 +519,7 @@ export function VoucherStudio({
                   accommodation.filter((_, x) => x !== i),
                 )
               }
-              className="text-[10px] text-danger hover:underline"
+              className="ds-meta text-danger hover:underline"
             >
               Remover hotel
             </Button>
@@ -630,7 +630,7 @@ export function VoucherStudio({
                   transfers.filter((_, x) => x !== i),
                 )
               }
-              className="text-[10px] text-danger hover:underline"
+              className="ds-meta text-danger hover:underline"
             >
               Remover transfer
             </Button>
@@ -712,7 +712,7 @@ export function VoucherStudio({
                     emergency.filter((_, x) => x !== i),
                   )
                 }
-                className="text-[10px] text-danger hover:underline"
+                className="ds-meta text-danger hover:underline"
               >
                 Remover
               </Button>
@@ -964,7 +964,7 @@ export function VoucherStudio({
             <div className="text-sm font-semibold">
               {isEdit ? "Editar Voucher" : "Novo Voucher"}
             </div>
-            <div className="text-[10px] text-muted-foreground">
+            <div className="ds-meta text-muted-foreground">
               {draft.destination ?? "Sem destino"}
             </div>
           </div>
@@ -1079,7 +1079,7 @@ export function VoucherStudio({
 
               {/* Chat area */}
               <div className="flex-1 overflow-y-auto p-4 space-y-3 bg-[url('https://user-images.githubusercontent.com/15075759/28719144-86dc0f70-73b1-11e7-911d-60d70fcded21.png')] bg-repeat">
-                <div className="max-w-[85%] bg-[#d9fdd3] text-[#111b21] rounded-2xl p-3 text-[11px] self-end ml-auto whitespace-pre-wrap font-mono relative leading-normal border border-border/20">
+                <div className="max-w-[85%] bg-[#d9fdd3] text-[#111b21] rounded-2xl p-3 ds-meta self-end ml-auto whitespace-pre-wrap font-mono relative leading-normal border border-border/20">
                   {generateWhatsAppText()}
                 </div>
               </div>
@@ -1182,7 +1182,7 @@ export function VoucherStudio({
             className="w-full max-w-[320px] p-0 overflow-y-auto bg-surface animate-none"
           >
             <SheetHeader className="px-4 py-3 border-b border-border bg-surface-alt/10">
-              <SheetTitle className="text-xs font-bold uppercase tracking-wider">
+              <SheetTitle className="ds-label-caps tracking-wider">
                 Campos do Voucher
               </SheetTitle>
             </SheetHeader>

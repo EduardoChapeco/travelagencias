@@ -273,7 +273,7 @@ function ClientAppBuilderPage() {
                       </div>
                       <div className="w-full h-40 glass-card border-none border-none rounded-[var(--radius-card)] shadow-none overflow-hidden flex flex-col">
                         <div className="flex-1 bg-accent relative">
-                          <span className="absolute top-2 right-2 bg-black/60 text-white text-[10px] px-2 py-1 rounded">R$ 2.500</span>
+                          <span className="absolute top-2 right-2 bg-black/60 text-white ds-meta px-2 py-1 rounded">R$ 2.500</span>
                         </div>
                         <div className="p-3">
                           <p className="font-semibold text-sm">Réveillon em Cancún</p>

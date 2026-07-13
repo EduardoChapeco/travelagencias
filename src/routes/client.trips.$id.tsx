@@ -704,7 +704,7 @@ function ClientTripDetail() {
                 )}
               >
                 <div className="space-y-1">
-                  <div className="text-xs font-bold uppercase tracking-widest flex items-center gap-1.5 opacity-80">
+                  <div className="ds-label-caps flex items-center gap-1.5 opacity-80">
                     <AlertTriangle
                       className={cn(
                         "h-4 w-4",
@@ -744,7 +744,7 @@ function ClientTripDetail() {
             {daysToTrip !== null && daysToTrip > 0 && (
               <div className="bg-brand text-brand-foreground rounded-3xl p-6 flex items-center justify-between">
                 <div>
-                  <div className="text-xs font-bold uppercase tracking-widest opacity-80">
+                  <div className="ds-label-caps opacity-80">
                     Contagem Regressiva
                   </div>
                   <div className="text-sm font-medium mt-1">
@@ -799,7 +799,7 @@ function ClientTripDetail() {
                     </div>
                     <div className="grid grid-cols-2 gap-4 text-xs">
                       <div className="p-3 glass bg-white/5 border-white/10/50 border-none rounded-[var(--radius-card)]">
-                        <span className="text-[10px] text-muted-foreground uppercase font-bold block">
+                        <span className="ds-meta text-muted-foreground uppercase font-bold block">
                           Sua Poltrona
                         </span>
                         <strong className="text-sm font-extrabold text-foreground mt-1.5 block">
@@ -807,7 +807,7 @@ function ClientTripDetail() {
                         </strong>
                       </div>
                       <div className="p-3 glass bg-white/5 border-white/10/50 border-none rounded-[var(--radius-card)]">
-                        <span className="text-[10px] text-muted-foreground uppercase font-bold block">
+                        <span className="ds-meta text-muted-foreground uppercase font-bold block">
                           Acomodação
                         </span>
                         <strong className="text-sm font-extrabold text-foreground mt-1.5 block truncate">
@@ -943,7 +943,7 @@ function ClientTripDetail() {
               {/* Opções de escolha se houver mais de uma */}
               {activeCase.alternatives && activeCase.alternatives.length > 1 && (
                 <div className="space-y-2 glass bg-white/5 border-white/10/10 p-3 rounded-[var(--radius-card)] border-none/60">
-                  <span className="text-[11px] font-bold text-muted-foreground uppercase block">
+                  <span className="ds-meta font-bold text-muted-foreground uppercase block">
                     Selecione a opção de voo preferida:
                   </span>
                   <div className="grid grid-cols-2 gap-3">
@@ -1031,7 +1031,7 @@ function ClientTripDetail() {
                                 </span>
                               </div>
                               {seg.baggage && (
-                                <div className="text-[10px] text-muted-foreground">
+                                <div className="ds-meta text-muted-foreground">
                                   Bagagem: {seg.baggage}
                                 </div>
                               )}
@@ -1084,7 +1084,7 @@ function ClientTripDetail() {
                                 </span>
                               </div>
                               {seg.baggage && (
-                                <div className="text-[10px] text-muted-foreground">
+                                <div className="ds-meta text-muted-foreground">
                                   Bagagem: {seg.baggage}
                                 </div>
                               )}
@@ -1105,7 +1105,7 @@ function ClientTripDetail() {
                           pontuação de alteração de <strong>{analysis.risk_score}/100</strong>.
                         </p>
                         {analysis.warnings && analysis.warnings.length > 0 && (
-                          <div className="text-[11px] text-amber-800 space-y-1 mt-1 pl-4 list-disc">
+                          <div className="ds-meta text-amber-800 space-y-1 mt-1 pl-4 list-disc">
                             {analysis.warnings.map((w: string, i: number) => (
                               <div key={i} className="flex items-center gap-1.5">
                                 <Info className="h-3.5 w-3.5 shrink-0 text-amber-600" /> {w}
@@ -1169,7 +1169,7 @@ function ClientTripDetail() {
                 <Label htmlFor="sig-name" className="text-xs font-bold text-foreground">
                   Assinatura Eletrônica do Passageiro
                 </Label>
-                <p className="text-[10px] text-muted-foreground mb-2">
+                <p className="ds-meta text-muted-foreground mb-2">
                   Digite seu nome completo exatamente como consta no seu documento para gerar a
                   chave de integridade criptográfica.
                 </p>

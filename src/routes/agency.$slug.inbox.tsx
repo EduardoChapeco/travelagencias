@@ -1,7 +1,8 @@
 import { createFileRoute, useParams, Link } from "@tanstack/react-router";
 import { useState, useEffect, useRef } from "react";
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
+import { useInbox } from "@/hooks/use-inbox";
 import { useAgency } from "@/lib/agency-context";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
@@ -116,25 +117,33 @@ function formatTime(iso: string | null) {
 
 function InboxModule() {
   const { agency } = useAgency();
-  const { slug } = Route.useParams();
+  const { slug } = useParams({ from: "/agency/$slug/inbox" });
   const queryClient = useQueryClient();
 
-  const [selectedId, setSelectedId] = useState<string | null>(null);
-  const [searchQuery, setSearchQuery] = useState("");
-  const [filterChannel, setFilterChannel] = useState<string | null>(null);
+  const {
+    selectedId, setSelectedId, searchQuery, setSearchQuery, filterChannel, setFilterChannel,
+    mySessionsOnly, setMySessionsOnly, currentUser,
+    recording, aiSuggestion, setAiSuggestion, generatingAi, analyzing, uploadingDoc,
+    messagesEndRef, fileInputRef,
+    conversations, isLoadingConversations, isErrorConversations, errorConversations,
+    selectedConversation, messages, isLoadingMessages,
+    channels, isLoadingChannels, isErrorChannels, errorChannels,
+    matchedLead, matchedClient, matchedClientId,
+    explicitLeadId, explicitClientId,
+    clientDocs, recentProposals, leadInsights, refetchInsights,
+    crmSearchQuery, setCrmSearchQuery, crmSearchType, setCrmSearchType,
+    isLinkingOpen, setIsLinkingOpen, crmSearchResults,
+    sendReplyMutation, assignToMeMutation,
+    linkContactToCrm, handleAttachmentUpload, startRecording, stopRecording,
+    generateAiProposalForLead, saveContactNotes, generateAiSuggestion,
+    triggerAnalysis, handleDocUpload, createLeadFromSession,
+  } = useInbox();
+
+  // Estados locais e de UI pura/formulários que permanecem na rota
   const [reply, setReply] = useState("");
   const [sendingReply, setSendingReply] = useState(false);
-  const [aiSuggestion, setAiSuggestion] = useState<string | null>(null);
-  const [generatingAi, setGeneratingAi] = useState(false);
-  const [recording, setRecording] = useState(false);
-  const [mediaRecorder, setMediaRecorder] = useState<MediaRecorder | null>(null);
-  const fileInputRef = useRef<HTMLInputElement>(null);
-  const messagesEndRef = useRef<HTMLDivElement>(null);
-
-  // Layout states
   const [showDetails, setShowDetails] = useState(true);
   const [detailsTab, setDetailsTab] = useState<"profile" | "documents" | "notices" | "ai_templates">("profile");
-  const [uploadingDoc, setUploadingDoc] = useState(false);
   const [docTypeToUpload, setDocTypeToUpload] = useState("rg");
   const [contactNotes, setContactNotes] = useState("");
   const [savingNotes, setSavingNotes] = useState(false);
@@ -151,286 +160,8 @@ function InboxModule() {
   const [instaAccountId, setInstaAccountId] = useState("");
   const [instaToken, setInstaToken] = useState("");
   const [submittingConfig, setSubmittingConfig] = useState(false);
-  const [mySessionsOnly, setMySessionsOnly] = useState(false);
-  const [currentUser, setCurrentUser] = useState<any>(null);
-  const [analyzing, setAnalyzing] = useState(false);
 
-  const [crmSearchQuery, setCrmSearchQuery] = useState("");
-  const [crmSearchType, setCrmSearchType] = useState<"lead" | "client">("lead");
-  const [isLinkingOpen, setIsLinkingOpen] = useState(false);
-
-  const { data: crmSearchResults = [] } = useQuery({
-    enabled: isLinkingOpen && crmSearchQuery.length > 2 && !!agency,
-    queryKey: ["inbox-crm-search", crmSearchType, crmSearchQuery, agency?.id],
-    queryFn: async () => {
-      if (crmSearchType === "lead") {
-        const { data, error } = await db
-          .from("leads")
-          .select("id, name, email, phone")
-          .eq("agency_id", agency!.id)
-          .ilike("name", `%${crmSearchQuery}%`)
-          .limit(10);
-        if (error) throw error;
-        return data || [];
-      } else {
-        const { data, error } = await db
-          .from("clients")
-          .select("id, full_name, email, phone")
-          .eq("agency_id", agency!.id)
-          .ilike("full_name", `%${crmSearchQuery}%`)
-          .limit(10);
-        if (error) throw error;
-        return (data || []).map((d: any) => ({
-          id: d.id,
-          name: d.full_name,
-          email: d.email,
-          phone: d.phone
-        }));
-      }
-    }
-  });
-
-  const linkContactToCrm = async (leadId: string | null, clientId: string | null) => {
-    if (!selectedConversation?.contacts?.id) return;
-    const { error } = await db
-      .from("contacts")
-      .update({ lead_id: leadId, client_id: clientId })
-      .eq("id", selectedConversation.contacts.id);
-
-    if (error) {
-      toast.error("Erro ao vincular contato: " + error.message);
-    } else {
-      toast.success("Vínculo atualizado com sucesso!");
-      setIsLinkingOpen(false);
-      setCrmSearchQuery("");
-      queryClient.invalidateQueries({ queryKey: ["conversations"] });
-      queryClient.invalidateQueries({ queryKey: ["inbox-matched-lead", selectedId] });
-      queryClient.invalidateQueries({ queryKey: ["inbox-matched-client", selectedId] });
-    }
-  };
-
-  useEffect(() => {
-    supabase.auth.getUser().then(({ data }) => setCurrentUser(data.user));
-  }, []);
-
-  // ── Fetch channels (Para filtros e modal Sheet) ────────────────────────────
-  const { data: channels = [], isLoading: isLoadingChannels, isError: isErrorChannels, error: errorChannels } = useQuery({
-    queryKey: ["inbox-channels", agency?.id],
-    queryFn: async () => {
-      if (!agency?.id) return [];
-      const { data, error } = await db
-        .from("channels")
-        .select("*")
-        .eq("agency_id", agency.id);
-      if (error) throw error;
-      return data || [];
-    },
-    enabled: !!agency?.id,
-  });
-
-  // ── Fetch Conversations ────────────────────────────────────────────────────
-  const { data: conversations = [], isLoading: isLoadingConversations, isError: isErrorConversations, error: errorConversations } = useQuery({
-    queryKey: ["conversations", agency?.id, filterChannel, mySessionsOnly],
-    queryFn: async () => {
-      if (!agency?.id) return [];
-      let q = db
-        .from("conversations")
-        .select(`
-          *,
-          contacts(*),
-          channels(*),
-          messages(id, body, direction, status, created_at)
-        `)
-        .eq("agency_id", agency.id)
-        .order("last_message_at", { ascending: false, nullsFirst: false })
-        .order("created_at", { referencedTable: "messages", ascending: false })
-        .limit(1, { referencedTable: "messages" });
-
-      const { data, error } = await q;
-      if (error) throw error;
-
-      // Ordenar mensagens de cada conversa localmente para pegar a última
-      return (data || []).map((c: any) => {
-        const sortedMsgs = c.messages 
-          ? [...c.messages].sort((a: any, b: any) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())
-          : [];
-        return {
-          ...c,
-          messages: sortedMsgs
-        };
-      }) as Conversation[];
-    },
-    enabled: !!agency?.id,
-  });
-
-  // ── Fetch Messages for Selected Conversation ───────────────────────────────
-  const { data: messages = [], isLoading: isLoadingMessages } = useQuery({
-    queryKey: ["messages", selectedId],
-    queryFn: async () => {
-      if (!selectedId) return [];
-      const { data, error } = await db
-        .from("messages")
-        .select("*")
-        .eq("conversation_id", selectedId)
-        .order("created_at", { ascending: true });
-      if (error) throw error;
-      return data || [];
-    },
-    enabled: !!selectedId,
-  });
-
-  // Auto-scroll messages
-  useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
-  }, [messages]);
-
-  // Realtime subscription
-  useEffect(() => {
-    if (!agency?.id) return;
-
-    const channel = supabase.channel("inbox-realtime-v3")
-      .on(
-        "postgres_changes",
-        { event: "INSERT", schema: "public", table: "messages", filter: `agency_id=eq.${agency.id}` },
-        (payload) => {
-          queryClient.invalidateQueries({ queryKey: ["conversations", agency.id] });
-          queryClient.invalidateQueries({ queryKey: ["unread-conversations-count", agency.id] });
-          if (payload.new.conversation_id === selectedId) {
-            queryClient.invalidateQueries({ queryKey: ["messages", selectedId] });
-            if (payload.new.direction === "inbound") {
-              toast("Nova mensagem recebida!");
-            }
-          }
-        }
-      )
-      .on(
-        "postgres_changes",
-        { event: "UPDATE", schema: "public", table: "messages", filter: `agency_id=eq.${agency.id}` },
-        (payload) => {
-          if (payload.new.conversation_id === selectedId) {
-            queryClient.invalidateQueries({ queryKey: ["messages", selectedId] });
-          }
-        }
-      )
-      .subscribe();
-
-    return () => {
-      supabase.removeChannel(channel);
-    };
-  }, [agency?.id, selectedId, queryClient]);
-
-  // Marcar conversa como lida ao selecionar ou receber novas mensagens na conversa ativa
-  useEffect(() => {
-    if (!selectedId || !agency?.id) return;
-
-    const markAsRead = async () => {
-      try {
-        // 1. Zerar o unread_count na conversa
-        await db
-          .from("conversations")
-          .update({ unread_count: 0 } as any)
-          .eq("id", selectedId);
-
-        // 2. Marcar mensagens inbound como lidas
-        await db
-          .from("messages")
-          .update({ status: "read" } as any)
-          .eq("conversation_id", selectedId)
-          .eq("direction", "inbound")
-          .neq("status", "read");
-
-        // 3. Invalida os estados de contagem e conversas
-        queryClient.invalidateQueries({ queryKey: ["conversations", agency.id] });
-        queryClient.invalidateQueries({ queryKey: ["unread-conversations-count", agency.id] });
-      } catch (err) {
-        console.error("Erro ao marcar mensagens como lidas:", err);
-      }
-    };
-
-    markAsRead();
-  }, [selectedId, agency?.id, queryClient]);
-
-  const selectedConversation = conversations.find((c) => c.id === selectedId) || null;
-
-  // ── Match CRM info ──────────────────────────────────────────────────────────
-  const matchedContactEmail = selectedConversation?.contacts?.email;
-  const matchedContactPhone = selectedConversation?.contacts?.phone;
-  const explicitLeadId = selectedConversation?.contacts?.lead_id;
-  const explicitClientId = selectedConversation?.contacts?.client_id;
-
-  const { data: matchedLead } = useQuery({
-    enabled: !!agency && (!!explicitLeadId || !!matchedContactEmail || !!matchedContactPhone),
-    queryKey: ["inbox-matched-lead", selectedId, matchedContactEmail, matchedContactPhone, explicitLeadId],
-    queryFn: async () => {
-      if (explicitLeadId) {
-        const { data } = await db.from("leads").select("*").eq("id", explicitLeadId).maybeSingle();
-        if (data) return data;
-      }
-      if (!matchedContactEmail && !matchedContactPhone) return null;
-      let q = db.from("leads").select("*").eq("agency_id", agency!.id);
-      if (matchedContactEmail) {
-        q = q.eq("email", matchedContactEmail);
-      } else {
-        const clean = matchedContactPhone!.replace(/\D/g, "");
-        q = q.like("phone", `%${clean}%`);
-      }
-      const { data } = await q.maybeSingle();
-      return data as any;
-    },
-  });
-
-  const { data: matchedClient } = useQuery({
-    enabled: !!agency && (!!explicitClientId || !!matchedContactEmail || !!matchedContactPhone),
-    queryKey: ["inbox-matched-client", selectedId, matchedContactEmail, matchedContactPhone, explicitClientId],
-    queryFn: async () => {
-      if (explicitClientId) {
-        const { data } = await db.from("clients").select("*").eq("id", explicitClientId).maybeSingle();
-        if (data) return data;
-      }
-      if (!matchedContactEmail && !matchedContactPhone) return null;
-      let q = db.from("clients").select("*").eq("agency_id", agency!.id);
-      if (matchedContactEmail) {
-        q = q.eq("email", matchedContactEmail);
-      } else {
-        const clean = matchedContactPhone!.replace(/\D/g, "");
-        q = q.like("phone", `%${clean}%`);
-      }
-      const { data } = await q.maybeSingle();
-      return data as any;
-    },
-  });
-
-  const matchedClientId = (matchedClient as any)?.id || null;
-
-  // Client Documents
-  const { data: clientDocs = [], refetch: refetchDocs } = useQuery({
-    enabled: !!agency && !!matchedClientId,
-    queryKey: ["inbox-client-docs", matchedClientId],
-    queryFn: async () => {
-      const { data } = await db
-        .from("client_documents")
-        .select("*")
-        .eq("client_id", matchedClientId!);
-      return data || [];
-    },
-  });
-
-  // Recent proposals for lead
-  const { data: recentProposals = [] } = useQuery({
-    enabled: !!agency && !!(matchedLead as any)?.id,
-    queryKey: ["inbox-lead-proposals", (matchedLead as any)?.id],
-    queryFn: async () => {
-      const { data } = await supabase
-        .from("proposals")
-        .select("id, title, number, total, currency, status")
-        .eq("lead_id", (matchedLead as any)!.id)
-        .order("created_at", { ascending: false })
-        .limit(3);
-      return data || [];
-    },
-  });
-
-  // Contact Notes loading
+  // Carregar anotações locais quando a conversa selecionada muda
   useEffect(() => {
     if (selectedConversation?.contacts?.metadata?.notes) {
       setContactNotes(selectedConversation.contacts.metadata.notes);
@@ -439,311 +170,44 @@ function InboxModule() {
     }
   }, [selectedId, selectedConversation]);
 
-  // Lead Insights (AI)
-  const { data: leadInsights, refetch: refetchInsights } = useQuery({
-    enabled: !!(matchedLead as any)?.id,
-    queryKey: ["inbox-lead-insights", (matchedLead as any)?.id],
-    queryFn: async () => {
-      const { data } = await db
-        .from("leads")
-        .select("general_profile, general_sentiment, generalized_objections")
-        .eq("id", (matchedLead as any)!.id)
-        .maybeSingle();
-      return data as any;
-    },
-  });
-
-  // ── Mutations ───────────────────────────────────────────────────────────────
-  const sendReplyMutation = useMutation({
-    mutationFn: async (text: string) => {
-      if (!agency?.id || !selectedId) throw new Error("No active conversation");
-      const { data, error } = await db.from("messages").insert({
-        agency_id: agency.id,
-        conversation_id: selectedId,
-        direction: "outbound",
-        body: text,
-        status: "queued",
-        sender_user_id: currentUser?.id,
-      });
-      if (error) throw error;
-
-      // Atualiza last_message_at na conversa
-      await db.from("conversations").update({ last_message_at: new Date().toISOString() }).eq("id", selectedId);
-      return data;
-    },
-    onSuccess: () => {
-      setReply("");
-      queryClient.invalidateQueries({ queryKey: ["messages", selectedId] });
-      queryClient.invalidateQueries({ queryKey: ["conversations", agency?.id] });
-    },
-    onError: (e: any) => toast.error(e.message),
-  });
-
-  const assignToMeMutation = useMutation({
-    mutationFn: async () => {
-      if (!selectedId || !currentUser?.id) throw new Error("No user or conversation selected");
-      const { data, error } = await db.from("conversations").update({
-        assigned_user_id: currentUser.id,
-        status: "open",
-      }).eq("id", selectedId);
-      if (error) throw error;
-      return data;
-    },
-    onSuccess: () => {
-      toast.success("Conversa atribuída a você com sucesso!");
-      queryClient.invalidateQueries({ queryKey: ["conversations", agency?.id] });
-    },
-    onError: (e: any) => toast.error(e.message),
-  });
-
-  async function handleAttachmentUpload(e: React.ChangeEvent<HTMLInputElement>) {
-    const file = e.target.files?.[0];
-    if (!file || !selectedId || !agency) return;
-    const toastId = toast.loading(`Enviando ${file.name}...`);
-    try {
-      const fileExt = file.name.split(".").pop();
-      const filePath = `inbox/attachments/${selectedId}/${Date.now()}.${fileExt}`;
-
-      const { error: uploadError } = await supabase.storage
-        .from("agency-media")
-        .upload(filePath, file);
-      if (uploadError) throw uploadError;
-
-      const {
-        data: { publicUrl },
-      } = supabase.storage.from("agency-media").getPublicUrl(filePath);
-
-      await db.from("messages").insert({
-        agency_id: agency.id,
-        conversation_id: selectedId,
-        direction: "outbound",
-        body: `Arquivo anexo: ${file.name}`,
-        media_url: publicUrl,
-        status: "queued",
-        sender_user_id: currentUser?.id,
-      });
-
-      await db.from("conversations").update({ last_message_at: new Date().toISOString() }).eq("id", selectedId);
-      toast.success("Arquivo enviado com sucesso!", { id: toastId });
-      queryClient.invalidateQueries({ queryKey: ["messages", selectedId] });
-      queryClient.invalidateQueries({ queryKey: ["conversations", agency.id] });
-    } catch (err: any) {
-      toast.error("Erro ao enviar anexo: " + err.message, { id: toastId });
-    }
-  }
-
-  async function startRecording() {
-    try {
-      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-      const recorder = new MediaRecorder(stream);
-      const chunks: Blob[] = [];
-      recorder.ondataavailable = (e) => chunks.push(e.data);
-      recorder.onstop = async () => {
-        if (!agency || !selectedId) return;
-        const toastId = toast.loading("Enviando áudio...");
-        try {
-          const blob = new Blob(chunks, { type: "audio/webm" });
-          const filePath = `inbox/attachments/${selectedId}/${Date.now()}.webm`;
-          const { error: uploadError } = await supabase.storage
-            .from("agency-media")
-            .upload(filePath, blob);
-          if (uploadError) throw uploadError;
-
-          const {
-            data: { publicUrl },
-          } = supabase.storage.from("agency-media").getPublicUrl(filePath);
-
-          await db.from("messages").insert({
-            agency_id: agency.id,
-            conversation_id: selectedId,
-            direction: "outbound",
-            body: "Mensagem de voz",
-            media_url: publicUrl,
-            status: "queued",
-            sender_user_id: currentUser?.id,
-          });
-
-          await db.from("conversations").update({ last_message_at: new Date().toISOString() }).eq("id", selectedId);
-          toast.success("Áudio enviado com sucesso!", { id: toastId });
-          queryClient.invalidateQueries({ queryKey: ["messages", selectedId] });
-          queryClient.invalidateQueries({ queryKey: ["conversations", agency.id] });
-        } catch (err: any) {
-          toast.error("Erro ao enviar áudio: " + err.message, { id: toastId });
-        }
-      };
-      recorder.start();
-      setMediaRecorder(recorder);
-      setRecording(true);
-    } catch (err: any) {
-      toast.error("Permissão de microfone negada ou não suportada.");
-    }
-  }
-
-  function stopRecording() {
-    if (mediaRecorder && recording) {
-      mediaRecorder.stop();
-      mediaRecorder.stream.getTracks().forEach((track: any) => track.stop());
-      setRecording(false);
-    }
-  }
-
-  async function generateAiProposalForLead() {
-    if (!matchedLead?.id || !agency) return;
-    const toastId = toast.loading("Analisando conversa e gerando proposta...");
-    try {
-      const { data, error } = await supabase.functions.invoke("ai-message-processor", {
-        body: { action: "create_proposal", lead_id: matchedLead.id, agency_id: agency.id },
-      });
-      if (error) throw error;
-      const url = `${window.location.origin}/m/proposal/${data.public_token}`;
-      setReply((prev) => (prev ? prev + "\n" : "") + `Olá! Preparamos uma proposta personalizada para você. Veja e confirme os detalhes aqui: ${url}`);
-      toast.success("Proposta de IA adicionada ao chat!", { id: toastId });
-    } catch (err: any) {
-      toast.error("Erro ao gerar proposta com IA: " + err.message, { id: toastId });
-    }
-  }
-
-  async function saveContactNotes() {
-    if (!selectedConversation?.contacts?.id) return;
+  // Função local com feedback de estado local para salvar notas
+  async function handleSaveContactNotes() {
     setSavingNotes(true);
     try {
-      const currentMeta = selectedConversation.contacts.metadata || {};
-      const { error } = await db.from("contacts").update({
-        metadata: {
-          ...currentMeta,
-          notes: contactNotes,
-        },
-      }).eq("id", selectedConversation.contacts.id);
-
-      if (error) throw error;
-      toast.success("Observações salvas com sucesso!");
-      queryClient.invalidateQueries({ queryKey: ["conversations", agency?.id] });
-    } catch (err: any) {
-      toast.error(err.message);
+      await saveContactNotes(contactNotes);
     } finally {
       setSavingNotes(false);
     }
   }
 
-  async function generateAiSuggestion() {
-    if (!selectedId || !agency) return;
-    setGeneratingAi(true);
+  // Função local para enviar resposta
+  async function handleSendReply() {
+    if (!reply.trim()) return;
+    setSendingReply(true);
     try {
-      const res = await generateOmnichannelReply({
-        data: {
-          agencyId: agency.id,
-          sessionId: selectedId,
-        },
-      });
-      setAiSuggestion(res.suggestion);
-    } catch (e: any) {
-      toast.error("Erro ao gerar sugestão de IA");
+      await sendReplyMutation.mutateAsync(reply.trim());
+      setReply("");
     } finally {
-      setGeneratingAi(false);
+      setSendingReply(false);
     }
   }
 
-  async function triggerAnalysis() {
-    if (!(matchedLead as any)?.id || !agency) return;
-    setAnalyzing(true);
-    const toastId = toast.loading("Analisando comportamento com IA...");
-    try {
-      const {
-        data: { session },
-      } = await supabase.auth.getSession();
-      const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
-      const res = await fetch(`${supabaseUrl}/functions/v1/ai-message-processor`, {
-        method: "POST",
-        headers: {
-          Authorization: `Bearer ${session?.access_token}`,
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ record: { lead_id: (matchedLead as any).id, agency_id: agency.id } }),
-      });
-      if (!res.ok) throw new Error("Falha na análise");
-      await refetchInsights();
-      toast.success("Análise de IA concluída!", { id: toastId });
-    } catch (e: any) {
-      toast.error("Erro ao rodar análise comportamental", { id: toastId });
-    } finally {
-      setAnalyzing(false);
+  // Função local para enviar a proposta gerada por IA
+  async function handleGenerateAiProposal() {
+    const text = await generateAiProposalForLead();
+    if (text) {
+      setReply((prev) => (prev ? prev + "\n" : "") + text);
     }
   }
 
-  async function handleDocUpload(e: React.ChangeEvent<HTMLInputElement>) {
-    const file = e.target.files?.[0];
-    if (!file || !matchedClientId || !agency) return;
-    setUploadingDoc(true);
-    const toastId = toast.loading(`Enviando ${file.name}...`);
-    try {
-      const fileExt = file.name.split(".").pop();
-      const filePath = `clients/documents/${matchedClientId}/${Date.now()}.${fileExt}`;
-      const { error: uploadErr } = await supabase.storage
-        .from("client-documents")
-        .upload(filePath, file);
-      if (uploadErr) throw uploadErr;
-
-      const {
-        data: { publicUrl },
-      } = supabase.storage.from("client-documents").getPublicUrl(filePath);
-
-      const { error } = await db.from("client_documents").insert({
-        agency_id: agency.id,
-        client_id: matchedClientId,
-        doc_type: docTypeToUpload,
-        file_url: publicUrl,
-        doc_number: file.name.replace(/\.[^/.]+$/, "").substring(0, 20),
-      });
-
-      if (error) throw error;
-      toast.success("Documento enviado e cadastrado!", { id: toastId });
-      refetchDocs();
-    } catch (err: any) {
-      toast.error("Erro no envio: " + err.message, { id: toastId });
-    } finally {
-      setUploadingDoc(false);
-    }
-  }
-
-  async function createLeadFromSession() {
-    if (!selectedConversation || !agency) return;
-    const toastId = toast.loading("Importando contato como lead no CRM...");
-    try {
-      const { data: stages } = await db
-        .from("crm_pipeline_stages")
-        .select("id")
-        .eq("agency_id", agency.id)
-        .limit(1);
-
-      const stageId = stages?.[0]?.id || null;
-      if (!stageId) throw new Error("Crie pelo menos um funil/etapa no CRM primeiro");
-
-      const contact = (selectedConversation.contacts || {}) as any;
-      const { error } = await db.from("leads").insert({
-        agency_id: agency.id,
-        name: contact.name || "Lead via Inbox",
-        phone: contact.phone || "",
-        email: contact.email || "",
-        stage_id: stageId,
-        status: "active",
-      } as any);
-
-      if (error) throw error;
-      toast.success("Contato cadastrado no CRM como Lead!", { id: toastId });
-      queryClient.invalidateQueries({ queryKey: ["inbox-matched-lead", selectedId] });
-    } catch (e: any) {
-      toast.error("Erro ao importar lead: " + e.message, { id: toastId });
-    }
-  }
-
-  // ── Filters & Search ───────────────────────────────────────────────────────
+  // Filtros locais
   const filteredConversations = conversations.filter((c) => {
     const contact = (c.contacts || {}) as any;
     const channel = (c.channels || {}) as any;
     const matchesSearch =
-      (contact.name || "").toLowerCase().includes(searchQuery.toLowerCase()) ||
-      (contact.phone || "").includes(searchQuery) ||
-      (contact.email || "").toLowerCase().includes(searchQuery.toLowerCase());
+      (contact.name || "").toLowerCase().includes(crmSearchQuery.toLowerCase()) ||
+      (contact.phone || "").includes(crmSearchQuery) ||
+      (contact.email || "").toLowerCase().includes(crmSearchQuery.toLowerCase());
 
     const matchesChannel = filterChannel ? channel.type === filterChannel : true;
     const matchesMySessions = mySessionsOnly && currentUser ? c.assigned_user_id === currentUser.id : true;
@@ -753,14 +217,15 @@ function InboxModule() {
 
   const activeChannelTypes = Array.from(new Set(channels.map((ch: any) => ch.type)));
 
+
   return (
-    <div className="flex h-full w-full overflow-hidden">
+    <div className="flex-1 flex overflow-hidden min-h-0">
       {(isErrorChannels || isErrorConversations) && (
         <div className="fixed bottom-4 left-1/2 -translate-x-1/2 z-50 flex items-center gap-3 rounded-[var(--radius-card)] border border-red-200 bg-red-50 px-4 py-3 shadow-none max-w-md">
           <AlertCircle className="h-4 w-4 text-red-600 shrink-0" />
           <div>
             <p className="text-xs font-bold text-red-800">Erro ao Carregar Inbox</p>
-            <p className="text-[11px] text-red-600">
+            <p className="ds-meta text-red-600">
               {isErrorChannels && errorChannels instanceof Error ? errorChannels.message
                : isErrorConversations && errorConversations instanceof Error ? errorConversations.message
                : "Verifique as permissões e tente novamente."}
@@ -770,7 +235,7 @@ function InboxModule() {
       )}
       {/* ── LEFT COLUMN: Conversations List (Width 320px) ────────────────────── */}
       <aside className={cn(
-        "flex flex-col border-r border-border shrink-0 glass-card border-none w-full md:w-[320px] h-full",
+        "flex flex-col border-r border-border shrink-0 bg-surface/30 w-full md:w-[320px] h-full",
         selectedId ? "hidden md:flex" : "flex"
       )}>
         {/* Header & Connection button */}
@@ -801,10 +266,10 @@ function InboxModule() {
                 </SheetDescription>
               </SheetHeader>
               
-              <div className="p-4 space-y-5 overflow-y-auto max-h-[calc(100vh-8rem)]">
+              <div className="p-4 space-y-5 overflow-y-auto dock-offset max-h-[calc(100vh-8rem)]">
                 {/* Canais Conectados */}
                 <div className="space-y-3">
-                  <h3 className="text-[10px] font-extrabold uppercase tracking-wide text-muted-foreground">Canais Ativos</h3>
+                  <h3 className="ds-meta font-extrabold uppercase tracking-wide text-muted-foreground">Canais Ativos</h3>
                   {isLoadingChannels ? (
                     <div className="flex justify-center py-4">
                       <RefreshCw className="w-5 h-5 animate-spin text-muted-foreground" />
@@ -840,7 +305,7 @@ function InboxModule() {
                 <div className="space-y-4 pt-2">
                   {!connectType ? (
                     <>
-                      <h3 className="text-[10px] font-extrabold uppercase tracking-wide text-muted-foreground">Adicionar Conexão</h3>
+                      <h3 className="ds-meta font-extrabold uppercase tracking-wide text-muted-foreground">Adicionar Conexão</h3>
                       
                       <Button 
                         onClick={() => setConnectType("gmail")}
@@ -849,7 +314,7 @@ function InboxModule() {
                         <Mail className="w-4 h-4 text-blue-500 shrink-0" />
                         <div>
                           <p className="font-bold">Conectar Gmail</p>
-                          <span className="text-[10px] text-muted-foreground font-normal">Sincronize mensagens do e-mail comercial.</span>
+                          <span className="ds-meta text-muted-foreground font-normal">Sincronize mensagens do e-mail comercial.</span>
                         </div>
                       </Button>
 
@@ -860,7 +325,7 @@ function InboxModule() {
                         <Phone className="w-4 h-4 text-green-500 shrink-0" />
                         <div>
                           <p className="font-bold">Integrar WhatsApp</p>
-                          <span className="text-[10px] text-muted-foreground font-normal">Conecte via WhatsApp Cloud API Oficial ou Evolution API.</span>
+                          <span className="ds-meta text-muted-foreground font-normal">Conecte via WhatsApp Cloud API Oficial ou Evolution API.</span>
                         </div>
                       </Button>
 
@@ -871,7 +336,7 @@ function InboxModule() {
                         <Instagram className="w-4 h-4 text-pink-500 shrink-0" />
                         <div>
                           <p className="font-bold">Integrar Instagram</p>
-                          <span className="text-[10px] text-muted-foreground font-normal">Receba mensagens diretas da rede Meta.</span>
+                          <span className="ds-meta text-muted-foreground font-normal">Receba mensagens diretas da rede Meta.</span>
                         </div>
                       </Button>
                     </>
@@ -880,7 +345,7 @@ function InboxModule() {
                       <div className="flex items-center justify-between pb-2 border-b border-border">
                         <Button
                           onClick={() => setConnectType(null)}
-                          className="text-[10px] font-black uppercase text-brand hover:underline cursor-pointer flex items-center gap-1 bg-transparent border-none"
+                          className="ds-meta font-black uppercase text-brand hover:underline cursor-pointer flex items-center gap-1 bg-transparent border-none"
                         >
                           ← Voltar
                         </Button>
@@ -896,7 +361,7 @@ function InboxModule() {
                               type="button"
                               onClick={() => setGmailSubTab("oauth")}
                               className={cn(
-                                "flex-1 text-center py-1 text-[11px] font-bold rounded-full transition-all cursor-pointer",
+                                "flex-1 text-center py-1 ds-meta font-bold rounded-full transition-all cursor-pointer",
                                 gmailSubTab === "oauth"
                                   ? "bg-brand text-white shadow-xs"
                                   : "text-muted-foreground hover:text-foreground"
@@ -908,7 +373,7 @@ function InboxModule() {
                               type="button"
                               onClick={() => setGmailSubTab("smtp")}
                               className={cn(
-                                "flex-1 text-center py-1 text-[11px] font-bold rounded-full transition-all cursor-pointer",
+                                "flex-1 text-center py-1 ds-meta font-bold rounded-full transition-all cursor-pointer",
                                 gmailSubTab === "smtp"
                                   ? "bg-brand text-white shadow-xs"
                                   : "text-muted-foreground hover:text-foreground"
@@ -920,7 +385,7 @@ function InboxModule() {
 
                           {gmailSubTab === "oauth" ? (
                             <div className="space-y-3 pt-1">
-                              <p className="text-[11px] text-muted-foreground leading-normal font-sans">
+                              <p className="ds-meta text-muted-foreground leading-normal font-sans">
                                 Conecte seu e-mail do Gmail de forma segura usando o protocolo OAuth oficial do Google. Você será redirecionado para a página de consentimento do Google.
                               </p>
                               <Button
@@ -1009,7 +474,7 @@ function InboxModule() {
                               }
                             }} className="space-y-3">
                               <div className="space-y-1">
-                                <label className="text-[10px] font-bold text-muted-foreground uppercase">E-mail Comercial *</label>
+                                <label className="ds-meta font-bold text-muted-foreground uppercase">E-mail Comercial *</label>
                                 <Input
                                   type="email"
                                   required
@@ -1020,7 +485,7 @@ function InboxModule() {
                                 />
                               </div>
                               <div className="space-y-1">
-                                <label className="text-[10px] font-bold text-muted-foreground uppercase">Resend API Key *</label>
+                                <label className="ds-meta font-bold text-muted-foreground uppercase">Resend API Key *</label>
                                 <Input
                                   type="password"
                                   required
@@ -1144,7 +609,7 @@ function InboxModule() {
                           }
                         }} className="space-y-3">
                           <div className="space-y-1">
-                            <label className="text-[10px] font-bold text-muted-foreground uppercase">Provedor</label>
+                            <label className="ds-meta font-bold text-muted-foreground uppercase">Provedor</label>
                             <Select
                               value={waProvider}
                               onChange={(e) => setWaProvider(e.target.value as any)}
@@ -1158,7 +623,7 @@ function InboxModule() {
                           {waProvider === "meta_official" ? (
                             <>
                               <div className="space-y-1">
-                                <label className="text-[10px] font-bold text-muted-foreground uppercase">Phone Number ID *</label>
+                                <label className="ds-meta font-bold text-muted-foreground uppercase">Phone Number ID *</label>
                                 <Input
                                   type="text"
                                   required
@@ -1169,7 +634,7 @@ function InboxModule() {
                                 />
                               </div>
                               <div className="space-y-1">
-                                <label className="text-[10px] font-bold text-muted-foreground uppercase">Access Token *</label>
+                                <label className="ds-meta font-bold text-muted-foreground uppercase">Access Token *</label>
                                 <Input
                                   type="password"
                                   required
@@ -1183,7 +648,7 @@ function InboxModule() {
                           ) : (
                             <>
                               <div className="space-y-1">
-                                <label className="text-[10px] font-bold text-muted-foreground uppercase">URL do Servidor *</label>
+                                <label className="ds-meta font-bold text-muted-foreground uppercase">URL do Servidor *</label>
                                 <Input
                                   type="url"
                                   required
@@ -1194,7 +659,7 @@ function InboxModule() {
                                 />
                               </div>
                               <div className="space-y-1">
-                                <label className="text-[10px] font-bold text-muted-foreground uppercase">Global API Key *</label>
+                                <label className="ds-meta font-bold text-muted-foreground uppercase">Global API Key *</label>
                                 <Input
                                   type="password"
                                   required
@@ -1256,7 +721,7 @@ function InboxModule() {
                           }
                         }} className="space-y-3">
                           <div className="space-y-1">
-                            <label className="text-[10px] font-bold text-muted-foreground uppercase">Instagram Account ID *</label>
+                            <label className="ds-meta font-bold text-muted-foreground uppercase">Instagram Account ID *</label>
                             <Input
                               type="text"
                               required
@@ -1267,7 +732,7 @@ function InboxModule() {
                             />
                           </div>
                           <div className="space-y-1">
-                            <label className="text-[10px] font-bold text-muted-foreground uppercase">Meta Page Access Token *</label>
+                            <label className="ds-meta font-bold text-muted-foreground uppercase">Meta Page Access Token *</label>
                             <Input
                               type="password"
                               required
@@ -1310,7 +775,7 @@ function InboxModule() {
           <div className="flex items-center gap-1.5 overflow-x-auto no-scrollbar pb-1">
             <Button
               onClick={() => setFilterChannel(null)}
-              className={`flex h-8 items-center gap-1.5 rounded-full px-3 text-[10px] font-bold uppercase transition-colors whitespace-nowrap border ${
+              className={`flex h-8 items-center gap-1.5 rounded-full px-3 ds-label-caps transition-colors whitespace-nowrap border ${
                 filterChannel === null
                   ? "bg-brand/10 text-brand border-brand/25"
                   : "bg-black/20 text-muted-foreground border-white/10 hover:text-foreground hover:bg-black/40"
@@ -1323,7 +788,7 @@ function InboxModule() {
             {activeChannelTypes.includes("whatsapp") && (
               <Button
                 onClick={() => setFilterChannel("whatsapp")}
-                className={`flex items-center gap-1.5 rounded-full px-2.5 py-1 text-[10px] font-bold uppercase transition-colors whitespace-nowrap border ${
+                className={`flex items-center gap-1.5 rounded-full px-2.5 py-1 ds-label-caps transition-colors whitespace-nowrap border ${
                   filterChannel === "whatsapp"
                     ? "bg-green-500/10 text-green-600 border-green-500/25"
                     : "bg-black/20 text-muted-foreground border-white/10 hover:text-foreground hover:bg-black/40"
@@ -1337,7 +802,7 @@ function InboxModule() {
             {activeChannelTypes.includes("email") && (
               <Button
                 onClick={() => setFilterChannel("email")}
-                className={`flex items-center gap-1.5 rounded-full px-2.5 py-1 text-[10px] font-bold uppercase transition-colors whitespace-nowrap border ${
+                className={`flex items-center gap-1.5 rounded-full px-2.5 py-1 ds-label-caps transition-colors whitespace-nowrap border ${
                   filterChannel === "email"
                     ? "bg-blue-500/10 text-blue-600 border-blue-500/25"
                     : "bg-black/20 text-muted-foreground border-white/10 hover:text-foreground hover:bg-black/40"
@@ -1352,7 +817,7 @@ function InboxModule() {
             {(activeChannelTypes.includes("instagram" as any) || conversations.some(c => (c.channels as any)?.type === "instagram")) && (
               <Button
                 onClick={() => setFilterChannel("instagram")}
-                className={`flex items-center gap-1.5 rounded-full px-2.5 py-1 text-[10px] font-bold uppercase transition-colors whitespace-nowrap border ${
+                className={`flex items-center gap-1.5 rounded-full px-2.5 py-1 ds-label-caps transition-colors whitespace-nowrap border ${
                   filterChannel === "instagram"
                     ? "bg-pink-500/10 text-pink-600 border-pink-500/25"
                     : "bg-black/20 text-muted-foreground border-white/10 hover:text-foreground hover:bg-black/40"
@@ -1365,7 +830,7 @@ function InboxModule() {
 
             <Button
               onClick={() => setMySessionsOnly(!mySessionsOnly)}
-              className={`ml-auto flex items-center gap-1 rounded-full px-2.5 py-1 text-[10px] font-bold uppercase transition-colors border ${
+              className={`ml-auto flex items-center gap-1 rounded-full px-2.5 py-1 ds-label-caps transition-colors border ${
                 mySessionsOnly
                   ? "bg-brand/10 text-brand border-brand/25"
                   : "bg-black/20 text-muted-foreground border-white/10 hover:text-foreground hover:bg-black/40"
@@ -1376,12 +841,12 @@ function InboxModule() {
           </div>
         </div>
 
-        {/* Sessions list */}
-        <div className="flex-1 overflow-y-auto no-scrollbar">
+        {/* Scrollable list */}
+        <div className="flex-1 overflow-y-auto dock-offset px-2 no-scrollbar space-y-1">
           {isLoadingConversations && (
             <div className="space-y-2 p-3">
               {[1, 2, 3].map((i) => (
-                <div key={i} className="h-16 rounded-[var(--radius-card)] glass bg-white/5 border-white/10/50 animate-pulse" />
+                <div key={i} className="h-16 rounded-lg bg-black/5 border border-white/5 animate-pulse" />
               ))}
             </div>
           )}
@@ -1396,7 +861,7 @@ function InboxModule() {
           {filteredConversations.map((c) => {
             const contact = c.contacts || ({} as any);
             const channel = c.channels || ({} as any);
-            const lastMsg = c.messages?.[0] || {};
+            const lastMsg = c.messages?.[0] || ({} as any);
             const Icon = CHANNEL_ICONS[channel.type] ?? MessageSquare;
             const isSelected = c.id === selectedId;
 
@@ -1427,12 +892,12 @@ function InboxModule() {
                     <span className="truncate text-xs font-semibold text-foreground">
                       {contact.name || "Contato"}
                     </span>
-                    <span className="shrink-0 text-[10px] text-muted-foreground ml-2">
+                    <span className="shrink-0 ds-meta text-muted-foreground ml-2">
                       {formatTime(c.last_message_at)}
                     </span>
                   </div>
                   <div className="flex items-center gap-1">
-                    <p className="flex-1 truncate text-[11px] text-muted-foreground">
+                    <p className="flex-1 truncate ds-meta text-muted-foreground">
                       {lastMsg.body || "Sem mensagens"}
                     </p>
                   </div>
@@ -1458,7 +923,7 @@ function InboxModule() {
 
       {/* ── CENTRAL COLUMN: Message Thread & Chat ───────────────────────────────── */}
       <section className={cn(
-        "flex flex-1 flex-col glass-card border-none border-r border-border h-full min-w-0",
+        "flex flex-1 flex-col border-r border-border h-full min-w-0 relative",
         selectedId ? "flex" : "hidden md:flex"
       )}>
         {selectedId ? (
@@ -1489,7 +954,7 @@ function InboxModule() {
                 <div className="text-sm font-semibold text-foreground">
                   {selectedConversation?.contacts?.name || "Contato"}
                 </div>
-                <div className="flex items-center gap-1 text-[10px] text-muted-foreground capitalize">
+                <div className="flex items-center gap-1 ds-meta text-muted-foreground capitalize">
                   {selectedConversation?.channels?.type && (
                     <>
                       {(() => {
@@ -1531,7 +996,7 @@ function InboxModule() {
                 <div className="flex items-start gap-2">
                   <Sparkles className="h-4 w-4 text-brand mt-0.5 shrink-0" />
                   <div className="flex-1">
-                    <div className="text-[10px] font-extrabold uppercase tracking-wide text-brand mb-1">
+                    <div className="ds-meta font-extrabold uppercase tracking-wide text-brand mb-1">
                       Sugestão da IA
                     </div>
                     <p className="text-xs text-foreground leading-relaxed">{aiSuggestion}</p>
@@ -1542,7 +1007,7 @@ function InboxModule() {
                         setReply(aiSuggestion);
                         setAiSuggestion(null);
                       }}
-                      className="rounded bg-brand px-2.5 py-1 text-[10px] font-bold text-brand-foreground hover:bg-brand/90 transition-colors cursor-pointer"
+                      className="rounded bg-brand px-2.5 py-1 ds-meta font-bold text-brand-foreground hover:bg-brand/90 transition-colors cursor-pointer"
                     >
                       Usar
                     </Button>
@@ -1555,7 +1020,7 @@ function InboxModule() {
             )}
 
             {/* Messages Thread list */}
-            <div className="flex-1 overflow-y-auto p-4 space-y-3 glass bg-white/5 border-white/10/10">
+            <div className="flex-1 overflow-y-auto dock-offset p-4 space-y-3 glass bg-white/5 border-white/10/10">
               {isLoadingMessages && (
                 <div className="flex justify-center items-center h-24">
                   <RefreshCw className="w-5 h-5 animate-spin text-muted-foreground" />
@@ -1681,10 +1146,10 @@ function InboxModule() {
 
       {/* ── RIGHT COLUMN: Collapsible Contact Info Panel (Width 320px) ───────────────── */}
       {selectedId && showDetails && (
-        <aside className="fixed inset-y-0 right-0 z-40 flex w-full flex-col border-l border-border glass-card border-none overflow-y-auto no-scrollbar md:relative md:w-80 md:z-0 md:flex md:shadow-none shadow-2xl h-full">
+        <aside className="fixed inset-y-0 right-0 z-40 flex w-full flex-col border-l border-border bg-surface/30 overflow-hidden md:relative md:w-80 md:z-0 md:flex shadow-2xl md:shadow-none h-full">
           {/* Header */}
           <div className="flex items-center justify-between border-b border-border px-4 min-h-[var(--ds-toolbar-height)] glass-toolbar shrink-0">
-            <h3 className="text-[10px] font-extrabold uppercase tracking-wider text-muted-foreground">
+            <h3 className="ds-meta font-extrabold uppercase tracking-wider text-muted-foreground">
               Painel do Cliente
             </h3>
             <Button onClick={() => setShowDetails(false)} className="text-muted-foreground hover:text-foreground cursor-pointer">
@@ -1733,7 +1198,7 @@ function InboxModule() {
           </div>
 
           {/* Tab content scroll block */}
-          <div className="flex-1 overflow-y-auto no-scrollbar">
+          <div className="flex-1 overflow-y-auto dock-offset no-scrollbar">
             {/* Tab: Profile */}
             {detailsTab === "profile" && (
               <div className="p-4 space-y-4">
@@ -1810,7 +1275,7 @@ function InboxModule() {
                       />
 
                       {crmSearchQuery.length > 2 && crmSearchResults.length === 0 && (
-                        <p className="text-[10px] text-muted-foreground text-center py-1">
+                        <p className="ds-meta text-muted-foreground text-center py-1">
                           Nenhum resultado encontrado.
                         </p>
                       )}
@@ -1828,7 +1293,7 @@ function InboxModule() {
                                   linkContactToCrm(null, res.id);
                                 }
                               }}
-                              className="w-full text-left px-2.5 py-1.5 hover:glass bg-white/5 border-white/10/40 text-[10px] text-foreground flex flex-col cursor-pointer"
+                              className="w-full text-left px-2.5 py-1.5 hover:glass bg-white/5 border-white/10/40 ds-meta text-foreground flex flex-col cursor-pointer"
                             >
                               <span className="font-semibold">{res.name}</span>
                               <span className="text-[8px] text-muted-foreground">
@@ -1872,7 +1337,7 @@ function InboxModule() {
                         </div>
                       </div>
                       <p className="text-xs font-bold text-foreground leading-snug">{(matchedLead as any).name}</p>
-                      {(matchedLead as any).email && <p className="text-[10px] text-muted-foreground">{(matchedLead as any).email}</p>}
+                      {(matchedLead as any).email && <p className="ds-meta text-muted-foreground">{(matchedLead as any).email}</p>}
                     </div>
                   ) : matchedClient ? (
                     <div className="space-y-1.5">
@@ -1900,17 +1365,17 @@ function InboxModule() {
                     </div>
                   ) : (
                     <div className="space-y-2 text-center py-1">
-                      <p className="text-[10px] text-muted-foreground">Não localizado no CRM</p>
+                      <p className="ds-meta text-muted-foreground">Não localizado no CRM</p>
                       <div className="flex flex-col gap-1.5">
                         <Button
                           onClick={createLeadFromSession}
-                          className="w-full text-[10px] font-bold border border-brand/35 text-brand bg-brand/5 hover:bg-brand/10 py-1.5 rounded-[var(--radius-card)] flex items-center justify-center gap-1 cursor-pointer"
+                          className="w-full ds-meta font-bold border border-brand/35 text-brand bg-brand/5 hover:bg-brand/10 py-1.5 rounded-[var(--radius-card)] flex items-center justify-center gap-1 cursor-pointer"
                         >
                           <UserPlus className="w-3.5 h-3.5" /> Importar como Lead
                         </Button>
                         <Button
                           onClick={() => setIsLinkingOpen(true)}
-                          className="w-full text-[10px] font-bold border-none text-muted-foreground glass-card border-none hover:text-foreground hover:glass bg-white/5 border-white/10/25 py-1.5 rounded-[var(--radius-card)] flex items-center justify-center gap-1 cursor-pointer"
+                          className="w-full ds-meta font-bold border-none text-muted-foreground glass-card border-none hover:text-foreground hover:glass bg-white/5 border-white/10/25 py-1.5 rounded-[var(--radius-card)] flex items-center justify-center gap-1 cursor-pointer"
                         >
                           <Link2 className="w-3.5 h-3.5" /> Vincular Lead/Cliente Existente
                         </Button>
@@ -1921,13 +1386,13 @@ function InboxModule() {
 
                 {/* Quick actions */}
                 <div className="space-y-2">
-                  <h4 className="text-[10px] font-extrabold uppercase tracking-wider text-muted-foreground">
+                  <h4 className="ds-meta font-extrabold uppercase tracking-wider text-muted-foreground">
                     Ações Rápidas
                   </h4>
                   <div className="space-y-1.5">
                     {matchedLead && (
                       <Button
-                        onClick={generateAiProposalForLead}
+                        onClick={handleGenerateAiProposal}
                         className="flex items-center gap-2 w-full text-left rounded-[var(--radius-card)] border border-brand/20 bg-brand/5 px-3 py-1.5 text-xs font-bold text-brand hover:bg-brand/10 transition-colors cursor-pointer"
                       >
                         <Sparkles className="w-3.5 h-3.5" />
@@ -1964,18 +1429,18 @@ function InboxModule() {
             {/* Tab: Documents */}
             {detailsTab === "documents" && (
               <div className="p-4 space-y-4">
-                <h4 className="text-[10px] font-extrabold uppercase tracking-wider text-muted-foreground">
+                <h4 className="ds-meta font-extrabold uppercase tracking-wider text-muted-foreground">
                   Documentos Pessoais
                 </h4>
 
                 {matchedClientId ? (
                   <div className="p-3 border-none rounded-[var(--radius-card)] glass bg-white/5 border-white/10/40 space-y-3">
                     <div className="flex items-center justify-between gap-2">
-                      <span className="text-[10px] font-bold text-foreground">Tipo de Doc:</span>
+                      <span className="ds-meta font-bold text-foreground">Tipo de Doc:</span>
                       <Select
                         value={docTypeToUpload}
                         onChange={(e) => setDocTypeToUpload(e.target.value)}
-                        className="h-7 text-[11px] rounded border-none glass-card border-none px-1"
+                        className="h-7 ds-meta rounded border-none glass-card border-none px-1"
                       >
                         <option value="rg">RG</option>
                         <option value="cpf">CPF</option>
@@ -1986,11 +1451,11 @@ function InboxModule() {
                       </Select>
                     </div>
                     <div className="relative">
-                      <Input type="file" id="client-doc-inbox-upload" onChange={handleDocUpload} disabled={uploadingDoc} className="hidden" />
+                      <Input type="file" id="client-doc-inbox-upload" onChange={(e) => handleDocUpload(e, docTypeToUpload)} disabled={uploadingDoc} className="hidden" />
                       <Button
                         onClick={() => document.getElementById("client-doc-inbox-upload")?.click()}
                         disabled={uploadingDoc}
-                        className="w-full h-16 border border-dashed border-border hover:border-brand/50 rounded-[var(--radius-card)] flex flex-col items-center justify-center text-[10px] font-medium text-muted-foreground glass-card border-none hover:text-foreground cursor-pointer transition-colors disabled:opacity-50"
+                        className="w-full h-16 border border-dashed border-border hover:border-brand/50 rounded-[var(--radius-card)] flex flex-col items-center justify-center ds-meta font-medium text-muted-foreground glass-card border-none hover:text-foreground cursor-pointer transition-colors disabled:opacity-50"
                       >
                         <Plus className="h-4 w-4 mb-1 text-muted-foreground/60" />
                         {uploadingDoc ? "Enviando..." : "Upload Documento"}
@@ -1998,7 +1463,7 @@ function InboxModule() {
                     </div>
                   </div>
                 ) : (
-                  <p className="text-[10px] text-muted-foreground text-center py-3 glass bg-white/5 border-white/10/30 border border-dashed border-border rounded-[var(--radius-card)]">
+                  <p className="ds-meta text-muted-foreground text-center py-3 glass bg-white/5 border-white/10/30 border border-dashed border-border rounded-[var(--radius-card)]">
                     Cadastre o lead como cliente no CRM primeiro para gerenciar seus documentos.
                   </p>
                 )}
@@ -2009,18 +1474,18 @@ function InboxModule() {
                       clientDocs.map((doc: any) => (
                         <div key={doc.id} className="p-3 border-none rounded-[var(--radius-card)] glass-card border-none flex flex-col gap-1.5 text-xs">
                           <div className="flex items-center justify-between">
-                            <span className="font-bold text-brand uppercase text-[10px]">{doc.doc_type}</span>
+                            <span className="font-bold text-brand uppercase ds-meta">{doc.doc_type}</span>
                             {doc.file_url && (
-                              <a href={doc.file_url} target="_blank" rel="noopener noreferrer" className="text-brand font-bold hover:underline flex items-center gap-0.5 text-[10px]">
+                              <a href={doc.file_url} target="_blank" rel="noopener noreferrer" className="text-brand font-bold hover:underline flex items-center gap-0.5 ds-meta">
                                 Ver arquivo <ExternalLink className="h-3 w-3" />
                               </a>
                             )}
                           </div>
-                          <span className="font-mono text-muted-foreground text-[10px]">{doc.doc_number || "Sem número"}</span>
+                          <span className="font-mono text-muted-foreground ds-meta">{doc.doc_number || "Sem número"}</span>
                         </div>
                       ))
                     ) : (
-                      <p className="text-[10px] text-muted-foreground text-center py-4">Nenhum documento anexado.</p>
+                      <p className="ds-meta text-muted-foreground text-center py-4">Nenhum documento anexado.</p>
                     )}
                   </div>
                 )}
@@ -2033,10 +1498,10 @@ function InboxModule() {
                 {matchedLead || matchedClient ? (
                   <div className="space-y-2">
                     <div className="flex items-center justify-between">
-                      <h4 className="text-[10px] font-extrabold uppercase tracking-wider text-muted-foreground">
+                      <h4 className="ds-meta font-extrabold uppercase tracking-wider text-muted-foreground">
                         Observações Internas
                       </h4>
-                      <Button onClick={saveContactNotes} disabled={savingNotes} className="text-[10px] text-brand font-bold hover:underline disabled:opacity-50 cursor-pointer">
+                      <Button onClick={handleSaveContactNotes} disabled={savingNotes} className="ds-meta text-brand font-bold hover:underline disabled:opacity-50 cursor-pointer">
                         {savingNotes ? "Salvando..." : "Salvar"}
                       </Button>
                     </div>
@@ -2060,10 +1525,10 @@ function InboxModule() {
                 {matchedLead ? (
                   <div className="space-y-3">
                     <div className="flex items-center justify-between">
-                      <h4 className="text-[10px] font-extrabold uppercase tracking-wider text-muted-foreground flex items-center gap-1">
+                      <h4 className="ds-meta font-extrabold uppercase tracking-wider text-muted-foreground flex items-center gap-1">
                         <Bot className="w-3.5 h-3.5 text-brand" /> IA RAG Insights
                       </h4>
-                      <Button onClick={triggerAnalysis} disabled={analyzing} className="text-[10px] text-brand font-bold hover:underline flex items-center gap-1 disabled:opacity-50 cursor-pointer">
+                      <Button onClick={triggerAnalysis} disabled={analyzing} className="ds-meta text-brand font-bold hover:underline flex items-center gap-1 disabled:opacity-50 cursor-pointer">
                         <RefreshCw className={cn("w-3 h-3", analyzing && "animate-spin")} />
                         <span>Atualizar</span>
                       </Button>
@@ -2072,23 +1537,23 @@ function InboxModule() {
                     {leadInsights ? (
                       <div className="space-y-2">
                         {(leadInsights as any).general_profile && (
-                          <div className="text-[11px] bg-brand/5 border border-brand/10 p-2.5 rounded-[var(--radius-card)] text-foreground leading-relaxed">
+                          <div className="ds-meta bg-brand/5 border border-brand/10 p-2.5 rounded-[var(--radius-card)] text-foreground leading-relaxed">
                             <strong>Comportamento:</strong> {(leadInsights as any).general_profile}
                           </div>
                         )}
                         {(leadInsights as any).general_sentiment && (
-                          <div className="text-[11px] bg-brand/5 border border-brand/10 p-2.5 rounded-[var(--radius-card)] text-foreground leading-relaxed">
+                          <div className="ds-meta bg-brand/5 border border-brand/10 p-2.5 rounded-[var(--radius-card)] text-foreground leading-relaxed">
                             <strong>Sentimento:</strong> {(leadInsights as any).general_sentiment}
                           </div>
                         )}
                         {(leadInsights as any).generalized_objections && (
-                          <div className="text-[11px] bg-brand/5 border border-brand/10 p-2.5 rounded-[var(--radius-card)] text-foreground leading-relaxed">
+                          <div className="ds-meta bg-brand/5 border border-brand/10 p-2.5 rounded-[var(--radius-card)] text-foreground leading-relaxed">
                             <strong>Objeções:</strong> {(leadInsights as any).generalized_objections}
                           </div>
                         )}
                       </div>
                     ) : (
-                      <p className="text-[10px] text-muted-foreground text-center py-2 glass bg-white/5 border-white/10/30 border border-dashed border-border rounded-[var(--radius-card)]">
+                      <p className="ds-meta text-muted-foreground text-center py-2 glass bg-white/5 border-white/10/30 border border-dashed border-border rounded-[var(--radius-card)]">
                         Sem insights gerados. Clique em atualizar.
                       </p>
                     )}

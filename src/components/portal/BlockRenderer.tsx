@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from "react";
-import { NewSectionsRenderer } from "./NewSectionsRenderer";
 import { Link } from "@tanstack/react-router";
 import { sanitizeHtml } from "@/lib/sanitize";
 import { supabase } from "@/integrations/supabase/client";
@@ -293,13 +292,13 @@ export function BlockRenderer({
           >
             {onSelectBlock && (
               <div
-                className={`absolute -top-3 -right-3 z-50 rounded-full bg-brand text-white px-2 py-0.5 text-[10px] font-bold transition-opacity duration-200${isSelected ? "opacity-100" : "opacity-0 group-hover:opacity-100"}`}
+                className={`absolute -top-3 -right-3 z-50 rounded-full bg-brand text-white px-2 py-0.5 ds-meta font-bold transition-opacity duration-200${isSelected ? "opacity-100" : "opacity-0 group-hover:opacity-100"}`}
               >
                 {b.type.toUpperCase()}
               </div>
             )}
             {onSelectBlock && !isCompatible && (
-              <div className="absolute top-2 left-2 z-50 bg-destructive/10 text-destructive border border-destructive/20 text-[10px] font-bold uppercase tracking-wider px-2 py-1 rounded backdrop-blur-sm pointer-events-none">
+              <div className="absolute top-2 left-2 z-50 bg-destructive/10 text-destructive border border-destructive/20 ds-label-caps tracking-wider px-2 py-1 rounded backdrop-blur-sm pointer-events-none">
                 ⚠️ Incompatível com o modo {mode?.toUpperCase()}
               </div>
             )}
@@ -831,7 +830,7 @@ function renderBlock(
                     <div>
                       <div className="font-bold text-xs text-foreground">{item.author}</div>
                       {item.role && (
-                        <div className="text-[10px] text-muted-foreground">{item.role}</div>
+                        <div className="ds-meta text-muted-foreground">{item.role}</div>
                       )}
                     </div>
                     <div className="ml-auto flex shrink-0">
@@ -1144,7 +1143,7 @@ function renderBlock(
                     <h3 className="font-bold text-base leading-tight group-hover:text-brand transition-colors mb-2">
                       {item.destination}
                     </h3>
-                    <p className="text-muted-foreground text-[11px] leading-relaxed line-clamp-3">
+                    <p className="text-muted-foreground ds-meta leading-relaxed line-clamp-3">
                       {item.description}
                     </p>
                   </div>
@@ -1164,7 +1163,7 @@ function renderBlock(
       return (
         <section className="mx-auto max-w-xl w-full text-center px-4">
           {b.title && (
-            <h3 className="text-[11px] font-bold text-muted-foreground uppercase tracking-widest mb-4">
+            <h3 className="ds-meta font-bold text-muted-foreground uppercase tracking-widest mb-4">
               {b.title}
             </h3>
           )}
@@ -1368,24 +1367,8 @@ function renderBlock(
       return <ClientBoardingTimelineBlock block={b} agencyId={agencyId} />;
 
     default:
-      return (
-        <NewSectionsRenderer
-          block={
-            blockItem as {
-              id: string;
-              type: string;
-              config: Record<string, any>;
-              styles?: any;
-              animation?: any;
-              responsive?: any;
-            }
-          }
-          agencySlug={agencySlug}
-          pageId={pageId}
-          agencyId={agencyId}
-          handleLinkClick={handleLinkClick}
-        />
-      );
+      // Tipo de bloco não reconhecido — renderização silenciosa omitida intencionalmente.
+      return null;
   }
 }
 
@@ -1606,7 +1589,7 @@ function PendingContractsWidgetBlock({
           <div className="text-xs font-bold text-foreground mb-1">Buscar Contratos (Sem Login)</div>
           <div className="space-y-2">
             <div>
-              <label className="text-[10px] uppercase font-bold text-muted-foreground">
+              <label className="ds-meta uppercase font-bold text-muted-foreground">
                 E-mail
               </label>
               <Input
@@ -1618,7 +1601,7 @@ function PendingContractsWidgetBlock({
               />
             </div>
             <div>
-              <label className="text-[10px] uppercase font-bold text-muted-foreground">
+              <label className="ds-meta uppercase font-bold text-muted-foreground">
                 Documento (CPF ou CNPJ)
               </label>
               <Input
@@ -1661,7 +1644,7 @@ function PendingContractsWidgetBlock({
                   </span>
                 )}
               </div>
-              <span className="text-[10px] font-bold text-yellow-600 bg-yellow-500/15 px-2 py-0.5 rounded-full uppercase shrink-0">
+              <span className="ds-meta font-bold text-yellow-600 bg-yellow-500/15 px-2 py-0.5 rounded-full uppercase shrink-0">
                 {c.status === "signed" ? "Ver" : "Assinar"}
               </span>
             </a>
@@ -1954,7 +1937,7 @@ function ToursGridBlock({
                 className={`mt-4 pt-3 border-t border-border/50 flex${block.layout === "list" ? "items-center justify-between" : "flex-col"}`}
               >
                 <div>
-                  <span className="text-[10px] uppercase text-muted-foreground font-bold block">
+                  <span className="ds-meta uppercase text-muted-foreground font-bold block">
                     A partir de
                   </span>
                   <div className="font-mono text-lg font-bold text-brand leading-none">
@@ -2048,7 +2031,7 @@ function BlogFeedBlock({
             )}
             <div className="p-4">
               {p.published_at && (
-                <div className="text-[10px] uppercase tracking-widest text-muted-foreground mb-1">
+                <div className="ds-meta uppercase tracking-widest text-muted-foreground mb-1">
                   {new Date(p.published_at).toLocaleDateString("pt-BR", {
                     day: "2-digit",
                     month: "short",
@@ -2259,7 +2242,7 @@ function ToursCarouselBlock({
               ) : (
                 <div className="h-full w-full bg-surface-alt" />
               )}
-              <div className="absolute bottom-3 right-3 rounded-2xl bg-background/90 px-2 py-1 text-[10px] font-bold backdrop-blur-sm">
+              <div className="absolute bottom-3 right-3 rounded-2xl bg-background/90 px-2 py-1 ds-meta font-bold backdrop-blur-sm">
                 {t.departure_date
                   ? new Date(t.departure_date).toLocaleDateString("pt-BR")
                   : "A Confirmar"}
@@ -2273,7 +2256,7 @@ function ToursCarouselBlock({
                 <p className="text-xs text-muted-foreground mt-1 line-clamp-2">{t.destination}</p>
               </div>
               <div className="mt-3 flex items-center justify-between border-t border-border/50 pt-2 shrink-0">
-                <span className="text-[10px] text-muted-foreground uppercase font-semibold">
+                <span className="ds-meta text-muted-foreground uppercase font-semibold">
                   A partir de
                 </span>
                 <span className="text-sm font-extrabold text-brand">
@@ -2404,7 +2387,7 @@ function FeaturedDestinationFilterBlock({
                 <span className="text-xs font-bold text-brand">
                   {t.base_price ? `R$ ${t.base_price.toLocaleString("pt-BR")}` : "Sob Consulta"}
                 </span>
-                <span className="text-[10px] text-muted-foreground uppercase font-bold tracking-wider">
+                <span className="ds-meta text-muted-foreground uppercase font-bold tracking-wider">
                   {t.departure_date
                     ? new Date(t.departure_date).toLocaleDateString("pt-BR")
                     : "A Confirmar"}
@@ -2565,7 +2548,7 @@ function LiveReviewsBlock({ block, agencyId }: { block: any; agencyId?: string }
               <div>
                 <h4 className="font-bold text-xs text-foreground">{r.author_name}</h4>
                 {r.author_role && (
-                  <p className="text-[10px] text-muted-foreground mt-0.5">{r.author_role}</p>
+                  <p className="ds-meta text-muted-foreground mt-0.5">{r.author_role}</p>
                 )}
               </div>
             </div>
@@ -2685,7 +2668,7 @@ function CountdownTourBlock({
     <section className="mx-auto max-w-lg w-full px-4">
       <div className="relative overflow-hidden rounded-3xl border border-border bg-surface p-6 md:p-8 flex flex-col items-center text-center gap-5">
         <div className="space-y-1">
-          <span className="text-[10px] font-bold uppercase tracking-wider text-brand">
+          <span className="ds-label-caps tracking-wider text-brand">
             {block.title || "Últimas Vagas!"}
           </span>
           <h3 className="font-bold text-lg text-foreground">{tour.title}</h3>
@@ -2792,7 +2775,7 @@ function ExchangeRatesBlock({ block }: { block: any }) {
               className="flex justify-between items-center py-2.5 first:pt-0 last:pb-0"
             >
               <div className="flex items-center gap-2">
-                <div className="h-6 w-10 rounded bg-surface-alt/80 flex items-center justify-center font-bold text-[10px] text-muted-foreground tracking-wider font-mono">
+                <div className="h-6 w-10 rounded bg-surface-alt/80 flex items-center justify-center font-bold ds-meta text-muted-foreground tracking-wider font-mono">
                   {cur}
                 </div>
                 <span className="text-xs text-muted-foreground font-medium">
@@ -2954,20 +2937,20 @@ function AgencyVouchersBlock({
                 >
                   <div className="absolute -right-4 -top-4 w-12 h-12 rounded-full border border-dashed border-border" />
                   <div className="flex justify-between items-start mb-2">
-                    <span className="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded bg-emerald-500/10 text-emerald-500">
+                    <span className="ds-label-caps tracking-wider px-2 py-0.5 rounded bg-emerald-500/10 text-emerald-500">
                       {v.status || "Confirmado"}
                     </span>
-                    <span className="text-[10px] font-mono text-muted-foreground">
+                    <span className="ds-meta font-mono text-muted-foreground">
                       ID: #{v.id.slice(0, 6)}
                     </span>
                   </div>
                   <h4 className="font-bold text-xs text-foreground line-clamp-1">
                     {v.group_trips?.title}
                   </h4>
-                  <p className="text-[10px] text-muted-foreground mt-0.5">
+                  <p className="ds-meta text-muted-foreground mt-0.5">
                     {v.group_trips?.destination}
                   </p>
-                  <div className="mt-3 pt-2 border-t border-border/50 flex justify-between items-center text-[10px] text-muted-foreground">
+                  <div className="mt-3 pt-2 border-t border-border/50 flex justify-between items-center ds-meta text-muted-foreground">
                     <span>
                       Partida:{" "}
                       {v.group_trips?.departure_date
@@ -2981,7 +2964,7 @@ function AgencyVouchersBlock({
             )}
             <Button
               onClick={() => setSearched(false)}
-              className="w-full mt-2 text-center text-[10px] text-brand hover:underline font-bold"
+              className="w-full mt-2 text-center ds-meta text-brand hover:underline font-bold"
             >
               Consultar outro documento
             </Button>
@@ -3033,7 +3016,7 @@ function WeatherForecastBlock({ block }: { block: any }) {
               key={idx}
               className="flex flex-col items-center bg-surface border border-border/40 rounded-3xl p-2 min-w-[56px]"
             >
-              <span className="text-[10px] text-muted-foreground font-semibold">
+              <span className="ds-meta text-muted-foreground font-semibold">
                 {idx === 0 ? "Hoje" : idx === 1 ? "Amanhã" : "Depois"}
               </span>
               <span className="text-lg font-black text-brand leading-tight mt-1">{f.temp}°</span>
@@ -3095,7 +3078,7 @@ function ItineraryTimelineBlock({ block }: { block: any }) {
           <div key={idx} className="relative">
             <div className="absolute -left-[31px] top-0.5 w-4 h-4 rounded-full bg-brand border-4 border-background flex items-center justify-center" />
             <div>
-              <span className="text-[10px] font-bold text-brand uppercase tracking-wider">
+              <span className="ds-meta font-bold text-brand uppercase tracking-wider">
                 Dia {day.day || idx + 1}
               </span>
               <h4 className="font-bold text-sm text-foreground mt-0.5">
@@ -3221,7 +3204,7 @@ function PromotionalBannerBlock({ block }: { block: any }) {
           <span className="font-mono font-black text-sm tracking-widest text-brand">
             {block.discount_code || "BEMVINDO10"}
           </span>
-          <span className="text-[10px] font-bold text-muted-foreground uppercase border-l border-border pl-3">
+          <span className="ds-meta font-bold text-muted-foreground uppercase border-l border-border pl-3">
             {copied ? "Copiado!" : "Copiar"}
           </span>
         </div>
@@ -3241,7 +3224,7 @@ function PaymentGatewaysDisplayBlock({ block, agencyId }: { block: any; agencyId
   return (
     <div className="mx-auto max-w-md w-full px-4">
       <div className="p-5 rounded-2xl border border-border bg-surface text-center">
-        <h4 className="text-[11px] font-bold text-muted-foreground uppercase tracking-wider mb-4">
+        <h4 className="ds-meta font-bold text-muted-foreground uppercase tracking-wider mb-4">
           {block.title || "Formas de Pagamento Aceitas"}
         </h4>
 
@@ -3310,7 +3293,7 @@ function AgentProfileCardBlock({ block, agencyId }: { block: any; agencyId?: str
           </div>
         )}
         <div className="flex-1">
-          <span className="text-[10px] font-bold text-brand uppercase tracking-wider">
+          <span className="ds-meta font-bold text-brand uppercase tracking-wider">
             Seu Especialista
           </span>
           <h4 className="font-bold text-sm text-foreground mt-0.5">{agent.full_name}</h4>
@@ -3381,7 +3364,7 @@ function TravelTipsFaqBlock({ block, agencyId }: { block: any; agencyId?: string
                 {tip.title}
                 <ChevronRight className="w-3.5 h-3.5 text-muted-foreground group-open:rotate-90 transition-transform" />
               </summary>
-              <p className="text-[11px] text-muted-foreground mt-2 leading-relaxed">
+              <p className="ds-meta text-muted-foreground mt-2 leading-relaxed">
                 {tip.content}
               </p>
             </details>
@@ -3406,7 +3389,7 @@ function TravelTipsFaqBlock({ block, agencyId }: { block: any; agencyId?: string
               {art.title}
               <ChevronRight className="w-3.5 h-3.5 text-muted-foreground group-open:rotate-90 transition-transform" />
             </summary>
-            <p className="text-[11px] text-muted-foreground mt-2 leading-relaxed">
+            <p className="ds-meta text-muted-foreground mt-2 leading-relaxed">
               {art.content?.replace(/<[^>]*>/g, "")}
             </p>
           </details>
@@ -3554,7 +3537,7 @@ function CorporateRfpFormBlock({ block, agencySlug }: { block: any; agencySlug: 
           <div className="text-center py-6 flex flex-col items-center justify-center">
             <CheckCircle2 className="h-10 w-10 text-emerald-500 mb-2" />
             <h5 className="font-bold text-xs text-foreground">Solicitação Enviada!</h5>
-            <p className="text-[10px] text-muted-foreground mt-1 max-w-xs text-center">
+            <p className="ds-meta text-muted-foreground mt-1 max-w-xs text-center">
               Nossos consultores B2B entrarão em contato em horário comercial.
             </p>
           </div>
@@ -3683,7 +3666,7 @@ function ClientDocumentUploadBlock({ block, agencyId }: { block: any; agencyId?:
           <h4 className="font-bold text-sm text-foreground text-center mb-1">
             {block.title || "Envio de Documento de Embarque"}
           </h4>
-          <p className="text-[11px] text-muted-foreground text-center leading-normal">
+          <p className="ds-meta text-muted-foreground text-center leading-normal">
             {block.instructions || "Envie seus dados para a emissão dos vouchers."}
           </p>
         </div>
@@ -3711,7 +3694,7 @@ function ClientDocumentUploadBlock({ block, agencyId }: { block: any; agencyId?:
               className="w-full focus:border-brand"
             />
             <div className="space-y-2">
-              <label className="text-[10px] font-bold text-muted-foreground uppercase">
+              <label className="ds-meta font-bold text-muted-foreground uppercase">
                 Link da foto do documento
               </label>
               <Input
@@ -3777,7 +3760,7 @@ function BiolinkNewsletterBoxBlock({ block, agencySlug }: { block: any; agencySl
   return (
     <div className="mx-auto max-w-md w-full px-4 py-2">
       {done ? (
-        <div className="text-[10px] text-center text-emerald-600 font-bold bg-emerald-50 dark:bg-emerald-950/20 py-2.5 rounded-3xl border border-emerald-100">
+        <div className="ds-meta text-center text-emerald-600 font-bold bg-emerald-50 dark:bg-emerald-950/20 py-2.5 rounded-3xl border border-emerald-100">
           Inscrito com sucesso! Obrigado.
         </div>
       ) : (
@@ -3796,7 +3779,7 @@ function BiolinkNewsletterBoxBlock({ block, agencySlug }: { block: any; agencySl
           <Button
             type="submit"
             disabled={busy}
-            className="h-9 px-4 rounded-3xl bg-brand text-brand-foreground text-[10px] font-bold hover:bg-brand/90 transition-all cursor-pointer disabled:opacity-50 shrink-0"
+            className="h-9 px-4 rounded-3xl bg-brand text-brand-foreground ds-meta font-bold hover:bg-brand/90 transition-all cursor-pointer disabled:opacity-50 shrink-0"
           >
             {busy ? "Salvando..." : block.button_label || "Inscrever"}
           </Button>
@@ -3847,7 +3830,7 @@ function LiveSalesCounterBlock({ block, agencyId }: { block: any; agencyId?: str
     <div className="mx-auto max-w-md w-full px-4">
       <div className="flex items-center gap-2.5 px-4 py-2.5 rounded-2xl border border-brand/20 bg-brand/5 dark:bg-brand/10 text-brand">
         <Sparkles className="w-4 h-4 animate-pulse shrink-0" />
-        <span className="text-[10px] font-bold text-left leading-normal">{salesMsg}</span>
+        <span className="ds-meta font-bold text-left leading-normal">{salesMsg}</span>
       </div>
     </div>
   );
@@ -3889,7 +3872,7 @@ function VisaCheckerBlock({ block }: { block: any }) {
         <h4 className="font-bold text-sm text-foreground text-center mb-1">
           {block.title || "Consultor de Vistos de Entrada"}
         </h4>
-        <p className="text-[11px] text-muted-foreground text-center mb-4">
+        <p className="ds-meta text-muted-foreground text-center mb-4">
           Verifique a necessidade de visto e documentos para sua viagem.
         </p>
 
@@ -3936,7 +3919,7 @@ function VisaCheckerBlock({ block }: { block: any }) {
             {result ? (
               <>
                 <div className="flex justify-between items-center">
-                  <span className="text-[10px] font-bold text-muted-foreground uppercase">
+                  <span className="ds-meta font-bold text-muted-foreground uppercase">
                     Exigência de Visto
                   </span>
                   <span
@@ -3965,20 +3948,20 @@ function VisaCheckerBlock({ block }: { block: any }) {
                 )}
                 {result.required_documents && (
                   <div className="text-xs">
-                    <span className="text-[10px] font-bold text-muted-foreground uppercase block mb-1">
+                    <span className="ds-meta font-bold text-muted-foreground uppercase block mb-1">
                       Documentos Necessários
                     </span>
-                    <p className="text-muted-foreground leading-relaxed bg-surface-alt/40 p-2.5 rounded-2xl border border-border/40 text-[11px]">
+                    <p className="text-muted-foreground leading-relaxed bg-surface-alt/40 p-2.5 rounded-2xl border border-border/40 ds-meta">
                       {result.required_documents}
                     </p>
                   </div>
                 )}
                 {result.notes && (
                   <div className="text-xs">
-                    <span className="text-[10px] font-bold text-muted-foreground uppercase block mb-1">
+                    <span className="ds-meta font-bold text-muted-foreground uppercase block mb-1">
                       Observações Importantes
                     </span>
-                    <p className="text-muted-foreground leading-relaxed text-[11px]">
+                    <p className="text-muted-foreground leading-relaxed ds-meta">
                       {result.notes}
                     </p>
                   </div>
@@ -4000,7 +3983,7 @@ function VisaCheckerBlock({ block }: { block: any }) {
                 <p className="text-xs text-muted-foreground font-semibold">
                   Sem regras específicas salvas.
                 </p>
-                <p className="text-[10px] text-muted-foreground mt-0.5">
+                <p className="ds-meta text-muted-foreground mt-0.5">
                   Consulte seu agente para detalhes deste destino.
                 </p>
               </div>
@@ -4102,14 +4085,14 @@ function InsuranceSimulatorBlock({ block, agencySlug }: { block: any; agencySlug
         <h4 className="font-bold text-sm text-foreground text-center mb-1">
           {block.title || "Simulador de Seguro Viagem"}
         </h4>
-        <p className="text-[11px] text-muted-foreground text-center mb-5">
+        <p className="ds-meta text-muted-foreground text-center mb-5">
           {block.description || "Simule planos de cobertura médica internacional em segundos."}
         </p>
 
         {step === "simulate" && (
           <div className="space-y-4">
             <div className="space-y-2">
-              <label className="text-[10px] uppercase font-bold text-muted-foreground">
+              <label className="ds-meta uppercase font-bold text-muted-foreground">
                 Destino / Região
               </label>
               <Select
@@ -4127,7 +4110,7 @@ function InsuranceSimulatorBlock({ block, agencySlug }: { block: any; agencySlug
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
               <div>
-                <label className="text-[10px] uppercase font-bold text-muted-foreground">
+                <label className="ds-meta uppercase font-bold text-muted-foreground">
                   Dias de Viagem
                 </label>
                 <Input
@@ -4139,7 +4122,7 @@ function InsuranceSimulatorBlock({ block, agencySlug }: { block: any; agencySlug
                 />
               </div>
               <div>
-                <label className="text-[10px] uppercase font-bold text-muted-foreground">
+                <label className="ds-meta uppercase font-bold text-muted-foreground">
                   Passageiros
                 </label>
                 <Input
@@ -4153,7 +4136,7 @@ function InsuranceSimulatorBlock({ block, agencySlug }: { block: any; agencySlug
             </div>
 
             <div>
-              <label className="text-[10px] uppercase font-bold text-muted-foreground">
+              <label className="ds-meta uppercase font-bold text-muted-foreground">
                 Faixa Etária do Viajante Mais Velho
               </label>
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-1.5 mt-1">
@@ -4166,7 +4149,7 @@ function InsuranceSimulatorBlock({ block, agencySlug }: { block: any; agencySlug
                     key={age.key}
                     type="button"
                     onClick={() => setAgeRange(age.key)}
-                    className={`py-2 rounded-2xl text-[10px] font-bold border transition-colors${ageRange === age.key ? "bg-brand text-brand-foreground border-brand" : "bg-surface-alt/40 border-border hover:bg-surface-alt/80"}`}
+                    className={`py-2 rounded-2xl ds-meta font-bold border transition-colors${ageRange === age.key ? "bg-brand text-brand-foreground border-brand" : "bg-surface-alt/40 border-border hover:bg-surface-alt/80"}`}
                   >
                     {age.label}
                   </Button>
@@ -4175,7 +4158,7 @@ function InsuranceSimulatorBlock({ block, agencySlug }: { block: any; agencySlug
             </div>
 
             <div className="space-y-2.5 pt-2 border-t border-border/50">
-              <span className="text-[10px] font-bold text-muted-foreground uppercase block">
+              <span className="ds-meta font-bold text-muted-foreground uppercase block">
                 Planos Recomendados
               </span>
               {plans.map((p, idx) => (
@@ -4193,7 +4176,7 @@ function InsuranceSimulatorBlock({ block, agencySlug }: { block: any; agencySlug
                   </div>
                   <Button
                     onClick={() => handleSelectPlan(p)}
-                    className="h-8 px-3.5 rounded-2xl bg-brand text-brand-foreground text-[10px] font-bold hover:bg-brand/90 transition-colors shrink-0"
+                    className="h-8 px-3.5 rounded-2xl bg-brand text-brand-foreground ds-meta font-bold hover:bg-brand/90 transition-colors shrink-0"
                   >
                     R$ {p.price.toFixed(0)}
                   </Button>
@@ -4206,7 +4189,7 @@ function InsuranceSimulatorBlock({ block, agencySlug }: { block: any; agencySlug
         {step === "contact" && (
           <form onSubmit={handleSubmit} className="space-y-3.5">
             <div className="p-3 bg-brand/5 border border-brand/10 rounded-2xl">
-              <span className="text-[10px] font-semibold text-brand block uppercase">
+              <span className="ds-meta font-semibold text-brand block uppercase">
                 Plano Selecionado
               </span>
               <span className="text-xs font-bold text-foreground block mt-0.5">
@@ -4218,7 +4201,7 @@ function InsuranceSimulatorBlock({ block, agencySlug }: { block: any; agencySlug
             </div>
 
             <div className="space-y-1">
-              <label className="text-[10px] uppercase font-bold text-muted-foreground">
+              <label className="ds-meta uppercase font-bold text-muted-foreground">
                 Seu Nome Completo
               </label>
               <Input
@@ -4231,7 +4214,7 @@ function InsuranceSimulatorBlock({ block, agencySlug }: { block: any; agencySlug
               />
             </div>
             <div className="space-y-1">
-              <label className="text-[10px] uppercase font-bold text-muted-foreground">
+              <label className="ds-meta uppercase font-bold text-muted-foreground">
                 E-mail
               </label>
               <Input
@@ -4244,7 +4227,7 @@ function InsuranceSimulatorBlock({ block, agencySlug }: { block: any; agencySlug
               />
             </div>
             <div className="space-y-1">
-              <label className="text-[10px] uppercase font-bold text-muted-foreground">
+              <label className="ds-meta uppercase font-bold text-muted-foreground">
                 WhatsApp
               </label>
               <Input
@@ -4280,7 +4263,7 @@ function InsuranceSimulatorBlock({ block, agencySlug }: { block: any; agencySlug
           <div className="text-center py-6 flex flex-col items-center">
             <CheckCircle2 className="h-12 w-12 text-emerald-500 mb-3" />
             <h5 className="font-bold text-sm text-foreground">Solicitação Recebida!</h5>
-            <p className="text-[11px] text-muted-foreground mt-1.5 max-w-xs leading-normal">
+            <p className="ds-meta text-muted-foreground mt-1.5 max-w-xs leading-normal">
               Seu simulado de seguro viagem foi enviado para emissão da apólice. Nosso consultor
               entrará em contato via WhatsApp nas próximas horas.
             </p>
@@ -4330,7 +4313,7 @@ function ReviewsSubmissionFormBlock({ block, agencyId }: { block: any; agencyId?
         <h4 className="font-bold text-sm text-foreground text-center mb-1">
           {block.title || "Deixe seu Depoimento"}
         </h4>
-        <p className="text-[11px] text-muted-foreground text-center mb-4">
+        <p className="ds-meta text-muted-foreground text-center mb-4">
           {block.subtitle || "Sua opinião nos ajuda a crescer e aprimorar nossas rotas."}
         </p>
 
@@ -4338,7 +4321,7 @@ function ReviewsSubmissionFormBlock({ block, agencyId }: { block: any; agencyId?
           <div className="text-center py-6 flex flex-col items-center">
             <CheckCircle2 className="h-10 w-10 text-emerald-500 mb-2" />
             <h5 className="font-bold text-xs text-foreground">Muito Obrigado!</h5>
-            <p className="text-[10px] text-muted-foreground mt-1 max-w-xs text-center leading-normal">
+            <p className="ds-meta text-muted-foreground mt-1 max-w-xs text-center leading-normal">
               Sua avaliação foi enviada com sucesso e ficará ativa no portal logo após a moderação.
             </p>
           </div>
@@ -4435,7 +4418,7 @@ function WhatsappFloatingBubbleBlock({ block }: { block: any }) {
         block.position === "left" ? "left-6 flex-row-reverse" : "right-6"
       }`}
     >
-      <div className="bg-surface text-foreground px-3.5 py-2 rounded-2xl border border-border text-[11px] font-bold max-w-[200px] leading-tight">
+      <div className="bg-surface text-foreground px-3.5 py-2 rounded-2xl border border-border ds-meta font-bold max-w-[200px] leading-tight">
         {agent ? `Fale com ${agent.full_name.split(" ")[0]}` : "Fale Conosco!"}
       </div>
       <a
@@ -4514,7 +4497,7 @@ function CustomPackageLeadBuilderBlock({ block, agencySlug }: { block: any; agen
         <h4 className="font-bold text-sm text-foreground text-center mb-1">
           {block.title || "Planeje seu Roteiro Sob Medida"}
         </h4>
-        <p className="text-[11px] text-muted-foreground text-center mb-5">
+        <p className="ds-meta text-muted-foreground text-center mb-5">
           {block.subtitle || "Diga o que você sonha e desenharemos nos mínimos detalhes."}
         </p>
 
@@ -4532,7 +4515,7 @@ function CustomPackageLeadBuilderBlock({ block, agencySlug }: { block: any; agen
         {step === 1 && (
           <div className="space-y-3.5">
             <div className="space-y-1">
-              <label className="text-[10px] uppercase font-bold text-muted-foreground">
+              <label className="ds-meta uppercase font-bold text-muted-foreground">
                 Destino Desejado
               </label>
               <Input
@@ -4546,7 +4529,7 @@ function CustomPackageLeadBuilderBlock({ block, agencySlug }: { block: any; agen
             </div>
             <div className="grid grid-cols-2 gap-2">
               <div className="space-y-1">
-                <label className="text-[10px] uppercase font-bold text-muted-foreground">
+                <label className="ds-meta uppercase font-bold text-muted-foreground">
                   Previsão de Partida
                 </label>
                 <Input
@@ -4557,7 +4540,7 @@ function CustomPackageLeadBuilderBlock({ block, agencySlug }: { block: any; agen
                 />
               </div>
               <div className="space-y-1">
-                <label className="text-[10px] uppercase font-bold text-muted-foreground">
+                <label className="ds-meta uppercase font-bold text-muted-foreground">
                   Duração (dias)
                 </label>
                 <Input
@@ -4584,7 +4567,7 @@ function CustomPackageLeadBuilderBlock({ block, agencySlug }: { block: any; agen
           <div className="space-y-3.5">
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
               <div className="space-y-1">
-                <label className="text-[10px] uppercase font-bold text-muted-foreground">
+                <label className="ds-meta uppercase font-bold text-muted-foreground">
                   Nº Passageiros
                 </label>
                 <Input
@@ -4596,7 +4579,7 @@ function CustomPackageLeadBuilderBlock({ block, agencySlug }: { block: any; agen
                 />
               </div>
               <div className="space-y-1">
-                <label className="text-[10px] uppercase font-bold text-muted-foreground">
+                <label className="ds-meta uppercase font-bold text-muted-foreground">
                   Hospedagem Preferida
                 </label>
                 <Select
@@ -4612,7 +4595,7 @@ function CustomPackageLeadBuilderBlock({ block, agencySlug }: { block: any; agen
             </div>
 
             <div>
-              <label className="text-[10px] uppercase font-bold text-muted-foreground">
+              <label className="ds-meta uppercase font-bold text-muted-foreground">
                 Perfil de Investimento
               </label>
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-1.5 mt-1">
@@ -4625,7 +4608,7 @@ function CustomPackageLeadBuilderBlock({ block, agencySlug }: { block: any; agen
                     key={b.key}
                     type="button"
                     onClick={() => setBudget(b.key)}
-                    className={`py-2 rounded-2xl text-[10px] font-bold border transition-colors${budget === b.key ? "bg-brand text-brand-foreground border-brand" : "bg-surface-alt/40 border-border hover:bg-surface-alt/80"}`}
+                    className={`py-2 rounded-2xl ds-meta font-bold border transition-colors${budget === b.key ? "bg-brand text-brand-foreground border-brand" : "bg-surface-alt/40 border-border hover:bg-surface-alt/80"}`}
                   >
                     {b.label}
                   </Button>
@@ -4655,7 +4638,7 @@ function CustomPackageLeadBuilderBlock({ block, agencySlug }: { block: any; agen
         {step === 3 && (
           <form onSubmit={handleSubmit} className="space-y-3.5">
             <div className="space-y-1">
-              <label className="text-[10px] uppercase font-bold text-muted-foreground">
+              <label className="ds-meta uppercase font-bold text-muted-foreground">
                 Seu Nome
               </label>
               <Input
@@ -4668,7 +4651,7 @@ function CustomPackageLeadBuilderBlock({ block, agencySlug }: { block: any; agen
               />
             </div>
             <div className="space-y-1">
-              <label className="text-[10px] uppercase font-bold text-muted-foreground">
+              <label className="ds-meta uppercase font-bold text-muted-foreground">
                 E-mail
               </label>
               <Input
@@ -4681,7 +4664,7 @@ function CustomPackageLeadBuilderBlock({ block, agencySlug }: { block: any; agen
               />
             </div>
             <div className="space-y-1">
-              <label className="text-[10px] uppercase font-bold text-muted-foreground">
+              <label className="ds-meta uppercase font-bold text-muted-foreground">
                 WhatsApp
               </label>
               <Input
@@ -4717,7 +4700,7 @@ function CustomPackageLeadBuilderBlock({ block, agencySlug }: { block: any; agen
           <div className="text-center py-6 flex flex-col items-center">
             <CheckCircle2 className="h-12 w-12 text-emerald-500 mb-3" />
             <h5 className="font-bold text-sm text-foreground">Solicitação Enviada!</h5>
-            <p className="text-[11px] text-muted-foreground mt-1.5 max-w-xs leading-normal">
+            <p className="ds-meta text-muted-foreground mt-1.5 max-w-xs leading-normal">
               Recebemos suas preferências de viagem. Um designer de roteiros especializado começará
               a estruturar sua rota e entrará em contato em breve.
             </p>
@@ -4856,7 +4839,7 @@ function FaqCategoryAccordionBlock({ block, agencyId }: { block: any; agencyId?:
               <ChevronRight className="w-3.5 h-3.5 text-muted-foreground group-open:rotate-90 transition-transform" />
             </summary>
             <div
-              className="text-[11px] text-muted-foreground mt-2 leading-relaxed prose prose-sm dark:prose-invert max-w-none"
+              className="ds-meta text-muted-foreground mt-2 leading-relaxed prose prose-sm dark:prose-invert max-w-none"
               dangerouslySetInnerHTML={{ __html: sanitizeHtml(art.content || "") }}
             />
           </details>
@@ -4878,7 +4861,7 @@ function AgencyBadgesTrustBlock({ block }: { block: any }) {
   return (
     <div className="mx-auto max-w-md w-full px-4 text-center">
       {block.title && (
-        <h4 className="text-[11px] font-bold text-muted-foreground uppercase tracking-widest mb-4">
+        <h4 className="ds-meta font-bold text-muted-foreground uppercase tracking-widest mb-4">
           {block.title}
         </h4>
       )}
@@ -4893,7 +4876,7 @@ function AgencyBadgesTrustBlock({ block }: { block: any }) {
               <div className="h-8 w-8 rounded-full bg-brand/10 text-brand flex items-center justify-center">
                 <Icon className="w-4 h-4" />
               </div>
-              <span className="text-[10px] font-bold text-foreground block leading-tight">
+              <span className="ds-meta font-bold text-foreground block leading-tight">
                 {b.title}
               </span>
               <span className="text-[8px] text-muted-foreground leading-normal">{b.desc}</span>
@@ -4986,7 +4969,7 @@ function CurrencyCalculatorBlock({ block }: { block: any }) {
           </div>
 
           <div className="p-3 bg-brand/5 border border-brand/10 rounded-3xl flex justify-between items-center mt-2.5">
-            <span className="text-[10px] font-bold text-muted-foreground uppercase">
+            <span className="ds-meta font-bold text-muted-foreground uppercase">
               Resultado Estimado
             </span>
             <span className="text-sm font-black text-brand tracking-tight">
@@ -5051,7 +5034,7 @@ function InteractiveFlightTrackerBlock({ block }: { block: any }) {
         <h4 className="font-bold text-sm text-foreground text-center mb-1">
           {block.title || "Status de Voos em Tempo Real"}
         </h4>
-        <p className="text-[11px] text-muted-foreground text-center mb-4">
+        <p className="ds-meta text-muted-foreground text-center mb-4">
           Insira o código do seu voo para obter portão de embarque e status.
         </p>
 
@@ -5077,13 +5060,13 @@ function InteractiveFlightTrackerBlock({ block }: { block: any }) {
           <div className="mt-4 pt-4 border-t border-border/60 space-y-3">
             <div className="flex justify-between items-center border-b border-border/40 pb-2.5">
               <div>
-                <span className="text-[10px] font-bold text-muted-foreground uppercase">Voo</span>
+                <span className="ds-meta font-bold text-muted-foreground uppercase">Voo</span>
                 <h5 className="text-base font-black text-foreground leading-none mt-0.5">
                   {flight.code}
                 </h5>
               </div>
               <span
-                className={`text-[10px] font-bold px-2.5 py-1 rounded-full uppercase${flight.status === "Atrasado" ? "bg-red-500/10 text-red-500" : flight.status === "Embarque Imediato" ? "bg-yellow-500/10 text-yellow-600" : "bg-emerald-500/10 text-emerald-500"}`}
+                className={`ds-meta font-bold px-2.5 py-1 rounded-full uppercase${flight.status === "Atrasado" ? "bg-red-500/10 text-red-500" : flight.status === "Embarque Imediato" ? "bg-yellow-500/10 text-yellow-600" : "bg-emerald-500/10 text-emerald-500"}`}
               >
                 {flight.status}
               </span>
@@ -5240,11 +5223,11 @@ function ClientBoardingTimelineBlock({ block, agencyId }: { block: any; agencyId
                   >
                     {step.title}
                   </h5>
-                  <p className="text-[10px] text-muted-foreground mt-0.5 leading-relaxed">
+                  <p className="ds-meta text-muted-foreground mt-0.5 leading-relaxed">
                     {step.desc}
                   </p>
                 </div>
-                <span className="text-[10px] font-mono text-muted-foreground bg-surface-alt/60 px-2 py-0.5 rounded-2xl font-bold">
+                <span className="ds-meta font-mono text-muted-foreground bg-surface-alt/60 px-2 py-0.5 rounded-2xl font-bold">
                   {step.time}
                 </span>
               </div>

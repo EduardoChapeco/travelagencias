@@ -30,7 +30,7 @@ export function StudioTemplatePicker({ format, value, onChange }: StudioTemplate
 
   if (relevant.length === 0) {
     return (
-      <div className="text-[10px] text-muted-foreground p-3 text-center border border-dashed border-border rounded-[var(--radius-card)]">
+      <div className="ds-meta text-muted-foreground p-3 text-center border border-dashed border-border rounded-[var(--radius-card)]">
         Nenhum template para este formato.
       </div>
     );

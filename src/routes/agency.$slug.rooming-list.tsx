@@ -25,7 +25,10 @@ import {
   AlertTriangle,
   ToggleLeft,
   ToggleRight,
+  RefreshCw,
+  MoreVertical,
 } from "lucide-react";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { supabase } from "@/integrations/supabase/client";
 import { useAgency } from "@/lib/agency-context";
 import { FormInput as Input } from "@/components/ui/input";
@@ -546,7 +549,7 @@ function TourPanel({ tour, slug }: TourPanelProps) {
 
         {/* Status toggles & stats */}
         <div className="flex flex-wrap items-center gap-3 shrink-0">
-          <div className="flex items-center gap-2 border-none/80 rounded-[var(--radius-card)] p-1 glass-card border-none/50 text-[10px] font-bold">
+          <div className="flex items-center gap-2 border-none/80 rounded-[var(--radius-card)] p-1 glass-card border-none/50 ds-meta font-bold">
             {/* Status (Open / Closed) */}
             <Button
               onClick={toggleListStatus}
@@ -589,7 +592,7 @@ function TourPanel({ tour, slug }: TourPanelProps) {
             </Button>
           </div>
 
-          <div className="text-[10px] text-muted-foreground font-semibold flex gap-2">
+          <div className="ds-meta text-muted-foreground font-semibold flex gap-2">
             <span>
               Quartos:{" "}
               {roomsQ.isLoading ? (
@@ -642,7 +645,7 @@ function TourPanel({ tour, slug }: TourPanelProps) {
             {/* Unallocated section */}
             <DroppableUnallocated>
               <div className="flex items-center justify-between mb-3">
-                <h4 className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground flex items-center gap-1.5">
+                <h4 className="ds-label-caps tracking-wider text-muted-foreground flex items-center gap-1.5">
                   <Users className="h-3.5 w-3.5 text-brand" /> Passageiros Confirmados Sem Quarto (
                   {unallocated.length})
                 </h4>
@@ -675,7 +678,7 @@ function TourPanel({ tour, slug }: TourPanelProps) {
                   type="button"
                   onClick={handleExportExcel}
                   disabled={exporting || rooms.length === 0}
-                  className="flex items-center gap-1.5 h-7 px-2.5 rounded-full border-none glass-card border-none text-[10px] font-bold text-foreground hover:glass bg-white/5 border-white/10 hover:border-brand transition-colors cursor-pointer disabled:opacity-50"
+                  className="flex items-center gap-1.5 h-7 px-2.5 rounded-full border-none glass-card border-none ds-meta font-bold text-foreground hover:glass bg-white/5 border-white/10 hover:border-brand transition-colors cursor-pointer disabled:opacity-50"
                 >
                   <Download className="h-3 w-3" /> Exportar Excel
                 </Button>
@@ -683,7 +686,7 @@ function TourPanel({ tour, slug }: TourPanelProps) {
                   type="button"
                   onClick={handleExportWord}
                   disabled={exporting || rooms.length === 0}
-                  className="flex items-center gap-1.5 h-7 px-2.5 rounded-full border-none glass-card border-none text-[10px] font-bold text-foreground hover:glass bg-white/5 border-white/10 hover:border-brand transition-colors cursor-pointer disabled:opacity-50"
+                  className="flex items-center gap-1.5 h-7 px-2.5 rounded-full border-none glass-card border-none ds-meta font-bold text-foreground hover:glass bg-white/5 border-white/10 hover:border-brand transition-colors cursor-pointer disabled:opacity-50"
                 >
                   <FileText className="h-3 w-3" /> Exportar Word
                 </Button>
@@ -691,14 +694,14 @@ function TourPanel({ tour, slug }: TourPanelProps) {
                   type="button"
                   onClick={handleExportPdf}
                   disabled={exporting || rooms.length === 0}
-                  className="flex items-center gap-1.5 h-7 px-2.5 rounded-full border-none glass-card border-none text-[10px] font-bold text-foreground hover:glass bg-white/5 border-white/10 hover:border-brand transition-colors cursor-pointer disabled:opacity-50"
+                  className="flex items-center gap-1.5 h-7 px-2.5 rounded-full border-none glass-card border-none ds-meta font-bold text-foreground hover:glass bg-white/5 border-white/10 hover:border-brand transition-colors cursor-pointer disabled:opacity-50"
                 >
                   <FileText className="h-3 w-3 text-rose-500" /> Exportar PDF
                 </Button>
                 <Button
                   type="button"
                   onClick={() => setAddOpen(true)}
-                  className="flex items-center gap-1.5 h-7 px-2.5 rounded-full bg-brand text-[10px] font-bold text-brand-foreground hover:opacity-90 cursor-pointer"
+                  className="flex items-center gap-1.5 h-7 px-2.5 rounded-full bg-brand ds-meta font-bold text-brand-foreground hover:opacity-90 cursor-pointer"
                 >
                   <Plus className="h-3 w-3" /> Novo Quarto
                 </Button>
@@ -894,7 +897,7 @@ function TourPanel({ tour, slug }: TourPanelProps) {
                                 e.target.value = "";
                               }
                             }}
-                            className="w-full h-7 rounded border-dashed border-brand/35 text-[10px] focus:border-brand cursor-pointer px-1"
+                            className="w-full h-7 rounded border-dashed border-brand/35 ds-meta focus:border-brand cursor-pointer px-1"
                           >
                             <option value="">+ Alocar Passageiro...</option>
                             {unallocated.map((p: any) => (
@@ -931,7 +934,7 @@ function TourPanel({ tour, slug }: TourPanelProps) {
                 <h5 className="text-xs font-bold text-foreground mb-3 flex items-center gap-1.5">
                   <CheckCircle2 className="h-4 w-4 text-success" /> Checklist de Fechamento do Grupo
                 </h5>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-[10px] font-bold">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 ds-meta font-bold">
                   {[
                     {
                       ok: unallocated.length === 0,
@@ -983,19 +986,22 @@ function TourPanel({ tour, slug }: TourPanelProps) {
           </DragOverlay>
 
           {/* Edit Room Modal */}
-          {editingRoom && (
-            <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
-              <div className="w-full max-w-md rounded-[var(--radius-card)] bg-background p-6 border-none shadow-none">
-                <h4 className="text-sm font-bold text-foreground mb-4">
-                  Editar Quarto {editingRoom.room_number}
-                </h4>
-                <form onSubmit={(e) => updateRoomMutation.mutate(e)} className="space-y-4">
-                  <Field label="Número / Nome *">
-                    <Input
-                      value={editingRoom.room_number}
-                      onChange={(e) =>
-                        setEditingRoom({ ...editingRoom, room_number: e.target.value })
-                      }
+          <Dialog open={!!editingRoom} onOpenChange={(open) => !open && setEditingRoom(null)}>
+            <DialogContent className="max-w-md p-0 overflow-hidden border-none/10 max-h-[90vh] bg-background">
+              <DialogHeader className="px-6 py-4 border-b border-border/40">
+                <DialogTitle className="text-sm font-bold text-foreground">
+                  Editar Quarto {editingRoom?.room_number}
+                </DialogTitle>
+              </DialogHeader>
+              {editingRoom && (
+                <div className="p-6">
+                  <form onSubmit={(e) => updateRoomMutation.mutate(e)} className="space-y-4">
+                    <Field label="Número / Nome *">
+                      <Input
+                        value={editingRoom.room_number}
+                        onChange={(e) =>
+                          setEditingRoom((prev) => prev ? { ...prev, room_number: e.target.value } : null)
+                        }
                       className="w-full rounded border-none glass-card border-none px-2.5 focus:border-brand"
                       required
                     />
@@ -1005,7 +1011,7 @@ function TourPanel({ tour, slug }: TourPanelProps) {
                       <Select
                         value={editingRoom.room_type}
                         onChange={(e) =>
-                          setEditingRoom({ ...editingRoom, room_type: e.target.value })
+                          setEditingRoom((prev) => prev ? { ...prev, room_type: e.target.value } : null)
                         }
                         className="w-full rounded border-none glass-card border-none px-2.5 focus:border-brand"
                       >
@@ -1020,7 +1026,7 @@ function TourPanel({ tour, slug }: TourPanelProps) {
                       <Input
                         value={editingRoom.hotel_name || ""}
                         onChange={(e) =>
-                          setEditingRoom({ ...editingRoom, hotel_name: e.target.value })
+                          setEditingRoom((prev) => prev ? { ...prev, hotel_name: e.target.value } : null)
                         }
                         className="w-full rounded border-none glass-card border-none px-2.5 focus:border-brand"
                       />
@@ -1032,7 +1038,7 @@ function TourPanel({ tour, slug }: TourPanelProps) {
                         type="date"
                         value={editingRoom.checkin_date || ""}
                         onChange={(e) =>
-                          setEditingRoom({ ...editingRoom, checkin_date: e.target.value })
+                          setEditingRoom((prev) => prev ? { ...prev, checkin_date: e.target.value } : null)
                         }
                         className="w-full rounded border-none glass-card border-none px-2.5 focus:border-brand"
                       />
@@ -1042,7 +1048,7 @@ function TourPanel({ tour, slug }: TourPanelProps) {
                         type="date"
                         value={editingRoom.checkout_date || ""}
                         onChange={(e) =>
-                          setEditingRoom({ ...editingRoom, checkout_date: e.target.value })
+                          setEditingRoom((prev) => prev ? { ...prev, checkout_date: e.target.value } : null)
                         }
                         className="w-full rounded border-none glass-card border-none px-2.5 focus:border-brand"
                       />
@@ -1051,7 +1057,7 @@ function TourPanel({ tour, slug }: TourPanelProps) {
                   <Field label="Notas / Obs.">
                     <Input
                       value={editingRoom.notes || ""}
-                      onChange={(e) => setEditingRoom({ ...editingRoom, notes: e.target.value })}
+                      onChange={(e) => setEditingRoom((prev) => prev ? { ...prev, notes: e.target.value } : null)}
                       className="w-full rounded border-none glass-card border-none px-2.5 focus:border-brand"
                       placeholder="Observações..."
                     />
@@ -1073,9 +1079,10 @@ function TourPanel({ tour, slug }: TourPanelProps) {
                     </PrimaryButton>
                   </div>
                 </form>
-              </div>
-            </div>
-          )}
+                </div>
+              )}
+            </DialogContent>
+          </Dialog>
         </DndContext>
       )}
     </div>
@@ -1142,7 +1149,7 @@ function RoomingListDashboard() {
           actions={
             <GhostButton
               onClick={handlePrint}
-              className="h-7 px-2.5 flex items-center gap-1 rounded-full border border-white/15 text-white/60 hover:text-white hover:bg-white/10 transition-colors cursor-pointer text-[11px] font-semibold"
+              className="h-7 px-2.5 flex items-center gap-1 rounded-full border border-white/15 text-white/60 hover:text-white hover:bg-white/10 transition-colors cursor-pointer ds-meta font-semibold"
             >
               <Printer className="h-3 w-3" />
               Imprimir

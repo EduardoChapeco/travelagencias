@@ -241,7 +241,7 @@ function VouchersPage() {
                 <Button
                   key={btn.id}
                   onClick={() => setStatusFilter(btn.id as any)}
-                  className={`px-2.5 py-1 rounded-full text-[11px] font-semibold cursor-pointer transition-all ${
+                  className={`px-2.5 py-1 rounded-full ds-meta font-semibold cursor-pointer transition-all ${
                     statusFilter === btn.id
                       ? "bg-white/15 text-white border border-white/20"
                       : "text-white/50 hover:text-white"
@@ -268,7 +268,7 @@ function VouchersPage() {
         // Vouchers Tab View
         // ========================================
         <>
-          <div className="flex-1 overflow-y-auto px-4  md:pr-6 py-4 flex flex-col gap-4 pb-24">
+          <div className="page-content page-section dock-offset">
             {vouchersQ.isError && (
               <div className="flex flex-col items-center justify-center py-12 px-6 text-center rounded-[var(--radius-card)] border border-red-200 bg-red-50/60">
                 <div className="h-9 w-9 rounded-full bg-red-100 flex items-center justify-center mb-2">
@@ -342,7 +342,7 @@ function VouchersPage() {
                       <div className="p-5 flex-1 flex flex-col">
                         <div className="grid grid-cols-2 gap-4 mb-6">
                           <div>
-                            <div className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest mb-1">
+                            <div className="ds-meta font-bold text-muted-foreground uppercase tracking-widest mb-1">
                               Localizador Geral
                             </div>
                             <div className="font-mono text-sm font-semibold text-foreground">
@@ -350,7 +350,7 @@ function VouchersPage() {
                             </div>
                           </div>
                           <div>
-                            <div className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest mb-1">
+                            <div className="ds-meta font-bold text-muted-foreground uppercase tracking-widest mb-1">
                               Emissão
                             </div>
                             <div className="flex items-center gap-1.5 text-xs font-medium text-foreground">
@@ -359,7 +359,7 @@ function VouchersPage() {
                             </div>
                           </div>
                           <div className="col-span-2">
-                            <div className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest mb-1">
+                            <div className="ds-meta font-bold text-muted-foreground uppercase tracking-widest mb-1">
                               Passageiros
                             </div>
                             <div className="flex items-center gap-1.5 text-xs font-medium text-foreground">
@@ -430,7 +430,7 @@ function VouchersPage() {
             {/* KPI cards dentro do conteúdo */}
             <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-6">
               <div className="rounded-[var(--radius-card)] border-none glass bg-white/5 border-white/10/20 p-3 text-center">
-                <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-wide block mb-1">
+                <span className="ds-meta font-bold text-muted-foreground uppercase tracking-wide block mb-1">
                   Total de Voos
                 </span>
                 <strong className="text-lg font-black text-foreground">
@@ -438,7 +438,7 @@ function VouchersPage() {
                 </strong>
               </div>
               <div className="rounded-[var(--radius-card)] border border-success/20 bg-success/5 p-3 text-center">
-                <span className="text-[10px] font-bold text-success uppercase tracking-wide block mb-1">
+                <span className="ds-meta font-bold text-success uppercase tracking-wide block mb-1">
                   Conferidos
                 </span>
                 <strong className="text-lg font-black text-success">
@@ -446,7 +446,7 @@ function VouchersPage() {
                 </strong>
               </div>
               <div className="rounded-[var(--radius-card)] border border-warning/20 bg-warning/5 p-3 text-center">
-                <span className="text-[10px] font-bold text-warning uppercase tracking-wide block mb-1">
+                <span className="ds-meta font-bold text-warning uppercase tracking-wide block mb-1">
                   Pendentes
                 </span>
                 <strong className="text-lg font-black text-warning">
@@ -454,7 +454,7 @@ function VouchersPage() {
                 </strong>
               </div>
               <div className="rounded-[var(--radius-card)] border border-brand/20 bg-brand/5 p-3 text-center">
-                <span className="text-[10px] font-bold text-brand uppercase tracking-wide block mb-1">
+                <span className="ds-meta font-bold text-brand uppercase tracking-wide block mb-1">
                   Taxa de Sucesso
                 </span>
                 <strong className="text-lg font-black text-brand">
@@ -504,7 +504,7 @@ function VouchersPage() {
             {flightsQ.data && filteredFlights.length > 0 && (
               <div className="border-none rounded-[var(--radius-card)] glass-card border-none overflow-x-auto">
                 <table className="w-full text-xs text-left border-collapse">
-                  <thead className="glass bg-white/5 border-white/10/40 border-b border-border text-[10px] uppercase font-bold text-muted-foreground">
+                  <thead className="glass bg-white/5 border-white/10/40 border-b border-border ds-meta uppercase font-bold text-muted-foreground">
                     <tr>
                       <th className="px-4 py-3">Passageiro & Viagem</th>
                       <th className="px-4 py-3">Rota / Voo</th>
@@ -536,7 +536,7 @@ function VouchersPage() {
                               {f.passenger_name}
                             </div>
                             {tripTitle && (
-                              <div className="text-[10px] text-muted-foreground mt-0.5 flex items-center gap-1.5">
+                              <div className="ds-meta text-muted-foreground mt-0.5 flex items-center gap-1.5">
                                 <span>
                                   Viagem: <strong>{tripTitle}</strong>
                                 </span>
@@ -570,7 +570,7 @@ function VouchersPage() {
                                 : "—"}
                             </div>
                             {f.date_time && (
-                              <div className="text-[10px] text-muted-foreground font-mono mt-0.5">
+                              <div className="ds-meta text-muted-foreground font-mono mt-0.5">
                                 {new Date(f.date_time).toLocaleTimeString("pt-BR", {
                                   hour: "2-digit",
                                   minute: "2-digit",

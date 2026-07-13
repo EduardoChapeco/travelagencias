@@ -101,7 +101,7 @@ function KanbanCard({ task, onOpen }: { task: TaskWithRelations; onOpen: (t: Tas
       <div className="font-semibold mb-1.5 text-foreground line-clamp-2 leading-snug">{task.title}</div>
 
       {task.assignee && (
-        <div className="text-[10px] text-muted-foreground truncate mb-1.5 flex items-center gap-1">
+        <div className="ds-meta text-muted-foreground truncate mb-1.5 flex items-center gap-1">
           <div className="w-3.5 h-3.5 rounded-full bg-surface-alt border border-border flex items-center justify-center text-[8px] font-bold uppercase text-muted-foreground shrink-0">
             {task.assignee.name?.charAt(0) || "?"}
           </div>
@@ -111,7 +111,7 @@ function KanbanCard({ task, onOpen }: { task: TaskWithRelations; onOpen: (t: Tas
 
       <div className="flex items-center justify-between gap-2 mt-2 pt-2 border-t border-border/40">
         {task.due_date ? (
-          <div className="flex items-center gap-1 text-[10px] text-muted-foreground font-medium">
+          <div className="flex items-center gap-1 ds-meta text-muted-foreground font-medium">
             <CalendarIcon className="h-3 w-3 text-muted-foreground/60" />
             {format(new Date(task.due_date), "dd/MM")}
           </div>
@@ -178,7 +178,7 @@ function QuickAddCard({
     return (
       <Button
         onClick={() => setOpen(true)}
-        className="w-full mt-1 flex items-center gap-1.5 text-[11px] text-muted-foreground/70 hover:text-muted-foreground px-2 py-1.5 rounded-2xl hover:bg-surface-alt/40 transition-colors"
+        className="w-full mt-1 flex items-center gap-1.5 ds-meta text-muted-foreground/70 hover:text-muted-foreground px-2 py-1.5 rounded-2xl hover:bg-surface-alt/40 transition-colors"
       >
         <Plus className="w-3.5 h-3.5" />
         Adicionar card
@@ -200,11 +200,11 @@ function QuickAddCard({
         }}
       />
       <div className="flex items-center gap-1.5">
-        <Button size="sm" className="h-6 text-[11px] px-2 gap-1" onClick={handleSubmit} disabled={!title.trim()}>
+        <Button size="sm" className="h-6 ds-meta px-2 gap-1" onClick={handleSubmit} disabled={!title.trim()}>
           <Check className="w-3 h-3" />
           Criar
         </Button>
-        <Button size="sm" variant="ghost" className="h-6 text-[11px] px-2" onClick={() => setOpen(false)}>
+        <Button size="sm" variant="ghost" className="h-6 ds-meta px-2" onClick={() => setOpen(false)}>
           <X className="w-3 h-3" />
         </Button>
       </div>
@@ -322,7 +322,7 @@ function KanbanColumn({
         </div>
 
         <div className="flex items-center gap-1 shrink-0">
-          <Badge variant="secondary" className="text-[10px] font-bold h-5 px-1.5 bg-surface-alt border-none">
+          <Badge variant="secondary" className="ds-meta font-bold h-5 px-1.5 bg-surface-alt border-none">
             {tasks.length}
           </Badge>
 
@@ -375,7 +375,7 @@ function KanbanColumn({
         </SortableContext>
 
         {tasks.length === 0 && (
-          <div className="h-16 w-full border border-dashed border-border/40 rounded-[var(--radius-card)] flex items-center justify-center text-[10px] text-muted-foreground/70 font-medium">
+          <div className="h-16 w-full border border-dashed border-border/40 rounded-[var(--radius-card)] flex items-center justify-center ds-meta text-muted-foreground/70 font-medium">
             Arraste tarefas para cá
           </div>
         )}

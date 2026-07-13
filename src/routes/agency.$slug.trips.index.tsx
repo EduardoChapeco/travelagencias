@@ -13,6 +13,8 @@ import { useAgency } from "@/lib/agency-context";
 import { PageHeader, ModuleActionButton, EmptyState } from "@/components/shell/PageHeader";
 import { ModuleAdminPanel } from "@/components/shell/ModuleAdminPanel";
 import { Button, GhostButton } from "@/components/ui/button";
+import { TRIP_STATUS_MAP } from "@/lib/constants/status";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { StatusBadge } from "@/components/ui/badge";
 import { money, fmtDate } from "@/lib/formatters";
 import { DataTable, DataTableColumnHeader } from "@/components/ui/data-table";
@@ -33,21 +35,7 @@ export const Route = createFileRoute("/agency/$slug/trips/")({
   component: TripsList,
 });
 
-const STATUS_TONE: Record<string, "neutral" | "success" | "warning" | "danger" | "info"> = {
-  planning: "neutral",
-  confirmed: "info",
-  in_progress: "warning",
-  completed: "success",
-  cancelled: "danger",
-};
 
-const STATUS_LABEL: Record<string, string> = {
-  planning: "Planejamento",
-  confirmed: "Confirmada",
-  in_progress: "Em andamento",
-  completed: "Concluída",
-  cancelled: "Cancelada",
-};
 
 function TripsList() {
   const { agency, isAgencyAdmin } = useAgency();
@@ -348,13 +336,13 @@ function TripsList() {
               {row.getValue("title")}
             </Link>
             {row.original.archived_at && (
-              <span className="inline-flex items-center gap-0.5 rounded bg-muted px-1.5 py-0.5 text-[10px] font-medium text-muted-foreground">
+              <span className="inline-flex items-center gap-0.5 rounded bg-muted px-1.5 py-0.5 ds-meta font-medium text-muted-foreground">
                 <Archive className="h-3 w-3" /> Arquivada
               </span>
             )}
           </div>
           {row.original.destination && (
-            <div className="text-[11px] text-muted-foreground mt-0.5">
+            <div className="ds-meta text-muted-foreground mt-0.5">
               {row.original.destination}
             </div>
           )}
@@ -376,8 +364,8 @@ function TripsList() {
       cell: ({ row }) => {
         const status = row.getValue("status") as string;
         return (
-          <StatusBadge tone={STATUS_TONE[status] ?? "neutral"}>
-            {STATUS_LABEL[status] ?? status}
+          <StatusBadge tone={TRIP_STATUS_MAP[status]?.tone ?? "neutral"}>
+            {TRIP_STATUS_MAP[status]?.label ?? status}
           </StatusBadge>
         );
       },
@@ -601,55 +589,43 @@ function TripsList() {
           agencyId={agency.id}
         />
       )}
-      {importOpen && agency && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-overlay p-4">
-          <div
-            className="w-full max-w-sm rounded-[var(--radius-card)] border-none glass-card border-none p-5 flex flex-col shadow-none"
-            onClick={(e) => e.stopPropagation()}
-          >
-            <div className="flex items-center justify-between border-b border-border pb-3 mb-4">
-              <h3 className="ds-h3 text-foreground flex items-center gap-2">
-                <Search className="h-4 w-4 text-brand" /> Importar do Infotravel
-              </h3>
-              <Button
-                type="button"
-                onClick={() => setImportOpen(false)}
-                className="text-xs text-muted-foreground hover:text-foreground font-semibold"
-              >
-                Fechar
-              </Button>
+      <Dialog open={importOpen} onOpenChange={setImportOpen}>
+        <DialogContent className="max-w-sm">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2 text-brand">
+              <Search className="h-4 w-4" /> Importar do Infotravel
+            </DialogTitle>
+          </DialogHeader>
+
+          <div className="space-y-4 py-2">
+            <div>
+              <label className="ds-label-caps font-bold text-muted-foreground block mb-1">
+                Localizador / ID da Reserva
+              </label>
+              <Input
+                type="text"
+                value={bookingId}
+                onChange={(e) => setBookingId(e.target.value)}
+                placeholder="Ex: B-998877 ou localizador"
+                className="w-full"
+              />
+              <p className="ds-meta text-muted-foreground mt-1.5 font-sans leading-relaxed">
+                Insira o ID de reserva para importar automaticamente os voos, hotéis, passageiros
+                e criar o voucher correspondente.
+              </p>
             </div>
 
-            <div className="space-y-4">
-              <div>
-                <label className="text-[10px] uppercase tracking-wider font-bold text-muted-foreground block mb-1">
-                  Localizador / ID da Reserva
-                </label>
-                <Input
-                  type="text"
-                  value={bookingId}
-                  onChange={(e) => setBookingId(e.target.value)}
-                  placeholder="Ex: B-998877 ou localizador"
-                  className="w-full rounded-full border-none glass-card border-none focus:border-brand"
-                />
-                <p className="text-[10px] text-muted-foreground mt-1.5 font-sans leading-relaxed">
-                  Insira o ID de reserva para importar automaticamente os voos, hotéis, passageiros
-                  e criar o voucher correspondente.
-                </p>
-              </div>
-
-              <Button
-                type="button"
-                disabled={importing || !bookingId.trim()}
-                onClick={handleImportBooking}
-                className="w-full flex h-9 items-center justify-center rounded-full bg-brand px-3 text-xs font-semibold text-brand-foreground hover:bg-brand/90 transition-colors disabled:opacity-50 cursor-pointer"
-              >
-                {importing ? "Importando..." : "Confirmar Importação"}
-              </Button>
-            </div>
+            <Button
+              type="button"
+              disabled={importing || !bookingId.trim()}
+              onClick={handleImportBooking}
+              className="w-full flex h-9 items-center justify-center bg-brand text-brand-foreground hover:bg-brand/90 transition-colors disabled:opacity-50 cursor-pointer"
+            >
+              {importing ? "Importando..." : "Confirmar Importação"}
+            </Button>
           </div>
-        </div>
-      )}
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

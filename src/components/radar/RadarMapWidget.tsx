@@ -195,12 +195,12 @@ export function RadarMapWidget({ travelers }: { travelers: RadarTraveler[] }) {
                         t.type === "flight" ? "bg-blue-400" : "bg-violet-400"
                       }`}
                     />
-                    <span className="text-[10px] uppercase font-bold text-slate-400 tracking-wider">
+                    <span className="ds-meta uppercase font-bold text-slate-400 tracking-wider">
                       {t.type === "flight" ? "Embarque Aéreo" : "Viagem Terrestre"}
                     </span>
                   </div>
                   <h4 className="text-xs font-black text-white leading-tight mb-1">{t.name}</h4>
-                  <div className="text-[10px] text-slate-300">
+                  <div className="ds-meta text-slate-300">
                     <span className="text-slate-500">Destino:</span> {t.destination} ({t.country})
                   </div>
                   {t.startDate && (

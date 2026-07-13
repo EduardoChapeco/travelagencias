@@ -5,6 +5,7 @@ import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { money, fmtDate } from "@/lib/formatters";
 import { Button } from "@/components/ui/button";
+import { HeaderPortal } from "@/components/shell/HeaderPortal";
 
 export const Route = createFileRoute("/agency/$slug/proposals/$id/preview")({
   head: ({ context }: any) => ({ meta: [{ title: `Pré-visualização da Proposta · ${context?.brand?.platform_name || 'Turis'}` }] }),
@@ -159,52 +160,54 @@ function ProposalPreview() {
   const totalPax = p.pax_adults + p.pax_seniors + p.pax_children + p.pax_infants;
 
   return (
-    <div className="flex h-screen flex-col overflow-hidden">
-      {/* ── Toolbar interno ──────────────────────────────────────────────────── */}
-      <div className="flex h-11 shrink-0 items-center justify-between border-b border-border glass-card border-none px-4 sm:px-6">
-        <div className="flex items-center gap-2 sm:gap-3">
-          <Link
-            to="/agency/$slug/proposals/$id"
-            params={{ slug, id }}
-            className="flex h-7 items-center gap-1.5 text-xs text-muted-foreground hover:text-foreground"
-            title="Voltar ao editor"
-          >
-            <ArrowLeft className="h-3.5 w-3.5" />
-            <span className="hidden sm:inline">Voltar ao editor</span>
-          </Link>
-          <span className="text-xs text-muted-foreground">·</span>
-          <span
-            className="flex items-center gap-1 text-xs text-muted-foreground"
-            title="Pré-visualização do cliente"
-          >
-            <Eye className="h-3.5 w-3.5" />
-            <span className="hidden sm:inline">Pré-visualização do cliente</span>
-          </span>
+    <div className="flex h-full flex-col overflow-hidden">
+      {/* ── Toolbar interno via Portal ───────────────────────────────────────── */}
+      <HeaderPortal>
+        <div className="flex w-full h-full items-center justify-between px-2 sm:px-6">
+          <div className="flex items-center gap-2 sm:gap-3">
+            <Link
+              to="/agency/$slug/proposals/$id"
+              params={{ slug, id }}
+              className="flex h-7 items-center gap-1.5 text-xs text-muted-foreground hover:text-foreground"
+              title="Voltar ao editor"
+            >
+              <ArrowLeft className="h-3.5 w-3.5" />
+              <span className="hidden sm:inline">Voltar ao editor</span>
+            </Link>
+            <span className="text-xs text-muted-foreground">·</span>
+            <span
+              className="flex items-center gap-1 text-xs text-muted-foreground"
+              title="Pré-visualização do cliente"
+            >
+              <Eye className="h-3.5 w-3.5" />
+              <span className="hidden sm:inline">Pré-visualização do cliente</span>
+            </span>
+          </div>
+          <div className="flex items-center gap-2">
+            <Button
+              onClick={() => {
+                navigator.clipboard.writeText(publicUrl);
+                toast.success("Link copiado");
+              }}
+              className="flex h-7 items-center justify-center gap-1.5 rounded-full border-none px-2 sm:px-3 text-xs hover:glass bg-white/5 border-white/10 cursor-pointer"
+              title="Copiar link público"
+            >
+              <Copy className="h-3.5 w-3.5" />
+              <span className="hidden sm:inline">Copiar link</span>
+            </Button>
+            <a
+              href={publicUrl}
+              target="_blank"
+              rel="noreferrer"
+              className="flex h-7 items-center justify-center gap-1.5 rounded-full border-none px-2 sm:px-3 text-xs hover:glass bg-white/5 border-white/10"
+              title="Abrir como cliente"
+            >
+              <ExternalLink className="h-3.5 w-3.5" />
+              <span className="hidden sm:inline">Abrir como cliente</span>
+            </a>
+          </div>
         </div>
-        <div className="flex items-center gap-2">
-          <Button
-            onClick={() => {
-              navigator.clipboard.writeText(publicUrl);
-              toast.success("Link copiado");
-            }}
-            className="flex h-7 items-center justify-center gap-1.5 rounded-full border-none px-2 sm:px-3 text-xs hover:glass bg-white/5 border-white/10 cursor-pointer"
-            title="Copiar link público"
-          >
-            <Copy className="h-3.5 w-3.5" />
-            <span className="hidden sm:inline">Copiar link</span>
-          </Button>
-          <a
-            href={publicUrl}
-            target="_blank"
-            rel="noreferrer"
-            className="flex h-7 items-center justify-center gap-1.5 rounded-full border-none px-2 sm:px-3 text-xs hover:glass bg-white/5 border-white/10"
-            title="Abrir como cliente"
-          >
-            <ExternalLink className="h-3.5 w-3.5" />
-            <span className="hidden sm:inline">Abrir como cliente</span>
-          </a>
-        </div>
-      </div>
+      </HeaderPortal>
 
       {/* ── Preview iframe-like area ──────────────────────────────────────────── */}
       <div className="flex-1 overflow-y-auto glass bg-white/5 border-white/10 py-8 px-4">
@@ -235,7 +238,7 @@ function ProposalPreview() {
                 </div>
               </div>
               <div
-                className="rounded-full px-3 py-1 text-[10px] font-bold uppercase tracking-widest"
+                className="rounded-full px-3 py-1 ds-label-caps"
                 style={{ background: accentColor, color: accentFg }}
               >
                 {p.status}
@@ -360,7 +363,7 @@ function ProposalPreview() {
               <div className="grid grid-cols-2 gap-4">
                 {p.includes.length > 0 && (
                   <div>
-                    <div className="mb-1.5 text-[10px] font-bold uppercase tracking-wide text-success">
+                    <div className="mb-1.5 ds-label-caps tracking-wide text-success">
                       Inclui
                     </div>
                     <ul className="space-y-1 text-xs">
@@ -375,7 +378,7 @@ function ProposalPreview() {
                 )}
                 {p.excludes.length > 0 && (
                   <div>
-                    <div className="mb-1.5 text-[10px] font-bold uppercase tracking-wide text-danger">
+                    <div className="mb-1.5 ds-label-caps tracking-wide text-danger">
                       Não inclui
                     </div>
                     <ul className="space-y-1 text-xs">
@@ -418,7 +421,7 @@ function ProposalPreview() {
               </div>
             )}
             {p.valid_until && (
-              <div className="mt-3 text-[11px]" style={{ color: `${accentFg}88` }}>
+              <div className="mt-3 ds-meta" style={{ color: `${accentFg}88` }}>
                 Válida até {fmtDate(p.valid_until)}
               </div>
             )}
@@ -440,7 +443,7 @@ function Section({
 }) {
   return (
     <div className="px-8 py-5 border-t border-border/50">
-      <h2 className="mb-3 text-[11px] font-bold uppercase tracking-[0.12em]" style={{ color }}>
+      <h2 className="mb-3 ds-meta font-bold uppercase tracking-[0.12em]" style={{ color }}>
         {title}
       </h2>
       {children}

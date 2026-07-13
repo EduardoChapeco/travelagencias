@@ -50,7 +50,7 @@ function Page() {
     <div className="mx-auto min-h-screen max-w-xl px-4 py-12 md:py-20">
       <div className="overflow-hidden rounded-[var(--radius-card)] glass-card border-none  ring-1 ring-border/50">
         <div className="border-b border-border/50 glass bg-white/5 border-white/10/30 px-6 py-4 text-center">
-          <h2 className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">
+          <h2 className="ds-label-caps text-muted-foreground">
             Sistema de Autenticidade Turis
           </h2>
         </div>
@@ -83,7 +83,7 @@ function Page() {
                     />
                   </svg>
                 </div>
-                <div className="inline-flex items-center gap-2 rounded-full bg-success/10 px-3 py-1 text-[10px] font-bold uppercase tracking-widest text-success">
+                <div className="inline-flex items-center gap-2 rounded-full bg-success/10 px-3 py-1 ds-label-caps text-success">
                   Assinatura Chancelada
                 </div>
                 <h1 className="mt-5 font-mono text-xl font-bold tracking-tight text-foreground">
@@ -111,7 +111,7 @@ function Page() {
                   <Row
                     k="Hash Criptográfico (Conteúdo)"
                     v={
-                      <span className="break-all font-mono text-[10px] text-muted-foreground">
+                      <span className="break-all font-mono ds-meta text-muted-foreground">
                         {row.content_hash ?? "—"}
                       </span>
                     }
@@ -119,7 +119,7 @@ function Page() {
                   <Row
                     k="Hash Criptográfico (Assinatura)"
                     v={
-                      <span className="break-all font-mono text-[10px] text-muted-foreground">
+                      <span className="break-all font-mono ds-meta text-muted-foreground">
                         {row.signed_hash ?? "—"}
                       </span>
                     }
@@ -127,7 +127,7 @@ function Page() {
                 </dl>
               </div>
               <div className="mt-6 rounded-[var(--radius-card)] bg-warning-bg/50 px-4 py-3 text-center">
-                <p className="text-[10px] font-medium leading-relaxed text-warning-text/80">
+                <p className="ds-meta font-medium leading-relaxed text-warning-text/80">
                   Este documento foi assinado digitalmente e possui validade jurídica garantida por
                   geolocalização, biometria e IP. O conteúdo completo do contrato está selado por
                   motivos de privacidade.

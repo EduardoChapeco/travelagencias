@@ -136,7 +136,7 @@ function SupplierCardGrid({ s, slug }: { s: Supplier; slug: string }) {
             <h3 className="text-sm font-bold text-foreground leading-tight truncate group-hover:text-[--brand-primary,theme(colors.pink.500)] transition-colors">
               {s.name}
             </h3>
-            <div className="text-[10px] uppercase tracking-widest font-semibold text-muted-foreground mt-0.5">
+            <div className="ds-meta uppercase tracking-widest font-semibold text-muted-foreground mt-0.5">
               {cfg.label}
             </div>
           </div>
@@ -160,7 +160,7 @@ function SupplierCardGrid({ s, slug }: { s: Supplier; slug: string }) {
       </div>
 
       {/* Contact quick row */}
-      <div className="flex gap-3 text-[11px] text-muted-foreground mb-4">
+      <div className="flex gap-3 ds-meta text-muted-foreground mb-4">
         {s.email && (
           <span className="flex items-center gap-1 truncate" title={s.email}>
             <Mail className="h-3 w-3 shrink-0" />
@@ -181,7 +181,7 @@ function SupplierCardGrid({ s, slug }: { s: Supplier; slug: string }) {
           {s.tags.slice(0, 3).map((t) => (
             <span
               key={t}
-              className="rounded-full border-none glass-card border-none px-1.5 py-0.5 text-[10px] text-muted-foreground uppercase tracking-wide"
+              className="rounded-full border-none glass-card border-none px-1.5 py-0.5 ds-meta text-muted-foreground uppercase tracking-wide"
             >
               {t}
             </span>
@@ -191,7 +191,7 @@ function SupplierCardGrid({ s, slug }: { s: Supplier; slug: string }) {
 
       {/* Footer — commission */}
       <div className="mt-auto pt-4 border-t border-border flex justify-between items-center">
-        <div className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground flex items-center gap-1">
+        <div className="ds-label-caps text-muted-foreground flex items-center gap-1">
           <Percent className="h-3 w-3" /> Markup Base
         </div>
         <div className="font-mono text-base font-bold text-[--brand-primary,theme(colors.pink.500)]">
@@ -321,7 +321,7 @@ function SuppliersPage() {
             <div className="flex items-center gap-1.5">
               <Button
                 onClick={() => setViewMode(viewMode === "grid" ? "list" : "grid")}
-                className="h-7 px-2 flex items-center justify-center rounded-full border border-white/15 text-white/60 hover:text-white hover:bg-white/10 transition-colors cursor-pointer text-[11px] font-semibold"
+                className="h-7 px-2 flex items-center justify-center rounded-full border border-white/15 text-white/60 hover:text-white hover:bg-white/10 transition-colors cursor-pointer ds-meta font-semibold"
                 title={viewMode === "grid" ? "Ver em Lista" : "Ver em Grid"}
               >
                 {viewMode === "grid" ? <List className="h-3.5 w-3.5" /> : <LayoutGrid className="h-3.5 w-3.5" />}
@@ -350,7 +350,7 @@ function SuppliersPage() {
         {/* ── Sidebar de filtros ── */}
         <aside className="hidden lg:flex w-52 shrink-0 flex-col border-r border-border bg-transparent overflow-y-auto">
           <div className="px-4 pt-5 pb-3">
-            <div className="text-[10px] uppercase tracking-widest font-semibold text-white/50 mb-3">
+            <div className="ds-meta uppercase tracking-widest font-semibold text-white/50 mb-3">
               Categoria
             </div>
             <div className="space-y-0.5">
@@ -382,23 +382,23 @@ function SuppliersPage() {
 
           {/* Stats Summary */}
           <div className="mt-auto border-t border-white/10 px-4 py-4 space-y-3">
-            <div className="text-[10px] uppercase tracking-widest font-semibold text-white/50 mb-2">
+            <div className="ds-meta uppercase tracking-widest font-semibold text-white/50 mb-2">
               Visão Geral
             </div>
             <div className="grid grid-cols-2 gap-2">
               <div className="rounded-[var(--radius-card)] border border-white/10 bg-white/5 p-2 text-center">
                 <div className="text-lg font-bold text-white">{stats.total}</div>
-                <div className="text-[10px] text-white/50">Total</div>
+                <div className="ds-meta text-white/50">Total</div>
               </div>
               <div className="rounded-[var(--radius-card)] border border-white/10 bg-white/5 p-2 text-center">
                 <div className="text-lg font-bold text-green-400">{stats.active}</div>
-                <div className="text-[10px] text-white/50">Ativos</div>
+                <div className="ds-meta text-white/50">Ativos</div>
               </div>
               <div className="col-span-2 rounded-[var(--radius-card)] border border-white/10 bg-white/5 p-2 text-center">
                 <div className="text-lg font-bold text-pink-400 font-mono">
                   {stats.avgCommission}%
                 </div>
-                <div className="text-[10px] text-white/50">Markup médio</div>
+                <div className="ds-meta text-white/50">Markup médio</div>
               </div>
             </div>
           </div>
@@ -444,19 +444,19 @@ function SuppliersPage() {
                 {/* List header */}
                 <div className="flex items-center gap-4 glass-card border-none px-5 py-2 border-b border-border">
                   <div className="w-8 shrink-0" />
-                  <div className="flex-1 text-[10px] font-semibold uppercase tracking-widest text-muted-foreground">
+                  <div className="flex-1 ds-meta font-semibold uppercase tracking-widest text-muted-foreground">
                     Parceiro
                   </div>
-                  <div className="hidden md:block w-28 text-[10px] font-semibold uppercase tracking-widest text-muted-foreground">
+                  <div className="hidden md:block w-28 ds-meta font-semibold uppercase tracking-widest text-muted-foreground">
                     Avaliação
                   </div>
-                  <div className="hidden sm:block w-24 text-[10px] font-semibold uppercase tracking-widest text-muted-foreground">
+                  <div className="hidden sm:block w-24 ds-meta font-semibold uppercase tracking-widest text-muted-foreground">
                     Telefone
                   </div>
-                  <div className="w-16 text-right text-[10px] font-semibold uppercase tracking-widest text-muted-foreground shrink-0">
+                  <div className="w-16 text-right ds-meta font-semibold uppercase tracking-widest text-muted-foreground shrink-0">
                     Markup
                   </div>
-                  <div className="w-14 text-[10px] font-semibold uppercase tracking-widest text-muted-foreground shrink-0">
+                  <div className="w-14 ds-meta font-semibold uppercase tracking-widest text-muted-foreground shrink-0">
                     Status
                   </div>
                 </div>

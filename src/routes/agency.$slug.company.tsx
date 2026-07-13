@@ -595,7 +595,7 @@ function Page() {
                       </div>
                       <div className="mb-3 flex items-start gap-2 rounded-full border-none/50 glass bg-white/5 border-white/10 px-3 py-2">
                         <Info className="mt-0.5 h-3.5 w-3.5 shrink-0 text-muted-foreground" />
-                        <p className="text-[11px] text-muted-foreground">
+                        <p className="ds-meta text-muted-foreground">
                           Preencha o Google Business ID e o Maps URL para sincronizar dados com o
                           Google Meu Negócio. A sincronização automática via API requer configuração
                           OAuth no Google Cloud Console.
@@ -624,7 +624,7 @@ function Page() {
                             <Input
                               value={form.google_maps_url.replace(/\?.*/, "") + "/review"}
                               readOnly
-                              className="font-mono text-[11px] opacity-70"
+                              className="font-mono ds-meta opacity-70"
                             />
                           </Field>
                         </div>
@@ -767,7 +767,7 @@ function Page() {
                 )}
 
                 {/* SAVE BAR (company tabs) */}
-                <div className="flex items-center justify-between rounded-b-lg border-x border-b border-border glass-card border-none px-5 py-3 text-[11px] text-muted-foreground">
+                <div className="flex items-center justify-between rounded-b-lg border-x border-b border-border glass-card border-none px-5 py-3 ds-meta text-muted-foreground">
                   <span>
                     {(q.data as any)?.updated_at
                       ? `Última edição: ${new Date((q.data as any).updated_at).toLocaleString("pt-BR")}`
@@ -816,7 +816,7 @@ function Page() {
                       {form.name || "Nome da agência"}
                     </div>
                     {form.short_description && (
-                      <div className="text-[10px] text-muted-foreground line-clamp-1">
+                      <div className="ds-meta text-muted-foreground line-clamp-1">
                         {form.short_description}
                       </div>
                     )}
@@ -824,32 +824,32 @@ function Page() {
                 </div>
                 {/* Portal config preview */}
                 <div className="p-3 border-b border-border">
-                  <div className="text-[10px] font-semibold uppercase tracking-wide text-muted-foreground mb-2">
+                  <div className="ds-meta font-semibold uppercase tracking-wide text-muted-foreground mb-2">
                     Seções ativas
                   </div>
                   <div className="flex flex-wrap gap-1">
                     {form.portal_theme.show_tours && (
-                      <span className="rounded-full glass bg-white/5 border-white/10 px-2 py-0.5 text-[10px]">
+                      <span className="rounded-full glass bg-white/5 border-white/10 px-2 py-0.5 ds-meta">
                         Roteiros
                       </span>
                     )}
                     {form.portal_theme.show_blog && (
-                      <span className="rounded-full glass bg-white/5 border-white/10 px-2 py-0.5 text-[10px]">
+                      <span className="rounded-full glass bg-white/5 border-white/10 px-2 py-0.5 ds-meta">
                         Blog
                       </span>
                     )}
                     {form.portal_theme.show_gallery && (
-                      <span className="rounded-full glass bg-white/5 border-white/10 px-2 py-0.5 text-[10px]">
+                      <span className="rounded-full glass bg-white/5 border-white/10 px-2 py-0.5 ds-meta">
                         Galeria
                       </span>
                     )}
                     {form.portal_theme.show_hours && (
-                      <span className="rounded-full glass bg-white/5 border-white/10 px-2 py-0.5 text-[10px]">
+                      <span className="rounded-full glass bg-white/5 border-white/10 px-2 py-0.5 ds-meta">
                         Horários
                       </span>
                     )}
                     {form.portal_theme.show_map && (
-                      <span className="rounded-full glass bg-white/5 border-white/10 px-2 py-0.5 text-[10px]">
+                      <span className="rounded-full glass bg-white/5 border-white/10 px-2 py-0.5 ds-meta">
                         Mapa
                       </span>
                     )}
@@ -857,7 +857,7 @@ function Page() {
                 </div>
                 {/* Cores preview */}
                 <div className="p-3">
-                  <div className="text-[10px] font-semibold uppercase tracking-wide text-muted-foreground mb-2">
+                  <div className="ds-meta font-semibold uppercase tracking-wide text-muted-foreground mb-2">
                     Cores
                   </div>
                   <div className="flex gap-2">

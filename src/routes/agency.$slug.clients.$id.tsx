@@ -238,7 +238,7 @@ function ClientDetail() {
           </p>
           <div className="flex items-end gap-4 max-w-xl">
             <div className="flex-1 space-y-1.5">
-              <label className="text-xs font-bold uppercase tracking-widest text-muted-foreground ml-2">
+              <label className="ds-label-caps text-muted-foreground ml-2">
                 Mover tudo para o cliente:
               </label>
               <SearchableSelect
@@ -342,7 +342,7 @@ function ClientDetail() {
               </div>
 
               <div className="rounded-full border-none glass-card border-none p-6">
-                <h3 className="text-xs font-bold uppercase tracking-widest text-muted-foreground mb-3">
+                <h3 className="ds-label-caps text-muted-foreground mb-3">
                   Preferências e Observações
                 </h3>
                 <p className="text-sm leading-relaxed whitespace-pre-wrap text-foreground">
@@ -399,7 +399,7 @@ function ClientDetail() {
 function InfoBlock({ label, value }: { label: string; value: React.ReactNode }) {
   return (
     <div className="glass-card border-none p-5 rounded-full border-none">
-      <div className="text-xs font-bold uppercase tracking-widest text-muted-foreground mb-1.5">
+      <div className="ds-label-caps text-muted-foreground mb-1.5">
         {label}
       </div>
       <div className="text-sm font-medium leading-relaxed text-foreground">{value}</div>

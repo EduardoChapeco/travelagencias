@@ -154,7 +154,7 @@ function PublicStoreIndex() {
                 
                 <div className="mt-auto pt-4 border-t border-border/40 flex items-center justify-between">
                   <div className="flex flex-col">
-                    <span className="text-[10px] uppercase font-bold tracking-widest text-muted-foreground">A partir de</span>
+                    <span className="ds-meta uppercase font-bold tracking-widest text-muted-foreground">A partir de</span>
                     <span className="text-lg font-black text-brand">
                       {item.price ? money(item.price) : "Sob consulta"}
                     </span>

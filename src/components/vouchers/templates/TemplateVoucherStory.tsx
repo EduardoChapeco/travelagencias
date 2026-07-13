@@ -104,7 +104,7 @@ export default function TemplateVoucherStory({ voucher: v, agency, brandKit }: P
         <div className="flex flex-col gap-3 mt-4">
           {v.flights && v.flights.length > 0 && (
             <div className="rounded-2xl bg-white/10 border border-white/15 backdrop-blur-sm p-4">
-              <div className="flex justify-between items-center text-[10px] font-bold uppercase tracking-widest text-white/60 mb-2">
+              <div className="flex justify-between items-center ds-label-caps text-white/60 mb-2">
                 <span>Voo Confirmado</span>
                 <Plane className="w-4 h-4" />
               </div>
@@ -120,7 +120,7 @@ export default function TemplateVoucherStory({ voucher: v, agency, brandKit }: P
                 </div>
                 <span>{v.flights[0].destination ?? "—"}</span>
               </div>
-              <div className="text-[10px] mt-1 text-white/50 text-center">
+              <div className="ds-meta mt-1 text-white/50 text-center">
                 {v.flights[0].airline}{" "}
                 {v.flights[0].flight_number && `· ${v.flights[0].flight_number}`}
                 {v.flights[0].date && ` · ${v.flights[0].date}`}
@@ -130,7 +130,7 @@ export default function TemplateVoucherStory({ voucher: v, agency, brandKit }: P
 
           {v.accommodation && v.accommodation.length > 0 && (
             <div className="rounded-2xl bg-white/10 border border-white/15 backdrop-blur-sm p-4">
-              <div className="flex justify-between items-center text-[10px] font-bold uppercase tracking-widest text-white/60 mb-1">
+              <div className="flex justify-between items-center ds-label-caps text-white/60 mb-1">
                 <span>Hospedagem</span>
                 <Hotel className="w-4 h-4" />
               </div>
@@ -141,7 +141,7 @@ export default function TemplateVoucherStory({ voucher: v, agency, brandKit }: P
                 {v.accommodation[0].name}
               </div>
               {v.accommodation[0].city && (
-                <div className="text-[10px] text-white/50 mt-0.5 truncate">
+                <div className="ds-meta text-white/50 mt-0.5 truncate">
                   {v.accommodation[0].city}
                 </div>
               )}
@@ -151,7 +151,7 @@ export default function TemplateVoucherStory({ voucher: v, agency, brandKit }: P
 
         {/* Passengers summary */}
         {v.passengers && v.passengers.length > 0 && (
-          <div className="mt-4 text-[11px] text-white/50 text-center">
+          <div className="mt-4 ds-meta text-white/50 text-center">
             {v.passengers.length} passageiro{v.passengers.length !== 1 ? "s" : ""} ·{" "}
             {v.passengers.map((p) => p.name.split(" ")[0]).join(", ")}
           </div>
@@ -159,7 +159,7 @@ export default function TemplateVoucherStory({ voucher: v, agency, brandKit }: P
 
         {/* Footer */}
         <div className="mt-auto pt-6 text-center">
-          <p className="text-[10px] uppercase tracking-widest text-white/40 mb-1">
+          <p className="ds-meta uppercase tracking-widest text-white/40 mb-1">
             Planejado com perfeição por
           </p>
           <p className="text-xs font-bold text-white/70">@{agency.slug}</p>

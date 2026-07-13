@@ -280,14 +280,14 @@ export function NewTaskModal({ open, onClose, defaultStatus = "todo", onCreated 
           {/* Preview de status + prioridade selecionados */}
           <div className="flex items-center gap-2 pt-1">
             <span
-              className="inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider"
+              className="inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 ds-label-caps tracking-wider"
               style={{ color: statusDef?.color, backgroundColor: `${statusDef?.color}18` }}
             >
               <span className="w-1.5 h-1.5 rounded-full" style={{ backgroundColor: statusDef?.color }} />
               {statusDef?.label}
             </span>
             <span
-              className="inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider"
+              className="inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 ds-label-caps tracking-wider"
               style={{ color: priorityDef?.color, backgroundColor: `${priorityDef?.color}18` }}
             >
               <Flag className="w-2.5 h-2.5" />

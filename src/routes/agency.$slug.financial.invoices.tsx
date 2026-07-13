@@ -76,7 +76,7 @@ function InvoicesPage() {
           <>
             <div className="overflow-hidden rounded-[var(--radius-card)] border-none glass-card border-none">
               <table className="w-full text-sm">
-                <thead className="glass bg-white/5 border-white/10/40 text-left text-[11px] uppercase tracking-wide text-muted-foreground">
+                <thead className="glass bg-white/5 border-white/10/40 text-left ds-meta uppercase tracking-wide text-muted-foreground">
                   <tr>
                     <th className="px-3 py-2 font-medium">Fatura</th>
                     <th className="px-3 py-2 font-medium">Descrição</th>

@@ -267,14 +267,14 @@ export function TaskDetailDrawer({ task, open, onClose, onUpdated }: TaskDetailD
                 )}
               </div>
               <div className="flex items-center gap-2 mt-1 flex-wrap">
-                <span className="text-[10px] font-mono text-muted-foreground/60 border border-border/40 rounded px-1.5 py-0.5">
+                <span className="ds-meta font-mono text-muted-foreground/60 border border-border/40 rounded px-1.5 py-0.5">
                   #{task.id.slice(0, 8)}
                 </span>
-                <span className="text-[10px] text-muted-foreground/60">
+                <span className="ds-meta text-muted-foreground/60">
                   Criada {format(new Date(task.created_at), "dd/MM/yy 'às' HH:mm", { locale: ptBR })}
                 </span>
                 {isSaving && (
-                  <span className="flex items-center gap-1 text-[10px] text-brand">
+                  <span className="flex items-center gap-1 ds-meta text-brand">
                     <Loader2 className="h-3 w-3 animate-spin" /> Salvando...
                   </span>
                 )}
@@ -296,7 +296,7 @@ export function TaskDetailDrawer({ task, open, onClose, onUpdated }: TaskDetailD
               <div className="grid grid-cols-2 gap-3">
                 {/* Status */}
                 <div className="space-y-1">
-                  <label className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground flex items-center gap-1">
+                  <label className="ds-label-caps tracking-wider text-muted-foreground flex items-center gap-1">
                     <Circle className="h-3 w-3" /> Status
                   </label>
                   <Select
@@ -324,7 +324,7 @@ export function TaskDetailDrawer({ task, open, onClose, onUpdated }: TaskDetailD
 
                 {/* Priority */}
                 <div className="space-y-1">
-                  <label className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground flex items-center gap-1">
+                  <label className="ds-label-caps tracking-wider text-muted-foreground flex items-center gap-1">
                     <Flag className="h-3 w-3" /> Prioridade
                   </label>
                   <Select
@@ -352,7 +352,7 @@ export function TaskDetailDrawer({ task, open, onClose, onUpdated }: TaskDetailD
 
                 {/* Due Date */}
                 <div className="space-y-1">
-                  <label className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground flex items-center gap-1">
+                  <label className="ds-label-caps tracking-wider text-muted-foreground flex items-center gap-1">
                     <Calendar className="h-3 w-3" /> Prazo
                   </label>
                   <Input
@@ -365,7 +365,7 @@ export function TaskDetailDrawer({ task, open, onClose, onUpdated }: TaskDetailD
 
                 {/* Assignee */}
                 <div className="space-y-1">
-                  <label className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground flex items-center gap-1">
+                  <label className="ds-label-caps tracking-wider text-muted-foreground flex items-center gap-1">
                     <User className="h-3 w-3" /> Responsável
                   </label>
                   <div className="h-8 flex items-center gap-2 rounded-2xl border border-border/60 bg-[var(--surface-alt)]/40 px-2.5">
@@ -385,7 +385,7 @@ export function TaskDetailDrawer({ task, open, onClose, onUpdated }: TaskDetailD
 
               {/* ── Etiquetas / Tags ──────────────────────────────────────── */}
               <div className="space-y-1 mt-4">
-                <label className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground flex items-center gap-1">
+                <label className="ds-label-caps tracking-wider text-muted-foreground flex items-center gap-1">
                   <Tag className="h-3 w-3" /> Etiquetas
                 </label>
                 <DSTagPicker
@@ -423,13 +423,13 @@ export function TaskDetailDrawer({ task, open, onClose, onUpdated }: TaskDetailD
                     <BarChart3 className="h-3 w-3" /> Dif.
                   </div>
                   <div className="text-base font-bold text-foreground">
-                    {task.difficulty_score || 1}<span className="text-[10px] text-muted-foreground">/5</span>
+                    {task.difficulty_score || 1}<span className="ds-meta text-muted-foreground">/5</span>
                   </div>
                 </div>
               </div>
 
               <div className="space-y-2">
-                <label className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground flex items-center gap-1">
+                <label className="ds-label-caps tracking-wider text-muted-foreground flex items-center gap-1">
                   <AlignLeft className="h-3 w-3" /> Descrição
                 </label>
                 <Textarea
@@ -444,14 +444,14 @@ export function TaskDetailDrawer({ task, open, onClose, onUpdated }: TaskDetailD
                       size="sm"
                       variant="ghost"
                       onClick={() => setDescValue((task.description as string) || "")}
-                      className="h-7 text-[10px] px-2.5 rounded-2xl border border-border/40 hover:bg-surface-alt/40"
+                      className="h-7 ds-meta px-2.5 rounded-2xl border border-border/40 hover:bg-surface-alt/40"
                     >
                       Cancelar
                     </Button>
                     <Button
                       size="sm"
                       onClick={handleSave}
-                      className="h-7 text-[10px] px-2.5 rounded-2xl bg-brand hover:bg-brand/90 text-white"
+                      className="h-7 ds-meta px-2.5 rounded-2xl bg-brand hover:bg-brand/90 text-white"
                     >
                       Salvar Descrição
                     </Button>

@@ -185,7 +185,7 @@ export function LeadForm({
           />
         </Field>
 
-        <div className="col-span-1 md:col-span-2 text-[11px] bg-brand/5 border border-brand/10 p-3.5 rounded-[var(--radius-card)] text-muted-foreground space-y-1">
+        <div className="col-span-1 md:col-span-2 ds-meta bg-brand/5 border border-brand/10 p-3.5 rounded-[var(--radius-card)] text-muted-foreground space-y-1">
           <span className="font-bold text-foreground block">Regras de Tarifa da Aviação:</span>
           <ul className="list-disc list-inside space-y-0.5">
             <li>

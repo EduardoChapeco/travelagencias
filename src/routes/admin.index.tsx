@@ -198,9 +198,9 @@ function Page() {
                   </div>
                   <div className="flex-1 min-w-0">
                     <div className="truncate text-xs font-medium">{a.name}</div>
-                    <div className="text-[10px] text-muted-foreground">/{a.slug}</div>
+                    <div className="ds-meta text-muted-foreground">/{a.slug}</div>
                   </div>
-                  <div className="text-[10px] text-muted-foreground shrink-0">
+                  <div className="ds-meta text-muted-foreground shrink-0">
                     {fmtDate(a.created_at)}
                   </div>
                 </Link>
@@ -217,7 +217,7 @@ function Page() {
                 Tickets em aberto
               </div>
               {d && d.openTickets > 0 && (
-                <span className="flex h-5 w-5 items-center justify-center rounded-full bg-danger text-[10px] font-bold text-white">
+                <span className="flex h-5 w-5 items-center justify-center rounded-full bg-danger ds-meta font-bold text-white">
                   {d.openTickets > 9 ? "9+" : d.openTickets}
                 </span>
               )}
@@ -228,7 +228,7 @@ function Page() {
                   <div className="flex-1 min-w-0">
                     <div className="truncate text-xs font-medium">{t.title}</div>
                     <div className="flex items-center gap-1.5 mt-0.5">
-                      <span className="font-mono text-[10px] text-muted-foreground">{t.code}</span>
+                      <span className="font-mono ds-meta text-muted-foreground">{t.code}</span>
                       <StatusBadge
                         tone={
                           t.priority === "urgent" || t.priority === "high" ? "danger" : "warning"
@@ -291,7 +291,7 @@ function StatCard({
       <div className="mt-0.5 text-xs font-medium text-muted-foreground">{label}</div>
       {sub && (
         <div
-          className={`mt-1 text-[10px] font-semibold uppercase tracking-wide ${trend !== undefined && trend > 0 ? "text-success" : trend !== undefined && trend < 0 ? "text-danger" : "text-muted-foreground/60"}`}
+          className={`mt-1 ds-meta font-semibold uppercase tracking-wide ${trend !== undefined && trend > 0 ? "text-success" : trend !== undefined && trend < 0 ? "text-danger" : "text-muted-foreground/60"}`}
         >
           {sub}
         </div>
@@ -321,7 +321,7 @@ function MiniStat({
         <div className={`text-lg font-bold leading-none ${urgent ? "text-danger" : ""}`}>
           {value}
         </div>
-        <div className="mt-0.5 text-[10px] text-muted-foreground">{label}</div>
+        <div className="mt-0.5 ds-meta text-muted-foreground">{label}</div>
       </div>
     </div>
   );

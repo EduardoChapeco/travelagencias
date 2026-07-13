@@ -175,7 +175,7 @@ function ClientCombobox({
             </div>
           ) : (
             <div className="border-t border-border p-3 space-y-2">
-              <div className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground mb-2">
+              <div className="ds-label-caps tracking-wider text-muted-foreground mb-2">
                 Novo cliente
               </div>
               <Input
@@ -600,7 +600,7 @@ export function NewProposalSheet({
             <span className="font-bold text-foreground text-xs flex items-center justify-center gap-1.5">
               <Sparkles className="h-3.5 w-3.5 text-brand" /> Importar Orçamento com IA (OCR)
             </span>
-            <p className="text-[10px] text-muted-foreground mt-0.5 max-w-xs mx-auto">
+            <p className="ds-meta text-muted-foreground mt-0.5 max-w-xs mx-auto">
               Arraste um PDF/Imagem ou clique para selecionar. A IA extrairá e preencherá tudo
               automaticamente.
             </p>
@@ -618,7 +618,7 @@ export function NewProposalSheet({
         )}
 
         {extractedItems && (
-          <div className="mt-3 rounded-2xl bg-success/5 border border-success/20 p-2 text-[10px] text-success flex items-center justify-between">
+          <div className="mt-3 rounded-2xl bg-success/5 border border-success/20 p-2 ds-meta text-success flex items-center justify-between">
             <div className="text-left">
               <span className="font-bold">✨ Dados extraídos com sucesso!</span>
               <p className="text-[9px] text-muted-foreground">
@@ -672,7 +672,7 @@ export function NewProposalSheet({
                 </option>
               ))}
             </Select>
-            <p className="text-[10px] text-muted-foreground mt-0.5">
+            <p className="ds-meta text-muted-foreground mt-0.5">
               Copia voos, hotéis, traslados, passeios, roteiro e inclusões deste template.
             </p>
           </Field>
@@ -756,7 +756,7 @@ export function NewProposalSheet({
             <option value="agency">🏢 Agência — toda a equipe vê</option>
             <option value="public">🌐 Pública — link acessível por qualquer um</option>
           </Select>
-          <p className="text-[11px] text-muted-foreground mt-1">
+          <p className="ds-meta text-muted-foreground mt-1">
             {visibility === "private" && "Apenas você pode ver esta cotação."}
             {visibility === "agency" && "Todos os agentes da sua equipe poderão ver e editar."}
             {visibility === "public" &&

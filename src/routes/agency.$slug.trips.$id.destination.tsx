@@ -48,7 +48,7 @@ function InfoRow({
     <div className="flex items-start gap-3 py-2.5 border-b border-border last:border-0">
       <Icon className="h-3.5 w-3.5 text-muted-foreground mt-0.5 shrink-0" />
       <div className="min-w-0">
-        <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">
+        <p className="ds-label-caps text-muted-foreground">
           {label}
         </p>
         <p className="text-xs text-foreground mt-0.5 leading-relaxed">{value}</p>
@@ -122,14 +122,14 @@ function TripDestinationPage() {
 
   if (!dest) {
     return (
-      <div className="flex-1 overflow-y-auto p-4 md:p-6 space-y-4">
+      <div className="page-content page-section">
         <div className="rounded-[var(--radius-card)] border border-dashed border-warning/40 bg-warning/5 p-5 flex items-start gap-3">
           <AlertTriangle className="h-4 w-4 text-warning mt-0.5 shrink-0" />
           <div>
             <p className="text-xs font-semibold text-foreground">
               Nenhuma informação revisada para "{trip.destination}"
             </p>
-            <p className="text-[11px] text-muted-foreground mt-1">
+            <p className="ds-meta text-muted-foreground mt-1">
               Acesse{" "}
               <span className="text-brand font-medium">
                 Identidade &amp; Templates → Destination Intelligence
@@ -146,7 +146,7 @@ function TripDestinationPage() {
   const safety = dest.safety_level ? SAFETY_CONFIG[dest.safety_level] : null;
 
   return (
-    <div className="flex-1 overflow-y-auto p-4 md:p-6 space-y-5">
+    <div className="page-content page-section">
       {/* Header */}
       <div className="flex items-start justify-between gap-4">
         <div>
@@ -168,7 +168,7 @@ function TripDestinationPage() {
             </StatusBadge>
           </div>
         </div>
-        <div className="text-[10px] text-muted-foreground text-right shrink-0">
+        <div className="ds-meta text-muted-foreground text-right shrink-0">
           <p>Revisado em</p>
           <p className="font-medium text-foreground">
             {dest.reviewed_at ? new Date(dest.reviewed_at).toLocaleDateString("pt-BR") : "—"}
@@ -180,12 +180,12 @@ function TripDestinationPage() {
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         {/* Vistos & Entrada */}
         <div className="rounded-[var(--radius-card)] border-none glass-card border-none p-4">
-          <h3 className="text-xs font-bold uppercase tracking-widest text-muted-foreground mb-3 flex items-center gap-1.5">
+          <h3 className="ds-label-caps text-muted-foreground mb-3 flex items-center gap-1.5">
             <Globe className="h-3.5 w-3.5" /> Vistos &amp; Entrada
           </h3>
           <div className="space-y-0">
             <div className="py-2.5 border-b border-border">
-              <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">
+              <p className="ds-label-caps text-muted-foreground">
                 Visto Necessário
               </p>
               <div className="flex items-center gap-1.5 mt-0.5">
@@ -206,20 +206,20 @@ function TripDestinationPage() {
 
         {/* Saúde */}
         <div className="rounded-[var(--radius-card)] border-none glass-card border-none p-4">
-          <h3 className="text-xs font-bold uppercase tracking-widest text-muted-foreground mb-3 flex items-center gap-1.5">
+          <h3 className="ds-label-caps text-muted-foreground mb-3 flex items-center gap-1.5">
             <Heart className="h-3.5 w-3.5" /> Saúde
           </h3>
           <div className="space-y-0">
             {dest.vaccinations_required && dest.vaccinations_required.length > 0 && (
               <div className="py-2.5 border-b border-border">
-                <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">
+                <p className="ds-label-caps text-muted-foreground">
                   Vacinas Obrigatórias
                 </p>
                 <div className="flex flex-wrap gap-1 mt-1">
                   {dest.vaccinations_required.map((v, i) => (
                     <span
                       key={i}
-                      className="text-[10px] bg-danger/10 text-danger px-2 py-0.5 rounded-full font-medium"
+                      className="ds-meta bg-danger/10 text-danger px-2 py-0.5 rounded-full font-medium"
                     >
                       {v}
                     </span>
@@ -229,14 +229,14 @@ function TripDestinationPage() {
             )}
             {dest.vaccinations_recommended && dest.vaccinations_recommended.length > 0 && (
               <div className="py-2.5 border-b border-border">
-                <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">
+                <p className="ds-label-caps text-muted-foreground">
                   Vacinas Recomendadas
                 </p>
                 <div className="flex flex-wrap gap-1 mt-1">
                   {dest.vaccinations_recommended.map((v, i) => (
                     <span
                       key={i}
-                      className="text-[10px] bg-warning/10 text-warning px-2 py-0.5 rounded-full font-medium"
+                      className="ds-meta bg-warning/10 text-warning px-2 py-0.5 rounded-full font-medium"
                     >
                       {v}
                     </span>
@@ -250,7 +250,7 @@ function TripDestinationPage() {
 
         {/* Informações Práticas */}
         <div className="rounded-[var(--radius-card)] border-none glass-card border-none p-4">
-          <h3 className="text-xs font-bold uppercase tracking-widest text-muted-foreground mb-3 flex items-center gap-1.5">
+          <h3 className="ds-label-caps text-muted-foreground mb-3 flex items-center gap-1.5">
             <Zap className="h-3.5 w-3.5" /> Informações Práticas
           </h3>
           <div className="space-y-0">
@@ -280,7 +280,7 @@ function TripDestinationPage() {
 
         {/* Segurança & Cultura */}
         <div className="rounded-[var(--radius-card)] border-none glass-card border-none p-4">
-          <h3 className="text-xs font-bold uppercase tracking-widest text-muted-foreground mb-3 flex items-center gap-1.5">
+          <h3 className="ds-label-caps text-muted-foreground mb-3 flex items-center gap-1.5">
             <ShieldAlert className="h-3.5 w-3.5" /> Segurança &amp; Cultura
           </h3>
           <div className="space-y-0">
@@ -295,7 +295,7 @@ function TripDestinationPage() {
       {/* Aviso ao agente */}
       <div className="rounded-[var(--radius-card)] border border-dashed border-brand/30 bg-brand/5 p-3 flex items-start gap-2.5">
         <Info className="h-3.5 w-3.5 text-brand shrink-0 mt-0.5" />
-        <p className="text-[11px] text-muted-foreground">
+        <p className="ds-meta text-muted-foreground">
           Estas informações são visíveis para o cliente no portal da viagem. Mantenha-as atualizadas
           em{" "}
           <span className="font-medium text-foreground">

@@ -251,7 +251,7 @@ function RadarTVPage() {
           <div>
             <div className="flex items-center gap-2">
               <span className="h-2 w-2 rounded-full bg-emerald-500 animate-ping" />
-              <span className="text-[10px] font-black tracking-widest text-emerald-400 uppercase">Live Radar de Operações</span>
+              <span className="ds-meta font-black tracking-widest text-emerald-400 uppercase">Live Radar de Operações</span>
             </div>
             <h1 className="text-xl md:text-2xl font-black tracking-tight text-white flex items-center gap-2 mt-0.5">
               <Globe className="h-5 w-5 text-brand" /> {agency?.name} <span className="text-slate-600 font-normal">|</span> <span className="text-slate-400 font-bold">Monitor Global</span>
@@ -269,7 +269,7 @@ function RadarTVPage() {
             <Button
               onClick={() => setActiveTab("all")}
               className={cn(
-                "px-3 py-1.5 text-[10px] font-bold uppercase rounded-full tracking-wider transition-all cursor-pointer",
+                "px-3 py-1.5 ds-label-caps rounded-full tracking-wider transition-all cursor-pointer",
                 activeTab === "all" ? "bg-brand text-white shadow-none" : "text-slate-400 hover:text-slate-200"
               )}
             >
@@ -278,7 +278,7 @@ function RadarTVPage() {
             <Button
               onClick={() => setActiveTab("in_transit")}
               className={cn(
-                "px-3 py-1.5 text-[10px] font-bold uppercase rounded-full tracking-wider transition-all cursor-pointer",
+                "px-3 py-1.5 ds-label-caps rounded-full tracking-wider transition-all cursor-pointer",
                 activeTab === "in_transit" ? "bg-emerald-600 text-white shadow-none" : "text-slate-400 hover:text-slate-200"
               )}
             >
@@ -352,7 +352,7 @@ function RadarTVPage() {
             <h3 className="text-xs font-black uppercase tracking-wider text-slate-300 flex items-center gap-1.5">
               <Users className="h-4 w-4 text-brand" /> Lista de Trânsito
             </h3>
-            <span className="text-[10px] font-mono font-bold bg-slate-900 px-2 py-0.5 rounded border border-slate-800 text-slate-400">
+            <span className="ds-meta font-mono font-bold bg-slate-900 px-2 py-0.5 rounded border border-slate-800 text-slate-400">
               {filteredTravelers.length} registros
             </span>
           </div>
@@ -401,7 +401,7 @@ function RadarTVPage() {
                     </span>
                   </div>
 
-                  <div className="flex items-center gap-1.5 text-[10px] text-slate-400 font-medium pl-1.5 mt-0.5">
+                  <div className="flex items-center gap-1.5 ds-meta text-slate-400 font-medium pl-1.5 mt-0.5">
                     <MapPin className="h-3 w-3 shrink-0 text-slate-500" />
                     <span className="truncate">{t.destination}</span>
                   </div>

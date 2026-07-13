@@ -467,7 +467,7 @@ function TripReaccommodationPage() {
               <CardHeader className="glass bg-white/5 border-white/10/20 border-b border-border/40 py-4 px-6">
                 <div className="flex flex-wrap items-center justify-between gap-4">
                   <div className="flex items-center gap-3">
-                    <span className="font-mono text-xs font-bold uppercase tracking-wider bg-rose-500/10 text-rose-600 px-2.5 py-1 rounded">
+                    <span className="font-mono ds-label-caps tracking-wider bg-rose-500/10 text-rose-600 px-2.5 py-1 rounded">
                       Caso #{c.id.substring(0, 6)}
                     </span>
                     <h3 className="font-semibold text-foreground text-sm">
@@ -576,7 +576,7 @@ function TripReaccommodationPage() {
                             {/* Route & Segments */}
                             <div className="lg:col-span-4 space-y-2">
                               <div className="flex items-center gap-2">
-                                <span className="font-mono text-[10px] font-bold px-1.5 py-0.5 rounded glass bg-white/5 border-white/10 border-none/60">
+                                <span className="font-mono ds-meta font-bold px-1.5 py-0.5 rounded glass bg-white/5 border-white/10 border-none/60">
                                   ALT {alt.ranking}
                                 </span>
                                 <span className="text-xs text-muted-foreground font-medium capitalize">
@@ -615,27 +615,27 @@ function TripReaccommodationPage() {
                             {/* Deterministic Diff Badges */}
                             <div className="lg:col-span-5 flex flex-wrap gap-2">
                               {analysis?.date_changed && (
-                                <span className="text-[10px] font-medium bg-rose-50 text-rose-600 border border-rose-100 rounded-full px-2 py-0.5">
+                                <span className="ds-meta font-medium bg-rose-50 text-rose-600 border border-rose-100 rounded-full px-2 py-0.5">
                                   Mudança de Data
                                 </span>
                               )}
                               {analysis?.airport_changed && (
-                                <span className="text-[10px] font-medium bg-rose-50 text-rose-600 border border-rose-100 rounded-full px-2 py-0.5">
+                                <span className="ds-meta font-medium bg-rose-50 text-rose-600 border border-rose-100 rounded-full px-2 py-0.5">
                                   Troca de Aeroporto
                                 </span>
                               )}
                               {analysis?.overnight_connection && (
-                                <span className="text-[10px] font-medium bg-amber-50 text-amber-600 border border-amber-100 rounded-full px-2 py-0.5">
+                                <span className="ds-meta font-medium bg-amber-50 text-amber-600 border border-amber-100 rounded-full px-2 py-0.5">
                                   Conexão Longa/Pernoite
                                 </span>
                               )}
                               {analysis?.baggage_changed && (
-                                <span className="text-[10px] font-medium bg-rose-50 text-rose-600 border border-rose-100 rounded-full px-2 py-0.5">
+                                <span className="ds-meta font-medium bg-rose-50 text-rose-600 border border-rose-100 rounded-full px-2 py-0.5">
                                   Franquia Bagagem Alterada
                                 </span>
                               )}
                               {analysis?.total_duration_delta_minutes !== 0 && (
-                                <span className="text-[10px] font-medium bg-slate-50 text-slate-600 border border-slate-100 rounded-full px-2 py-0.5">
+                                <span className="ds-meta font-medium bg-slate-50 text-slate-600 border border-slate-100 rounded-full px-2 py-0.5">
                                   Tempo:{" "}
                                   {analysis.total_duration_delta_minutes > 0
                                     ? `+${Math.round(analysis.total_duration_delta_minutes / 60)}h`
@@ -643,7 +643,7 @@ function TripReaccommodationPage() {
                                 </span>
                               )}
                               {analysis?.segment_count_delta !== 0 && (
-                                <span className="text-[10px] font-medium bg-slate-50 text-slate-600 border border-slate-100 rounded-full px-2 py-0.5">
+                                <span className="ds-meta font-medium bg-slate-50 text-slate-600 border border-slate-100 rounded-full px-2 py-0.5">
                                   Conexões:{" "}
                                   {analysis.segment_count_delta > 0
                                     ? `+${analysis.segment_count_delta}`
@@ -688,7 +688,7 @@ function TripReaccommodationPage() {
 
                           {/* Warning summaries */}
                           {analysis?.warnings && analysis.warnings.length > 0 && (
-                            <div className="bg-rose-500/5 px-4 py-2 text-[11px] text-rose-600 flex items-start gap-2 border-b border-border/20">
+                            <div className="bg-rose-500/5 px-4 py-2 ds-meta text-rose-600 flex items-start gap-2 border-b border-border/20">
                               <AlertTriangle className="h-3.5 w-3.5 shrink-0 mt-0.5" />
                               <div className="space-y-0.5">
                                 <span className="font-bold">Pontos de atenção identificados: </span>
@@ -698,7 +698,7 @@ function TripReaccommodationPage() {
                           )}
 
                           {/* AI & Deterministic details */}
-                          <div className="p-3 glass bg-white/5 border-white/10/10 text-[11px] text-muted-foreground grid grid-cols-1 md:grid-cols-2 gap-4">
+                          <div className="p-3 glass bg-white/5 border-white/10/10 ds-meta text-muted-foreground grid grid-cols-1 md:grid-cols-2 gap-4">
                             <div>
                               <span className="font-semibold text-foreground">
                                 Diferença Determinística:
@@ -814,14 +814,14 @@ function TripReaccommodationPage() {
                           <span className="text-muted-foreground font-semibold">
                             Assinatura de Integridade (SHA256):
                           </span>{" "}
-                          <span className="font-mono text-[10px] text-foreground glass-card border-none px-1.5 py-0.5 rounded border-none/40 break-all">
+                          <span className="font-mono ds-meta text-foreground glass-card border-none px-1.5 py-0.5 rounded border-none/40 break-all">
                             {activeDecision.signature_hash || "N/A"}
                           </span>
                         </div>
                         <div>
                           <span className="text-muted-foreground font-semibold">User Agent:</span>{" "}
                           <span
-                            className="text-foreground text-[11px] truncate block"
+                            className="text-foreground ds-meta truncate block"
                             title={activeDecision.user_agent || ""}
                           >
                             {activeDecision.user_agent || "N/A"}
@@ -913,7 +913,7 @@ function TripReaccommodationPage() {
                               <Button
                                 size="sm"
                                 variant="outline"
-                                className="cursor-pointer text-[10px] h-6 border-emerald-200 text-emerald-600 hover:bg-emerald-50"
+                                className="cursor-pointer ds-meta h-6 border-emerald-200 text-emerald-600 hover:bg-emerald-50"
                                 onClick={async () => {
                                   const latestDecision = c.decisions?.[0];
                                   const selectedAlt = c.alternatives?.find(
@@ -1008,14 +1008,14 @@ function TripReaccommodationPage() {
 
             <div className="space-y-4">
               <div className="flex items-center justify-between">
-                <Label className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
+                <Label className="ds-label-caps tracking-wider text-muted-foreground">
                   Trechos de Voo (Conexões)
                 </Label>
                 <Button
                   variant="outline"
                   size="sm"
                   onClick={addSegmentRow}
-                  className="cursor-pointer text-[10px]"
+                  className="cursor-pointer ds-meta"
                 >
                   <Plus className="mr-1 h-3 w-3" /> Adicionar Trecho
                 </Button>
@@ -1040,7 +1040,7 @@ function TripReaccommodationPage() {
 
                   <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
                     <div className="space-y-1">
-                      <Label className="text-[10px] text-muted-foreground">Cia Aérea (IATA)</Label>
+                      <Label className="ds-meta text-muted-foreground">Cia Aérea (IATA)</Label>
                       <Input
                         placeholder="Ex: LA, AD, G3"
                         value={seg.airline_code}
@@ -1050,7 +1050,7 @@ function TripReaccommodationPage() {
                       />
                     </div>
                     <div className="space-y-1">
-                      <Label className="text-[10px] text-muted-foreground">Nº do Voo</Label>
+                      <Label className="ds-meta text-muted-foreground">Nº do Voo</Label>
                       <Input
                         placeholder="Ex: 3450"
                         value={seg.flight_number}
@@ -1058,7 +1058,7 @@ function TripReaccommodationPage() {
                       />
                     </div>
                     <div className="space-y-1">
-                      <Label className="text-[10px] text-muted-foreground">Origem (IATA)</Label>
+                      <Label className="ds-meta text-muted-foreground">Origem (IATA)</Label>
                       <Input
                         placeholder="Ex: GRU"
                         value={seg.origin_iata}
@@ -1068,7 +1068,7 @@ function TripReaccommodationPage() {
                       />
                     </div>
                     <div className="space-y-1">
-                      <Label className="text-[10px] text-muted-foreground">Destino (IATA)</Label>
+                      <Label className="ds-meta text-muted-foreground">Destino (IATA)</Label>
                       <Input
                         placeholder="Ex: FLN"
                         value={seg.destination_iata}
@@ -1085,7 +1085,7 @@ function TripReaccommodationPage() {
 
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div className="space-y-1">
-                      <Label className="text-[10px] text-muted-foreground">
+                      <Label className="ds-meta text-muted-foreground">
                         Partida (Data e Hora)
                       </Label>
                       <Input
@@ -1095,7 +1095,7 @@ function TripReaccommodationPage() {
                       />
                     </div>
                     <div className="space-y-1">
-                      <Label className="text-[10px] text-muted-foreground">
+                      <Label className="ds-meta text-muted-foreground">
                         Chegada (Data e Hora)
                       </Label>
                       <Input
@@ -1108,7 +1108,7 @@ function TripReaccommodationPage() {
 
                   <div className="grid grid-cols-3 gap-4">
                     <div className="space-y-1">
-                      <Label className="text-[10px] text-muted-foreground">Classe/Cabine</Label>
+                      <Label className="ds-meta text-muted-foreground">Classe/Cabine</Label>
                       <Select
                         value={seg.cabin}
                         onValueChange={(v) => updateSegmentField(index, "cabin", v)}
@@ -1125,7 +1125,7 @@ function TripReaccommodationPage() {
                       </Select>
                     </div>
                     <div className="space-y-1">
-                      <Label className="text-[10px] text-muted-foreground">Bagagem Franquia</Label>
+                      <Label className="ds-meta text-muted-foreground">Bagagem Franquia</Label>
                       <Input
                         placeholder="Ex: 1x 23kg, Só de mão"
                         value={seg.baggage}
@@ -1133,7 +1133,7 @@ function TripReaccommodationPage() {
                       />
                     </div>
                     <div className="space-y-1">
-                      <Label className="text-[10px] text-muted-foreground">Localizador (PNR)</Label>
+                      <Label className="ds-meta text-muted-foreground">Localizador (PNR)</Label>
                       <Input
                         placeholder="Ex: XYZW12"
                         value={seg.record_locator}

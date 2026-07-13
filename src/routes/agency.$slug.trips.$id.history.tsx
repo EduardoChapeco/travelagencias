@@ -134,13 +134,13 @@ function TripHistoryPage() {
   combinedLogs.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
 
   return (
-    <div className="flex-1 overflow-y-auto p-4 md:p-6 space-y-6">
+    <div className="page-content page-section">
       {/* Header */}
       <div className="rounded-[var(--radius-card)] border-none glass-card border-none p-4 flex items-start gap-3">
         <Clock className="h-4 w-4 text-brand mt-0.5 shrink-0" />
         <div>
           <p className="text-xs font-semibold text-foreground">Histórico de Alterações</p>
-          <p className="text-[11px] text-muted-foreground mt-0.5">
+          <p className="ds-meta text-muted-foreground mt-0.5">
             Visualize o log de auditoria em tempo real para ações executadas nesta viagem, incluindo
             alterações operacionais e de embarque.
           </p>
@@ -168,7 +168,7 @@ function TripHistoryPage() {
 
       {!isLoading && combinedLogs.length > 0 && (
         <div className="rounded-[var(--radius-card)] border-none glass-card border-none p-4 max-w-3xl space-y-4">
-          <h3 className="text-xs font-bold uppercase tracking-widest text-muted-foreground flex items-center gap-1.5">
+          <h3 className="ds-label-caps text-muted-foreground flex items-center gap-1.5">
             <Activity className="h-3.5 w-3.5 text-brand" /> Linha do Tempo da Viagem (
             {combinedLogs.length} logs)
           </h3>
@@ -183,12 +183,12 @@ function TripHistoryPage() {
                   <div className="flex items-center gap-2 text-xs">
                     <span className="font-semibold text-foreground">{log.action}</span>
                     <span className="text-muted-foreground">·</span>
-                    <span className="text-muted-foreground font-mono text-[10px]">
+                    <span className="text-muted-foreground font-mono ds-meta">
                       {new Date(log.date).toLocaleString("pt-BR")}
                     </span>
                   </div>
                   <p className="text-xs text-muted-foreground">{log.details}</p>
-                  <div className="flex items-center gap-1 text-[10px] text-muted-foreground pt-0.5">
+                  <div className="flex items-center gap-1 ds-meta text-muted-foreground pt-0.5">
                     <User className="h-3 w-3" />
                     <span>Por {log.actorName}</span>
                     <span className="text-muted-foreground/60">·</span>

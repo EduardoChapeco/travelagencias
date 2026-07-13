@@ -138,7 +138,7 @@ export function TaskShell() {
               <Button
                 variant="outline"
                 size="sm"
-                className="h-7 px-2.5 gap-1.5 text-[11px] font-bold bg-transparent hover:bg-white/5 border-none text-white/70 hover:text-white rounded-full transition-colors cursor-pointer"
+                className="h-7 px-2.5 gap-1.5 ds-meta font-bold bg-transparent hover:bg-white/5 border-none text-white/70 hover:text-white rounded-full transition-colors cursor-pointer"
                 onClick={() => setFiltersOpen(true)}
               >
                 <Filter className="h-3 w-3" />

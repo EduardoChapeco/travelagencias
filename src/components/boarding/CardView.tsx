@@ -65,7 +65,7 @@ export function CardView({
             {card.airline || "Cia não informada"}
           </div>
           {card.trip_title && (
-            <div className="mt-1 text-[10px] text-muted-foreground line-clamp-1">
+            <div className="mt-1 ds-meta text-muted-foreground line-clamp-1">
               {card.trip_title}
             </div>
           )}
@@ -98,7 +98,7 @@ export function CardView({
       )}
 
       {/* Info row */}
-      <div className="flex items-center gap-3 px-4 pb-2 text-[11px] text-muted-foreground">
+      <div className="flex items-center gap-3 px-4 pb-2 ds-meta text-muted-foreground">
         {hasPax && (
           <span className="flex items-center gap-1">
             <Users className="h-3 w-3" />
@@ -130,7 +130,7 @@ export function CardView({
       {/* Alerts */}
       {(isUrgent || (card.alerts && card.alerts.length > 0)) && (
         <div
-          className={`mx-4 mb-3 flex items-start gap-1.5 rounded-full border px-2 py-1.5 text-[10px] font-semibold ${isUrgent ? "border-danger/30 bg-danger/5 text-danger" : "border-warning/30 bg-warning-bg/50 text-warning"}`}
+          className={`mx-4 mb-3 flex items-start gap-1.5 rounded-full border px-2 py-1.5 ds-meta font-semibold ${isUrgent ? "border-danger/30 bg-danger/5 text-danger" : "border-warning/30 bg-warning-bg/50 text-warning"}`}
         >
           <AlertTriangle className="mt-0.5 h-3 w-3 shrink-0" />
           <div className="flex flex-col">
@@ -149,7 +149,7 @@ export function CardView({
         <Button
           type="button"
           onClick={() => onCardClick(card)}
-          className="flex w-full items-center justify-between border-t border-border/50 px-4 py-2 text-[11px] font-medium text-muted-foreground hover:text-brand hover:bg-surface-alt/30 transition-colors"
+          className="flex w-full items-center justify-between border-t border-border/50 px-4 py-2 ds-meta font-medium text-muted-foreground hover:text-brand hover:bg-surface-alt/30 transition-colors"
         >
           Ver detalhes <ChevronRight className="h-3.5 w-3.5" />
         </Button>

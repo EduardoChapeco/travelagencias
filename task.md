@@ -4,9 +4,22 @@
 
 - [x] **LOTE 0** — Reparar fixture E2E do AppShell ✅ 11/11 testes passando
 - [x] **LOTE 2B** — Formulários canônicos (por domínio) ✅ 100% migrados
-- [ ] **LOTE 3** — Header, Toolbar, Busca, Filtros e Overlays
-- [ ] **LOTE 4** — Cards, Painéis, Tabelas, Kanban e Calendário
-- [ ] **LOTE 5** — Tokens, Tema e White-label
+- [x] **LOTE 3** — Header, Toolbar, Busca, Filtros e Overlays
+- [x] **LOTE 4** — Cards, Painéis, Tabelas, Kanban e Calendário
+- [x] **LOTE 5** — Tokens, Tema e White-label
+- [/] **LOTE 6** — Dados, Supabase, Tipagem e Código morto
+
+---
+
+## Fase 5: Unificação de Primitives
+- [x] Migrar Side Panels soltos (`fixed inset-0`, etc) para Radix Sheet (`SheetPage`)
+- [x] Migrar Modais soltos para Radix Dialog
+- [x] Remover botões de fechar redundantes dentro desses modais, deixando a UI padrão lidar com isso.
+- [x] Validar Z-Index context
+
+## Fase 6: Padronização de Navegação e Menus
+- [x] Identificar Dropdowns, Sidebars e Menus de Navegação duplicados
+- [/] Refatorar componentes de Header e Sidebar para consumo global
 - [ ] **LOTE 6** — Dados, Supabase, Tipagem e Código morto
 
 ---
@@ -22,6 +35,26 @@
 - [x] Solução definitiva: navegar para `/auth/login`, setar localStorage via `evaluate()`, depois usar `history.pushState + popstate` para SPA routing sem SSR
 - [x] **4/4 testes passando** ✅ (55.6s, incluindo 24.3s para o AppShell)
 - [x] Preservação: isolamento de tenant, verificações geométricas (não alterados)
+
+## Fase 5 — Portal: Dead Code + Desacoplamento Quotes (Lote 5)
+- [x] Confirmar zero consumidores de `NewSectionsRenderer.tsx` (grep global)
+- [x] Deletar `src/components/portal/NewSectionsRenderer.tsx` (103KB de dead code)
+- [x] Remover import morto de `NewSectionsRenderer` em `BlockRenderer.tsx` (L2)
+- [x] Substituir fallback `<NewSectionsRenderer>` no switch do `BlockRenderer` por `null` silencioso
+- [x] Adicionar `fetchKnowledgeDocs`, `deleteKnowledgeDoc` em `quotes-rag.ts`
+- [x] Adicionar `deleteQuoteRequest`, `getCurrentUserRole`, `getCurrentUserId`, `invokeAiOrchestrator` em `quotes.ts`
+- [x] Substituir 8 chamadas diretas ao `supabase` em `agency.$slug.quotes.index.tsx` por serviços
+- [x] Remover `shadow-lg` de `sheet.tsx`, `dialog.tsx` e `AIGeneratorSheet.tsx`
+- [x] Typecheck global — zero erros
+- [x] Build de produção — 100% sucesso (BlockRenderer: 364KB → 237KB, -35%)
+
+## Fase 6 — Inbox Central: Desacoplamento de Lógica e Hook Customizado (Lote 6)
+- [x] Criar hook `src/hooks/use-inbox.ts` encapsulando toda a camada de dados (12 queries, mutations e realtime subscription)
+- [x] Refatorar a rota `src/routes/agency.$slug.inbox.tsx` para consumir o hook `useInbox`
+- [x] Manter estados de UI/formulário locais isolados na página da rota
+- [x] Corrigir imports de `@tanstack/react-query` e tipagens/fallbacks no mapeamento de mensagens
+- [x] Rodar typecheck global — zero erros
+- [x] Rodar build de homologação de produção — 100% sucesso (Reduzido em 535 linhas de código acoplado)
 
 ---
 

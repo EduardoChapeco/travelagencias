@@ -191,11 +191,11 @@ export function FileUploader({
                     setUrlDraft("");
                   }
                 }}
-                className="h-7 w-full rounded px-2 text-[11px]"
+                className="h-7 w-full rounded px-2 ds-meta"
               />
             </div>
           )}
-          <div className="text-[10px] text-muted-foreground">Máx {LIMITS_MB[variant]}MB</div>
+          <div className="ds-meta text-muted-foreground">Máx {LIMITS_MB[variant]}MB</div>
         </div>
       )}
     </div>

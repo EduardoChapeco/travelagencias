@@ -51,6 +51,7 @@ import {
   PanelLeft,
   AlertCircle,
 } from "lucide-react";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { toast } from "sonner";
 import { useAgency } from "@/lib/agency-context";
 import { supabase } from "@/integrations/supabase/client";
@@ -828,15 +829,15 @@ function PageEditorRoute() {
 
         <div className="hidden sm:flex items-center gap-2">
           {saveStatus === "saving" && (
-            <span className="text-[10px] text-muted-foreground animate-pulse mr-1">
+            <span className="ds-meta text-muted-foreground animate-pulse mr-1">
               Salvando...
             </span>
           )}
           {saveStatus === "saved" && (
-            <span className="text-[10px] text-green-600 font-bold mr-1">✓ Salvo</span>
+            <span className="ds-meta text-green-600 font-bold mr-1">✓ Salvo</span>
           )}
           {saveStatus === "error" && (
-            <span className="text-[10px] text-destructive font-bold mr-1">✗ Erro</span>
+            <span className="ds-meta text-destructive font-bold mr-1">✗ Erro</span>
           )}
 
           {!isNew && (
@@ -976,7 +977,7 @@ function PageEditorRoute() {
               <Button
                 type="button"
                 onClick={() => setLeftTab("sections")}
-                className={`py-3 text-[10px] uppercase tracking-wider font-bold transition-all border-b-2 -mb-[1px] cursor-pointer ${
+                className={`py-3 ds-label-caps font-bold transition-all border-b-2 -mb-[1px] cursor-pointer ${
                   leftTab === "sections"
                     ? "border-foreground text-foreground"
                     : "border-transparent text-muted-foreground hover:text-foreground"
@@ -987,7 +988,7 @@ function PageEditorRoute() {
               <Button
                 type="button"
                 onClick={() => setLeftTab("templates")}
-                className={`py-3 text-[10px] uppercase tracking-wider font-bold transition-all border-b-2 -mb-[1px] cursor-pointer ${
+                className={`py-3 ds-label-caps font-bold transition-all border-b-2 -mb-[1px] cursor-pointer ${
                   leftTab === "templates"
                     ? "border-foreground text-foreground"
                     : "border-transparent text-muted-foreground hover:text-foreground"
@@ -998,7 +999,7 @@ function PageEditorRoute() {
               <Button
                 type="button"
                 onClick={() => setLeftTab("layers")}
-                className={`py-3 text-[10px] uppercase tracking-wider font-bold transition-all border-b-2 -mb-[1px] cursor-pointer ${
+                className={`py-3 ds-label-caps font-bold transition-all border-b-2 -mb-[1px] cursor-pointer ${
                   leftTab === "layers"
                     ? "border-foreground text-foreground"
                     : "border-transparent text-muted-foreground hover:text-foreground"
@@ -1012,10 +1013,10 @@ function PageEditorRoute() {
             {leftTab === "sections" && (
               <div className="flex-1 flex flex-col min-h-0 overflow-y-auto p-4 space-y-4 scrollbar-thin">
                 <div>
-                  <h4 className="text-[10px] uppercase tracking-wider font-bold text-foreground">
+                  <h4 className="ds-label-caps font-bold text-foreground">
                     Biblioteca de Seções
                   </h4>
-                  <p className="text-[10px] text-muted-foreground leading-normal mt-0.5">
+                  <p className="ds-meta text-muted-foreground leading-normal mt-0.5">
                     Adicione novos blocos ao layout.
                   </p>
                 </div>
@@ -1129,7 +1130,7 @@ function PageEditorRoute() {
                                   }`}
                                 />
                               </div>
-                              <span className="text-[10px] font-semibold text-foreground leading-tight">
+                              <span className="ds-meta font-semibold text-foreground leading-tight">
                                 {BLOCK_LABELS[type]}
                               </span>
                               {isBiolinkType && (
@@ -1160,10 +1161,10 @@ function PageEditorRoute() {
             {leftTab === "templates" && (
               <div className="flex-1 flex flex-col min-h-0 overflow-y-auto p-4 space-y-4 scrollbar-thin">
                 <div>
-                  <h4 className="text-[10px] uppercase tracking-wider font-bold text-foreground">
+                  <h4 className="ds-label-caps font-bold text-foreground">
                     Designs Prontos
                   </h4>
-                  <p className="text-[10px] text-muted-foreground leading-normal mt-0.5">
+                  <p className="ds-meta text-muted-foreground leading-normal mt-0.5">
                     Selecione um template pronto.
                   </p>
                 </div>
@@ -1186,7 +1187,7 @@ function PageEditorRoute() {
                           {tpl.category}
                         </span>
                       </div>
-                      <span className="text-[10px] text-muted-foreground leading-normal">
+                      <span className="ds-meta text-muted-foreground leading-normal">
                         {tpl.description}
                       </span>
                     </Button>
@@ -1199,7 +1200,7 @@ function PageEditorRoute() {
             {leftTab === "layers" && (
               <div className="flex-1 flex flex-col min-h-0">
                 <div className="px-4 py-3 border-b border-border bg-white flex justify-between items-center shrink-0">
-                  <h3 className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground flex items-center gap-1.5">
+                  <h3 className="ds-label-caps tracking-wider text-muted-foreground flex items-center gap-1.5">
                     <Layers className="w-3.5 h-3.5" /> Ordenar Seções
                   </h3>
                   <span className="text-[9px] bg-border px-1.5 py-0.5 font-bold text-muted-foreground">
@@ -1210,7 +1211,7 @@ function PageEditorRoute() {
                   {blocks.length === 0 ? (
                     <div className="border border-dashed border-border p-8 text-center glass bg-white/5 border-white/10/10">
                       <p className="text-xs text-muted-foreground font-medium">Página vazia</p>
-                      <p className="text-[10px] text-muted-foreground/70 mt-1">
+                      <p className="ds-meta text-muted-foreground/70 mt-1">
                         Adicione seções pela aba "Seções".
                       </p>
                     </div>
@@ -1368,14 +1369,14 @@ function PageEditorRoute() {
                       removeBlock(selectedBlockId);
                       setSelectedBlockId(null);
                     }}
-                    className="flex-1 justify-center text-destructive hover:bg-destructive/5 hover:border-destructive/30 text-[10px] uppercase tracking-wider font-bold"
+                    className="flex-1 justify-center text-destructive hover:bg-destructive/5 hover:border-destructive/30 ds-label-caps font-bold"
                   >
                     <Trash2 className="w-3.5 h-3.5 mr-1.5" /> Excluir
                   </GhostButton>
                   <PrimaryButton
                     type="button"
                     onClick={() => setSelectedBlockId(null)}
-                    className="flex-1 justify-center text-[10px] uppercase tracking-wider font-bold"
+                    className="flex-1 justify-center ds-label-caps font-bold"
                   >
                     Concluído
                   </PrimaryButton>
@@ -1639,7 +1640,7 @@ function PageEditorRoute() {
                 <div className="flex justify-between items-center">
                   <div>
                     <span className="text-sm font-semibold">{v.title}</span>
-                    <div className="text-[11px] text-muted-foreground mt-0.5">
+                    <div className="ds-meta text-muted-foreground mt-0.5">
                       {new Date(v.created_at).toLocaleString("pt-BR")}
                     </div>
                   </div>
@@ -1684,10 +1685,12 @@ function PageEditorRoute() {
         }}
       />
 
-      {showNewPageModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/55 backdrop-blur-sm">
-          <div className="glass-card border-none border-none rounded-[var(--radius-card)] p-6 w-full max-w-md space-y-4">
-            <h3 className="text-sm font-bold text-foreground">Criar Nova Página</h3>
+      <Dialog open={showNewPageModal} onOpenChange={setShowNewPageModal}>
+        <DialogContent className="max-w-md p-0 overflow-hidden border-none/10 max-h-[90vh] bg-background">
+          <DialogHeader className="px-6 py-4 border-b border-border/40">
+            <DialogTitle className="text-sm font-bold text-foreground">Criar Nova Página</DialogTitle>
+          </DialogHeader>
+          <div className="p-6 space-y-4">
             <div className="space-y-3">
               <Field label="Título da Página">
                 <Input
@@ -1727,13 +1730,15 @@ function PageEditorRoute() {
               </PrimaryButton>
             </div>
           </div>
-        </div>
-      )}
+        </DialogContent>
+      </Dialog>
 
-      {showRenameModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/55 backdrop-blur-sm">
-          <div className="glass-card border-none border-none rounded-[var(--radius-card)] p-6 w-full max-w-md space-y-4">
-            <h3 className="text-sm font-bold text-foreground">Renomear Página</h3>
+      <Dialog open={!!showRenameModal} onOpenChange={(open) => !open && setShowRenameModal(null)}>
+        <DialogContent className="max-w-md p-0 overflow-hidden border-none/10 max-h-[90vh] bg-background">
+          <DialogHeader className="px-6 py-4 border-b border-border/40">
+            <DialogTitle className="text-sm font-bold text-foreground">Renomear Página</DialogTitle>
+          </DialogHeader>
+          <div className="p-6 space-y-4">
             <div className="space-y-3">
               <Field label="Título da Página">
                 <Input value={renameTitle} onChange={(e) => setRenameTitle(e.target.value)} />
@@ -1755,22 +1760,22 @@ function PageEditorRoute() {
               </PrimaryButton>
             </div>
           </div>
-        </div>
-      )}
+        </DialogContent>
+      </Dialog>
 
       {/* Floating Action Menu for mobile devices */}
       <div className="sm:hidden fixed bottom-4 left-1/2 -translate-x-1/2 z-50 flex items-center gap-2 glass-card border-none/90 dark:bg-zinc-950/90 backdrop-blur-3xl border border-white/20 dark:border-white/10 p-2.5 rounded-3xl shadow-none w-[calc(100vw-32px)] max-w-sm justify-between">
         <div className="flex items-center gap-1.5 min-w-0">
           {saveStatus === "saving" && (
-            <span className="text-[10px] text-muted-foreground animate-pulse truncate">
+            <span className="ds-meta text-muted-foreground animate-pulse truncate">
               Salvando...
             </span>
           )}
           {saveStatus === "saved" && (
-            <span className="text-[10px] text-green-600 font-bold">✓ Salvo</span>
+            <span className="ds-meta text-green-600 font-bold">✓ Salvo</span>
           )}
           {saveStatus === "error" && (
-            <span className="text-[10px] text-destructive font-bold">✗ Erro</span>
+            <span className="ds-meta text-destructive font-bold">✗ Erro</span>
           )}
         </div>
         <div className="flex items-center gap-2 shrink-0">

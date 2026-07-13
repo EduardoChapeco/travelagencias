@@ -403,7 +403,7 @@ export function NewGroupTourWizard({
 
       {/* Mobile progress indicator */}
       <div className="md:hidden flex items-center justify-between border-b border-border bg-surface px-6 py-3 shrink-0">
-        <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider">
+        <span className="ds-meta font-bold text-muted-foreground uppercase tracking-wider">
           Passo {step + 1} de {STEPS.length}
         </span>
         <span className="text-xs font-black text-brand uppercase tracking-widest">
@@ -419,7 +419,7 @@ export function NewGroupTourWizard({
             className={`flex items-center gap-2 ${i === step ? "opacity-100" : "opacity-40"}`}
           >
             <div
-              className={`flex h-6 w-6 items-center justify-center rounded-full text-[11px] font-bold ${
+              className={`flex h-6 w-6 items-center justify-center rounded-full ds-meta font-bold ${
                 i < step
                   ? "bg-success text-success-foreground"
                   : i === step
@@ -521,7 +521,7 @@ export function NewGroupTourWizard({
                         </option>
                       ))}
                     </Select>
-                    <p className="text-[10px] text-muted-foreground mt-1">
+                    <p className="ds-meta text-muted-foreground mt-1">
                       Ao atrelar um ônibus, as vendas permitirão a escolha da poltrona.
                     </p>
                   </Field>
@@ -617,7 +617,7 @@ export function NewGroupTourWizard({
                     {...register("youtubeUrl")}
                     placeholder="Ex: https://www.youtube.com/watch?v=dQw4w9WgXcQ"
                   />
-                  <p className="text-[10px] text-muted-foreground mt-1">
+                  <p className="ds-meta text-muted-foreground mt-1">
                     Insira a URL de um vídeo promocional para ser incorporado na página de vendas
                     B2C.
                   </p>
@@ -644,7 +644,7 @@ export function NewGroupTourWizard({
 
                 {/* Form to add a new pricing tier */}
                 <div className="p-4 rounded-[var(--radius-card)] border border-border bg-surface-alt/10 space-y-4">
-                  <h4 className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
+                  <h4 className="ds-label-caps tracking-wider text-muted-foreground">
                     Nova Tarifa
                   </h4>
                   <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
@@ -755,7 +755,7 @@ export function NewGroupTourWizard({
 
                 {/* Form to add a new extra option */}
                 <div className="p-4 rounded-[var(--radius-card)] border border-border bg-surface-alt/10 space-y-4">
-                  <h4 className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
+                  <h4 className="ds-label-caps tracking-wider text-muted-foreground">
                     Novo Opcional
                   </h4>
                   <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
@@ -1059,7 +1059,7 @@ export function NewGroupTourWizard({
                         <span className="text-sm font-semibold text-muted-foreground">
                           {uploading ? "Enviando..." : "Clique para fazer upload da capa"}
                         </span>
-                        <span className="text-[10px] text-muted-foreground mt-1 uppercase tracking-widest">
+                        <span className="ds-meta text-muted-foreground mt-1 uppercase tracking-widest">
                           Recomendado: 1200x800px
                         </span>
                       </label>
@@ -1226,7 +1226,7 @@ export function NewGroupTourWizard({
 
                 {watchPricingTiers && watchPricingTiers.length > 0 && (
                   <div className="space-y-2 rounded-[var(--radius-card)] border border-border bg-surface p-5">
-                    <h4 className="text-xs font-bold uppercase tracking-widest text-muted-foreground mb-2 flex items-center gap-1.5">
+                    <h4 className="ds-label-caps text-muted-foreground mb-2 flex items-center gap-1.5">
                       <BedDouble className="h-4 w-4" /> Tarifas de Acomodação (
                       {watchPricingTiers.length})
                     </h4>
@@ -1246,7 +1246,7 @@ export function NewGroupTourWizard({
 
                 {watchExtraOptions && watchExtraOptions.length > 0 && (
                   <div className="space-y-2 rounded-[var(--radius-card)] border border-border bg-surface p-5">
-                    <h4 className="text-xs font-bold uppercase tracking-widest text-muted-foreground mb-2 flex items-center gap-1.5">
+                    <h4 className="ds-label-caps text-muted-foreground mb-2 flex items-center gap-1.5">
                       <Layers className="h-4 w-4" /> Opcionais Cadastrados (
                       {watchExtraOptions.length})
                     </h4>
@@ -1265,7 +1265,7 @@ export function NewGroupTourWizard({
                 )}
 
                 <div className="space-y-4 rounded-[var(--radius-card)] border border-border bg-surface p-5">
-                  <h4 className="text-xs font-bold uppercase tracking-widest text-muted-foreground">
+                  <h4 className="ds-label-caps text-muted-foreground">
                     Opções de Publicação
                   </h4>
 

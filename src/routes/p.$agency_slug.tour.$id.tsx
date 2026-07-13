@@ -452,7 +452,7 @@ function Page() {
                 <section className="bg-white border border-slate-200 rounded-[var(--radius-card)] p-5 md:p-6 space-y-4 shadow-xs relative">
                   <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4 border-b border-slate-100 pb-4">
                     <div className="space-y-1">
-                      <span className="text-[10px] font-extrabold uppercase tracking-wider text-slate-400 block">
+                      <span className="ds-meta font-extrabold uppercase tracking-wider text-slate-400 block">
                         Hospedagem Inclusa
                       </span>
                       <h2 className="text-lg font-black text-slate-900 uppercase flex items-center gap-2">
@@ -488,7 +488,7 @@ function Page() {
                     Array.isArray(hotel.amenities) &&
                     hotel.amenities.length > 0 && (
                       <div className="space-y-2 pt-2">
-                        <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest block">
+                        <span className="ds-meta font-bold text-slate-400 uppercase tracking-widest block">
                           Comodidades & Lazer
                         </span>
                         <div className="flex flex-wrap gap-2">
@@ -506,7 +506,7 @@ function Page() {
 
                   {hotel.gallery && Array.isArray(hotel.gallery) && hotel.gallery.length > 0 && (
                     <div className="space-y-2 pt-3 border-t border-slate-100">
-                      <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest block">
+                      <span className="ds-meta font-bold text-slate-400 uppercase tracking-widest block">
                         Galeria de Fotos
                       </span>
                       <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
@@ -564,7 +564,7 @@ function Page() {
                 <section className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   {includes.length > 0 && (
                     <div className="bg-white border border-slate-200 rounded-[var(--radius-card)] p-5 shadow-xs space-y-3">
-                      <h3 className="text-xs font-bold uppercase tracking-wider text-emerald-800 flex items-center gap-1.5">
+                      <h3 className="ds-label-caps tracking-wider text-emerald-800 flex items-center gap-1.5">
                         <Check className="w-4 h-4 text-emerald-600 shrink-0" /> O que está Incluso
                       </h3>
                       <ul className="text-xs text-slate-650 space-y-2 font-medium">
@@ -579,7 +579,7 @@ function Page() {
                   )}
                   {excludes.length > 0 && (
                     <div className="bg-white border border-slate-200 rounded-[var(--radius-card)] p-5 shadow-xs space-y-3">
-                      <h3 className="text-xs font-bold uppercase tracking-wider text-rose-800 flex items-center gap-1.5">
+                      <h3 className="ds-label-caps tracking-wider text-rose-800 flex items-center gap-1.5">
                         <XCircle className="w-4 h-4 text-rose-650 shrink-0" /> O que não está
                         Incluso
                       </h3>
@@ -601,7 +601,7 @@ function Page() {
             <div className="space-y-6">
               <div className="sticky top-6 bg-white border border-slate-200 rounded-[var(--radius-card)] p-5 md:p-6 shadow-none space-y-5">
                 <div className="border-b border-slate-100 pb-4 text-center">
-                  <span className="text-[10px] font-extrabold uppercase tracking-widest text-slate-400 block">
+                  <span className="ds-meta font-extrabold uppercase tracking-widest text-slate-400 block">
                     Reservas Online
                   </span>
                   <div className="text-3xl font-mono font-black text-[var(--color-brand)] mt-1">
@@ -658,7 +658,7 @@ function Page() {
                 {/* Pricing Tiers Selection */}
                 {pricingTiers.length > 0 ? (
                   <div className="space-y-3">
-                    <label className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">
+                    <label className="ds-meta font-bold text-slate-400 uppercase tracking-wider block">
                       1. Escolha a Acomodação
                     </label>
                     <div className="space-y-2">
@@ -683,7 +683,7 @@ function Page() {
                               </span>
                             </div>
                             {tier.description && (
-                              <span className="text-[10px] text-slate-500 font-medium block leading-snug">
+                              <span className="ds-meta text-slate-500 font-medium block leading-snug">
                                 {tier.description}
                               </span>
                             )}
@@ -702,7 +702,7 @@ function Page() {
                 {/* Upgrades Extras Selection */}
                 {extraOptions.length > 0 && (
                   <div className="space-y-2.5 pt-2 border-t border-slate-100">
-                    <label className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">
+                    <label className="ds-meta font-bold text-slate-400 uppercase tracking-wider block">
                       2. Serviços Opcionais
                     </label>
                     <div className="space-y-2">
@@ -812,7 +812,7 @@ function Page() {
                           <div
                             key={idx}
                             className={cn(
-                              "h-10 w-10 flex items-center justify-center text-[10px] rounded text-slate-400 font-bold",
+                              "h-10 w-10 flex items-center justify-center ds-meta rounded text-slate-400 font-bold",
                               cell.type === "aisle" && "text-transparent",
                               cell.type === "wc" && "bg-blue-50 text-blue-700",
                               cell.type === "door" && "bg-amber-50 text-amber-700",
@@ -918,7 +918,7 @@ function Page() {
 
               {passengerCount > 1 && (
                 <div className="space-y-3 pt-3 border-t border-slate-100">
-                  <h3 className="text-[10px] font-extrabold uppercase tracking-widest text-slate-400">
+                  <h3 className="ds-meta font-extrabold uppercase tracking-widest text-slate-400">
                     Demais passageiros
                   </h3>
                   {extraPassengers.map((name, idx) => (
@@ -1037,7 +1037,7 @@ function Page() {
 
             {/* Pix Copy and paste */}
             <div className="space-y-2.5">
-              <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest block">
+              <label className="ds-meta font-bold text-slate-400 uppercase tracking-widest block">
                 {pixKey.startsWith("000201")
                   ? "Código Copia e Cola Pix:"
                   : "Chave Pix para Transferência:"}
@@ -1113,7 +1113,7 @@ function Page() {
               <PrimaryButton
                 onClick={handleFinalEnrollment}
                 disabled={busy || !uploadedFile}
-                className="flex-1 h-11 text-xs font-bold uppercase tracking-wider bg-emerald-600 hover:bg-emerald-700 text-white rounded-[var(--radius-card)] cursor-pointer disabled:opacity-40"
+                className="flex-1 h-11 ds-label-caps tracking-wider bg-emerald-600 hover:bg-emerald-700 text-white rounded-[var(--radius-card)] cursor-pointer disabled:opacity-40"
               >
                 {busy ? "Enviando..." : "Confirmar Inscrição"}
               </PrimaryButton>
@@ -1178,7 +1178,7 @@ function Page() {
                 setSelectedExtras([]);
                 setForm({ passenger_name: "", passenger_cpf: "", email: "", phone: "", notes: "" });
               }}
-              className="w-full h-11 text-xs font-bold uppercase tracking-wider bg-slate-900 text-white rounded-[var(--radius-card)] cursor-pointer hover:bg-slate-800 shadow-none"
+              className="w-full h-11 ds-label-caps tracking-wider bg-slate-900 text-white rounded-[var(--radius-card)] cursor-pointer hover:bg-slate-800 shadow-none"
             >
               Comprar outra passagem
             </Button>
@@ -1202,7 +1202,7 @@ function Page() {
                   .getElementById("checkout_anchor")
                   ?.scrollIntoView({ behavior: "smooth", block: "start" });
               }}
-              className="px-6 h-10 bg-[var(--color-brand)] text-[var(--color-brand-foreground)] font-bold text-xs uppercase tracking-wider rounded-[var(--radius-card)] shadow-none active:scale-95 transition-transform"
+              className="px-6 h-10 bg-[var(--color-brand)] text-[var(--color-brand-foreground)] font-bold ds-label-caps rounded-[var(--radius-card)] shadow-none active:scale-95 transition-transform"
             >
               Reservar
             </Button>

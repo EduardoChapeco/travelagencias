@@ -29,7 +29,7 @@ export function TripFlightCard({ flight, pnr }: { flight: any; pnr?: string }) {
             · Voo {f.flight_number || "—"}
           </span>
         </div>
-        <span className="text-[10px] font-bold uppercase tracking-wider text-success bg-success/10 border border-success/20 px-2 py-0.5 rounded-full">
+        <span className="ds-label-caps tracking-wider text-success bg-success/10 border border-success/20 px-2 py-0.5 rounded-full">
           Confirmado
         </span>
       </div>
@@ -38,14 +38,14 @@ export function TripFlightCard({ flight, pnr }: { flight: any; pnr?: string }) {
       <div className="px-6 py-5 flex items-center justify-between gap-4">
         <div className="space-y-1">
           <div className="text-3xl font-black text-foreground tracking-tight">{originCode}</div>
-          <div className="text-[11px] font-bold text-muted-foreground truncate max-w-[100px]">
+          <div className="ds-meta font-bold text-muted-foreground truncate max-w-[100px]">
             {f.origin}
           </div>
           <div className="text-xs font-medium text-foreground mt-1">{f.departure_time || "—"}</div>
         </div>
 
         <div className="flex-1 flex flex-col items-center justify-center px-2">
-          <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider mb-1">
+          <span className="ds-meta font-bold text-muted-foreground uppercase tracking-wider mb-1">
             {f.stops > 0 ? `${f.stops} parada(s)` : "Direto"}
           </span>
           <div className="w-full flex items-center relative">
@@ -59,7 +59,7 @@ export function TripFlightCard({ flight, pnr }: { flight: any; pnr?: string }) {
 
         <div className="space-y-1 text-right">
           <div className="text-3xl font-black text-foreground tracking-tight">{destCode}</div>
-          <div className="text-[11px] font-bold text-muted-foreground truncate max-w-[100px]">
+          <div className="ds-meta font-bold text-muted-foreground truncate max-w-[100px]">
             {f.destination}
           </div>
           <div className="text-xs font-medium text-foreground mt-1">{f.arrival_time || "—"}</div>
@@ -194,7 +194,7 @@ export function DestinationIntelligenceBlock({
                     {di.vaccinations_required.map((v: string, i: number) => (
                       <span
                         key={i}
-                        className="text-[10px] font-semibold bg-danger/10 text-danger border border-danger/20 px-2 py-0.5 rounded-full"
+                        className="ds-meta font-semibold bg-danger/10 text-danger border border-danger/20 px-2 py-0.5 rounded-full"
                       >
                         {v}
                       </span>
@@ -210,7 +210,7 @@ export function DestinationIntelligenceBlock({
                       {di.vaccinations_recommended.map((v: string, i: number) => (
                         <span
                           key={i}
-                          className="text-[10px] font-semibold bg-warning/10 text-warning border border-warning/20 px-2 py-0.5 rounded-full"
+                          className="ds-meta font-semibold bg-warning/10 text-warning border border-warning/20 px-2 py-0.5 rounded-full"
                         >
                           {v}
                         </span>
@@ -373,7 +373,7 @@ export function DestinationFallbackBlock({ destination }: { destination?: string
                 </div>
                 <div>
                   <div className="text-xs font-bold text-foreground">Ponto Turístico {i}</div>
-                  <div className="text-[10px] text-muted-foreground line-clamp-2 mt-1">
+                  <div className="ds-meta text-muted-foreground line-clamp-2 mt-1">
                     Um dos locais mais visitados da região, ideal para fotos ao pôr do sol.
                   </div>
                 </div>

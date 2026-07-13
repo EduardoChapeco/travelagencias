@@ -401,29 +401,29 @@ function CashPage() {
                 <div className="flex gap-1">
                   <Button
                     onClick={() => setNewTxType("receipt")}
-                    className="h-7 px-2.5 rounded-full bg-success hover:bg-success/90 text-[11px] font-semibold text-white transition-all cursor-pointer"
+                    className="h-7 px-2.5 rounded-full bg-success hover:bg-success/90 ds-meta font-semibold text-white transition-all cursor-pointer"
                   >
                     + Entrada
                   </Button>
                   <Button
                     onClick={() => setNewTxType("payment")}
-                    className="h-7 px-2.5 rounded-full bg-danger hover:bg-danger/90 text-[11px] font-semibold text-white transition-all cursor-pointer"
+                    className="h-7 px-2.5 rounded-full bg-danger hover:bg-danger/90 ds-meta font-semibold text-white transition-all cursor-pointer"
                   >
                     + Saída
                   </Button>
                   <Button
                     onClick={() => setNewTxType("reconciliation")}
-                    className="h-7 px-2.5 rounded-full bg-info hover:bg-info/90 text-[11px] font-semibold text-white transition-all cursor-pointer flex items-center gap-1"
+                    className="h-7 px-2.5 rounded-full bg-info hover:bg-info/90 ds-meta font-semibold text-white transition-all cursor-pointer flex items-center gap-1"
                   >
                     <Coins className="h-3 w-3" /> Conciliar
                   </Button>
                   <Button
                     onClick={() => setNewTxType("vale")}
-                    className="h-7 px-2.5 rounded-full bg-warning hover:bg-warning/90 text-[11px] font-semibold text-white transition-all cursor-pointer flex items-center gap-1"
+                    className="h-7 px-2.5 rounded-full bg-warning hover:bg-warning/90 ds-meta font-semibold text-white transition-all cursor-pointer flex items-center gap-1"
                   >
                     <Users className="h-3 w-3" /> Vale
                   </Button>
-                  <label className="h-7 px-2.5 rounded-full border border-white/15 bg-white/5 hover:bg-white/10 text-[11px] font-semibold text-white/90 transition-all cursor-pointer flex items-center gap-1">
+                  <label className="h-7 px-2.5 rounded-full border border-white/15 bg-white/5 hover:bg-white/10 ds-meta font-semibold text-white/90 transition-all cursor-pointer flex items-center gap-1">
                     <FileText className="h-3 w-3" /> OCR
                     <Input
                       type="file"
@@ -479,13 +479,13 @@ function CashPage() {
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
           {activeReg?.type === "physical" && (
             <div className="glass-card border-none border-none rounded-[var(--radius-card)] p-4">
-              <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest block">
+              <span className="ds-meta font-bold text-muted-foreground uppercase tracking-widest block">
                 Saldo de Abertura
               </span>
               <strong className="text-2xl font-mono block mt-1.5 text-foreground">
                 {money(opening)}
               </strong>
-              <span className="text-[10px] text-muted-foreground mt-1 block">
+              <span className="ds-meta text-muted-foreground mt-1 block">
                 {activeSession
                   ? `Aberto às ${new Date(activeSession.opened_at).toLocaleTimeString("pt-BR")}`
                   : "Caixa fechado"}
@@ -494,29 +494,29 @@ function CashPage() {
           )}
 
           <div className="glass-card border-none border-none rounded-[var(--radius-card)] p-4">
-            <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest flex items-center gap-1">
+            <span className="ds-meta font-bold text-muted-foreground uppercase tracking-widest flex items-center gap-1">
               <ArrowDownCircle className="w-3.5 h-3.5 text-success" /> Total Entradas
             </span>
             <strong className="text-2xl font-mono block mt-1.5 text-success">
               +{money(entries)}
             </strong>
-            <span className="text-[10px] text-muted-foreground mt-1 block">
+            <span className="ds-meta text-muted-foreground mt-1 block">
               Aportes e recebimentos
             </span>
           </div>
 
           <div className="glass-card border-none border-none rounded-[var(--radius-card)] p-4">
-            <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest flex items-center gap-1">
+            <span className="ds-meta font-bold text-muted-foreground uppercase tracking-widest flex items-center gap-1">
               <ArrowUpCircle className="w-3.5 h-3.5 text-danger" /> Total Saídas
             </span>
             <strong className="text-2xl font-mono block mt-1.5 text-danger">-{money(exits)}</strong>
-            <span className="text-[10px] text-muted-foreground mt-1 block">
+            <span className="ds-meta text-muted-foreground mt-1 block">
               Sangrias e despesas
             </span>
           </div>
 
           <div className="glass-card border-none border-none rounded-[var(--radius-card)] p-4">
-            <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest block">
+            <span className="ds-meta font-bold text-muted-foreground uppercase tracking-widest block">
               Saldo Atual
             </span>
             <strong
@@ -524,7 +524,7 @@ function CashPage() {
             >
               {money(balance)}
             </strong>
-            <span className="text-[10px] text-muted-foreground mt-1 block">
+            <span className="ds-meta text-muted-foreground mt-1 block">
               Saldo líquido recalculado
             </span>
           </div>
@@ -590,7 +590,7 @@ function CashPage() {
             ) : (
               <div className="overflow-x-auto">
                 <table className="w-full text-sm">
-                  <thead className="glass bg-white/5 border-white/10 text-left text-[10px] font-bold uppercase tracking-wider text-muted-foreground border-b border-border">
+                  <thead className="glass bg-white/5 border-white/10 text-left ds-label-caps tracking-wider text-muted-foreground border-b border-border">
                     <tr>
                       <th className="px-5 py-3">Data/Hora</th>
                       <th className="px-5 py-3">Descrição / Observações</th>
@@ -610,7 +610,7 @@ function CashPage() {
                           {tx.receipt_url && (
                             <Button
                               onClick={() => handleViewReceipt(tx.receipt_url!)}
-                              className="text-[10px] text-brand hover:underline bg-transparent border-0 p-0 cursor-pointer"
+                              className="ds-meta text-brand hover:underline bg-transparent border-0 p-0 cursor-pointer"
                             >
                               Ver comprovante
                             </Button>
@@ -1058,7 +1058,7 @@ function ReconciliationForm({
           </strong>
         </div>
         {netDue < 0 && (
-          <div className="flex items-start gap-1.5 text-[10px] text-danger bg-danger-bg border border-danger/20 p-2 rounded-[var(--radius-card)] mt-1">
+          <div className="flex items-start gap-1.5 ds-meta text-danger bg-danger-bg border border-danger/20 p-2 rounded-[var(--radius-card)] mt-1">
             <AlertCircle className="w-3.5 h-3.5 mt-0.5 shrink-0" />
             <span>O valor recebido supera nossa comissão. A operadora deduzirá a diferença.</span>
           </div>

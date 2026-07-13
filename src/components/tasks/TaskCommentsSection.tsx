@@ -70,7 +70,7 @@ export function TaskCommentsSection({ taskId, agencyId }: TaskCommentsSectionPro
 
   return (
     <div className="space-y-3">
-      <label className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground flex items-center gap-1">
+      <label className="ds-label-caps tracking-wider text-muted-foreground flex items-center gap-1">
         <MessageSquare className="h-3 w-3" /> Comentários
         {comments.length > 0 && (
           <span className="ml-1 font-mono text-[9px] bg-surface-alt border border-border/40 px-1.5 py-0.5 rounded text-muted-foreground">
@@ -95,12 +95,12 @@ export function TaskCommentsSection({ taskId, agencyId }: TaskCommentsSectionPro
           const initials = name.charAt(0).toUpperCase();
           return (
             <div key={c.id} className="flex items-start gap-2.5">
-              <div className="h-6 w-6 rounded-full bg-brand/10 text-brand flex items-center justify-center text-[10px] font-black uppercase shrink-0 mt-0.5">
+              <div className="h-6 w-6 rounded-full bg-brand/10 text-brand flex items-center justify-center ds-meta font-black uppercase shrink-0 mt-0.5">
                 {initials}
               </div>
               <div className="flex-1 min-w-0">
                 <div className="flex items-center gap-2 mb-1">
-                  <span className="text-[11px] font-bold text-foreground">{name}</span>
+                  <span className="ds-meta font-bold text-foreground">{name}</span>
                   <span className="text-[9px] text-muted-foreground/60">
                     {format(new Date(c.created_at), "dd/MM 'às' HH:mm")}
                   </span>

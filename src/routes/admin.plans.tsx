@@ -22,6 +22,7 @@ import {
 } from "lucide-react";
 import { fetchPlans, deletePlan, togglePlanActive, savePlan } from "@/services/admin";
 import { PageHeader, EmptyState } from "@/components/shell/PageHeader";
+import { SheetPage } from "@/components/ui/sheet";
 import { Field } from "@/components/ui/field";
 import { FormInput as Input } from "@/components/ui/input";
 import { FormTextarea as Textarea } from "@/components/ui/textarea";
@@ -137,7 +138,7 @@ function Page() {
         <div className="mt-4 flex flex-col items-center justify-center py-8 px-4 text-center rounded-[var(--radius-card)] border border-red-200 bg-red-50/60 max-w-xl mx-auto">
           <AlertCircle className="h-5 w-5 text-red-600 mb-1.5" />
           <h3 className="text-xs font-bold text-red-800">Falha ao Carregar Planos</h3>
-          <p className="text-[11px] text-red-600 mt-0.5">
+          <p className="ds-meta text-red-600 mt-0.5">
             {q.error instanceof Error ? q.error.message : "Erro de conexão."}
           </p>
         </div>
@@ -167,7 +168,7 @@ function Page() {
           >
             {plan.is_featured && (
               <div className="absolute -top-2.5 left-4">
-                <span className="flex items-center gap-1 rounded-full bg-brand px-2.5 py-0.5 text-[10px] font-semibold text-brand-foreground">
+                <span className="flex items-center gap-1 rounded-full bg-brand px-2.5 py-0.5 ds-meta font-semibold text-brand-foreground">
                   <Star className="h-2.5 w-2.5" /> Destaque
                 </span>
               </div>
@@ -284,7 +285,7 @@ function LimitBadge({
     <div className="flex flex-col items-center gap-0.5 text-center">
       <Icon className="h-3.5 w-3.5 text-muted-foreground" />
       <div className="text-xs font-bold">{value === -1 ? "∞" : value}</div>
-      <div className="text-[10px] text-muted-foreground">{label}</div>
+      <div className="ds-meta text-muted-foreground">{label}</div>
     </div>
   );
 }
@@ -344,14 +345,14 @@ function PlanEditor({
   }
 
   return (
-    <div className="fixed inset-0 z-50 flex justify-end bg-overlay" onClick={onClose}>
-      <div
-        className="h-full w-full max-w-lg overflow-y-auto border-l border-border glass-card border-none p-6"
-        onClick={(e) => e.stopPropagation()}
-      >
-        <h2 className="mb-5 text-base font-semibold tracking-tight">
-          {isNew ? "Novo plano" : `Editar: ${initial.name}`}
-        </h2>
+    <SheetPage
+      isOpen={true}
+      onClose={onClose}
+      title={isNew ? "Novo plano" : `Editar: ${initial.name}`}
+      width="clamp(480px, 45vw, 640px)"
+      contentClassName="p-6"
+    >
+      <div className="flex h-full flex-col">
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
           <div className="grid gap-3 sm:grid-cols-2">
             <Field label="Nome do plano *" error={errors.name?.message}>
@@ -430,7 +431,7 @@ function PlanEditor({
             </div>
           </div>
 
-          <div className="flex justify-end gap-2 pt-2">
+          <div className="flex justify-end gap-2 pt-2 mt-auto">
             <GhostButton type="button" onClick={onClose}>
               Cancelar
             </GhostButton>
@@ -440,6 +441,6 @@ function PlanEditor({
           </div>
         </form>
       </div>
-    </div>
+    </SheetPage>
   );
 }

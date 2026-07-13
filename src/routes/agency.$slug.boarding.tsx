@@ -238,7 +238,7 @@ function BoardingKanbanPage() {
                 <Button
                   onClick={handleExportExcel}
                   disabled={exporting}
-                  className="h-7 px-2.5 flex items-center gap-1 rounded-full border border-white/15 text-white/60 hover:text-white hover:bg-white/10 transition-colors cursor-pointer text-[11px] font-semibold disabled:opacity-50"
+                  className="h-7 px-2.5 flex items-center gap-1 rounded-full border border-white/15 text-white/60 hover:text-white hover:bg-white/10 transition-colors cursor-pointer ds-meta font-semibold disabled:opacity-50"
                   title="Exportar Lista de Embarque (.xlsx)"
                 >
                   <Download className="h-3 w-3" />
@@ -332,7 +332,7 @@ function BoardingKanbanPage() {
                 <div className="overflow-x-auto border-none rounded-full glass-card border-none">
                   <table className="w-full border-collapse text-left text-xs">
                     <thead>
-                      <tr className="border-b border-border glass bg-white/5 border-white/10 font-semibold text-muted-foreground uppercase tracking-widest text-[10px]">
+                      <tr className="border-b border-border glass bg-white/5 border-white/10 font-semibold text-muted-foreground uppercase tracking-widest ds-meta">
                         <th className="p-4">Localizador (PNR)</th>
                         <th className="p-4">Viagem / Destino</th>
                         <th className="p-4">Cia Aérea</th>
@@ -362,7 +362,7 @@ function BoardingKanbanPage() {
                                 {card.trip_title || "Sem Título"}
                               </div>
                               {card.trip_destination && (
-                                <div className="text-[10px] text-muted-foreground uppercase tracking-wider mt-0.5">
+                                <div className="ds-meta text-muted-foreground uppercase tracking-wider mt-0.5">
                                   {card.trip_destination}
                                 </div>
                               )}
@@ -379,7 +379,7 @@ function BoardingKanbanPage() {
                                 <span className="font-mono text-foreground font-semibold">
                                   {checklistDone}/{checklistTotal}
                                 </span>
-                                <span className="text-[10px] text-muted-foreground">
+                                <span className="ds-meta text-muted-foreground">
                                   (
                                   {checklistTotal > 0
                                     ? Math.round((checklistDone / checklistTotal) * 100)
@@ -433,7 +433,7 @@ function BoardingKanbanPage() {
                 {["Dom", "Seg", "Ter", "Qua", "Qui", "Sex", "Sáb"].map((d) => (
                   <div
                     key={d}
-                    className="py-2 text-center text-[10px] font-semibold uppercase tracking-wider text-muted-foreground"
+                    className="py-2 text-center ds-meta font-semibold uppercase tracking-wider text-muted-foreground"
                   >
                     {d}
                   </div>
@@ -468,7 +468,7 @@ function BoardingKanbanPage() {
                             <Button
                               key={card.id}
                               onClick={() => setDetail(card)}
-                              className="w-full text-left p-1 text-[10px] rounded-xs border-none glass-card border-none hover:glass bg-white/5 border-white/10 transition-colors truncate font-semibold block group"
+                              className="w-full text-left p-1 ds-meta rounded-xs border-none glass-card border-none hover:glass bg-white/5 border-white/10 transition-colors truncate font-semibold block group"
                             >
                               <span className="flex items-center gap-1">
                                 <span

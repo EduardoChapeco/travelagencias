@@ -114,12 +114,12 @@ export function DocumentsPanel({ clientId, agencyId }: { clientId: string; agenc
         </div>
         <div className="flex items-center gap-2">
           {expiredCount > 0 && (
-            <span className="text-[10px] font-bold bg-danger/10 text-danger border border-danger/30 px-2 py-0.5 rounded-full flex items-center gap-1">
+            <span className="ds-meta font-bold bg-danger/10 text-danger border border-danger/30 px-2 py-0.5 rounded-full flex items-center gap-1">
               <AlertTriangle className="h-3 w-3" /> {expiredCount} vencido(s)
             </span>
           )}
           {soonCount > 0 && (
-            <span className="text-[10px] font-bold bg-warning/10 text-warning border border-warning/30 px-2 py-0.5 rounded-full">
+            <span className="ds-meta font-bold bg-warning/10 text-warning border border-warning/30 px-2 py-0.5 rounded-full">
               {soonCount} vence em breve
             </span>
           )}
@@ -153,10 +153,10 @@ export function DocumentsPanel({ clientId, agencyId }: { clientId: string; agenc
                       {DOC_TYPES.find((t) => t.value === doc.doc_type)?.label ?? doc.doc_type}
                     </span>
                     {status === "expired" && (
-                      <span className="text-[10px] font-bold text-danger">⚠ VENCIDO</span>
+                      <span className="ds-meta font-bold text-danger">⚠ VENCIDO</span>
                     )}
                     {status === "soon" && (
-                      <span className="text-[10px] font-bold text-warning">⏰ Vence em breve</span>
+                      <span className="ds-meta font-bold text-warning">⏰ Vence em breve</span>
                     )}
                   </div>
                   <div className="text-xs text-muted-foreground">
@@ -183,7 +183,7 @@ export function DocumentsPanel({ clientId, agencyId }: { clientId: string; agenc
             <div className="rounded-[var(--radius-card)] border border-brand/30 bg-brand/5 p-4 space-y-3">
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground block mb-1">
+                  <label className="ds-label-caps tracking-wider text-muted-foreground block mb-1">
                     Tipo
                   </label>
                   <Select
@@ -199,7 +199,7 @@ export function DocumentsPanel({ clientId, agencyId }: { clientId: string; agenc
                   </Select>
                 </div>
                 <div>
-                  <label className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground block mb-1">
+                  <label className="ds-label-caps tracking-wider text-muted-foreground block mb-1">
                     Número
                   </label>
                   <Input
@@ -210,7 +210,7 @@ export function DocumentsPanel({ clientId, agencyId }: { clientId: string; agenc
                   />
                 </div>
                 <div>
-                  <label className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground block mb-1">
+                  <label className="ds-label-caps tracking-wider text-muted-foreground block mb-1">
                     Emissão
                   </label>
                   <Input
@@ -221,7 +221,7 @@ export function DocumentsPanel({ clientId, agencyId }: { clientId: string; agenc
                   />
                 </div>
                 <div>
-                  <label className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground block mb-1">
+                  <label className="ds-label-caps tracking-wider text-muted-foreground block mb-1">
                     Vencimento
                   </label>
                   <Input

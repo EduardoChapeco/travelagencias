@@ -6,6 +6,7 @@ import {
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { useAgency } from "@/lib/agency-context";
+import { BLOG_STATUS_MAP } from "@/lib/constants/status";
 import { EmptyState } from "@/components/shell/PageHeader";
 import { PageHeader, ModuleActionButton } from "@/components/shell/PageHeader";
 import { Field } from "@/components/ui/field";
@@ -13,6 +14,7 @@ import { FormInput as Input } from "@/components/ui/input";
 import { NativeSelect as Select } from "@/components/ui/select";
 import { FormTextarea as Textarea } from "@/components/ui/textarea";
 import { PrimaryButton, GhostButton , Button } from "@/components/ui/button";
+import { SheetPage } from "@/components/ui/sheet";
 import { StatusBadge } from "@/components/ui/badge";
 import { fmtDate } from "@/lib/formatters";
 import { FileUploader } from "@/components/uploads/FileUploader";
@@ -54,16 +56,7 @@ function calcReadingTime(text: string) {
   return Math.max(1, Math.ceil(words / 200));
 }
 
-const STATUS_LABEL: Record<string, string> = {
-  draft: "Rascunho",
-  scheduled: "Agendado",
-  published: "Publicado",
-};
-const STATUS_TONE: Record<string, "neutral" | "info" | "success" | "warning"> = {
-  draft: "neutral",
-  scheduled: "info",
-  published: "success",
-};
+
 
 function BlogPage() {
   const { agency } = useAgency();
@@ -110,7 +103,7 @@ function BlogPage() {
             placeholder: "Buscar artigos..."
           }}
           filters={["all", "published", "draft", "scheduled"].map((s) => ({
-            label: s === "all" ? "Todos" : (STATUS_LABEL[s] ?? s),
+            label: s === "all" ? "Todos" : (BLOG_STATUS_MAP[s]?.label ?? s),
             value: s
           }))}
           activeFilter={filterStatus}
@@ -149,7 +142,7 @@ function BlogPage() {
             },
           ].map((s) => (
             <div key={s.label} className="rounded-[var(--radius-card)] border-none glass-card border-none p-4">
-              <div className="flex items-center gap-1.5 text-[11px] text-muted-foreground">
+              <div className="flex items-center gap-1.5 ds-meta text-muted-foreground">
                 <s.icon className="h-3.5 w-3.5" />
                 {s.label}
               </div>
@@ -194,8 +187,8 @@ function BlogPage() {
                     </div>
                   )}
                   <div className="absolute top-2 right-2">
-                    <StatusBadge tone={STATUS_TONE[p.status] ?? "neutral"}>
-                      {STATUS_LABEL[p.status] ?? p.status}
+                    <StatusBadge tone={BLOG_STATUS_MAP[p.status]?.tone ?? "neutral"}>
+                      {BLOG_STATUS_MAP[p.status]?.label ?? p.status}
                     </StatusBadge>
                   </div>
                 </div>
@@ -207,7 +200,7 @@ function BlogPage() {
                   {p.excerpt && (
                     <p className="mt-1 text-xs text-muted-foreground line-clamp-2">{p.excerpt}</p>
                   )}
-                  <div className="mt-3 flex items-center justify-between text-[11px] text-muted-foreground">
+                  <div className="mt-3 flex items-center justify-between ds-meta text-muted-foreground">
                     <div className="flex items-center gap-2">
                       {p.category && (
                         <span className="rounded glass bg-white/5 border-white/10 px-1.5 py-0.5 font-medium">
@@ -226,7 +219,7 @@ function BlogPage() {
                     </div>
                   </div>
                   {p.published_at && (
-                    <div className="mt-1.5 text-[10px] text-muted-foreground uppercase tracking-wide">
+                    <div className="mt-1.5 ds-meta text-muted-foreground uppercase tracking-wide">
                       {fmtDate(p.published_at)}
                     </div>
                   )}
@@ -378,40 +371,30 @@ function BlogSheet({
       : null;
 
   return (
-    <div className="fixed inset-0 z-50 flex justify-end bg-overlay" onClick={onClose}>
-      <div
-        className="flex h-full w-full max-w-2xl flex-col border-l border-border glass-card border-none"
-        onClick={(e) => e.stopPropagation()}
-      >
-        {/* Header */}
-        <div className="flex items-center justify-between border-b border-border px-6 py-4">
-          <h2 className="text-base font-semibold tracking-tight">
-            {post ? "Editar artigo" : "Novo artigo"}
-          </h2>
-          <div className="flex items-center gap-2">
-            {previewUrl && (
-              <a
-                href={previewUrl}
-                target="_blank"
-                rel="noreferrer"
-                className="flex h-8 items-center gap-1.5 rounded-full border-none px-2.5 text-xs font-medium hover:glass bg-white/5 border-white/10"
-              >
-                <ExternalLink className="h-3.5 w-3.5" />
-                Ver publicado
-              </a>
-            )}
-            <Button
-              type="button"
-              onClick={onClose}
-              className="flex h-8 w-8 items-center justify-center rounded-full border-none hover:glass bg-white/5 border-white/10"
+    <SheetPage
+      isOpen={true}
+      onClose={onClose}
+      title={post ? "Editar artigo" : "Novo artigo"}
+      width="clamp(480px, 45vw, 720px)"
+      contentClassName="flex-1 overflow-y-auto px-6 py-5 no-scrollbar"
+    >
+      <div className="flex h-full w-full flex-col">
+        {/* Custom Actions */}
+        {previewUrl && (
+          <div className="mb-4 flex justify-end">
+            <a
+              href={previewUrl}
+              target="_blank"
+              rel="noreferrer"
+              className="flex h-8 w-max items-center gap-1.5 rounded-full border-none px-3 text-xs font-medium hover:glass bg-white/5 border-white/10 transition-colors"
             >
-              <X className="h-4 w-4" />
-            </Button>
+              <ExternalLink className="h-3.5 w-3.5" />
+              Ver publicado
+            </a>
           </div>
-        </div>
+        )}
 
-        {/* Scrollable body */}
-        <div className="flex-1 overflow-y-auto px-6 py-5">
+
           <form id="blog-form" onSubmit={submit} className="space-y-4">
             {/* COVER IMAGE */}
             <FileUploader
@@ -515,7 +498,7 @@ function BlogSheet({
                       maxLength={60}
                       placeholder={title}
                     />
-                    <span className="mt-0.5 block text-right text-[10px] text-muted-foreground">
+                    <span className="mt-0.5 block text-right ds-meta text-muted-foreground">
                       {metaTitle.length}/60
                     </span>
                   </Field>
@@ -530,11 +513,11 @@ function BlogSheet({
                       maxLength={160}
                       placeholder={excerpt}
                     />
-                    <span className="mt-0.5 block text-right text-[10px] text-muted-foreground">
+                    <span className="mt-0.5 block text-right ds-meta text-muted-foreground">
                       {metaDesc.length}/160
                     </span>
                   </Field>
-                  <p className="text-[11px] text-muted-foreground">
+                  <p className="ds-meta text-muted-foreground">
                     A imagem de capa é usada automaticamente como OG image nas redes sociais.
                   </p>
                 </div>
@@ -542,7 +525,7 @@ function BlogSheet({
             </div>
 
             {/* Reading time info */}
-            <div className="flex items-center gap-1.5 text-[11px] text-muted-foreground">
+            <div className="flex items-center gap-1.5 ds-meta text-muted-foreground">
               <Clock className="h-3.5 w-3.5" />
               Tempo de leitura estimado: ~{readingTime} min
               {tagsRaw && (
@@ -560,8 +543,6 @@ function BlogSheet({
               )}
             </div>
           </form>
-        </div>
-
         {/* Footer */}
         <div className="border-t border-border px-6 py-4 flex items-center justify-between gap-2">
           <div className="flex items-center gap-2">
@@ -594,6 +575,6 @@ function BlogSheet({
           </div>
         </div>
       </div>
-    </div>
+    </SheetPage>
   );
 }

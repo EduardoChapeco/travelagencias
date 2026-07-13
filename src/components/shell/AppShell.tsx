@@ -170,7 +170,7 @@ export function AppShell({
         <div id="shell-header-portal" className="flex-1 px-4 z-50 flex items-center justify-center pointer-events-auto min-w-0" />
 
         {/* Right: Pill ultra-fina — hora, data e notificações */}
-        <div className="flex items-center gap-3 glass-pill px-3 h-8 rounded-full pointer-events-auto text-[11px] font-medium tracking-wide shrink-0">
+        <div className="flex items-center gap-3 glass-pill px-3 h-8 rounded-full pointer-events-auto ds-meta font-medium tracking-wide shrink-0">
           <span className="text-os-muted capitalize hidden sm:inline">{dateStr}</span>
           <span className="text-os">{timeStr}</span>
           <div className="w-[1px] h-2.5 bg-white/15" />
@@ -229,7 +229,7 @@ export function AppShell({
                     <AlertTriangle className="h-4 w-4 shrink-0 text-rose-400" />
                     <span>Assinatura atrasada. Regularize o pagamento.</span>
                   </div>
-                  <a href={`/agency/${agency!.slug}/settings/billing`} className="bg-rose-500 text-white px-3 py-1 rounded-full font-black hover:bg-rose-400 transition-colors uppercase text-[10px]">
+                  <a href={`/agency/${agency!.slug}/settings/billing`} className="bg-rose-500 text-white px-3 py-1 rounded-full font-black hover:bg-rose-400 transition-colors uppercase ds-meta">
                     Regularizar
                   </a>
                 </div>

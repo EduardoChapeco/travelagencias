@@ -193,7 +193,7 @@ function LoginPage() {
 
           <div className="space-y-2">
             <div className="flex items-center justify-between">
-              <label className="text-[10px] font-black uppercase tracking-widest text-white/70">
+              <label className="ds-meta font-black uppercase tracking-widest text-white/70">
                 Senha
               </label>
               <Link
@@ -212,7 +212,7 @@ function LoginPage() {
               className="rounded-[var(--radius-card)] bg-white/5 border-white/10 focus:border-white/30 text-white placeholder:text-white/30 font-medium"
             />
             {errors.password?.message && (
-              <p className="text-[10px] font-bold text-rose-300 mt-1">{errors.password.message}</p>
+              <p className="ds-meta font-bold text-rose-300 mt-1">{errors.password.message}</p>
             )}
           </div>
 
@@ -220,7 +220,7 @@ function LoginPage() {
             id="login-submit"
             type="submit"
             disabled={isSubmitting}
-            className="w-full h-12 text-xs font-bold uppercase tracking-wider rounded-full bg-brand hover:bg-brand/95 text-white active:scale-[0.98] transition-all duration-200 mt-6 cursor-pointer"
+            className="w-full h-12 ds-label-caps tracking-wider rounded-full bg-brand hover:bg-brand/95 text-white active:scale-[0.98] transition-all duration-200 mt-6 cursor-pointer"
           >
             {isSubmitting ? "Entrando..." : "Acessar Workspace"}
           </PrimaryButton>
@@ -238,7 +238,7 @@ function LoginPage() {
           </Link>
         </p>
 
-        <p className="text-center text-[10px] text-white/40 font-bold uppercase tracking-wider mt-8">
+        <p className="text-center ds-meta text-white/40 font-bold uppercase tracking-wider mt-8">
           © {new Date().getFullYear()} {brandName}.
         </p>
       </div>

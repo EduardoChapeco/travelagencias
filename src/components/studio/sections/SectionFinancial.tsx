@@ -19,7 +19,7 @@ export function SectionFinancial({ draft, save }: Props) {
         <div className="rounded-[var(--radius-card)] border border-border/50 bg-surface p-4">
           <div className="flex items-center gap-2 mb-3">
             <DollarSign className="h-3.5 w-3.5 text-brand" />
-            <span className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
+            <span className="ds-label-caps tracking-wider text-muted-foreground">
               Resumo
             </span>
           </div>
@@ -60,7 +60,7 @@ export function SectionFinancial({ draft, save }: Props) {
 
         {/* Pix Discount */}
         <div>
-          <label className="text-[10px] uppercase tracking-wider font-bold text-muted-foreground block mb-2">
+          <label className="ds-label-caps font-bold text-muted-foreground block mb-2">
             Desconto Pix:{" "}
             <strong className="text-foreground">{draft.pix_discount_percent ?? 0}%</strong>
           </label>

@@ -108,7 +108,7 @@ export function AIFloatingWidget({ inline = false }: { inline?: boolean }) {
             >
               {aiActions && aiActions.length > 0 && (
                 <div className="px-4 pt-3 pb-2 bg-white/5 border-b border-white/10 shrink-0">
-                  <span className="text-[10px] font-black uppercase tracking-wider text-white/50 flex items-center gap-1 mb-2">
+                  <span className="ds-meta font-black uppercase tracking-wider text-white/50 flex items-center gap-1 mb-2">
                     <Compass className="w-3.5 h-3.5" /> Ações Rápidas desta página
                   </span>
                   <div className="flex flex-wrap gap-1.5 max-h-[80px] overflow-y-auto no-scrollbar">
@@ -116,7 +116,7 @@ export function AIFloatingWidget({ inline = false }: { inline?: boolean }) {
                       <Button
                         key={idx}
                         onClick={() => handleSuggestionClick(act.prompt)}
-                        className="px-2.5 py-1 text-[11px] font-bold rounded-full bg-brand/20 hover:bg-brand/35 text-brand-light border border-brand/20 transition-all cursor-pointer truncate max-w-full"
+                        className="px-2.5 py-1 ds-meta font-bold rounded-full bg-brand/20 hover:bg-brand/35 text-brand-light border border-brand/20 transition-all cursor-pointer truncate max-w-full"
                         title={act.prompt}
                       >
                         {act.label}
@@ -201,7 +201,7 @@ export function AIFloatingWidget({ inline = false }: { inline?: boolean }) {
           >
             {aiActions && aiActions.length > 0 && (
               <div className="px-4 pt-3 pb-2 bg-white/5 border-b border-white/10 shrink-0">
-                <span className="text-[10px] font-black uppercase tracking-wider text-white/50 flex items-center gap-1 mb-2">
+                <span className="ds-meta font-black uppercase tracking-wider text-white/50 flex items-center gap-1 mb-2">
                   <Compass className="w-3.5 h-3.5" /> Ações Rápidas desta página
                 </span>
                 <div className="flex flex-wrap gap-1.5 max-h-[80px] overflow-y-auto no-scrollbar">
@@ -209,7 +209,7 @@ export function AIFloatingWidget({ inline = false }: { inline?: boolean }) {
                     <Button
                       key={idx}
                       onClick={() => handleSuggestionClick(act.prompt)}
-                      className="px-2.5 py-1 text-[11px] font-bold rounded-full bg-brand/20 hover:bg-brand/35 text-brand-light border border-brand/20 transition-all cursor-pointer truncate max-w-full"
+                      className="px-2.5 py-1 ds-meta font-bold rounded-full bg-brand/20 hover:bg-brand/35 text-brand-light border border-brand/20 transition-all cursor-pointer truncate max-w-full"
                       title={act.prompt}
                     >
                       {act.label}
@@ -261,7 +261,7 @@ export function AIFloatingWidget({ inline = false }: { inline?: boolean }) {
                 initial={{ opacity: 0, x: -8 }}
                 animate={{ opacity: 1, x: 0 }}
                 exit={{ opacity: 0, x: -8 }}
-                className="text-[11px] font-black uppercase tracking-wider text-white/85"
+                className="ds-meta font-black uppercase tracking-wider text-white/85"
               >
                 IA Assistant
               </motion.span>

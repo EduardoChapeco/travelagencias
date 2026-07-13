@@ -125,31 +125,31 @@ export function LedgerDashboard() {
       {/* KPI Cards */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         <div className="glass-card border-none border-none rounded-[var(--radius-card)] p-4">
-          <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest flex items-center gap-1">
+          <span className="ds-meta font-bold text-muted-foreground uppercase tracking-widest flex items-center gap-1">
             <ArrowDownCircle className="w-3.5 h-3.5 text-success" /> Total de Débitos (D)
           </span>
           <strong className="text-2xl font-mono block mt-1.5 text-success">
             {money(totals.totalDebits)}
           </strong>
-          <span className="text-[10px] text-muted-foreground mt-1 block">
+          <span className="ds-meta text-muted-foreground mt-1 block">
             Aplicações de recursos registradas
           </span>
         </div>
 
         <div className="glass-card border-none border-none rounded-[var(--radius-card)] p-4">
-          <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest flex items-center gap-1">
+          <span className="ds-meta font-bold text-muted-foreground uppercase tracking-widest flex items-center gap-1">
             <ArrowUpCircle className="w-3.5 h-3.5 text-danger" /> Total de Créditos (C)
           </span>
           <strong className="text-2xl font-mono block mt-1.5 text-danger">
             {money(totals.totalCredits)}
           </strong>
-          <span className="text-[10px] text-muted-foreground mt-1 block">
+          <span className="ds-meta text-muted-foreground mt-1 block">
             Origens de recursos registradas
           </span>
         </div>
 
         <div className="glass-card border-none border-none rounded-[var(--radius-card)] p-4">
-          <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest flex items-center gap-1">
+          <span className="ds-meta font-bold text-muted-foreground uppercase tracking-widest flex items-center gap-1">
             <Scale className="w-3.5 h-3.5 text-brand" /> Saldo Líquido do Razão
           </span>
           <strong
@@ -160,7 +160,7 @@ export function LedgerDashboard() {
           >
             {money(totals.balance)}
           </strong>
-          <span className="text-[10px] text-muted-foreground mt-1 block">
+          <span className="ds-meta text-muted-foreground mt-1 block">
             Diferença consolidada entre D e C
           </span>
         </div>
@@ -229,7 +229,7 @@ export function LedgerDashboard() {
           ) : null}
 
           <table className="w-full text-sm">
-            <thead className="glass bg-white/5 border-white/10/40 text-left text-[10px] font-bold uppercase tracking-wider text-muted-foreground border-b border-border">
+            <thead className="glass bg-white/5 border-white/10/40 text-left ds-label-caps tracking-wider text-muted-foreground border-b border-border">
               <tr>
                 <th className="px-5 py-3">Data/Hora</th>
                 <th className="px-5 py-3">Código da Conta</th>

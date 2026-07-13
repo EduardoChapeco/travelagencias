@@ -24,7 +24,7 @@ export function Accordion({
     <div className="mb-4 overflow-hidden rounded-[var(--radius-card)] bg-surface  ring-1 ring-border/50 transition-all">
       <Button
         onClick={() => setOpen(!open)}
-        className="flex w-full items-center justify-between px-4 py-3 text-left text-xs font-bold uppercase tracking-widest text-muted-foreground hover:bg-surface-alt/50 transition-colors"
+        className="flex w-full items-center justify-between px-4 py-3 text-left ds-label-caps text-muted-foreground hover:bg-surface-alt/50 transition-colors"
       >
         <span>{title}</span>
         {open ? <ChevronDown className="h-4 w-4" /> : <ChevronRight className="h-4 w-4" />}
@@ -47,7 +47,7 @@ export function NumField({
   useEffect(() => setV(String(value)), [value]);
   return (
     <label className="block">
-      <span className="mb-1 block text-[10px] uppercase tracking-wide text-muted-foreground">
+      <span className="mb-1 block ds-meta uppercase tracking-wide text-muted-foreground">
         {label}
       </span>
       <Input
@@ -78,7 +78,7 @@ export function TextField({
   useEffect(() => setV(value ?? ""), [value]);
   return (
     <label className="block">
-      <span className="mb-1 block text-[10px] uppercase tracking-wide text-muted-foreground">
+      <span className="mb-1 block ds-meta uppercase tracking-wide text-muted-foreground">
         {label}
       </span>
       <Input
@@ -139,7 +139,7 @@ export function Sel({
 export function L({ label, children }: { label: string; children: React.ReactNode }) {
   return (
     <label className="block">
-      <span className="mb-1 block text-[10px] uppercase tracking-wide text-muted-foreground">
+      <span className="mb-1 block ds-meta uppercase tracking-wide text-muted-foreground">
         {label}
       </span>
       {children}
@@ -207,14 +207,14 @@ export function FileUploadList({
             <Button
               type="button"
               onClick={() => onChange(images.filter((_, x) => x !== i))}
-              className="absolute -right-1 -top-1 rounded-full bg-destructive px-1 text-[10px] text-destructive-foreground hover:bg-destructive/80 transition-colors"
+              className="absolute -right-1 -top-1 rounded-full bg-destructive px-1 ds-meta text-destructive-foreground hover:bg-destructive/80 transition-colors"
             >
               ×
             </Button>
           </div>
         ))}
       </div>
-      <label className="text-[11px] text-primary hover:underline cursor-pointer">
+      <label className="ds-meta text-primary hover:underline cursor-pointer">
         {uploading ? "Enviando…" : "+ adicionar imagens"}
         <Input
           type="file"
@@ -257,7 +257,7 @@ export function TagsEditor({
         {tags.map((t, i) => (
           <span
             key={i}
-            className="flex items-center gap-1 rounded bg-surface-alt px-2 py-0.5 text-[11px]"
+            className="flex items-center gap-1 rounded bg-surface-alt px-2 py-0.5 ds-meta"
           >
             {t}
             <Button

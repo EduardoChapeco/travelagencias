@@ -52,7 +52,7 @@ export function SectionTransfers({ draft, save }: Props) {
         <Card key={t.id || i} onRemove={() => remove(i)}>
           <div className="mb-2">
             <div className="mb-1">
-              <span className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wider block mb-1">
+              <span className="ds-meta font-semibold text-muted-foreground uppercase tracking-wider block mb-1">
                 Buscar Operadora de Transfer no Catálogo
               </span>
               <SupplierAutocomplete

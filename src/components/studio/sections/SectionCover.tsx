@@ -66,7 +66,7 @@ export function SectionCover({ draft, save }: SectionCoverProps) {
           />
 
           <div className="space-y-1">
-            <span className="block text-[10px] uppercase tracking-wide text-muted-foreground">
+            <span className="block ds-meta uppercase tracking-wide text-muted-foreground">
               Imagem de Capa
             </span>
             <div className="flex gap-1.5">
@@ -125,7 +125,7 @@ export function SectionCover({ draft, save }: SectionCoverProps) {
             {showAiPrompt && (
               <div className="mt-2 rounded-2xl border border-brand/20 bg-brand/5 p-3 space-y-2">
                 <div className="flex items-center justify-between">
-                  <span className="text-[10px] uppercase tracking-wide font-bold text-brand flex items-center gap-1">
+                  <span className="ds-meta uppercase tracking-wide font-bold text-brand flex items-center gap-1">
                     <Sparkles className="w-3 h-3" /> Gerar Capa com IA
                   </span>
                   <Button
@@ -189,7 +189,7 @@ export function SectionCover({ draft, save }: SectionCoverProps) {
             {showUnsplashCover && (
               <div className="mt-2 rounded-2xl border border-border bg-surface p-3">
                 <div className="flex items-center justify-between mb-2">
-                  <span className="text-[10px] uppercase tracking-wide font-semibold">
+                  <span className="ds-meta uppercase tracking-wide font-semibold">
                     Buscar imagem
                   </span>
                   <Button
@@ -277,7 +277,7 @@ export function SectionCover({ draft, save }: SectionCoverProps) {
           />
 
           <div className="space-y-1">
-            <span className="block text-[10px] uppercase tracking-wide text-muted-foreground">
+            <span className="block ds-meta uppercase tracking-wide text-muted-foreground">
               Foto do Consultor (URL)
             </span>
             <div className="flex gap-2">
@@ -309,7 +309,7 @@ export function SectionCover({ draft, save }: SectionCoverProps) {
                   alt="Agent Photo"
                   className="h-10 w-10 rounded-full object-cover border border-border"
                 />
-                <div className="text-[10px] text-muted-foreground">
+                <div className="ds-meta text-muted-foreground">
                   Foto vinculada ao consultor.
                 </div>
                 <Button

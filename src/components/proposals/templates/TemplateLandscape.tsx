@@ -86,7 +86,7 @@ export default function TemplateLandscape({ proposal: p, agency }: TemplateProps
         {/* Informações da Capa */}
         <div className="absolute inset-0 flex flex-col justify-end p-16 z-10">
           <div className="max-w-4xl space-y-4">
-            <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-widest bg-white/10 backdrop-blur-md border border-white/20">
+            <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full ds-label-caps bg-white/10 backdrop-blur-md border border-white/20">
               <Compass
                 className="w-3.5 h-3.5 text-brand"
                 style={{ color: brand !== "#18181b" ? brand : "#38bdf8" }}
@@ -407,7 +407,7 @@ export default function TemplateLandscape({ proposal: p, agency }: TemplateProps
           <div className="grid grid-cols-5 gap-8 items-center">
             {/* Valor Esquerda */}
             <div className="col-span-2 space-y-2">
-              <span className="text-[10px] font-bold uppercase tracking-widest text-slate-400 block">
+              <span className="ds-label-caps text-slate-400 block">
                 Valor Total da Viagem
               </span>
               <div
@@ -426,7 +426,7 @@ export default function TemplateLandscape({ proposal: p, agency }: TemplateProps
             {/* Condições de Pagamento Direita */}
             <div className="col-span-3 grid grid-cols-2 gap-4">
               <div className="bg-slate-800/40 border border-slate-800 rounded-2xl p-5">
-                <span className="text-[10px] font-bold uppercase tracking-widest text-slate-400 block mb-2">
+                <span className="ds-label-caps text-slate-400 block mb-2">
                   Cartão de Crédito
                 </span>
                 <div className="text-2xl font-black text-white leading-none">
@@ -442,7 +442,7 @@ export default function TemplateLandscape({ proposal: p, agency }: TemplateProps
                 style={{ borderColor: brand !== "#18181b" ? brand : "#38bdf8" }}
               >
                 <div className="flex justify-between items-start mb-2">
-                  <span className="text-[10px] font-bold uppercase tracking-widest text-slate-500">
+                  <span className="ds-label-caps text-slate-500">
                     Pix (À vista)
                   </span>
                   <span className="bg-emerald-100 text-emerald-800 text-[9px] font-black px-1.5 py-0.5 rounded">
@@ -474,7 +474,7 @@ export default function TemplateLandscape({ proposal: p, agency }: TemplateProps
                 </div>
               )}
               <div>
-                <div className="text-[10px] font-bold uppercase tracking-widest text-slate-500 mb-0.5">
+                <div className="ds-label-caps text-slate-500 mb-0.5">
                   Consultor Comercial
                 </div>
                 <div className="font-extrabold text-white text-base leading-snug">
@@ -492,7 +492,7 @@ export default function TemplateLandscape({ proposal: p, agency }: TemplateProps
           )}
 
           <div className="text-right">
-            <span className="text-[10px] font-bold uppercase tracking-widest text-slate-600 block mb-1">
+            <span className="ds-label-caps text-slate-600 block mb-1">
               Token Autenticador
             </span>
             <span className="font-mono text-xs text-slate-400">{p.public_token?.slice(0, 16)}</span>

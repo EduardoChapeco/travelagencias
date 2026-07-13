@@ -205,7 +205,7 @@ export function ReportsView({ filters }: { filters: TaskFiltersState }) {
             <h2 className="text-sm font-black uppercase tracking-wider text-[var(--foreground)]">
               Relatório de Produtividade & Métricas
             </h2>
-            <p className="text-[11px] text-[var(--muted-foreground)] mt-0.5 font-medium">
+            <p className="ds-meta text-[var(--muted-foreground)] mt-0.5 font-medium">
               Análise sistêmica de entregas, tempos médios e conformidade de estimativas.
             </p>
           </div>
@@ -215,39 +215,39 @@ export function ReportsView({ filters }: { filters: TaskFiltersState }) {
       {/* Cartões de Métricas Avançadas */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 shrink-0">
         <div className="p-4 rounded-[var(--radius-card)] border border-border bg-surface-alt/10 space-y-1">
-          <div className="text-[10px] text-[var(--muted-foreground)] uppercase font-bold tracking-wider flex items-center gap-1.5">
+          <div className="ds-meta text-[var(--muted-foreground)] uppercase font-bold tracking-wider flex items-center gap-1.5">
             <CheckCircle className="h-3.5 w-3.5 text-[var(--brand)]" /> Eficiência de Entrega
           </div>
           <div className="text-xl font-black text-[var(--foreground)]">
-            {Math.round(completionRate)}% <span className="text-[10px] text-muted-foreground font-normal">({completed}/{total} concluídas)</span>
+            {Math.round(completionRate)}% <span className="ds-meta text-muted-foreground font-normal">({completed}/{total} concluídas)</span>
           </div>
         </div>
 
         <div className="p-4 rounded-[var(--radius-card)] border border-border bg-surface-alt/10 space-y-1">
-          <div className="text-[10px] text-[var(--muted-foreground)] uppercase font-bold tracking-wider flex items-center gap-1.5">
+          <div className="ds-meta text-[var(--muted-foreground)] uppercase font-bold tracking-wider flex items-center gap-1.5">
             <Clock className="h-3.5 w-3.5 text-blue-500" /> Tempo Médio de Entrega
           </div>
           <div className="text-xl font-black text-[var(--foreground)]">
-            {leadTimeStr} <span className="text-[10px] text-muted-foreground font-normal">desde a criação</span>
+            {leadTimeStr} <span className="ds-meta text-muted-foreground font-normal">desde a criação</span>
           </div>
         </div>
 
         <div className="p-4 rounded-[var(--radius-card)] border border-border bg-surface-alt/10 space-y-1">
-          <div className="text-[10px] text-[var(--muted-foreground)] uppercase font-bold tracking-wider flex items-center gap-1.5">
+          <div className="ds-meta text-[var(--muted-foreground)] uppercase font-bold tracking-wider flex items-center gap-1.5">
             <Zap className="h-3.5 w-3.5 text-amber-500" /> Pontos de Dificuldade
           </div>
           <div className="text-xl font-black text-[var(--foreground)]">
-            {completedDifficultyPoints} <span className="text-[10px] text-muted-foreground font-normal">pontos entregues</span>
+            {completedDifficultyPoints} <span className="ds-meta text-muted-foreground font-normal">pontos entregues</span>
           </div>
         </div>
 
         <div className="p-4 rounded-[var(--radius-card)] border border-border bg-surface-alt/10 space-y-1">
-          <div className="text-[10px] text-[var(--muted-foreground)] uppercase font-bold tracking-wider flex items-center gap-1.5">
+          <div className="ds-meta text-[var(--muted-foreground)] uppercase font-bold tracking-wider flex items-center gap-1.5">
             <Calendar className="h-3.5 w-3.5 text-emerald-500" /> Aderência ao Prazo
           </div>
           <div className="text-xl font-black text-[var(--foreground)]">
             {tasksWithDueDateCount > 0 ? `${onTimeRate}%` : "—"}{" "}
-            <span className="text-[10px] text-muted-foreground font-normal">no prazo estipulado</span>
+            <span className="ds-meta text-muted-foreground font-normal">no prazo estipulado</span>
           </div>
         </div>
       </div>
@@ -307,7 +307,7 @@ export function ReportsView({ filters }: { filters: TaskFiltersState }) {
                 </div>
                 <div className="flex flex-col gap-2 p-2">
                   {complexityData.map((c, i) => (
-                    <div key={i} className="flex items-center gap-2 text-[10px] font-bold text-muted-foreground uppercase">
+                    <div key={i} className="flex items-center gap-2 ds-meta font-bold text-muted-foreground uppercase">
                       <span className="h-2.5 w-2.5 rounded-full" style={{ backgroundColor: c.color }} />
                       <span>{c.name}: {c.value} ({Math.round((c.value / total) * 100)}%)</span>
                     </div>
@@ -325,7 +325,7 @@ export function ReportsView({ filters }: { filters: TaskFiltersState }) {
           <h3 className="text-xs uppercase font-extrabold text-[var(--muted-foreground)] tracking-wider mb-4 flex items-center justify-between">
             <span>Precisão de Horas Estimadas vs Reais por Agente</span>
             {totalEstimatedMinutes > 0 && (
-              <span className="text-[10px] text-muted-foreground lowercase">
+              <span className="ds-meta text-muted-foreground lowercase">
                 desvio de estimativa: <strong className="text-foreground">{estimationDeviation}%</strong>
               </span>
             )}

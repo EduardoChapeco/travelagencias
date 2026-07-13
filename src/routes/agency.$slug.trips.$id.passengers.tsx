@@ -22,9 +22,11 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAgency, getModuleName } from "@/lib/agency-context";
 import { StatusBadge } from "@/components/ui/badge";
 import { fmtDate } from "@/lib/formatters";
+import { processPassengerWithAI } from "@/lib/ocr-ai";
 import { NewPassengerSheet } from "@/components/trips/NewPassengerSheet";
 import { toast } from "sonner";
 import { useConfirm } from "@/hooks/use-confirm";
+import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { FormInput as Input } from "@/components/ui/input";
 import { NativeSelect as Select } from "@/components/ui/select";
@@ -200,35 +202,15 @@ function PassengersPage() {
       let extractedData: any = {};
       let expirationDate = customExpDate || null;
       try {
-        const { data: ocrData, error: ocrErr } = await supabase.functions.invoke(
-          "ai-orchestrator",
-          {
-            body: {
-              action: "completion",
-              feature: "ocr_passenger",
-              file_base64: fileBase64,
-              mime: file.type,
-              agency_id: agency.id,
-            },
-          },
-        );
-        if (!ocrErr && ocrData?.result) {
-          let parsedResult = ocrData.result;
-          if (typeof parsedResult === "string") {
-            try {
-              const cleaned = parsedResult.replace(/\`\`\`json/gi, "").replace(/\`\`\`/g, "").trim();
-              parsedResult = JSON.parse(cleaned);
-            } catch (e) {
-              console.warn("Falha no parse fallback de OCR Passenger:", e);
-            }
-          }
-          extractedData = parsedResult;
+        const ocrData = await processPassengerWithAI(fileBase64, file.type, agency.id);
+        if (ocrData) {
+          extractedData = ocrData;
           if (extractedData.expiration_date) {
             expirationDate = extractedData.expiration_date;
           }
           toast.success("Dados extraídos do documento!", { id: toastId });
         } else {
-          console.warn("OCR returned empty or error", ocrErr);
+          console.warn("OCR returned empty or error");
           toast.success("Documento enviado sem extração automática.", { id: toastId });
         }
       } catch (ocrErr) {
@@ -288,7 +270,7 @@ function PassengersPage() {
   };
 
   return (
-    <div className="flex-1 overflow-y-auto px-4 md:px-6 py-5 min-h-0">
+    <div className="page-content dock-offset">
       <ConfirmDialog />
       {(list.isError || tripQ.isError || docsQ.isError) && (
         <div className="mb-6 flex flex-col items-center justify-center py-10 px-6 text-center rounded-[var(--radius-card)] border border-red-200 bg-red-50/60">
@@ -348,7 +330,7 @@ function PassengersPage() {
               )}
               Confirmar Todos
             </Button>
-            <span className="text-[10px] font-bold text-warning bg-warning/10 border border-warning/20 px-2 py-1 rounded whitespace-nowrap">
+            <span className="ds-meta font-bold text-warning bg-warning/10 border border-warning/20 px-2 py-1 rounded whitespace-nowrap">
               Pendente de Revisão
             </span>
           </div>
@@ -395,7 +377,7 @@ function PassengersPage() {
                   <div className="min-w-0">
                     <h3 className="truncate font-bold text-foreground">{p.full_name}</h3>
                     <div className="flex flex-wrap items-center gap-2 mt-1">
-                      <span className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
+                      <span className="ds-meta font-semibold uppercase tracking-wider text-muted-foreground">
                         {translateKind(p.kind)}
                       </span>
                       {p.is_lead_passenger && (
@@ -429,7 +411,7 @@ function PassengersPage() {
                       <FileText className="h-3.5 w-3.5" />
                     </div>
                     <div className="flex-1 min-w-0">
-                      <div className="text-[10px] font-semibold uppercase text-muted-foreground tracking-wide mb-0.5">
+                      <div className="ds-meta font-semibold uppercase text-muted-foreground tracking-wide mb-0.5">
                         {p.document_type
                           ? String(p.document_type).toUpperCase()
                           : "Documento Principal"}
@@ -447,7 +429,7 @@ function PassengersPage() {
                         <Calendar className="h-3.5 w-3.5" />
                       </div>
                       <div className="min-w-0">
-                        <div className="text-[10px] font-semibold uppercase text-muted-foreground tracking-wide mb-0.5">
+                        <div className="ds-meta font-semibold uppercase text-muted-foreground tracking-wide mb-0.5">
                           Nascimento
                         </div>
                         <div className="text-xs font-medium truncate">
@@ -461,7 +443,7 @@ function PassengersPage() {
                         <ShieldCheck className="h-3.5 w-3.5" />
                       </div>
                       <div className="min-w-0">
-                        <div className="text-[10px] font-semibold uppercase text-muted-foreground tracking-wide mb-0.5">
+                        <div className="ds-meta font-semibold uppercase text-muted-foreground tracking-wide mb-0.5">
                           Nacionalidade
                         </div>
                         <div className="text-xs font-medium truncate">{p.nationality || "—"}</div>
@@ -490,10 +472,10 @@ function PassengersPage() {
 
                 {/* Documentos Anexados & Upload Area */}
                 <div className="pt-4 border-t border-border/50 space-y-3 mt-4">
-                  <div className="text-[10px] font-bold uppercase text-muted-foreground tracking-wide mb-1 flex items-center justify-between">
+                  <div className="ds-label-caps text-muted-foreground tracking-wide mb-1 flex items-center justify-between">
                     <span>Documentos Operacionais</span>
                     {uploadingPid === p.id && (
-                      <span className="flex items-center gap-1 text-[10px] text-brand">
+                      <span className="flex items-center gap-1 ds-meta text-brand">
                         <Loader2 className="h-3 w-3 animate-spin" /> Leitura Inteligente...
                       </span>
                     )}
@@ -560,7 +542,7 @@ function PassengersPage() {
                               </div>
                             </div>
                             {doc.expiration_date && (
-                              <div className="text-[10px] text-muted-foreground font-mono">
+                              <div className="ds-meta text-muted-foreground font-mono">
                                 Validade:{" "}
                                 {new Date(doc.expiration_date + "T12:00:00").toLocaleDateString(
                                   "pt-BR",
@@ -568,7 +550,7 @@ function PassengersPage() {
                               </div>
                             )}
                             {isExpired && (
-                              <div className="flex items-center gap-1 text-[10px] text-danger font-bold mt-1">
+                              <div className="flex items-center gap-1 ds-meta text-danger font-bold mt-1">
                                 <AlertTriangle className="h-3 w-3 shrink-0" />
                                 Expirado!
                               </div>
@@ -585,7 +567,7 @@ function PassengersPage() {
 
                     {(!docsQ.data ||
                       docsQ.data.filter((d: any) => d.passenger_id === p.id).length === 0) && (
-                      <div className="text-[10px] text-muted-foreground italic py-1">
+                      <div className="ds-meta text-muted-foreground italic py-1">
                         Nenhum anexo cadastrado.
                       </div>
                     )}
@@ -599,7 +581,7 @@ function PassengersPage() {
                         onChange={(e) =>
                           setSelectedDocType({ ...selectedDocType, [p.id]: e.target.value as any })
                         }
-                        className="rounded-full border-none glass-card border-none px-2 text-[10px] font-medium"
+                        className="rounded-full border-none glass-card border-none px-2 ds-meta font-medium"
                       >
                         <option value="passport">Passaporte</option>
                         <option value="visa">Visto</option>
@@ -611,10 +593,10 @@ function PassengersPage() {
                         value={expDates[p.id] || ""}
                         onChange={(e) => setExpDates({ ...expDates, [p.id]: e.target.value })}
                         placeholder="Vencimento"
-                        className="rounded-full border-none glass-card border-none px-2 text-[10px]"
+                        className="rounded-full border-none glass-card border-none px-2 ds-meta"
                       />
                     </div>
-                    <label className="flex h-8 items-center justify-center gap-1.5 rounded-full border-none glass-card border-none cursor-pointer text-[10px] font-bold hover:glass bg-white/5 border-white/10 transition-colors">
+                    <label className="flex h-8 items-center justify-center gap-1.5 rounded-full border-none glass-card border-none cursor-pointer ds-meta font-bold hover:glass bg-white/5 border-white/10 transition-colors">
                       <Upload className="h-3.5 w-3.5 text-muted-foreground" />
                       Anexar & Identificar Dados
                       <Input
@@ -765,20 +747,9 @@ function DataConferencePanel({
       let extractedData: any = {};
       let expirationDate = null;
       try {
-        const { data: ocrData, error: ocrErr } = await supabase.functions.invoke(
-          "ai-orchestrator",
-          {
-            body: {
-              action: "completion",
-              feature: "ocr_passenger",
-              file_base64: fileBase64,
-              mime: file.type,
-              agency_id: agencyId,
-            },
-          },
-        );
-        if (!ocrErr && ocrData?.result) {
-          extractedData = ocrData.result;
+        const ocrData = await processPassengerWithAI(fileBase64, file.type, agencyId);
+        if (ocrData) {
+          extractedData = ocrData;
           if (extractedData.expiration_date) {
             expirationDate = extractedData.expiration_date;
           }
@@ -848,8 +819,8 @@ function DataConferencePanel({
   if (!passenger) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex bg-background/90 p-4 md:p-6 overflow-hidden">
-      <div className="flex flex-col md:flex-row w-full gap-6 glass-card border-none rounded-[var(--radius-card)] border-none shadow-2xl overflow-hidden container p-0">
+    <Dialog open={true} onOpenChange={(open) => !open && onClose()}>
+      <DialogContent className="max-w-[90vw] md:max-w-6xl p-0 overflow-hidden border-none/10 max-h-[90vh] glass dark:glass-dark text-white flex flex-col md:flex-row gap-0">
         {/* LADO ESQUERDO: Visualizador de Documentos */}
         <div className="flex-1 flex flex-col p-6 border-r border-border/80 glass bg-white/5 border-white/10/10">
           <div className="flex items-center justify-between mb-4">
@@ -911,7 +882,7 @@ function DataConferencePanel({
                 <ShieldCheck className="h-4 w-4 text-emerald-600" /> Dados Identificados pela
                 Inteligência Artificial
               </h4>
-              <div className="grid grid-cols-2 gap-3 text-[11px]">
+              <div className="grid grid-cols-2 gap-3 ds-meta">
                 {Object.entries(doc.extracted_metadata).map(([key, val]) => (
                   <div key={key} className="glass bg-white/5 border-white/10/50 p-2 rounded border-none/40">
                     <span className="font-semibold text-muted-foreground block uppercase text-[8px] tracking-wider">
@@ -926,7 +897,7 @@ function DataConferencePanel({
         </div>
 
         {/* LADO DIREITO: Form de CRUD/CMS (Edição) */}
-        <div className="w-full md:w-[480px] flex flex-col p-6 glass-card border-none overflow-y-auto">
+        <div className="w-full md:w-[480px] flex flex-col page-content dock-offset glass-card border-none">
           <div className="flex items-center justify-between border-b border-border pb-4 mb-6">
             <div>
               <h3 className="text-lg font-bold text-foreground">Conferência de Cadastro</h3>
@@ -944,7 +915,7 @@ function DataConferencePanel({
 
           <div className="space-y-4 flex-1">
             <div>
-              <label className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground block mb-1">
+              <label className="ds-label-caps tracking-wider text-muted-foreground block mb-1">
                 Nome Completo
               </label>
               <Input
@@ -956,7 +927,7 @@ function DataConferencePanel({
             </div>
 
             <div>
-              <label className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground block mb-1">
+              <label className="ds-label-caps tracking-wider text-muted-foreground block mb-1">
                 Tipo de Passageiro
               </label>
               <Select
@@ -972,7 +943,7 @@ function DataConferencePanel({
 
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <label className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground block mb-1">
+                <label className="ds-label-caps tracking-wider text-muted-foreground block mb-1">
                   Tipo Documento
                 </label>
                 <Select
@@ -988,7 +959,7 @@ function DataConferencePanel({
                 </Select>
               </div>
               <div>
-                <label className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground block mb-1">
+                <label className="ds-label-caps tracking-wider text-muted-foreground block mb-1">
                   Número Documento
                 </label>
                 <Input
@@ -1002,7 +973,7 @@ function DataConferencePanel({
 
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <label className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground block mb-1">
+                <label className="ds-label-caps tracking-wider text-muted-foreground block mb-1">
                   Nascimento
                 </label>
                 <Input
@@ -1013,7 +984,7 @@ function DataConferencePanel({
                 />
               </div>
               <div>
-                <label className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground block mb-1">
+                <label className="ds-label-caps tracking-wider text-muted-foreground block mb-1">
                   Nacionalidade
                 </label>
                 <Input
@@ -1028,7 +999,7 @@ function DataConferencePanel({
 
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <label className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground block mb-1">
+                <label className="ds-label-caps tracking-wider text-muted-foreground block mb-1">
                   Email
                 </label>
                 <Input
@@ -1039,7 +1010,7 @@ function DataConferencePanel({
                 />
               </div>
               <div>
-                <label className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground block mb-1">
+                <label className="ds-label-caps tracking-wider text-muted-foreground block mb-1">
                   Telefone
                 </label>
                 <Input
@@ -1052,7 +1023,7 @@ function DataConferencePanel({
             </div>
 
             <div>
-              <label className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground block mb-1">
+              <label className="ds-label-caps tracking-wider text-muted-foreground block mb-1">
                 Observações Operacionais
               </label>
               <Textarea
@@ -1085,7 +1056,7 @@ function DataConferencePanel({
             </Button>
           </div>
         </div>
-      </div>
-    </div>
+      </DialogContent>
+    </Dialog>
   );
 }

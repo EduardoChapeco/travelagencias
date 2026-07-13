@@ -149,7 +149,7 @@ export function SectionFlights({ draft, save }: Props) {
           </div>
           <div className="grid grid-cols-1 gap-2 mb-2">
             <div className="mb-1">
-              <span className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wider block mb-1">
+              <span className="ds-meta font-semibold text-muted-foreground uppercase tracking-wider block mb-1">
                 Buscar Companhia Aérea no Catálogo
               </span>
               <SupplierAutocomplete
@@ -309,11 +309,11 @@ export function SectionFlights({ draft, save }: Props) {
                           <h4 className="text-xs font-bold text-foreground truncate group-hover:text-brand transition-colors">
                             {flight.airline} • Voo {flight.flight_number}
                           </h4>
-                          <span className="text-[10px] text-muted-foreground font-mono">
+                          <span className="ds-meta text-muted-foreground font-mono">
                             {flight.stops === 0 ? "Direto" : `${flight.stops} parada(s)`}
                           </span>
                         </div>
-                        <p className="text-[10px] text-muted-foreground font-sans truncate">
+                        <p className="ds-meta text-muted-foreground font-sans truncate">
                           {flight.origin} {flight.departure_time} → {flight.destination}{" "}
                           {flight.arrival_time}
                         </p>
@@ -331,7 +331,7 @@ export function SectionFlights({ draft, save }: Props) {
                         <Button
                           type="button"
                           onClick={() => importFlight(flight)}
-                          className="px-2.5 py-1 text-[10px] bg-primary text-primary-foreground font-semibold rounded hover:bg-primary/95 transition-all cursor-pointer"
+                          className="px-2.5 py-1 ds-meta bg-primary text-primary-foreground font-semibold rounded hover:bg-primary/95 transition-all cursor-pointer"
                         >
                           Selecionar
                         </Button>

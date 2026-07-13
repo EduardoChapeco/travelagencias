@@ -157,7 +157,7 @@ export function LeadCardView({
                   <span>{lead.destination}</span>
                 </div>
               )}
-              <div className="flex flex-wrap items-center gap-x-1.5 text-[10px] text-muted-foreground pl-4 mt-0.5">
+              <div className="flex flex-wrap items-center gap-x-1.5 ds-meta text-muted-foreground pl-4 mt-0.5">
                 {travelPeriod && <span className="font-medium">{travelPeriod}</span>}
                 {travelPeriod && <span>•</span>}
                 <span className="font-semibold text-foreground/80">{paxBreakdown}</span>
@@ -215,7 +215,7 @@ export function LeadCardView({
             </div>
 
             {lead.estimated_value > 0 && (
-              <span className="shrink-0 font-mono text-[11px] font-bold text-brand">
+              <span className="shrink-0 font-mono ds-meta font-bold text-brand">
                 R${Math.round(lead.estimated_value).toLocaleString("pt-BR")}
               </span>
             )}
@@ -231,7 +231,7 @@ export function LeadCardView({
         >
           {transferMode ? (
             <Select
-              className="text-[10px] h-6 rounded px-1 focus:outline-brand"
+              className="ds-meta h-6 rounded px-1 focus:outline-brand"
               onChange={(e) => {
                 if (e.target.value && onTransfer) {
                   onTransfer(lead.id, e.target.value);

@@ -39,7 +39,7 @@ export function SectionTravelers({ draft, save }: Props) {
 
       <div className="space-y-2 mt-2">
         <div className="flex items-center justify-between">
-          <span className="text-[10px] uppercase tracking-wider text-muted-foreground font-bold">
+          <span className="ds-label-caps text-muted-foreground font-bold">
             Nomes dos passageiros
           </span>
           <AddBtn
@@ -53,7 +53,7 @@ export function SectionTravelers({ draft, save }: Props) {
         </div>
         {((draft as any).pax_names ?? []).map((name: string, i: number) => (
           <div key={i} className="flex items-center gap-2">
-            <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-surface-alt text-[10px] font-bold text-muted-foreground">
+            <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-surface-alt ds-meta font-bold text-muted-foreground">
               {i + 1}
             </span>
             <Input

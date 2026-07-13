@@ -278,10 +278,10 @@ function AISiteBuilder() {
             </Link>
           )}
           <div>
-            <h1 className="text-xs font-bold uppercase tracking-wider text-brand">
+            <h1 className="ds-label-caps tracking-wider text-brand">
               Criador de Sites
             </h1>
-            <p className="text-[10px] text-muted-foreground">
+            <p className="ds-meta text-muted-foreground">
               Gerador automático de portal e páginas
             </p>
           </div>
@@ -318,7 +318,7 @@ function AISiteBuilder() {
             <h3 className="text-xs font-bold text-foreground flex items-center gap-1.5">
               <Sparkles className="w-3.5 h-3.5 text-brand" /> Sugestões de temas
             </h3>
-            <ul className="space-y-1.5 text-[10px] text-muted-foreground list-disc pl-4 leading-normal">
+            <ul className="space-y-1.5 ds-meta text-muted-foreground list-disc pl-4 leading-normal">
               <li>"Site de cruzeiros de luxo no Caribe com grid de destinos e depoimentos."</li>
               <li>"Landing page para venda de pacotes promocionais da Disney com cronograma."</li>
               <li>
@@ -363,7 +363,7 @@ function AISiteBuilder() {
                     <div className="flex items-center gap-2 text-xs font-bold text-green-600">
                       <CheckCircle2 className="w-4 h-4" /> Site Publicado com Sucesso!
                     </div>
-                    <p className="text-[10px] text-muted-foreground leading-normal">
+                    <p className="ds-meta text-muted-foreground leading-normal">
                       A landing page foi salva no banco de dados e está com o link ativo para
                       compartilhamento público instantâneo.
                     </p>
@@ -372,7 +372,7 @@ function AISiteBuilder() {
                         href={m.siteLink}
                         target="_blank"
                         rel="noreferrer"
-                        className="flex-1 h-8 rounded-[var(--radius-card)] glass-card border-none border-none hover:glass bg-white/5 border-white/10 text-[10px] font-bold text-center flex items-center justify-center transition-colors"
+                        className="flex-1 h-8 rounded-[var(--radius-card)] glass-card border-none border-none hover:glass bg-white/5 border-white/10 ds-meta font-bold text-center flex items-center justify-center transition-colors"
                       >
                         Visualizar Site
                       </a>
@@ -383,7 +383,7 @@ function AISiteBuilder() {
                             params: { slug: m.agencySlug!, page_id: m.siteId! },
                           })
                         }
-                        className="flex-1 h-8 rounded-[var(--radius-card)] bg-brand hover:bg-brand-hover text-white text-[10px] font-bold transition-colors"
+                        className="flex-1 h-8 rounded-[var(--radius-card)] bg-brand hover:bg-brand-hover text-white ds-meta font-bold transition-colors"
                       >
                         Editar Seções
                       </Button>
@@ -415,11 +415,11 @@ function AISiteBuilder() {
                       style={{ animationDelay: "300ms" }}
                     ></div>
                   </div>
-                  <span className="text-[11px] font-semibold text-brand animate-pulse">
+                  <span className="ds-meta font-semibold text-brand animate-pulse">
                     {currentProgress}
                   </span>
                 </div>
-                <div className="text-[10px] text-muted-foreground mt-1">
+                <div className="ds-meta text-muted-foreground mt-1">
                   Etapa {currentStep + 1} de 6
                 </div>
               </div>

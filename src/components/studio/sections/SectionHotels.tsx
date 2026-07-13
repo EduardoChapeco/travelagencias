@@ -148,7 +148,7 @@ export function SectionHotels({ draft, save }: Props) {
         <Card key={h.id || i} onRemove={() => remove(i)}>
           <div className="grid grid-cols-1 gap-2 mb-2">
             <div className="mb-1">
-              <span className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wider block mb-1">
+              <span className="ds-meta font-semibold text-muted-foreground uppercase tracking-wider block mb-1">
                 Buscar Hotel no Catálogo da Agência
               </span>
               <SupplierAutocomplete
@@ -196,13 +196,13 @@ export function SectionHotels({ draft, save }: Props) {
           {/* Rooms */}
           <div className="mb-2">
             <div className="flex items-center justify-between mb-1">
-              <span className="text-[10px] uppercase tracking-wider font-bold text-muted-foreground">
+              <span className="ds-label-caps font-bold text-muted-foreground">
                 Quartos
               </span>
               <Button
                 type="button"
                 onClick={() => addRoom(i)}
-                className="flex items-center gap-1 text-[10px] text-brand hover:underline"
+                className="flex items-center gap-1 ds-meta text-brand hover:underline"
               >
                 <Plus className="h-3 w-3" /> Adicionar
               </Button>
@@ -243,7 +243,7 @@ export function SectionHotels({ draft, save }: Props) {
             {unsplashOpenIndex === i ? (
               <div className="rounded-2xl border border-border bg-surface p-3 mt-1">
                 <div className="flex items-center justify-between mb-2">
-                  <span className="text-[10px] uppercase tracking-wide font-semibold">
+                  <span className="ds-meta uppercase tracking-wide font-semibold">
                     Buscar imagem
                   </span>
                   <Button
@@ -270,7 +270,7 @@ export function SectionHotels({ draft, save }: Props) {
               <Button
                 type="button"
                 onClick={() => setUnsplashOpenIndex(i)}
-                className="flex w-full items-center justify-center gap-1.5 rounded-full border border-dashed border-border py-2 text-[10px] text-muted-foreground hover:bg-surface-alt transition-colors mt-1"
+                className="flex w-full items-center justify-center gap-1.5 rounded-full border border-dashed border-border py-2 ds-meta text-muted-foreground hover:bg-surface-alt transition-colors mt-1"
               >
                 <Search className="h-3 w-3" /> Buscar foto do hotel no Unsplash
               </Button>
@@ -388,7 +388,7 @@ export function SectionHotels({ draft, save }: Props) {
                         <h4 className="text-xs font-bold text-foreground truncate group-hover:text-brand transition-colors">
                           {hotel.name}
                         </h4>
-                        <p className="text-[10px] text-muted-foreground font-sans truncate">
+                        <p className="ds-meta text-muted-foreground font-sans truncate">
                           {hotel.meal_plan} • {hotel.rooms?.[0]?.type}
                         </p>
                       </div>
@@ -402,7 +402,7 @@ export function SectionHotels({ draft, save }: Props) {
                         <Button
                           type="button"
                           onClick={() => importHotel(hotel)}
-                          className="px-2.5 py-1 text-[10px] bg-primary text-primary-foreground font-semibold rounded hover:bg-primary/95 transition-all cursor-pointer"
+                          className="px-2.5 py-1 ds-meta bg-primary text-primary-foreground font-semibold rounded hover:bg-primary/95 transition-all cursor-pointer"
                         >
                           Selecionar
                         </Button>

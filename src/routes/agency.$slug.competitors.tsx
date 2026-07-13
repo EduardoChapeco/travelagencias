@@ -180,7 +180,7 @@ Retorne EXATAMENTE UM JSON com as seguintes chaves precisas (sem markdown em vol
                   {analysis.mental_triggers.map((t) => (
                     <span
                       key={t}
-                      className="px-2 py-1 text-[10px] font-semibold glass bg-white/5 border-white/10 border-none rounded-full"
+                      className="px-2 py-1 ds-meta font-semibold glass bg-white/5 border-white/10 border-none rounded-full"
                     >
                       {t}
                     </span>

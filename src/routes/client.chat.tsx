@@ -159,7 +159,7 @@ function ClientChatRoute() {
                     >
                       {event.data.body}
                       <div
-                        className={`text-[10px] mt-1 text-right ${isMe ? "text-primary-foreground/70" : "text-muted-foreground"}`}
+                        className={`ds-meta mt-1 text-right ${isMe ? "text-primary-foreground/70" : "text-muted-foreground"}`}
                       >
                         {fmtDate(event.date)}
                       </div>
@@ -179,9 +179,9 @@ function ClientChatRoute() {
                       <p className="text-xs font-semibold text-zinc-800">
                         Chamado #{event.data.number || event.data.id.slice(0,4)} Aberto
                       </p>
-                      <p className="text-[10px] text-zinc-500 mt-0.5">{event.data.title}</p>
-                      <p className="text-[10px] text-zinc-400 mt-1">{fmtDate(event.date)}</p>
-                      <Link to="/client/support" className="text-[10px] text-primary font-semibold mt-2 hover:underline">
+                      <p className="ds-meta text-zinc-500 mt-0.5">{event.data.title}</p>
+                      <p className="ds-meta text-zinc-400 mt-1">{fmtDate(event.date)}</p>
+                      <Link to="/client/support" className="ds-meta text-primary font-semibold mt-2 hover:underline">
                         Ver Suporte
                       </Link>
                     </div>
@@ -200,8 +200,8 @@ function ClientChatRoute() {
                       <p className="text-xs font-semibold text-green-900">
                         Assinatura Criptografada via KYC
                       </p>
-                      <p className="text-[10px] text-green-700/80 mt-0.5">Identidade verificada e anexada ao documento.</p>
-                      <p className="text-[10px] text-green-600/60 mt-1">{fmtDate(event.date)}</p>
+                      <p className="ds-meta text-green-700/80 mt-0.5">Identidade verificada e anexada ao documento.</p>
+                      <p className="ds-meta text-green-600/60 mt-1">{fmtDate(event.date)}</p>
                     </div>
                   </div>
                 );
@@ -219,13 +219,13 @@ function ClientChatRoute() {
                       <p className={`text-xs font-semibold ${isAccepted ? 'text-blue-900' : 'text-zinc-800'}`}>
                         {isAccepted ? 'Proposta Aprovada!' : `Proposta #${event.data.number} Recebida`}
                       </p>
-                      <p className={`text-[10px] mt-0.5 ${isAccepted ? 'text-blue-700/80' : 'text-zinc-500'}`}>
+                      <p className={`ds-meta mt-0.5 ${isAccepted ? 'text-blue-700/80' : 'text-zinc-500'}`}>
                         {event.data.title}
                       </p>
-                      <p className={`text-[10px] mt-1 ${isAccepted ? 'text-blue-600/60' : 'text-zinc-400'}`}>
+                      <p className={`ds-meta mt-1 ${isAccepted ? 'text-blue-600/60' : 'text-zinc-400'}`}>
                         {fmtDate(event.date)}
                       </p>
-                      <Link to="/client/quotes/$id" params={{ id: event.data.id }} className={`text-[10px] font-semibold mt-2 hover:underline ${isAccepted ? 'text-blue-700' : 'text-primary'}`}>
+                      <Link to="/client/quotes/$id" params={{ id: event.data.id }} className={`ds-meta font-semibold mt-2 hover:underline ${isAccepted ? 'text-blue-700' : 'text-primary'}`}>
                         Ver Proposta
                       </Link>
                     </div>

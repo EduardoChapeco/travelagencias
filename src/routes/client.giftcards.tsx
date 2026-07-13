@@ -45,7 +45,7 @@ function Page() {
               {g.recipient_name && <div className="mt-3 text-sm">Para: {g.recipient_name}</div>}
               {g.message && <p className="mt-2 italic text-xs">"{g.message}"</p>}
               {g.expires_at && (
-                <div className="mt-3 text-[11px] text-muted-foreground">
+                <div className="mt-3 ds-meta text-muted-foreground">
                   Expira {new Date(g.expires_at).toLocaleDateString("pt-BR")}
                 </div>
               )}

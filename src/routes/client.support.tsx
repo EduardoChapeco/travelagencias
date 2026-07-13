@@ -73,15 +73,15 @@ function ClientSupportRoute() {
   const getStatusBadge = (status: string) => {
     switch (status) {
       case "open":
-        return <span className="px-2 py-1 bg-yellow-500/10 text-yellow-500 text-[10px] rounded-full uppercase font-bold tracking-wider">Aberto</span>;
+        return <span className="px-2 py-1 bg-yellow-500/10 text-yellow-500 ds-meta rounded-full uppercase font-bold tracking-wider">Aberto</span>;
       case "in_progress":
-        return <span className="px-2 py-1 bg-blue-500/10 text-blue-500 text-[10px] rounded-full uppercase font-bold tracking-wider">Em Andamento</span>;
+        return <span className="px-2 py-1 bg-blue-500/10 text-blue-500 ds-meta rounded-full uppercase font-bold tracking-wider">Em Andamento</span>;
       case "resolved":
-        return <span className="px-2 py-1 bg-green-500/10 text-green-500 text-[10px] rounded-full uppercase font-bold tracking-wider">Resolvido</span>;
+        return <span className="px-2 py-1 bg-green-500/10 text-green-500 ds-meta rounded-full uppercase font-bold tracking-wider">Resolvido</span>;
       case "closed":
-        return <span className="px-2 py-1 bg-zinc-500/10 text-zinc-500 text-[10px] rounded-full uppercase font-bold tracking-wider">Fechado</span>;
+        return <span className="px-2 py-1 bg-zinc-500/10 text-zinc-500 ds-meta rounded-full uppercase font-bold tracking-wider">Fechado</span>;
       default:
-        return <span className="px-2 py-1 bg-zinc-500/10 text-zinc-500 text-[10px] rounded-full uppercase font-bold tracking-wider">{status}</span>;
+        return <span className="px-2 py-1 bg-zinc-500/10 text-zinc-500 ds-meta rounded-full uppercase font-bold tracking-wider">{status}</span>;
     }
   };
 

@@ -382,7 +382,7 @@ export function BlockFormEditor({ block: blockItem, updateBlock, agencyId }: Pro
                 onChange={(html) => updateBlock(block.id, { text: html })}
               />
             </div>
-            <p className="text-[10px] text-muted-foreground mt-1">
+            <p className="ds-meta text-muted-foreground mt-1">
               Este bloco puxará automaticamente as redes sociais e o formulário de lead da agência
               no portal público.
             </p>
@@ -419,7 +419,7 @@ export function BlockFormEditor({ block: blockItem, updateBlock, agencyId }: Pro
                   className="border border-border rounded-3xl p-4 space-y-3 bg-surface shadow-none"
                 >
                   <div className="flex items-center justify-between gap-2">
-                    <span className="text-[10px] font-bold text-muted-foreground uppercase">
+                    <span className="ds-meta font-bold text-muted-foreground uppercase">
                       Item #{itemIdx + 1}
                     </span>
                     <Button
@@ -755,7 +755,7 @@ export function BlockFormEditor({ block: blockItem, updateBlock, agencyId }: Pro
                 ))}
               </Select>
             </Field>
-            <p className="text-[10px] text-muted-foreground">
+            <p className="ds-meta text-muted-foreground">
               Os roteiros são buscados automaticamente. Gerencie-os em{" "}
               <strong>Roteiros em Grupo</strong>.
             </p>
@@ -920,7 +920,7 @@ export function BlockFormEditor({ block: blockItem, updateBlock, agencyId }: Pro
                 ))}
               </Select>
             </Field>
-            <p className="text-[10px] text-muted-foreground">
+            <p className="ds-meta text-muted-foreground">
               Os posts são buscados automaticamente. Gerencie-os em{" "}
               <strong>Portal &gt; Blog</strong>.
             </p>
@@ -1191,7 +1191,7 @@ export function BlockFormEditor({ block: blockItem, updateBlock, agencyId }: Pro
                   className="border border-border rounded-3xl p-3 space-y-3 bg-surface shadow-none"
                 >
                   <div className="flex justify-between items-center pb-2 border-b border-border/40">
-                    <span className="text-[10px] font-bold text-muted-foreground uppercase">
+                    <span className="ds-meta font-bold text-muted-foreground uppercase">
                       Destino #{idx + 1}
                     </span>
                     <Button
@@ -2226,10 +2226,10 @@ export function BlockFormEditor({ block: blockItem, updateBlock, agencyId }: Pro
         {activeTab === "bindings" && (
           <div className="space-y-4">
             <div>
-              <h4 className="text-[10px] uppercase tracking-wider font-bold text-foreground">
+              <h4 className="ds-label-caps font-bold text-foreground">
                 Vincular Dados Dinâmicos
               </h4>
-              <p className="text-[10px] text-muted-foreground leading-normal mt-0.5">
+              <p className="ds-meta text-muted-foreground leading-normal mt-0.5">
                 Substitua textos ou imagens estáticas por campos vindos de um Pacote / Roteiro da
                 agência.
               </p>
@@ -2255,7 +2255,7 @@ export function BlockFormEditor({ block: blockItem, updateBlock, agencyId }: Pro
 
             {(block as any).bindings?.packageId && (
               <div className="pt-4 border-t border-border space-y-3">
-                <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider block">
+                <span className="ds-meta font-bold text-muted-foreground uppercase tracking-wider block">
                   Mapeamento de Campos
                 </span>
 
@@ -2294,7 +2294,7 @@ export function BlockFormEditor({ block: blockItem, updateBlock, agencyId }: Pro
 
                     return (
                       <div key={key} className="space-y-1">
-                        <label className="text-[11px] font-bold text-foreground capitalize">
+                        <label className="ds-meta font-bold text-foreground capitalize">
                           {key.replace("_", " ")}
                         </label>
                         <Select
@@ -2407,7 +2407,7 @@ export function BlockFormEditor({ block: blockItem, updateBlock, agencyId }: Pro
                 </Field>
                 {/* Gradient Presets */}
                 <div className="bg-surface-alt/45 p-2.5 rounded-3xl border border-border/40 space-y-2">
-                  <span className="text-[10px] font-bold text-muted-foreground uppercase">
+                  <span className="ds-meta font-bold text-muted-foreground uppercase">
                     Presets Vibrantes:
                   </span>
                   <div className="grid grid-cols-2 gap-2">
@@ -2936,7 +2936,7 @@ function SectionStyleEditor({ block, updateBlock, agencyId }: Props) {
           </div>
           {(brandColor || brandColorLight) && (
             <div className="flex gap-2 items-center mt-2 bg-surface-alt/40 p-2 rounded-2xl border border-border/40">
-              <span className="text-[10px] font-bold text-muted-foreground uppercase">
+              <span className="ds-meta font-bold text-muted-foreground uppercase">
                 Cores da Agência:
               </span>
               {brandColor && (
@@ -3001,7 +3001,7 @@ function SectionStyleEditor({ block, updateBlock, agencyId }: Props) {
           </div>
           {(brandColor || brandOriginalFg) && (
             <div className="flex gap-2 items-center mt-2 bg-surface-alt/40 p-2 rounded-2xl border border-border/40">
-              <span className="text-[10px] font-bold text-muted-foreground uppercase">
+              <span className="ds-meta font-bold text-muted-foreground uppercase">
                 Presets de Contraste:
               </span>
               {brandOriginalFg && (
@@ -3297,7 +3297,7 @@ export function RegistryBlockFormEditor({
             return (
               <div key={field.key} className="border-t border-border pt-4 mt-4 space-y-2">
                 <div className="flex justify-between items-center mb-2">
-                  <span className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
+                  <span className="ds-label-caps tracking-wider text-muted-foreground">
                     {field.label}
                   </span>
                 </div>
@@ -3401,7 +3401,7 @@ function UnsplashPicker({ value, onChange }: { value: string; onChange: (url: st
               ))}
             </div>
           ) : (
-            <div className="text-[10px] text-muted-foreground text-center py-4">
+            <div className="ds-meta text-muted-foreground text-center py-4">
               Sem resultados. Busque termos em inglês.
             </div>
           )}

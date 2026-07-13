@@ -473,7 +473,7 @@ function TicketAdvancedRoute() {
         <div className="p-4 space-y-5 overflow-y-auto flex-1">
           {/* Responsável */}
           <div className="space-y-1">
-            <h4 className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">Responsável</h4>
+            <h4 className="ds-label-caps tracking-wider text-muted-foreground">Responsável</h4>
             <div className="flex items-center gap-2 p-2 rounded-[var(--radius-card)] glass-card border-none border-none">
               <div className="h-7 w-7 rounded-full bg-brand/10 text-brand flex items-center justify-center text-xs font-black uppercase shrink-0">
                 {assigneeName.charAt(0)}
@@ -501,7 +501,7 @@ function TicketAdvancedRoute() {
 
           {/* Entidades de Viagem */}
           <div className="space-y-3 pt-2 border-t border-border">
-            <h4 className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">Entidades de Viagem</h4>
+            <h4 className="ds-label-caps tracking-wider text-muted-foreground">Entidades de Viagem</h4>
             <Field label="Localizadores (LOC) — separar por vírgula">
               <Input
                 value={metaDraft.loc_codes}
@@ -530,7 +530,7 @@ function TicketAdvancedRoute() {
 
           {/* Financeiro */}
           <div className="space-y-3 pt-2 border-t border-border">
-            <h4 className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">Financeiro & Reembolso</h4>
+            <h4 className="ds-label-caps tracking-wider text-muted-foreground">Financeiro & Reembolso</h4>
             <Field label="Custo Extra (BRL)">
               <Input
                 type="number"

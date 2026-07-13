@@ -31,6 +31,7 @@ import { NativeSelect as Select } from "@/components/ui/select";
 import { FormTextarea as Textarea } from "@/components/ui/textarea";
 import { PrimaryButton, GhostButton , Button } from "@/components/ui/button";
 import { StatusBadge } from "@/components/ui/badge";
+import { SheetPage } from "@/components/ui/sheet";
 import { PageHeader, ModuleActionButton } from "@/components/shell/PageHeader";
 
 export const Route = createFileRoute("/agency/$slug/destination-intelligence")({
@@ -311,7 +312,7 @@ function DestinationIntelligencePage() {
             placeholder: "Buscar destino…"
           }}
           actions={
-            <div className="flex items-center gap-1.5 text-[11px] text-white/50">
+            <div className="flex items-center gap-1.5 ds-meta text-white/50">
               <span><strong className="text-white">{q.data?.length ?? 0}</strong> destinos</span>
               <span className="hidden sm:inline"><strong className="text-white">{q.data?.filter((d) => d.ai_generated_at).length ?? 0}</strong> com IA</span>
               <span className="hidden sm:inline"><strong className="text-white">{q.data?.filter((d) => d.visa_required).length ?? 0}</strong> exigem visto</span>
@@ -481,7 +482,7 @@ function DestinationIntelligencePage() {
                   </div>
 
                   {/* Info grid */}
-                  <div className="grid grid-cols-2 gap-2 text-[11px]">
+                  <div className="grid grid-cols-2 gap-2 ds-meta">
                     {dest.visa_required !== null && (
                       <div className="flex items-center gap-1 text-muted-foreground">
                         {dest.visa_required ? (
@@ -526,7 +527,7 @@ function DestinationIntelligencePage() {
 
                   {/* Vaccinations */}
                   {(dest.vaccinations_required ?? []).length > 0 && (
-                    <div className="bg-danger/5 border border-danger/20 rounded-[var(--radius-card)] px-3 py-2 text-[10px]">
+                    <div className="bg-danger/5 border border-danger/20 rounded-[var(--radius-card)] px-3 py-2 ds-meta">
                       <span className="font-bold text-danger uppercase tracking-wide block mb-0.5">
                         Vacinas Obrigatórias
                       </span>
@@ -538,7 +539,7 @@ function DestinationIntelligencePage() {
 
                   {/* Budget */}
                   {dest.budget_range && (
-                    <div className="text-[10px] text-muted-foreground border-t border-border/50 pt-2">
+                    <div className="ds-meta text-muted-foreground border-t border-border/50 pt-2">
                       <Zap className="h-3 w-3 inline mr-1 text-warning" />
                       {dest.budget_range}
                     </div>
@@ -566,25 +567,14 @@ function DestinationIntelligencePage() {
       </div>
 
       {/* Form Sheet */}
-      {showForm && (
-        <div className="fixed inset-0 z-50 flex justify-end bg-overlay" onClick={closeForm}>
-          <div
-            className="h-full w-full max-w-xl overflow-y-auto border-l border-border glass-card border-none"
-            onClick={(e) => e.stopPropagation()}
-          >
-            <div className="flex items-center justify-between p-5 border-b border-border sticky top-0 glass-card border-none z-10">
-              <h2 className="text-sm font-bold text-foreground">
-                {editing ? `Editar: ${editing.destination}` : "Novo Destino"}
-              </h2>
-              <Button
-                onClick={closeForm}
-                className="rounded border-none p-1 hover:glass bg-white/5 border-white/10"
-              >
-                <X className="h-4 w-4" />
-              </Button>
-            </div>
-
-            <div className="p-5 space-y-4">
+      <SheetPage
+        isOpen={showForm}
+        onClose={closeForm}
+        title={editing ? `Editar: ${editing.destination}` : "Novo Destino"}
+        width="clamp(480px, 45vw, 640px)"
+      >
+        <div className="h-full flex flex-col">
+          <div className="p-5 space-y-4 flex-1">
               <div className="grid grid-cols-2 gap-3">
                 <Field label="Destino *">
                   <Input
@@ -608,7 +598,7 @@ function DestinationIntelligencePage() {
 
               {/* Visa */}
               <div className="border-none rounded-[var(--radius-card)] p-4 space-y-3">
-                <div className="text-xs font-bold uppercase tracking-wider text-muted-foreground flex items-center gap-1.5">
+                <div className="ds-label-caps tracking-wider text-muted-foreground flex items-center gap-1.5">
                   <Globe className="h-3.5 w-3.5" /> Visto & Entrada
                 </div>
                 <div className="flex items-center gap-2">
@@ -643,7 +633,7 @@ function DestinationIntelligencePage() {
 
               {/* Health */}
               <div className="border-none rounded-[var(--radius-card)] p-4 space-y-3">
-                <div className="text-xs font-bold uppercase tracking-wider text-muted-foreground flex items-center gap-1.5">
+                <div className="ds-label-caps tracking-wider text-muted-foreground flex items-center gap-1.5">
                   <Heart className="h-3.5 w-3.5" /> Saúde
                 </div>
                 <Field label="Vacinas Obrigatórias (uma por linha)">
@@ -673,7 +663,7 @@ function DestinationIntelligencePage() {
 
               {/* Safety */}
               <div className="border-none rounded-[var(--radius-card)] p-4 space-y-3">
-                <div className="text-xs font-bold uppercase tracking-wider text-muted-foreground flex items-center gap-1.5">
+                <div className="ds-label-caps tracking-wider text-muted-foreground flex items-center gap-1.5">
                   <ShieldAlert className="h-3.5 w-3.5" /> Segurança
                 </div>
                 <Field label="Nível de Segurança">
@@ -698,7 +688,7 @@ function DestinationIntelligencePage() {
 
               {/* Practical */}
               <div className="border-none rounded-[var(--radius-card)] p-4 space-y-3">
-                <div className="text-xs font-bold uppercase tracking-wider text-muted-foreground flex items-center gap-1.5">
+                <div className="ds-label-caps tracking-wider text-muted-foreground flex items-center gap-1.5">
                   <Zap className="h-3.5 w-3.5" /> Informações Práticas
                 </div>
                 <div className="grid grid-cols-2 gap-3">
@@ -752,7 +742,7 @@ function DestinationIntelligencePage() {
 
               {/* Tax */}
               <div className="border-none rounded-[var(--radius-card)] p-4 space-y-3">
-                <div className="text-xs font-bold uppercase tracking-wider text-muted-foreground flex items-center gap-1.5">
+                <div className="ds-label-caps tracking-wider text-muted-foreground flex items-center gap-1.5">
                   <DollarSign className="h-3.5 w-3.5" /> Taxa Turística
                 </div>
                 <Field label="Descrição da Taxa">
@@ -787,7 +777,7 @@ function DestinationIntelligencePage() {
 
               {/* Curadoria e Controle */}
               <div className="border-none rounded-[var(--radius-card)] p-4 space-y-3">
-                <div className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
+                <div className="ds-label-caps tracking-wider text-muted-foreground">
                   Curadoria e Qualidade
                 </div>
                 <div className="grid grid-cols-2 gap-3">
@@ -827,7 +817,7 @@ function DestinationIntelligencePage() {
 
               {/* Tips */}
               <div className="border-none rounded-[var(--radius-card)] p-4 space-y-3">
-                <div className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
+                <div className="ds-label-caps tracking-wider text-muted-foreground">
                   Dicas e Contexto
                 </div>
                 <Field label="Dicas Culturais">
@@ -866,10 +856,9 @@ function DestinationIntelligencePage() {
                   {saveMut.isPending ? "Salvando…" : "Salvar Destino"}
                 </PrimaryButton>
               </div>
-            </div>
           </div>
         </div>
-      )}
+      </SheetPage>
     </div>
   );
 }

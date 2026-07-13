@@ -53,7 +53,7 @@ export function TripConfirmationItems({ items }: { items: ConfirmationItem[] }) 
                 )}
               </div>
               <div className="min-w-0">
-                <div className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">
+                <div className="ds-label-caps text-muted-foreground">
                   {item.item_type === "flight"
                     ? "Voo"
                     : item.item_type === "hotel"
@@ -242,10 +242,10 @@ export function TripCheckinWidget({
     <div className="mt-5 border-t border-border/50 pt-4 space-y-4">
       {!isCheckinOpen && opensAtDate && (
         <div className="rounded-2xl border border-amber-200 bg-amber-500/5 p-3.5 space-y-1">
-          <div className="flex items-center gap-1.5 text-amber-700 font-extrabold text-xs uppercase tracking-wider">
+          <div className="flex items-center gap-1.5 text-amber-700 font-extrabold ds-label-caps">
             <Clock className="h-4 w-4 text-amber-600" /> Check-in Ainda Não Disponível
           </div>
-          <p className="text-[10px] text-amber-600 font-medium leading-normal">
+          <p className="ds-meta text-amber-600 font-medium leading-normal">
             O check-in online estará disponível a partir de{" "}
             {opensAtDate.toLocaleString("pt-BR", { dateStyle: "short", timeStyle: "short" })}.
           </p>
@@ -253,17 +253,17 @@ export function TripCheckinWidget({
       )}
       {checkinButtons && checkinButtons.length > 0 && (
         <div className="space-y-2">
-          <div className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider">
+          <div className="ds-meta font-bold text-muted-foreground uppercase tracking-wider">
             Links Rápidos de Check-in
           </div>
           <div className="grid grid-cols-1 gap-2">{checkinButtons}</div>
         </div>
       )}
       <div className="p-3.5 rounded-2xl border border-rose-200 bg-rose-500/5 space-y-2.5">
-        <div className="flex items-center gap-1.5 text-rose-700 font-extrabold text-xs uppercase tracking-wider">
+        <div className="flex items-center gap-1.5 text-rose-700 font-extrabold ds-label-caps">
           <AlertTriangle className="h-4 w-4 text-rose-600" /> Emergência no Aeroporto
         </div>
-        <p className="text-[10px] text-rose-600 font-medium leading-normal">
+        <p className="ds-meta text-rose-600 font-medium leading-normal">
           Teve algum problema com seu voo no aeroporto? Clique abaixo para alertar nosso suporte
           instantaneamente.
         </p>
@@ -330,7 +330,7 @@ export function TripVoucherFlights({ pnr, flights }: { pnr?: string; flights: an
               </div>
               <div className="text-right">
                 <div className="text-xs font-bold text-foreground">{fmtDate(f.date)}</div>
-                <div className="text-[11px] font-bold text-muted-foreground mt-0.5">
+                <div className="ds-meta font-bold text-muted-foreground mt-0.5">
                   {f.departure_time} - {f.arrival_time}
                 </div>
               </div>
@@ -369,7 +369,7 @@ export function TripBoardingCard({
             </p>
             <div className="flex flex-wrap items-center gap-3">
               {boardingCard.briefing_date && (
-                <span className="text-[11px] font-bold bg-surface border border-border px-2.5 py-1 rounded-full text-foreground whitespace-nowrap">
+                <span className="ds-meta font-bold bg-surface border border-border px-2.5 py-1 rounded-full text-foreground whitespace-nowrap">
                   📅{" "}
                   {new Date(boardingCard.briefing_date).toLocaleString("pt-BR", {
                     dateStyle: "short",
@@ -382,7 +382,7 @@ export function TripBoardingCard({
                   href={boardingCard.briefing_url}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-flex items-center gap-1 text-[11px] font-bold bg-brand text-brand-foreground px-3 py-1 rounded-full hover:opacity-90 transition-opacity"
+                  className="inline-flex items-center gap-1 ds-meta font-bold bg-brand text-brand-foreground px-3 py-1 rounded-full hover:opacity-90 transition-opacity"
                 >
                   Acessar Reunião <ExternalLink className="w-3 h-3" />
                 </a>
@@ -396,7 +396,7 @@ export function TripBoardingCard({
             <div className="flex items-center gap-2 text-warning font-bold text-xs mb-2">
               <AlertTriangle className="w-4 h-4" /> Alertas Operacionais
             </div>
-            <ul className="space-y-1.5 text-[11px] text-muted-foreground font-medium pl-5 list-disc leading-relaxed">
+            <ul className="space-y-1.5 ds-meta text-muted-foreground font-medium pl-5 list-disc leading-relaxed">
               {boardingCard.alerts.map((a: string, i: number) => (
                 <li key={i}>{a}</li>
               ))}
@@ -609,7 +609,7 @@ export function TripPassengers({ passengers }: { passengers: any[] }) {
               )}
             </div>
             {p.is_lead && (
-              <div className="text-[10px] font-bold text-brand bg-brand/10 px-2 py-1 rounded">
+              <div className="ds-meta font-bold text-brand bg-brand/10 px-2 py-1 rounded">
                 Titular
               </div>
             )}
@@ -635,14 +635,14 @@ export function TripAccommodation({ hotels }: { hotels: any[] }) {
               </p>
               <div className="mt-5 flex items-center justify-between text-xs font-bold text-foreground bg-background rounded-[var(--radius-card)] p-3 border border-border">
                 <div className="text-center">
-                  <div className="text-[10px] uppercase tracking-wider text-muted-foreground mb-1">
+                  <div className="ds-label-caps text-muted-foreground mb-1">
                     Check-in
                   </div>
                   <div>{fmtDate(h.checkin)}</div>
                 </div>
                 <ArrowLeft className="h-4 w-4 rotate-180 text-muted-foreground" />
                 <div className="text-center">
-                  <div className="text-[10px] uppercase tracking-wider text-muted-foreground mb-1">
+                  <div className="ds-label-caps text-muted-foreground mb-1">
                     Check-out
                   </div>
                   <div>{fmtDate(h.checkout)}</div>
@@ -685,14 +685,14 @@ export function TripVoucherAccommodation({ hotels }: { hotels: any[] }) {
               </p>
               <div className="mt-5 flex items-center justify-between text-xs font-bold text-foreground bg-background rounded-[var(--radius-card)] p-3 border border-border">
                 <div className="text-center">
-                  <div className="text-[10px] uppercase tracking-wider text-muted-foreground mb-1">
+                  <div className="ds-label-caps text-muted-foreground mb-1">
                     Check-in
                   </div>
                   <div>{fmtDate(h.checkin)}</div>
                 </div>
                 <ArrowLeft className="h-4 w-4 rotate-180 text-muted-foreground" />
                 <div className="text-center">
-                  <div className="text-[10px] uppercase tracking-wider text-muted-foreground mb-1">
+                  <div className="ds-label-caps text-muted-foreground mb-1">
                     Check-out
                   </div>
                   <div>{fmtDate(h.checkout)}</div>

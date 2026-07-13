@@ -11,8 +11,12 @@ import {
   Loader2,
   CheckCircle,
   AlertCircle,
+  AlertTriangle,
 } from "lucide-react";
+import { processBoletoWithAI } from "@/lib/ocr-ai";
 import { toast } from "sonner";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Button, GhostButton, PrimaryButton } from "@/components/ui/button";
 import { useAgency } from "@/lib/agency-context";
 import { money } from "@/lib/formatters";
 import { supabase } from "@/integrations/supabase/client";
@@ -31,7 +35,6 @@ import { RecordTable } from "@/components/trips/financial/RecordTable";
 import { InstallmentTable } from "@/components/trips/financial/InstallmentTable";
 import { PlanForm } from "@/components/trips/financial/PlanForm";
 import { AddRecordSheet } from "@/components/trips/financial/AddRecordSheet";
-import { Button } from "@/components/ui/button";
 import { FormInput as Input } from "@/components/ui/input";
 import { NativeSelect as Select } from "@/components/ui/select";
 
@@ -79,21 +82,10 @@ function TripFinancial() {
         const controller = new AbortController();
         const timeoutId = setTimeout(() => controller.abort(), timeoutMs);
 
-        const { data, error } = await supabase.functions.invoke("ai-orchestrator", {
-          body: {
-            action: "completion",
-            feature: "ocr_boleto",
-            file_base64: b64,
-            mime: file.type,
-            agency_id: agency.id,
-          },
-        });
+        const ocrResultData = await processBoletoWithAI(b64, file.type, agency.id);
         clearTimeout(timeoutId);
 
-        if (error) {
-          throw new Error(error.message || "Erro retornado pela Edge Function de OCR de Boleto");
-        }
-        setOcrResult(data?.result ?? data);
+        setOcrResult(ocrResultData);
         toast.success("Boleto analisado com sucesso!");
       } catch (err: any) {
         const isTimeout = err.name === "AbortError";
@@ -438,28 +430,18 @@ function TripFinancial() {
       )}
 
       {/* ── OCR Boleto Modal ──────────────────────────────────────────────────── */}
-      {showOcrModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
-          <div className="w-full max-w-md glass-card border-none border-none rounded-[var(--radius-card)] overflow-hidden">
-            {/* Header */}
-            <div className="flex items-center justify-between px-5 py-4 border-b border-border">
-              <div className="flex items-center gap-2">
-                <FileText className="h-5 w-5 text-brand" />
-                <h3 className="font-bold text-foreground">Importar Boleto via OCR</h3>
-              </div>
-              <Button
-                onClick={() => {
-                  setShowOcrModal(false);
-                  setOcrResult(null);
-                  setOcrFile(null);
-                }}
-                className="rounded-full p-1.5 text-muted-foreground hover:glass bg-white/5 border-white/10"
-              >
-                <X className="h-4 w-4" />
-              </Button>
-            </div>
+      <Dialog open={showOcrModal} onOpenChange={setShowOcrModal}>
+        <DialogContent className="max-w-md p-0 overflow-hidden border-none/10 max-h-[90vh] glass dark:glass-dark text-white">
+          <DialogHeader className="px-5 py-4 border-b border-white/10 bg-white/5">
+            <DialogTitle className="flex items-center gap-2">
+              <FileText className="h-5 w-5 text-brand" />
+              <span className="font-bold text-white text-sm uppercase tracking-wider">
+                Importar Boleto via OCR
+              </span>
+            </DialogTitle>
+          </DialogHeader>
 
-            <div className="p-5 space-y-4">
+          <div className="p-5 space-y-4">
               {/* File Upload */}
               {!ocrResult && (
                 <label
@@ -531,7 +513,7 @@ function TripFinancial() {
                     {(ocrResult.barcode || ocrResult.linha_digitavel) && (
                       <div className="pt-1 border-t border-border/50">
                         <div className="text-muted-foreground mb-1">Linha Digit\u00e1vel:</div>
-                        <div className="break-all text-[11px] text-foreground">
+                        <div className="break-all ds-meta text-foreground">
                           {ocrResult.barcode ?? ocrResult.linha_digitavel}
                         </div>
                       </div>
@@ -587,9 +569,8 @@ function TripFinancial() {
                 </div>
               )}
             </div>
-          </div>
-        </div>
-      )}
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

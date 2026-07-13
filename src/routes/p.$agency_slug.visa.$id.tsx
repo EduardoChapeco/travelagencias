@@ -82,7 +82,7 @@ function Page() {
         </p>
 
         <div className="mt-6 glass bg-white/5 border-white/10/50 border-none/50 p-4 rounded-[var(--radius-card)]">
-          <div className="text-[10px] uppercase tracking-widest font-bold text-muted-foreground">
+          <div className="ds-meta uppercase tracking-widest font-bold text-muted-foreground">
             Protocolo de Atendimento
           </div>
           <div className="font-mono text-lg font-bold text-foreground mt-1 select-all">

@@ -210,7 +210,7 @@ function CRMPage() {
             activeTab !== "admin" ? (
               <div className="flex items-center gap-1">
                 <RadixSelect value={ownerFilter} onValueChange={setOwnerFilter}>
-                  <SelectTrigger className="h-7 text-[11px] font-semibold hover:bg-white/10 rounded-full text-os-muted hover:text-os border-white/10 px-2.5 cursor-pointer focus:ring-0">
+                  <SelectTrigger className="h-7 ds-meta font-semibold hover:bg-white/10 rounded-full text-os-muted hover:text-os border-white/10 px-2.5 cursor-pointer focus:ring-0">
                     <SelectValue placeholder="Responsáveis" />
                   </SelectTrigger>
                   <SelectContent>
@@ -227,7 +227,7 @@ function CRMPage() {
                 </RadixSelect>
 
                 <RadixSelect value={sourceFilter} onValueChange={setSourceFilter}>
-                  <SelectTrigger className="h-7 text-[11px] font-semibold hover:bg-white/10 rounded-full text-os-muted hover:text-os border-white/10 px-2.5 cursor-pointer focus:ring-0">
+                  <SelectTrigger className="h-7 ds-meta font-semibold hover:bg-white/10 rounded-full text-os-muted hover:text-os border-white/10 px-2.5 cursor-pointer focus:ring-0">
                     <SelectValue placeholder="Origens" />
                   </SelectTrigger>
                   <SelectContent>
@@ -290,7 +290,7 @@ function CRMPage() {
               <div className="overflow-x-auto">
                 <table className="w-full text-left text-sm border-collapse">
                   <thead>
-                    <tr className="border-b border-border/60 text-muted-foreground text-xs uppercase tracking-wider font-bold">
+                    <tr className="border-b border-border/60 text-muted-foreground ds-label-caps font-bold">
                       <th className="py-3 px-4">Nome</th>
                       <th className="py-3 px-4">Destino</th>
                       <th className="py-3 px-4">Valor Estimado</th>
@@ -610,7 +610,7 @@ function NewLeadSheet({
               loading={clientsQ.isLoading}
               clearable={true}
             />
-            <p className="text-[11px] text-muted-foreground mt-1">
+            <p className="ds-meta text-muted-foreground mt-1">
               Vincular preencherá os dados de contato automaticamente.
             </p>
           </Field>
@@ -851,7 +851,7 @@ function StageSettingsPanel({
           <p className="text-xs text-muted-foreground -mt-3">
             Renomeie, mude cores ou crie novas colunas.
           </p>
-          <div className="text-[11px] font-bold uppercase tracking-widest text-muted-foreground pt-2">
+          <div className="ds-label-caps text-muted-foreground pt-2">
             Colunas do Pipeline
           </div>
 
@@ -909,12 +909,12 @@ function StageSettingsPanel({
 
               <div className="flex items-center w-24">
                 {s.is_won && (
-                  <span className="text-[10px] bg-success/20 text-success px-2 py-1 rounded font-bold">
+                  <span className="ds-meta bg-success/20 text-success px-2 py-1 rounded font-bold">
                     GANHO
                   </span>
                 )}
                 {s.is_lost && (
-                  <span className="text-[10px] bg-danger/20 text-danger px-2 py-1 rounded font-bold">
+                  <span className="ds-meta bg-danger/20 text-danger px-2 py-1 rounded font-bold">
                     PERDIDO
                   </span>
                 )}

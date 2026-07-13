@@ -31,7 +31,8 @@ import {
 } from "lucide-react";
 import { toast } from "sonner";
 import { logTripAudit } from "@/services/audit";
-import { Button } from "@/components/ui/button";
+import { GhostButton, PrimaryButton, Button } from "@/components/ui/button";
+import { CONFIRMATION_STATUS_MAP } from "@/lib/constants/status";
 import { FormInput as Input } from "@/components/ui/input";
 import { NativeSelect as Select } from "@/components/ui/select";
 
@@ -67,18 +68,6 @@ const STATUS_CYCLE: Record<string, string> = {
   pending: "confirmed",
   confirmed: "cancelled",
   cancelled: "pending",
-};
-
-const STATUS_LABELS: Record<string, string> = {
-  pending: "Pendente",
-  confirmed: "Confirmado",
-  cancelled: "Cancelado",
-};
-
-const STATUS_TONE: Record<string, "warning" | "success" | "danger"> = {
-  pending: "warning",
-  confirmed: "success",
-  cancelled: "danger",
 };
 
 // ──────────────────────────────────────────────────────────────────────
@@ -272,14 +261,14 @@ function TripConfirmationPage() {
   // ────────────────────────────────────────────────────────────────────
 
   return (
-    <div className="flex-1 overflow-y-auto p-4 md:p-6 space-y-6 max-w-4xl">
+    <div className="page-content page-section max-w-4xl">
       {/* ── Header ── */}
       <div className="rounded-[var(--radius-card)] border-none glass-card border-none p-4 flex items-start justify-between gap-4">
         <div className="flex items-start gap-3">
           <CheckCircle2 className="h-4 w-4 text-brand mt-0.5 shrink-0" />
           <div>
             <p className="text-xs font-semibold text-foreground">Confirmação de Reserva</p>
-            <p className="text-[11px] text-muted-foreground mt-0.5">
+            <p className="ds-meta text-muted-foreground mt-0.5">
               Registre os códigos localizadores e status de confirmação de cada serviço contratado
               nesta viagem. Dados persistidos em banco.
             </p>
@@ -302,19 +291,19 @@ function TripConfirmationPage() {
         <div className="grid grid-cols-3 gap-3">
           <div className="rounded-[var(--radius-card)] border-none glass-card border-none p-3 text-center">
             <p className="text-xl font-bold text-foreground">{items.length}</p>
-            <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground mt-0.5">
+            <p className="ds-label-caps text-muted-foreground mt-0.5">
               Total
             </p>
           </div>
           <div className="rounded-[var(--radius-card)] border border-emerald-100 bg-emerald-50/50 p-3 text-center">
             <p className="text-xl font-bold text-emerald-700">{confirmedCount}</p>
-            <p className="text-[10px] font-bold uppercase tracking-widest text-emerald-600/70 mt-0.5">
+            <p className="ds-label-caps text-emerald-600/70 mt-0.5">
               Confirmados
             </p>
           </div>
           <div className="rounded-[var(--radius-card)] border border-amber-100 bg-amber-50/50 p-3 text-center">
             <p className="text-xl font-bold text-amber-700">{pendingCount}</p>
-            <p className="text-[10px] font-bold uppercase tracking-widest text-amber-600/70 mt-0.5">
+            <p className="ds-label-caps text-amber-600/70 mt-0.5">
               Pendentes
             </p>
           </div>
@@ -337,7 +326,7 @@ function TripConfirmationPage() {
       {showForm && (
         <div className="rounded-[var(--radius-card)] border-none glass-card border-none p-5 space-y-4">
           <div className="flex items-center justify-between">
-            <h3 className="text-xs font-bold uppercase tracking-widest text-foreground">
+            <h3 className="ds-label-caps text-foreground">
               {editingId ? "Editar Localizador" : "Novo Localizador de Serviço"}
             </h3>
             <Button
@@ -351,7 +340,7 @@ function TripConfirmationPage() {
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
             {/* Tipo */}
             <div className="space-y-1">
-              <label className="text-[10px] font-bold text-muted-foreground uppercase">
+              <label className="ds-meta font-bold text-muted-foreground uppercase">
                 Tipo de Serviço
               </label>
               <Select
@@ -369,7 +358,7 @@ function TripConfirmationPage() {
 
             {/* Fornecedor */}
             <div className="space-y-1">
-              <label className="text-[10px] font-bold text-muted-foreground uppercase">
+              <label className="ds-meta font-bold text-muted-foreground uppercase">
                 Fornecedor / Operadora *
               </label>
               <Input
@@ -383,7 +372,7 @@ function TripConfirmationPage() {
 
             {/* Localizador */}
             <div className="space-y-1">
-              <label className="text-[10px] font-bold text-muted-foreground uppercase">
+              <label className="ds-meta font-bold text-muted-foreground uppercase">
                 Código Localizador *
               </label>
               <Input
@@ -402,7 +391,7 @@ function TripConfirmationPage() {
 
             {/* Detalhes */}
             <div className="space-y-1 sm:col-span-2">
-              <label className="text-[10px] font-bold text-muted-foreground uppercase">
+              <label className="ds-meta font-bold text-muted-foreground uppercase">
                 Detalhes da Reserva
               </label>
               <Input
@@ -416,7 +405,7 @@ function TripConfirmationPage() {
 
             {/* Data de utilização */}
             <div className="space-y-1">
-              <label className="text-[10px] font-bold text-muted-foreground uppercase">
+              <label className="ds-meta font-bold text-muted-foreground uppercase">
                 Data de Utilização
               </label>
               <Input
@@ -429,7 +418,7 @@ function TripConfirmationPage() {
 
             {/* Notas internas */}
             <div className="space-y-1 sm:col-span-2 md:col-span-3">
-              <label className="text-[10px] font-bold text-muted-foreground uppercase">
+              <label className="ds-meta font-bold text-muted-foreground uppercase">
                 Notas Internas (opcional)
               </label>
               <Input
@@ -511,13 +500,13 @@ function TripConfirmationPage() {
 
                 <div className="min-w-0">
                   <div className="flex items-center gap-2">
-                    <span className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">
+                    <span className="ds-label-caps text-muted-foreground">
                       {ITEM_TYPE_LABELS[item.item_type] ?? item.item_type}
                     </span>
                     {item.service_date && (
                       <>
                         <span className="text-muted-foreground/40 text-xs">·</span>
-                        <span className="text-[10px] font-mono text-muted-foreground">
+                        <span className="ds-meta font-mono text-muted-foreground">
                           {fmtDate(item.service_date)}
                         </span>
                       </>
@@ -530,7 +519,7 @@ function TripConfirmationPage() {
                     <p className="text-xs text-muted-foreground truncate mt-0.5">{item.details}</p>
                   )}
                   {item.notes && (
-                    <p className="text-[10px] text-muted-foreground/60 italic mt-0.5 truncate">
+                    <p className="ds-meta text-muted-foreground/60 italic mt-0.5 truncate">
                       {item.notes}
                     </p>
                   )}
@@ -561,8 +550,8 @@ function TripConfirmationPage() {
                   title="Clique para alternar status"
                   className="cursor-pointer disabled:opacity-50"
                 >
-                  <StatusBadge tone={STATUS_TONE[item.status] ?? "warning"}>
-                    {STATUS_LABELS[item.status] ?? item.status}
+                  <StatusBadge tone={CONFIRMATION_STATUS_MAP[item.status]?.tone ?? "neutral"} className="cursor-pointer">
+                    {CONFIRMATION_STATUS_MAP[item.status]?.label ?? item.status}
                   </StatusBadge>
                 </Button>
 

@@ -108,7 +108,7 @@ export function TaskFiltersDrawer({
             <div className="flex items-center justify-between">
               <div className="space-y-0.5">
                 <label className="text-xs font-semibold text-foreground">Mostrar Tarefas Concluídas</label>
-                <p className="text-[10px] text-muted-foreground">Exibe tarefas marcadas como resolvidas/canceladas.</p>
+                <p className="ds-meta text-muted-foreground">Exibe tarefas marcadas como resolvidas/canceladas.</p>
               </div>
               <Switch
                 checked={localFilters.show_done}
@@ -119,7 +119,7 @@ export function TaskFiltersDrawer({
             <div className="flex items-center justify-between">
               <div className="space-y-0.5">
                 <label className="text-xs font-semibold text-foreground">Mostrar Subtarefas</label>
-                <p className="text-[10px] text-muted-foreground">Exibe tarefas filhas integradas à lista principal.</p>
+                <p className="ds-meta text-muted-foreground">Exibe tarefas filhas integradas à lista principal.</p>
               </div>
               <Switch
                 checked={localFilters.show_subtasks}
@@ -191,7 +191,7 @@ export function TaskFiltersDrawer({
               Responsável
             </h3>
             {teamMembers.length === 0 ? (
-              <p className="text-[11px] text-muted-foreground">Nenhum membro da equipe disponível.</p>
+              <p className="ds-meta text-muted-foreground">Nenhum membro da equipe disponível.</p>
             ) : (
               <div className="space-y-1.5 max-h-40 overflow-y-auto pr-1">
                 {teamMembers.map((member) => {
@@ -226,7 +226,7 @@ export function TaskFiltersDrawer({
             </h3>
             <div className="grid grid-cols-2 gap-2">
               <div className="space-y-1">
-                <label className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider">De</label>
+                <label className="ds-meta font-bold text-muted-foreground uppercase tracking-wider">De</label>
                 <Input
                   type="date"
                   value={localFilters.due_date_from || ""}
@@ -237,7 +237,7 @@ export function TaskFiltersDrawer({
                 />
               </div>
               <div className="space-y-1">
-                <label className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider">Até</label>
+                <label className="ds-meta font-bold text-muted-foreground uppercase tracking-wider">Até</label>
                 <Input
                   type="date"
                   value={localFilters.due_date_to || ""}

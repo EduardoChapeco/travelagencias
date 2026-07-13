@@ -17,6 +17,8 @@ interface StudioToolbarProps {
   children?: React.ReactNode;
 }
 
+import { HeaderPortal } from "@/components/shell/HeaderPortal";
+
 export function StudioToolbar({
   title,
   subtitle,
@@ -31,7 +33,8 @@ export function StudioToolbar({
   children,
 }: StudioToolbarProps) {
   return (
-    <header data-toolbar className="flex h-10 items-center justify-between border-b border-transparent bg-transparent px-4 md:px-6 shrink-0 mt-1">
+    <HeaderPortal>
+      <div className="flex w-full items-center justify-between px-2 gap-4">
       <div className="flex items-center gap-3 flex-1 min-w-0">
         <Link
           to={backTo as any}
@@ -43,7 +46,7 @@ export function StudioToolbar({
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-2">
             {subtitle && (
-              <span className="text-[10px] text-muted-foreground font-mono uppercase tracking-wider">
+              <span className="ds-meta text-muted-foreground font-mono uppercase tracking-wider">
                 {subtitle}
               </span>
             )}
@@ -55,12 +58,12 @@ export function StudioToolbar({
               </span>
             )}
             {saving ? (
-              <span className="flex items-center gap-1 text-[10px] text-muted-foreground">
+              <span className="flex items-center gap-1 ds-meta text-muted-foreground">
                 <Loader2 className="h-3 w-3 animate-spin text-brand" />
                 <span>Salvando...</span>
               </span>
             ) : (
-              <span className="flex items-center gap-1 text-[10px] text-emerald-600">
+              <span className="flex items-center gap-1 ds-meta text-emerald-600">
                 <Check className="h-3 w-3" />
                 <span>Salvo</span>
               </span>
@@ -80,6 +83,7 @@ export function StudioToolbar({
         </div>
       </div>
       <div className="flex items-center gap-2 shrink-0">{children}</div>
-    </header>
+      </div>
+    </HeaderPortal>
   );
 }

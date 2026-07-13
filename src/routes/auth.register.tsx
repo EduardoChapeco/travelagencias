@@ -145,7 +145,7 @@ function RegisterPage() {
 
           {/* Floating Benefit Card */}
           <div className="glass-card border-none border-none rounded-[var(--radius-card)] p-6 space-y-4 shadow-none">
-            <h4 className="text-xs font-bold uppercase tracking-widest text-accent">
+            <h4 className="ds-label-caps text-accent">
               Módulos Inclusos na sua Conta
             </h4>
             <div className="space-y-3">
@@ -170,7 +170,7 @@ function RegisterPage() {
         </div>
 
         {/* Footer */}
-        <p className="relative z-10 text-[10px] text-muted-foreground/60 font-bold uppercase tracking-wider">
+        <p className="relative z-10 ds-meta text-muted-foreground/60 font-bold uppercase tracking-wider">
           © {new Date().getFullYear()} Turis. Desenvolvido para profissionais de turismo.
         </p>
       </div>
@@ -259,7 +259,7 @@ function RegisterPage() {
                 </label>
               </div>
               {errors.acceptedTerms && (
-                <p className="mt-1 text-[11px] text-danger font-bold">
+                <p className="mt-1 ds-meta text-danger font-bold">
                   {errors.acceptedTerms.message}
                 </p>
               )}
@@ -268,7 +268,7 @@ function RegisterPage() {
             <PrimaryButton
               type="submit"
               disabled={isSubmitting}
-              className="w-full h-11 text-xs font-bold uppercase tracking-wider rounded-full bg-primary hover:bg-primary/95 text-primary-foreground active:scale-[0.98] transition-all duration-200 mt-6 cursor-pointer"
+              className="w-full h-11 ds-label-caps tracking-wider rounded-full bg-primary hover:bg-primary/95 text-primary-foreground active:scale-[0.98] transition-all duration-200 mt-6 cursor-pointer"
             >
               {isSubmitting ? "Criando conta…" : "Criar conta"}
             </PrimaryButton>

@@ -130,7 +130,7 @@ export function NotificationsPanel({ onClose }: { onClose: () => void }) {
           <Bell className="h-4 w-4 text-muted-foreground" />
           <h3 className="text-sm font-semibold">Notificações</h3>
           {unreadCount > 0 && (
-            <span className="flex h-5 items-center justify-center rounded-full bg-brand px-2 text-[10px] font-bold text-brand-foreground">
+            <span className="flex h-5 items-center justify-center rounded-full bg-brand px-2 ds-meta font-bold text-brand-foreground">
               {unreadCount}
             </span>
           )}
@@ -190,12 +190,12 @@ export function NotificationsPanel({ onClose }: { onClose: () => void }) {
                   >
                     {n.title}
                   </h4>
-                  <span className="shrink-0 text-[10px] text-muted-foreground">
+                  <span className="shrink-0 ds-meta text-muted-foreground">
                     {fmtDate(n.created_at)}
                   </span>
                 </div>
                 {n.message && (
-                  <p className="mt-1 text-[11px] leading-relaxed text-muted-foreground line-clamp-2">
+                  <p className="mt-1 ds-meta leading-relaxed text-muted-foreground line-clamp-2">
                     {n.message}
                   </p>
                 )}
@@ -203,7 +203,7 @@ export function NotificationsPanel({ onClose }: { onClose: () => void }) {
                 {n.link_url && (
                   <Link
                     to={n.link_url}
-                    className="mt-2 inline-flex text-[10px] font-medium text-brand hover:underline"
+                    className="mt-2 inline-flex ds-meta font-medium text-brand hover:underline"
                     onClick={() => {
                       if (isUnread) markRead.mutate(n.id);
                       onClose();

@@ -17,11 +17,6 @@ export const ITINERARY_TYPE_LABELS: Record<string, string> = {
   confirmed: "Itinerário Confirmado",
 };
 
-export const ITINERARY_STATUS_LABELS: Record<string, string> = {
-  draft: "Rascunho",
-  active: "Ativo / Vigente",
-  archived: "Arquivado",
-};
 
 /** Busca todos os itinerários de voo de uma viagem, incluindo seus segmentos */
 export async function fetchFlightItineraries(tripId: string): Promise<FlightItinerary[]> {

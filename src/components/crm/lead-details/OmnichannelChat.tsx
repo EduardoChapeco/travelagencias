@@ -283,13 +283,13 @@ export function OmnichannelChat({
         </div>
         <div className="flex-1">
           <h3 className="text-sm font-bold text-foreground">WhatsApp</h3>
-          <p className="text-[10px] text-muted-foreground">
+          <p className="ds-meta text-muted-foreground">
             {messages.length > 0
               ? `${messages.length} mensagens · Última às ${lastMsgTime}`
               : "Nenhuma mensagem ainda"}
           </p>
         </div>
-        <span className="text-[10px] font-bold bg-success/10 text-success border border-success/20 px-2 py-1 rounded-full">
+        <span className="ds-meta font-bold bg-success/10 text-success border border-success/20 px-2 py-1 rounded-full">
           {messages.length > 0 ? "ATIVO" : "AGUARDANDO"}
         </span>
       </div>

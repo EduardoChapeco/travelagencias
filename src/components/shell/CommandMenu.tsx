@@ -141,7 +141,7 @@ export function CommandMenu() {
             )}
             <Button
               onClick={() => setOpen(false)}
-              className="ml-2 text-[10px] font-medium px-1.5 py-0.5 bg-surface-alt rounded text-muted-foreground border border-border hover:bg-border transition-colors"
+              className="ml-2 ds-meta font-medium px-1.5 py-0.5 bg-surface-alt rounded text-muted-foreground border border-border hover:bg-border transition-colors"
             >
               ESC
             </Button>
@@ -172,7 +172,7 @@ export function CommandMenu() {
                     <span className="text-xs text-muted-foreground">{item.subtitle}</span>
                   )}
                 </div>
-                <div className="text-[10px] font-semibold tracking-wider uppercase text-muted-foreground/50 ml-4">
+                <div className="ds-meta font-semibold tracking-wider uppercase text-muted-foreground/50 ml-4">
                   {getTypeLabel(item.type)}
                 </div>
               </Command.Item>

@@ -95,7 +95,7 @@ export function AILandingAgent({ agencySlug, blocks }: { agencySlug: string; blo
               <Bot className="h-5 w-5" />
               <div>
                 <h3 className="font-bold text-sm">Assistente Virtual</h3>
-                <p className="text-[10px] opacity-80">Respondendo agora</p>
+                <p className="ds-meta opacity-80">Respondendo agora</p>
               </div>
             </div>
             <Button

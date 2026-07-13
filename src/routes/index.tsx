@@ -179,7 +179,7 @@ function Landing() {
 
       {/* ── Hero BENTO PREMIUM ─────────────────────────────────────────────── */}
       <section className="relative z-10 mx-auto max-w-6xl px-6 pt-20 pb-24 text-center lg:pt-24">
-        <div className="mx-auto mb-6 inline-flex items-center gap-2 rounded-full border-none glass bg-white/5 border-white/10 px-4 py-1.5 text-[10px] font-bold uppercase tracking-widest text-muted-foreground animate-fadeIn">
+        <div className="mx-auto mb-6 inline-flex items-center gap-2 rounded-full border-none glass bg-white/5 border-white/10 px-4 py-1.5 ds-label-caps text-muted-foreground animate-fadeIn">
           <span className="relative flex h-1.5 w-1.5">
             <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-75"></span>
             <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-primary"></span>
@@ -201,20 +201,20 @@ function Landing() {
         <div className="mt-10 flex flex-col sm:flex-row items-center justify-center gap-3">
           <Link
             to="/auth/register"
-            className="group relative inline-flex h-12 w-full sm:w-auto items-center justify-center gap-3 rounded-full bg-primary px-8 text-xs font-bold uppercase tracking-wider text-primary-foreground hover:bg-primary/95 transition-all"
+            className="group relative inline-flex h-12 w-full sm:w-auto items-center justify-center gap-3 rounded-full bg-primary px-8 ds-label-caps tracking-wider text-primary-foreground hover:bg-primary/95 transition-all"
           >
             Começar Agora Grátis
             <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
           </Link>
           <a
             href="#features"
-            className="inline-flex h-12 w-full sm:w-auto items-center justify-center rounded-full border-none-strong glass-card border-none px-8 text-xs font-bold uppercase tracking-wider text-foreground transition-all hover:glass bg-white/5 border-white/10"
+            className="inline-flex h-12 w-full sm:w-auto items-center justify-center rounded-full border-none-strong glass-card border-none px-8 ds-label-caps tracking-wider text-foreground transition-all hover:glass bg-white/5 border-white/10"
           >
             Ver Recursos
           </a>
         </div>
 
-        <div className="mt-8 flex flex-wrap items-center justify-center gap-x-8 gap-y-3 text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
+        <div className="mt-8 flex flex-wrap items-center justify-center gap-x-8 gap-y-3 ds-label-caps tracking-wider text-muted-foreground">
           <span className="flex items-center gap-1.5">
             <CheckCircle2 className="h-4 w-4 text-primary" /> Sem cartão de crédito
           </span>
@@ -237,7 +237,7 @@ function Landing() {
                 <div className="text-4xl font-extrabold text-foreground tracking-tight group-hover:scale-105 transition-transform duration-300">
                   {s.value}
                 </div>
-                <div className="mt-3 text-[10px] uppercase tracking-widest font-bold text-muted-foreground">
+                <div className="mt-3 ds-meta uppercase tracking-widest font-bold text-muted-foreground">
                   {s.label}
                 </div>
               </div>
@@ -253,7 +253,7 @@ function Landing() {
       >
         <div className="mx-auto max-w-6xl px-6">
           <div className="mb-16 text-center max-w-3xl mx-auto">
-            <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground mb-3">
+            <p className="ds-label-caps text-muted-foreground mb-3">
               O Contraste do Sucesso
             </p>
             <h2 className="ds-h1 text-foreground">
@@ -365,7 +365,7 @@ function Landing() {
       <section id="features" className="relative z-10 py-24">
         <div className="mx-auto max-w-6xl px-6">
           <div className="mb-16 text-center max-w-2xl mx-auto">
-            <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground mb-3">
+            <p className="ds-label-caps text-muted-foreground mb-3">
               Arquitetura de Sucesso Integrada
             </p>
             <h2 className="ds-h1 text-foreground">
@@ -423,7 +423,7 @@ function Landing() {
       >
         <div className="mx-auto max-w-6xl px-6">
           <div className="mb-16 text-center max-w-2xl mx-auto">
-            <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground mb-3">
+            <p className="ds-label-caps text-muted-foreground mb-3">
               Resultados de Clientes
             </p>
             <h2 className="ds-h2 text-foreground text-center">
@@ -506,14 +506,14 @@ function Landing() {
           <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
             <Link
               to="/auth/register"
-              className="group relative inline-flex h-12 w-full sm:w-auto items-center justify-center gap-2 rounded-full bg-primary px-8 text-xs font-bold uppercase tracking-wider text-primary-foreground hover:bg-primary/90 transition-all"
+              className="group relative inline-flex h-12 w-full sm:w-auto items-center justify-center gap-2 rounded-full bg-primary px-8 ds-label-caps tracking-wider text-primary-foreground hover:bg-primary/90 transition-all"
             >
               Criar Conta Grátis
               <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1 text-primary-foreground" />
             </Link>
             <Link
               to="/auth/login"
-              className="inline-flex h-12 w-full sm:w-auto items-center justify-center rounded-full border-none glass-card border-none px-8 text-xs font-bold uppercase tracking-wider text-foreground transition-colors hover:glass bg-white/5 border-white/10"
+              className="inline-flex h-12 w-full sm:w-auto items-center justify-center rounded-full border-none glass-card border-none px-8 ds-label-caps tracking-wider text-foreground transition-colors hover:glass bg-white/5 border-white/10"
             >
               Acessar Minha Agência
             </Link>
@@ -525,18 +525,18 @@ function Landing() {
       <footer className="border-t border-border glass bg-white/5 border-white/10 py-10 relative z-10">
         <div className="mx-auto flex max-w-6xl flex-col items-center justify-between gap-6 px-6 sm:flex-row">
           <div className="flex items-center gap-3">
-            <div className="flex h-7 w-7 items-center justify-center rounded-full bg-primary text-primary-foreground text-[10px] font-bold">
+            <div className="flex h-7 w-7 items-center justify-center rounded-full bg-primary text-primary-foreground ds-meta font-bold">
               T
             </div>
             <span className="text-xs font-bold text-foreground tracking-tight uppercase">
               Turis
             </span>
           </div>
-          <p className="text-[10px] text-muted-foreground font-semibold">
+          <p className="ds-meta text-muted-foreground font-semibold">
             © {new Date().getFullYear()} Turis. Desenvolvido exclusivamente para profissionais de
             turismo.
           </p>
-          <div className="flex items-center gap-6 text-[10px] text-muted-foreground font-bold uppercase tracking-wider">
+          <div className="flex items-center gap-6 ds-meta text-muted-foreground font-bold uppercase tracking-wider">
             <Link to="/auth/login" className="hover:text-foreground transition-colors">
               Entrar
             </Link>

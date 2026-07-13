@@ -119,14 +119,14 @@ function BusLayoutsPage() {
                 <div className="mt-4 pt-3 border-t border-border flex justify-between items-center gap-2">
                    <Button 
                      onClick={() => setEditingLayout(l)} 
-                     className="text-[11px] font-semibold text-muted-foreground hover:text-foreground flex items-center gap-1 transition-colors px-2.5 py-1.5 rounded-full hover:glass bg-white/5 border-white/10 cursor-pointer border-none glass-card border-none"
+                     className="ds-meta font-semibold text-muted-foreground hover:text-foreground flex items-center gap-1 transition-colors px-2.5 py-1.5 rounded-full hover:glass bg-white/5 border-white/10 cursor-pointer border-none glass-card border-none"
                    >
                      <Settings2 className="h-3 w-3" /> Cadastro
                    </Button>
                    <Link
                      to="/agency/$slug/bus-layouts/$id"
                      params={{ slug, id: l.id }}
-                     className="text-[11px] font-bold text-brand hover:text-brand/90 flex items-center gap-1 px-3 py-1.5 rounded-full bg-brand/5 border border-brand/10 transition-colors cursor-pointer"
+                     className="ds-meta font-bold text-brand hover:text-brand/90 flex items-center gap-1 px-3 py-1.5 rounded-full bg-brand/5 border border-brand/10 transition-colors cursor-pointer"
                    >
                      💺 Desenhar Mapa
                    </Link>

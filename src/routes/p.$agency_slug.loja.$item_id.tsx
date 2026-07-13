@@ -168,7 +168,7 @@ function PublicStoreItemDetail() {
 
           <div>
             <div className="flex items-center gap-2 mb-4">
-              <span className="bg-brand/10 text-brand px-3 py-1 rounded-full text-xs font-bold uppercase tracking-widest">
+              <span className="bg-brand/10 text-brand px-3 py-1 rounded-full ds-label-caps">
                 {itemType === "group_tour" ? "Grupo de Viagem" : "Pacote Personalizado"}
               </span>
             </div>

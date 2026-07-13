@@ -8,6 +8,7 @@ import { Button, GhostButton } from "@/components/ui/button";
 import { ModuleAdminPanel } from "@/components/shell/ModuleAdminPanel";
 import { PageHeader, EmptyState, ModuleActionButton } from "@/components/shell/PageHeader";
 import { FormInput as Input } from "@/components/ui/input";
+import { PROPOSAL_STATUS_MAP } from "@/lib/constants/status";
 import { StatusBadge } from "@/components/ui/badge";
 import { money, fmtDate } from "@/lib/formatters";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -42,25 +43,7 @@ export const Route = createFileRoute("/agency/$slug/proposals/")({
   component: ProposalsList,
 });
 
-const STATUS_TONE: Record<string, "neutral" | "success" | "warning" | "danger" | "info"> = {
-  draft: "neutral",
-  sent: "info",
-  viewed: "info",
-  accepted: "success",
-  converted: "success",
-  rejected: "danger",
-  expired: "warning",
-};
 
-const STATUS_LABEL: Record<string, string> = {
-  draft: "Rascunho",
-  sent: "Enviada",
-  viewed: "Visualizada",
-  accepted: "Aceita",
-  converted: "Convertida",
-  rejected: "Recusada",
-  expired: "Expirada",
-};
 
 function ProposalsList() {
   const { agency, isAgencyAdmin } = useAgency();
@@ -155,7 +138,7 @@ function ProposalsList() {
                   setPage(1);
                 }}
               >
-                <SelectTrigger className="h-7 text-[11px] font-semibold hover:bg-white/10 rounded-full text-os-muted hover:text-os border-white/10 px-2 cursor-pointer focus:ring-0">
+                <SelectTrigger className="h-7 ds-meta font-semibold hover:bg-white/10 rounded-full text-os-muted hover:text-os border-white/10 px-2 cursor-pointer focus:ring-0">
                   <SelectValue placeholder="Todos Status" />
                 </SelectTrigger>
                 <SelectContent>
@@ -209,7 +192,7 @@ function ProposalsList() {
             <div className="flex-1 rounded-[var(--radius-card)] glass text-white bg-black/40 backdrop-blur-2xl-panel overflow-hidden flex flex-col">
               <div className="flex-1 overflow-y-auto no-scrollbar">
                 <table className="w-full text-sm">
-                  <thead className="glass bg-white/5 border-white/10/40 text-left text-[11px] uppercase tracking-wide text-muted-foreground sticky top-0 glass-card border-none backdrop-blur-md z-10">
+                  <thead className="glass bg-white/5 border-white/10/40 text-left ds-meta uppercase tracking-wide text-muted-foreground sticky top-0 glass-card border-none backdrop-blur-md z-10">
                     <tr>
                       <th className="px-3 py-2 font-medium">#</th>
                       <th className="px-3 py-2 font-medium">Título</th>
@@ -244,21 +227,21 @@ function ProposalsList() {
                           {fmtDate(p.travel_start)} → {fmtDate(p.travel_end)}
                         </td>
                         <td className="px-3 py-2.5">
-                          <StatusBadge tone={STATUS_TONE[p.status] ?? "neutral"}>
-                            {STATUS_LABEL[p.status] ?? p.status}
+                          <StatusBadge tone={PROPOSAL_STATUS_MAP[p.status]?.tone ?? "neutral"}>
+                            {PROPOSAL_STATUS_MAP[p.status]?.label ?? p.status}
                           </StatusBadge>
                         </td>
                         <td className="px-3 py-2.5">
                           {p.visibility === "public" ? (
-                            <span className="inline-flex items-center gap-1 rounded-full bg-brand/10 text-brand border border-brand/20 px-2 py-0.5 text-[10px] font-semibold">
+                            <span className="inline-flex items-center gap-1 rounded-full bg-brand/10 text-brand border border-brand/20 px-2 py-0.5 ds-meta font-semibold">
                               🌐 Pública
                             </span>
                           ) : p.visibility === "agency" ? (
-                            <span className="inline-flex items-center gap-1 rounded-full bg-success/10 text-success border border-success/20 px-2 py-0.5 text-[10px] font-semibold">
+                            <span className="inline-flex items-center gap-1 rounded-full bg-success/10 text-success border border-success/20 px-2 py-0.5 ds-meta font-semibold">
                               🏢 Agência
                             </span>
                           ) : (
-                            <span className="inline-flex items-center gap-1 rounded-full glass bg-white/5 border-white/10 text-muted-foreground border-none px-2 py-0.5 text-[10px] font-semibold">
+                            <span className="inline-flex items-center gap-1 rounded-full glass bg-white/5 border-white/10 text-muted-foreground border-none px-2 py-0.5 ds-meta font-semibold">
                               🔒 Privada
                             </span>
                           )}

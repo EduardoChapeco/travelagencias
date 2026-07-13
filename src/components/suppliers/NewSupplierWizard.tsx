@@ -208,7 +208,7 @@ export function NewSupplierWizard({
             className={`flex items-center gap-2 ${i === step ? "opacity-100" : "opacity-40"}`}
           >
             <div
-              className={`flex h-6 w-6 items-center justify-center rounded-full text-[11px] font-bold ${
+              className={`flex h-6 w-6 items-center justify-center rounded-full ds-meta font-bold ${
                 i < step
                   ? "bg-success text-success-foreground"
                   : i === step
@@ -322,7 +322,7 @@ export function NewSupplierWizard({
                       {...register("commission", { valueAsNumber: true })}
                       className="text-2xl font-mono text-brand"
                     />
-                    <p className="text-[10px] text-muted-foreground mt-2 uppercase tracking-widest">
+                    <p className="ds-meta text-muted-foreground mt-2 uppercase tracking-widest">
                       Esta taxa será usada como padrão para calcular a rentabilidade dos pacotes
                       deste fornecedor.
                     </p>

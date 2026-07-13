@@ -52,7 +52,7 @@ export function ThreadView({ conversation, messages, onSendMessage, onAssignToMe
       case 'sent': return <Check className="w-3 h-3 text-muted-foreground" />;
       case 'delivered': return <CheckCheck className="w-3 h-3 text-muted-foreground" />;
       case 'read': return <CheckCheck className="w-3 h-3 text-blue-500" />;
-      case 'failed': return <span className="text-[10px] text-red-500">Falha</span>;
+      case 'failed': return <span className="ds-meta text-red-500">Falha</span>;
       default: return null;
     }
   };
@@ -123,7 +123,7 @@ export function ThreadView({ conversation, messages, onSendMessage, onAssignToMe
                       <a href={msg.media_url} target="_blank" rel="noreferrer" className="text-xs underline text-blue-600">Ver Anexo</a>
                     </div>
                   )}
-                  <div className={cn("text-[10px] mt-1 flex items-center gap-1 justify-end opacity-70", isOutbound ? "text-slate-700 dark:text-primary-foreground" : "text-muted-foreground")}>
+                  <div className={cn("ds-meta mt-1 flex items-center gap-1 justify-end opacity-70", isOutbound ? "text-slate-700 dark:text-primary-foreground" : "text-muted-foreground")}>
                     {format(new Date(msg.created_at), "HH:mm")}
                     {isOutbound && getStatusIcon(msg.status)}
                   </div>

@@ -294,10 +294,10 @@ export function ContractEditor({
             {fixedClauses.map((c) => (
               <div key={c.number} className="px-5 py-3">
                 <div className="mb-0.5 flex items-center gap-2">
-                  <span className="font-mono text-[10px] text-muted-foreground">
+                  <span className="font-mono ds-meta text-muted-foreground">
                     Art. {c.number}
                   </span>
-                  <span className="text-[10px] uppercase tracking-wide text-muted-foreground font-bold">
+                  <span className="ds-meta uppercase tracking-wide text-muted-foreground font-bold">
                     {c.section}
                   </span>
                   <Shield className="h-3 w-3 text-muted-foreground" />

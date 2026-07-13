@@ -85,7 +85,7 @@ const COLOR_TOKENS = [
 // Typography scale details
 const TYPO_TOKENS = [
   {
-    class: "text-[10px]",
+    class: "ds-meta",
     size: "10px",
     weight: "Medium/Bold",
     desc: "Usada para legendas pequenas, badges e status.",
@@ -286,7 +286,7 @@ function DesignSystemPage() {
           <h2 className="text-xs font-extrabold tracking-wider text-foreground uppercase flex items-center gap-2">
             <Settings className="w-3.5 h-3.5 text-brand" /> Design System Hub
           </h2>
-          <p className="text-[10px] text-muted-foreground mt-0.5">Fonte de Verdade Visual</p>
+          <p className="ds-meta text-muted-foreground mt-0.5">Fonte de Verdade Visual</p>
         </div>
 
         <nav className="flex-1 overflow-y-auto p-2 space-y-0.5 no-scrollbar">
@@ -315,7 +315,7 @@ function DesignSystemPage() {
           ))}
         </nav>
 
-        <div className="p-3 border-t border-border glass bg-white/5 border-white/10/10 text-[10px] text-muted-foreground leading-relaxed font-mono">
+        <div className="p-3 border-t border-border glass bg-white/5 border-white/10/10 ds-meta text-muted-foreground leading-relaxed font-mono">
           Turis OS
           <br />
           No Shadows Mode
@@ -429,7 +429,7 @@ function DesignSystemPage() {
                       </span>
                       <StatusBadge tone="neutral">{token.category}</StatusBadge>
                     </div>
-                    <p className="text-[11px] text-muted-foreground leading-snug">{token.desc}</p>
+                    <p className="ds-meta text-muted-foreground leading-snug">{token.desc}</p>
                   </div>
 
                   <div className="flex items-center gap-3">
@@ -440,7 +440,7 @@ function DesignSystemPage() {
                     />
                     <Button
                       onClick={() => copyToClipboard(`var(${token.name})`)}
-                      className="text-[10px] text-brand hover:underline flex items-center gap-1 cursor-pointer font-semibold"
+                      className="ds-meta text-brand hover:underline flex items-center gap-1 cursor-pointer font-semibold"
                     >
                       <Copy className="h-2.5 w-2.5" /> Copiar token
                     </Button>
@@ -477,7 +477,7 @@ function DesignSystemPage() {
                   {TYPO_TOKENS.map((typo) => (
                     <tr key={typo.class} className="hover:glass bg-white/5 border-white/10/10 transition-colors">
                       <td className="p-4 font-mono font-bold text-brand">{typo.class}</td>
-                      <td className="p-4 font-mono text-[11px]">{typo.size}</td>
+                      <td className="p-4 font-mono ds-meta">{typo.size}</td>
                       <td className="p-4 text-muted-foreground max-w-xs">{typo.desc}</td>
                       <td className="p-4 text-right font-semibold">
                         <span className={typo.class}>Turis</span>
@@ -497,7 +497,7 @@ function DesignSystemPage() {
                   <span className="font-semibold block text-muted-foreground">
                     Fonte Sans-Serif (Textos e Inputs)
                   </span>
-                  <code className="block glass bg-white/5 border-white/10 p-2 rounded border-none/80 font-mono text-[11px]">
+                  <code className="block glass bg-white/5 border-white/10 p-2 rounded border-none/80 font-mono ds-meta">
                     font-family: var(--font-sans) ("Inter", -apple-system, sans-serif)
                   </code>
                 </div>
@@ -505,7 +505,7 @@ function DesignSystemPage() {
                   <span className="font-semibold block text-muted-foreground">
                     Fonte Monoespaçada (Códigos e Logs)
                   </span>
-                  <code className="block glass bg-white/5 border-white/10 p-2 rounded border-none/80 font-mono text-[11px]">
+                  <code className="block glass bg-white/5 border-white/10 p-2 rounded border-none/80 font-mono ds-meta">
                     font-family: var(--font-mono) ("JetBrains Mono", monospace)
                   </code>
                 </div>
@@ -535,7 +535,7 @@ function DesignSystemPage() {
                   Páginas administrativas comuns de formulário ou listagem utilizam paddings de
                   container responsivos para manter a harmonia em todas as telas:
                 </p>
-                <code className="block glass bg-white/5 border-white/10 p-2.5 rounded border-none/80 font-mono text-[11px] text-brand">
+                <code className="block glass bg-white/5 border-white/10 p-2.5 rounded border-none/80 font-mono ds-meta text-brand">
                   &lt;div className="px-4 md:px-6 py-4 md:py-6"&gt; ... &lt;/div&gt;
                 </code>
               </div>
@@ -599,7 +599,7 @@ function DesignSystemPage() {
                 </h4>
                 <GhostButton
                   onClick={() => toggleCode("buttons")}
-                  className="h-7 text-[11px] gap-1"
+                  className="h-7 ds-meta gap-1"
                 >
                   <Code className="h-3 w-3" />{" "}
                   {showCode["buttons"] ? "Ocultar Código" : "Ver Código"}
@@ -614,7 +614,7 @@ function DesignSystemPage() {
               </div>
 
               {showCode["buttons"] && (
-                <pre className="glass bg-white/5 border-white/10 p-3 rounded border-none font-mono text-[11px] text-brand overflow-x-auto">
+                <pre className="glass bg-white/5 border-white/10 p-3 rounded border-none font-mono ds-meta text-brand overflow-x-auto">
                   {`import { PrimaryButton, GhostButton } from "@/components/ui/form";
 
 // Uso dos botões padrão:
@@ -633,7 +633,7 @@ function DesignSystemPage() {
                 <h4 className="text-xs font-bold text-foreground uppercase tracking-wider">
                   Campos de Formulário e Validação
                 </h4>
-                <GhostButton onClick={() => toggleCode("forms")} className="h-7 text-[11px] gap-1">
+                <GhostButton onClick={() => toggleCode("forms")} className="h-7 ds-meta gap-1">
                   <Code className="h-3 w-3" /> {showCode["forms"] ? "Ocultar Código" : "Ver Código"}
                 </GhostButton>
               </div>
@@ -653,7 +653,7 @@ function DesignSystemPage() {
               </div>
 
               {showCode["forms"] && (
-                <pre className="glass bg-white/5 border-white/10 p-3 rounded border-none font-mono text-[11px] text-brand overflow-x-auto">
+                <pre className="glass bg-white/5 border-white/10 p-3 rounded border-none font-mono ds-meta text-brand overflow-x-auto">
                   {`import { Field, Input, Select } from "@/components/ui/form";
 
 <Field label="Nome Completo" hint="Insira seu nome igual ao do passaporte.">
@@ -675,7 +675,7 @@ function DesignSystemPage() {
                 <h4 className="text-xs font-bold text-foreground uppercase tracking-wider">
                   Status Badges
                 </h4>
-                <GhostButton onClick={() => toggleCode("badges")} className="h-7 text-[11px] gap-1">
+                <GhostButton onClick={() => toggleCode("badges")} className="h-7 ds-meta gap-1">
                   <Code className="h-3 w-3" />{" "}
                   {showCode["badges"] ? "Ocultar Código" : "Ver Código"}
                 </GhostButton>
@@ -690,7 +690,7 @@ function DesignSystemPage() {
               </div>
 
               {showCode["badges"] && (
-                <pre className="glass bg-white/5 border-white/10 p-3 rounded border-none font-mono text-[11px] text-brand overflow-x-auto">
+                <pre className="glass bg-white/5 border-white/10 p-3 rounded border-none font-mono ds-meta text-brand overflow-x-auto">
                   {`import { StatusBadge } from "@/components/ui/form";
 
 <StatusBadge tone="neutral">Rascunho</StatusBadge>
@@ -708,7 +708,7 @@ function DesignSystemPage() {
                 <h4 className="text-xs font-bold text-foreground uppercase tracking-wider">
                   Alertas Planos (Sem Sombras)
                 </h4>
-                <GhostButton onClick={() => toggleCode("alerts")} className="h-7 text-[11px] gap-1">
+                <GhostButton onClick={() => toggleCode("alerts")} className="h-7 ds-meta gap-1">
                   <Code className="h-3 w-3" />{" "}
                   {showCode["alerts"] ? "Ocultar Código" : "Ver Código"}
                 </GhostButton>
@@ -733,7 +733,7 @@ function DesignSystemPage() {
               </div>
 
               {showCode["alerts"] && (
-                <pre className="glass bg-white/5 border-white/10 p-3 rounded border-none font-mono text-[11px] text-brand overflow-x-auto">
+                <pre className="glass bg-white/5 border-white/10 p-3 rounded border-none font-mono ds-meta text-brand overflow-x-auto">
                   {`// Alerta Azul (Info)
 <div className="bg-info-bg text-info border border-info/30 rounded-[var(--radius-card)] p-4 flex gap-3 text-xs leading-relaxed">
   <Info className="h-4.5 w-4.5 shrink-0" />
@@ -899,37 +899,37 @@ function DesignSystemPage() {
 
                 {/* Elements Adder */}
                 <div className="border-t border-border/60 pt-4 space-y-3">
-                  <span className="text-[11px] font-bold text-muted-foreground uppercase tracking-widest block">
+                  <span className="ds-meta font-bold text-muted-foreground uppercase tracking-widest block">
                     Incluir Elementos
                   </span>
                   <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
                     <Button
                       onClick={() => addSandboxElement("header")}
-                      className="h-8 rounded-[var(--radius-card)] glass-card border-none border-none hover:border-brand/40 text-[10px] font-semibold text-foreground flex items-center justify-center gap-1 cursor-pointer"
+                      className="h-8 rounded-[var(--radius-card)] glass-card border-none border-none hover:border-brand/40 ds-meta font-semibold text-foreground flex items-center justify-center gap-1 cursor-pointer"
                     >
                       <Plus className="w-3 h-3" /> Título
                     </Button>
                     <Button
                       onClick={() => addSandboxElement("paragraph")}
-                      className="h-8 rounded-[var(--radius-card)] glass-card border-none border-none hover:border-brand/40 text-[10px] font-semibold text-foreground flex items-center justify-center gap-1 cursor-pointer"
+                      className="h-8 rounded-[var(--radius-card)] glass-card border-none border-none hover:border-brand/40 ds-meta font-semibold text-foreground flex items-center justify-center gap-1 cursor-pointer"
                     >
                       <Plus className="w-3 h-3" /> Parágrafo
                     </Button>
                     <Button
                       onClick={() => addSandboxElement("button")}
-                      className="h-8 rounded-[var(--radius-card)] glass-card border-none border-none hover:border-brand/40 text-[10px] font-semibold text-foreground flex items-center justify-center gap-1 cursor-pointer"
+                      className="h-8 rounded-[var(--radius-card)] glass-card border-none border-none hover:border-brand/40 ds-meta font-semibold text-foreground flex items-center justify-center gap-1 cursor-pointer"
                     >
                       <Plus className="w-3 h-3" /> Botão CTA
                     </Button>
                     <Button
                       onClick={() => addSandboxElement("image")}
-                      className="h-8 rounded-[var(--radius-card)] glass-card border-none border-none hover:border-brand/40 text-[10px] font-semibold text-foreground flex items-center justify-center gap-1 cursor-pointer"
+                      className="h-8 rounded-[var(--radius-card)] glass-card border-none border-none hover:border-brand/40 ds-meta font-semibold text-foreground flex items-center justify-center gap-1 cursor-pointer"
                     >
                       <Plus className="w-3 h-3" /> Imagem
                     </Button>
                     <Button
                       onClick={() => addSandboxElement("features")}
-                      className="h-8 rounded-[var(--radius-card)] glass-card border-none border-none hover:border-brand/40 text-[10px] font-semibold text-foreground flex items-center justify-center gap-1 cursor-pointer"
+                      className="h-8 rounded-[var(--radius-card)] glass-card border-none border-none hover:border-brand/40 ds-meta font-semibold text-foreground flex items-center justify-center gap-1 cursor-pointer"
                     >
                       <Plus className="w-3 h-3" /> Recursos
                     </Button>
@@ -939,7 +939,7 @@ function DesignSystemPage() {
                 {/* Elements Editor list */}
                 {sandboxElements.length > 0 && (
                   <div className="border-t border-border/60 pt-4 space-y-3">
-                    <span className="text-[11px] font-bold text-muted-foreground uppercase tracking-widest block">
+                    <span className="ds-meta font-bold text-muted-foreground uppercase tracking-widest block">
                       Configurar Elementos ({sandboxElements.length})
                     </span>
                     <div className="space-y-3 max-h-56 overflow-y-auto pr-1.5 scrollbar-thin">
@@ -949,7 +949,7 @@ function DesignSystemPage() {
                           className="p-3 glass bg-white/5 border-white/10/40 border-none/50 rounded-[var(--radius-card)] space-y-2 relative group/item"
                         >
                           <div className="flex items-center justify-between">
-                            <span className="text-[10px] font-bold uppercase tracking-wider text-brand">
+                            <span className="ds-label-caps tracking-wider text-brand">
                               #{i + 1} {el.type}
                             </span>
                             <Button
@@ -1013,7 +1013,7 @@ function DesignSystemPage() {
                                     nextList[fIdx] = e.target.value;
                                     updateSandboxElement(el.id, "featuresList", nextList);
                                   }}
-                                  className="h-7 text-[11px]"
+                                  className="h-7 ds-meta"
                                 />
                               ))}
                             </div>
@@ -1029,7 +1029,7 @@ function DesignSystemPage() {
               <div className="lg:col-span-7 space-y-6">
                 {/* Live Preview Frame */}
                 <div className="space-y-2">
-                  <span className="text-[11px] font-bold text-muted-foreground uppercase tracking-widest flex items-center gap-1">
+                  <span className="ds-meta font-bold text-muted-foreground uppercase tracking-widest flex items-center gap-1">
                     <Eye className="w-3.5 h-3.5 text-brand" /> Preview em Tempo Real
                   </span>
 
@@ -1112,7 +1112,7 @@ function DesignSystemPage() {
                 {/* React/Tailwind Code Output */}
                 <div className="space-y-2">
                   <div className="flex items-center justify-between">
-                    <span className="text-[11px] font-bold text-muted-foreground uppercase tracking-widest flex items-center gap-1">
+                    <span className="ds-meta font-bold text-muted-foreground uppercase tracking-widest flex items-center gap-1">
                       <Code className="w-3.5 h-3.5 text-brand" /> Código JSX (Tailwind v4)
                     </span>
                     <Button

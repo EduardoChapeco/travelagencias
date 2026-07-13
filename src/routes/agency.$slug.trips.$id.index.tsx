@@ -1,7 +1,7 @@
 import { createFileRoute, Link, useParams } from "@tanstack/react-router";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useState, useEffect } from "react";
-import { Save } from "lucide-react";
+import { Save, Clock, Plane, MapPin, CalendarDays } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { useAgency } from "@/lib/agency-context";
@@ -10,7 +10,19 @@ import { FormInput as Input } from "@/components/ui/input";
 import { NativeSelect as Select } from "@/components/ui/select";
 import { FormTextarea as Textarea } from "@/components/ui/textarea";
 import { PrimaryButton } from "@/components/ui/button";
-import { money } from "@/lib/formatters";
+import { StatusBadge } from "@/components/ui/badge";
+import { TRIP_STATUS_MAP } from "@/lib/constants/status";
+import { fmtDate, money } from "@/lib/formatters";
+import { cn } from "@/lib/utils";
+
+function getDaysToTrip(travelStart?: string | null): number | null {
+  if (!travelStart) return null;
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  const start = new Date(travelStart + "T00:00:00");
+  const diff = Math.ceil((start.getTime() - today.getTime()) / (1000 * 60 * 60 * 24));
+  return diff;
+}
 
 export const Route = createFileRoute("/agency/$slug/trips/$id/")({
   component: TripOverview,
@@ -66,13 +78,15 @@ function TripOverview() {
   if (tripQ.isLoading) return <div className="text-sm text-muted-foreground p-6">Carregando…</div>;
   if (!tripQ.data)
     return <div className="text-sm text-muted-foreground p-6">Viagem não encontrada.</div>;
-  if (!form) return <div className="text-sm text-muted-foreground p-6">Carregando…</div>;
-
   const t = form;
   const margin = Number(t.total_sale || 0) - Number(t.total_cost || 0);
 
+  const daysToTrip = getDaysToTrip(t.travel_start);
+  const isFuture = daysToTrip !== null && daysToTrip > 0;
+  const isToday = daysToTrip === 0;
+
   return (
-    <div className="flex-1 overflow-y-auto px-4 md:px-6 py-5 min-h-0">
+    <div className="page-content dock-offset">
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-[1fr_280px]">
         <form
           className="space-y-4 rounded-[var(--radius-card)] border-none glass-card border-none p-6 "
@@ -207,8 +221,81 @@ function TripOverview() {
         </form>
 
         <aside className="space-y-4">
+          {/* Resumo da Viagem & Metadados */}
+          <div className="rounded-[var(--radius-card)] border-none glass-card border-none p-5 space-y-4">
+            <div>
+              <div className="flex items-center gap-2 mb-2">
+                <span className="font-mono text-xs text-brand font-bold bg-brand/10 px-2 py-0.5 rounded">
+                  #{t.number}
+                </span>
+                <StatusBadge tone={TRIP_STATUS_MAP[t.status]?.tone ?? "neutral"}>
+                  {TRIP_STATUS_MAP[t.status]?.label ?? t.status}
+                </StatusBadge>
+              </div>
+              <h2 className="text-sm font-bold text-foreground truncate">{t.title}</h2>
+            </div>
+
+            <div className="space-y-2 text-xs text-muted-foreground border-t border-border pt-3">
+              {t.destination && (
+                <div className="flex items-center gap-2">
+                  <MapPin className="h-3.5 w-3.5 text-muted-foreground/60 shrink-0" />
+                  <span className="truncate">{t.destination}</span>
+                </div>
+              )}
+              {(t.travel_start || t.travel_end) && (
+                <div className="flex items-center gap-2">
+                  <CalendarDays className="h-3.5 w-3.5 text-muted-foreground/60 shrink-0" />
+                  <span>
+                    {t.travel_start ? fmtDate(t.travel_start) : "—"} →{" "}
+                    {t.travel_end ? fmtDate(t.travel_end) : "—"}
+                  </span>
+                </div>
+              )}
+            </div>
+
+            {/* Countdown */}
+            {t.status !== "cancelled" && daysToTrip !== null && (
+              <div
+                className={cn(
+                  "flex items-center gap-2.5 rounded-[var(--radius-card)] border px-3 py-2 text-xs mt-1",
+                  isToday
+                    ? "border-warning/30 bg-warning/5 text-warning-foreground"
+                    : isFuture
+                      ? "border-brand/20 bg-brand/5 text-foreground"
+                      : t.status === "completed"
+                        ? "border-success/20 bg-success/5 text-success-foreground"
+                        : "border-border glass bg-white/5 border-white/10/50 text-muted-foreground",
+                )}
+              >
+                {isToday ? (
+                  <>
+                    <Plane className="h-3.5 w-3.5 text-warning animate-bounce" />
+                    <span className="font-bold text-warning">Embarque hoje!</span>
+                  </>
+                ) : isFuture ? (
+                  <>
+                    <Clock className="h-3.5 w-3.5 text-brand" />
+                    <span className="font-semibold text-foreground">
+                      Faltam <span className="text-brand font-bold">{daysToTrip} dias</span>
+                    </span>
+                  </>
+                ) : t.status === "completed" ? (
+                  <>
+                    <Plane className="h-3.5 w-3.5 text-success" />
+                    <span className="font-semibold text-success">Concluída!</span>
+                  </>
+                ) : (
+                  <>
+                    <Plane className="h-3.5 w-3.5 text-muted-foreground" />
+                    <span>Ocorreu há {Math.abs(daysToTrip)} dias</span>
+                  </>
+                )}
+              </div>
+            )}
+          </div>
+
           <div className="rounded-[var(--radius-card)] border-none glass-card border-none p-5 ">
-            <h3 className="mb-4 text-xs font-bold uppercase tracking-widest text-muted-foreground">
+            <h3 className="mb-4 ds-label-caps text-muted-foreground">
               Rentabilidade (P&L)
             </h3>
             <div className="space-y-3">

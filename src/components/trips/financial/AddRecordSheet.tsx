@@ -189,7 +189,7 @@ export function AddRecordSheet({
               placeholder="Buscar fornecedor cadastrado..."
             />
             {selectedSupplier?.commission_rate != null && selectedSupplier.commission_rate > 0 && (
-              <p className="mt-1 text-[10px] text-green-600 font-semibold">
+              <p className="mt-1 ds-meta text-green-600 font-semibold">
                 ✓ Comissão de {selectedSupplier.commission_rate}% configurada neste fornecedor
               </p>
             )}

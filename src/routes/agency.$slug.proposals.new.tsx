@@ -20,6 +20,8 @@ import {
 } from "@/components/ui/select";
 import { FormTextarea as Textarea } from "@/components/ui/textarea";
 import { PrimaryButton, GhostButton , Button } from "@/components/ui/button";
+import { PageHeader, ModuleActionButton } from "@/components/shell/PageHeader";
+import { SheetPage } from "@/components/ui/sheet";
 import {
   createProposal,
   fetchClientsPick,
@@ -275,18 +277,24 @@ function NewProposal() {
   }
 
   return (
-    <div className="max-w-3xl mx-auto p-4 md:p-6 space-y-6">
-      <div>
-        <Link
-          to="/agency/$slug/proposals"
-          params={{ slug }}
-          className="mb-2 inline-flex items-center gap-1.5 text-xs text-muted-foreground hover:text-foreground"
-        >
-          <ArrowLeft className="h-3.5 w-3.5" /> Voltar
-        </Link>
-        <h1 className="text-xl font-semibold tracking-tight">Nova cotação</h1>
-      </div>
-
+    <SheetPage
+      isOpen={true}
+      onClose={() => navigate({ to: "/agency/$slug/proposals", params: { slug } })}
+      title={search.lead_id ? "Nova Cotação (via Lead)" : "Nova Cotação"}
+      width="100%"
+    >
+      <div className="flex-1 p-6 md:p-10 lg:p-16 w-full max-w-4xl mx-auto space-y-6">
+        <div className="flex items-center gap-4 border-b border-white/5 pb-4">
+          <div className="h-12 w-12 rounded-[var(--radius-card)] bg-brand/10 text-brand flex items-center justify-center border border-brand/20">
+            <Sparkles className="h-6 w-6" />
+          </div>
+          <div>
+            <h1 className="text-xl font-bold text-foreground">Nova Cotação e Orçamento</h1>
+            <p className="text-sm text-muted-foreground ds-meta mt-1">
+              Crie uma cotação do zero ou importe um PDF de voos/hotéis do sistema antigo.
+            </p>
+          </div>
+        </div>
       {/* OCR Dropzone */}
       <div
         className={cn(
@@ -345,7 +353,7 @@ function NewProposal() {
           <div className="mt-4 rounded-[var(--radius-card)] bg-success/5 border border-success/20 p-3 text-xs text-success flex items-center justify-between">
             <div className="text-left">
               <span className="font-bold text-success">✨ Dados extraídos com sucesso!</span>
-              <p className="text-[10px] text-muted-foreground mt-0.5">
+              <p className="ds-meta text-muted-foreground mt-0.5">
                 {extractedItems.flights?.length ?? 0} voo(s), {extractedItems.hotels?.length ?? 0}{" "}
                 hotel(eis) e {extractedItems.itinerary?.length ?? 0} dia(s) de roteiro serão salvos
                 ao criar a cotação.
@@ -354,7 +362,7 @@ function NewProposal() {
             <Button
               type="button"
               onClick={() => setExtractedItems(null)}
-              className="text-muted-foreground hover:text-danger text-[10px] font-semibold border-none rounded px-2 py-0.5 hover:glass bg-white/5 border-white/10 transition-colors"
+              className="text-muted-foreground hover:text-danger ds-meta font-semibold border-none rounded px-2 py-0.5 hover:glass bg-white/5 border-white/10 transition-colors"
             >
               Descartar
             </Button>
@@ -463,18 +471,19 @@ function NewProposal() {
         <Field label="Observações" error={errors.notes?.message}>
           <Textarea {...register("notes")} />
         </Field>
-        <div className="flex justify-end gap-2 pt-2">
-          <GhostButton
-            type="button"
-            onClick={() => navigate({ to: "/agency/$slug/proposals", params: { slug } })}
-          >
+        <div className="mt-8 pt-6 border-t border-white/5 flex justify-end gap-3">
+          <GhostButton type="button" onClick={() => navigate({ to: "/agency/$slug/proposals", params: { slug } })}>
             Cancelar
           </GhostButton>
-          <PrimaryButton type="submit" disabled={isSubmitting}>
-            {isSubmitting ? "Criando…" : "Criar cotação"}
+          <PrimaryButton onClick={handleSubmit(onSubmit)} disabled={isSubmitting}>
+            {isSubmitting ? (
+              <Loader2 className="h-4 w-4 animate-spin mr-2" />
+            ) : null}
+            Avançar para Montagem
           </PrimaryButton>
         </div>
       </form>
     </div>
-  );
+  </SheetPage>
+);
 }

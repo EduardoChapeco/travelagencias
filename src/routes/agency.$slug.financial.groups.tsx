@@ -130,7 +130,7 @@ export function GroupFinancialsDashboard() {
     }
     if (kpisQ.isError) {
       return (
-        <span className="text-[10px] text-danger font-bold mt-1.5 flex items-center gap-1">
+        <span className="ds-meta text-danger font-bold mt-1.5 flex items-center gap-1">
           <AlertCircle className="w-3 h-3 shrink-0" /> Erro ao carregar
         </span>
       );
@@ -150,54 +150,54 @@ export function GroupFinancialsDashboard() {
       {/* KPI Panel */}
       <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
         <div className="glass-card border-none border-none rounded-[var(--radius-card)] p-4">
-          <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest flex items-center gap-1">
+          <span className="ds-meta font-bold text-muted-foreground uppercase tracking-widest flex items-center gap-1">
             <DollarSign className="w-3.5 h-3.5 text-success" /> Faturamento Total
           </span>
           {renderKpiValue(totalRevenue, "text-success")}
-          <span className="text-[10px] text-muted-foreground mt-1 block">
+          <span className="ds-meta text-muted-foreground mt-1 block">
             Inscrições quitadas ou geradas
           </span>
         </div>
 
         <div className="glass-card border-none border-none rounded-[var(--radius-card)] p-4">
-          <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest flex items-center gap-1">
+          <span className="ds-meta font-bold text-muted-foreground uppercase tracking-widest flex items-center gap-1">
             <TrendingUp className="w-3.5 h-3.5 text-danger" /> Custos Operacionais
           </span>
           {renderKpiValue(totalCosts, "text-danger")}
-          <span className="text-[10px] text-muted-foreground mt-1 block">
+          <span className="ds-meta text-muted-foreground mt-1 block">
             Fixo, variável e marketing
           </span>
         </div>
 
         <div className="glass-card border-none border-none rounded-[var(--radius-card)] p-4">
-          <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest block">
+          <span className="ds-meta font-bold text-muted-foreground uppercase tracking-widest block">
             Resultado Líquido
           </span>
           {renderKpiValue(
             totalNetProfit,
             totalNetProfit >= 0 ? "text-foreground" : "text-danger",
           )}
-          <span className="text-[10px] text-muted-foreground mt-1 block">
+          <span className="ds-meta text-muted-foreground mt-1 block">
             Lucro líquido acumulado
           </span>
         </div>
 
         <div className="glass-card border-none border-none rounded-[var(--radius-card)] p-4">
-          <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest flex items-center gap-1">
+          <span className="ds-meta font-bold text-muted-foreground uppercase tracking-widest flex items-center gap-1">
             <Landmark className="w-3.5 h-3.5 text-brand" /> Poupança Retida
           </span>
           {renderKpiValue(totalVault, "text-brand")}
-          <span className="text-[10px] text-muted-foreground mt-1 block">
+          <span className="ds-meta text-muted-foreground mt-1 block">
             Fundo garantidor terrestre
           </span>
         </div>
 
         <div className="glass-card border-none border-none rounded-[var(--radius-card)] p-4">
-          <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest flex items-center gap-1">
+          <span className="ds-meta font-bold text-muted-foreground uppercase tracking-widest flex items-center gap-1">
             <Target className="w-3.5 h-3.5 text-amber-600" /> Gastos Meta/Google
           </span>
           {renderKpiValue(totalMarketing, "text-amber-700")}
-          <span className="text-[10px] text-muted-foreground mt-1 block">
+          <span className="ds-meta text-muted-foreground mt-1 block">
             Orçamento de tráfego pago
           </span>
         </div>
@@ -243,7 +243,7 @@ export function GroupFinancialsDashboard() {
             </div>
           ) : (
             <table className="w-full text-sm">
-              <thead className="glass bg-white/5 border-white/10/40 text-left text-[10px] font-bold uppercase tracking-wider text-muted-foreground border-b border-border">
+              <thead className="glass bg-white/5 border-white/10/40 text-left ds-label-caps tracking-wider text-muted-foreground border-b border-border">
               <tr>
                 <th className="px-5 py-3">Excursão</th>
                 <th className="px-5 py-3">Período</th>
@@ -275,7 +275,7 @@ export function GroupFinancialsDashboard() {
                       >
                         {t.title}
                       </Link>
-                      <span className="text-[10px] text-muted-foreground block font-normal">
+                      <span className="ds-meta text-muted-foreground block font-normal">
                         {t.destination || "Destino não informado"}
                       </span>
                     </td>
@@ -382,7 +382,7 @@ export function GroupFinancialsDashboard() {
 
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
-            <thead className="glass bg-white/5 border-white/10 text-left text-[10px] font-bold uppercase tracking-wider text-muted-foreground border-b border-border">
+            <thead className="glass bg-white/5 border-white/10 text-left ds-label-caps tracking-wider text-muted-foreground border-b border-border">
               <tr>
                 <th className="px-5 py-3">Data/Hora</th>
                 <th className="px-5 py-3">Excursão Vinculada</th>

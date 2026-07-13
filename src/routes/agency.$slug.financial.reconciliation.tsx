@@ -11,6 +11,7 @@ import { Field } from "@/components/ui/field";
 import { FormInput as Input } from "@/components/ui/input";
 import { NativeSelect as Select } from "@/components/ui/select";
 import { PrimaryButton, GhostButton , Button } from "@/components/ui/button";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { StatusBadge } from "@/components/ui/badge";
 import { money, fmtDate } from "@/lib/formatters";
 import { FormTextarea as Textarea } from "@/components/ui/textarea";
@@ -277,7 +278,7 @@ function ReconciliationPage() {
         <div className="overflow-hidden rounded-[var(--radius-card)] border-none glass-card border-none shadow-none">
           <div className="overflow-x-auto w-full">
             <table className="w-full text-xs">
-              <thead className="glass bg-white/5 border-white/10/40 border-b border-border text-left text-[10px] uppercase font-bold tracking-wider text-muted-foreground">
+              <thead className="glass bg-white/5 border-white/10/40 border-b border-border text-left ds-meta uppercase font-bold tracking-wider text-muted-foreground">
                 <tr>
                   <th className="px-4 py-3">Código/Viagem</th>
                   <th className="px-4 py-3">Passageiro</th>
@@ -295,7 +296,7 @@ function ReconciliationPage() {
                       <div className="font-mono font-bold text-gray-700">
                         {rec.payment_plan?.trip?.code}
                       </div>
-                      <div className="text-[10px] text-muted-foreground truncate max-w-[220px] mt-0.5">
+                      <div className="ds-meta text-muted-foreground truncate max-w-[220px] mt-0.5">
                         {rec.payment_plan?.trip?.title}
                       </div>
                     </td>
@@ -347,13 +348,13 @@ function ReconciliationPage() {
                               setSelectedRegisterId(matchingSession.cash_register_id);
                             }
                           }}
-                          className="h-7 px-2.5 rounded-[var(--radius-card)] bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-[10px] uppercase tracking-wide flex items-center gap-1 cursor-pointer transition-colors"
+                          className="h-7 px-2.5 rounded-[var(--radius-card)] bg-emerald-600 hover:bg-emerald-700 text-white font-bold ds-meta uppercase tracking-wide flex items-center gap-1 cursor-pointer transition-colors"
                         >
                           <Check className="w-3.5 h-3.5" /> Conciliar
                         </Button>
                         <Button
                           onClick={() => setRejectReceipt(rec)}
-                          className="h-7 px-2.5 rounded-[var(--radius-card)] border-none hover:bg-rose-50 text-rose-600 font-bold text-[10px] uppercase tracking-wide flex items-center gap-1 cursor-pointer transition-colors"
+                          className="h-7 px-2.5 rounded-[var(--radius-card)] border-none hover:bg-rose-50 text-rose-600 font-bold ds-meta uppercase tracking-wide flex items-center gap-1 cursor-pointer transition-colors"
                         >
                           <X className="w-3.5 h-3.5" /> Recusar
                         </Button>
@@ -368,25 +369,19 @@ function ReconciliationPage() {
       )}
 
       {/* Approve / Conciliation Drawer Modal */}
-      {selectedReceipt && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4 animate-in fade-in duration-200">
-          <div className="w-full max-w-md glass dark:glass-dark rounded-[var(--radius-card)] border border-white/10 overflow-hidden shadow-none text-white">
-            <div className="flex items-center justify-between px-5 py-4 border-b border-white/10 bg-white/5">
-              <div className="flex items-center gap-2">
-                <CheckCircle className="w-5 h-5 text-emerald-450" />
-                <h3 className="font-bold text-white text-sm uppercase tracking-wider">
-                  Aprovar Comprovante
-                </h3>
-              </div>
-              <Button
-                onClick={() => setSelectedReceipt(null)}
-                className="p-1 rounded hover:bg-white/10 text-white"
-              >
-                <X className="w-4 h-4" />
-              </Button>
-            </div>
+      <Dialog open={!!selectedReceipt} onOpenChange={(open) => !open && setSelectedReceipt(null)}>
+        <DialogContent className="max-w-md p-0 overflow-hidden border-none/10 max-h-[90vh] glass dark:glass-dark text-white">
+          <DialogHeader className="px-5 py-4 border-b border-white/10 bg-white/5">
+            <DialogTitle className="flex items-center gap-2">
+              <CheckCircle className="w-5 h-5 text-emerald-450" />
+              <span className="font-bold text-white text-sm uppercase tracking-wider">
+                Aprovar Comprovante
+              </span>
+            </DialogTitle>
+          </DialogHeader>
 
-            <div className="p-5 space-y-4">
+            {selectedReceipt && (
+              <div className="p-5 space-y-4">
               <div className="bg-gray-50 border-none rounded-[var(--radius-card)] p-4 text-xs space-y-2 font-mono">
                 <div className="flex justify-between">
                   <span className="text-gray-400">Passageiro:</span>
@@ -437,7 +432,7 @@ function ReconciliationPage() {
               </div>
 
               {selectedRegisterId && !selectedSessionId && (
-                <div className="text-[10px] text-amber-700 bg-amber-500/10 border border-amber-500/20 p-3 rounded-[var(--radius-card)] flex items-start gap-1.5">
+                <div className="ds-meta text-amber-700 bg-amber-500/10 border border-amber-500/20 p-3 rounded-[var(--radius-card)] flex items-start gap-1.5">
                   <AlertCircle className="w-4 h-4 mt-0.5 shrink-0" />
                   <span>
                     A conta digital/banco aceita depósitos diretos sem expediente aberto, mas o
@@ -462,36 +457,30 @@ function ReconciliationPage() {
                     })
                   }
                   disabled={actionBusy || !selectedRegisterId}
-                  className="flex-1 h-10 text-xs font-bold uppercase tracking-wider bg-emerald-600 hover:bg-emerald-700 text-white rounded-[var(--radius-card)]"
+                  className="flex-1 h-10 ds-label-caps tracking-wider bg-emerald-600 hover:bg-emerald-700 text-white rounded-[var(--radius-card)]"
                 >
                   {actionBusy ? "Salvando..." : "Confirmar e Lançar"}
                 </PrimaryButton>
+                </div>
               </div>
-            </div>
-          </div>
-        </div>
-      )}
+            )}
+        </DialogContent>
+      </Dialog>
 
       {/* Reject Drawer Modal */}
-      {rejectReceipt && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4 animate-in fade-in duration-200">
-          <div className="w-full max-w-md glass dark:glass-dark rounded-[var(--radius-card)] border border-white/10 overflow-hidden shadow-none text-white">
-            <div className="flex items-center justify-between px-5 py-4 border-b border-white/10 bg-white/5">
-              <div className="flex items-center gap-2">
-                <XCircle className="w-5 h-5 text-rose-450" />
-                <h3 className="font-bold text-white text-sm uppercase tracking-wider">
-                  Recusar Comprovante
-                </h3>
-              </div>
-              <Button
-                onClick={() => setRejectReceipt(null)}
-                className="p-1 rounded hover:bg-white/10 text-white"
-              >
-                <X className="w-4 h-4" />
-              </Button>
-            </div>
+      <Dialog open={!!rejectReceipt} onOpenChange={(open) => !open && setRejectReceipt(null)}>
+        <DialogContent className="max-w-md p-0 overflow-hidden border-none/10 max-h-[90vh] glass dark:glass-dark text-white">
+          <DialogHeader className="px-5 py-4 border-b border-white/10 bg-white/5">
+            <DialogTitle className="flex items-center gap-2">
+              <XCircle className="w-5 h-5 text-rose-450" />
+              <span className="font-bold text-white text-sm uppercase tracking-wider">
+                Recusar Comprovante
+              </span>
+            </DialogTitle>
+          </DialogHeader>
 
-            <div className="p-5 space-y-4">
+            {rejectReceipt && (
+              <div className="p-5 space-y-4 text-sm text-foreground/80">
               <p className="text-xs text-muted-foreground leading-relaxed">
                 O cliente será alertado no portal sobre a recusa do comprovante da Parcela #
                 {rejectReceipt.number} (Valor: {money(rejectReceipt.amount)}) e poderá enviar um
@@ -520,15 +509,15 @@ function ReconciliationPage() {
                     })
                   }
                   disabled={actionBusy || !rejectionReason.trim()}
-                  className="flex-1 h-10 text-xs font-bold uppercase tracking-wider bg-rose-600 hover:bg-rose-700 text-white rounded-[var(--radius-card)]"
+                  className="flex-1 h-10 ds-label-caps tracking-wider bg-rose-600 hover:bg-rose-700 text-white rounded-[var(--radius-card)]"
                 >
                   {actionBusy ? "Recusando..." : "Confirmar Recusa"}
                 </PrimaryButton>
               </div>
             </div>
-          </div>
-        </div>
-      )}
+            )}
+          </DialogContent>
+        </Dialog>
       </div>
     </div>
   );

@@ -49,7 +49,7 @@ export default function TemplateDarkPremium({ proposal: p, agency }: TemplatePro
             </div>
           )}
           <div className="text-right text-white">
-            <div className="text-[10px] font-bold uppercase tracking-widest opacity-80">
+            <div className="ds-label-caps opacity-80">
               Proposta Oficial
             </div>
             <div className="text-xl font-mono">#{p.number}</div>
@@ -100,7 +100,7 @@ export default function TemplateDarkPremium({ proposal: p, agency }: TemplatePro
         {/* Resumo Executivo Flutuante */}
         <div className="bg-white rounded-[32px] p-8 border border-slate-200 -mt-24 grid grid-cols-2 md:grid-cols-4 gap-6 text-center divide-x divide-slate-100">
           <div>
-            <div className="text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-2">
+            <div className="ds-label-caps text-slate-400 mb-2">
               Cliente
             </div>
             <div className="font-semibold text-slate-900 text-sm">
@@ -108,7 +108,7 @@ export default function TemplateDarkPremium({ proposal: p, agency }: TemplatePro
             </div>
           </div>
           <div>
-            <div className="text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-2">
+            <div className="ds-label-caps text-slate-400 mb-2">
               Período
             </div>
             <div className="font-semibold text-slate-900 text-sm">
@@ -117,7 +117,7 @@ export default function TemplateDarkPremium({ proposal: p, agency }: TemplatePro
             </div>
           </div>
           <div>
-            <div className="text-[10px] font-bold uppercase tracking-widest text-zinc-500 mb-1">
+            <div className="ds-label-caps text-zinc-500 mb-1">
               Viajantes
             </div>
             <div className="text-sm font-semibold text-zinc-800">
@@ -125,7 +125,7 @@ export default function TemplateDarkPremium({ proposal: p, agency }: TemplatePro
             </div>
           </div>
           <div>
-            <div className="text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-2">
+            <div className="ds-label-caps text-slate-400 mb-2">
               Válido até
             </div>
             <div className="font-semibold text-slate-900 text-sm text-red-500">
@@ -153,7 +153,7 @@ export default function TemplateDarkPremium({ proposal: p, agency }: TemplatePro
                   className="border border-slate-200 rounded-3xl overflow-hidden break-inside-avoid"
                 >
                   <div className="bg-blue-50 px-6 py-3 flex justify-between items-center border-b border-blue-100">
-                    <span className="text-xs font-bold uppercase tracking-widest text-blue-600">
+                    <span className="ds-label-caps text-blue-600">
                       {f.airline || "Companhia"}
                     </span>
                     <span className="text-xs font-mono font-bold text-blue-800 bg-blue-100/50 px-3 py-1 rounded-full">
@@ -171,7 +171,7 @@ export default function TemplateDarkPremium({ proposal: p, agency }: TemplatePro
                     </div>
                     <div className="flex-1 px-4 relative flex items-center justify-center">
                       <div className="w-full border-t border-dashed border-slate-300 absolute" />
-                      <div className="bg-white border border-slate-200 px-4 py-1 rounded-full z-10 text-[10px] font-bold text-slate-400 uppercase tracking-widest">
+                      <div className="bg-white border border-slate-200 px-4 py-1 rounded-full z-10 ds-meta font-bold text-slate-400 uppercase tracking-widest">
                         {f.date ? fmtDate(f.date) : "—"}
                       </div>
                     </div>
@@ -204,10 +204,10 @@ export default function TemplateDarkPremium({ proposal: p, agency }: TemplatePro
                   className="border border-slate-200 rounded-3xl overflow-hidden break-inside-avoid"
                 >
                   <div className="bg-amber-50 px-6 py-3 flex justify-between items-center border-b border-amber-100">
-                    <span className="text-xs font-bold uppercase tracking-widest text-amber-700">
+                    <span className="ds-label-caps text-amber-700">
                       Hotel & Resort
                     </span>
-                    <span className="text-xs font-bold uppercase text-amber-800 bg-amber-100/50 px-3 py-1 rounded-full">
+                    <span className="ds-label-caps text-amber-800 bg-amber-100/50 px-3 py-1 rounded-full">
                       {h.meal_plan || "Só Hospedagem"}
                     </span>
                   </div>
@@ -217,19 +217,19 @@ export default function TemplateDarkPremium({ proposal: p, agency }: TemplatePro
 
                     <div className="flex gap-8 mb-6 bg-slate-50 p-4 rounded-[var(--radius-card)] border border-slate-100">
                       <div>
-                        <div className="text-[10px] uppercase font-bold text-slate-400">
+                        <div className="ds-meta uppercase font-bold text-slate-400">
                           Check-in
                         </div>
                         <div className="font-semibold text-slate-800">{fmtDate(h.checkin)}</div>
                       </div>
                       <div>
-                        <div className="text-[10px] uppercase font-bold text-slate-400">
+                        <div className="ds-meta uppercase font-bold text-slate-400">
                           Check-out
                         </div>
                         <div className="font-semibold text-slate-800">{fmtDate(h.checkout)}</div>
                       </div>
                       <div>
-                        <div className="text-[10px] uppercase font-bold text-slate-400">
+                        <div className="ds-meta uppercase font-bold text-slate-400">
                           Quartos
                         </div>
                         <div className="font-semibold text-slate-800">
@@ -279,7 +279,7 @@ export default function TemplateDarkPremium({ proposal: p, agency }: TemplatePro
 
             <div className="flex flex-col md:flex-row justify-between items-start gap-12">
               <div className="flex-1">
-                <div className="text-[10px] uppercase font-bold tracking-widest text-zinc-500 mb-2">
+                <div className="ds-meta uppercase font-bold tracking-widest text-zinc-500 mb-2">
                   Total do Pacote
                 </div>
                 <div className="text-5xl font-light text-white mb-6">
@@ -293,7 +293,7 @@ export default function TemplateDarkPremium({ proposal: p, agency }: TemplatePro
                 className="bg-zinc-800/50 border border-zinc-700/50 p-6 rounded-none border-l-2"
                 style={{ borderLeftColor: brand }}
               >
-                <div className="text-[10px] uppercase font-bold tracking-widest text-zinc-500 mb-2">
+                <div className="ds-meta uppercase font-bold tracking-widest text-zinc-500 mb-2">
                   Parcelamento
                 </div>
                 <div className="text-lg font-semibold text-white">
@@ -301,11 +301,11 @@ export default function TemplateDarkPremium({ proposal: p, agency }: TemplatePro
                 </div>
               </div>
               <div className="bg-[#D4AF37]/10 rounded-3xl p-6 border border-[#D4AF37]/30 backdrop-blur relative">
-                <div className="text-[10px] uppercase font-bold tracking-widest text-zinc-400 mb-2">
+                <div className="ds-meta uppercase font-bold tracking-widest text-zinc-400 mb-2">
                   À vista (PIX)
                 </div>
                 <div
-                  className="text-[10px] font-bold px-2 py-0.5"
+                  className="ds-meta font-bold px-2 py-0.5"
                   style={{ color: brand, border: `1px solid ${brand}` }}
                 >
                   -{vm.totals.descontoPixPercentual}%
@@ -336,7 +336,7 @@ export default function TemplateDarkPremium({ proposal: p, agency }: TemplatePro
             )}
             <div>
               <div className="font-bold text-slate-900 text-lg">{p.agent_name}</div>
-              <div className="text-xs font-bold uppercase tracking-widest text-slate-400 mb-1">
+              <div className="ds-label-caps text-slate-400 mb-1">
                 Consultor Premium
               </div>
               <div className="text-sm font-medium">{p.agent_whatsapp}</div>

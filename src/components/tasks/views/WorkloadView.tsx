@@ -111,7 +111,7 @@ export function WorkloadView({ filters }: { filters: TaskFiltersState }) {
                   </div>
                   <div>
                     <h3 className="font-bold text-sm text-[var(--foreground)] capitalize">{w.name}</h3>
-                    <p className="text-[11px] text-[var(--muted-foreground)]">{w.tasks.length} tarefa{w.tasks.length !== 1 ? "s" : ""}</p>
+                    <p className="ds-meta text-[var(--muted-foreground)]">{w.tasks.length} tarefa{w.tasks.length !== 1 ? "s" : ""}</p>
                   </div>
                 </div>
 

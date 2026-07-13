@@ -50,7 +50,7 @@ function Page() {
                 <p className="mt-1 text-xs text-muted-foreground">{c.description}</p>
               )}
               {c.min_purchase && (
-                <div className="mt-2 text-[11px] text-muted-foreground">
+                <div className="mt-2 ds-meta text-muted-foreground">
                   Mínimo{" "}
                   {Number(c.min_purchase).toLocaleString("pt-BR", {
                     style: "currency",
@@ -59,7 +59,7 @@ function Page() {
                 </div>
               )}
               {c.expires_at && (
-                <div className="mt-1 text-[11px] text-muted-foreground">
+                <div className="mt-1 ds-meta text-muted-foreground">
                   Válido até {new Date(c.expires_at).toLocaleDateString("pt-BR")}
                 </div>
               )}

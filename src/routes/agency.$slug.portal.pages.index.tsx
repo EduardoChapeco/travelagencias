@@ -100,7 +100,7 @@ function PageMiniPreview({ template }: { template: string | null }) {
         }`}
       >
         <div
-          className={`w-7 h-7 rounded-full flex items-center justify-center text-[10px] font-black border${
+          className={`w-7 h-7 rounded-full flex items-center justify-center ds-meta font-black border${
             isDark
               ? "bg-slate-800 border-slate-700 text-slate-200"
               : isVibrant
@@ -427,7 +427,7 @@ function PagesPage() {
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
             <div className="rounded-[var(--radius-card)] border-none/60 glass-card border-none p-5 flex items-center justify-between">
               <div>
-                <span className="text-[11px] font-bold uppercase tracking-wider text-muted-foreground">
+                <span className="ds-meta font-bold uppercase tracking-wider text-muted-foreground">
                   Páginas Criadas
                 </span>
                 <h3 className="text-2xl font-black text-foreground mt-1">{totalPages}</h3>
@@ -439,7 +439,7 @@ function PagesPage() {
 
             <div className="rounded-[var(--radius-card)] border-none/60 glass-card border-none p-5 flex items-center justify-between">
               <div>
-                <span className="text-[11px] font-bold uppercase tracking-wider text-muted-foreground">
+                <span className="ds-meta font-bold uppercase tracking-wider text-muted-foreground">
                   Acessos Totais
                 </span>
                 <h3 className="text-2xl font-black text-foreground mt-1">{totalViews}</h3>
@@ -451,7 +451,7 @@ function PagesPage() {
 
             <div className="rounded-[var(--radius-card)] border-none/60 glass-card border-none p-5 flex items-center justify-between">
               <div>
-                <span className="text-[11px] font-bold uppercase tracking-wider text-muted-foreground">
+                <span className="ds-meta font-bold uppercase tracking-wider text-muted-foreground">
                   Cliques em Links
                 </span>
                 <h3 className="text-2xl font-black text-foreground mt-1">{totalClicks}</h3>
@@ -463,7 +463,7 @@ function PagesPage() {
 
             <div className="rounded-[var(--radius-card)] border-none/60 glass-card border-none p-5 flex items-center justify-between">
               <div>
-                <span className="text-[11px] font-bold uppercase tracking-wider text-muted-foreground">
+                <span className="ds-meta font-bold uppercase tracking-wider text-muted-foreground">
                   CTR Geral
                 </span>
                 <h3 className="text-2xl font-black text-foreground mt-1">{globalCtr}%</h3>
@@ -615,7 +615,7 @@ function PagesPage() {
                         {/* Header metadata */}
                         <div className="space-y-1">
                           <div className="flex items-center justify-between w-full">
-                            <span className="text-[10px] uppercase font-black font-mono tracking-wider text-muted-foreground">
+                            <span className="ds-meta uppercase font-black font-mono tracking-wider text-muted-foreground">
                               {isBiolink
                                 ? "Link na Bio"
                                 : isMobileLanding
@@ -637,13 +637,13 @@ function PagesPage() {
                           >
                             {p.title}
                           </h4>
-                          <p className="text-[11px] font-mono text-muted-foreground truncate">
+                          <p className="ds-meta font-mono text-muted-foreground truncate">
                             /{p.slug}
                           </p>
                         </div>
 
                         {/* Micro analytics counts */}
-                        <div className="flex items-center gap-3 py-2 px-3 rounded-xs glass bg-white/5 border-white/10/30 border-none/40 text-[11px] font-semibold text-muted-foreground w-max select-none">
+                        <div className="flex items-center gap-3 py-2 px-3 rounded-xs glass bg-white/5 border-white/10/30 border-none/40 ds-meta font-semibold text-muted-foreground w-max select-none">
                           <span className="flex items-center gap-1">
                             <Eye className="w-3.5 h-3.5" /> {pageStats.views} views
                           </span>
@@ -725,7 +725,7 @@ function PagesPage() {
                 Endereço da Página (URL Slug)
               </label>
               <div className="flex h-10 w-full items-center rounded-full border-none glass-card border-none overflow-hidden">
-                <span className="glass bg-white/5 border-white/10/70 border-r border-border px-3 text-[11px] font-bold text-muted-foreground/80 h-full flex items-center select-none">
+                <span className="glass bg-white/5 border-white/10/70 border-r border-border px-3 ds-meta font-bold text-muted-foreground/80 h-full flex items-center select-none">
                   /{agency?.slug}/
                 </span>
                 <Input

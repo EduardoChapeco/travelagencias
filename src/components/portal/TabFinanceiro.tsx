@@ -52,7 +52,7 @@ export function TabFinanceiro({
         {/* Summary card */}
         <div className="md:col-span-1">
           <div className="bg-foreground rounded-3xl p-6 text-background">
-            <h3 className="text-xs font-bold uppercase tracking-widest text-background/50 mb-2">
+            <h3 className="ds-label-caps text-background/50 mb-2">
               Valor do Pacote
             </h3>
             <div className="text-3xl font-black tracking-tight mb-6">
@@ -128,7 +128,7 @@ export function TabFinanceiro({
                               {money(inst.amount, trip.currency)}
                             </div>
                             <div
-                              className={`text-[10px] uppercase font-bold tracking-wider ${
+                              className={`ds-meta uppercase font-bold tracking-wider ${
                                 inst.status === "paid"
                                   ? " text-success"
                                   : inst.status === "late"

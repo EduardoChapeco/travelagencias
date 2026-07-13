@@ -333,11 +333,11 @@ function TabContacts({ supplierId, agencyId }: { supplierId: string; agencyId: s
             <div className="flex-1 min-w-0">
               <div className="flex items-center gap-2 flex-wrap">
                 <span className="font-semibold text-sm">{c.name}</span>
-                <span className="text-[10px] uppercase tracking-widest font-semibold text-[--brand-primary,theme(colors.pink.500)] border border-[--brand-primary,theme(colors.pink.400)]/30 bg-[--brand-primary,theme(colors.pink.500)]/5 rounded px-1.5 py-0.5">
+                <span className="ds-meta uppercase tracking-widest font-semibold text-[--brand-primary,theme(colors.pink.500)] border border-[--brand-primary,theme(colors.pink.400)]/30 bg-[--brand-primary,theme(colors.pink.500)]/5 rounded px-1.5 py-0.5">
                   {c.role}
                 </span>
                 {c.is_primary && (
-                  <span className="text-[10px] font-semibold text-green-600 bg-green-50 border border-green-200 rounded px-1.5 py-0.5">
+                  <span className="ds-meta font-semibold text-green-600 bg-green-50 border border-green-200 rounded px-1.5 py-0.5">
                     Principal
                   </span>
                 )}
@@ -582,7 +582,7 @@ function TabProducts({ supplierId, agencyId }: { supplierId: string; agencyId: s
               <div className="flex-1 min-w-0">
                 <div className="flex items-center gap-2 flex-wrap">
                   <span className="font-semibold text-sm">{p.name}</span>
-                  <span className="text-[10px] uppercase tracking-widest font-semibold text-muted-foreground border-none rounded px-1.5 py-0.5 glass-card border-none">
+                  <span className="ds-meta uppercase tracking-widest font-semibold text-muted-foreground border-none rounded px-1.5 py-0.5 glass-card border-none">
                     {pkind?.label ?? p.kind}
                   </span>
                 </div>
@@ -807,7 +807,7 @@ function TabFiles({ supplierId, agencyId }: { supplierId: string; agencyId: stri
                   </Button>
                 )}
                 {f.ocr_reviewed && (
-                  <span className="text-[10px] text-green-600 border border-green-200 bg-green-50 rounded px-1.5 py-0.5 font-semibold">
+                  <span className="ds-meta text-green-600 border border-green-200 bg-green-50 rounded px-1.5 py-0.5 font-semibold">
                     ✓ Revisado
                   </span>
                 )}
@@ -825,7 +825,7 @@ function TabFiles({ supplierId, agencyId }: { supplierId: string; agencyId: stri
                   <AlertCircle className="h-3.5 w-3.5" /> Dados Extraídos por IA — Aguardando
                   revisão
                 </div>
-                <pre className="text-[10px] text-amber-800 overflow-auto max-h-40">
+                <pre className="ds-meta text-amber-800 overflow-auto max-h-40">
                   {JSON.stringify(f.ocr_data, null, 2)}
                 </pre>
                 <Button
@@ -1023,13 +1023,13 @@ function TabReviews({ supplierId, agencyId }: { supplierId: string; agencyId: st
                   {r.tags?.map((t: string) => (
                     <span
                       key={t}
-                      className="rounded-full border-none glass-card border-none px-1.5 py-0.5 text-[10px] text-muted-foreground"
+                      className="rounded-full border-none glass-card border-none px-1.5 py-0.5 ds-meta text-muted-foreground"
                     >
                       {t}
                     </span>
                   ))}
                 </div>
-                <div className="text-[11px] text-muted-foreground mt-1">
+                <div className="ds-meta text-muted-foreground mt-1">
                   {new Date(r.created_at).toLocaleDateString("pt-BR")} · {r.user?.email ?? "—"}
                 </div>
               </div>
@@ -1163,7 +1163,7 @@ function SupplierDetailsPage() {
               <div className="pb-1">
                 <h1 className="text-xl font-bold text-foreground leading-tight">{supplier.name}</h1>
                 <div className="flex items-center gap-2 mt-0.5">
-                  <span className="text-[10px] uppercase tracking-widest font-semibold text-muted-foreground">
+                  <span className="ds-meta uppercase tracking-widest font-semibold text-muted-foreground">
                     {cfg.label}
                   </span>
                   {(supplier.city || supplier.country) && (
@@ -1193,7 +1193,7 @@ function SupplierDetailsPage() {
                 <TabsTrigger
                   key={value}
                   value={value}
-                  className="inline-flex items-center justify-center h-7 px-3 text-[11px] font-semibold rounded-full transition-all gap-1.5 whitespace-nowrap cursor-pointer data-[state=active]:bg-white/10 data-[state=active]:text-white data-[state=active]:border data-[state=active]:border-white/5 data-[state=active]:shadow-xs text-white/60 hover:text-white"
+                  className="inline-flex items-center justify-center h-7 px-3 ds-meta font-semibold rounded-full transition-all gap-1.5 whitespace-nowrap cursor-pointer data-[state=active]:bg-white/10 data-[state=active]:text-white data-[state=active]:border data-[state=active]:border-white/5 data-[state=active]:shadow-xs text-white/60 hover:text-white"
                 >
                   <TIcon className="h-3.5 w-3.5" />
                   {label}
@@ -1336,7 +1336,7 @@ function SupplierDetailsPage() {
       <aside className="hidden lg:flex w-72 shrink-0 flex-col border-l border-border glass-card border-none overflow-y-auto">
         {/* Markup */}
         <div className="border-b border-border p-5">
-          <div className="flex items-center gap-1.5 mb-2 text-[10px] font-bold uppercase tracking-widest text-[--brand-primary,theme(colors.pink.600)]">
+          <div className="flex items-center gap-1.5 mb-2 ds-label-caps text-[--brand-primary,theme(colors.pink.600)]">
             <Percent className="h-3.5 w-3.5" /> Markup / Comissão Base
           </div>
           <div className="text-4xl font-bold text-foreground font-mono">
@@ -1349,7 +1349,7 @@ function SupplierDetailsPage() {
 
         {/* Rating */}
         <div className="border-b border-border p-5">
-          <div className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground mb-2">
+          <div className="ds-label-caps text-muted-foreground mb-2">
             Avaliação
           </div>
           <StarRatingDisplay rating={supplier.rating} />
@@ -1357,7 +1357,7 @@ function SupplierDetailsPage() {
 
         {/* SLA */}
         <div className="border-b border-border p-5">
-          <div className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground mb-2">
+          <div className="ds-label-caps text-muted-foreground mb-2">
             SLA de Resposta
           </div>
           <div className="flex items-center gap-1.5 text-sm font-semibold">
@@ -1369,7 +1369,7 @@ function SupplierDetailsPage() {
         {/* Contato rápido */}
         {(supplier.phone || supplier.email || supplier.whatsapp) && (
           <div className="border-b border-border p-5 space-y-3">
-            <div className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">
+            <div className="ds-label-caps text-muted-foreground">
               Contato Rápido
             </div>
             {supplier.phone && (
@@ -1413,22 +1413,22 @@ function SupplierDetailsPage() {
         {/* Estatísticas Reais de Uso */}
         {stats && (
           <div className="p-5 border-t border-border space-y-4">
-            <div className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">
+            <div className="ds-label-caps text-muted-foreground">
               Métricas do Parceiro
             </div>
             <div className="grid grid-cols-2 gap-3">
               <div className="p-3 rounded-[var(--radius-card)] border-none glass bg-white/5 border-white/10">
-                <div className="text-[10px] text-muted-foreground uppercase font-bold">Vendas</div>
+                <div className="ds-meta text-muted-foreground uppercase font-bold">Vendas</div>
                 <div className="text-lg font-bold text-foreground mt-0.5">{stats.usageCount}</div>
               </div>
               <div className="p-3 rounded-[var(--radius-card)] border-none glass bg-white/5 border-white/10">
-                <div className="text-[10px] text-muted-foreground uppercase font-bold">Produtos</div>
+                <div className="ds-meta text-muted-foreground uppercase font-bold">Produtos</div>
                 <div className="text-lg font-bold text-foreground mt-0.5">{stats.productsCount}</div>
               </div>
             </div>
             
             <div className="flex items-center justify-between p-3 rounded-[var(--radius-card)] border-none glass bg-white/5 border-white/10">
-              <div className="text-[10px] text-muted-foreground uppercase font-bold">Avaliação Média</div>
+              <div className="ds-meta text-muted-foreground uppercase font-bold">Avaliação Média</div>
               <div className="flex items-center gap-1">
                 <Star className="h-3.5 w-3.5 fill-amber-400 text-amber-400" />
                 <span className="text-xs font-bold text-foreground">

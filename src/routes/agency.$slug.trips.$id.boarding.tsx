@@ -249,14 +249,14 @@ function TripBoardingPage() {
   });
 
   return (
-    <div className="flex-1 overflow-y-auto p-4 md:p-6 space-y-6">
+    <div className="page-content page-section">
       {/* Header informativo */}
       <div className="rounded-[var(--radius-card)] border-none glass-card border-none p-4 flex items-start gap-3 justify-between">
         <div className="flex items-start gap-3">
           <Navigation className="h-4 w-4 text-brand mt-0.5 shrink-0" />
           <div>
             <p className="text-xs font-semibold text-foreground">Check-in & Status de Embarque</p>
-            <p className="text-[11px] text-muted-foreground mt-0.5">
+            <p className="ds-meta text-muted-foreground mt-0.5">
               Monitore cartões de embarque, configure overrides de check-in e visualize a timeline
               de eventos dos passageiros.
             </p>
@@ -264,7 +264,7 @@ function TripBoardingPage() {
         </div>
 
         {/* Tab Selector */}
-        <div className="flex glass bg-white/5 border-white/10 p-0.5 rounded-[var(--radius-card)] border-none/60 text-[11px] font-semibold">
+        <div className="flex glass bg-white/5 border-white/10 p-0.5 rounded-[var(--radius-card)] border-none/60 ds-meta font-semibold">
           <Button
             onClick={() => setActiveTab("cards")}
             className={cn(
@@ -365,7 +365,7 @@ function TripBoardingPage() {
                     <div className="p-4 grid grid-cols-1 md:grid-cols-3 gap-6">
                       {/* Detalhes do Voo */}
                       <div className="space-y-3">
-                        <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">
+                        <p className="ds-label-caps text-muted-foreground">
                           Trecho & Data
                         </p>
                         <div className="space-y-2">
@@ -429,7 +429,7 @@ function TripBoardingPage() {
                       {/* Checklist Operacional */}
                       <div className="md:col-span-2 space-y-3">
                         <div className="flex items-center justify-between">
-                          <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">
+                          <p className="ds-label-caps text-muted-foreground">
                             Checklist do Trecho
                           </p>
                           <span className="text-xs font-semibold text-brand">
@@ -542,7 +542,7 @@ function TripBoardingPage() {
                           {seg.origin_iata} → {seg.destination_iata}
                         </span>
                       </div>
-                      <span className="font-mono text-[10px] bg-brand/10 text-brand px-2 py-0.5 rounded font-bold">
+                      <span className="font-mono ds-meta bg-brand/10 text-brand px-2 py-0.5 rounded font-bold">
                         {seg.airline_code} {seg.flight_number}
                       </span>
                     </div>
@@ -649,7 +649,7 @@ function TripBoardingPage() {
                       </span>
 
                       <p className="text-xs font-medium text-foreground leading-normal">{text}</p>
-                      <p className="text-[10px] text-muted-foreground">
+                      <p className="ds-meta text-muted-foreground">
                         {new Date(evt.occurred_at).toLocaleString("pt-BR")}
                       </p>
                     </div>

@@ -249,13 +249,13 @@ export function CommissionSection({
               </Select>
             </Field>
             <div className="rounded-2xl bg-surface-alt/30 border border-border/50 p-3 flex flex-col justify-center">
-              <div className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground mb-1">
+              <div className="ds-label-caps tracking-wider text-muted-foreground mb-1">
                 Faturamento Mensal do Agente
               </div>
               <div className="text-sm font-semibold text-foreground">
                 R$ {agentMonthlyBilling ? agentMonthlyBilling.toLocaleString("pt-BR") : "0,00"}
               </div>
-              <div className="text-[10px] text-muted-foreground mt-0.5">
+              <div className="ds-meta text-muted-foreground mt-0.5">
                 Regra ativa:{" "}
                 {agentRule
                   ? agentRule.commission_type === "fixed"
@@ -270,7 +270,7 @@ export function CommissionSection({
           {/* Itens Comissionáveis */}
           <div className="space-y-3 pt-2">
             <div className="flex items-center justify-between border-b border-border/50 pb-2">
-              <h4 className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
+              <h4 className="ds-label-caps tracking-wider text-muted-foreground">
                 Itens da Viagem
               </h4>
               <Button
@@ -381,7 +381,7 @@ export function CommissionSection({
                       </Field>
                       <div className="flex items-center justify-between col-span-2 sm:col-span-1 pt-4 sm:pt-0">
                         <div className="text-right flex-1 sm:pr-3">
-                          <span className="text-[10px] text-muted-foreground font-semibold uppercase block">
+                          <span className="ds-meta text-muted-foreground font-semibold uppercase block">
                             Remuneração
                           </span>
                           <span className="text-xs font-bold text-success font-mono">
@@ -410,13 +410,13 @@ export function CommissionSection({
           {/* KPIs de Comissão Consolidados */}
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 pt-4 border-t border-border/55">
             <div className="rounded-2xl border border-border bg-surface-alt/40 p-3">
-              <div className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground mb-1">
+              <div className="ds-label-caps tracking-wider text-muted-foreground mb-1">
                 Base Comissionável
               </div>
               <div className="text-lg font-bold text-foreground font-mono">
                 {money(baseComissionavel, currency)}
               </div>
-              <div className="text-[10px] text-muted-foreground mt-0.5">
+              <div className="ds-meta text-muted-foreground mt-0.5">
                 Venda total (itens): R${" "}
                 {items
                   .reduce((s, item) => s + (item.tarifa_base || 0) + (item.taxas || 0), 0)
@@ -425,25 +425,25 @@ export function CommissionSection({
               </div>
             </div>
             <div className="rounded-2xl border border-success/20 bg-success/5 p-3">
-              <div className="text-[10px] font-bold uppercase tracking-wider text-success mb-1">
+              <div className="ds-label-caps tracking-wider text-success mb-1">
                 Comissão Agência
               </div>
               <div className="text-lg font-bold text-success font-mono">
                 {money(agencyCommission, currency)}
               </div>
-              <div className="text-[10px] text-muted-foreground mt-0.5">
+              <div className="ds-meta text-muted-foreground mt-0.5">
                 Inclui bônus de R${" "}
                 {items.reduce((s, item) => s + (item.bonus || 0), 0).toLocaleString("pt-BR")}
               </div>
             </div>
             <div className="rounded-2xl border border-brand/20 bg-brand/5 p-3">
-              <div className="text-[10px] font-bold uppercase tracking-wider text-brand mb-1">
+              <div className="ds-label-caps tracking-wider text-brand mb-1">
                 Comissão Agente ({agentPct}%)
               </div>
               <div className="text-lg font-bold text-brand font-mono">
                 {money(agentCommission, currency)}
               </div>
-              <div className="text-[10px] text-muted-foreground mt-0.5">
+              <div className="ds-meta text-muted-foreground mt-0.5">
                 Calculado sobre a base de R$ {baseComissionavel.toLocaleString("pt-BR")}
               </div>
             </div>
@@ -451,7 +451,7 @@ export function CommissionSection({
               className={`rounded-2xl border p-3 ${netProfit >= 0 ? "border-success/20 bg-success/5" : "border-danger/20 bg-danger/5"}`}
             >
               <div
-                className={`text-[10px] font-bold uppercase tracking-wider mb-1 ${netProfit >= 0 ? "text-success" : "text-danger"}`}
+                className={`ds-label-caps tracking-wider mb-1 ${netProfit >= 0 ? "text-success" : "text-danger"}`}
               >
                 Lucro Líquido
               </div>

@@ -42,7 +42,7 @@ export function CancelModal({
           </div>
 
           <div className="space-y-2">
-            <label className="text-xs font-bold uppercase tracking-widest text-muted-foreground">
+            <label className="ds-label-caps text-muted-foreground">
               Motivo do Cancelamento
             </label>
             <Textarea

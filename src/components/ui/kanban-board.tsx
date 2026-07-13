@@ -74,13 +74,13 @@ export function KanbanColumnHeader({
           </span>
         </div>
         {count !== undefined && (
-          <span className="flex h-5 min-w-[20px] items-center justify-center rounded-full bg-black/10 dark:bg-white/10 px-2 text-[11px] font-bold text-foreground">
+          <span className="flex h-5 min-w-[20px] items-center justify-center rounded-full bg-black/10 dark:bg-white/10 px-2 ds-meta font-bold text-foreground">
             {count}
           </span>
         )}
       </div>
       {subtitle && (
-        <div className="text-[11px] font-medium text-foreground/60 mt-1 ml-5">
+        <div className="ds-meta font-medium text-foreground/60 mt-1 ml-5">
           {subtitle}
         </div>
       )}

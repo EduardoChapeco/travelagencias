@@ -1,6 +1,4 @@
 import { createLazyFileRoute, useParams, useNavigate } from "@tanstack/react-router";
-import { useEffect, useState } from "react";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { LeadInterestCard } from "@/components/crm/lead-details/LeadInterestCard";
 import { LeadAccessibilityCard } from "@/components/crm/lead-details/LeadAccessibilityCard";
 import { LeadForm } from "@/components/crm/lead-details/LeadForm";
@@ -11,11 +9,9 @@ import {
   X, MessageSquare, UserCheck, Plus, Paperclip, Check, ShieldAlert, Camera, Trash, Send, FileText, FileDown, AlertCircle, Sparkles, Pencil, } from "lucide-react";
 import { toast } from "sonner";
 import confetti from "canvas-confetti";
-import { supabase } from "@/integrations/supabase/client";
-import {
-  fetchStages, fetchLeadById, fetchLeadActivities, fetchLeadOwnerProfile, promoteLeadToClient, updateLead, addLeadActivity, uploadLeadAttachment, fetchAgencyUsers, transferLead, fetchLeadMeetings, createLeadMeeting, deleteLeadMeeting, syncMeetingToGoogleCalendar, type Stage, type Lead, type LeadMeeting, } from "@/services/crm";
+import { useLeadDetail } from "@/hooks/use-lead-detail";
+import { type Lead, type LeadMeeting, updateLead, createLeadMeeting, deleteLeadMeeting, syncMeetingToGoogleCalendar, promoteLeadToClient, addLeadActivity, transferLead } from "@/services/crm";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { useAgency } from "@/lib/agency-context";
 import { Field } from "@/components/ui/field";
 import { FormInput as Input } from "@/components/ui/input";
 import {
@@ -30,8 +26,6 @@ import { PrimaryButton, GhostButton , Button } from "@/components/ui/button";
 import { fmtDate, money } from "@/lib/formatters";
 import { SheetPage } from "@/components/ui/sheet";
 import { NewProposalSheet } from "@/components/proposals/NewProposalSheet";
-import { useConfirm } from "@/hooks/use-confirm";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 
 export const Route = createLazyFileRoute("/agency/$slug/crm/$lead_id")({
   component: LeadDetailPage,
@@ -49,120 +43,61 @@ const TAG_COLOR_PRESETS = [
 ];
 
 function LeadDetailPage() {
-  const { agency } = useAgency();
   const { slug, lead_id } = useParams({ from: "/agency/$slug/crm/$lead_id" });
   const navigate = useNavigate();
-  const qc = useQueryClient();
-  const { confirm, ConfirmDialog } = useConfirm();
-
-  const [editing, setEditing] = useState(false);
-  const [checklistInput, setChecklistInput] = useState("");
-  const [newTagName, setNewTagName] = useState("");
-  const [newTagColor, setNewTagColor] = useState("#3b82f6");
-  const [uploading, setUploading] = useState(false);
-  const [proposalSheetOpen, setProposalSheetOpen] = useState(false);
-
-  const [confirmConvertOpen, setConfirmConvertOpen] = useState(false);
-  const [clientPayload, setClientPayload] = useState({
-    full_name: "",
-    document: "",
-    birth_date: "",
-    email: "",
-    phone: "",
-    pcd: false,
-    reduced_mobility: false,
-    autism: false,
-    health_notes: "",
-  });
-
-  const [paxForm, setPaxForm] = useState({
-    full_name: "",
-    document: "",
-    birth_date: "",
-    relationship: "other",
-    phone: "",
-    email: "",
-  });
-  const [paxFormOpen, setPaxFormOpen] = useState(false);
-
-  const [meetingForm, setMeetingForm] = useState({
-    title: "",
-    description: "",
-    scheduled_at: "",
-    duration_minutes: 30,
-    meeting_type: "call",
-  });
-  const [meetingFormOpen, setMeetingFormOpen] = useState(false);
-
-  const stagesQ = useQuery({
-    enabled: !!agency,
-    queryKey: ["stages", agency?.id],
-    queryFn: () => fetchStages(agency!.id),
-  });
-
-  const leadQ = useQuery({
-    enabled: !!agency,
-    queryKey: ["lead", lead_id],
-    queryFn: () => fetchLeadById(lead_id),
-  });
-
-  const activitiesQ = useQuery({
-    enabled: !!lead_id,
-    queryKey: ["lead-activities", lead_id],
-    queryFn: () => fetchLeadActivities(lead_id),
-  });
-
-  const ownerQ = useQuery({
-    enabled: !!leadQ.data?.owner_id,
-    queryKey: ["profile", leadQ.data?.owner_id],
-    queryFn: () => fetchLeadOwnerProfile(leadQ.data!.owner_id!),
-  });
-
-  const usersQ = useQuery({
-    enabled: !!agency,
-    queryKey: ["agency-users", agency?.id],
-    queryFn: () => fetchAgencyUsers(agency!.id),
-  });
-
-  const meetingsQ = useQuery({
-    enabled: !!leadQ.data?.id,
-    queryKey: ["lead-meetings", lead_id],
-    queryFn: () => fetchLeadMeetings(lead_id),
-  });
-
-  useEffect(() => {
-    if (leadQ.data) {
-      setClientPayload({
-        full_name: leadQ.data.name || "",
-        document: "",
-        birth_date: "",
-        email: leadQ.data.email || "",
-        phone: leadQ.data.phone || "",
-        pcd: leadQ.data.pcd || false,
-        reduced_mobility: leadQ.data.reduced_mobility || false,
-        autism: leadQ.data.autism || false,
-        health_notes: leadQ.data.health_notes || "",
-      });
-    }
-  }, [leadQ.data]);
-
-  const proposalsQ = useQuery({
-    enabled: !!leadQ.data?.id,
-    queryKey: ["proposals", agency?.id, { leadId: leadQ.data?.id }],
-    queryFn: async () => {
-      let query = supabase.from("proposals").select("id, number, title, status, total, created_at");
-
-      if (leadQ.data?.client_id) {
-        query = query.or(`lead_id.eq.${lead_id},client_id.eq.${leadQ.data.client_id}`);
-      } else {
-        query = query.eq("lead_id", lead_id);
-      }
-
-      const { data, error } = await query;
-      if (error) throw error;
-      return data;
-    },
-  });
+  const {
+    agency,
+    lead,
+    stage,
+    diffDays,
+    lastContactDate,
+    editing,
+    setEditing,
+    checklistInput,
+    setChecklistInput,
+    newTagName,
+    setNewTagName,
+    newTagColor,
+    setNewTagColor,
+    uploading,
+    proposalSheetOpen,
+    setProposalSheetOpen,
+    confirmConvertOpen,
+    setConfirmConvertOpen,
+    clientPayload,
+    setClientPayload,
+    paxForm,
+    setPaxForm,
+    paxFormOpen,
+    setPaxFormOpen,
+    meetingForm,
+    setMeetingForm,
+    meetingFormOpen,
+    setMeetingFormOpen,
+    stagesQ,
+    leadQ,
+    activitiesQ,
+    ownerQ,
+    usersQ,
+    meetingsQ,
+    proposalsQ,
+    handleClose,
+    handleConvert,
+    toggleChecklistItem,
+    addChecklistItem,
+    deleteChecklistItem,
+    addTag,
+    removeTag,
+    handleFileUpload,
+    removeAttachment,
+    handleLgpdToggle,
+    handlePhotoUpload,
+    handleCopyFormLink,
+    handleShareFormWhatsApp,
+    ConfirmDialog,
+    confirm,
+    qc,
+  } = useLeadDetail(lead_id, slug);
 
   if (leadQ.isLoading) {
     return (
@@ -172,7 +107,7 @@ function LeadDetailPage() {
     );
   }
 
-  if (leadQ.isError || !leadQ.data) {
+  if (leadQ.isError || !lead) {
     return (
       <div className="fixed inset-0 z-50 flex items-center justify-center bg-background/60 backdrop-blur-sm">
         <div className="flex flex-col items-center gap-3 p-8 rounded-[var(--radius-card)] border border-red-200 bg-red-50 text-center max-w-sm">
@@ -194,231 +129,15 @@ function LeadDetailPage() {
     );
   }
 
-  const lead = leadQ.data as Lead;
-  const stage = stagesQ.data?.find((s) => s.id === lead?.stage_id);
-
-  // Staleness calculations
-  const lastContactDate = lead?.last_contacted_at
-    ? new Date(lead.last_contacted_at)
-    : lead
-      ? new Date(lead.created_at)
-      : new Date();
-  const diffTime = Math.abs(new Date().getTime() - lastContactDate.getTime());
-  const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-
-  function handleClose() {
-    navigate({ to: "/agency/$slug/crm", params: { slug } });
-  }
-
-  async function handleConvert() {
-    // ── Validate mandatory fields before conversion ──────────────────────────
-    const missing: string[] = [];
-    if (!lead.name?.trim()) missing.push("Nome completo");
-    if (!(lead as any).document?.trim() && !(lead as any).cpf?.trim())
-      missing.push("CPF / Documento");
-    if (!(lead as any).birth_date?.trim()) missing.push("Data de nascimento");
-    if (!lead.phone?.trim()) missing.push("WhatsApp / Telefone");
-
-    if (missing.length > 0) {
-      toast.error(
-        `Preencha os campos obrigatórios antes de converter:\n• ${missing.join("\n• ")}`,
-        { duration: 6000 },
-      );
-      setEditing(true); // Open edit form so user can fill in
-      return;
-    }
-
-    try {
-      await promoteLeadToClient(lead.id);
-    } catch (error: any) {
-      return toast.error("Erro ao converter lead: " + error.message);
-    }
-
-    confetti({
-      particleCount: 150,
-      spread: 70,
-      origin: { y: 0.6 },
-      colors: ["#000000", "#ffffff", "#a8a29e", stage?.color || "#3b82f6"],
-      disableForReducedMotion: true,
-    });
-
-    toast.success("Lead convertido para Cliente!");
-    qc.invalidateQueries({ queryKey: ["lead", lead.id] });
-    qc.invalidateQueries({ queryKey: ["leads", agency?.id] });
-  }
-
-  // --- Checklist Helpers ---
-  async function toggleChecklistItem(itemId: string, done: boolean) {
-    const list = lead.checklist || [];
-    const updated = list.map((item) => (item.id === itemId ? { ...item, done } : item));
-    try {
-      await updateLead(lead.id, { checklist: updated });
-      qc.invalidateQueries({ queryKey: ["lead", lead.id] });
-    } catch (e) {
-      toast.error("Falha ao salvar checklist");
-    }
-  }
-
-  async function addChecklistItem(e: React.FormEvent) {
-    e.preventDefault();
-    if (!checklistInput.trim()) return;
-    const list = lead.checklist || [];
-    const newItem = {
-      id: crypto.randomUUID(),
-      text: checklistInput.trim(),
-      done: false,
-    };
-    const updated = [...list, newItem];
-    try {
-      await updateLead(lead.id, { checklist: updated });
-      setChecklistInput("");
-      qc.invalidateQueries({ queryKey: ["lead", lead.id] });
-      toast.success("Item adicionado!");
-    } catch (e) {
-      toast.error("Falha ao adicionar item");
-    }
-  }
-
-  async function deleteChecklistItem(itemId: string) {
-    const list = lead.checklist || [];
-    const updated = list.filter((item) => item.id !== itemId);
-    try {
-      await updateLead(lead.id, { checklist: updated });
-      qc.invalidateQueries({ queryKey: ["lead", lead.id] });
-    } catch (e) {
-      toast.error("Falha ao deletar item");
-    }
-  }
-
-  // --- Tag Helpers ---
-  async function addTag() {
-    if (!newTagName.trim()) return;
-    const tagString = `${newTagName.trim()}:${newTagColor}`;
-    const list = lead.tags || [];
-    if (list.includes(tagString)) return toast.error("Tag já existe");
-    const updated = [...list, tagString];
-    try {
-      await updateLead(lead.id, { tags: updated });
-      setNewTagName("");
-      qc.invalidateQueries({ queryKey: ["lead", lead.id] });
-      qc.invalidateQueries({ queryKey: ["leads", agency?.id] });
-      toast.success("Tag adicionada!");
-    } catch (e) {
-      toast.error("Falha ao adicionar tag");
-    }
-  }
-
-  async function removeTag(tag: string) {
-    const list = lead.tags || [];
-    const updated = list.filter((t) => t !== tag);
-    try {
-      await updateLead(lead.id, { tags: updated });
-      qc.invalidateQueries({ queryKey: ["lead", lead.id] });
-      qc.invalidateQueries({ queryKey: ["leads", agency?.id] });
-    } catch (e) {
-      toast.error("Falha ao remover tag");
-    }
-  }
-
-  // --- Attachments Helpers ---
-  async function handleFileUpload(e: React.ChangeEvent<HTMLInputElement>) {
-    const file = e.target.files?.[0];
-    if (!file) return;
-    setUploading(true);
-    const toastId = toast.loading(`Enviando arquivo ${file.name}...`);
-    try {
-      await uploadLeadAttachment(lead.id, file, lead.attachments || []);
-      qc.invalidateQueries({ queryKey: ["lead", lead.id] });
-      toast.success("Arquivo enviado com sucesso!", { id: toastId });
-    } catch (err: any) {
-      toast.error(err.message || "Erro ao fazer upload", { id: toastId });
-    } finally {
-      setUploading(false);
-    }
-  }
-
-  async function removeAttachment(attachmentId: string) {
-    confirm({
-      title: "Remover Anexo",
-      description: "Deseja remover este anexo permanentemente?",
-      variant: "destructive",
-      onConfirm: async () => {
-        const list = lead.attachments || [];
-        const updated = list.filter((a) => a.id !== attachmentId);
-        try {
-          await updateLead(lead.id, { attachments: updated });
-          qc.invalidateQueries({ queryKey: ["lead", lead.id] });
-          toast.success("Anexo removido.");
-        } catch (e) {
-          toast.error("Falha ao remover anexo");
-        }
-      },
-    });
-  }
-
-  // --- LGPD Helpers ---
-  async function handleLgpdToggle(checked: boolean) {
-    try {
-      await updateLead(lead.id, {
-        lgpd_accepted: checked,
-        lgpd_accepted_at: checked ? new Date().toISOString() : null,
-      });
-      qc.invalidateQueries({ queryKey: ["lead", lead.id] });
-      toast.success("Termo LGPD atualizado!");
-    } catch (e) {
-      toast.error("Erro ao atualizar LGPD");
-    }
-  }
-
-  // --- Photo Upload Helpers ---
-  async function handlePhotoUpload(e: React.ChangeEvent<HTMLInputElement>) {
-    const file = e.target.files?.[0];
-    if (!file) return;
-    const toastId = toast.loading(`Enviando foto de perfil...`);
-    try {
-      const fileExt = file.name.split(".").pop();
-      const filePath = `crm/avatars/${lead.id}/${Date.now()}.${fileExt}`;
-      const { error } = await supabase.storage.from("agency-media").upload(filePath, file);
-      if (error) throw error;
-      const {
-        data: { publicUrl },
-      } = supabase.storage.from("agency-media").getPublicUrl(filePath);
-      await updateLead(lead.id, { avatar_url: publicUrl });
-      qc.invalidateQueries({ queryKey: ["lead", lead.id] });
-      qc.invalidateQueries({ queryKey: ["leads", agency?.id] });
-      toast.success("Foto atualizada com sucesso!", { id: toastId });
-    } catch (err: any) {
-      toast.error(err.message || "Erro ao enviar foto", { id: toastId });
-    }
-  }
-
-  function handleCopyFormLink() {
-    const url = `${window.location.origin}/m/lead/${lead.id}`;
-    navigator.clipboard.writeText(url);
-    toast.success("Link do formulário copiado para a área de transferência!");
-  }
-
-  function handleShareFormWhatsApp() {
-    const url = `${window.location.origin}/m/lead/${lead.id}`;
-    const text = `Olá, ${lead.name}! Para podermos personalizar seu atendimento e planejar sua viagem para ${lead.destination || "seu destino de interesse"}, por favor preencha este formulário rápido: ${url}`;
-    const waUrl = `https://wa.me/${lead.phone?.replace(/\D/g, "") || ""}?text=${encodeURIComponent(text)}`;
-    window.open(waUrl, "_blank");
-  }
-
   return (
     <SheetPage
       isOpen={true}
       onClose={handleClose}
-      title={lead?.name || "Carregando lead..."}
+      title={lead.name}
       width="clamp(720px, 60vw, 1024px)"
     >
-      {leadQ.isLoading ? (
-        <div className="flex h-64 items-center justify-center">
-          <div className="h-8 w-8 animate-spin rounded-full border-2 border-brand border-t-transparent" />
-        </div>
-      ) : (
-        <div className="space-y-6">
-          <ConfirmDialog />
+      <div className="space-y-6">
+        <ConfirmDialog />
           {/* Header Actions Row */}
           <div className="flex flex-wrap items-center justify-between gap-4 glass bg-white/5 border-white/10/40 border-none/60 p-4 rounded-[var(--radius-card)]">
             <div className="flex items-center gap-3">
@@ -450,7 +169,7 @@ function LeadDetailPage() {
                 <h3 className="font-bold text-foreground text-sm flex items-center gap-2">
                   {lead.name}
                   {lead.lgpd_accepted && (
-                    <span className="text-[10px] font-bold text-success bg-success/10 border border-success/30 px-1.5 py-0.5 rounded flex items-center gap-0.5">
+                    <span className="ds-meta font-bold text-success bg-success/10 border border-success/30 px-1.5 py-0.5 rounded flex items-center gap-0.5">
                       <ShieldAlert className="h-3 w-3 inline" /> LGPD OK
                     </span>
                   )}
@@ -592,7 +311,7 @@ function LeadDetailPage() {
                       <AlertCircle className="h-4 w-4" />
                       <span>O lead está sem contato há {diffDays} dias! O que aconteceu?</span>
                     </div>
-                    <p className="text-[11px] text-muted-foreground">
+                    <p className="ds-meta text-muted-foreground">
                       Evite a perda da oportunidade respondendo a este quiz rápido.
                     </p>
                     <div className="flex flex-wrap gap-2 pt-1">
@@ -621,7 +340,7 @@ function LeadDetailPage() {
                               toast.error("Falha ao salvar");
                             }
                           }}
-                          className="text-[10px] font-bold bg-background border-none px-3 py-1.5 rounded-[var(--radius-card)] hover:border-brand/40 transition-colors cursor-pointer"
+                          className="ds-meta font-bold bg-background border-none px-3 py-1.5 rounded-[var(--radius-card)] hover:border-brand/40 transition-colors cursor-pointer"
                         >
                           {opt.label}
                         </Button>
@@ -637,7 +356,7 @@ function LeadDetailPage() {
                       <span className="text-xs font-bold text-foreground block">
                         Lead Classificado como Inativo
                       </span>
-                      <span className="text-[11px] text-muted-foreground mt-0.5 block">
+                      <span className="ds-meta text-muted-foreground mt-0.5 block">
                         Motivo:{" "}
                         {lead.staleness_status === "disappeared"
                           ? "Sumiu / Não responde"
@@ -702,7 +421,7 @@ function LeadDetailPage() {
                 {/* Stage and Owner Dropdowns Card */}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4 glass-card border-none p-5 rounded-[var(--radius-card)] border-none">
                   <div>
-                    <label className="block text-[10px] font-bold uppercase tracking-widest text-muted-foreground mb-1.5">
+                    <label className="block ds-label-caps text-muted-foreground mb-1.5">
                       Estágio do Funil
                     </label>
                     <Select
@@ -742,7 +461,7 @@ function LeadDetailPage() {
                     </Select>
                   </div>
                   <div>
-                    <label className="block text-[10px] font-bold uppercase tracking-widest text-muted-foreground mb-1.5">
+                    <label className="block ds-label-caps text-muted-foreground mb-1.5">
                       Responsável / Dono
                     </label>
                     <Select
@@ -777,7 +496,7 @@ function LeadDetailPage() {
 
                 {/* Tag pill list and creator */}
                 <div className="rounded-[var(--radius-card)] border-none glass-card border-none p-5 space-y-4">
-                  <h4 className="text-xs font-bold uppercase tracking-widest text-muted-foreground border-b border-border/40 pb-2">
+                  <h4 className="ds-label-caps text-muted-foreground border-b border-border/40 pb-2">
                     Tags do Lead
                   </h4>
 
@@ -846,7 +565,7 @@ function LeadDetailPage() {
                 {/* General notes */}
                 {lead.notes && (
                   <div className="rounded-[var(--radius-card)] border-none glass-card border-none p-5">
-                    <h4 className="text-xs font-bold uppercase tracking-widest text-muted-foreground border-b border-border/40 pb-2 mb-3">
+                    <h4 className="ds-label-caps text-muted-foreground border-b border-border/40 pb-2 mb-3">
                       Anotações de Cadastro
                     </h4>
                     <p className="whitespace-pre-wrap text-xs text-foreground/80 leading-relaxed font-medium">
@@ -863,7 +582,7 @@ function LeadDetailPage() {
                     <Sparkles className="h-4 w-4" />
                     <span>Link Mágico de Cadastro do Cliente</span>
                   </div>
-                  <p className="text-[11px] text-muted-foreground leading-relaxed">
+                  <p className="ds-meta text-muted-foreground leading-relaxed">
                     Envie este link para que o cliente revise as preferências de viagem, preencha
                     documentos e cadastre todos os acompanhantes da família ou grupo de forma
                     autônoma.
@@ -889,7 +608,7 @@ function LeadDetailPage() {
                 {/* Travelers List */}
                 <div className="rounded-[var(--radius-card)] border-none glass-card border-none p-5 space-y-4">
                   <div className="flex items-center justify-between border-b border-border/40 pb-2">
-                    <h4 className="text-xs font-bold uppercase tracking-widest text-muted-foreground">
+                    <h4 className="ds-label-caps text-muted-foreground">
                       Viajantes Vinculados / Acompanhantes
                     </h4>
                     <span className="text-xs font-extrabold text-brand bg-brand/5 border border-brand/10 px-2 py-0.5 rounded">
@@ -950,7 +669,7 @@ function LeadDetailPage() {
                                         ? "Familiar"
                                         : "Outro"}
                           </span>
-                          <div className="text-[10px] text-muted-foreground space-y-0.5 mt-2.5 font-mono pt-2 border-t border-border/40">
+                          <div className="ds-meta text-muted-foreground space-y-0.5 mt-2.5 font-mono pt-2 border-t border-border/40">
                             {pax.document && <div>CPF: {pax.document}</div>}
                             {pax.birth_date && (
                               <div>
@@ -1075,7 +794,7 @@ function LeadDetailPage() {
                 {/* Meeting Scheduler and Follow-ups */}
                 <div className="rounded-[var(--radius-card)] border-none glass-card border-none p-5 space-y-4">
                   <div className="flex items-center justify-between border-b border-border/40 pb-2">
-                    <h4 className="text-xs font-bold uppercase tracking-widest text-muted-foreground">
+                    <h4 className="ds-label-caps text-muted-foreground">
                       Compromissos & Reuniões Agendadas
                     </h4>
                     <Button
@@ -1210,11 +929,11 @@ function LeadDetailPage() {
                               {meeting.title}
                             </span>
                             {meeting.description && (
-                              <span className="text-[11px] text-muted-foreground block truncate">
+                              <span className="ds-meta text-muted-foreground block truncate">
                                 {meeting.description}
                               </span>
                             )}
-                            <span className="text-[10px] text-brand font-semibold block">
+                            <span className="ds-meta text-brand font-semibold block">
                               {new Date(meeting.scheduled_at).toLocaleString("pt-BR", {
                                 day: "2-digit",
                                 month: "long",
@@ -1234,7 +953,7 @@ function LeadDetailPage() {
                                 navigator.clipboard.writeText(inviteText);
                                 toast.success("Convite copiado!");
                               }}
-                              className="text-[10px] font-extrabold uppercase bg-brand/5 border border-brand/10 hover:bg-brand/10 text-brand px-2.5 py-1.5 rounded-[var(--radius-card)] transition-colors cursor-pointer"
+                              className="ds-meta font-extrabold uppercase bg-brand/5 border border-brand/10 hover:bg-brand/10 text-brand px-2.5 py-1.5 rounded-[var(--radius-card)] transition-colors cursor-pointer"
                               title="Copiar texto de convite para enviar por email ou whats"
                             >
                               Copiar Convite
@@ -1254,7 +973,7 @@ function LeadDetailPage() {
                                   });
                                 }
                               }}
-                              className={`text-[10px] font-extrabold uppercase px-2.5 py-1.5 rounded-[var(--radius-card)] transition-colors cursor-pointer ${
+                              className={`ds-meta font-extrabold uppercase px-2.5 py-1.5 rounded-[var(--radius-card)] transition-colors cursor-pointer ${
                                 meeting.google_event_id
                                   ? "bg-success/10 text-success border border-success/20 cursor-default"
                                   : "glass-card border-none border-none/80 hover:border-brand/40 text-muted-foreground hover:text-foreground"
@@ -1300,7 +1019,7 @@ function LeadDetailPage() {
                 {/* Proposals Integration */}
                 <div className="rounded-[var(--radius-card)] border-none glass-card border-none p-5 space-y-4">
                   <div className="flex items-center justify-between border-b border-border/40 pb-2">
-                    <h4 className="text-xs font-bold uppercase tracking-widest text-muted-foreground">
+                    <h4 className="ds-label-caps text-muted-foreground">
                       Propostas de Venda
                     </h4>
                     <Button
@@ -1332,7 +1051,7 @@ function LeadDetailPage() {
                               {money(prop.total)}
                             </span>
                           </div>
-                          <div className="flex items-center justify-between text-[10px] text-muted-foreground">
+                          <div className="flex items-center justify-between ds-meta text-muted-foreground">
                             <span>
                               #{prop.number} · {fmtDate(prop.created_at)}
                             </span>
@@ -1348,7 +1067,7 @@ function LeadDetailPage() {
 
                 {/* Attachments Section */}
                 <div className="rounded-[var(--radius-card)] border-none glass-card border-none p-5 space-y-4">
-                  <h4 className="text-xs font-bold uppercase tracking-widest text-muted-foreground border-b border-border/40 pb-2 flex items-center gap-1.5">
+                  <h4 className="ds-label-caps text-muted-foreground border-b border-border/40 pb-2 flex items-center gap-1.5">
                     <Paperclip className="h-4 w-4 text-brand" /> Documentos e Anexos
                   </h4>
 
@@ -1357,7 +1076,7 @@ function LeadDetailPage() {
                     <span className="text-xs font-bold text-foreground">
                       {uploading ? "Enviando arquivo..." : "Clique para anexar um arquivo"}
                     </span>
-                    <span className="text-[10px] text-muted-foreground mt-0.5">
+                    <span className="ds-meta text-muted-foreground mt-0.5">
                       PDF, Imagens, Documentos de viagem
                     </span>
                     <Input
@@ -1389,7 +1108,7 @@ function LeadDetailPage() {
                             >
                               {file.name}
                             </a>
-                            <span className="text-[10px] text-muted-foreground shrink-0 font-mono">
+                            <span className="ds-meta text-muted-foreground shrink-0 font-mono">
                               ({(file.size / 1024).toFixed(1)} KB)
                             </span>
                           </div>
@@ -1421,7 +1140,7 @@ function LeadDetailPage() {
               <TabsContent value="timeline" className="space-y-6">
                 {/* Timeline and History activities */}
                 <div className="space-y-6">
-                  <h4 className="text-xs font-bold uppercase tracking-widest text-muted-foreground border-b border-border/40 pb-2">
+                  <h4 className="ds-label-caps text-muted-foreground border-b border-border/40 pb-2">
                     Histórico & Atividades Conversacionais
                   </h4>
                   <NewActivity
@@ -1625,7 +1344,6 @@ function LeadDetailPage() {
             </div>
           </SheetPage>
         </div>
-      )}
 
       {proposalSheetOpen && agency && (
         <NewProposalSheet

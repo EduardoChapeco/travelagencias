@@ -83,31 +83,31 @@ function BrainPanel() {
         {/* Indicadores de Performance */}
         <div className="grid gap-4 grid-cols-2 md:grid-cols-4">
           <div className="rounded-[var(--radius-card)] border-none glass-card border-none p-4 flex flex-col justify-between shadow-xs">
-            <span className="text-[10px] text-muted-foreground uppercase font-semibold">Docs Absorvidos</span>
+            <span className="ds-meta text-muted-foreground uppercase font-semibold">Docs Absorvidos</span>
             <div className="flex items-baseline gap-2 mt-2">
               <span className="text-2xl font-bold text-foreground">{docs.length}</span>
-              <span className="text-[10px] text-muted-foreground">PDFs/Textos</span>
+              <span className="ds-meta text-muted-foreground">PDFs/Textos</span>
             </div>
           </div>
           <div className="rounded-[var(--radius-card)] border-none glass-card border-none p-4 flex flex-col justify-between shadow-xs">
-            <span className="text-[10px] text-muted-foreground uppercase font-semibold">Base de Conhecimento</span>
+            <span className="ds-meta text-muted-foreground uppercase font-semibold">Base de Conhecimento</span>
             <div className="flex items-baseline gap-2 mt-2">
               <span className="text-2xl font-bold text-foreground">{totalChunks}</span>
-              <span className="text-[10px] text-muted-foreground">chunks (pgvector)</span>
+              <span className="ds-meta text-muted-foreground">chunks (pgvector)</span>
             </div>
           </div>
           <div className="rounded-[var(--radius-card)] border-none glass-card border-none p-4 flex flex-col justify-between shadow-xs">
-            <span className="text-[10px] text-muted-foreground uppercase font-semibold">Msgs Recebidas</span>
+            <span className="ds-meta text-muted-foreground uppercase font-semibold">Msgs Recebidas</span>
             <div className="flex items-baseline gap-2 mt-2">
               <span className="text-2xl font-bold text-foreground text-brand">{inboundCount}</span>
-              <span className="text-[10px] text-muted-foreground">inbound (omnichannel)</span>
+              <span className="ds-meta text-muted-foreground">inbound (omnichannel)</span>
             </div>
           </div>
           <div className="rounded-[var(--radius-card)] border-none glass-card border-none p-4 flex flex-col justify-between shadow-xs">
-            <span className="text-[10px] text-muted-foreground uppercase font-semibold">Total no Período</span>
+            <span className="ds-meta text-muted-foreground uppercase font-semibold">Total no Período</span>
             <div className="flex items-baseline gap-2 mt-2">
               <span className="text-2xl font-bold text-success">{inboxMessages.length}</span>
-              <span className="text-[10px] text-muted-foreground">últimas 20 msgs</span>
+              <span className="ds-meta text-muted-foreground">últimas 20 msgs</span>
             </div>
           </div>
         </div>
@@ -163,7 +163,7 @@ function BrainPanel() {
                      </div>
                      <Badge
                        variant="outline"
-                       className={`text-[10px] h-5 ml-2 shrink-0 ${
+                       className={`ds-meta h-5 ml-2 shrink-0 ${
                          msg.direction === 'inbound' ? 'bg-blue-50 text-blue-700' : 'glass-card border-none'
                        }`}
                      >
@@ -173,7 +173,7 @@ function BrainPanel() {
                    <div className="flex items-center gap-2 mt-1">
                      <Badge
                        variant="outline"
-                       className={`text-[10px] h-5 border-none ${
+                       className={`ds-meta h-5 border-none ${
                          msg.status === 'read' ? 'bg-success/10 text-success' :
                          msg.status === 'failed' ? 'bg-destructive/10 text-destructive' :
                          'bg-primary/10 text-primary'
@@ -181,7 +181,7 @@ function BrainPanel() {
                      >
                        {msg.status}
                      </Badge>
-                     <span className="text-[10px] text-muted-foreground">
+                     <span className="ds-meta text-muted-foreground">
                        {format(new Date(msg.created_at), "dd/MM HH:mm", { locale: ptBR })}
                      </span>
                    </div>

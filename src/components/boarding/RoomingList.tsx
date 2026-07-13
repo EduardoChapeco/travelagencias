@@ -208,7 +208,7 @@ export function RoomingList({
           <BedDouble className="h-4 w-4 text-muted-foreground" />
           <span className="text-sm font-semibold text-foreground">Rooming List</span>
           {rooms.length > 0 && (
-            <span className="text-[10px] bg-surface-alt border border-border rounded-full px-1.5 py-0.5 font-mono text-muted-foreground">
+            <span className="ds-meta bg-surface-alt border border-border rounded-full px-1.5 py-0.5 font-mono text-muted-foreground">
               {confirmedCount}/{rooms.length} quartos · {totalPax} pax
             </span>
           )}
@@ -217,7 +217,7 @@ export function RoomingList({
           <Button
             type="button"
             onClick={() => setShowForm(true)}
-            className="flex items-center gap-1 text-[11px] font-semibold text-brand hover:underline"
+            className="flex items-center gap-1 ds-meta font-semibold text-brand hover:underline"
           >
             <Plus className="h-3 w-3" /> Quarto
           </Button>
@@ -231,7 +231,7 @@ export function RoomingList({
           className="rounded-[var(--radius-card)] border border-border bg-surface p-4 space-y-3 animate-in fade-in slide-in-from-top-2 duration-200"
         >
           <div className="flex items-center justify-between border-b border-border pb-2">
-            <span className="text-xs font-bold uppercase tracking-wider text-foreground">
+            <span className="ds-label-caps tracking-wider text-foreground">
               {editingId ? "Editar Quarto" : "Novo Quarto"}
             </span>
             <Button
@@ -245,7 +245,7 @@ export function RoomingList({
 
           <div className="grid grid-cols-2 gap-2">
             <div>
-              <label className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wider">
+              <label className="ds-meta font-semibold text-muted-foreground uppercase tracking-wider">
                 Nº Quarto
               </label>
               <Input
@@ -257,7 +257,7 @@ export function RoomingList({
               />
             </div>
             <div>
-              <label className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wider">
+              <label className="ds-meta font-semibold text-muted-foreground uppercase tracking-wider">
                 Tipo
               </label>
               <Select
@@ -273,7 +273,7 @@ export function RoomingList({
               </Select>
             </div>
             <div>
-              <label className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wider">
+              <label className="ds-meta font-semibold text-muted-foreground uppercase tracking-wider">
                 Hotel
               </label>
               <Input
@@ -285,7 +285,7 @@ export function RoomingList({
             </div>
             <div className="grid grid-cols-2 gap-1">
               <div>
-                <label className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wider">
+                <label className="ds-meta font-semibold text-muted-foreground uppercase tracking-wider">
                   Check-in
                 </label>
                 <Input
@@ -296,7 +296,7 @@ export function RoomingList({
                 />
               </div>
               <div>
-                <label className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wider">
+                <label className="ds-meta font-semibold text-muted-foreground uppercase tracking-wider">
                   Check-out
                 </label>
                 <Input
@@ -312,7 +312,7 @@ export function RoomingList({
           {/* Passengers */}
           <div>
             <div className="flex items-center justify-between mb-1">
-              <label className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wider flex items-center gap-1">
+              <label className="ds-meta font-semibold text-muted-foreground uppercase tracking-wider flex items-center gap-1">
                 <Users className="h-3 w-3" /> Passageiros no Quarto
               </label>
               <Button
@@ -320,7 +320,7 @@ export function RoomingList({
                 onClick={() =>
                   setPassengers([...passengers, { name: "", document: "", meal_plan: "BB" }])
                 }
-                className="text-[10px] text-brand hover:underline"
+                className="ds-meta text-brand hover:underline"
               >
                 + Passageiro
               </Button>
@@ -381,7 +381,7 @@ export function RoomingList({
           </div>
 
           <div>
-            <label className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wider">
+            <label className="ds-meta font-semibold text-muted-foreground uppercase tracking-wider">
               Observações
             </label>
             <Textarea
@@ -444,14 +444,14 @@ export function RoomingList({
                     Quarto {room.room_number}
                   </span>
                   <span
-                    className={`text-[10px] rounded px-1.5 py-0.5 font-semibold ${
+                    className={`ds-meta rounded px-1.5 py-0.5 font-semibold ${
                       ROOM_TYPE_COLORS[room.room_type] ?? "bg-surface-alt text-muted-foreground"
                     }`}
                   >
                     {ROOM_TYPE_LABELS[room.room_type] ?? room.room_type}
                   </span>
                   {room.is_confirmed && (
-                    <span className="text-[10px] text-success font-semibold flex items-center gap-0.5">
+                    <span className="ds-meta text-success font-semibold flex items-center gap-0.5">
                       <Check className="h-3 w-3" /> Confirmado
                     </span>
                   )}
@@ -462,7 +462,7 @@ export function RoomingList({
                     onClick={() =>
                       confirmMut.mutate({ id: room.id, confirmed: !room.is_confirmed })
                     }
-                    className={`text-[10px] font-semibold px-2 py-1 rounded border transition-colors ${
+                    className={`ds-meta font-semibold px-2 py-1 rounded border transition-colors ${
                       room.is_confirmed
                         ? "border-border text-muted-foreground hover:border-border-strong"
                         : "border-success/40 text-success hover:bg-success-bg/20"
@@ -492,7 +492,7 @@ export function RoomingList({
               </div>
 
               {room.hotel_name && (
-                <p className="text-[10px] text-muted-foreground mb-1.5 flex items-center gap-1">
+                <p className="ds-meta text-muted-foreground mb-1.5 flex items-center gap-1">
                   <Hotel className="h-2.5 w-2.5" /> {room.hotel_name}
                   {room.checkin_date && ` · ${room.checkin_date} → ${room.checkout_date ?? "?"}`}
                 </p>
@@ -503,7 +503,7 @@ export function RoomingList({
                   {room.passengers.map((p, i) => (
                     <span
                       key={i}
-                      className="inline-flex items-center gap-1 text-[10px] bg-surface-alt border border-border rounded px-1.5 py-0.5"
+                      className="inline-flex items-center gap-1 ds-meta bg-surface-alt border border-border rounded px-1.5 py-0.5"
                     >
                       <Users className="h-2.5 w-2.5 text-muted-foreground" />
                       {p.name}
@@ -516,7 +516,7 @@ export function RoomingList({
               )}
 
               {room.notes && (
-                <p className="mt-1.5 text-[10px] text-muted-foreground italic">{room.notes}</p>
+                <p className="mt-1.5 ds-meta text-muted-foreground italic">{room.notes}</p>
               )}
             </div>
           ))}

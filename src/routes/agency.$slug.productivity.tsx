@@ -194,7 +194,7 @@ function ProductivityRoute() {
                       </div>
                       <div className="text-right">
                         <p className="text-xl font-bold text-foreground">{data.totalScore} pts</p>
-                        <p className="text-[10px] text-muted-foreground flex items-center gap-1">
+                        <p className="ds-meta text-muted-foreground flex items-center gap-1">
                           <BrainCircuit className="w-3 h-3" /> Score IA
                         </p>
                       </div>

@@ -131,7 +131,7 @@ export function NewCorporateRfpWizard({
             className={`flex items-center gap-2 ${i === step ? "opacity-100" : "opacity-40"}`}
           >
             <div
-              className={`flex h-6 w-6 items-center justify-center rounded-full text-[11px] font-bold ${
+              className={`flex h-6 w-6 items-center justify-center rounded-full ds-meta font-bold ${
                 i < step
                   ? "bg-success text-success-foreground"
                   : i === step
@@ -246,7 +246,7 @@ export function NewCorporateRfpWizard({
                   placeholder="0.00"
                   className="text-lg font-mono text-brand"
                 />
-                <p className="text-[10px] text-muted-foreground mt-1">
+                <p className="ds-meta text-muted-foreground mt-1">
                   Ao definir o orçamento, o sistema alertará se a cotação violar a política da
                   empresa.
                 </p>

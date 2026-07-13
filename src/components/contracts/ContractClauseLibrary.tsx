@@ -292,7 +292,7 @@ export function ContractClauseLibrary({
 
             <div className="flex items-center justify-between border-t border-border pt-4">
               {editingClause && (
-                <div className="text-[10px] text-muted-foreground">
+                <div className="ds-meta text-muted-foreground">
                   Versão Atual: {editingClause.version} · Criada por:{" "}
                   {editingClause.agency_id ? "Sua Agência" : "Global"}
                 </div>
@@ -323,7 +323,7 @@ export function ContractClauseLibrary({
               if (clauses.length === 0) return null;
               return (
                 <div key={groupKey} className="space-y-2.5">
-                  <h3 className="text-xs font-bold uppercase tracking-wider text-muted-foreground border-b border-border/60 pb-1.5">
+                  <h3 className="ds-label-caps tracking-wider text-muted-foreground border-b border-border/60 pb-1.5">
                     {CLAUSE_KIND_LABELS[groupKey]} ({clauses.length})
                   </h3>
                   <div className="space-y-3">
@@ -355,7 +355,7 @@ export function ContractClauseLibrary({
                                   </span>
                                 )}
                               </h4>
-                              <p className="text-[10px] text-muted-foreground font-mono mt-0.5">
+                              <p className="ds-meta text-muted-foreground font-mono mt-0.5">
                                 Versão {clause.version} · Classificação:{" "}
                                 {CLAUSE_KIND_LABELS[clause.kind]}
                               </p>
@@ -364,7 +364,7 @@ export function ContractClauseLibrary({
                               {isGlobal ? (
                                 <Button
                                   onClick={() => handleDuplicate(clause)}
-                                  className="flex h-7 px-2.5 items-center gap-1 rounded border border-border bg-surface text-[10px] font-semibold text-foreground hover:bg-surface-alt transition-colors"
+                                  className="flex h-7 px-2.5 items-center gap-1 rounded border border-border bg-surface ds-meta font-semibold text-foreground hover:bg-surface-alt transition-colors"
                                   title="Duplicar para personalizar esta cláusula padrão"
                                 >
                                   <Copy className="h-3 w-3 text-muted-foreground" /> Personalizar

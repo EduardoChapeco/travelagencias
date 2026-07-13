@@ -198,7 +198,7 @@ function PublicLeadFormPage() {
             </div>
           )}
           <div>
-            <span className="text-[10px] uppercase tracking-widest font-extrabold text-brand block">
+            <span className="ds-meta uppercase tracking-widest font-extrabold text-brand block">
               Formulário Personalizado
             </span>
             <h1 className="text-base font-bold text-foreground leading-tight mt-0.5">
@@ -243,7 +243,7 @@ function PublicLeadFormPage() {
 
             {/* Travel Details Section */}
             <div className="glass-card border-none border-none rounded-[var(--radius-card)] p-5 space-y-4">
-              <h3 className="text-xs font-bold uppercase tracking-widest text-muted-foreground border-b border-border/50 pb-2 flex items-center gap-1.5">
+              <h3 className="ds-label-caps text-muted-foreground border-b border-border/50 pb-2 flex items-center gap-1.5">
                 <MapPin className="h-4 w-4 text-brand" /> Destino & Interesse
               </h3>
 
@@ -291,7 +291,7 @@ function PublicLeadFormPage() {
 
             {/* Dates Section */}
             <div className="glass-card border-none border-none rounded-[var(--radius-card)] p-5 space-y-4">
-              <h3 className="text-xs font-bold uppercase tracking-widest text-muted-foreground border-b border-border/50 pb-2 flex items-center gap-1.5">
+              <h3 className="ds-label-caps text-muted-foreground border-b border-border/50 pb-2 flex items-center gap-1.5">
                 <Calendar className="h-4 w-4 text-brand" /> Datas Previstas
               </h3>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -316,7 +316,7 @@ function PublicLeadFormPage() {
 
             {/* Passengers Section */}
             <div className="glass-card border-none border-none rounded-[var(--radius-card)] p-5 space-y-4">
-              <h3 className="text-xs font-bold uppercase tracking-widest text-muted-foreground border-b border-border/50 pb-2 flex items-center gap-1.5">
+              <h3 className="ds-label-caps text-muted-foreground border-b border-border/50 pb-2 flex items-center gap-1.5">
                 <Users className="h-4 w-4 text-brand" /> Passageiros & Idades
               </h3>
 
@@ -370,7 +370,7 @@ function PublicLeadFormPage() {
               )}
 
               {/* Aviation tariff guidance */}
-              <div className="text-[11px] bg-brand/5 border border-brand/10 p-3.5 rounded-[var(--radius-card)] text-muted-foreground space-y-1">
+              <div className="ds-meta bg-brand/5 border border-brand/10 p-3.5 rounded-[var(--radius-card)] text-muted-foreground space-y-1">
                 <span className="font-bold text-foreground block">
                   Regras de Tarifa da Aviação:
                 </span>
@@ -392,7 +392,7 @@ function PublicLeadFormPage() {
             {/* Acompanhantes Section */}
             <div className="glass-card border-none border-none rounded-[var(--radius-card)] p-5 space-y-4">
               <div className="flex items-center justify-between border-b border-border/50 pb-2">
-                <h3 className="text-xs font-bold uppercase tracking-widest text-muted-foreground flex items-center gap-1.5">
+                <h3 className="ds-label-caps text-muted-foreground flex items-center gap-1.5">
                   <Users className="h-4 w-4 text-brand" /> Viajantes Acompanhantes
                 </h3>
                 <span className="text-xs font-extrabold text-brand bg-brand/5 border border-brand/10 px-2 py-0.5 rounded">
@@ -431,7 +431,7 @@ function PublicLeadFormPage() {
                                       : "Outro"}
                         </span>
                         {(pax.document || pax.birth_date) && (
-                          <div className="text-[10px] text-muted-foreground space-y-0.5 mt-2 font-mono">
+                          <div className="ds-meta text-muted-foreground space-y-0.5 mt-2 font-mono">
                             {pax.document && <div>CPF: {pax.document}</div>}
                             {pax.birth_date && (
                               <div>
@@ -537,7 +537,7 @@ function PublicLeadFormPage() {
 
             {/* Acessibilidade & Saúde Section */}
             <div className="glass-card border-none border-none rounded-[var(--radius-card)] p-5 space-y-4">
-              <h3 className="text-xs font-bold uppercase tracking-widest text-muted-foreground border-b border-border/50 pb-2 flex items-center gap-1.5">
+              <h3 className="ds-label-caps text-muted-foreground border-b border-border/50 pb-2 flex items-center gap-1.5">
                 <Heart className="h-4 w-4 text-brand" /> Necessidades Especiais & Saúde
               </h3>
 
@@ -584,7 +584,7 @@ function PublicLeadFormPage() {
 
             {/* Custom Notes Section */}
             <div className="glass-card border-none border-none rounded-[var(--radius-card)] p-5 space-y-4">
-              <h3 className="text-xs font-bold uppercase tracking-widest text-muted-foreground border-b border-border/50 pb-2">
+              <h3 className="ds-label-caps text-muted-foreground border-b border-border/50 pb-2">
                 Conte-nos Mais
               </h3>
               <Field label="Algum detalhe ou preferência especial?">
@@ -635,7 +635,7 @@ function PublicLeadFormPage() {
 
       {/* Footer */}
       <footer className="py-6 text-center text-xs text-muted-foreground shrink-0 border-t border-border glass-card border-none mt-10">
-        <div className="flex items-center justify-center gap-1 text-[10px]">
+        <div className="flex items-center justify-center gap-1 ds-meta">
           Protegido por criptografia <Heart className="h-3 w-3 text-brand fill-brand" /> Powered by
           Turis
         </div>

@@ -54,7 +54,7 @@ export function SectionMap({ draft, save }: SectionMapProps) {
         {showMap && (
           <div>
             <div className="flex items-center justify-between mb-2">
-              <span className="text-[10px] uppercase tracking-wide font-semibold">
+              <span className="ds-meta uppercase tracking-wide font-semibold">
                 Mapa Interativo
               </span>
               <Button

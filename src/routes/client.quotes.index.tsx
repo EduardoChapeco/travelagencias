@@ -113,7 +113,7 @@ function ClientQuotesIndex() {
                 
                 <div className="font-mono font-semibold bg-accent px-4 py-2 rounded-[var(--radius-card)] text-lg self-start md:self-auto shrink-0 text-center">
                   {money(Number(quote.total || 0), quote.currency || "BRL")}
-                  <div className="text-[10px] text-muted-foreground font-sans uppercase tracking-widest mt-1">Ver Proposta</div>
+                  <div className="ds-meta text-muted-foreground font-sans uppercase tracking-widest mt-1">Ver Proposta</div>
                 </div>
               </Link>
             )

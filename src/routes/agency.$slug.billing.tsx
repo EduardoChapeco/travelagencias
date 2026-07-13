@@ -269,7 +269,7 @@ function BillingPage() {
       <div className="mt-8 rounded-[var(--radius-card)] border-none glass-card border-none/50 p-6 flex flex-col md:flex-row md:items-center justify-between gap-6">
         <div className="space-y-2">
           <div className="flex items-center gap-2">
-            <span className="text-xs font-bold uppercase tracking-widest text-brand">
+            <span className="ds-label-caps text-brand">
               Assinatura Ativa
             </span>
             <StatusBadge tone="success">{currentSub?.status || "trialing"}</StatusBadge>
@@ -410,7 +410,7 @@ function BillingPage() {
         ) : (
           <div className="rounded-[var(--radius-card)] border-none glass-card border-none overflow-hidden">
             <table className="w-full text-left text-xs">
-              <thead className="glass bg-white/5 border-white/10/50 border-b border-border text-[10px] uppercase font-bold text-muted-foreground tracking-wider">
+              <thead className="glass bg-white/5 border-white/10/50 border-b border-border ds-meta uppercase font-bold text-muted-foreground tracking-wider">
                 <tr>
                   <th className="px-5 py-3.5">Fatura</th>
                   <th className="px-5 py-3.5">Valor</th>
@@ -453,7 +453,7 @@ function BillingPage() {
                       </StatusBadge>
                     </td>
                     <td className="px-5 py-3.5 text-right">
-                      <GhostButton className="h-7 text-[10px] font-bold rounded">
+                      <GhostButton className="h-7 ds-meta font-bold rounded">
                         Recibo
                       </GhostButton>
                     </td>
@@ -540,7 +540,7 @@ function BillingPage() {
                           {brl(prorationQ.data?.final_amount_due ?? 0)}
                         </span>
                       </div>
-                      <div className="text-[10px] text-muted-foreground/80 leading-relaxed mt-1">
+                      <div className="ds-meta text-muted-foreground/80 leading-relaxed mt-1">
                         * Seu novo ciclo de faturamento mensal de 30 dias começa a valer a partir de
                         hoje.
                       </div>
@@ -562,7 +562,7 @@ function BillingPage() {
                   </h4>
                   <div className="space-y-3">
                     <div>
-                      <label className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground mb-1 block">
+                      <label className="ds-label-caps tracking-wider text-muted-foreground mb-1 block">
                         Número do Cartão
                       </label>
                       <div className="relative">
@@ -582,7 +582,7 @@ function BillingPage() {
                       </span>
                     </div>
                     <div>
-                      <label className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground mb-1 block">
+                      <label className="ds-label-caps tracking-wider text-muted-foreground mb-1 block">
                         Nome no Cartão
                       </label>
                       <Input
@@ -595,7 +595,7 @@ function BillingPage() {
                     </div>
                     <div className="grid grid-cols-2 gap-3">
                       <div>
-                        <label className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground mb-1 block">
+                        <label className="ds-label-caps tracking-wider text-muted-foreground mb-1 block">
                           Validade
                         </label>
                         <Input
@@ -607,7 +607,7 @@ function BillingPage() {
                         />
                       </div>
                       <div>
-                        <label className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground mb-1 block">
+                        <label className="ds-label-caps tracking-wider text-muted-foreground mb-1 block">
                           CVV
                         </label>
                         <Input

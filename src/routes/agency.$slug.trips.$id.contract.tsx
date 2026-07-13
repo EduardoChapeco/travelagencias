@@ -14,6 +14,7 @@ import JSZip from "jszip";
 // Import decomposed components
 import { ContractEditor, type Clause } from "@/components/trips/contract/ContractEditor";
 import { ContractAddendums } from "@/components/trips/contract/ContractAddendums";
+import { CONTRACT_STATUS_MAP } from "@/lib/constants/status";
 import { ContractSidebar } from "@/components/trips/contract/ContractSidebar";
 import { ContractSignatureControl } from "@/components/trips/contract/ContractSignatureControl";
 
@@ -99,23 +100,7 @@ type Passenger = {
 
 // ─── Status helpers ───────────────────────────────────────────────────────────
 
-const STATUS_LABEL: Record<string, string> = {
-  draft: "Rascunho",
-  sent: "Enviado",
-  viewed: "Visualizado",
-  pending_signature: "Aguardando assinatura",
-  signed: "Assinado",
-  cancelled: "Cancelado",
-};
 
-const STATUS_TONE: Record<string, "neutral" | "info" | "warning" | "success" | "danger"> = {
-  draft: "neutral",
-  sent: "info",
-  viewed: "warning",
-  pending_signature: "warning",
-  signed: "success",
-  cancelled: "danger",
-};
 
 // ─── Main component ───────────────────────────────────────────────────────────
 
@@ -597,8 +582,8 @@ function TripContract() {
             <FileText className="h-4 w-4 text-muted-foreground" />
             <span className="text-xs text-muted-foreground">{trip.title}</span>
             {contract && (
-              <StatusBadge tone={STATUS_TONE[contract.status]}>
-                {STATUS_LABEL[contract.status]}
+              <StatusBadge tone={CONTRACT_STATUS_MAP[contract.status]?.tone ?? "neutral"}>
+                {CONTRACT_STATUS_MAP[contract.status]?.label ?? contract.status}
               </StatusBadge>
             )}
           </div>

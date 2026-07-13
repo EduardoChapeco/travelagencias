@@ -11,6 +11,7 @@ import { ModuleAdminPanel } from "@/components/shell/ModuleAdminPanel";
 import { FormInput as Input } from "@/components/ui/input";
 import { NativeSelect as Select } from "@/components/ui/select";
 import { StatusBadge } from "@/components/ui/badge";
+import { CONTRACT_STATUS_MAP } from "@/lib/constants/status";
 import { GhostButton } from "@/components/ui/button";
 import { money, fmtDate } from "@/lib/formatters";
 import { cn } from "@/lib/utils";
@@ -35,13 +36,7 @@ type ContractRow = {
   client_data: { name?: string } | null;
 };
 
-const STATUS_MAP: Record<string, { label: string; tone: any }> = {
-  draft: { label: "Rascunho", tone: "neutral" },
-  sent: { label: "Enviado", tone: "info" },
-  viewed: { label: "Visualizado", tone: "warning" },
-  signed: { label: "Assinado", tone: "success" },
-  cancelled: { label: "Cancelado", tone: "danger" },
-};
+
 
 function ContractsPage() {
   const { agency, isAgencyAdmin } = useAgency();
@@ -111,7 +106,7 @@ function ContractsPage() {
                   setStatusFilter(e.target.value);
                   setPage(1);
                 }}
-                className="h-7 text-[11px] font-semibold hover:bg-white/5 rounded-full text-white/70 hover:text-white px-2 cursor-pointer"
+                className="h-7 ds-meta font-semibold hover:bg-white/5 rounded-full text-white/70 hover:text-white px-2 cursor-pointer"
               >
                 <option value="all" className="bg-neutral-900 text-white">Todos Status</option>
                 <option value="draft" className="bg-neutral-900 text-white">Rascunho</option>
@@ -128,7 +123,7 @@ function ContractsPage() {
         {/* ── Visualização de Lista de Contratos (Pesquisa e Filtros) ──────────────────── */}
         {activeTab === "list" && (
           <>
-            <div className="flex-1 overflow-y-auto px-4  md:pr-6 py-4 min-h-0 flex flex-col gap-4 pb-24">
+            <div className="page-content page-section dock-offset min-h-0">
               {q.isLoading && <div className="text-sm text-muted-foreground p-4">Carregando…</div>}
 
               {q.isError && (
@@ -159,7 +154,7 @@ function ContractsPage() {
           <>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {q.data.data.map((c) => {
-                const statusInfo = STATUS_MAP[c.status] || { label: c.status, tone: "neutral" };
+                const statusInfo = CONTRACT_STATUS_MAP[c.status] || { label: c.status, tone: "neutral" };
 
                 return (
                   <div
@@ -186,7 +181,7 @@ function ContractsPage() {
                           <h3 className="font-bold text-foreground line-clamp-1 group-hover:text-brand transition-colors">
                             Contrato v{c.version}
                           </h3>
-                          <div className="text-[10px] uppercase tracking-widest font-semibold text-muted-foreground">
+                          <div className="ds-meta uppercase tracking-widest font-semibold text-muted-foreground">
                             Viagem vinculada
                           </div>
                         </div>
@@ -238,7 +233,7 @@ function ContractsPage() {
 
                     <div className="flex items-center justify-between pt-4 border-t border-border/50">
                       <div className="flex flex-col">
-                        <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest mb-0.5">
+                        <span className="ds-meta font-bold text-muted-foreground uppercase tracking-widest mb-0.5">
                           Valor Total
                         </span>
                         <span className="font-mono text-lg font-bold text-foreground">

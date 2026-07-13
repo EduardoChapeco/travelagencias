@@ -64,7 +64,7 @@ export function StudioFormatPicker({ value, onChange }: StudioFormatPickerProps)
               </div>
               <span className="text-xs font-bold">{opt.label}</span>
             </div>
-            <span className="text-[10px] text-muted-foreground leading-snug">{opt.desc}</span>
+            <span className="ds-meta text-muted-foreground leading-snug">{opt.desc}</span>
           </Button>
         );
       })}

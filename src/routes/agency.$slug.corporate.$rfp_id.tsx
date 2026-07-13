@@ -202,7 +202,7 @@ function RfpDetailPage() {
                   >
                     {isCompleted && !isCurrent ? <Check className="w-3.5 h-3.5" /> : idx + 1}
                   </div>
-                  <span className="text-[10px] uppercase tracking-widest font-bold bg-background px-1">
+                  <span className="ds-meta uppercase tracking-widest font-bold bg-background px-1">
                     {step}
                   </span>
                 </div>
@@ -220,19 +220,19 @@ function RfpDetailPage() {
 
               <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
                 <div className="glass bg-white/5 border-white/10/50 p-3 rounded-[var(--radius-card)]">
-                  <div className="text-[10px] font-semibold text-muted-foreground uppercase tracking-widest mb-1 flex items-center gap-1.5">
+                  <div className="ds-meta font-semibold text-muted-foreground uppercase tracking-widest mb-1 flex items-center gap-1.5">
                     <MapPin className="w-3 h-3" /> Destino
                   </div>
                   <div className="font-medium text-sm">{rfp.destination || "—"}</div>
                 </div>
                 <div className="glass bg-white/5 border-white/10/50 p-3 rounded-[var(--radius-card)]">
-                  <div className="text-[10px] font-semibold text-muted-foreground uppercase tracking-widest mb-1 flex items-center gap-1.5">
+                  <div className="ds-meta font-semibold text-muted-foreground uppercase tracking-widest mb-1 flex items-center gap-1.5">
                     <Users className="w-3 h-3" /> Pax
                   </div>
                   <div className="font-medium text-sm">{rfp.pax_count} pessoas</div>
                 </div>
                 <div className="glass bg-white/5 border-white/10/50 p-3 rounded-[var(--radius-card)]">
-                  <div className="text-[10px] font-semibold text-muted-foreground uppercase tracking-widest mb-1 flex items-center gap-1.5">
+                  <div className="ds-meta font-semibold text-muted-foreground uppercase tracking-widest mb-1 flex items-center gap-1.5">
                     <DollarSign className="w-3 h-3" /> Budget Estimado
                   </div>
                   <div className="font-medium text-sm">
@@ -240,7 +240,7 @@ function RfpDetailPage() {
                   </div>
                 </div>
                 <div className="glass bg-white/5 border-white/10/50 p-3 rounded-[var(--radius-card)]">
-                  <div className="text-[10px] font-semibold text-muted-foreground uppercase tracking-widest mb-1 flex items-center gap-1.5">
+                  <div className="ds-meta font-semibold text-muted-foreground uppercase tracking-widest mb-1 flex items-center gap-1.5">
                     <Clock className="w-3 h-3" /> Viagem
                   </div>
                   <div className="font-medium text-sm truncate">
@@ -275,7 +275,7 @@ function RfpDetailPage() {
                 <div className="glass bg-white/5 border-white/10/50 border border-brand/30 p-4 rounded-[var(--radius-card)] mb-4 space-y-3">
                   <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                     <div className="sm:col-span-2">
-                      <label className="text-[10px] uppercase tracking-widest font-semibold text-muted-foreground mb-1 block">
+                      <label className="ds-meta uppercase tracking-widest font-semibold text-muted-foreground mb-1 block">
                         Título da Opção
                       </label>
                       <Input
@@ -285,7 +285,7 @@ function RfpDetailPage() {
                       />
                     </div>
                     <div>
-                      <label className="text-[10px] uppercase tracking-widest font-semibold text-muted-foreground mb-1 block">
+                      <label className="ds-meta uppercase tracking-widest font-semibold text-muted-foreground mb-1 block">
                         Valor Total
                       </label>
                       <Input
@@ -297,7 +297,7 @@ function RfpDetailPage() {
                     </div>
                   </div>
                   <div>
-                    <label className="text-[10px] uppercase tracking-widest font-semibold text-muted-foreground mb-1 block">
+                    <label className="ds-meta uppercase tracking-widest font-semibold text-muted-foreground mb-1 block">
                       Detalhes
                     </label>
                     <Textarea
@@ -329,7 +329,7 @@ function RfpDetailPage() {
                     className={`p-4 rounded-[var(--radius-card)] border ${rfp.approved_option_id === opt.id ? "bg-success/5 border-success/30 ring-1 ring-success/20" : "glass-card border-none border-border"} relative group`}
                   >
                     {rfp.approved_option_id === opt.id && (
-                      <div className="absolute top-4 right-4 text-success font-bold text-[10px] uppercase tracking-widest flex items-center gap-1">
+                      <div className="absolute top-4 right-4 text-success font-bold ds-meta uppercase tracking-widest flex items-center gap-1">
                         <CheckCircle2 className="w-3.5 h-3.5" /> Aprovada
                       </div>
                     )}

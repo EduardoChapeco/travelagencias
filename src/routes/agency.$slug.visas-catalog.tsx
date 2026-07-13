@@ -78,7 +78,7 @@ function VisasCatalogPage() {
             <Link
               to="/agency/$slug/visas"
               params={{ slug }}
-              className="inline-flex h-7 items-center gap-1.5 rounded-full border border-white/10 bg-white/5 px-3 text-[11px] font-bold text-white/90 hover:bg-white/10 transition-colors cursor-pointer shrink-0"
+              className="inline-flex h-7 items-center gap-1.5 rounded-full border border-white/10 bg-white/5 px-3 ds-meta font-bold text-white/90 hover:bg-white/10 transition-colors cursor-pointer shrink-0"
             >
               <ArrowLeft className="w-3 h-3" /> Voltar
             </Link>
@@ -156,7 +156,7 @@ function VisasCatalogPage() {
                 </div>
 
                 <div className="text-xs text-muted-foreground mt-4 whitespace-pre-line border-t border-border/40 pt-3">
-                  <span className="font-bold text-[10px] uppercase text-foreground/80 tracking-wide block mb-1">
+                  <span className="font-bold ds-meta uppercase text-foreground/80 tracking-wide block mb-1">
                     Exigências:
                   </span>
                   {Array.isArray(req.required_documents)
@@ -165,7 +165,7 @@ function VisasCatalogPage() {
                 </div>
 
                 {req.notes && (
-                  <div className="text-[11px] italic text-muted-foreground/80 glass bg-white/5 border-white/10/30 rounded p-2.5 mt-3 border-none/30">
+                  <div className="ds-meta italic text-muted-foreground/80 glass bg-white/5 border-white/10/30 rounded p-2.5 mt-3 border-none/30">
                     {req.notes}
                   </div>
                 )}

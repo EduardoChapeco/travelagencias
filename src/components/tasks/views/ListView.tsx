@@ -145,7 +145,7 @@ function StatusGroupSection({
       {/* Group Header */}
       <div className="flex items-center gap-2 px-3 py-1.5 bg-[var(--surface-alt)]/40 rounded-2xl border border-border/30">
         <span className="h-2 w-2 rounded-full shrink-0" style={{ backgroundColor: color }} />
-        <span className="text-[10px] font-black uppercase text-foreground tracking-wider">{label}</span>
+        <span className="ds-meta font-black uppercase text-foreground tracking-wider">{label}</span>
         <span className="text-[9px] font-mono font-bold bg-slate-100 dark:bg-slate-900 border px-1.5 py-0.5 rounded text-muted-foreground ml-auto">
           {tasks.length}
         </span>
@@ -205,13 +205,13 @@ function StatusGroupSection({
                       <td className="p-3">
                         {task.assignee ? (
                           <div className="flex items-center gap-1.5">
-                            <div className="h-5.5 w-5.5 rounded-full bg-brand/10 text-brand flex items-center justify-center text-[10px] font-black uppercase">
+                            <div className="h-5.5 w-5.5 rounded-full bg-brand/10 text-brand flex items-center justify-center ds-meta font-black uppercase">
                               {task.assignee.name?.charAt(0) || "?"}
                             </div>
-                            <span className="text-[11px] font-medium text-foreground truncate max-w-[100px]">{task.assignee.name || "—"}</span>
+                            <span className="ds-meta font-medium text-foreground truncate max-w-[100px]">{task.assignee.name || "—"}</span>
                           </div>
                         ) : (
-                          <span className="text-[10px] text-muted-foreground">-</span>
+                          <span className="ds-meta text-muted-foreground">-</span>
                         )}
                       </td>
                       <td className="p-3">
@@ -244,12 +244,12 @@ function StatusGroupSection({
             placeholder={`+ Adicionar tarefa rápida em "${label}"...`}
             value={quickTitle}
             onChange={(e) => setQuickTitle(e.target.value)}
-            className="flex-1 border-none text-[11px] font-semibold placeholder:text-muted-foreground/60 px-2"
+            className="flex-1 border-none ds-meta font-semibold placeholder:text-muted-foreground/60 px-2"
           />
           {quickTitle.trim() && (
             <Button
               type="submit"
-              className="h-7 px-3 rounded bg-brand text-white text-[10px] font-bold hover:bg-brand/90 cursor-pointer shadow-xs transition-colors shrink-0"
+              className="h-7 px-3 rounded bg-brand text-white ds-meta font-bold hover:bg-brand/90 cursor-pointer shadow-xs transition-colors shrink-0"
             >
               Adicionar
             </Button>

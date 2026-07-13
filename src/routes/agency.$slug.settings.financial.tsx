@@ -14,7 +14,11 @@ import {
   Trash2,
   AlertTriangle,
   CheckCircle2,
+  ArrowUpRight,
+  Calculator,
 } from "lucide-react";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { money } from "@/lib/formatters";
 import { PageHeader, ModuleActionButton } from "@/components/shell/PageHeader";
 import { Field } from "@/components/ui/field";
 import { FormInput as Input } from "@/components/ui/input";
@@ -302,7 +306,7 @@ function FinancialSettingsPage() {
               ) : (
                 <div className="overflow-hidden rounded-[var(--radius-card)] border-none glass-card">
                   <table className="w-full text-xs text-left">
-                    <thead className="glass bg-white/5 border-b border-white/10 text-[10px] uppercase font-bold text-muted-foreground">
+                    <thead className="glass bg-white/5 border-b border-white/10 ds-meta uppercase font-bold text-muted-foreground">
                       <tr>
                         <th className="px-4 py-3">Mês / Ano</th>
                         <th className="px-4 py-3">Status</th>
@@ -349,7 +353,7 @@ function FinancialSettingsPage() {
                                       close: false,
                                     })
                                   }
-                                  className="inline-flex items-center gap-1 text-[10px] font-bold text-rose-600 border border-rose-600/20 bg-rose-50 hover:bg-rose-100 px-2 py-1 rounded-full cursor-pointer transition-colors"
+                                  className="inline-flex items-center gap-1 ds-meta font-bold text-rose-600 border border-rose-600/20 bg-rose-50 hover:bg-rose-100 px-2 py-1 rounded-full cursor-pointer transition-colors"
                                 >
                                   <Unlock className="w-3 h-3" /> Reabrir
                                 </Button>
@@ -363,7 +367,7 @@ function FinancialSettingsPage() {
                                       close: true,
                                     })
                                   }
-                                  className="inline-flex items-center gap-1 text-[10px] font-bold text-emerald-600 border border-emerald-600/20 bg-emerald-50 hover:bg-emerald-100 px-2 py-1 rounded-full cursor-pointer transition-colors"
+                                  className="inline-flex items-center gap-1 ds-meta font-bold text-emerald-600 border border-emerald-600/20 bg-emerald-50 hover:bg-emerald-100 px-2 py-1 rounded-full cursor-pointer transition-colors"
                                 >
                                   <Lock className="w-3 h-3" /> Travar Mês
                                 </Button>
@@ -416,7 +420,7 @@ function FinancialSettingsPage() {
                       <div className="flex items-center justify-between px-4 py-3 bg-white/5 border-b border-white/10">
                         <div>
                           <strong className="text-xs text-white block">{plan.name}</strong>
-                          <span className="text-[10px] text-muted-foreground">
+                          <span className="ds-meta text-muted-foreground">
                             Vendedor: <strong>{plan.seller_name}</strong>
                           </span>
                         </div>
@@ -439,7 +443,7 @@ function FinancialSettingsPage() {
 
                       {/* Details & Tiers */}
                       <div className="p-4 space-y-3">
-                        <div className="flex items-center gap-6 text-[11px] text-muted-foreground">
+                        <div className="flex items-center gap-6 ds-meta text-muted-foreground">
                           <span>
                             Modo de Escala:{" "}
                             <strong className="text-gray-800 capitalize">
@@ -458,7 +462,7 @@ function FinancialSettingsPage() {
 
                         {/* List tiers */}
                         <div className="overflow-hidden rounded-[var(--radius-card)] border-none max-w-xl">
-                          <table className="w-full text-[11px] text-left">
+                          <table className="w-full ds-meta text-left">
                             <thead className="bg-gray-50 border-b border-border text-[9px] uppercase font-bold text-gray-500">
                               <tr>
                                 <th className="px-3 py-2">Volume Mínimo</th>
@@ -506,25 +510,18 @@ function FinancialSettingsPage() {
       </div>
 
       {/* New Plan Modal Overlay */}
-      {showPlanModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4 animate-in fade-in duration-200">
-          <div className="w-full max-w-md glass dark:glass-dark rounded-[var(--radius-card)] border border-white/10 overflow-hidden shadow-none text-white">
-            <div className="flex items-center justify-between px-5 py-4 border-b border-white/10 bg-white/5">
-              <div className="flex items-center gap-2">
-                <Percent className="w-5 h-5 text-brand" />
-                <h3 className="font-bold text-white text-sm uppercase tracking-wider">
-                  Criar Novo Plano de Comissão
-                </h3>
-              </div>
-              <Button
-                onClick={() => setShowPlanModal(false)}
-                className="p-1 rounded hover:bg-white/10 text-white"
-              >
-                <X className="w-4 h-4" />
-              </Button>
-            </div>
+      <Dialog open={showPlanModal} onOpenChange={setShowPlanModal}>
+        <DialogContent className="max-w-md p-0 overflow-hidden border-none/10 max-h-[90vh] glass dark:glass-dark text-white">
+          <DialogHeader className="px-5 py-4 border-b border-white/10 bg-white/5">
+            <DialogTitle className="flex items-center gap-2">
+              <Percent className="w-5 h-5 text-brand" />
+              <span className="font-bold text-white text-sm uppercase tracking-wider">
+                Criar Novo Plano de Comissão
+              </span>
+            </DialogTitle>
+          </DialogHeader>
 
-            <div className="p-5 space-y-4 text-xs">
+          <div className="p-5 space-y-4 text-xs">
               <Field label="Nome do Plano *">
                 <Input
                   value={newPlanName}
@@ -588,15 +585,14 @@ function FinancialSettingsPage() {
                 <PrimaryButton
                   onClick={() => createPlan.mutate()}
                   disabled={createPlan.isPending || !newPlanName || !selectedSeller}
-                  className="flex-1 h-10 text-xs font-bold uppercase tracking-wider bg-brand hover:opacity-90 text-brand-foreground rounded-[var(--radius-card)]"
+                  className="flex-1 h-10 ds-label-caps tracking-wider bg-brand hover:opacity-90 text-brand-foreground rounded-[var(--radius-card)]"
                 >
                   {createPlan.isPending ? "Criando..." : "Salvar Plano"}
                 </PrimaryButton>
               </div>
             </div>
-          </div>
-        </div>
-      )}
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

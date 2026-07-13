@@ -229,7 +229,7 @@ function PortalSettingsPage() {
                   onChange={(e) => set("seo_default_description", e.target.value)}
                   placeholder="Agência de viagens especializada em..."
                 />
-                <div className="mt-1 text-right text-[10px] text-muted-foreground">
+                <div className="mt-1 text-right ds-meta text-muted-foreground">
                   {form.seo_default_description.length}/160
                 </div>
               </Field>
@@ -266,7 +266,7 @@ function PortalSettingsPage() {
                   />
                 </div>
                 {form.custom_domain && (
-                  <p className="text-[10px] text-muted-foreground mt-1">
+                  <p className="ds-meta text-muted-foreground mt-1">
                     Seu portal ficará acessível em{" "}
                     <a
                       href={`https://${form.custom_domain}`}
@@ -283,17 +283,17 @@ function PortalSettingsPage() {
 
               {/* Preview card */}
               <div className="rounded-full border-none glass bg-white/5 border-white/10 p-4">
-                <div className="text-[10px] font-semibold uppercase tracking-wide text-muted-foreground mb-3">
+                <div className="ds-meta font-semibold uppercase tracking-wide text-muted-foreground mb-3">
                   Preview no Google
                 </div>
                 <div className="space-y-0.5">
                   <div className="text-sm font-medium text-[#1a0dab]">
                     Início{form.seo_title_suffix || ` · ${agency.name}`}
                   </div>
-                  <div className="text-[11px] text-[#006621]">
+                  <div className="ds-meta text-[#006621]">
                     {window.location.origin}/p/{agency.slug}
                   </div>
-                  <div className="text-[11px] text-[#545454] line-clamp-2">
+                  <div className="ds-meta text-[#545454] line-clamp-2">
                     {form.seo_default_description || "Descrição não definida"}
                   </div>
                 </div>
@@ -340,7 +340,7 @@ function PortalSettingsPage() {
                       }`}
                     >
                       <div className="text-xs font-semibold mb-1">{s.label}</div>
-                      <div className="text-[10px] text-muted-foreground">{s.desc}</div>
+                      <div className="ds-meta text-muted-foreground">{s.desc}</div>
                     </Button>
                   ))}
                 </div>
@@ -461,14 +461,14 @@ function PortalSettingsPage() {
 
               {/* Footer preview */}
               <div className="rounded-full border-none glass bg-white/5 border-white/10 p-4">
-                <div className="text-[10px] font-semibold uppercase tracking-wide text-muted-foreground mb-2">
+                <div className="ds-meta font-semibold uppercase tracking-wide text-muted-foreground mb-2">
                   Preview do rodapé
                 </div>
                 <div className="border-t border-border pt-3 flex flex-wrap items-center justify-between gap-2">
-                  <span className="text-[11px] text-muted-foreground">{form.footer_text}</span>
+                  <span className="ds-meta text-muted-foreground">{form.footer_text}</span>
                   <div className="flex gap-3 flex-wrap">
                     {form.footer_links.map((l, i) => (
-                      <span key={i} className="text-[11px] text-brand">
+                      <span key={i} className="ds-meta text-brand">
                         {l.label}
                       </span>
                     ))}
@@ -499,7 +499,7 @@ function PortalSettingsPage() {
                   className="font-mono"
                 />
                 {form.analytics_id && (
-                  <p className="mt-1 text-[10px] text-success">
+                  <p className="mt-1 ds-meta text-success">
                     ✓ Script do Google Analytics será injetado automaticamente no portal
                   </p>
                 )}
@@ -516,7 +516,7 @@ function PortalSettingsPage() {
                   className="font-mono"
                 />
                 {form.meta_pixel_id && (
-                  <p className="mt-1 text-[10px] text-success">
+                  <p className="mt-1 ds-meta text-success">
                     ✓ Meta Pixel será ativado no portal
                   </p>
                 )}
@@ -549,7 +549,7 @@ function PortalSettingsPage() {
               {/* Warning */}
               <div className="flex items-start gap-2 rounded-full border border-warning/30 bg-warning/5 p-3">
                 <span className="mt-0.5 text-warning">⚠️</span>
-                <p className="text-[11px] text-muted-foreground">
+                <p className="ds-meta text-muted-foreground">
                   Scripts personalizados são executados em todas as páginas do portal. Certifique-se
                   de que o código é confiável antes de salvar.
                 </p>

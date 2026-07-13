@@ -6,7 +6,9 @@ import {
 import { useAgency } from "@/lib/agency-context";
 import { Button, GhostButton, PrimaryButton } from "@/components/ui/button";
 import { PageHeader, EmptyState, ModuleActionButton } from "@/components/shell/PageHeader";
+import { ModuleAdminPanel } from "@/components/shell/ModuleAdminPanel";
 import { FormInput as Input } from "@/components/ui/input";
+import { QUOTE_STATUS_MAP } from "@/lib/constants/status";
 import {
   Select,
   SelectContent,
@@ -18,12 +20,11 @@ import { FormTextarea as Textarea } from "@/components/ui/textarea";
 import { Field } from "@/components/ui/field";
 import { StatusBadge } from "@/components/ui/badge";
 import { fmtDate } from "@/lib/formatters";
-import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { useDebounce } from "@/hooks/use-debounce";
-import { fetchQuoteRequestsList, createQuoteRequest } from "@/services/quotes";
+import { fetchQuoteRequestsList, createQuoteRequest, deleteQuoteRequest, getCurrentUserRole, getCurrentUserId, invokeAiOrchestrator } from "@/services/quotes";
 import { fetchClientsPick, fetchLeadsPick } from "@/services/proposals";
-import { ingestKnowledgeDocument } from "@/services/quotes-rag";
+import { ingestKnowledgeDocument, fetchKnowledgeDocs, deleteKnowledgeDoc } from "@/services/quotes-rag";
 import {
   fetchAgencyRules,
   fetchRuleCandidates,
@@ -46,23 +47,7 @@ export const Route = createFileRoute("/agency/$slug/quotes/")({
   component: QuotesIndexPage,
 });
 
-const STATUS_TONE: Record<string, "neutral" | "success" | "warning" | "danger" | "info"> = {
-  draft: "neutral",
-  planning: "info",
-  searching: "warning",
-  completed: "success",
-  converted: "success",
-  cancelled: "danger",
-};
 
-const STATUS_LABEL: Record<string, string> = {
-  draft: "Rascunho",
-  planning: "Planejando",
-  searching: "Buscando",
-  completed: "Concluído",
-  converted: "Convertido",
-  cancelled: "Cancelado",
-};
 
 const CATEGORY_LABEL: Record<string, string> = {
   gateway_rules: "Regras de Conexão (Gateway)",
@@ -139,19 +124,7 @@ function QuotesIndexPage() {
   const { data: userRole = "agent" } = useQuery({
     enabled: !!agency,
     queryKey: ["user-role", agency?.id],
-    queryFn: async () => {
-      const {
-        data: { user },
-      } = await supabase.auth.getUser();
-      if (!user) return "agent";
-      const { data } = await supabase
-        .from("user_roles")
-        .select("role")
-        .eq("user_id", user.id)
-        .eq("agency_id", agency!.id)
-        .maybeSingle();
-      return data?.role || "agent";
-    },
+    queryFn: () => getCurrentUserRole(agency!.id),
   });
   const isSuperAdmin = userRole === "super_admin";
 
@@ -159,14 +132,7 @@ function QuotesIndexPage() {
   const { data: knowledgeDocs = [], isLoading: isDocsLoading, isError: isDocsError, error: docsError } = useQuery({
     enabled: !!agency && activeTab === "knowledge",
     queryKey: ["knowledge-documents", agency?.id],
-    queryFn: async () => {
-      const { data, error } = await supabase
-        .from("knowledge_documents")
-        .select("*")
-        .order("created_at", { ascending: false });
-      if (error) throw error;
-      return data || [];
-    },
+    queryFn: () => fetchKnowledgeDocs(),
   });
 
   // ── Rules & AI tab queries ──────────────────────────────────────────────
@@ -243,18 +209,10 @@ function QuotesIndexPage() {
 }
 Texto: "${aiText}"`;
 
-      const { data, error } = await supabase.functions.invoke("ai-orchestrator", {
-        body: {
-          action: "completion",
-          prompt,
-          systemPrompt:
-            "Você é o assistente inteligente de viagens do Turis. Extraia informações de voos, hotéis, datas, viajantes e orçamento e monte exatamente o JSON solicitado.",
-          modelPreference: "smart",
-        },
-      });
-
-      if (error) throw error;
-      const text = data?.result || "";
+      const text = await invokeAiOrchestrator(
+        prompt,
+        "Você é o assistente inteligente de viagens do Turis. Extraia informações de voos, hotéis, datas, viajantes e orçamento e monte exatamente o JSON solicitado.",
+      );
       const match = text.match(/\{[\s\S]*\}/);
       const parsed = JSON.parse(match ? match[0] : text);
 
@@ -413,10 +371,7 @@ Texto: "${aiText}"`;
 
   // Delete Mutation
   const deleteMut = useMutation({
-    mutationFn: async (id: string) => {
-      const { error } = await supabase.from("quote_requests").delete().eq("id", id);
-      if (error) throw error;
-    },
+    mutationFn: (id: string) => deleteQuoteRequest(id),
     onSuccess: () => {
       toast.success("Cotação excluída com sucesso");
       qc.invalidateQueries({ queryKey: ["quote-requests"] });
@@ -426,13 +381,7 @@ Texto: "${aiText}"`;
 
   // Delete Knowledge Mutation
   const deleteKnowledgeMut = useMutation({
-    mutationFn: async (id: string) => {
-      const { error } = await supabase
-        .from("knowledge_documents")
-        .delete()
-        .eq("id", id);
-      if (error) throw error;
-    },
+    mutationFn: (id: string) => deleteKnowledgeDoc(id),
     onSuccess: () => {
       toast.success("Diretriz excluída com sucesso");
       qc.invalidateQueries({ queryKey: ["knowledge-documents", agency?.id] });
@@ -443,9 +392,8 @@ Texto: "${aiText}"`;
   // ── Rules mutations ────────────────────────────────────────────────────
   const approveCandidateMut = useMutation({
     mutationFn: async (candidateId: string) => {
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user) throw new Error("Sessão expirada");
-      return approveRuleCandidate(candidateId, user.id);
+      const userId = await getCurrentUserId();
+      return approveRuleCandidate(candidateId, userId);
     },
     onSuccess: () => {
       toast.success("Sugestão aprovada e regra ativa criada com sucesso!");
@@ -457,9 +405,8 @@ Texto: "${aiText}"`;
 
   const rejectCandidateMut = useMutation({
     mutationFn: async (candidateId: string) => {
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user) throw new Error("Sessão expirada");
-      return rejectRuleCandidate(candidateId, user.id);
+      const userId = await getCurrentUserId();
+      return rejectRuleCandidate(candidateId, userId);
     },
     onSuccess: () => {
       toast.success("Sugestão rejeitada.");
@@ -656,7 +603,7 @@ Texto: "${aiText}"`;
                           <div className="font-semibold text-foreground">
                             {q.client?.full_name || q.lead?.name || "Sem contato vinculado"}
                           </div>
-                          <div className="text-[10px] text-muted-foreground">
+                          <div className="ds-meta text-muted-foreground">
                             {q.client
                               ? "Cliente cadastrado"
                               : q.lead
@@ -686,8 +633,8 @@ Texto: "${aiText}"`;
                           {budgetVal > 0 ? `R$ ${budgetVal.toLocaleString()}` : "N/D"}
                         </td>
                         <td className="px-4 py-3.5">
-                          <StatusBadge tone={STATUS_TONE[q.status]}>
-                            {STATUS_LABEL[q.status] || q.status}
+                          <StatusBadge tone={QUOTE_STATUS_MAP[q.status]?.tone || "neutral"}>
+                            {QUOTE_STATUS_MAP[q.status]?.label || q.status}
                           </StatusBadge>
                         </td>
                         <td className="px-4 py-3.5 text-right">
@@ -695,7 +642,7 @@ Texto: "${aiText}"`;
                             <Link
                               to="/agency/$slug/quotes/$id"
                               params={{ slug, id: q.id }}
-                              className="inline-flex h-7 items-center justify-center rounded border-none glass-card border-none px-2.5 text-[11px] font-bold text-foreground hover:glass bg-white/5 border-white/10"
+                              className="inline-flex h-7 items-center justify-center rounded border-none glass-card border-none px-2.5 ds-meta font-bold text-foreground hover:glass bg-white/5 border-white/10"
                             >
                               Central de Decisão
                             </Link>
@@ -771,7 +718,7 @@ Texto: "${aiText}"`;
                       {doc.scope === "global" ? "Global" : "Agência"}
                     </StatusBadge>
                   </div>
-                  <span className="text-[10px] text-muted-foreground block mb-3 font-semibold uppercase tracking-wider">
+                  <span className="ds-meta text-muted-foreground block mb-3 font-semibold uppercase tracking-wider">
                     {CATEGORY_LABEL[doc.category] || doc.category}
                   </span>
                   <p className="text-xs text-muted-foreground leading-relaxed line-clamp-4">
@@ -780,7 +727,7 @@ Texto: "${aiText}"`;
                 </div>
 
                 <div className="border-t border-border mt-4 pt-3 flex items-center justify-between shrink-0">
-                  <span className="text-[10px] text-muted-foreground flex items-center gap-1">
+                  <span className="ds-meta text-muted-foreground flex items-center gap-1">
                     {doc.scope === "global" ? (
                       <>
                         <ShieldCheck className="h-3.5 w-3.5 text-success shrink-0" />
@@ -840,7 +787,7 @@ Texto: "${aiText}"`;
                 <div className="rounded border-none glass-card border-none p-6 text-center">
                   <CheckCircle2 className="h-8 w-8 text-success mx-auto mb-2 opacity-60" />
                   <p className="text-xs text-muted-foreground">Nenhuma sugestão pendente de revisão.</p>
-                  <p className="text-[10px] text-muted-foreground mt-1">O motor de aprendizado irá sugerir novas regras conforme as cotações forem processadas.</p>
+                  <p className="ds-meta text-muted-foreground mt-1">O motor de aprendizado irá sugerir novas regras conforme as cotações forem processadas.</p>
                 </div>
               ) : (
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -856,7 +803,7 @@ Texto: "${aiText}"`;
                                 <AlertTriangle className="h-3.5 w-3.5 text-warning shrink-0" />
                                 <span className="text-xs font-bold text-foreground">{cand.pattern}</span>
                               </div>
-                              <span className="text-[10px] text-muted-foreground">
+                              <span className="ds-meta text-muted-foreground">
                                 {cand.sample_size} casos analisados · confiança {Math.round(Number(cand.confidence) * 100)}%
                               </span>
                             </div>
@@ -865,15 +812,15 @@ Texto: "${aiText}"`;
 
                           {proposed?.effect && (
                             <div className="glass-card border-none rounded border-none p-2">
-                              <div className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground mb-1">Efeito Proposto</div>
-                              <pre className="text-[10px] text-foreground whitespace-pre-wrap break-all font-mono">
+                              <div className="ds-meta font-semibold uppercase tracking-wider text-muted-foreground mb-1">Efeito Proposto</div>
+                              <pre className="ds-meta text-foreground whitespace-pre-wrap break-all font-mono">
                                 {JSON.stringify(proposed.effect, null, 2)}
                               </pre>
                             </div>
                           )}
 
                           {cand.simulated_impact && (
-                            <div className="flex items-center gap-1.5 text-[10px] text-muted-foreground">
+                            <div className="flex items-center gap-1.5 ds-meta text-muted-foreground">
                               <TrendingDown className="h-3 w-3" />
                               Impacto simulado registrado
                             </div>
@@ -883,7 +830,7 @@ Texto: "${aiText}"`;
                             <Button
                               onClick={() => approveCandidateMut.mutate(cand.id)}
                               disabled={approveCandidateMut.isPending}
-                              className="flex-1 inline-flex items-center justify-center gap-1.5 h-8 rounded border border-success/40 bg-success/10 text-[11px] font-bold text-success hover:bg-success/20 transition-colors disabled:opacity-50"
+                              className="flex-1 inline-flex items-center justify-center gap-1.5 h-8 rounded border border-success/40 bg-success/10 ds-meta font-bold text-success hover:bg-success/20 transition-colors disabled:opacity-50"
                             >
                               <CheckCircle2 className="h-3.5 w-3.5" />
                               Aprovar e Ativar Regra
@@ -891,7 +838,7 @@ Texto: "${aiText}"`;
                             <Button
                               onClick={() => rejectCandidateMut.mutate(cand.id)}
                               disabled={rejectCandidateMut.isPending}
-                              className="inline-flex items-center justify-center gap-1.5 h-8 px-3 rounded border border-danger/30 bg-danger/5 text-[11px] font-bold text-danger hover:bg-danger/10 transition-colors disabled:opacity-50"
+                              className="inline-flex items-center justify-center gap-1.5 h-8 px-3 rounded border border-danger/30 bg-danger/5 ds-meta font-bold text-danger hover:bg-danger/10 transition-colors disabled:opacity-50"
                             >
                               <XCircle className="h-3.5 w-3.5" />
                               Rejeitar
@@ -916,7 +863,7 @@ Texto: "${aiText}"`;
                 <div className="rounded border-none glass-card border-none p-6 text-center">
                   <Zap className="h-8 w-8 text-muted-foreground mx-auto mb-2 opacity-40" />
                   <p className="text-xs text-muted-foreground">Nenhuma regra ativa ainda.</p>
-                  <p className="text-[10px] text-muted-foreground mt-1">Aprove sugestões da IA acima para ativar regras no motor de decisão.</p>
+                  <p className="ds-meta text-muted-foreground mt-1">Aprove sugestões da IA acima para ativar regras no motor de decisão.</p>
                 </div>
               ) : (
                 <div className="rounded border-none overflow-hidden">
@@ -936,7 +883,7 @@ Texto: "${aiText}"`;
                         const ver = rule.current_version;
                         return (
                           <tr key={rule.id} className="hover:glass bg-white/5 border-white/10/50 transition-colors">
-                            <td className="px-4 py-3.5 font-mono text-[11px] text-foreground">{rule.code}</td>
+                            <td className="px-4 py-3.5 font-mono ds-meta text-foreground">{rule.code}</td>
                             <td className="px-4 py-3.5">
                               <StatusBadge tone={rule.scope === "global" ? "success" : "info"}>
                                 {rule.scope === "global" ? "Global" : "Agência"}
@@ -962,7 +909,7 @@ Texto: "${aiText}"`;
                                       status: rule.status === "active" ? "paused" : "active",
                                     })
                                   }
-                                  className="inline-flex h-7 items-center gap-1 px-2 rounded border-none text-[10px] font-semibold text-muted-foreground hover:text-foreground hover:glass bg-white/5 border-white/10 transition-colors"
+                                  className="inline-flex h-7 items-center gap-1 px-2 rounded border-none ds-meta font-semibold text-muted-foreground hover:text-foreground hover:glass bg-white/5 border-white/10 transition-colors"
                                   title={rule.status === "active" ? "Pausar regra" : "Ativar regra"}
                                 >
                                   {rule.status === "active" ? (
@@ -1019,7 +966,7 @@ Texto: "${aiText}"`;
                 <div className="rounded border-none glass-card border-none p-6 text-center">
                   <Bell className="h-8 w-8 text-muted-foreground mx-auto mb-2 opacity-40" />
                   <p className="text-xs text-muted-foreground">Nenhum alerta configurado.</p>
-                  <p className="text-[10px] text-muted-foreground mt-1 mb-4">Configure alertas para monitorar tarifas e oportunidades automáticas.</p>
+                  <p className="ds-meta text-muted-foreground mt-1 mb-4">Configure alertas para monitorar tarifas e oportunidades automáticas.</p>
                   <PrimaryButton onClick={() => setWatcherOpen(true)} className="gap-1.5">
                     <Bell className="h-3.5 w-3.5" />
                     Criar Primeiro Alerta
@@ -1047,25 +994,25 @@ Texto: "${aiText}"`;
                           </div>
                           <div className="space-y-1">
                             {crit?.destination && (
-                              <div className="text-[10px] text-muted-foreground flex items-center gap-1">
+                              <div className="ds-meta text-muted-foreground flex items-center gap-1">
                                 <Compass className="h-3 w-3 shrink-0" />
                                 Destino: <span className="text-foreground font-medium">{crit.destination}</span>
                               </div>
                             )}
                             {crit?.origin && (
-                              <div className="text-[10px] text-muted-foreground flex items-center gap-1">
+                              <div className="ds-meta text-muted-foreground flex items-center gap-1">
                                 <ArrowRight className="h-3 w-3 shrink-0" />
                                 Origem: <span className="text-foreground font-medium">{crit.origin}</span>
                               </div>
                             )}
                             {crit?.maxPrice > 0 && (
-                              <div className="text-[10px] text-muted-foreground flex items-center gap-1">
+                              <div className="ds-meta text-muted-foreground flex items-center gap-1">
                                 <TrendingDown className="h-3 w-3 shrink-0" />
                                 Teto: <span className="text-foreground font-medium">R$ {Number(crit.maxPrice).toLocaleString("pt-BR")}</span>
                               </div>
                             )}
                             {crit?.productType && (
-                              <div className="text-[10px] text-muted-foreground flex items-center gap-1">
+                              <div className="ds-meta text-muted-foreground flex items-center gap-1">
                                 <Eye className="h-3 w-3 shrink-0" />
                                 Tipo: <span className="text-foreground font-medium capitalize">{crit.productType}</span>
                               </div>
@@ -1080,7 +1027,7 @@ Texto: "${aiText}"`;
                                 status: w.status === "active" ? "paused" : "active",
                               })
                             }
-                            className="flex-1 inline-flex items-center justify-center gap-1 h-7 rounded border-none text-[10px] font-semibold text-muted-foreground hover:text-foreground hover:glass bg-white/5 border-white/10 transition-colors"
+                            className="flex-1 inline-flex items-center justify-center gap-1 h-7 rounded border-none ds-meta font-semibold text-muted-foreground hover:text-foreground hover:glass bg-white/5 border-white/10 transition-colors"
                           >
                             {w.status === "active" ? (
                               <><BellOff className="h-3 w-3" /> Pausar</>
@@ -1118,7 +1065,7 @@ Texto: "${aiText}"`;
                 <div className="rounded border-none glass-card border-none p-6 text-center">
                   <TrendingDown className="h-8 w-8 text-muted-foreground mx-auto mb-2 opacity-40" />
                   <p className="text-xs text-muted-foreground">Nenhuma oportunidade detectada ainda.</p>
-                  <p className="text-[10px] text-muted-foreground mt-1">
+                  <p className="ds-meta text-muted-foreground mt-1">
                     O motor reativo detecta automaticamente tarifas abaixo dos limites configurados nos alertas acima durante as buscas GDS.
                   </p>
                 </div>
@@ -1144,7 +1091,7 @@ Texto: "${aiText}"`;
                               <p className="text-xs font-bold text-foreground line-clamp-1">
                                 {pkg?.name || "Pacote identificado"}
                               </p>
-                              <p className="text-[10px] text-muted-foreground mt-0.5">
+                              <p className="ds-meta text-muted-foreground mt-0.5">
                                 Alerta: {watchProfile?.name || "—"}
                               </p>
                             </div>
@@ -1168,11 +1115,11 @@ Texto: "${aiText}"`;
                                 style={{ width: `${Math.min(100, promo.score)}%` }}
                               />
                             </div>
-                            <span className="text-[10px] font-bold text-success">{promo.score}pts</span>
+                            <span className="ds-meta font-bold text-success">{promo.score}pts</span>
                           </div>
 
                           {promo.reason && (
-                            <p className="text-[10px] text-muted-foreground leading-relaxed line-clamp-3">
+                            <p className="ds-meta text-muted-foreground leading-relaxed line-clamp-3">
                               {promo.reason}
                             </p>
                           )}
@@ -1182,14 +1129,14 @@ Texto: "${aiText}"`;
                           <div className="flex gap-2 border-t border-border pt-2">
                             <Button
                               onClick={() => updatePromotionMut.mutate({ id: promo.id, status: "approved" })}
-                              className="flex-1 inline-flex items-center justify-center gap-1 h-7 rounded border border-success/40 bg-success/10 text-[10px] font-bold text-success hover:bg-success/20 transition-colors"
+                              className="flex-1 inline-flex items-center justify-center gap-1 h-7 rounded border border-success/40 bg-success/10 ds-meta font-bold text-success hover:bg-success/20 transition-colors"
                             >
                               <CheckCircle2 className="h-3 w-3" />
                               Aprovar
                             </Button>
                             <Button
                               onClick={() => updatePromotionMut.mutate({ id: promo.id, status: "dismissed" })}
-                              className="inline-flex items-center justify-center gap-1 h-7 px-2 rounded border-none text-[10px] font-semibold text-muted-foreground hover:glass bg-white/5 border-white/10 transition-colors"
+                              className="inline-flex items-center justify-center gap-1 h-7 px-2 rounded border-none ds-meta font-semibold text-muted-foreground hover:glass bg-white/5 border-white/10 transition-colors"
                             >
                               <XCircle className="h-3 w-3" />
                               Ignorar
@@ -1238,7 +1185,7 @@ Texto: "${aiText}"`;
 
               {/* AI Conversation Parser Section */}
               <div className="glass bg-white/5 border-white/10/40 border-none/80 rounded p-4 mb-6">
-                <div className="flex items-center gap-1.5 text-[11px] font-bold uppercase tracking-wider text-muted-foreground mb-3">
+                <div className="flex items-center gap-1.5 ds-meta font-bold uppercase tracking-wider text-muted-foreground mb-3">
                   <Sparkles className="h-3.5 w-3.5 text-brand" />
                   Interpretar com IA (Opcional)
                 </div>
@@ -1253,7 +1200,7 @@ Texto: "${aiText}"`;
                     type="button"
                     onClick={handleAiInterpret}
                     disabled={interpreting || !aiText.trim()}
-                    className="h-8 text-[11px]"
+                    className="h-8 ds-meta"
                   >
                     {interpreting ? (
                       <>
@@ -1570,7 +1517,7 @@ Texto: "${aiText}"`;
                     onChange={(e) => setWatcherMaxPrice(Number(e.target.value))}
                     placeholder="3000"
                   />
-                  <p className="text-[10px] text-muted-foreground mt-1">
+                  <p className="ds-meta text-muted-foreground mt-1">
                     Tarifas abaixo deste valor serão registradas como oportunidade.
                   </p>
                 </Field>

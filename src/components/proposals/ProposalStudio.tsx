@@ -54,7 +54,7 @@ export function ProposalStudio({ draft, save, agency }: ProposalStudioProps) {
         <Accordion title="Aparência & Template" defaultOpen>
           <div className="space-y-4">
             <div>
-              <span className="block text-[10px] uppercase tracking-wide text-muted-foreground mb-2">
+              <span className="block ds-meta uppercase tracking-wide text-muted-foreground mb-2">
                 Formato do Canvas
               </span>
               <StudioFormatPicker
@@ -63,7 +63,7 @@ export function ProposalStudio({ draft, save, agency }: ProposalStudioProps) {
               />
             </div>
             <div>
-              <span className="block text-[10px] uppercase tracking-wide text-muted-foreground mb-2">
+              <span className="block ds-meta uppercase tracking-wide text-muted-foreground mb-2">
                 Template
               </span>
               <StudioTemplatePicker
@@ -92,7 +92,7 @@ export function ProposalStudio({ draft, save, agency }: ProposalStudioProps) {
             <div className="flex items-center justify-between py-1">
               <div>
                 <span className="block text-xs font-bold text-foreground">Template da Agência</span>
-                <span className="block text-[10px] text-muted-foreground">
+                <span className="block ds-meta text-muted-foreground">
                   Disponível para clonagem
                 </span>
               </div>
@@ -105,14 +105,14 @@ export function ProposalStudio({ draft, save, agency }: ProposalStudioProps) {
             </div>
 
             <div className="border-t border-border/60 pt-3">
-              <span className="block text-[10px] uppercase tracking-wide text-muted-foreground mb-2">
+              <span className="block ds-meta uppercase tracking-wide text-muted-foreground mb-2">
                 Log de Atividades
               </span>
 
               {historyQ.isLoading ? (
-                <div className="text-[10px] text-muted-foreground">Carregando histórico...</div>
+                <div className="ds-meta text-muted-foreground">Carregando histórico...</div>
               ) : !historyQ.data || historyQ.data.length === 0 ? (
-                <div className="text-[10px] text-muted-foreground italic">
+                <div className="ds-meta text-muted-foreground italic">
                   Nenhuma atividade registrada ainda.
                 </div>
               ) : (
@@ -151,7 +151,7 @@ export function ProposalStudio({ draft, save, agency }: ProposalStudioProps) {
                     return (
                       <div
                         key={entry.id}
-                        className="text-[11px] border-b border-border/40 pb-1.5 last:border-0 last:pb-0"
+                        className="ds-meta border-b border-border/40 pb-1.5 last:border-0 last:pb-0"
                       >
                         <div className="flex justify-between items-start gap-1">
                           <span className="font-semibold text-foreground leading-tight">
@@ -162,7 +162,7 @@ export function ProposalStudio({ draft, save, agency }: ProposalStudioProps) {
                           </span>
                         </div>
                         {descText && (
-                          <p className="text-[10px] text-muted-foreground mt-0.5">{descText}</p>
+                          <p className="ds-meta text-muted-foreground mt-0.5">{descText}</p>
                         )}
                       </div>
                     );

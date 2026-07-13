@@ -124,7 +124,7 @@ export function PageHeader({
                         key={f.value}
                         onClick={() => onFilterChange?.(f.value)}
                         className={cn(
-                          "px-3 h-7 rounded-full text-[11px] font-extrabold whitespace-nowrap transition-all duration-200 cursor-pointer flex items-center gap-1.5",
+                          "px-3 h-7 rounded-full ds-meta font-extrabold whitespace-nowrap transition-all duration-200 cursor-pointer flex items-center gap-1.5",
                           isActive
                             ? "bg-primary text-primary-foreground shadow-sm"
                             : "text-muted-foreground hover:text-foreground hover:bg-surface-alt"

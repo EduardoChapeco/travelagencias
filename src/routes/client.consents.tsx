@@ -106,7 +106,7 @@ function ClientConsentsPage() {
       </header>
 
       <div>
-        <h3 className="mb-4 text-xs font-bold uppercase tracking-widest text-muted-foreground flex items-center gap-2">
+        <h3 className="mb-4 ds-label-caps text-muted-foreground flex items-center gap-2">
           <ShieldAlert className="h-4 w-4" /> Ações Pendentes
         </h3>
 
@@ -145,7 +145,7 @@ function ClientConsentsPage() {
                   <div>
                     <h4 className="text-base font-bold text-foreground flex items-center gap-2">
                       {KIND_LABELS[m.kind] || m.kind}
-                      <span className="inline-flex items-center rounded-full glass bg-white/5 border-white/10 px-2 py-0.5 text-[10px] font-semibold text-muted-foreground border-none">
+                      <span className="inline-flex items-center rounded-full glass bg-white/5 border-white/10 px-2 py-0.5 ds-meta font-semibold text-muted-foreground border-none">
                         v{m.version}
                       </span>
                     </h4>
@@ -170,7 +170,7 @@ function ClientConsentsPage() {
       </div>
 
       <div className="pt-4 border-t border-border/50">
-        <h3 className="mb-4 text-xs font-bold uppercase tracking-widest text-muted-foreground flex items-center gap-2">
+        <h3 className="mb-4 ds-label-caps text-muted-foreground flex items-center gap-2">
           <Clock className="h-4 w-4" /> Histórico de Aceites (Trilha de Auditoria)
         </h3>
 
@@ -204,7 +204,7 @@ function ClientConsentsPage() {
                         <Clock className="h-3.5 w-3.5" /> {fmtDate(a.accepted_at)}
                       </span>
                       {a.ip_address && (
-                        <span className="font-mono text-[10px] glass bg-white/5 border-white/10 px-2 py-0.5 rounded border-none">
+                        <span className="font-mono ds-meta glass bg-white/5 border-white/10 px-2 py-0.5 rounded border-none">
                           IP: {a.ip_address}
                         </span>
                       )}
