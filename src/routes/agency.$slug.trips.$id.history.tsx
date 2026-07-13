@@ -134,7 +134,7 @@ function TripHistoryPage() {
   combinedLogs.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
 
   return (
-    <div className="page-content page-section">
+    <div className="w-full flex flex-col gap-6">
       {/* Header */}
       <div className="rounded-[var(--radius-card)] border-none glass-card border-none p-4 flex items-start gap-3">
         <Clock className="h-4 w-4 text-brand mt-0.5 shrink-0" />

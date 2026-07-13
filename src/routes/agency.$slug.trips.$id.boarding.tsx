@@ -249,7 +249,7 @@ function TripBoardingPage() {
   });
 
   return (
-    <div className="page-content page-section">
+    <div className="w-full flex flex-col gap-6">
       {/* Header informativo */}
       <div className="rounded-[var(--radius-card)] border-none glass-card border-none p-4 flex items-start gap-3 justify-between">
         <div className="flex items-start gap-3">

@@ -179,7 +179,7 @@ function TripLodgingPage() {
   };
 
   return (
-    <div className="page-content page-section">
+    <div className="w-full flex flex-col gap-6">
       {/* Header */}
       <div className="rounded-[var(--radius-card)] border-none glass-card border-none p-4 flex items-start justify-between gap-4">
         <div className="flex items-start gap-3">

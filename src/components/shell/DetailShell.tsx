@@ -63,8 +63,8 @@ export function DetailShell({
         </div>
       )}
 
-      {/* Content Area (lets the child handle scroll if needed via canonical classes) */}
-      <div className="flex-1 flex flex-col min-h-0 relative">
+      {/* Content Area (unified bounding and scroll handling) */}
+      <div className="flex-1 flex flex-col min-h-0 relative page-content dock-offset max-w-7xl mx-auto w-full">
         {children}
       </div>
     </div>

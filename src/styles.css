@@ -264,43 +264,11 @@
     color: rgba(255, 255, 255, 0.98) !important;
   }
 
-  /* Interceptar cores escuras de texto do Tailwind dentro do workspace e torná-las claras e legíveis */
-  .os-workspace .text-zinc-950,
-  .os-workspace .text-zinc-900,
-  .os-workspace .text-zinc-800,
-  .os-workspace .text-zinc-700,
-  .os-workspace .text-zinc-600,
-  .os-workspace .text-gray-950,
-  .os-workspace .text-gray-900,
-  .os-workspace .text-gray-800,
-  .os-workspace .text-gray-700,
-  .os-workspace .text-gray-600,
-  .os-workspace .text-slate-950,
-  .os-workspace .text-slate-900,
-  .os-workspace .text-slate-800,
-  .os-workspace .text-slate-700,
-  .os-workspace .text-slate-600,
-  .os-workspace .text-neutral-950,
-  .os-workspace .text-neutral-900,
-  .os-workspace .text-neutral-800,
-  .os-workspace .text-neutral-700,
-  .os-workspace .text-neutral-600,
-  .os-workspace .text-black,
-  .os-workspace .text-foreground {
-    color: rgba(255, 255, 255, 0.95) !important;
-  }
-
-  .os-workspace .text-zinc-500,
-  .os-workspace .text-zinc-400,
-  .os-workspace .text-gray-500,
-  .os-workspace .text-gray-400,
-  .os-workspace .text-slate-500,
-  .os-workspace .text-slate-400,
-  .os-workspace .text-neutral-500,
-  .os-workspace .text-neutral-400,
-  .os-workspace .text-muted-foreground {
-    color: rgba(255, 255, 255, 0.60) !important;
-  }
+  /*
+   * REMOVED: Aggressive text color interceptors
+   * Tailwind text color utilities (e.g. .text-zinc-900) should work natively.
+   * Forcing them to white caused UI-203 (light cards with white text).
+   */
 
   /* bg-muted → ultra leve */
   .os-workspace .bg-muted,

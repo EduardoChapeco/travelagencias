@@ -118,9 +118,10 @@ function AccordionSection({
   return (
     <div className="rounded-2xl border border-border bg-surface">
       <Button
+        variant="subtle"
         type="button"
         onClick={() => setOpenId(open ? null : id)}
-        className="flex w-full items-center gap-2 px-3 py-2.5 text-xs font-semibold hover:bg-surface-alt transition-colors"
+        className="flex w-full items-center gap-2 px-3 py-2.5 text-xs font-semibold hover:bg-surface-alt transition-colors shadow-none"
       >
         {open ? (
           <ChevronDown className="h-3.5 w-3.5 text-muted-foreground" />

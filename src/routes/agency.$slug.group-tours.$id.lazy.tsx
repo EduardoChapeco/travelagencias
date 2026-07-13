@@ -374,7 +374,7 @@ function TourDetailPage() {
   const cac = pCount > 0 ? adsSpend / pCount : 0;
 
   return (
-    <div className="p-4 md:p-6 max-w-7xl mx-auto space-y-6">
+    <div className="page-content dock-offset max-w-7xl mx-auto w-full flex flex-col min-h-0 relative space-y-6">
               <div className="flex items-center gap-2">
           <Select
             value={t.status}

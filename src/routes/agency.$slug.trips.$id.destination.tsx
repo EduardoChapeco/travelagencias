@@ -122,7 +122,7 @@ function TripDestinationPage() {
 
   if (!dest) {
     return (
-      <div className="page-content page-section">
+      <div className="w-full flex flex-col gap-6">
         <div className="rounded-[var(--radius-card)] border border-dashed border-warning/40 bg-warning/5 p-5 flex items-start gap-3">
           <AlertTriangle className="h-4 w-4 text-warning mt-0.5 shrink-0" />
           <div>
@@ -146,7 +146,7 @@ function TripDestinationPage() {
   const safety = dest.safety_level ? SAFETY_CONFIG[dest.safety_level] : null;
 
   return (
-    <div className="page-content page-section">
+    <div className="w-full flex flex-col gap-6">
       {/* Header */}
       <div className="flex items-start justify-between gap-4">
         <div>

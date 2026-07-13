@@ -261,7 +261,7 @@ function TripConfirmationPage() {
   // ────────────────────────────────────────────────────────────────────
 
   return (
-    <div className="page-content page-section max-w-4xl">
+    <div className="w-full flex flex-col gap-6 max-w-4xl mx-auto">
       {/* ── Header ── */}
       <div className="rounded-[var(--radius-card)] border-none glass-card border-none p-4 flex items-start justify-between gap-4">
         <div className="flex items-start gap-3">

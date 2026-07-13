@@ -320,7 +320,7 @@ function TripVouchers() {
 
   // ── List mode ─────────────────────────────────────────────────────────────────
   return (
-    <div className="page-content dock-offset">
+    <div className="w-full flex flex-col gap-6">
       <ConfirmDialog />
       <div className="mb-6 flex items-center justify-between">
         <h2 className="text-lg font-semibold tracking-tight">Vouchers & Guias</h2>

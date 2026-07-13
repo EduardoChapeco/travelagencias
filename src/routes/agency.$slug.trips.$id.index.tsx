@@ -86,7 +86,7 @@ function TripOverview() {
   const isToday = daysToTrip === 0;
 
   return (
-    <div className="page-content dock-offset">
+    <div className="w-full">
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-[1fr_280px]">
         <form
           className="space-y-4 rounded-[var(--radius-card)] border-none glass-card border-none p-6 "

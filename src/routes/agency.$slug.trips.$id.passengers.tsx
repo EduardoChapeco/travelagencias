@@ -270,7 +270,7 @@ function PassengersPage() {
   };
 
   return (
-    <div className="page-content dock-offset">
+    <div className="w-full">
       <ConfirmDialog />
       {(list.isError || tripQ.isError || docsQ.isError) && (
         <div className="mb-6 flex flex-col items-center justify-center py-10 px-6 text-center rounded-[var(--radius-card)] border border-red-200 bg-red-50/60">
@@ -897,7 +897,7 @@ function DataConferencePanel({
         </div>
 
         {/* LADO DIREITO: Form de CRUD/CMS (Edição) */}
-        <div className="w-full md:w-[480px] flex flex-col page-content dock-offset glass-card border-none">
+        <div className="w-full md:w-[480px] flex flex-col p-6 glass-card border-none">
           <div className="flex items-center justify-between border-b border-border pb-4 mb-6">
             <div>
               <h3 className="text-lg font-bold text-foreground">Conferência de Cadastro</h3>
