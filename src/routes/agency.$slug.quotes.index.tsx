@@ -493,7 +493,7 @@ Texto: "${aiText}"`;
   });
 
   return (
-    <div className="flex h-full flex-col overflow-hidden">
+    <div className="w-full flex h-full flex-col overflow-hidden">
               <PageHeader
           title="Cotações"
           search={{
@@ -556,7 +556,7 @@ Texto: "${aiText}"`;
         />
 
       {/* Main Content */}
-      <div className="flex-1 overflow-hidden px-4  md:pr-6 py-4 flex flex-col min-h-0 pb-24">
+      <div className="page-content page-section dock-offset">
         {activeTab === "quotes" ? (
           isQuotesError ? (
             <div className="p-4 rounded-[var(--radius-card)] glass-error text-xs flex items-center gap-2 m-6">

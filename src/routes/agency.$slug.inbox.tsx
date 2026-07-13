@@ -219,7 +219,7 @@ function InboxModule() {
 
 
   return (
-    <div className="flex-1 flex overflow-hidden min-h-0">
+    <div className="w-full flex-1 flex overflow-hidden min-h-0">
       {(isErrorChannels || isErrorConversations) && (
         <div className="fixed bottom-4 left-1/2 -translate-x-1/2 z-50 flex items-center gap-3 rounded-[var(--radius-card)] border border-red-200 bg-red-50 px-4 py-3 shadow-none max-w-md">
           <AlertCircle className="h-4 w-4 text-red-600 shrink-0" />

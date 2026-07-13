@@ -488,3 +488,60 @@ export async function syncMeetingToGoogleCalendar(meetingId: string): Promise<vo
 
   if (error) throw error;
 }
+
+// ---------------------------------------------------------------------------
+// Proposals por Lead — repositório canônico
+// Extrai a query inline que estava em use-lead-detail.ts.
+// ---------------------------------------------------------------------------
+export type LeadProposalSummary = {
+  id: string;
+  number: number | null;
+  title: string | null;
+  status: string | null;
+  total: number | null;
+  created_at: string;
+};
+
+export async function fetchLeadProposals(
+  leadId: string,
+  clientId?: string | null
+): Promise<LeadProposalSummary[]> {
+  let query = supabase
+    .from("proposals")
+    .select("id, number, title, status, total, created_at");
+
+  if (clientId) {
+    query = query.or(`lead_id.eq.${leadId},client_id.eq.${clientId}`);
+  } else {
+    query = query.eq("lead_id", leadId);
+  }
+
+  const { data, error } = await query;
+  if (error) throw error;
+  return (data ?? []) as LeadProposalSummary[];
+}
+
+// ---------------------------------------------------------------------------
+// Upload de avatar do Lead — repositório canônico
+// Extrai o upload de mídia que estava em use-lead-detail.ts.
+// Bucket: agency-media | Path: crm/avatars/{leadId}/{timestamp}.{ext}
+// ---------------------------------------------------------------------------
+export async function uploadLeadAvatar(
+  leadId: string,
+  file: File
+): Promise<string> {
+  const fileExt = file.name.split(".").pop();
+  const filePath = `crm/avatars/${leadId}/${Date.now()}.${fileExt}`;
+
+  const { error: uploadError } = await supabase.storage
+    .from("agency-media")
+    .upload(filePath, file);
+  if (uploadError) throw uploadError;
+
+  const {
+    data: { publicUrl },
+  } = supabase.storage.from("agency-media").getPublicUrl(filePath);
+
+  await updateLead(leadId, { avatar_url: publicUrl });
+  return publicUrl;
+}

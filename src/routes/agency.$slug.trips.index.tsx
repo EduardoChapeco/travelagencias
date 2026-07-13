@@ -499,7 +499,7 @@ function TripsList() {
           }
         />
 
-      <div className="flex-1 overflow-hidden px-4  md:pr-6 py-4 flex flex-col min-h-0 pb-24">
+      <div className="page-content page-section dock-offset">
         {list.isError && (
           <div className="flex flex-col items-center justify-center py-16 px-6 text-center rounded-[var(--radius-card)] border border-red-200 bg-red-50/60 mb-4">
             <div className="h-10 w-10 rounded-full bg-red-100 flex items-center justify-center mb-3">

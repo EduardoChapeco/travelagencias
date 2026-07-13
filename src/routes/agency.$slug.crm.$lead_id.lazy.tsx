@@ -10,7 +10,7 @@ import {
 import { toast } from "sonner";
 import confetti from "canvas-confetti";
 import { useLeadDetail } from "@/hooks/use-lead-detail";
-import { type Lead, type LeadMeeting, updateLead, createLeadMeeting, deleteLeadMeeting, syncMeetingToGoogleCalendar, promoteLeadToClient, addLeadActivity, transferLead } from "@/services/crm";
+import { type Lead, type LeadMeeting } from "@/services/crm";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Field } from "@/components/ui/field";
 import { FormInput as Input } from "@/components/ui/input";
@@ -94,6 +94,17 @@ function LeadDetailPage() {
     handlePhotoUpload,
     handleCopyFormLink,
     handleShareFormWhatsApp,
+    // Handlers de domínio (extraídos do inline da rota)
+    handleUpdateStaleness,
+    handleReactivateLead,
+    handleChangeStage,
+    handleTransferLead,
+    handleAddPax,
+    handleRemovePax,
+    // Meetings via sub-hook
+    createMeeting,
+    deleteMeeting,
+    syncMeetingToGoogle,
     ConfirmDialog,
     confirm,
     qc,
@@ -324,22 +335,7 @@ function LeadDetailPage() {
                         <Button
                           key={opt.v}
                           type="button"
-                          onClick={async () => {
-                            try {
-                              await updateLead(lead.id, { staleness_status: opt.v });
-                              await addLeadActivity({
-                                leadId: lead.id,
-                                agencyId: lead.agency_id,
-                                type: "note",
-                                content: `Inatividade registrada: "${opt.label}"`,
-                              });
-                              qc.invalidateQueries({ queryKey: ["lead", lead.id] });
-                              qc.invalidateQueries({ queryKey: ["leads", agency?.id] });
-                              toast.success("Status de inatividade atualizado!");
-                            } catch (e) {
-                              toast.error("Falha ao salvar");
-                            }
-                          }}
+                          onClick={() => handleUpdateStaleness(opt.v, opt.label)}
                           className="ds-meta font-bold bg-background border-none px-3 py-1.5 rounded-[var(--radius-card)] hover:border-brand/40 transition-colors cursor-pointer"
                         >
                           {opt.label}
@@ -369,19 +365,7 @@ function LeadDetailPage() {
                       </span>
                     </div>
                     <GhostButton
-                      onClick={async () => {
-                        try {
-                          await updateLead(lead.id, {
-                            staleness_status: "active",
-                            last_contacted_at: new Date().toISOString(),
-                          });
-                          qc.invalidateQueries({ queryKey: ["lead", lead.id] });
-                          qc.invalidateQueries({ queryKey: ["leads", agency?.id] });
-                          toast.success("Lead reativado com sucesso!");
-                        } catch (e) {
-                          toast.error("Falha ao reativar");
-                        }
-                      }}
+                      onClick={() => handleReactivateLead()}
                       className="text-xs font-bold h-8 px-3 rounded-[var(--radius-card)]"
                     >
                       Re-ativar Lead
@@ -426,27 +410,7 @@ function LeadDetailPage() {
                     </label>
                     <Select
                       value={lead.stage_id}
-                      onValueChange={async (newStage) => {
-                        if (newStage === lead.stage_id) return;
-                        const fromName = stage?.name ?? "—";
-                        const toName = stagesQ.data?.find((s) => s.id === newStage)?.name ?? "—";
-                        try {
-                          await updateLead(lead.id, { stage_id: newStage });
-                          await addLeadActivity({
-                            leadId: lead.id,
-                            agencyId: lead.agency_id,
-                            type: "stage_change",
-                            content: `Movido de ${fromName} para ${toName}`,
-                            metadata: { from: lead.stage_id, to: newStage },
-                          });
-                          qc.invalidateQueries({ queryKey: ["lead", lead_id] });
-                          qc.invalidateQueries({ queryKey: ["lead-activities", lead_id] });
-                          qc.invalidateQueries({ queryKey: ["leads", agency?.id] });
-                          toast.success(`Estágio alterado para ${toName}`);
-                        } catch (error: any) {
-                          toast.error(error.message);
-                        }
-                      }}
+                      onValueChange={(newStage) => handleChangeStage(newStage)}
                     >
                       <SelectTrigger className="w-full bg-white/5 rounded-full border-none">
                         <SelectValue placeholder="Selecione o estágio..." />
@@ -466,18 +430,7 @@ function LeadDetailPage() {
                     </label>
                     <Select
                       value={lead.owner_id || "unassigned"}
-                      onValueChange={async (val) => {
-                        const ownerId = val === "unassigned" ? null : val;
-                        try {
-                          await transferLead(lead.id, ownerId);
-                          qc.invalidateQueries({ queryKey: ["lead", lead_id] });
-                          qc.invalidateQueries({ queryKey: ["leads", agency?.id] });
-                          qc.invalidateQueries({ queryKey: ["lead-activities", lead_id] });
-                          toast.success("Dono do lead atualizado.");
-                        } catch (e) {
-                          toast.error("Falha ao salvar dono");
-                        }
-                      }}
+                      onValueChange={(val) => handleTransferLead(val === "unassigned" ? null : val)}
                     >
                       <SelectTrigger className="w-full bg-white/5 rounded-full border-none">
                         <SelectValue placeholder="Não atribuído" />
@@ -634,15 +587,7 @@ function LeadDetailPage() {
                                 description: "Deseja remover este acompanhante?",
                                 variant: "destructive",
                                 onConfirm: async () => {
-                                  const list = lead.pax_list || [];
-                                  const updated = list.filter((_, idx) => idx !== index);
-                                  try {
-                                    await updateLead(lead.id, { pax_list: updated });
-                                    qc.invalidateQueries({ queryKey: ["lead", lead.id] });
-                                    toast.success("Acompanhante removido!");
-                                  } catch (e) {
-                                    toast.error("Falha ao salvar");
-                                  }
+                                  await handleRemovePax(index);
                                 },
                               });
                             }}
@@ -699,25 +644,7 @@ function LeadDetailPage() {
                     <form
                       onSubmit={async (e) => {
                         e.preventDefault();
-                        if (!paxForm.full_name) return;
-                        const list = lead.pax_list || [];
-                        const updated = [...list, { ...paxForm }];
-                        try {
-                          await updateLead(lead.id, { pax_list: updated });
-                          setPaxForm({
-                            full_name: "",
-                            document: "",
-                            birth_date: "",
-                            relationship: "other",
-                            phone: "",
-                            email: "",
-                          });
-                          setPaxFormOpen(false);
-                          qc.invalidateQueries({ queryKey: ["lead", lead.id] });
-                          toast.success("Acompanhante cadastrado!");
-                        } catch (err) {
-                          toast.error("Falha ao salvar acompanhante");
-                        }
+                        await handleAddPax(paxForm);
                       }}
                       className="border-none p-4 rounded-[var(--radius-card)] glass bg-white/5 border-white/10/10 space-y-3"
                     >
@@ -807,34 +734,7 @@ function LeadDetailPage() {
 
                   {meetingFormOpen && (
                     <form
-                      onSubmit={async (e) => {
-                        e.preventDefault();
-                        if (!meetingForm.title || !meetingForm.scheduled_at) return;
-                        try {
-                          await createLeadMeeting({
-                            lead_id: lead.id,
-                            agency_id: lead.agency_id,
-                            title: meetingForm.title,
-                            description: meetingForm.description || null,
-                            scheduled_at: new Date(meetingForm.scheduled_at).toISOString(),
-                            duration_minutes: Number(meetingForm.duration_minutes),
-                            meeting_type: meetingForm.meeting_type,
-                          });
-                          setMeetingForm({
-                            title: "",
-                            description: "",
-                            scheduled_at: "",
-                            duration_minutes: 30,
-                            meeting_type: "call",
-                          });
-                          setMeetingFormOpen(false);
-                          qc.invalidateQueries({ queryKey: ["lead-meetings", lead.id] });
-                          qc.invalidateQueries({ queryKey: ["lead-activities", lead.id] });
-                          toast.success("Compromisso agendado!");
-                        } catch (err) {
-                          toast.error("Falha ao criar compromisso");
-                        }
-                      }}
+                      onSubmit={(e) => createMeeting(e)}
                       className="border-none p-4 rounded-[var(--radius-card)] glass bg-white/5 border-white/10/10 space-y-3"
                     >
                       <Field label="Título do Compromisso *">
@@ -964,13 +864,11 @@ function LeadDetailPage() {
                               onClick={async () => {
                                 const toastId = toast.loading("Sincronizando com Google Agenda...");
                                 try {
-                                  await syncMeetingToGoogleCalendar(meeting.id);
+                                  await syncMeetingToGoogle(meeting.id);
                                   qc.invalidateQueries({ queryKey: ["lead-meetings", lead.id] });
                                   toast.success("Sincronizado com sucesso!", { id: toastId });
-                                } catch (err: any) {
-                                  toast.error(err.message || "Erro na sincronização", {
-                                    id: toastId,
-                                  });
+                                } catch (err: unknown) {
+                                  toast.error((err as Error).message || "Erro na sincronização", { id: toastId });
                                 }
                               }}
                               className={`ds-meta font-extrabold uppercase px-2.5 py-1.5 rounded-[var(--radius-card)] transition-colors cursor-pointer ${
@@ -990,15 +888,7 @@ function LeadDetailPage() {
                                   description: "Deseja remover este compromisso?",
                                   variant: "destructive",
                                   onConfirm: async () => {
-                                    try {
-                                      await deleteLeadMeeting(meeting.id);
-                                      qc.invalidateQueries({
-                                        queryKey: ["lead-meetings", lead.id],
-                                      });
-                                      toast.success("Compromisso removido.");
-                                    } catch (e) {
-                                      toast.error("Erro ao remover");
-                                    }
+                                    await deleteMeeting(meeting.id);
                                   },
                                 });
                               }}
@@ -1048,7 +938,7 @@ function LeadDetailPage() {
                           <div className="flex items-center justify-between font-bold">
                             <span className="text-foreground truncate">{prop.title}</span>
                             <span className="font-mono text-brand font-extrabold">
-                              {money(prop.total)}
+                              {money(prop.total ?? 0)}
                             </span>
                           </div>
                           <div className="flex items-center justify-between ds-meta text-muted-foreground">
@@ -1321,19 +1211,15 @@ function LeadDetailPage() {
                       return;
                     }
                     try {
-                      await promoteLeadToClient(lead.id, clientPayload);
+                      await handleConvert();
                       confetti({
                         particleCount: 150,
                         spread: 70,
                         origin: { y: 0.6 },
                         colors: ["#000000", "#ffffff", "#a8a29e", "#10B981"],
                       });
-                      toast.success("Lead convertido para Cliente com sucesso!");
-                      setConfirmConvertOpen(false);
-                      qc.invalidateQueries({ queryKey: ["lead", lead.id] });
-                      qc.invalidateQueries({ queryKey: ["leads", agency?.id] });
-                    } catch (e: any) {
-                      toast.error(e.message || "Erro na conversão");
+                    } catch (e: unknown) {
+                      toast.error((e as Error).message || "Erro na conversão");
                     }
                   }}
                   className="h-9 text-xs"

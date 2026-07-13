@@ -208,7 +208,7 @@ function VouchersPage() {
   }
 
   return (
-    <div className="flex h-full flex-col overflow-hidden">
+    <div className="w-full flex h-full flex-col overflow-hidden">
               <PageHeader
           title="Vouchers"
           search={{
@@ -426,7 +426,7 @@ function VouchersPage() {
         // ========================================
         <>
           {/* Fila list table */}
-          <div className="flex-1 overflow-auto px-4  md:pr-6 py-4 min-h-0 pb-24">
+          <div className="page-content page-section dock-offset">
             {/* KPI cards dentro do conteúdo */}
             <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-6">
               <div className="rounded-[var(--radius-card)] border-none glass bg-white/5 border-white/10/20 p-3 text-center">

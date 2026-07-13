@@ -53,7 +53,7 @@ function BusLayoutsPage() {
   }, [q.data, qSearch, typeFilter]);
 
   return (
-    <div className="flex h-full flex-col overflow-hidden">
+    <div className="w-full flex h-full flex-col overflow-hidden">
               <PageHeader
           title="Frota & Ônibus"
           search={{
@@ -89,7 +89,7 @@ function BusLayoutsPage() {
           }
         />
 
-      <div className="flex-1 overflow-y-auto px-4  md:pr-6 py-4 flex flex-col gap-4">
+      <div className="page-content page-section dock-offset">
         {q.isLoading && <div className="text-sm text-muted-foreground">Carregando…</div>}
         {filtered.length === 0 && !q.isLoading && (
           <EmptyState
@@ -201,6 +201,9 @@ function NewLayout({
           c,
           type: isAisle ? "aisle" : "seat",
           label: isAisle ? "" : String(seatNumber++).padStart(2, "0"),
+          deck: 1,
+          status: isAisle ? undefined : "available",
+          category: isAisle ? undefined : "convencional",
         });
       }
     }

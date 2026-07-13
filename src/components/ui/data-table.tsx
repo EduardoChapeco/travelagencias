@@ -193,8 +193,9 @@ export function DataTableColumnHeader<TData, TValue>({
   return (
     <div className={`flex items-center space-x-2 ${className}`}>
       <Button
+        variant="ghost"
         onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        className="flex items-center gap-1 hover:text-foreground hover:bg-surface-alt px-1.5 py-1 -ml-1.5 rounded-full transition-colors"
+        className="flex items-center gap-1 hover:text-foreground hover:bg-surface-alt px-1.5 py-1 -ml-1.5 rounded-full transition-colors shadow-none"
       >
         <span>{title}</span>
         {column.getIsSorted() === "desc" ? (

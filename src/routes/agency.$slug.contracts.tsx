@@ -78,7 +78,7 @@ function ContractsPage() {
   });
 
   return (
-    <div className="flex h-full flex-col overflow-hidden">
+    <div className="w-full flex h-full flex-col overflow-hidden">
               <PageHeader
           title="Contratos"
           search={activeTab === "list" ? {
@@ -283,14 +283,14 @@ function ContractsPage() {
 
         {/* ── Visualização de Biblioteca de Cláusulas Contratuais (Inline) ───────────── */}
         {activeTab === "clauses" && agency && (
-          <div className="flex-1 overflow-y-auto px-4  md:pr-6 py-4 min-h-0">
+          <div className="page-content page-section dock-offset">
             <ContractClauseLibrary agencyId={agency.id} isInline={true} />
           </div>
         )}
  
         {/* ── Visualização do Painel de Administrador (Inline) ───────────────────────── */}
         {activeTab === "admin" && agency && (
-          <div className="flex-1 overflow-y-auto px-4  md:pr-6 py-4 min-h-0">
+          <div className="page-content page-section dock-offset">
             <ModuleAdminPanel
               moduleKey="contracts"
               moduleName="Contratos"

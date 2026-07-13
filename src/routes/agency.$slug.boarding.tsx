@@ -222,7 +222,7 @@ function BoardingKanbanPage() {
   }
 
   return (
-    <div className="flex h-full flex-col overflow-hidden">
+    <div className="w-full flex h-full flex-col overflow-hidden">
               <PageHeader
           title="Embarques"
           filters={[
@@ -323,7 +323,7 @@ function BoardingKanbanPage() {
           )}
 
           {viewMode === "list" && (
-            <div className="flex-1 overflow-y-auto p-4 md:p-6 animate-in fade-in duration-300">
+            <div className="page-content page-section dock-offset animate-in fade-in duration-300">
               {localCards.length === 0 ? (
                 <div className="text-center py-12 border border-dashed rounded-[var(--radius-card)] text-sm text-muted-foreground">
                   Nenhum localizador de embarque cadastrado.
@@ -402,7 +402,7 @@ function BoardingKanbanPage() {
           )}
 
           {viewMode === "calendar" && (
-            <div className="flex-1 flex flex-col p-4 md:p-6 overflow-hidden animate-in fade-in duration-300">
+            <div className="page-content page-section dock-offset animate-in fade-in duration-300">
               <div className="flex items-center justify-between mb-4">
                 <h2 className="text-sm font-bold uppercase tracking-wider text-foreground">
                   {currentMonth.toLocaleDateString("pt-BR", { month: "long", year: "numeric" })}

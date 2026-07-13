@@ -47,7 +47,15 @@ type ItineraryDay = {
   description_md?: string;
   description?: string;
 };
-type SeatCell = { r: number; c: number; label: string; type: string };
+type SeatCell = {
+  r: number;
+  c: number;
+  label: string;
+  type: string;
+  deck?: number;
+  category?: string;
+  status?: string;
+};
 
 type GroupCost = {
   id: string;
@@ -2315,6 +2323,7 @@ function BusSeatManager({
   const { confirm, ConfirmDialog } = useConfirm();
   const [selectedSeat, setSelectedSeat] = useState<SeatCell | null>(null);
   const [selectedPax, setSelectedPax] = useState("");
+  const [activeDeck, setActiveDeck] = useState<number>(1);
 
   const qMap = useQuery({
     queryKey: ["bus-layout", layoutId],
@@ -2370,7 +2379,13 @@ function BusSeatManager({
       <div className="text-sm text-muted-foreground p-8">Erro ao carregar layout do ônibus.</div>
     );
 
-  const mapData = (qMap.data.seat_map as unknown as SeatCell[]) || [];
+  const mapData = (qMap.data.seat_map as unknown as SeatCell[]).map(c => ({
+    ...c,
+    deck: c.deck || 1
+  })) || [];
+  
+  const isDoubleDecker = mapData.some(c => c.deck === 2);
+  const deckCells = mapData.filter(c => c.deck === activeDeck);
   const maxCol = mapData.length > 0 ? Math.max(...mapData.map((c) => c.c)) + 1 : 5;
   const cols = qMap.data.cols || maxCol;
 
@@ -2382,10 +2397,32 @@ function BusSeatManager({
   return (
     <div className="flex flex-col md:flex-row gap-6">
       <div className="flex-1 glass-card border-none border-none rounded-[var(--radius-card)] p-8 overflow-x-auto">
-        <div className="min-w-max mx-auto">
-          <div className="h-10 mb-6 border-b-2 border-dashed border-border/50 rounded-t-[3rem] glass bg-white/5 border-white/10/20 flex items-end justify-center pb-2 ds-label-caps text-muted-foreground">
-            Motorista
+        {isDoubleDecker && (
+          <div className="flex justify-center mb-6">
+            <div className="flex items-center gap-1 bg-black/40 p-1 rounded-full border border-white/10">
+              <Button
+                variant={activeDeck === 1 ? "default" : "ghost"}
+                onClick={() => setActiveDeck(1)}
+                className="h-8 px-4 text-xs font-bold rounded-full cursor-pointer"
+              >
+                1º Andar (Deck inferior)
+              </Button>
+              <Button
+                variant={activeDeck === 2 ? "default" : "ghost"}
+                onClick={() => setActiveDeck(2)}
+                className="h-8 px-4 text-xs font-bold rounded-full cursor-pointer"
+              >
+                2º Andar (Deck superior)
+              </Button>
+            </div>
           </div>
+        )}
+
+        <div className="min-w-max mx-auto">
+          <div className="h-10 mb-6 border-b border-dashed border-white/20 rounded-t-[3rem] bg-white/5 flex items-center justify-center text-xs font-extrabold uppercase tracking-widest text-muted-foreground select-none">
+            {activeDeck === 1 ? "🚍 Cabine Frontal" : "Frente do Veículo"}
+          </div>
+          
           <div
             style={{
               display: "grid",
@@ -2393,32 +2430,62 @@ function BusSeatManager({
               gap: "8px",
             }}
           >
-            {mapData.map((cell) => {
+            {deckCells.map((cell) => {
               const assigned = passengers.find((p) => p.seat_number === cell.label);
               const isOccupied = !!assigned;
+              const isSeat = cell.type === "seat";
+              
+              const getSeatColor = (cat: any, occupied: boolean) => {
+                if (!occupied) {
+                  switch (cat) {
+                    case "executivo":
+                      return "border-blue-400 bg-blue-500/10 text-blue-300 hover:bg-blue-500/20";
+                    case "semi_leito":
+                      return "border-purple-400 bg-purple-500/10 text-purple-300 hover:bg-purple-500/20";
+                    case "leito":
+                      return "border-amber-400 bg-amber-500/10 text-amber-300 hover:bg-amber-500/20";
+                    case "leito_cama":
+                      return "border-rose-500 bg-rose-500/10 text-rose-400 hover:bg-rose-500/20";
+                    default:
+                      return "border-border/60 glass bg-white/5 border-white/10 text-muted-foreground hover:border-brand hover:text-brand";
+                  }
+                } else {
+                  return "border-brand bg-brand/20 text-brand font-bold";
+                }
+              };
+
               return (
-                <div key={`${cell.r}-${cell.c}`} className="relative">
+                <div key={`${cell.r}-${cell.c}-${cell.deck}`} className="relative">
                   <Button
                     type="button"
-                    onClick={() => cell.type === "seat" && setSelectedSeat(cell)}
-                    disabled={cell.type !== "seat"}
+                    onClick={() => isSeat && setSelectedSeat(cell)}
+                    disabled={!isSeat}
                     className={cn(
-                      "flex h-12 w-12 items-center justify-center rounded-[var(--radius-card)] border-2 text-xs font-semibold transition-all",
-                      cell.type === "seat" &&
-                        !isOccupied &&
-                        "border-border/60 glass-card border-none hover:border-brand hover:text-brand",
-                      cell.type === "seat" && isOccupied && "border-brand bg-brand/10 text-brand",
-                      cell.type === "aisle" &&
-                        "border-dashed border-border/30 bg-transparent text-transparent",
-                      cell.type === "wc" && "border-info/30 bg-info-bg text-info opacity-70",
-                      cell.type === "door" &&
-                        "border-warning/30 bg-warning-bg text-warning opacity-70",
+                      "flex h-12 w-12 items-center justify-center rounded-[var(--radius-card)] border-2 text-xs font-extrabold transition-all relative focus:ring-1 focus:ring-brand",
+                      isSeat && getSeatColor(cell.category, isOccupied),
+                      cell.type === "aisle" && "border-dashed border-white/5 bg-transparent text-transparent",
+                      cell.type === "wc" && "border-info bg-info/10 text-info opacity-70 cursor-not-allowed",
+                      cell.type === "door" && "border-warning bg-warning/10 text-warning opacity-70 cursor-not-allowed",
+                      cell.type === "driver" && "border-success bg-success/10 text-success opacity-70 cursor-not-allowed",
+                      cell.type === "stairs" && "border-purple-400/20 bg-purple-400/5 text-purple-300 opacity-70 cursor-not-allowed",
+                      cell.type === "kitchen" && "border-orange-400/20 bg-orange-400/5 text-orange-300 opacity-70 cursor-not-allowed",
+                      cell.type === "guide" && "border-cyan-400/20 bg-cyan-400/5 text-cyan-300 opacity-70 cursor-not-allowed",
+                      cell.type === "empty" && "border-transparent bg-transparent text-transparent pointer-events-none"
                     )}
                   >
-                    {cell.label}
+                    {isSeat ? cell.label : (
+                      cell.type === "wc" ? "WC" :
+                      cell.type === "door" ? "🚪" :
+                      cell.type === "driver" ? "🧑‍✈️" :
+                      cell.type === "stairs" ? "🪜" :
+                      cell.type === "kitchen" ? "☕" :
+                      cell.type === "guide" ? "🎙️" : ""
+                    )}
                   </Button>
-                  {isOccupied && cell.type === "seat" && (
-                    <div className="absolute -top-2 -right-2 h-4 w-4 bg-brand rounded-full border-2 border-surface" />
+                  {isOccupied && isSeat && (
+                    <div className="absolute -top-1 -right-1 h-3.5 w-3.5 bg-brand rounded-full border border-surface flex items-center justify-center">
+                      <div className="h-1.5 w-1.5 bg-white rounded-full" />
+                    </div>
                   )}
                 </div>
               );
@@ -2429,14 +2496,14 @@ function BusSeatManager({
 
       <div className="w-full md:w-80 space-y-4">
         {orphans.length > 0 && (
-          <div className="bg-amber-50 border border-amber-200 rounded-[var(--radius-card)] p-4 text-xs text-amber-900 space-y-2">
+          <div className="bg-amber-500/10 border border-amber-500/25 rounded-[var(--radius-card)] p-4 text-xs text-amber-200 space-y-2">
             <div className="font-bold flex items-center gap-1">
               ⚠️ Inconsistência de Assentos
             </div>
-            <p className="ds-meta text-amber-700 leading-snug font-medium">
+            <p className="ds-meta text-amber-300/80 leading-snug font-medium">
               Os seguintes passageiros estão alocados em poltronas que não existem no layout selecionado:
             </p>
-            <ul className="list-disc pl-4 space-y-1 font-semibold ds-meta text-amber-800">
+            <ul className="list-disc pl-4 space-y-1 font-semibold ds-meta text-amber-300">
               {orphans.map((p) => (
                 <li key={p.id}>
                   {p.passenger_name} ({p.seat_number})
@@ -2462,52 +2529,53 @@ function BusSeatManager({
         )}
 
         {selectedSeat ? (
-          <div className="bg-brand/5 border border-brand/20 rounded p-5">
+          <div className="bg-brand/5 border border-brand/20 rounded p-5 space-y-4">
             <div className="ds-label-caps text-brand mb-1">
-              Poltrona {selectedSeat.label}
+              Poltrona {selectedSeat.label} {selectedSeat.category && `(${selectedSeat.category.replace("_", "-")})`}
             </div>
-            <h4 className="text-sm font-semibold mb-4">Gerenciar Assento</h4>
+            <h4 className="text-sm font-semibold mb-4 text-foreground">Gerenciar Assento</h4>
             <Field label="Passageiro">
               <Select value={selectedPax} onChange={(e) => setSelectedPax(e.target.value)}>
                 <option value="">Selecione o passageiro...</option>
                 <option value="remove">Livre (Remover reserva)</option>
                 {passengers.map((p) => (
                   <option key={p.id} value={p.id}>
-                    {p.passenger_name}
+                    {p.passenger_name} {p.seat_number ? `(Atualmente no assento ${p.seat_number})` : ""}
                   </option>
                 ))}
               </Select>
             </Field>
+
             <div className="mt-4 flex gap-2">
-              <GhostButton onClick={() => setSelectedSeat(null)} className="flex-1 text-xs">
+              <GhostButton onClick={() => setSelectedSeat(null)} className="flex-1 text-xs font-bold h-9">
                 Cancelar
               </GhostButton>
-              <PrimaryButton onClick={assignSeat} className="flex-1 text-xs">
+              <PrimaryButton onClick={assignSeat} className="flex-1 text-xs font-bold h-9">
                 Confirmar
               </PrimaryButton>
             </div>
           </div>
         ) : (
-          <div className="glass-card border-none border border-dashed border-border/60 rounded p-6 text-center text-sm text-muted-foreground">
+          <div className="glass-card border-none border border-dashed border-border/60 rounded p-6 text-center text-xs text-muted-foreground">
             Clique em uma poltrona no mapa ao lado para alocar os passageiros inscritos.
           </div>
         )}
 
         <div className="glass-card border-none border-none rounded p-5">
-          <div className="ds-label-caps text-muted-foreground mb-3">
+          <div className="ds-label-caps text-muted-foreground mb-3 font-bold uppercase tracking-widest text-xs">
             Resumo de Ocupação
           </div>
           <div className="flex justify-between items-center text-sm mb-2">
             <span className="flex items-center gap-2">
               <div className="w-3 h-3 bg-brand/10 border border-brand rounded-full" /> Vendidos
             </span>
-            <span className="font-semibold">{passengers.filter((p) => p.seat_number).length}</span>
+            <span className="font-semibold text-foreground">{passengers.filter((p) => p.seat_number).length}</span>
           </div>
           <div className="flex justify-between items-center text-sm">
             <span className="flex items-center gap-2">
-              <div className="w-3 h-3 glass-card border-none border-none/60 rounded-full" /> Livres
+              <div className="w-3 h-3 glass bg-white/5 border border-white/10 rounded-full" /> Livres
             </span>
-            <span className="font-semibold">
+            <span className="font-semibold text-foreground">
               {mapData.filter((c) => c.type === "seat").length -
                 passengers.filter((p) => p.seat_number).length}
             </span>

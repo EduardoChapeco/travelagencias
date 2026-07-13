@@ -191,7 +191,7 @@ function CRMPage() {
   }
 
   return (
-    <div className="flex h-full flex-col overflow-hidden bg-transparent">
+    <div className="w-full flex h-full flex-col overflow-hidden bg-transparent">
               <PageHeader
           title="CRM"
           search={activeTab !== "admin" ? {
@@ -279,7 +279,7 @@ function CRMPage() {
       )}
 
       {activeTab === "archived" && leadsQ.data && (
-        <div className="flex-1 overflow-auto p-6  md:pr-6 py-4 bg-transparent pb-24">
+        <div className="page-content page-section dock-offset bg-transparent">
           <div className="rounded-[var(--radius-card)] border-none glass-card border-none p-6">
             <h2 className="text-lg font-bold text-foreground mb-4">Leads Arquivados</h2>
             {leadsQ.data.length === 0 ? (
@@ -401,7 +401,7 @@ function CRMPage() {
       )}
 
       {activeTab === "admin" && agency && (
-        <div className="flex-1 overflow-y-auto px-4 md:px-6 py-4">
+        <div className="page-content page-section dock-offset">
           <ModuleAdminPanel
             moduleKey="crm"
             moduleName="CRM"
