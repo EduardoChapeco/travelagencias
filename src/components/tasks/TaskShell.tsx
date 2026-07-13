@@ -5,8 +5,7 @@ import { TaskView, TaskFiltersState, TaskStatus } from "@/lib/tasks/task.types";
 import { Tabs } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
 import { Plus, Filter, Settings2 } from "lucide-react";
-import { useNavigate } from "@tanstack/react-router";
-import { Route } from "@/routes/agency.$slug.daily-tasks";
+import { useNavigate, useSearch } from "@tanstack/react-router";
 import { supabase } from "@/integrations/supabase/client";
 import { PageHeader, ModuleActionButton } from "@/components/shell/PageHeader";
 import { ModuleAdminPanel } from "@/components/shell/ModuleAdminPanel";
@@ -24,7 +23,7 @@ import { TaskFiltersDrawer } from "./TaskFiltersDrawer";
 export function TaskShell() {
   const { agency, isAgencyAdmin } = useAgency();
   const navigate = useNavigate();
-  const search = Route.useSearch() as any;
+  const search = useSearch({ strict: false }) as any;
   const activeView = (search.view as TaskView) || "my-day";
 
   const [filters, setFilters] = useState<TaskFiltersState>({
