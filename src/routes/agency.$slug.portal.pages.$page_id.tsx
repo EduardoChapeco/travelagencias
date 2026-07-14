@@ -666,9 +666,9 @@ function PageEditorRoute() {
   }
 
   return (
-    <div className="flex flex-col h-screen bg-white overflow-hidden">
+    <div className="page-content dock-offset max-w-full flex flex-col p-0 relative min-h-0">
       {/* Top Navigation Bar - Ultrathin (h-11) */}
-      <div className="sticky top-0 z-10 flex h-11 items-center justify-between border-b border-border bg-white px-4 shrink-0 select-none">
+      <div className="sticky top-0 z-10 flex h-11 items-center justify-between border-b border-white/10 glass bg-white/5 px-4 shrink-0 select-none">
         <div className="flex items-center gap-2">
           {/* Page Dropdown Switcher */}
           <DropdownMenu>
@@ -789,7 +789,7 @@ function PageEditorRoute() {
         </div>
 
         {/* Viewport controls - compact divide group */}
-        <div className="hidden md:flex items-center bg-white border-none p-0.5 rounded-full divide-x divide-border">
+        <div className="hidden md:flex items-center glass bg-white/5 border-white/10 p-0.5 rounded-full divide-x divide-white/10">
           <Button
             onClick={() => {
               if (mode === "biolink") {
@@ -874,7 +874,7 @@ function PageEditorRoute() {
       {/* Main Workspace Layout */}
       <div className="flex flex-1 overflow-hidden min-h-0">
         {/* ── 1. ULTRAFINA SIDEBAR (w-12) ── */}
-        <div className="w-12 flex-shrink-0 border-r border-border bg-white flex flex-col items-center py-4 justify-between select-none">
+        <div className="w-12 flex-shrink-0 border-r border-white/10 glass bg-white/5 flex flex-col items-center py-4 justify-between select-none">
           <div className="flex flex-col items-center gap-5 w-full">
             {/* Back button */}
             <Button
@@ -971,9 +971,9 @@ function PageEditorRoute() {
 
         {/* ── 2. DRAWER PANEL: Tab Content (width 268px) ── */}
         {isLeftSidebarOpen && (
-          <div className="w-[268px] flex-shrink-0 border-r border-border bg-white flex flex-col overflow-hidden animate-in slide-in-from-left duration-200">
+          <div className="w-[268px] flex-shrink-0 border-r border-white/10 glass bg-white/5 flex flex-col overflow-hidden animate-in slide-in-from-left duration-200">
             {/* Minimally Styled Tabs */}
-            <div className="flex border-b border-border bg-white shrink-0 select-none px-4 gap-4">
+            <div className="flex border-b border-white/10 shrink-0 select-none px-4 gap-4">
               <Button
                 type="button"
                 onClick={() => setLeftTab("sections")}
@@ -1175,7 +1175,7 @@ function PageEditorRoute() {
                       key={tpl.id}
                       type="button"
                       onClick={() => handleApplyTemplate(tpl.id)}
-                      className={`w-full text-left p-3 border hover:border-brand/40 transition-all flex flex-col gap-1.5 group cursor-pointer ${template === tpl.id ? "bg-brand/5 border-brand/40" : "bg-white border-border hover:glass bg-white/5 border-white/10"}`}
+                      className={`w-full text-left p-3 border rounded-[var(--radius-card)] hover:border-brand/40 transition-all flex flex-col gap-1.5 group cursor-pointer ${template === tpl.id ? "bg-brand/5 border-brand/40" : "glass bg-white/5 border-white/10"}`}
                     >
                       <div className="flex justify-between items-center w-full">
                         <span
@@ -1199,7 +1199,7 @@ function PageEditorRoute() {
             {/* TAB CONTENT: LAYERS */}
             {leftTab === "layers" && (
               <div className="flex-1 flex flex-col min-h-0">
-                <div className="px-4 py-3 border-b border-border bg-white flex justify-between items-center shrink-0">
+                <div className="px-4 py-3 border-b border-border flex justify-between items-center shrink-0">
                   <h3 className="ds-label-caps tracking-wider text-muted-foreground flex items-center gap-1.5">
                     <Layers className="w-3.5 h-3.5" /> Ordenar Seções
                   </h3>
@@ -1259,7 +1259,7 @@ function PageEditorRoute() {
         {/* ── 2. CENTER CANVAS: Live page preview simulation (flex-1) ── */}
         <div className="flex-1 glass bg-white/5 border-white/10/30 relative overflow-hidden flex flex-col items-center justify-start min-h-0 h-full">
           {/* ── Canvas Ruler: device indicator ── */}
-          <div className="w-full flex items-center justify-center gap-2 py-2 shrink-0 border-b border-border bg-white/70">
+          <div className="w-full flex items-center justify-center gap-2 py-2 shrink-0 border-b border-white/10 glass bg-white/5">
             <span className="text-[9px] uppercase tracking-widest font-bold text-muted-foreground">
               {viewport === "desktop" && "Desktop · 1200px"}
               {viewport === "tablet" && "Tablet · 768px"}
@@ -1326,7 +1326,7 @@ function PageEditorRoute() {
             const blockLabel =
               BLOCK_LABELS[activeBlock?.type as keyof typeof BLOCK_LABELS] ?? "Seção";
             return (
-              <div className="w-[360px] flex-shrink-0 border-l border-border bg-white flex flex-col overflow-hidden">
+              <div className="w-[360px] flex-shrink-0 border-l border-white/10 glass bg-white/5 flex flex-col overflow-hidden">
                 {/* Header */}
                 <div className="flex items-start justify-between px-5 pt-4 pb-3 border-b border-border shrink-0">
                   <div className="flex flex-col gap-0.5">

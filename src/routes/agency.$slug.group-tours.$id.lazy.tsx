@@ -288,7 +288,7 @@ function TourDetailPage() {
 
   if (tourQ.isLoading) {
     return (
-      <div className="flex min-h-[400px] flex-col items-center justify-center p-8 text-center bg-background">
+      <div className="flex min-h-[400px] flex-col items-center justify-center text-center">
         <div className="h-8 w-8 animate-spin rounded-full border-4 border-brand border-t-transparent mb-4" />
         <p className="text-sm text-muted-foreground">Carregando dados da excursão...</p>
       </div>
@@ -297,9 +297,9 @@ function TourDetailPage() {
 
   if (tourQ.isError) {
     return (
-      <div className="flex min-h-[400px] flex-col items-center justify-center p-8 text-center bg-background rounded-[var(--radius-card)] border border-red-200 bg-red-50/50 m-6">
-        <div className="h-10 w-10 rounded-full bg-red-100 flex items-center justify-center mb-4">
-          <AlertTriangle className="h-5 w-5 text-red-600" />
+      <div className="flex min-h-[400px] flex-col items-center justify-center p-8 text-center glass-error rounded-[var(--radius-card)] m-6">
+        <div className="h-10 w-10 rounded-full bg-red-100/10 flex items-center justify-center mb-4">
+          <AlertTriangle className="h-5 w-5 text-red-500" />
         </div>
         <h3 className="text-base font-bold text-red-800">Falha ao Carregar Excursão</h3>
         <p className="text-xs text-red-600 mt-1 max-w-md">
@@ -319,9 +319,9 @@ function TourDetailPage() {
 
   if (!tourQ.data) {
     return (
-      <div className="flex min-h-[400px] flex-col items-center justify-center p-8 text-center bg-background rounded-[var(--radius-card)] border border-dashed border-border m-6">
-        <div className="h-10 w-10 rounded-full bg-slate-100 flex items-center justify-center mb-4">
-          <XCircle className="h-5 w-5 text-slate-500" />
+      <div className="flex min-h-[400px] flex-col items-center justify-center p-8 text-center glass bg-white/5 rounded-[var(--radius-card)] border border-dashed border-white/10 m-6">
+        <div className="h-10 w-10 rounded-full glass bg-white/10 flex items-center justify-center mb-4">
+          <XCircle className="h-5 w-5 text-white/50" />
         </div>
         <h3 className="text-base font-bold text-foreground">Excursão Não Encontrada</h3>
         <p className="text-xs text-muted-foreground mt-1 max-w-sm">

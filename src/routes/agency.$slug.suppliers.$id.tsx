@@ -577,7 +577,7 @@ function TabProducts({ supplierId, agencyId }: { supplierId: string; agencyId: s
           return (
             <div
               key={p.id}
-              className="flex items-start gap-3 rounded-[var(--radius-card)] border-none bg-white p-4 hover:glass-card border-none transition-colors"
+              className="flex items-start gap-3 rounded-[var(--radius-card)] border-none glass bg-white/5 border-white/10 p-4 hover:glass-card transition-colors"
             >
               <div className="flex-1 min-w-0">
                 <div className="flex items-center gap-2 flex-wrap">
@@ -768,7 +768,7 @@ function TabFiles({ supplierId, agencyId }: { supplierId: string; agencyId: stri
 
       <div className="space-y-2">
         {q.data?.map((f: any) => (
-          <div key={f.id} className="rounded-[var(--radius-card)] border-none bg-white p-4 space-y-3">
+          <div key={f.id} className="rounded-[var(--radius-card)] border-none glass bg-white/5 border-white/10 p-4 space-y-3">
             <div className="flex items-center gap-3">
               <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-[var(--radius-card)] border-none glass-card border-none">
                 <FileText className="h-4 w-4 text-muted-foreground" />
@@ -1004,7 +1004,7 @@ function TabReviews({ supplierId, agencyId }: { supplierId: string; agencyId: st
 
       <div className="space-y-3">
         {q.data?.map((r) => (
-          <div key={r.id} className="rounded-[var(--radius-card)] border-none bg-white p-4">
+          <div key={r.id} className="rounded-[var(--radius-card)] border-none glass bg-white/5 border-white/10 p-4">
             <div className="flex items-start justify-between">
               <div className="space-y-1">
                 <div className="flex items-center gap-0.5">
@@ -1147,7 +1147,7 @@ function SupplierDetailsPage() {
             <div className="px-5 pb-5 -mt-5 flex items-end gap-4">
               <div
                 className={cn(
-                  "flex h-16 w-16 shrink-0 items-center justify-center rounded-[var(--radius-card)] border-2 border-white bg-white shadow-none border-none/40",
+                  "flex h-16 w-16 shrink-0 items-center justify-center rounded-[var(--radius-card)] glass bg-white/5 border border-white/20 shadow-none",
                 )}
               >
                 {supplier.logo_url ? (
@@ -1203,7 +1203,7 @@ function SupplierDetailsPage() {
 
             {/* TAB: GERAL */}
             <TabsContent value="geral" className="space-y-4">
-              <div className="rounded-[var(--radius-card)] border-none bg-white p-5">
+              <div className="rounded-[var(--radius-card)] border-none glass bg-white/5 border-white/10 p-5">
                 <h3 className="mb-4 text-sm font-semibold">Informações da Empresa</h3>
                 <div className="grid grid-cols-2 gap-x-6 gap-y-4">
                   {[
@@ -1233,7 +1233,7 @@ function SupplierDetailsPage() {
               </div>
 
               {/* Links */}
-              <div className="rounded-[var(--radius-card)] border-none bg-white p-5">
+              <div className="rounded-[var(--radius-card)] border-none glass bg-white/5 border-white/10 p-5">
                 <h3 className="mb-4 text-sm font-semibold">Links & Redes</h3>
                 <div className="flex flex-wrap gap-3">
                   {supplier.website && (
@@ -1279,7 +1279,7 @@ function SupplierDetailsPage() {
 
               {/* Notas */}
               {supplier.notes && (
-                <div className="rounded-[var(--radius-card)] border-none bg-white p-5">
+                <div className="rounded-[var(--radius-card)] border-none glass bg-white/5 border-white/10 p-5">
                   <h3 className="mb-2 text-sm font-semibold">
                     Observações & Política de Comissionamento
                   </h3>
@@ -1291,7 +1291,7 @@ function SupplierDetailsPage() {
 
               {/* Tags */}
               {supplier.tags && supplier.tags.length > 0 && (
-                <div className="rounded-[var(--radius-card)] border-none bg-white p-5">
+                <div className="rounded-[var(--radius-card)] border-none glass bg-white/5 border-white/10 p-5">
                   <h3 className="mb-3 text-sm font-semibold flex items-center gap-1.5">
                     <Tag className="h-3.5 w-3.5" /> Tags
                   </h3>
@@ -1377,7 +1377,7 @@ function SupplierDetailsPage() {
                 href={`tel:${supplier.phone}`}
                 className="flex items-center gap-2.5 text-sm text-foreground hover:text-[--brand-primary,theme(colors.pink.500)] transition-colors"
               >
-                <div className="flex h-7 w-7 items-center justify-center rounded-[var(--radius-card)] border-none bg-white">
+                <div className="flex h-7 w-7 items-center justify-center rounded-[var(--radius-card)] border-none glass bg-white/5 border-white/10">
                   <PhoneCall className="h-3.5 w-3.5" />
                 </div>
                 {supplier.phone}
@@ -1390,7 +1390,7 @@ function SupplierDetailsPage() {
                 rel="noreferrer"
                 className="flex items-center gap-2.5 text-sm text-green-700 hover:underline"
               >
-                <div className="flex h-7 w-7 items-center justify-center rounded-[var(--radius-card)] border-none bg-white">
+                <div className="flex h-7 w-7 items-center justify-center rounded-[var(--radius-card)] border-none glass bg-white/5 border-white/10">
                   <MessageCircle className="h-3.5 w-3.5 text-green-600" />
                 </div>
                 WhatsApp
@@ -1401,7 +1401,7 @@ function SupplierDetailsPage() {
                 href={`mailto:${supplier.email}`}
                 className="flex items-center gap-2.5 text-sm text-foreground hover:text-[--brand-primary,theme(colors.pink.500)] transition-colors truncate"
               >
-                <div className="flex h-7 w-7 items-center justify-center rounded-[var(--radius-card)] border-none bg-white shrink-0">
+                <div className="flex h-7 w-7 items-center justify-center rounded-[var(--radius-card)] border-none glass bg-white/5 border-white/10 shrink-0">
                   <Mail className="h-3.5 w-3.5" />
                 </div>
                 <span className="truncate">{supplier.email}</span>
