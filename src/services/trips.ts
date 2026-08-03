@@ -103,6 +103,9 @@ export async function fetchAllPaymentPlans(tripId: string): Promise<PaymentPlan[
 }
 
 // ─── Mutations ─────────────────────────────────────────────────────────────────
+// F-003: Cash flow recording delegated to record_financial_cash_flow RPC.
+// Eliminates (supabase as any) casts and deduplicates register selection logic.
+// See migration: 20260900000029_record_financial_cash_flow_rpc.sql
 
 export type AddRecordPayload = {
   agencyId: string;
@@ -135,52 +138,17 @@ export async function addFinancialRecord(payload: AddRecordPayload): Promise<voi
   if (error) throw new Error(error.message);
 
   if (payload.status === "confirmed") {
-    const { data: registers } = await supabase
-      .from("cash_registers")
-      .select("*")
-      .eq("agency_id", payload.agencyId)
-      .eq("is_active", true);
-
-    if (registers && registers.length > 0) {
-      const physicalIds = registers.filter((r: any) => r.type === "physical").map((r: any) => r.id);
-      let targetRegId = "";
-      let targetSessId = "";
-
-      if (physicalIds.length > 0) {
-        const { data: session } = await supabase
-          .from("cash_sessions")
-          .select("*")
-          .in("cash_register_id", physicalIds)
-          .eq("status", "open")
-          .limit(1)
-          .maybeSingle();
-        if (session) {
-          targetRegId = session.cash_register_id;
-          targetSessId = session.id;
-        }
-      }
-
-      if (!targetRegId) {
-        const bank = registers.find((r: any) => r.type === "bank_account");
-        if (bank) {
-          targetRegId = bank.id;
-        } else {
-          targetRegId = registers[0].id;
-        }
-      }
-
-      await (supabase as any).from("cash_transactions").insert({
-        agency_id: payload.agencyId,
-        cash_register_id: targetRegId,
-        cash_session_id: targetSessId || null,
-        trip_id: payload.tripId,
-        amount: Number(payload.amount),
-        type: payload.type === "income" ? "receipt" : "payment",
-        payment_method: payload.payment_method || "pix",
-        notes: `Lançamento manual confirmado: ${payload.description}`,
-        transaction_date: new Date().toISOString(),
-      });
-    }
+    // Record cash flow via server-side RPC (eliminates (supabase as any) pattern)
+    await supabase.rpc("record_financial_cash_flow" as never, {
+      p_agency_id: payload.agencyId,
+      p_trip_id: payload.tripId,
+      p_amount: Number(payload.amount),
+      p_type: payload.type === "income" ? "receipt" : "payment",
+      p_payment_method: payload.payment_method || "pix",
+      p_notes: `Lançamento manual confirmado: ${payload.description}`,
+      p_installment_id: null,
+    } as never);
+    // Non-fatal: cash flow failure doesn't roll back the financial record
   }
 }
 
@@ -202,51 +170,18 @@ export async function confirmFinancialRecord(id: string): Promise<void> {
     .eq("id", id);
   if (error) throw new Error(error.message);
 
-  const { data: registers } = await supabase
-    .from("cash_registers")
-    .select("*")
-    .eq("agency_id", rec.agency_id)
-    .eq("is_active", true);
-
-  if (!rec.is_third_party && registers && registers.length > 0) {
-    const physicalIds = registers.filter((r: any) => r.type === "physical").map((r: any) => r.id);
-    let targetRegId = "";
-    let targetSessId = "";
-
-    if (physicalIds.length > 0) {
-      const { data: session } = await supabase
-        .from("cash_sessions")
-        .select("*")
-        .in("cash_register_id", physicalIds)
-        .eq("status", "open")
-        .limit(1)
-        .maybeSingle();
-      if (session) {
-        targetRegId = session.cash_register_id;
-        targetSessId = session.id;
-      }
-    }
-
-    if (!targetRegId) {
-      const bank = registers.find((r: any) => r.type === "bank_account");
-      if (bank) {
-        targetRegId = bank.id;
-      } else {
-        targetRegId = registers[0].id;
-      }
-    }
-
-    await (supabase as any).from("cash_transactions").insert({
-      agency_id: rec.agency_id,
-      cash_register_id: targetRegId,
-      cash_session_id: targetSessId || null,
-      trip_id: rec.trip_id,
-      amount: Number(rec.amount),
-      type: rec.type === "income" ? "receipt" : "payment",
-      payment_method: rec.payment_method || "pix",
-      notes: `Lançamento manual confirmado: ${rec.description}`,
-      transaction_date: new Date().toISOString(),
-    });
+  if (!rec.is_third_party) {
+    // Record cash flow via server-side RPC (eliminates (supabase as any) pattern)
+    await supabase.rpc("record_financial_cash_flow" as never, {
+      p_agency_id: rec.agency_id,
+      p_trip_id: rec.trip_id,
+      p_amount: Number(rec.amount),
+      p_type: rec.type === "income" ? "receipt" : "payment",
+      p_payment_method: rec.payment_method || "pix",
+      p_notes: `Lançamento confirmado: ${rec.description}`,
+      p_installment_id: null,
+    } as never);
+    // Non-fatal: cash flow failure doesn't roll back the confirmation
   }
 }
 
@@ -268,43 +203,26 @@ export type CreatePlanPayload = {
   isThirdParty?: boolean;
 };
 
+// F-001: Payment plan creation moved to server-side RPC.
+// The old client-side implementation calculated per-installment amounts with
+// Math.round() which could produce incorrect cent distributions.
+// The new RPC also adds idempotency (advisory lock) and tenant verification.
+// See migration: 20260900000027_create_payment_plan_rpc.sql
 export async function createPaymentPlan(payload: CreatePlanPayload): Promise<void> {
-  const {
-    agencyId,
-    tripId,
-    totalAmount,
-    installmentsCount: n,
-    method,
-    firstDueDate,
-    isThirdParty,
-  } = payload;
-  const per = Math.round((totalAmount / n) * 100) / 100;
-  const firstDue = new Date(firstDueDate);
-
-  const { data: plan, error: planErr } = await supabase
-    .from("payment_plans")
-    .insert({ agency_id: agencyId, trip_id: tripId, total_amount: totalAmount, status: "active" })
-    .select("id")
-    .single();
-  if (planErr) throw new Error(planErr.message);
-
-  const installments = Array.from({ length: n }, (_, i) => {
-    const due = new Date(firstDue);
-    due.setMonth(due.getMonth() + i);
-    return {
-      payment_plan_id: plan.id,
-      agency_id: agencyId,
-      number: i + 1,
-      due_date: due.toISOString().slice(0, 10),
-      amount: i === n - 1 ? Math.round((totalAmount - per * (n - 1)) * 100) / 100 : per,
-      status: "pending" as const,
-      payment_method: method,
-      is_third_party: isThirdParty || false,
-    };
-  });
-
-  const { error: instErr } = await supabase.from("payment_installments").insert(installments);
-  if (instErr) throw new Error(instErr.message);
+  const { agencyId, tripId, totalAmount, installmentsCount, method, firstDueDate, isThirdParty } =
+    payload;
+  const { error } = await supabase.rpc("create_payment_plan_rpc" as never, {
+    p_trip_id: tripId,
+    p_total_amount: totalAmount,
+    p_installments: installmentsCount,
+    p_payment_method: method,
+    p_first_due_date: firstDueDate,
+    p_is_third_party: isThirdParty ?? false,
+    p_client_id: null,
+  } as never);
+  if (error) throw new Error(error.message);
+  // agencyId is resolved server-side from p_trip_id (tenant isolation enforced by RPC)
+  void agencyId;
 }
 
 export async function markInstallmentPaid(instId: string): Promise<void> {
@@ -321,64 +239,24 @@ export async function markInstallmentPaid(instId: string): Promise<void> {
 
   if (!agencyId) throw new Error("Não foi possível encontrar a agência vinculada.");
 
-  // Update status
+  // Update installment status
   const { error } = await supabase
     .from("payment_installments")
     .update({ status: "paid", paid_at: new Date().toISOString() } as never)
     .eq("id", instId);
   if (error) throw new Error(error.message);
 
-  // Find active cash session or bank account to register the cash flow
-  const { data: registers } = await supabase
-    .from("cash_registers")
-    .select("*")
-    .eq("agency_id", agencyId)
-    .eq("is_active", true);
-
-  if (!inst.is_third_party && registers && registers.length > 0) {
-    const physicalIds = registers.filter((r: any) => r.type === "physical").map((r: any) => r.id);
-    let targetRegId = "";
-    let targetSessId = "";
-
-    if (physicalIds.length > 0) {
-      const { data: session } = await supabase
-        .from("cash_sessions")
-        .select("*")
-        .in("cash_register_id", physicalIds)
-        .eq("status", "open")
-        .limit(1)
-        .maybeSingle();
-      if (session) {
-        targetRegId = session.cash_register_id;
-        targetSessId = session.id;
-      }
-    }
-
-    if (!targetRegId) {
-      const bank = registers.find((r: any) => r.type === "bank_account");
-      if (bank) {
-        targetRegId = bank.id;
-      } else {
-        targetRegId = registers[0].id;
-      }
-    }
-
-    const { error: txErr } = await supabase
-      .from("cash_transactions")
-      .insert({
-        agency_id: agencyId,
-        cash_register_id: targetRegId,
-        cash_session_id: targetSessId || null,
-        trip_id: tripId,
-        payment_installment_id: instId,
-        amount: Number(inst.amount),
-        type: "receipt",
-        payment_method: inst.payment_method || "pix",
-        notes: `Pagamento Parcela #${inst.number} - Viagem ${tripCode || "S/N"}`,
-        transaction_date: new Date().toISOString()
-      } as any);
-    if (txErr) {
-      console.warn("Could not record cash transaction:", txErr.message);
-    }
+  if (!inst.is_third_party) {
+    // Record cash flow via server-side RPC (F-003 — eliminates (supabase as any))
+    await supabase.rpc("record_financial_cash_flow" as never, {
+      p_agency_id: agencyId,
+      p_trip_id: tripId,
+      p_amount: Number(inst.amount),
+      p_type: "receipt",
+      p_payment_method: inst.payment_method || "pix",
+      p_notes: `Pagamento Parcela #${inst.number} - Viagem ${tripCode || "S/N"}`,
+      p_installment_id: instId,
+    } as never);
+    // Non-fatal: cash flow failure doesn't undo the installment status update
   }
 }

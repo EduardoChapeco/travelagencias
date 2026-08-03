@@ -82,28 +82,28 @@ function BrainPanel() {
 
         {/* Indicadores de Performance */}
         <div className="grid gap-4 grid-cols-2 md:grid-cols-4">
-          <div className="rounded-[var(--radius-card)] border-none glass-card border-none p-4 flex flex-col justify-between shadow-xs">
+          <div className="rounded-[var(--radius-card)] border-none glass-card border-none p-4 flex flex-col justify-between">
             <span className="ds-meta text-muted-foreground uppercase font-semibold">Docs Absorvidos</span>
             <div className="flex items-baseline gap-2 mt-2">
               <span className="text-2xl font-bold text-foreground">{docs.length}</span>
               <span className="ds-meta text-muted-foreground">PDFs/Textos</span>
             </div>
           </div>
-          <div className="rounded-[var(--radius-card)] border-none glass-card border-none p-4 flex flex-col justify-between shadow-xs">
+          <div className="rounded-[var(--radius-card)] border-none glass-card border-none p-4 flex flex-col justify-between">
             <span className="ds-meta text-muted-foreground uppercase font-semibold">Base de Conhecimento</span>
             <div className="flex items-baseline gap-2 mt-2">
               <span className="text-2xl font-bold text-foreground">{totalChunks}</span>
               <span className="ds-meta text-muted-foreground">chunks (pgvector)</span>
             </div>
           </div>
-          <div className="rounded-[var(--radius-card)] border-none glass-card border-none p-4 flex flex-col justify-between shadow-xs">
+          <div className="rounded-[var(--radius-card)] border-none glass-card border-none p-4 flex flex-col justify-between">
             <span className="ds-meta text-muted-foreground uppercase font-semibold">Msgs Recebidas</span>
             <div className="flex items-baseline gap-2 mt-2">
               <span className="text-2xl font-bold text-foreground text-brand">{inboundCount}</span>
               <span className="ds-meta text-muted-foreground">inbound (omnichannel)</span>
             </div>
           </div>
-          <div className="rounded-[var(--radius-card)] border-none glass-card border-none p-4 flex flex-col justify-between shadow-xs">
+          <div className="rounded-[var(--radius-card)] border-none glass-card border-none p-4 flex flex-col justify-between">
             <span className="ds-meta text-muted-foreground uppercase font-semibold">Total no Período</span>
             <div className="flex items-baseline gap-2 mt-2">
               <span className="text-2xl font-bold text-success">{inboxMessages.length}</span>

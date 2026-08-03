@@ -137,30 +137,34 @@ export async function fetchClientTickets(clientId: string): Promise<ClientTicket
 }
 
 // ─── Mutations ────────────────────────────────────────────────────────────────
+// All mutations route through SECURITY DEFINER RPCs that:
+//   1. Authenticate the caller via auth.uid() server-side
+//   2. Resolve agency_id from the DB (never from client input — IDOR protection)
+//   3. Verify agency membership before applying any change
+// See migration: 20260900000028_client_idor_protection_rpcs.sql
 
 export async function updateClientProfile(
   clientId: string,
   patch: Record<string, unknown>,
 ): Promise<void> {
-  const { error } = await supabase
-    .from("clients")
-    .update(patch as never)
-    .eq("id", clientId);
+  const { error } = await supabase.rpc("update_client_profile_rpc" as never, {
+    p_client_id: clientId,
+    p_patch: patch,
+  } as never);
   if (error) throw new Error(error.message);
 }
 
 export async function archiveClient(clientId: string): Promise<void> {
-  const { error } = await supabase
-    .from("clients")
-    .update({ deleted_at: new Date().toISOString() } as never)
-    .eq("id", clientId);
+  const { error } = await supabase.rpc("archive_client_rpc" as never, {
+    p_client_id: clientId,
+  } as never);
   if (error) throw new Error(error.message);
 }
 
 export async function mergeClients(sourceId: string, targetId: string): Promise<void> {
-  const { error } = await (supabase.rpc as any)("merge_clients", {
+  const { error } = await supabase.rpc("merge_clients" as never, {
     p_target_id: targetId,
     p_source_id: sourceId,
-  });
+  } as never);
   if (error) throw new Error(error.message);
 }

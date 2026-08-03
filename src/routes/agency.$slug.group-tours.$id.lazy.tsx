@@ -1619,6 +1619,11 @@ function HotelPricingTabContent({ tour, onUpdate }: { tour: any; onUpdate: () =>
 
   const handlePopulateDefaultTiers = async () => {
     const baseVal = Number(tour.base_price) || 1000;
+    // UI HELPER ONLY: These multipliers (1.4, 0.9, 0.5) generate SUGGESTED starting values
+    // for the agent to review and edit. They are NOT authoritative prices.
+    // The final prices are saved via update_group_tour_pricing RPC (server-side authority).
+    // The agent MUST review and adjust these before the tour goes live.
+    // TODO (F-004): Consider making these configurable per agency in settings.
     const defaults = [
       {
         name: "Quarto Duplo (Double) - por pessoa",
@@ -1627,17 +1632,17 @@ function HotelPricingTabContent({ tour, onUpdate }: { tour: any; onUpdate: () =>
       },
       {
         name: "Quarto Individual (Single)",
-        price: Math.round(baseVal * 1.4),
+        price: Math.round(baseVal * 1.4), // Suggested: 40% above double (edit as needed)
         description: "Acomodação privativa em quarto individual",
       },
       {
         name: "Quarto Triplo (Triple) - por pessoa",
-        price: Math.round(baseVal * 0.9),
+        price: Math.round(baseVal * 0.9), // Suggested: 10% below double (edit as needed)
         description: "Acomodação compartilhada para 3 adultos",
       },
       {
         name: "Tarifa Infantil (Child)",
-        price: Math.round(baseVal * 0.5),
+        price: Math.round(baseVal * 0.5), // Suggested: 50% of double (edit as needed)
         description: "Para crianças de 2 a 11 anos no mesmo quarto",
       },
     ];
