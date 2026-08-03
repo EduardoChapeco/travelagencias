@@ -12,7 +12,7 @@ import { Field } from "@/components/ui/field";
 import { FormInput as Input } from "@/components/ui/input";
 import { FormTextarea as Textarea } from "@/components/ui/textarea";
 import { SimpleSheet as Sheet, SheetPage } from "@/components/ui/sheet";
-import { PrimaryButton, GhostButton , Button } from "@/components/ui/button";
+import { Button } from "@/components/ui/button";
 import { StatusBadge } from "@/components/ui/badge";
 import { RichTextEditor } from "@/components/ui/RichTextEditor";
 
@@ -455,13 +455,13 @@ function PlaybookSheet({
             <div className="pt-4 border-t border-border mt-4">
               <div className="flex items-center justify-between mb-4">
                 <label className="text-sm font-bold text-foreground">Etapas do Processo</label>
-                <GhostButton
+                <Button variant="ghost"
                   type="button"
                   onClick={addStep}
                   className="h-8 text-xs font-bold cursor-pointer"
                 >
                   + Adicionar Etapa
-                </GhostButton>
+                </Button>
               </div>
 
               <div className="space-y-4">
@@ -508,12 +508,12 @@ function PlaybookSheet({
         </div>
 
         <div className="border-t border-border px-6 py-4 flex items-center justify-end gap-2">
-          <GhostButton type="button" onClick={onClose}>
+          <Button variant="ghost" type="button" onClick={onClose}>
             Cancelar
-          </GhostButton>
-          <PrimaryButton type="submit" form="playbook-form" disabled={submitting}>
+          </Button>
+          <Button variant="default" type="submit" form="playbook-form" disabled={submitting}>
             {submitting ? "Salvando…" : initialData ? "Salvar alterações" : "Criar Playbook"}
-          </PrimaryButton>
+          </Button>
         </div>
     </SheetPage>
   );
@@ -682,12 +682,12 @@ function ArticleSheet({
             </div>
           </form>
         <div className="border-t border-border px-6 py-4 flex items-center justify-end gap-2 mt-auto">
-          <GhostButton type="button" onClick={onClose}>
+          <Button variant="ghost" type="button" onClick={onClose}>
             Cancelar
-          </GhostButton>
-          <PrimaryButton type="submit" form="article-form" disabled={submitting}>
+          </Button>
+          <Button variant="default" type="submit" form="article-form" disabled={submitting}>
             {submitting ? "Salvando…" : initialData ? "Salvar alterações" : "Criar artigo"}
-          </PrimaryButton>
+          </Button>
         </div>
       </div>
     </SheetPage>

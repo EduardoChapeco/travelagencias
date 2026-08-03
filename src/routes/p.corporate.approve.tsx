@@ -4,8 +4,8 @@ import { useQuery, useMutation } from "@tanstack/react-query";
 import { CheckCircle2, XCircle, Building2, Briefcase, Calendar, MapPin, Send } from "lucide-react";
 import { fetchCorporateRfp, updateCorporateRfpStatus } from "@/services/public";
 import { FormTextarea as Textarea } from "@/components/ui/textarea";
-import { PrimaryButton, GhostButton , Button } from "@/components/ui/button";
-import { fmtDate } from "@/lib/formatters";
+import { Button } from "@/components/ui/button";
+import { formatDate } from "@/lib/formatters";
 import { toast } from "sonner";
 
 export const Route = createFileRoute("/p/corporate/approve")({
@@ -76,7 +76,7 @@ function CorporateApprovePage() {
                 <MapPin className="h-4 w-4" /> {rfp.destination}
               </div>
               <div className="flex items-center gap-1.5">
-                <Calendar className="h-4 w-4" /> {fmtDate(rfp.departure_date)}
+                <Calendar className="h-4 w-4" /> {formatDate(rfp.departure_date)}
               </div>
             </div>
           </div>
@@ -117,7 +117,7 @@ function CorporateApprovePage() {
                       rows={3}
                     />
                     <div className="flex gap-3">
-                      <GhostButton
+                      <Button variant="ghost"
                         className="text-danger hover:bg-danger/10"
                         onClick={() =>
                           updateStatus.mutate({ status: "rejected", reason: rejectReason })
@@ -125,7 +125,7 @@ function CorporateApprovePage() {
                         disabled={updateStatus.isPending || !rejectReason.trim()}
                       >
                         Confirmar Recusa
-                      </GhostButton>
+                      </Button>
                       <Button
                         onClick={() => setIsRejecting(false)}
                         className="text-sm text-muted-foreground hover:text-foreground font-medium"
@@ -136,13 +136,13 @@ function CorporateApprovePage() {
                   </div>
                 ) : (
                   <div className="flex flex-col sm:flex-row gap-3">
-                    <PrimaryButton
+                    <Button variant="default"
                       className="flex-1 py-6 text-lg gap-2"
                       onClick={() => updateStatus.mutate({ status: "approved" })}
                       disabled={updateStatus.isPending}
                     >
                       <CheckCircle2 className="h-5 w-5" /> Aprovar Orçamento
-                    </PrimaryButton>
+                    </Button>
                     <Button
                       onClick={() => setIsRejecting(true)}
                       className="flex-1 flex items-center justify-center gap-2 py-6 text-lg font-semibold border-none text-foreground rounded-[var(--radius-card)] hover:glass bg-white/5 border-white/10 transition-colors"

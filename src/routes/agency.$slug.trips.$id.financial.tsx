@@ -16,9 +16,9 @@ import {
 import { processBoletoWithAI } from "@/lib/ocr-ai";
 import { toast } from "sonner";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { Button, GhostButton, PrimaryButton } from "@/components/ui/button";
+import { Button } from "@/components/ui/button";
 import { useAgency } from "@/lib/agency-context";
-import { money } from "@/lib/formatters";
+import { formatCurrency } from "@/lib/formatters";
 import { supabase } from "@/integrations/supabase/client";
 import {
   fetchTripSummary,
@@ -295,7 +295,7 @@ function TripFinancial() {
       {/* Income */}
       <Section
         title={`Receitas (${income.length})`}
-        total={money(totalIncome, trip?.currency)}
+        total={formatCurrency(totalIncome, trip?.currency)}
         open={openSection === "income"}
         onToggle={() => setOpenSection(openSection === "income" ? null : "income")}
         onAdd={() => {
@@ -315,7 +315,7 @@ function TripFinancial() {
       {/* Third Party Income */}
       <Section
         title={`Faturamento Operadora/Terceiros (${thirdPartyIncome.length})`}
-        total={money(totalThirdParty, trip?.currency)}
+        total={formatCurrency(totalThirdParty, trip?.currency)}
         open={openSection === "third_party"}
         onToggle={() => setOpenSection(openSection === "third_party" ? null : "third_party")}
       >
@@ -330,7 +330,7 @@ function TripFinancial() {
       {/* Expenses */}
       <Section
         title={`Custos / Fornecedores (${expenses.length})`}
-        total={money(totalExpense, trip?.currency)}
+        total={formatCurrency(totalExpense, trip?.currency)}
         open={openSection === "expense"}
         onToggle={() => setOpenSection(openSection === "expense" ? null : "expense")}
         onAdd={() => {
@@ -387,7 +387,7 @@ function TripFinancial() {
               <Section
                 key={plan.id}
                 title={sectionTitle}
-                total={money(plan.total_amount, trip?.currency)}
+                total={formatCurrency(plan.total_amount, trip?.currency)}
                 open={openSection === `plan_${plan.id}`}
                 onToggle={() =>
                   setOpenSection(openSection === `plan_${plan.id}` ? null : `plan_${plan.id}`)
@@ -543,7 +543,7 @@ function TripFinancial() {
                           <option key={inst.id} value={inst.id}>
                             Parcela #{inst.number} —{" "}
                             {new Date(inst.due_date + "T12:00:00").toLocaleDateString("pt-BR")} —{" "}
-                            {money(inst.amount)}
+                            {formatCurrency(inst.amount)}
                           </option>
                         ))}
                     </Select>

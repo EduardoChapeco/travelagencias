@@ -7,7 +7,7 @@ import { useAgency } from "@/lib/agency-context";
 import { Field } from "@/components/ui/field";
 import { FormInput as Input } from "@/components/ui/input";
 import { NativeSelect as Select } from "@/components/ui/select";
-import { money } from "@/lib/formatters";
+import { formatCurrency } from "@/lib/formatters";
 import { Button } from "@/components/ui/button";
 import { getAgentPct } from "@/utils/pricing";
 
@@ -188,13 +188,8 @@ export function CommissionSection({
       agent_id: agentId || null,
       items_commission: items,
       embarque_tax: totalTaxas,
-      agency_commission_pct: items.length > 0 ? items[0].agency_commission_pct : 15,
-      agent_commission_pct: agentPct,
-      agent_commission_brl: agentCommission,
-      agency_commission_brl: agencyCommission,
-      base_comissionavel: baseComissionavel,
-      total_bonus: items.reduce((s, item) => s + (item.bonus || 0), 0),
-      net_profit: netProfit,
+      // As variáveis abaixo foram removidas pois o backend as recalcula e ignora os valores do cliente.
+      // E agora há um gateway contra fraude no servidor garantindo limites.
     };
     const { error } = commQ.data
       ? await supabase
@@ -221,7 +216,7 @@ export function CommissionSection({
         </div>
         <div className="flex items-center gap-3">
           <span className="text-xs font-mono text-success font-bold">
-            Agência: {money(agencyCommission, currency)}
+            Agência: {formatCurrency(agencyCommission, currency)}
           </span>
           {open ? (
             <ChevronDown className="h-4 w-4 text-foreground" />
@@ -385,7 +380,7 @@ export function CommissionSection({
                             Remuneração
                           </span>
                           <span className="text-xs font-bold text-success font-mono">
-                            {money(
+                            {formatCurrency(
                               ((item.tarifa_base || 0) * (item.agency_commission_pct || 0)) / 100 +
                                 (item.bonus || 0),
                               currency,
@@ -414,7 +409,7 @@ export function CommissionSection({
                 Base Comissionável
               </div>
               <div className="text-lg font-bold text-foreground font-mono">
-                {money(baseComissionavel, currency)}
+                {formatCurrency(baseComissionavel, currency)}
               </div>
               <div className="ds-meta text-muted-foreground mt-0.5">
                 Venda total (itens): R${" "}
@@ -429,7 +424,7 @@ export function CommissionSection({
                 Comissão Agência
               </div>
               <div className="text-lg font-bold text-success font-mono">
-                {money(agencyCommission, currency)}
+                {formatCurrency(agencyCommission, currency)}
               </div>
               <div className="ds-meta text-muted-foreground mt-0.5">
                 Inclui bônus de R${" "}
@@ -441,7 +436,7 @@ export function CommissionSection({
                 Comissão Agente ({agentPct}%)
               </div>
               <div className="text-lg font-bold text-brand font-mono">
-                {money(agentCommission, currency)}
+                {formatCurrency(agentCommission, currency)}
               </div>
               <div className="ds-meta text-muted-foreground mt-0.5">
                 Calculado sobre a base de R$ {baseComissionavel.toLocaleString("pt-BR")}
@@ -458,7 +453,7 @@ export function CommissionSection({
               <div
                 className={`text-lg font-bold font-mono ${netProfit >= 0 ? "text-success" : "text-danger"}`}
               >
-                {money(netProfit, currency)}
+                {formatCurrency(netProfit, currency)}
               </div>
             </div>
           </div>

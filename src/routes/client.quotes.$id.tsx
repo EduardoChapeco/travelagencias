@@ -49,9 +49,7 @@ function ClientQuoteView() {
       // Update status to viewed if not decided
       if (!p.decided_at && p.status !== "draft") {
         await (supabase as any)
-          .from("proposals")
-          .update({ status: "viewed" })
-          .eq("id", p.id);
+          .rpc("public_mark_proposal_viewed", { _id: p.id });
       }
 
       return p as unknown as ProposalPublic;
@@ -62,9 +60,7 @@ function ClientQuoteView() {
     onMutate: () => toast.loading("Registrando sua decisão..."),
     mutationFn: async (status: "approved" | "rejected") => {
       const { error } = await (supabase as any)
-        .from("proposals")
-        .update({ status, decided_at: new Date().toISOString() })
-        .eq("id", id);
+        .rpc("public_decide_proposal", { _id: id, _status: status });
       if (error) throw error;
     },
     onSuccess: () => {

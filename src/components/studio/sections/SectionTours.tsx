@@ -12,7 +12,7 @@ import { replaceAt } from "@/components/proposals/ProposalFormFields";
 import { useAgency } from "@/lib/agency-context";
 import { supabase } from "@/integrations/supabase/client";
 import { Search } from "lucide-react";
-import { PrimaryButton , Button } from "@/components/ui/button";
+import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import { FormInput as Input } from "@/components/ui/input";
 
@@ -180,14 +180,14 @@ export function SectionTours({ draft, save }: Props) {
                     />
                   </L>
                 </div>
-                <PrimaryButton
+                <Button variant="default"
                   type="button"
                   disabled={loading}
                   onClick={handleSearchPromotions}
                   className="h-8"
                 >
                   Filtrar
-                </PrimaryButton>
+                </Button>
               </div>
 
               <div className="space-y-2 pt-2">

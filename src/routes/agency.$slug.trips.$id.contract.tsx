@@ -6,9 +6,9 @@ import {
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { useAgency } from "@/lib/agency-context";
-import { PrimaryButton, GhostButton , Button } from "@/components/ui/button";
+import { Button } from "@/components/ui/button";
 import { StatusBadge } from "@/components/ui/badge";
-import { money, fmtDate } from "@/lib/formatters";
+import { formatCurrency, formatDate } from "@/lib/formatters";
 import JSZip from "jszip";
 
 // Import decomposed components
@@ -259,8 +259,8 @@ function TripContract() {
       setPackageSummary(
         [
           t.destination ? `Destino: ${t.destination}` : null,
-          t.travel_start ? `Partida: ${fmtDate(t.travel_start)}` : null,
-          t.travel_end ? `Retorno: ${fmtDate(t.travel_end)}` : null,
+          t.travel_start ? `Partida: ${formatDate(t.travel_start)}` : null,
+          t.travel_end ? `Retorno: ${formatDate(t.travel_end)}` : null,
         ]
           .filter(Boolean)
           .join(" · "),
@@ -592,7 +592,7 @@ function TripContract() {
             <div className="mt-1 flex flex-wrap items-center gap-x-2 gap-y-1 text-xs text-muted-foreground font-mono">
               <span>v{contract.version}</span>
               <span>·</span>
-              <span>criado em {fmtDate(contract.created_at)}</span>
+              <span>criado em {formatDate(contract.created_at)}</span>
               {contract.view_count !== undefined && contract.view_count > 0 && (
                 <>
                   <span>·</span>
@@ -605,7 +605,7 @@ function TripContract() {
               {contract.last_viewed_at && (
                 <>
                   <span>·</span>
-                  <span>Último acesso: {fmtDate(contract.last_viewed_at)}</span>
+                  <span>Último acesso: {formatDate(contract.last_viewed_at)}</span>
                 </>
               )}
             </div>
@@ -648,17 +648,17 @@ function TripContract() {
           )}
 
           {!contract && (
-            <PrimaryButton
+            <Button variant="default"
               onClick={() => createContract.mutate()}
               disabled={createContract.isPending}
             >
               {createContract.isPending ? "Gerando…" : "Gerar Contrato"}
-            </PrimaryButton>
+            </Button>
           )}
 
           {contract?.status === "draft" && (
             <>
-              <GhostButton
+              <Button variant="ghost"
                 onClick={() =>
                   updateContract.mutate({
                     package_summary: packageSummary,
@@ -670,26 +670,26 @@ function TripContract() {
                 disabled={updateContract.isPending}
               >
                 Salvar rascunho
-              </GhostButton>
-              <PrimaryButton
+              </Button>
+              <Button variant="default"
                 onClick={() => sendContract.mutate()}
                 disabled={sendContract.isPending}
               >
                 <Send className="mr-1.5 h-3.5 w-3.5 inline" />
                 Enviar para assinatura
-              </PrimaryButton>
+              </Button>
             </>
           )}
 
           {contract?.status === "pending_signature" && (
-            <GhostButton
+            <Button variant="ghost"
               onClick={() => cancelContract.mutate()}
               disabled={cancelContract.isPending}
               className="text-danger border-danger hover:bg-danger-bg font-bold"
             >
               <XCircle className="mr-1.5 h-3.5 w-3.5 inline" />
               Cancelar Contrato
-            </GhostButton>
+            </Button>
           )}
         </div>
       </div>
@@ -701,7 +701,7 @@ function TripContract() {
           <div className="flex-1">
             <div className="text-sm font-bold text-success">Contrato assinado digitalmente</div>
             <div className="text-xs text-success/80 mt-0.5 font-medium">
-              Assinado em {fmtDate(contract.signed_at)} · Hash:{" "}
+              Assinado em {formatDate(contract.signed_at)} · Hash:{" "}
               <span className="font-mono">{contract.signed_hash?.slice(0, 16)}…</span>
               {contract.certificate && (
                 <>

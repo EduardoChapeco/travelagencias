@@ -3,7 +3,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { Field } from "@/components/ui/field";
 import { FormInput as Input } from "@/components/ui/input";
-import { PrimaryButton } from "@/components/ui/button";
+import { Button } from "@/components/ui/button";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -51,9 +51,9 @@ function ResetPage() {
           <Field label="Nova senha" error={errors.password?.message}>
             <Input type="password" placeholder="Mínimo 8 caracteres" {...register("password")} />
           </Field>
-          <PrimaryButton type="submit" disabled={isSubmitting} className="w-full">
+          <Button variant="default" type="submit" disabled={isSubmitting} className="w-full">
             {isSubmitting ? "Salvando…" : "Atualizar senha"}
-          </PrimaryButton>
+          </Button>
         </form>
       </div>
     </div>

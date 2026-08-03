@@ -10,7 +10,7 @@ import {
 } from "@/services/client-area";
 import { toast } from "sonner";
 import { ClientShell } from "@/components/shell/ClientShell";
-import { fmtDate } from "@/lib/formatters";
+import { formatDate } from "@/lib/formatters";
 import { Button } from "@/components/ui/button";
 import { FormInput as Input } from "@/components/ui/input";
 
@@ -161,7 +161,7 @@ function ClientChatRoute() {
                       <div
                         className={`ds-meta mt-1 text-right ${isMe ? "text-primary-foreground/70" : "text-muted-foreground"}`}
                       >
-                        {fmtDate(event.date)}
+                        {formatDate(event.date)}
                       </div>
                     </div>
                   </div>
@@ -180,7 +180,7 @@ function ClientChatRoute() {
                         Chamado #{event.data.number || event.data.id.slice(0,4)} Aberto
                       </p>
                       <p className="ds-meta text-zinc-500 mt-0.5">{event.data.title}</p>
-                      <p className="ds-meta text-zinc-400 mt-1">{fmtDate(event.date)}</p>
+                      <p className="ds-meta text-zinc-400 mt-1">{formatDate(event.date)}</p>
                       <Link to="/client/support" className="ds-meta text-primary font-semibold mt-2 hover:underline">
                         Ver Suporte
                       </Link>
@@ -201,7 +201,7 @@ function ClientChatRoute() {
                         Assinatura Criptografada via KYC
                       </p>
                       <p className="ds-meta text-green-700/80 mt-0.5">Identidade verificada e anexada ao documento.</p>
-                      <p className="ds-meta text-green-600/60 mt-1">{fmtDate(event.date)}</p>
+                      <p className="ds-meta text-green-600/60 mt-1">{formatDate(event.date)}</p>
                     </div>
                   </div>
                 );
@@ -223,7 +223,7 @@ function ClientChatRoute() {
                         {event.data.title}
                       </p>
                       <p className={`ds-meta mt-1 ${isAccepted ? 'text-blue-600/60' : 'text-zinc-400'}`}>
-                        {fmtDate(event.date)}
+                        {formatDate(event.date)}
                       </p>
                       <Link to="/client/quotes/$id" params={{ id: event.data.id }} className={`ds-meta font-semibold mt-2 hover:underline ${isAccepted ? 'text-blue-700' : 'text-primary'}`}>
                         Ver Proposta

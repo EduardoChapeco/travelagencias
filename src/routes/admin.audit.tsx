@@ -4,8 +4,8 @@ import { useState } from "react";
 import { Filter, ChevronLeft, ChevronRight, X, AlertCircle } from "lucide-react";
 import { fetchAdminAuditLogs } from "@/services/admin";
 import { PageHeader, EmptyState } from "@/components/shell/PageHeader";
-import { GhostButton } from "@/components/ui/button";
-import { fmtDate } from "@/lib/formatters";
+import { Button } from "@/components/ui/button";
+import { formatDate } from "@/lib/formatters";
 import { NativeSelect as Select } from "@/components/ui/select";
 
 export const Route = createFileRoute("/admin/audit")({
@@ -89,12 +89,12 @@ function Page() {
             </div>
 
             {hasActiveFilters && (
-              <GhostButton
+              <Button variant="ghost"
                 onClick={resetFilters}
                 className="h-9 px-2 text-danger hover:bg-danger/10"
               >
                 <X className="h-4 w-4" />
-              </GhostButton>
+              </Button>
             )}
           </div>
         }
@@ -141,7 +141,7 @@ function Page() {
               {q.data.data.map((e: any) => (
                 <tr key={e.id} className="border-t border-border">
                   <td className="px-3 py-2.5 text-xs text-muted-foreground">
-                    {fmtDate(e.created_at)}
+                    {formatDate(e.created_at)}
                   </td>
                   <td className="px-3 py-2.5 font-mono ds-meta font-semibold text-foreground/80">
                     {e.action}
@@ -184,23 +184,23 @@ function Page() {
               de <span className="font-medium text-foreground">{totalCount}</span> logs
             </div>
             <div className="flex items-center gap-2">
-              <GhostButton
+              <Button variant="ghost"
                 disabled={page === 1}
                 onClick={() => setPage((p) => Math.max(1, p - 1))}
                 className="h-8 w-8 p-0"
               >
                 <ChevronLeft className="h-4 w-4" />
-              </GhostButton>
+              </Button>
               <div className="text-xs font-medium">
                 {page} / {totalPages}
               </div>
-              <GhostButton
+              <Button variant="ghost"
                 disabled={page >= totalPages}
                 onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
                 className="h-8 w-8 p-0"
               >
                 <ChevronRight className="h-4 w-4" />
-              </GhostButton>
+              </Button>
             </div>
           </div>
         </div>

@@ -2,7 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { fetchPublicBlogPost, submitBlogLead } from "@/services/public";
 import { ArrowLeft, Clock, Eye, Send, Share2, BookOpen } from "lucide-react";
 import { sanitizeHtml } from "@/lib/sanitize";
-import { fmtDate } from "@/lib/formatters";
+import { formatDate } from "@/lib/formatters";
 import { useState } from "react";
 import { toast } from "sonner";
 import { useMutation } from "@tanstack/react-query";
@@ -149,7 +149,7 @@ function PublicBlogPage() {
             <div className="flex items-center justify-center gap-4 mt-8 text-xs font-bold text-muted-foreground uppercase tracking-wider">
               {post.published_at && (
                 <span className="flex items-center gap-1.5">
-                  <Clock className="w-3.5 h-3.5" /> {fmtDate(post.published_at)}
+                  <Clock className="w-3.5 h-3.5" /> {formatDate(post.published_at)}
                 </span>
               )}
               <span className="flex items-center gap-1.5">
@@ -222,7 +222,7 @@ function PublicBlogPage() {
                     </h4>
                     {r.published_at && (
                       <div className="ds-meta text-muted-foreground uppercase tracking-wide mt-2">
-                        {fmtDate(r.published_at)}
+                        {formatDate(r.published_at)}
                       </div>
                     )}
                   </div>

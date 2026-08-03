@@ -9,10 +9,10 @@ import { useAgency } from "@/lib/agency-context";
 import { Field } from "@/components/ui/field";
 import { FormInput as Input } from "@/components/ui/input";
 import { NativeSelect as Select } from "@/components/ui/select";
-import { GhostButton, PrimaryButton , Button } from "@/components/ui/button";
+import { Button } from "@/components/ui/button";
 import { SheetPage } from "@/components/ui/sheet";
 import { StatusBadge } from "@/components/ui/badge";
-import { fmtDate } from "@/lib/formatters";
+import { formatDate } from "@/lib/formatters";
 import { processVoucherWithAI } from "@/lib/ocr-ai";
 // html2canvas is loaded on-demand — see getHtml2Canvas() below
 import { Instagram } from "lucide-react";
@@ -549,10 +549,10 @@ function TripVouchers() {
               </div>
             </div>
             <div className="flex w-full justify-between items-center mt-auto pt-4">
-              <GhostButton onClick={() => setStoryVoucher(null)}>Fechar</GhostButton>
-              <PrimaryButton onClick={downloadStory} disabled={generatingStory}>
+              <Button variant="ghost" onClick={() => setStoryVoucher(null)}>Fechar</Button>
+              <Button variant="default" onClick={downloadStory} disabled={generatingStory}>
                 {generatingStory ? "Gerando..." : "Baixar Imagem 9:16"}
-              </PrimaryButton>
+              </Button>
             </div>
         </SheetPage>
       )}

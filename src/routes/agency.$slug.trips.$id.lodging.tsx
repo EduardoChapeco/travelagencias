@@ -4,7 +4,7 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useAgency } from "@/lib/agency-context";
 import { StatusBadge } from "@/components/ui/badge";
-import { fmtDate } from "@/lib/formatters";
+import { formatDate } from "@/lib/formatters";
 import {
   Bed,
   Calendar,
@@ -418,8 +418,8 @@ function TripLodgingPage() {
                     </span>
                     <span className="font-medium text-foreground flex items-center gap-1.5">
                       <Calendar className="h-3.5 w-3.5 text-muted-foreground" />
-                      {card.hotel_checkin ? fmtDate(card.hotel_checkin) : "—"} até{" "}
-                      {card.hotel_checkout ? fmtDate(card.hotel_checkout) : "—"}
+                      {card.hotel_checkin ? formatDate(card.hotel_checkin) : "—"} até{" "}
+                      {card.hotel_checkout ? formatDate(card.hotel_checkout) : "—"}
                     </span>
                   </div>
 

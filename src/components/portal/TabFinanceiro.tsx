@@ -1,5 +1,5 @@
 import { AlertCircle, CreditCard, CheckCircle, Clock } from "lucide-react";
-import { fmtDate, money } from "@/lib/formatters";
+import { formatDate, formatCurrency } from "@/lib/formatters";
 import { AppWidget } from "@/components/portal/TripPortalShared";
 import { toast } from "sonner";
 import { handleViewReceipt } from "@/utils/storage-helper";
@@ -56,19 +56,19 @@ export function TabFinanceiro({
               Valor do Pacote
             </h3>
             <div className="text-3xl font-black tracking-tight mb-6">
-              {money(trip.total_sale, trip.currency)}
+              {formatCurrency(trip.total_sale, trip.currency)}
             </div>
             <div className="space-y-3">
               <div className="flex justify-between items-center bg-white/10 p-3 rounded-[var(--radius-card)]">
                 <span className="text-xs font-medium">Pago</span>
                 <span className="text-sm font-bold text-success">
-                  {money(trip.total_paid ?? 0, trip.currency)}
+                  {formatCurrency(trip.total_paid ?? 0, trip.currency)}
                 </span>
               </div>
               <div className="flex justify-between items-center bg-white/10 p-3 rounded-[var(--radius-card)] border border-warning/30">
                 <span className="text-xs font-medium">Pendente</span>
                 <span className="text-sm font-black text-warning">
-                  {money(outstanding, trip.currency)}
+                  {formatCurrency(outstanding, trip.currency)}
                 </span>
               </div>
             </div>
@@ -116,7 +116,7 @@ export function TabFinanceiro({
                             Parcela {inst.number}
                           </div>
                           <div className="text-xs font-medium text-muted-foreground mt-0.5">
-                            Vencimento: {fmtDate(inst.due_date)}
+                            Vencimento: {formatDate(inst.due_date)}
                           </div>
                         </div>
                       </div>
@@ -125,7 +125,7 @@ export function TabFinanceiro({
                         <div className="text-left sm:text-right flex items-center sm:items-end justify-between sm:flex-col sm:justify-start w-full gap-2">
                           <div>
                             <div className="text-base font-black text-foreground">
-                              {money(inst.amount, trip.currency)}
+                              {formatCurrency(inst.amount, trip.currency)}
                             </div>
                             <div
                               className={`ds-meta uppercase font-bold tracking-wider ${

@@ -1,5 +1,5 @@
 import { Camera, Image as ImageIcon, ShieldAlert } from "lucide-react";
-import { fmtDate } from "@/lib/formatters";
+import { formatDate } from "@/lib/formatters";
 import { MultiFileUploader } from "@/components/uploads/MultiFileUploader";
 import { Button } from "@/components/ui/button";
 
@@ -93,7 +93,7 @@ export function TabMemorias({
                   />
                   <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-end p-3">
                     <span className="ds-meta text-white font-medium">
-                      {fmtDate(m.created_at)}
+                      {formatDate(m.created_at)}
                     </span>
                   </div>
                 </div>

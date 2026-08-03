@@ -79,7 +79,7 @@ import { FormInput as Input } from "@/components/ui/input";
 import { NativeSelect as Select } from "@/components/ui/select";
 import { FormTextarea as Textarea } from "@/components/ui/textarea";
 import { StatusBadge } from "@/components/ui/badge";
-import { GhostButton, PrimaryButton , Button } from "@/components/ui/button";
+import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Skeleton } from "@/components/ui/skeleton";
 import { cn } from "@/lib/utils";
@@ -234,9 +234,9 @@ function TabContacts({ supplierId, agencyId }: { supplierId: string; agencyId: s
     <div className="space-y-4">
       <div className="flex items-center justify-between">
         <h3 className="text-sm font-semibold">Contatos Operacionais</h3>
-        <GhostButton className="h-7 text-xs gap-1.5" onClick={() => setAdding(true)}>
+        <Button variant="ghost" className="h-7 text-xs gap-1.5" onClick={() => setAdding(true)}>
           <Plus className="h-3.5 w-3.5" /> Adicionar
-        </GhostButton>
+        </Button>
       </div>
 
       {adding && (
@@ -296,7 +296,7 @@ function TabContacts({ supplierId, agencyId }: { supplierId: string; agencyId: s
             </Field>
           </div>
           <div className="flex gap-2 pt-1">
-            <PrimaryButton
+            <Button variant="default"
               className="h-8 text-xs"
               onClick={() => addMut.mutate()}
               disabled={!form.name || addMut.isPending}
@@ -307,10 +307,10 @@ function TabContacts({ supplierId, agencyId }: { supplierId: string; agencyId: s
                 <Check className="h-3.5 w-3.5" />
               )}{" "}
               Salvar
-            </PrimaryButton>
-            <GhostButton className="h-8 text-xs" onClick={() => setAdding(false)}>
+            </Button>
+            <Button variant="ghost" className="h-8 text-xs" onClick={() => setAdding(false)}>
               Cancelar
-            </GhostButton>
+            </Button>
           </div>
         </div>
       )}
@@ -468,9 +468,9 @@ function TabProducts({ supplierId, agencyId }: { supplierId: string; agencyId: s
     <div className="space-y-4">
       <div className="flex items-center justify-between">
         <h3 className="text-sm font-semibold">Catálogo de Produtos & Serviços</h3>
-        <GhostButton className="h-7 text-xs gap-1.5" onClick={() => setAdding(true)}>
+        <Button variant="ghost" className="h-7 text-xs gap-1.5" onClick={() => setAdding(true)}>
           <Plus className="h-3.5 w-3.5" /> Adicionar
-        </GhostButton>
+        </Button>
       </div>
 
       {adding && (
@@ -546,7 +546,7 @@ function TabProducts({ supplierId, agencyId }: { supplierId: string; agencyId: s
             />
           </Field>
           <div className="flex gap-2 pt-1">
-            <PrimaryButton
+            <Button variant="default"
               className="h-8 text-xs"
               onClick={() => addMut.mutate()}
               disabled={!form.name || addMut.isPending}
@@ -557,10 +557,10 @@ function TabProducts({ supplierId, agencyId }: { supplierId: string; agencyId: s
                 <Check className="h-3.5 w-3.5" />
               )}{" "}
               Salvar
-            </PrimaryButton>
-            <GhostButton className="h-8 text-xs" onClick={() => setAdding(false)}>
+            </Button>
+            <Button variant="ghost" className="h-8 text-xs" onClick={() => setAdding(false)}>
               Cancelar
-            </GhostButton>
+            </Button>
           </div>
         </div>
       )}
@@ -737,7 +737,7 @@ function TabFiles({ supplierId, agencyId }: { supplierId: string; agencyId: stri
     <div className="space-y-4">
       <div className="flex items-center justify-between">
         <h3 className="text-sm font-semibold">Arquivos & Documentos</h3>
-        <GhostButton
+        <Button variant="ghost"
           className="h-7 text-xs gap-1.5"
           onClick={() => fileRef.current?.click()}
           disabled={uploading}
@@ -748,7 +748,7 @@ function TabFiles({ supplierId, agencyId }: { supplierId: string; agencyId: stri
             <Upload className="h-3.5 w-3.5" />
           )}{" "}
           Upload
-        </GhostButton>
+        </Button>
         <Input
           ref={fileRef}
           type="file"
@@ -947,9 +947,9 @@ function TabReviews({ supplierId, agencyId }: { supplierId: string; agencyId: st
     <div className="space-y-4">
       <div className="flex items-center justify-between">
         <h3 className="text-sm font-semibold">Avaliações Internas de Performance</h3>
-        <GhostButton className="h-7 text-xs gap-1.5" onClick={() => setAdding(true)}>
+        <Button variant="ghost" className="h-7 text-xs gap-1.5" onClick={() => setAdding(true)}>
           <Star className="h-3.5 w-3.5" /> Avaliar
-        </GhostButton>
+        </Button>
       </div>
 
       {adding && (
@@ -976,7 +976,7 @@ function TabReviews({ supplierId, agencyId }: { supplierId: string; agencyId: st
             />
           </Field>
           <div className="flex gap-2 pt-1">
-            <PrimaryButton
+            <Button variant="default"
               className="h-8 text-xs"
               onClick={() => addMut.mutate()}
               disabled={addMut.isPending}
@@ -987,10 +987,10 @@ function TabReviews({ supplierId, agencyId }: { supplierId: string; agencyId: st
                 <Check className="h-3.5 w-3.5" />
               )}{" "}
               Salvar
-            </PrimaryButton>
-            <GhostButton className="h-8 text-xs" onClick={() => setAdding(false)}>
+            </Button>
+            <Button variant="ghost" className="h-8 text-xs" onClick={() => setAdding(false)}>
               Cancelar
-            </GhostButton>
+            </Button>
           </div>
         </div>
       )}

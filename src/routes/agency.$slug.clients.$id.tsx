@@ -8,7 +8,7 @@ import { useAgency, getModuleName } from "@/lib/agency-context";
 import { useConfirm } from "@/hooks/use-confirm";
 import { usePrompt } from "@/hooks/use-prompt";
 import { StatusBadge } from "@/components/ui/badge";
-import { fmtDate, money } from "@/lib/formatters";
+import { formatDate, formatCurrency } from "@/lib/formatters";
 import { SearchableSelect } from "@/components/ui/searchable-select";
 import {
   fetchClient,
@@ -144,7 +144,7 @@ function ClientDetail() {
   const tags = c.tags || [];
 
   return (
-    <div className="p-4 md:p-6 max-w-7xl mx-auto space-y-6">
+    <div className="page-content dock-offset max-w-7xl mx-auto space-y-6 w-full">
       <ConfirmDialog />
       <PromptDialog />
 
@@ -310,7 +310,7 @@ function ClientDetail() {
                 />
                 <InfoBlock
                   label="Nascimento"
-                  value={c.birth_date ? fmtDate(c.birth_date) : "Não informado"}
+                  value={c.birth_date ? formatDate(c.birth_date) : "Não informado"}
                 />
                 <InfoBlock
                   label="Documentos Nacionais"
@@ -331,7 +331,7 @@ function ClientDetail() {
                       <>
                         {c.passport_number} <br />
                         <span className="text-muted-foreground text-xs">
-                          Vence em: {c.passport_expiry ? fmtDate(c.passport_expiry) : "?"}
+                          Vence em: {c.passport_expiry ? formatDate(c.passport_expiry) : "?"}
                         </span>
                       </>
                     ) : (

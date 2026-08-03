@@ -4,7 +4,7 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useAgency } from "@/lib/agency-context";
 import { StatusBadge } from "@/components/ui/badge";
-import { fmtDate } from "@/lib/formatters";
+import { formatDate } from "@/lib/formatters";
 import {
   fetchFlightItineraries,
   createFlightItinerary,
@@ -850,7 +850,7 @@ function TripFlightsPage() {
                         {card.flight_date && (
                           <span className="flex items-center gap-1">
                             <Calendar className="h-3 w-3" />
-                            {fmtDate(card.flight_date)}
+                            {formatDate(card.flight_date)}
                           </span>
                         )}
                         {card.pnr && (

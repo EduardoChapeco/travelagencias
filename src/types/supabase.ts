@@ -13130,6 +13130,45 @@ export type Database = {
         Args: { p_article_id: string; p_is_upvote: boolean }
         Returns: undefined
       }
+      // ── Secure Server-Side Gateways (Microfases 5-8) ───────────────────────
+      public_mark_proposal_viewed: {
+        Args: { _id: string }
+        Returns: undefined
+      }
+      public_decide_proposal: {
+        Args: { _id: string; _status: string }
+        Returns: undefined
+      }
+      client_upload_receipt: {
+        Args: { _installment_id: string; _receipt_url: string }
+        Returns: undefined
+      }
+      client_decide_flight_change: {
+        Args: { _case_id: string; _status: string }
+        Returns: undefined
+      }
+      // ── Group Tour Financial RPCs (Microfase 2) ─────────────────────────────
+      update_group_tour_budget: {
+        Args: {
+          p_tour_id: string
+          p_ads_budget: number
+          p_target_poupanca_balance: number
+        }
+        Returns: undefined
+      }
+      update_group_tour_pricing: {
+        Args: {
+          p_tour_id: string
+          p_pricing_tiers: unknown[]
+          p_extra_options: unknown[]
+        }
+        Returns: undefined
+      }
+      // ── Trip Financial RPC (Microfase 1) ────────────────────────────────────
+      update_trip_financials: {
+        Args: { p_trip_id: string; p_total_sale: number; p_total_cost: number }
+        Returns: undefined
+      }
     }
     Enums: {
       app_role:

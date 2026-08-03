@@ -14,8 +14,8 @@ import { FormInput as Input } from "@/components/ui/input";
 import { NativeSelect as Select } from "@/components/ui/select";
 import { FormTextarea as Textarea } from "@/components/ui/textarea";
 import { SimpleSheet as Sheet } from "@/components/ui/sheet";
-import { PrimaryButton, GhostButton , Button } from "@/components/ui/button";
-import { money } from "@/lib/formatters";
+import { Button } from "@/components/ui/button";
+import { formatCurrency } from "@/lib/formatters";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -242,7 +242,7 @@ function CashPage() {
     },
     onSuccess: (_, vars) => {
       const diff = vars.reportedBalance - balance;
-      toast.success(`Caixa fechado. Diferença: ${diff >= 0 ? "+" : ""}${money(diff)}`);
+      toast.success(`Caixa fechado. Diferença: ${diff >= 0 ? "+" : ""}${formatCurrency(diff)}`);
       qc.invalidateQueries({ queryKey: ["cash-session-active", activeReg?.id] });
       qc.invalidateQueries({ queryKey: ["cash-transactions"] });
       setCloseRegisterSheet(false);
@@ -382,19 +382,19 @@ function CashPage() {
             <div className="flex items-center gap-1.5">
               {activeReg?.type === "physical" &&
                 (activeSession ? (
-                  <GhostButton
+                  <Button variant="ghost"
                     onClick={() => setCloseRegisterSheet(true)}
                     className="flex h-7 items-center gap-1 rounded-full px-2.5 text-xs font-semibold text-danger border-danger/20 hover:bg-danger/5 transition-colors cursor-pointer"
                   >
                     <Lock className="h-3 w-3" /> Fechar
-                  </GhostButton>
+                  </Button>
                 ) : (
-                  <PrimaryButton
+                  <Button variant="default"
                     onClick={() => setOpenRegisterSheet(true)}
                     className="flex h-7 items-center gap-1 rounded-full px-2.5 text-xs font-semibold bg-brand hover:bg-brand/90 text-brand-foreground transition-colors cursor-pointer"
                   >
                     <Unlock className="h-3 w-3" /> Abrir
-                  </PrimaryButton>
+                  </Button>
                 ))}
 
               {(activeReg?.type !== "physical" || activeSession) && (
@@ -483,7 +483,7 @@ function CashPage() {
                 Saldo de Abertura
               </span>
               <strong className="text-2xl font-mono block mt-1.5 text-foreground">
-                {money(opening)}
+                {formatCurrency(opening)}
               </strong>
               <span className="ds-meta text-muted-foreground mt-1 block">
                 {activeSession
@@ -498,7 +498,7 @@ function CashPage() {
               <ArrowDownCircle className="w-3.5 h-3.5 text-success" /> Total Entradas
             </span>
             <strong className="text-2xl font-mono block mt-1.5 text-success">
-              +{money(entries)}
+              +{formatCurrency(entries)}
             </strong>
             <span className="ds-meta text-muted-foreground mt-1 block">
               Aportes e recebimentos
@@ -509,7 +509,7 @@ function CashPage() {
             <span className="ds-meta font-bold text-muted-foreground uppercase tracking-widest flex items-center gap-1">
               <ArrowUpCircle className="w-3.5 h-3.5 text-danger" /> Total Saídas
             </span>
-            <strong className="text-2xl font-mono block mt-1.5 text-danger">-{money(exits)}</strong>
+            <strong className="text-2xl font-mono block mt-1.5 text-danger">-{formatCurrency(exits)}</strong>
             <span className="ds-meta text-muted-foreground mt-1 block">
               Sangrias e despesas
             </span>
@@ -522,7 +522,7 @@ function CashPage() {
             <strong
               className={`text-2xl font-mono block mt-1.5 ${balance >= 0 ? "text-foreground" : "text-danger"}`}
             >
-              {money(balance)}
+              {formatCurrency(balance)}
             </strong>
             <span className="ds-meta text-muted-foreground mt-1 block">
               Saldo líquido recalculado
@@ -547,12 +547,12 @@ function CashPage() {
               Abra o caixa informando o saldo inicial para começar a registrar transações
               financeiras diárias.
             </p>
-            <PrimaryButton
+            <Button variant="default"
               onClick={() => setOpenRegisterSheet(true)}
               className="mt-4 text-xs px-4 py-2"
             >
               Abrir Sessão de Caixa
-            </PrimaryButton>
+            </Button>
           </div>
         )}
 
@@ -637,7 +637,7 @@ function CashPage() {
                             }
                           >
                             {tx.type === "receipt" || tx.type === "deposit" ? "+" : "−"}{" "}
-                            {money(Number(tx.amount))}
+                            {formatCurrency(Number(tx.amount))}
                           </span>
                         </td>
                       </tr>
@@ -720,7 +720,7 @@ function CashPage() {
             loading={addTransaction.isPending}
             onSubmit={(data) => {
               const netDiff = data.commission - data.client_paid_operator;
-              const note = `Conciliação Operadora — Comissão: ${money(data.commission)}. Pago direto à Op: ${money(data.client_paid_operator)}. Líquido: ${money(netDiff)}`;
+              const note = `Conciliação Operadora — Comissão: ${formatCurrency(data.commission)}. Pago direto à Op: ${formatCurrency(data.client_paid_operator)}. Líquido: ${formatCurrency(netDiff)}`;
               addTransaction.mutate({
                 amount: Math.abs(netDiff),
                 payment_method: "bank_transfer",
@@ -779,12 +779,12 @@ function OpenForm({
         <Textarea {...register("notes")} placeholder="Descreva observações se houver" />
       </Field>
       <div className="flex justify-end gap-2 pt-2">
-        <GhostButton type="button" onClick={onClose}>
+        <Button variant="ghost" type="button" onClick={onClose}>
           Cancelar
-        </GhostButton>
-        <PrimaryButton type="submit" disabled={loading}>
+        </Button>
+        <Button variant="default" type="submit" disabled={loading}>
           {loading ? "Abrindo..." : "Iniciar Expediente"}
-        </PrimaryButton>
+        </Button>
       </div>
     </form>
   );
@@ -821,7 +821,7 @@ function CloseForm({
       <div className="glass bg-white/5 border-white/10 border-none rounded-[var(--radius-card)] p-4 text-xs space-y-2">
         <div className="flex justify-between">
           <span className="text-muted-foreground">Saldo esperado no sistema:</span>
-          <strong className="font-mono">{money(currentBalance)}</strong>
+          <strong className="font-mono">{formatCurrency(currentBalance)}</strong>
         </div>
         <div className="flex justify-between">
           <span className="text-muted-foreground">Diferença/Quebra de Caixa:</span>
@@ -831,7 +831,7 @@ function CloseForm({
             }`}
           >
             {difference > 0 ? "+" : ""}
-            {money(difference)}
+            {formatCurrency(difference)}
           </strong>
         </div>
       </div>
@@ -845,12 +845,12 @@ function CloseForm({
         <Textarea {...register("notes")} placeholder="Explique eventuais diferenças no caixa" />
       </Field>
       <div className="flex justify-end gap-2 pt-2">
-        <GhostButton type="button" onClick={onClose}>
+        <Button variant="ghost" type="button" onClick={onClose}>
           Cancelar
-        </GhostButton>
-        <PrimaryButton type="submit" disabled={loading} className="bg-danger hover:bg-danger/90">
+        </Button>
+        <Button variant="default" type="submit" disabled={loading} className="bg-danger hover:bg-danger/90">
           {loading ? "Fechando..." : "Encerrar Expediente"}
-        </PrimaryButton>
+        </Button>
       </div>
     </form>
   );
@@ -963,12 +963,12 @@ function TransactionForm({
       </Field>
 
       <div className="flex justify-end gap-2 pt-2">
-        <GhostButton type="button" onClick={onClose}>
+        <Button variant="ghost" type="button" onClick={onClose}>
           Cancelar
-        </GhostButton>
-        <PrimaryButton type="submit" disabled={loading}>
+        </Button>
+        <Button variant="default" type="submit" disabled={loading}>
           {loading ? "Salvando..." : "Salvar Transação"}
-        </PrimaryButton>
+        </Button>
       </div>
     </form>
   );
@@ -1045,16 +1045,16 @@ function ReconciliationForm({
       <div className="glass bg-white/5 border-white/10 border-none rounded-[var(--radius-card)] p-4 text-xs space-y-2.5">
         <div className="flex justify-between">
           <span className="text-muted-foreground">Valor Total da Venda:</span>
-          <strong className="font-mono">{money(totalSale)}</strong>
+          <strong className="font-mono">{formatCurrency(totalSale)}</strong>
         </div>
         <div className="flex justify-between">
           <span className="text-muted-foreground">Nossa Comissão Estimada ({rate}%):</span>
-          <strong className="font-mono text-success">{money(commission)}</strong>
+          <strong className="font-mono text-success">{formatCurrency(commission)}</strong>
         </div>
         <div className="flex justify-between border-t border-border pt-2 font-semibold">
           <span>Saldo Líquido com a Operadora:</span>
           <strong className={`font-mono ${netDue >= 0 ? "text-success" : "text-danger"}`}>
-            {netDue >= 0 ? "A Receber: " : "A Pagar: "} {money(Math.abs(netDue))}
+            {netDue >= 0 ? "A Receber: " : "A Pagar: "} {formatCurrency(Math.abs(netDue))}
           </strong>
         </div>
         {netDue < 0 && (
@@ -1066,12 +1066,12 @@ function ReconciliationForm({
       </div>
 
       <div className="flex justify-end gap-2 pt-2">
-        <GhostButton type="button" onClick={onClose}>
+        <Button variant="ghost" type="button" onClick={onClose}>
           Cancelar
-        </GhostButton>
-        <PrimaryButton type="submit" disabled={loading}>
+        </Button>
+        <Button variant="default" type="submit" disabled={loading}>
           {loading ? "Salvando..." : "Salvar Conciliação"}
-        </PrimaryButton>
+        </Button>
       </div>
     </form>
   );
@@ -1110,12 +1110,12 @@ function NewRegisterSheet({
           </Select>
         </Field>
         <div className="flex justify-end gap-2 pt-2">
-          <GhostButton type="button" onClick={onClose}>
+          <Button variant="ghost" type="button" onClick={onClose}>
             Cancelar
-          </GhostButton>
-          <PrimaryButton type="submit" disabled={isSubmitting}>
+          </Button>
+          <Button variant="default" type="submit" disabled={isSubmitting}>
             {isSubmitting ? "Criando..." : "Criar Caixa"}
-          </PrimaryButton>
+          </Button>
         </div>
       </form>
     </Sheet>

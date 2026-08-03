@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from "react";
 import { X, Printer, Download, Image as ImageIcon, ToggleLeft, ToggleRight } from "lucide-react";
-import { money } from "@/lib/formatters";
+import { formatCurrency } from "@/lib/formatters";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { cn } from "@/lib/utils";
@@ -26,7 +26,7 @@ interface PaymentReceiptModalProps {
   };
 }
 
-function fmtDate(d: string | null | undefined) {
+function formatDate(d: string | null | undefined) {
   if (!d) return new Date().toLocaleDateString("pt-BR");
   return new Date(d).toLocaleDateString("pt-BR", {
     day: "2-digit",
@@ -48,6 +48,8 @@ function translatePaymentMethod(method: string | null | undefined): string {
   if (m === "boleto") return "Boleto Bancário";
   return method;
 }
+
+import { Dialog, DialogContent } from "@/components/ui/dialog";
 
 export function PaymentReceiptModal({ isOpen, onClose, data }: PaymentReceiptModalProps) {
   const [isThermal, setIsThermal] = useState(() => {
@@ -180,7 +182,7 @@ export function PaymentReceiptModal({ isOpen, onClose, data }: PaymentReceiptMod
 
   const authCode = `TOS-REC-${receiptDetails.receiptId.slice(0, 8).toUpperCase()}-${new Date(receiptDetails.paymentDate || new Date()).getFullYear()}`;
   const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=100x100&data=${encodeURIComponent(
-    `Autenticação Turis: ${authCode} | Valor: ${money(receiptDetails.amount)} | Pago por: ${receiptDetails.payerName}`,
+    `Autenticação Turis: ${authCode} | Valor: ${formatCurrency(receiptDetails.amount)} | Pago por: ${receiptDetails.payerName}`,
   )}`;
 
   const handlePrint = () => {
@@ -275,8 +277,8 @@ export function PaymentReceiptModal({ isOpen, onClose, data }: PaymentReceiptMod
   };
 
   return (
-    <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/60 backdrop-blur-xs p-4 overflow-y-auto">
-      <div className="relative w-full max-w-2xl rounded-2xl bg-white border border-border flex flex-col shadow-2xl overflow-hidden max-h-[90vh]">
+    <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
+      <DialogContent className="max-w-2xl p-0 gap-0 border-border bg-white shadow-2xl flex flex-col sm:rounded-2xl z-[100]">
         {/* Header Options */}
         <div className="flex items-center justify-between border-b border-border bg-slate-50 px-5 py-3.5">
           <div>
@@ -352,7 +354,7 @@ export function PaymentReceiptModal({ isOpen, onClose, data }: PaymentReceiptMod
                     </span>
                   </div>
                   <div>
-                    Data: <span>{fmtDate(receiptDetails.paymentDate)}</span>
+                    Data: <span>{formatDate(receiptDetails.paymentDate)}</span>
                   </div>
                 </div>
 
@@ -384,7 +386,7 @@ export function PaymentReceiptModal({ isOpen, onClose, data }: PaymentReceiptMod
                   </div>
                   <div className="flex justify-between font-extrabold text-sm border-t border-dashed border-black pt-1 mt-1">
                     <span>Valor Pago:</span>
-                    <span>{money(receiptDetails.amount)}</span>
+                    <span>{formatCurrency(receiptDetails.amount)}</span>
                   </div>
                 </div>
 
@@ -463,7 +465,7 @@ export function PaymentReceiptModal({ isOpen, onClose, data }: PaymentReceiptMod
                       Valor Recebido
                     </span>
                     <strong className="text-2xl font-mono text-slate-900 mt-1 block">
-                      {money(receiptDetails.amount)}
+                      {formatCurrency(receiptDetails.amount)}
                     </strong>
                   </div>
                   <div className="text-right text-xs">
@@ -516,7 +518,7 @@ export function PaymentReceiptModal({ isOpen, onClose, data }: PaymentReceiptMod
                       Data e Hora do Pagamento
                     </span>
                     <strong className="text-slate-800 block text-xs">
-                      {fmtDate(receiptDetails.paymentDate)}
+                      {formatDate(receiptDetails.paymentDate)}
                     </strong>
                   </div>
                 </div>
@@ -591,7 +593,7 @@ export function PaymentReceiptModal({ isOpen, onClose, data }: PaymentReceiptMod
             <ImageIcon className="h-3.5 w-3.5" /> Salvar Imagem
           </Button>
         </div>
-      </div>
-    </div>
+      </DialogContent>
+    </Dialog>
   );
 }

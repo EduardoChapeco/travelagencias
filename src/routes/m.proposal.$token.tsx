@@ -4,8 +4,8 @@ import { useState, useEffect, useRef } from "react";
 import { toast } from "sonner";
 import { z } from "zod";
 import { supabase } from "@/integrations/supabase/client";
-import { PrimaryButton, GhostButton , Button } from "@/components/ui/button";
-import { money, fmtDate } from "@/lib/formatters";
+import { Button } from "@/components/ui/button";
+import { formatCurrency, formatDate } from "@/lib/formatters";
 import {
   Calendar,
   Users,
@@ -185,12 +185,7 @@ function PublicProposalView() {
       // mark as viewed (fire-and-forget)
       if (!p.decided_at && p.status !== "draft") {
         await supabase
-          .from("proposals")
-          .update({
-            status: "viewed",
-            viewed_at: new Date().toISOString(),
-          } as never)
-          .eq("id", p.id);
+          .rpc("public_mark_proposal_viewed", { _id: p.id });
 
         // Log client view in history
         await logProposalActivity(p.id, p.agency_id, "viewed");
@@ -205,10 +200,9 @@ function PublicProposalView() {
     },
     mutationFn: async (status: "accepted" | "rejected") => {
       if (!q.data) return;
+      const dbStatus = status === "accepted" ? "approved" : status;
       const { error } = await supabase
-        .from("proposals")
-        .update({ status, decided_at: new Date().toISOString() } as never)
-        .eq("id", q.data.id);
+        .rpc("public_decide_proposal", { _id: q.data.id, _status: dbStatus });
       if (error) throw error;
 
       // Log client decision in history
@@ -418,7 +412,7 @@ function PublicProposalView() {
                     </div>
                     <div className="font-bold text-emerald-600 text-sm">Proposta Aceita!</div>
                     <p className="text-muted-foreground leading-normal">
-                      Aprovada em {fmtDate(p.decided_at)}. Nosso agente de viagens entrará em
+                      Aprovada em {formatDate(p.decided_at)}. Nosso agente de viagens entrará em
                       contato para os trâmites do contrato de viagem.
                     </p>
                   </div>
@@ -430,7 +424,7 @@ function PublicProposalView() {
                     </div>
                     <div className="font-bold text-rose-600 text-sm">Proposta Recusada</div>
                     <p className="text-muted-foreground leading-normal">
-                      Recusada em {fmtDate(p.decided_at)}. Entraremos em contato para ajustar as
+                      Recusada em {formatDate(p.decided_at)}. Entraremos em contato para ajustar as
                       condições de acordo com suas preferências.
                     </p>
                   </div>
@@ -464,8 +458,8 @@ function PublicProposalView() {
                 <strong>Destino:</strong> {p.destination ?? "—"}
               </div>
               <div>
-                <strong>Período:</strong> {p.travel_start ? fmtDate(p.travel_start) : ""} —{" "}
-                {p.travel_end ? fmtDate(p.travel_end) : ""}
+                <strong>Período:</strong> {p.travel_start ? formatDate(p.travel_start) : ""} —{" "}
+                {p.travel_end ? formatDate(p.travel_end) : ""}
               </div>
               <div>
                 <strong>Passageiros:</strong> {totalPax} passageiro(s)
@@ -473,7 +467,7 @@ function PublicProposalView() {
             </div>
             {p.valid_until && (
               <div className="rounded-[var(--radius-card)] bg-amber-500/15 p-2.5 ds-meta text-amber-700 dark:text-amber-500 font-medium">
-                Condições de tarifas garantidas até {fmtDate(p.valid_until)}.
+                Condições de tarifas garantidas até {formatDate(p.valid_until)}.
               </div>
             )}
           </div>
@@ -504,10 +498,10 @@ function DecideActions({
             : "Confirmar recusa desta proposta de viagem?"}
         </p>
         <div className="flex items-center justify-center gap-2">
-          <GhostButton type="button" onClick={() => setConfirm(null)} className="h-8 ds-meta">
+          <Button variant="ghost" type="button" onClick={() => setConfirm(null)} className="h-8 ds-meta">
             Voltar
-          </GhostButton>
-          <PrimaryButton
+          </Button>
+          <Button variant="default"
             type="button"
             onClick={() => onDecide(confirm)}
             disabled={pending}
@@ -515,7 +509,7 @@ function DecideActions({
             style={{ background: brand, color: brandFg }}
           >
             {pending ? "Enviando…" : "Confirmar"}
-          </PrimaryButton>
+          </Button>
         </div>
       </div>
     );

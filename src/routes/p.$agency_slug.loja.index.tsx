@@ -4,7 +4,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { MapPin, Calendar, ArrowRight } from "lucide-react";
 import { FilterBar } from "@/components/ui/filter-bar";
 import { useState } from "react";
-import { money } from "@/lib/formatters";
+import { formatCurrency } from "@/lib/formatters";
 import { Skeleton } from "@/components/ui/skeleton";
 
 export const Route = createFileRoute("/p/$agency_slug/loja/")({
@@ -156,7 +156,7 @@ function PublicStoreIndex() {
                   <div className="flex flex-col">
                     <span className="ds-meta uppercase font-bold tracking-widest text-muted-foreground">A partir de</span>
                     <span className="text-lg font-black text-brand">
-                      {item.price ? money(item.price) : "Sob consulta"}
+                      {item.price ? formatCurrency(item.price) : "Sob consulta"}
                     </span>
                   </div>
                   <div className="h-8 w-8 rounded-full bg-brand/5 flex items-center justify-center group-hover:bg-brand group-hover:text-brand-foreground transition-colors">

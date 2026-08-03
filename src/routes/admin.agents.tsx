@@ -5,8 +5,8 @@ import { Search, ChevronLeft, ChevronRight, AlertCircle } from "lucide-react";
 import { fetchAdminAgents } from "@/services/admin";
 import { PageHeader, EmptyState } from "@/components/shell/PageHeader";
 import { FormInput as Input } from "@/components/ui/input";
-import { GhostButton } from "@/components/ui/button";
-import { fmtDate } from "@/lib/formatters";
+import { Button } from "@/components/ui/button";
+import { formatDate } from "@/lib/formatters";
 import { useDebounce } from "@/hooks/use-debounce";
 
 export const Route = createFileRoute("/admin/agents")({
@@ -105,7 +105,7 @@ function Page() {
                   </td>
                   <td className="px-3 py-2.5 text-xs">{r.role}</td>
                   <td className="px-3 py-2.5 text-xs text-muted-foreground">
-                    {fmtDate(r.created_at)}
+                    {formatDate(r.created_at)}
                   </td>
                 </tr>
               ))}
@@ -123,23 +123,23 @@ function Page() {
               de <span className="font-medium text-foreground">{totalCount}</span> agentes
             </div>
             <div className="flex items-center gap-2">
-              <GhostButton
+              <Button variant="ghost"
                 disabled={page === 1}
                 onClick={() => setPage((p) => Math.max(1, p - 1))}
                 className="h-8 w-8 p-0"
               >
                 <ChevronLeft className="h-4 w-4" />
-              </GhostButton>
+              </Button>
               <div className="text-xs font-medium">
                 {page} / {totalPages}
               </div>
-              <GhostButton
+              <Button variant="ghost"
                 disabled={page >= totalPages}
                 onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
                 className="h-8 w-8 p-0"
               >
                 <ChevronRight className="h-4 w-4" />
-              </GhostButton>
+              </Button>
             </div>
           </div>
         </div>

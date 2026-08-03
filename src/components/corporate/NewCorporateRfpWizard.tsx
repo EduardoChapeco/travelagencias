@@ -16,7 +16,7 @@ import { Field } from "@/components/ui/field";
 import { FormInput as Input } from "@/components/ui/input";
 import { NativeSelect as Select } from "@/components/ui/select";
 import { FormTextarea as Textarea } from "@/components/ui/textarea";
-import { PrimaryButton, GhostButton } from "@/components/ui/button";
+import { Button } from "@/components/ui/button";
 import { SearchableSelect } from "@/components/ui/searchable-select";
 import { SheetPage } from "@/components/ui/sheet";
 import { toast } from "sonner";
@@ -322,26 +322,26 @@ export function NewCorporateRfpWizard({
 
       {/* Footer Actions */}
       <div className="flex items-center justify-between border-t border-border bg-surface-alt/30 px-6 py-4 shrink-0">
-        <GhostButton onClick={handleBack} disabled={step === 0} className="gap-2 w-28">
+        <Button variant="ghost" onClick={handleBack} disabled={step === 0} className="gap-2 w-28">
           <ChevronLeft className="h-4 w-4" /> Voltar
-        </GhostButton>
+        </Button>
 
         <div className="flex gap-3">
-          <GhostButton onClick={onClose} disabled={submitting}>
+          <Button variant="ghost" onClick={onClose} disabled={submitting}>
             Cancelar
-          </GhostButton>
+          </Button>
           {step < STEPS.length - 1 ? (
-            <PrimaryButton onClick={handleNext} className="gap-2 w-32">
+            <Button variant="default" onClick={handleNext} className="gap-2 w-32">
               Próximo <ChevronRight className="h-4 w-4" />
-            </PrimaryButton>
+            </Button>
           ) : (
-            <PrimaryButton
+            <Button variant="default"
               onClick={submit}
               disabled={submitting}
               className="w-56 font-bold tracking-wider"
             >
               {submitting ? "CRIANDO..." : "ABRIR REQUISIÇÃO (RFP)"}
-            </PrimaryButton>
+            </Button>
           )}
         </div>
       </div>

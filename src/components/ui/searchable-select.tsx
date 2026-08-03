@@ -3,6 +3,7 @@ import { Search, X, ChevronDown, Loader2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { FormInput as Input } from "@/components/ui/input";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 
 export type SearchableOption = {
   value: string;
@@ -41,29 +42,17 @@ export function SearchableSelect({
   const [query, setQuery] = useState("");
   const [asyncOptions, setAsyncOptions] = useState<SearchableOption[]>([]);
   const [searching, setSearching] = useState(false);
-  const containerRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const allOptions = options ?? asyncOptions;
   const selectedOption = allOptions.find((o) => o.value === value);
 
-  // Close on outside click
-  useEffect(() => {
-    function handleClickOutside(e: MouseEvent) {
-      if (containerRef.current && !containerRef.current.contains(e.target as Node)) {
-        setOpen(false);
-        setQuery("");
-      }
-    }
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, []);
-
   // Focus input when opened
   useEffect(() => {
     if (open && inputRef.current) {
-      inputRef.current.focus();
+      // Pequeno timeout para garantir que o PopoverContent renderizou
+      setTimeout(() => inputRef.current?.focus(), 50);
     }
   }, [open]);
 
@@ -121,113 +110,117 @@ export function SearchableSelect({
   const isLoading = loading || searching;
 
   return (
-    <div ref={containerRef} className={cn("relative w-full", className)}>
-      {/* Trigger */}
-      <Button
-        type="button"
-        disabled={disabled}
-        onClick={() => !disabled && setOpen((o) => !o)}
-        className={cn(
-          "flex w-full h-9 items-center justify-between gap-2 rounded-[var(--radius-input)] border border-input bg-transparent px-3 text-sm outline-none transition-colors shadow-xs",
-          "hover:border-white/20 focus:border-white/30 focus:ring-1 focus:ring-white/20",
-          "disabled:cursor-not-allowed disabled:opacity-60",
-          open && "border-border-strong ring-2 ring-ring/20",
-          !value && "text-muted-foreground",
-        )}
-      >
-        <span className="flex-1 truncate text-left">
-          {selectedOption ? (
-            <span className="flex items-center gap-1.5">
-              <span className="font-medium text-foreground">{selectedOption.label}</span>
-              {selectedOption.sublabel && (
-                <span className="text-xs text-muted-foreground">({selectedOption.sublabel})</span>
-              )}
-            </span>
-          ) : (
-            placeholder
+    <Popover open={open} onOpenChange={setOpen}>
+      <PopoverTrigger asChild>
+        <Button
+          type="button"
+          disabled={disabled}
+          className={cn(
+            "flex w-full h-9 items-center justify-between gap-2 rounded-[var(--radius-input)] border border-input bg-transparent px-3 text-sm outline-none transition-colors shadow-xs",
+            "hover:border-white/20 focus:border-white/30 focus:ring-1 focus:ring-white/20",
+            "disabled:cursor-not-allowed disabled:opacity-60",
+            open && "border-border-strong ring-2 ring-ring/20",
+            !value && "text-muted-foreground",
+            className
           )}
-        </span>
+        >
+          <span className="flex-1 truncate text-left">
+            {selectedOption ? (
+              <span className="flex items-center gap-1.5">
+                <span className="font-medium text-foreground">{selectedOption.label}</span>
+                {selectedOption.sublabel && (
+                  <span className="text-xs text-muted-foreground">({selectedOption.sublabel})</span>
+                )}
+              </span>
+            ) : (
+              placeholder
+            )}
+          </span>
 
-        <span className="flex shrink-0 items-center gap-1">
-          {clearable && value && (
-            <span
-              role="button"
-              onClick={handleClear}
-              className="rounded p-0.5 text-muted-foreground hover:bg-surface-alt hover:text-foreground"
-            >
-              <X className="h-3.5 w-3.5" />
-            </span>
-          )}
-          {isLoading ? (
-            <Loader2 className="h-4 w-4 animate-spin text-muted-foreground" />
-          ) : (
-            <ChevronDown
-              className={cn(
-                "h-4 w-4 text-muted-foreground transition-transform",
-                open && "rotate-180",
-              )}
-            />
-          )}
-        </span>
-      </Button>
-
-      {/* Dropdown */}
-      {open && (
-        <div className="absolute left-0 right-0 top-full z-50 mt-1 overflow-hidden rounded-[var(--radius-card)] border border-white/10 glass text-white bg-black/40 backdrop-blur-2xl shadow-lg animate-in fade-in-0 zoom-in-95 slide-in-from-top-2 duration-100">
-          {/* Search input */}
-          <div className="flex items-center gap-2 border-b border-border px-3 py-2">
-            <Search className="h-3.5 w-3.5 shrink-0 text-muted-foreground" />
-            <Input
-              ref={inputRef}
-              type="text"
-              value={query}
-              onChange={(e) => setQuery(e.target.value)}
-              placeholder={searchPlaceholder}
-              className="flex-1"
-            />
-            {query && (
-              <Button
-                type="button"
-                onClick={() => setQuery("")}
-                className="text-muted-foreground hover:text-foreground"
+          <span className="flex shrink-0 items-center gap-1">
+            {clearable && value && (
+              <span
+                role="button"
+                onClick={handleClear}
+                className="rounded p-0.5 text-muted-foreground hover:bg-surface-alt hover:text-foreground"
               >
                 <X className="h-3.5 w-3.5" />
-              </Button>
+              </span>
             )}
-          </div>
-
-          {/* Options list */}
-          <div className="max-h-56 overflow-y-auto py-1">
-            {isLoading && filteredOptions.length === 0 ? (
-              <div className="flex items-center justify-center gap-2 py-6 text-xs text-muted-foreground">
-                <Loader2 className="h-4 w-4 animate-spin" />
-                Buscando...
-              </div>
-            ) : filteredOptions.length === 0 ? (
-              <div className="py-6 text-center text-xs text-muted-foreground">
-                Nenhum resultado encontrado.
-              </div>
+            {isLoading ? (
+              <Loader2 className="h-4 w-4 animate-spin text-muted-foreground" />
             ) : (
-              filteredOptions.map((opt) => (
-                <Button
-                  key={opt.value}
-                  type="button"
-                  onClick={() => handleSelect(opt)}
-                  className={cn(
-                    "flex w-full items-center gap-2 px-3 py-2 text-left text-sm transition-colors hover:bg-white/10",
-                    opt.value === value && "bg-primary/20 font-semibold text-primary",
-                  )}
-                >
-                  <span className="flex-1 truncate">{opt.label}</span>
-                  {opt.sublabel && (
-                    <span className="shrink-0 text-xs text-muted-foreground">{opt.sublabel}</span>
-                  )}
-                </Button>
-              ))
+              <ChevronDown
+                className={cn(
+                  "h-4 w-4 text-muted-foreground transition-transform",
+                  open && "rotate-180",
+                )}
+              />
             )}
-          </div>
+          </span>
+        </Button>
+      </PopoverTrigger>
+
+      <PopoverContent
+        align="start"
+        className="w-[var(--radix-popover-trigger-width)] p-0 rounded-[var(--radius-card)] border-white/10 glass text-white bg-black/40 backdrop-blur-2xl shadow-lg"
+      >
+        {/* Search input */}
+        <div className="flex items-center gap-2 border-b border-border px-3 py-2">
+          <Search className="h-3.5 w-3.5 shrink-0 text-muted-foreground" />
+          <Input
+            ref={inputRef}
+            type="text"
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
+            placeholder={searchPlaceholder}
+            className="flex-1 border-none bg-transparent shadow-none focus-visible:ring-0 focus-visible:border-none px-0 h-8"
+          />
+          {query && (
+            <Button
+              type="button"
+              variant="ghost"
+              size="icon"
+              className="h-6 w-6 rounded-full text-muted-foreground hover:text-foreground"
+              onClick={() => setQuery("")}
+            >
+              <X className="h-3.5 w-3.5" />
+            </Button>
+          )}
         </div>
-      )}
-    </div>
+
+        {/* Options list */}
+        <div className="max-h-56 overflow-y-auto py-1">
+          {isLoading && filteredOptions.length === 0 ? (
+            <div className="flex items-center justify-center gap-2 py-6 text-xs text-muted-foreground">
+              <Loader2 className="h-4 w-4 animate-spin" />
+              Buscando...
+            </div>
+          ) : filteredOptions.length === 0 ? (
+            <div className="py-6 text-center text-xs text-muted-foreground">
+              Nenhum resultado encontrado.
+            </div>
+          ) : (
+            filteredOptions.map((opt) => (
+              <Button
+                key={opt.value}
+                type="button"
+                variant="ghost"
+                onClick={() => handleSelect(opt)}
+                className={cn(
+                  "flex w-full items-center gap-2 px-3 py-2 h-auto text-left text-sm transition-colors rounded-none hover:bg-white/10 font-normal",
+                  opt.value === value && "bg-primary/20 font-semibold text-primary",
+                )}
+              >
+                <span className="flex-1 truncate text-left">{opt.label}</span>
+                {opt.sublabel && (
+                  <span className="shrink-0 text-xs text-muted-foreground">{opt.sublabel}</span>
+                )}
+              </Button>
+            ))
+          )}
+        </div>
+      </PopoverContent>
+    </Popover>
   );
 }

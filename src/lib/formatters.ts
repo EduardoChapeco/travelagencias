@@ -27,6 +27,3 @@ export function formatDate(value?: string | null): string {
     : "—";
 }
 
-/** Compatibility aliases while legacy consumers migrate to semantic names. */
-export const money = formatCurrency;
-export const fmtDate = formatDate;

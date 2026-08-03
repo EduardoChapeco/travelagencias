@@ -4,7 +4,7 @@ import { Bell, Check, X, Circle, Info, AlertTriangle, CheckCircle } from "lucide
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useAgency } from "@/lib/agency-context";
-import { fmtDate } from "@/lib/formatters";
+import { formatDate } from "@/lib/formatters";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 
@@ -191,7 +191,7 @@ export function NotificationsPanel({ onClose }: { onClose: () => void }) {
                     {n.title}
                   </h4>
                   <span className="shrink-0 ds-meta text-muted-foreground">
-                    {fmtDate(n.created_at)}
+                    {formatDate(n.created_at)}
                   </span>
                 </div>
                 {n.message && (

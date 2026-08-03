@@ -7,7 +7,7 @@ import { FormInput as Input } from "@/components/ui/input";
 import { NativeSelect as Select } from "@/components/ui/select";
 import { FormTextarea as Textarea } from "@/components/ui/textarea";
 import { SimpleSheet as Sheet } from "@/components/ui/sheet";
-import { PrimaryButton, GhostButton } from "@/components/ui/button";
+import { Button } from "@/components/ui/button";
 import { fetchTripPassengersMin, createBoardingCard } from "@/services/boarding";
 
 export function NewCard({
@@ -143,12 +143,12 @@ export function NewCard({
           </div>
         </div>
         <div className="flex justify-end gap-3 pt-4 border-t border-border/50">
-          <GhostButton type="button" onClick={onClose}>
+          <Button variant="ghost" type="button" onClick={onClose}>
             Cancelar
-          </GhostButton>
-          <PrimaryButton type="submit" disabled={submitting}>
+          </Button>
+          <Button variant="default" type="submit" disabled={submitting}>
             {submitting ? "Processando…" : "Adicionar à Fila"}
-          </PrimaryButton>
+          </Button>
         </div>
       </form>
     </Sheet>

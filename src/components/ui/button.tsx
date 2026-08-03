@@ -56,12 +56,4 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
 );
 Button.displayName = "Button";
 
-function PrimaryButton({ className, ...props }: React.ButtonHTMLAttributes<HTMLButtonElement>) {
-  return <Button {...props} variant="default" className={className} />;
-}
-
-function GhostButton({ className, ...props }: React.ButtonHTMLAttributes<HTMLButtonElement>) {
-  return <Button {...props} variant="ghost" className={className} />;
-}
-
-export { Button, GhostButton, PrimaryButton, buttonVariants };
+export { Button, buttonVariants };

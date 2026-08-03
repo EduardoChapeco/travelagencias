@@ -11,7 +11,7 @@ import { PageHeader } from "@/components/shell/PageHeader";
 import { Field } from "@/components/ui/field";
 import { FormInput as Input } from "@/components/ui/input";
 import { NativeSelect as Select } from "@/components/ui/select";
-import { PrimaryButton, GhostButton } from "@/components/ui/button";
+import { Button } from "@/components/ui/button";
 import { FileUploader } from "@/components/uploads/FileUploader";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
@@ -196,12 +196,12 @@ function Page() {
         </section>
 
         <div className="flex gap-2 border-t border-border pt-4">
-          <PrimaryButton disabled={isSubmitting}>
+          <Button variant="default" disabled={isSubmitting}>
             {isSubmitting ? "Salvando…" : "Salvar"}
-          </PrimaryButton>
-          <GhostButton type="button" onClick={changePassword}>
+          </Button>
+          <Button variant="ghost" type="button" onClick={changePassword}>
             Alterar senha
-          </GhostButton>
+          </Button>
         </div>
 
         {!me.data?.client && (

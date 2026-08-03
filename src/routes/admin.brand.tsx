@@ -7,7 +7,7 @@ import { fetchBrandingConfig, saveBrandingConfig } from "@/services/admin";
 import { PageHeader } from "@/components/shell/PageHeader";
 import { Field } from "@/components/ui/field";
 import { FormInput as Input } from "@/components/ui/input";
-import { PrimaryButton } from "@/components/ui/button";
+import { Button } from "@/components/ui/button";
 import { useForm } from "react-hook-form";
 import { FileUploader } from "@/components/uploads/FileUploader";
 import { z } from "zod";
@@ -202,10 +202,10 @@ function Page() {
           </section>
 
           <div className="flex justify-end">
-            <PrimaryButton type="submit" disabled={isSubmitting} className="gap-1.5">
+            <Button variant="default" type="submit" disabled={isSubmitting} className="gap-1.5">
               <Save className="h-3.5 w-3.5" />
               {isSubmitting ? "Salvando…" : "Salvar marca global"}
-            </PrimaryButton>
+            </Button>
           </div>
         </div>
 

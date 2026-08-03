@@ -9,8 +9,8 @@ import { EmptyState } from "@/components/shell/PageHeader";
 import { PageHeader } from "@/components/shell/PageHeader";
 import { ModuleAdminPanel } from "@/components/shell/ModuleAdminPanel";
 import { StatusBadge } from "@/components/ui/badge";
-import { GhostButton , Button } from "@/components/ui/button";
-import { fmtDate } from "@/lib/formatters";
+import { Button } from "@/components/ui/button";
+import { formatDate } from "@/lib/formatters";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
 import { FormInput as Input } from "@/components/ui/input";
@@ -355,7 +355,7 @@ function VouchersPage() {
                             </div>
                             <div className="flex items-center gap-1.5 text-xs font-medium text-foreground">
                               <Calendar className="h-3.5 w-3.5 text-muted-foreground" />
-                              {fmtDate(v.generated_at ?? v.created_at)}
+                              {formatDate(v.generated_at ?? v.created_at)}
                             </div>
                           </div>
                           <div className="col-span-2">
@@ -400,20 +400,20 @@ function VouchersPage() {
                     {Math.ceil(vouchersQ.data.count / pageSize) || 1}
                   </div>
                   <div className="flex items-center gap-2">
-                    <GhostButton
+                    <Button variant="ghost"
                       disabled={page === 1}
                       onClick={() => setPage((p) => Math.max(1, p - 1))}
                       className="h-9 px-4 text-xs font-semibold rounded-full border-none"
                     >
                       Anterior
-                    </GhostButton>
-                    <GhostButton
+                    </Button>
+                    <Button variant="ghost"
                       disabled={page * pageSize >= vouchersQ.data.count}
                       onClick={() => setPage((p) => p + 1)}
                       className="h-9 px-4 text-xs font-semibold rounded-full border-none"
                     >
                       Próxima
-                    </GhostButton>
+                    </Button>
                   </div>
                 </div>
               </>
@@ -503,17 +503,17 @@ function VouchersPage() {
 
             {flightsQ.data && filteredFlights.length > 0 && (
               <div className="border-none rounded-[var(--radius-card)] glass-card border-none overflow-x-auto">
-                <table className="w-full text-xs text-left border-collapse">
+                <table className="w-full min-w-max text-xs text-left border-collapse">
                   <thead className="glass bg-white/5 border-white/10/40 border-b border-border ds-meta uppercase font-bold text-muted-foreground">
                     <tr>
-                      <th className="px-4 py-3">Passageiro & Viagem</th>
-                      <th className="px-4 py-3">Rota / Voo</th>
-                      <th className="px-4 py-3">Data / Hora</th>
-                      <th className="px-4 py-3">Localizador (PNR)</th>
-                      <th className="px-4 py-3">Assento</th>
-                      <th className="px-4 py-3">Status</th>
-                      <th className="px-4 py-3">Notas</th>
-                      <th className="px-4 py-3 text-right">Ações</th>
+                      <th className="px-4 py-3 whitespace-nowrap">Passageiro & Viagem</th>
+                      <th className="px-4 py-3 whitespace-nowrap">Rota / Voo</th>
+                      <th className="px-4 py-3 whitespace-nowrap">Data / Hora</th>
+                      <th className="px-4 py-3 whitespace-nowrap">Localizador (PNR)</th>
+                      <th className="px-4 py-3 whitespace-nowrap">Assento</th>
+                      <th className="px-4 py-3 whitespace-nowrap">Status</th>
+                      <th className="px-4 py-3 whitespace-nowrap">Notas</th>
+                      <th className="px-4 py-3 text-right whitespace-nowrap">Ações</th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-border/60">

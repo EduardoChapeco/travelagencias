@@ -4,7 +4,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { PageHeader } from "@/components/shell/PageHeader";
 import { FileText, Clock, CheckCircle, XCircle } from "lucide-react";
 import { StatusBadge } from "@/components/ui/badge";
-import { money, fmtDate } from "@/lib/formatters";
+import { formatCurrency, formatDate } from "@/lib/formatters";
 import { fetchClientAgencies } from "@/services/client-area";
 
 export const Route = createFileRoute("/client/quotes/")({
@@ -106,13 +106,13 @@ function ClientQuotesIndex() {
                     <h3 className="font-bold text-lg">{quote.title}</h3>
                     <p className="text-sm text-muted-foreground">
                       Agência: {quote.agency?.name || "Desconhecida"}
-                      {quote.valid_until && ` • Válida até ${fmtDate(quote.valid_until)}`}
+                      {quote.valid_until && ` • Válida até ${formatDate(quote.valid_until)}`}
                     </p>
                   </div>
                 </div>
                 
                 <div className="font-mono font-semibold bg-accent px-4 py-2 rounded-[var(--radius-card)] text-lg self-start md:self-auto shrink-0 text-center">
-                  {money(Number(quote.total || 0), quote.currency || "BRL")}
+                  {formatCurrency(Number(quote.total || 0), quote.currency || "BRL")}
                   <div className="ds-meta text-muted-foreground font-sans uppercase tracking-widest mt-1">Ver Proposta</div>
                 </div>
               </Link>

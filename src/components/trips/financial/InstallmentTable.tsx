@@ -1,6 +1,6 @@
 import { CheckCircle } from "lucide-react";
 import { StatusBadge } from "@/components/ui/badge";
-import { money, fmtDate } from "@/lib/formatters";
+import { formatCurrency, formatDate } from "@/lib/formatters";
 import { type PaymentInstallment } from "@/services/trips";
 import { handleViewReceipt } from "@/utils/storage-helper";
 import { Button } from "@/components/ui/button";
@@ -38,7 +38,7 @@ export function InstallmentTable({
         {sorted.map((inst) => (
           <tr key={inst.id} className="border-b border-border/50 hover:bg-surface-alt/40">
             <td className="py-2 font-mono pr-3 text-foreground">#{inst.number}</td>
-            <td className="py-2 pr-3 text-muted-foreground font-mono">{fmtDate(inst.due_date)}</td>
+            <td className="py-2 pr-3 text-muted-foreground font-mono">{formatDate(inst.due_date)}</td>
             <td className="py-2 pr-3 flex flex-col gap-0.5">
               <StatusBadge tone={PAYABLE_STATUS_MAP[inst.status]?.tone ?? "neutral"}>
                 {PAYABLE_STATUS_MAP[inst.status]?.label ?? inst.status}
@@ -50,13 +50,13 @@ export function InstallmentTable({
               )}
             </td>
             <td className="py-2 pr-3 text-muted-foreground">
-              {inst.paid_at ? fmtDate(inst.paid_at) : "—"}
+              {inst.paid_at ? formatDate(inst.paid_at) : "—"}
             </td>
             <td className="py-2 text-right font-mono font-semibold text-foreground">
-              {money(inst.amount, currency)}
+              {formatCurrency(inst.amount, currency)}
               {inst.late_fee > 0 && (
                 <div className="ds-meta text-danger">
-                  +{money(inst.late_fee, currency)} juros
+                  +{formatCurrency(inst.late_fee, currency)} juros
                 </div>
               )}
             </td>

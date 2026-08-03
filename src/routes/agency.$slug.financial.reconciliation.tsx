@@ -10,10 +10,10 @@ import {
 import { Field } from "@/components/ui/field";
 import { FormInput as Input } from "@/components/ui/input";
 import { NativeSelect as Select } from "@/components/ui/select";
-import { PrimaryButton, GhostButton , Button } from "@/components/ui/button";
+import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { StatusBadge } from "@/components/ui/badge";
-import { money, fmtDate } from "@/lib/formatters";
+import { formatCurrency, formatDate } from "@/lib/formatters";
 import { FormTextarea as Textarea } from "@/components/ui/textarea";
 
 export const Route = createFileRoute("/agency/$slug/financial/reconciliation")({
@@ -306,11 +306,11 @@ function ReconciliationPage() {
                     <td className="px-4 py-3.5">
                       <span className="font-mono text-gray-600">Parcela #{rec.number}</span>
                       <div className="text-[9px] text-muted-foreground mt-0.5">
-                        Vencimento: {fmtDate(rec.due_date)}
+                        Vencimento: {formatDate(rec.due_date)}
                       </div>
                     </td>
                     <td className="px-4 py-3.5 text-right font-mono font-bold text-gray-900">
-                      {money(rec.amount)}
+                      {formatCurrency(rec.amount)}
                     </td>
                     <td className="px-4 py-3.5 capitalize">
                       <span className="inline-flex items-center gap-1">
@@ -391,7 +391,7 @@ function ReconciliationPage() {
                 </div>
                 <div className="flex justify-between">
                   <span className="text-gray-400">Valor a Ratear:</span>
-                  <strong className="text-gray-800">{money(selectedReceipt.amount)}</strong>
+                  <strong className="text-gray-800">{formatCurrency(selectedReceipt.amount)}</strong>
                 </div>
                 <div className="flex justify-between border-t border-border/50 pt-1.5 mt-1.5 font-bold">
                   <span className="text-gray-600">Comprovante:</span>
@@ -442,13 +442,13 @@ function ReconciliationPage() {
               )}
 
               <div className="flex gap-2.5 pt-2 border-t border-border">
-                <GhostButton
+                <Button variant="ghost"
                   onClick={() => setSelectedReceipt(null)}
                   className="flex-1 h-10 text-xs"
                 >
                   Cancelar
-                </GhostButton>
-                <PrimaryButton
+                </Button>
+                <Button variant="default"
                   onClick={() =>
                     approveReceipt.mutate({
                       receiptId: selectedReceipt.id,
@@ -460,7 +460,7 @@ function ReconciliationPage() {
                   className="flex-1 h-10 ds-label-caps tracking-wider bg-emerald-600 hover:bg-emerald-700 text-white rounded-[var(--radius-card)]"
                 >
                   {actionBusy ? "Salvando..." : "Confirmar e Lançar"}
-                </PrimaryButton>
+                </Button>
                 </div>
               </div>
             )}
@@ -483,7 +483,7 @@ function ReconciliationPage() {
               <div className="p-5 space-y-4 text-sm text-foreground/80">
               <p className="text-xs text-muted-foreground leading-relaxed">
                 O cliente será alertado no portal sobre a recusa do comprovante da Parcela #
-                {rejectReceipt.number} (Valor: {money(rejectReceipt.amount)}) e poderá enviar um
+                {rejectReceipt.number} (Valor: {formatCurrency(rejectReceipt.amount)}) e poderá enviar um
                 novo arquivo.
               </p>
 
@@ -498,10 +498,10 @@ function ReconciliationPage() {
               </Field>
 
               <div className="flex gap-2.5 pt-2 border-t border-border">
-                <GhostButton onClick={() => setRejectReceipt(null)} className="flex-1 h-10 text-xs">
+                <Button variant="ghost" onClick={() => setRejectReceipt(null)} className="flex-1 h-10 text-xs">
                   Voltar
-                </GhostButton>
-                <PrimaryButton
+                </Button>
+                <Button variant="default"
                   onClick={() =>
                     rejectReceiptMutation.mutate({
                       receiptId: rejectReceipt.id,
@@ -512,7 +512,7 @@ function ReconciliationPage() {
                   className="flex-1 h-10 ds-label-caps tracking-wider bg-rose-600 hover:bg-rose-700 text-white rounded-[var(--radius-card)]"
                 >
                   {actionBusy ? "Recusando..." : "Confirmar Recusa"}
-                </PrimaryButton>
+                </Button>
               </div>
             </div>
             )}

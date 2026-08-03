@@ -14,7 +14,7 @@ import { FormInput as Input } from "@/components/ui/input";
 import { SimpleSheet as Sheet } from "@/components/ui/sheet";
 import { Field } from "@/components/ui/field";
 import { NativeSelect as Select } from "@/components/ui/select";
-import { PrimaryButton, GhostButton, Button } from "@/components/ui/button";
+import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
 export const Route = createFileRoute("/agency/$slug/bus-layouts/$id")({
@@ -332,87 +332,97 @@ function BusLayoutEditorPage() {
   const selectedCell = selectedCellIndex !== null ? map[selectedCellIndex] : null;
 
   return (
-    <div className="w-full flex h-full flex-col overflow-hidden">
-      <PageHeader
-        title={l.name}
-        description={`Editor visual do veículo (${l.vehicle_type === "bus" ? "Ônibus" : l.vehicle_type}).`}
-        primaryAction={
-          <div className="flex items-center gap-1">
-            <Link
-              to="/agency/$slug/bus-layouts"
-              params={{ slug }}
-              className="inline-flex h-8 items-center gap-1 rounded-full border border-white/10 px-3.5 text-xs font-semibold text-os-muted hover:bg-white/10 hover:text-os cursor-pointer"
-            >
-              <ArrowLeft className="h-3.5 w-3.5" /> Voltar
-            </Link>
-            <PrimaryButton
-              onClick={saveLayout}
-              disabled={saving}
-              className="h-8 px-4 text-xs bg-brand text-brand-foreground hover:bg-brand/90 font-bold rounded-full flex items-center gap-1.5 cursor-pointer shadow-none"
-            >
-              <Save className="h-3.5 w-3.5" /> {saving ? "Salvando..." : "Salvar Layout"}
-            </PrimaryButton>
+    <div className="flex flex-1 min-h-0 flex-col">
+      {/* ── Toolbar ──────────────────────────────────────────────────────────── */}
+      <div className="flex flex-wrap items-center justify-between gap-3 border-b border-border bg-surface px-4 py-2.5 shrink-0">
+        <div className="flex items-center gap-3">
+          <Link
+            to="/agency/$slug/bus-layouts"
+            params={{ slug }}
+            className="rounded-full p-1.5 text-muted-foreground hover:bg-surface-alt transition-colors inline-flex items-center justify-center"
+          >
+            <ArrowLeft className="h-4 w-4" />
+          </Link>
+          <div>
+            <div className="text-sm font-semibold">
+              Editor de Frota
+            </div>
+            <div className="ds-meta text-muted-foreground">
+              {l.name} ({l.vehicle_type === "bus" ? "Ônibus" : l.vehicle_type})
+            </div>
           </div>
-        }
-      />
+        </div>
+        <div className="flex items-center gap-2">
+          <Button
+            type="button"
+            onClick={saveLayout}
+            disabled={saving}
+            className="flex h-8 items-center gap-1.5 rounded-full bg-primary px-3 text-xs font-semibold text-primary-foreground disabled:opacity-60 whitespace-nowrap cursor-pointer shadow-none"
+          >
+            <Save className="h-3.5 w-3.5" />
+            {saving ? "Salvando…" : "Salvar Layout"}
+          </Button>
+        </div>
+      </div>
 
-      <div className="page-content page-section dock-offset flex flex-col lg:flex-row gap-6 items-stretch min-h-0 overflow-y-auto">
+      {/* ── Body ─────────────────────────────────────────────────────────────── */}
+      <div className="flex flex-1 overflow-hidden">
         
-        {/* Painel Esquerdo: Ações, Configs e Paleta */}
-        <div className="w-full lg:w-72 space-y-4 shrink-0 flex flex-col">
+        {/* Left: Sidebar (Configs & Palette) */}
+        <div className="w-[280px] shrink-0 border-r border-border bg-surface overflow-y-auto p-4 space-y-6">
           {/* Alerta de Viagens Ativas */}
           {qTripsInUse.data && qTripsInUse.data.length > 0 && (
-            <div className="rounded-[var(--radius-card)] border border-warning/20 bg-warning/5 p-4 space-y-2 text-xs">
+            <div className="rounded-2xl border border-warning/20 bg-warning/5 p-3 space-y-2 text-xs">
               <div className="font-bold text-warning flex items-center gap-1.5">
-                <Info className="h-4 w-4" /> Layout em Uso
+                <Info className="h-3.5 w-3.5" /> Layout em Uso
               </div>
               <p className="text-muted-foreground leading-normal">
                 Este veículo está vinculado a <strong>{qTripsInUse.data.length} viagens confirmadas</strong>. 
-                Alterações radicais de assentos afetarão reservas históricas.
+                Alterações radicais afetarão as reservas.
               </p>
             </div>
           )}
 
           {/* Ferramentas do Cadastro */}
-          <div className="rounded-[var(--radius-card)] border-none glass-card p-4 space-y-3">
-            <h3 className="text-xs font-extrabold text-foreground uppercase tracking-widest flex items-center gap-1.5">
-              <Settings2 className="h-4 w-4 text-brand" /> Veículo
+          <div className="space-y-3">
+            <h3 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider flex items-center gap-1.5">
+              <Settings2 className="h-3.5 w-3.5" /> Configurações
             </h3>
             <div className="flex flex-col gap-2">
               <Button
-                variant="ghost"
+                variant="outline"
                 onClick={() => setEditOpen(true)}
                 type="button"
-                className="text-xs justify-start h-9 glass bg-white/5 border-white/10 hover:bg-white/10 text-foreground font-semibold rounded-full border-none w-full"
+                className="w-full text-xs h-8 justify-start font-medium cursor-pointer"
               >
                 <Settings2 className="h-3.5 w-3.5 mr-2" /> Editar Dimensões
               </Button>
 
-              <label className="flex items-center justify-between p-2 rounded-[var(--radius-card)] bg-white/5 border border-white/10 text-xs font-semibold cursor-pointer select-none">
-                <span>Double Decker (2 andares)</span>
+              <label className="flex items-center justify-between p-2 rounded border border-border bg-surface-alt/30 text-xs font-semibold cursor-pointer select-none">
+                <span>Double Decker</span>
                 <input
                   type="checkbox"
                   checked={isDoubleDecker}
                   onChange={handleToggleDoubleDecker}
-                  className="rounded border-none text-brand focus:ring-0 cursor-pointer h-4 w-4 bg-black/40"
+                  className="rounded border-border text-primary focus:ring-0 cursor-pointer h-3.5 w-3.5 bg-surface"
                 />
               </label>
             </div>
           </div>
 
           {/* Paleta de Desenho */}
-          <div className="rounded-[var(--radius-card)] border-none glass-card p-4 flex-1 space-y-3">
-            <h3 className="text-xs font-extrabold text-foreground uppercase tracking-widest flex items-center gap-1.5">
-              <Layout className="h-4 w-4 text-brand" /> Paleta de Desenho
+          <div className="space-y-3">
+            <h3 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider flex items-center gap-1.5">
+              <Layout className="h-3.5 w-3.5" /> Ferramentas
             </h3>
-            <div className="grid grid-cols-2 gap-2">
+            <div className="grid grid-cols-2 gap-1.5">
               {(
                 [
                   { type: "seat", label: "💺 Poltrona" },
                   { type: "aisle", label: "⬜ Corredor" },
                   { type: "wc", label: "🚻 Banheiro" },
                   { type: "door", label: "🚪 Porta" },
-                  { type: "driver", label: "🧑‍✈️ Motorista" },
+                  { type: "driver", label: "🧑‍✈️ Motoris..." },
                   { type: "stairs", label: "🪜 Escada" },
                   { type: "kitchen", label: "☕ Cozinha" },
                   { type: "guide", label: "🎙️ Guia" },
@@ -424,24 +434,24 @@ function BusLayoutEditorPage() {
                   type="button"
                   onClick={() => setActiveTool(t.type)}
                   className={cn(
-                    "h-9 justify-start text-xs font-bold transition-all px-3 rounded-[var(--radius-card)] border cursor-pointer",
+                    "h-8 justify-start text-xs font-medium transition-all px-2 rounded-md border cursor-pointer shadow-none",
                     activeTool === t.type
-                      ? "bg-brand text-white border-brand shadow-xs"
-                      : "glass-card border-none border-border text-muted-foreground hover:text-foreground hover:glass bg-white/5 border-white/10"
+                      ? "bg-primary text-primary-foreground border-primary"
+                      : "bg-transparent border-transparent text-muted-foreground hover:bg-surface-alt hover:text-foreground hover:border-border"
                   )}
                 >
-                  {t.label}
+                  <span className="truncate">{t.label}</span>
                 </Button>
               ))}
             </div>
 
             {activeTool === "seat" && (
-              <div className="pt-3 border-t border-white/10 space-y-2">
-                <span className="text-xs font-bold text-muted-foreground">Categoria Padrão:</span>
+              <div className="pt-4 border-t border-border space-y-2 mt-4">
+                <span className="text-xs font-medium text-muted-foreground block mb-1">Categoria Padrão</span>
                 <Select
                   value={defaultCategory}
                   onChange={(e: any) => setDefaultCategory(e.target.value)}
-                  className="w-full text-xs font-semibold"
+                  className="w-full text-xs font-medium h-8 bg-surface-alt/50 border-border"
                 >
                   <option value="convencional">Convencional (Cinza)</option>
                   <option value="executivo">Executivo (Azul)</option>
@@ -454,65 +464,67 @@ function BusLayoutEditorPage() {
           </div>
         </div>
 
-        {/* Painel Central: Grade */}
-        <div className="flex-1 rounded-[var(--radius-card)] border-none glass-card p-6 flex flex-col min-h-0">
+        {/* Center: Canvas */}
+        <div className="flex-1 min-w-0 overflow-auto bg-surface-alt/30 flex items-start justify-center p-8 relative">
           
-          <div className="flex flex-wrap items-center justify-between border-b border-white/10 pb-4 mb-4 gap-4">
-            <div className="flex items-center gap-1 bg-black/40 p-1 rounded-full border border-white/10">
+          {/* Controles do Canvas (Undo/Redo e Decks) */}
+          <div className="absolute top-4 left-4 right-4 flex items-center justify-between z-10 pointer-events-none">
+            <div className="flex items-center gap-1 bg-surface p-1 rounded-full border border-border shadow-sm pointer-events-auto">
               <Button
                 variant={activeDeck === 1 ? "default" : "ghost"}
                 onClick={() => setActiveDeck(1)}
-                className="h-8 px-4 text-xs font-bold rounded-full"
+                className="h-7 px-3 text-xs font-semibold rounded-full cursor-pointer shadow-none"
               >
-                1º Andar (Deck inferior)
+                1º Andar
               </Button>
               {isDoubleDecker && (
                 <Button
                   variant={activeDeck === 2 ? "default" : "ghost"}
                   onClick={() => setActiveDeck(2)}
-                  className="h-8 px-4 text-xs font-bold rounded-full"
+                  className="h-7 px-3 text-xs font-semibold rounded-full cursor-pointer shadow-none"
                 >
-                  2º Andar (Deck superior)
+                  2º Andar
                 </Button>
               )}
             </div>
 
-            <div className="flex items-center gap-1.5">
-              <GhostButton
+            <div className="flex items-center gap-1 bg-surface p-1 rounded-full border border-border shadow-sm pointer-events-auto">
+              <Button variant="ghost"
                 disabled={historyIndex <= 0}
                 onClick={handleUndo}
-                className="h-8 w-8 p-0 rounded-full border-none"
+                className="h-7 w-7 p-0 rounded-full cursor-pointer"
                 title="Desfazer"
               >
-                <Undo className="h-4 w-4" />
-              </GhostButton>
-              <GhostButton
+                <Undo className="h-3.5 w-3.5" />
+              </Button>
+              <Button variant="ghost"
                 disabled={historyIndex >= history.length - 1}
                 onClick={handleRedo}
-                className="h-8 w-8 p-0 rounded-full border-none"
+                className="h-7 w-7 p-0 rounded-full cursor-pointer"
                 title="Refazer"
               >
-                <Redo className="h-4 w-4" />
-              </GhostButton>
-              <div className="h-4 w-[1px] bg-white/10 mx-1" />
-              <GhostButton
+                <Redo className="h-3.5 w-3.5" />
+              </Button>
+              <div className="h-3 w-[1px] bg-border mx-1" />
+              <Button
+                variant="outline"
                 onClick={autoNumberSeats}
-                className="h-8 px-3 text-xs font-bold rounded-full border-none text-brand bg-brand/5 hover:bg-brand/10"
+                className="h-7 px-2.5 text-xs font-semibold rounded-full border-border text-brand hover:bg-brand/5 cursor-pointer shadow-none"
               >
                 <Sparkles className="h-3 w-3 mr-1" /> Autonumerar
-              </GhostButton>
+              </Button>
             </div>
           </div>
 
-          <div className="flex-1 overflow-auto flex items-center justify-center p-4">
-            <div className="border border-white/15 bg-black/60 rounded-3xl p-6 shadow-2xl relative min-w-[280px]">
+          <div className="flex items-center justify-center min-h-full py-16">
+            <div className="border border-border bg-surface rounded-[2rem] p-6 shadow-sm relative min-w-[280px]">
               
-              <div className="h-10 mb-6 border-b border-dashed border-white/20 rounded-t-[2.5rem] bg-white/5 flex items-center justify-center text-xs font-extrabold uppercase tracking-widest text-muted-foreground select-none">
+              <div className="h-10 mb-6 border-b border-dashed border-border/60 bg-surface-alt/30 rounded-t-3xl flex items-center justify-center text-xs font-bold uppercase tracking-widest text-muted-foreground select-none">
                 🚍 Cabine Frontal
               </div>
 
               <div
-                className="grid gap-3 justify-center mx-auto"
+                className="grid gap-2.5 justify-center mx-auto"
                 style={{
                   gridTemplateColumns: `repeat(${l.cols}, minmax(0, 1fr))`,
                 }}
@@ -523,15 +535,15 @@ function BusLayoutEditorPage() {
                   const getSeatColorClass = (cat: any) => {
                     switch (cat) {
                       case "executivo":
-                        return "border-blue-400 bg-blue-500/10 text-blue-300 hover:bg-blue-500/20";
+                        return "border-blue-200 bg-blue-50 text-blue-700 hover:bg-blue-100 dark:border-blue-900 dark:bg-blue-900/20 dark:text-blue-400";
                       case "semi_leito":
-                        return "border-purple-400 bg-purple-500/10 text-purple-300 hover:bg-purple-500/20";
+                        return "border-purple-200 bg-purple-50 text-purple-700 hover:bg-purple-100 dark:border-purple-900 dark:bg-purple-900/20 dark:text-purple-400";
                       case "leito":
-                        return "border-amber-400 bg-amber-500/10 text-amber-300 hover:bg-amber-500/20";
+                        return "border-amber-200 bg-amber-50 text-amber-700 hover:bg-amber-100 dark:border-amber-900 dark:bg-amber-900/20 dark:text-amber-400";
                       case "leito_cama":
-                        return "border-rose-500 bg-rose-500/10 text-rose-400 hover:bg-rose-500/20";
+                        return "border-rose-200 bg-rose-50 text-rose-700 hover:bg-rose-100 dark:border-rose-900 dark:bg-rose-900/20 dark:text-rose-400";
                       default:
-                        return "border-brand bg-brand/5 text-brand hover:bg-brand/10";
+                        return "border-border bg-surface-alt/50 text-foreground hover:bg-surface-alt hover:border-border-strong";
                     }
                   };
 
@@ -541,17 +553,17 @@ function BusLayoutEditorPage() {
                         type="button"
                         onClick={() => handleCellClick(index)}
                         className={cn(
-                          "flex h-12 w-12 items-center justify-center rounded-[var(--radius-card)] border-2 text-xs font-extrabold transition-all relative focus:ring-1 focus:ring-brand",
+                          "flex h-11 w-11 p-0 items-center justify-center rounded-xl border text-xs font-bold transition-all relative cursor-pointer shadow-none",
                           cell.type === "seat" && getSeatColorClass(cell.category),
-                          cell.type === "aisle" && "border-dashed border-white/5 bg-transparent text-white/10 hover:bg-white/5",
-                          cell.type === "wc" && "border-info bg-info/10 text-info hover:bg-info/20",
-                          cell.type === "door" && "border-warning bg-warning/10 text-warning hover:bg-warning/20",
-                          cell.type === "driver" && "border-success bg-success/10 text-success hover:bg-success/20",
-                          cell.type === "stairs" && "border-purple-400/50 bg-purple-400/5 text-purple-300 hover:bg-purple-400/15",
-                          cell.type === "kitchen" && "border-orange-400/50 bg-orange-400/5 text-orange-300 hover:bg-orange-400/15",
-                          cell.type === "guide" && "border-cyan-400/50 bg-cyan-400/5 text-cyan-300 hover:bg-cyan-400/15",
-                          cell.type === "empty" && "border-transparent bg-transparent text-transparent hover:bg-white/5",
-                          isSelected && "ring-2 ring-white border-white scale-105 z-10"
+                          cell.type === "aisle" && "border-dashed border-border bg-transparent text-muted-foreground/30 hover:bg-surface-alt/30",
+                          cell.type === "wc" && "border-info/30 bg-info/10 text-info hover:bg-info/20",
+                          cell.type === "door" && "border-warning/30 bg-warning/10 text-warning hover:bg-warning/20",
+                          cell.type === "driver" && "border-success/30 bg-success/10 text-success hover:bg-success/20",
+                          cell.type === "stairs" && "border-purple-200 bg-purple-50 text-purple-700 hover:bg-purple-100",
+                          cell.type === "kitchen" && "border-orange-200 bg-orange-50 text-orange-700 hover:bg-orange-100",
+                          cell.type === "guide" && "border-cyan-200 bg-cyan-50 text-cyan-700 hover:bg-cyan-100",
+                          cell.type === "empty" && "border-transparent bg-transparent text-transparent hover:bg-surface-alt/50",
+                          isSelected && "ring-2 ring-primary border-primary scale-105 z-10"
                         )}
                       >
                         {cell.type === "seat" && (cell.label || "💺")}
@@ -564,10 +576,10 @@ function BusLayoutEditorPage() {
                         {cell.type === "aisle" && ""}
                         
                         {cell.type === "seat" && cell.status === "blocked" && (
-                          <div className="absolute -top-1 -right-1 h-3 w-3 bg-danger rounded-full border border-white" />
+                          <div className="absolute -top-1 -right-1 h-3 w-3 bg-danger rounded-full border border-background shadow-sm" />
                         )}
                         {cell.type === "seat" && cell.status === "accessible" && (
-                          <div className="absolute -top-1 -right-1 h-3 w-3 bg-info rounded-full border border-white" />
+                          <div className="absolute -top-1 -right-1 h-3 w-3 bg-info rounded-full border border-background shadow-sm" />
                         )}
                       </Button>
                     </div>
@@ -578,109 +590,110 @@ function BusLayoutEditorPage() {
           </div>
         </div>
 
-        {/* Inspector Lateral */}
-        <div className="w-full lg:w-72 shrink-0">
-          <div className="rounded-[var(--radius-card)] border-none glass-card p-4 space-y-4 h-full flex flex-col justify-between">
-            <div className="space-y-4">
-              <h3 className="text-xs font-extrabold text-foreground uppercase tracking-widest flex items-center gap-1.5 border-b border-white/10 pb-2">
-                <MapIcon className="h-4 w-4 text-brand" /> Inspector de Célula
-              </h3>
+        {/* Right: Inspector Lateral */}
+        <div className="w-[280px] shrink-0 border-l border-border bg-surface overflow-y-auto p-4 flex flex-col">
+          <div className="space-y-4">
+            <h3 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider flex items-center gap-1.5 border-b border-border pb-3">
+              <MapIcon className="h-3.5 w-3.5" /> Inspector de Célula
+            </h3>
 
-              {selectedCell ? (
-                <div className="space-y-3">
-                  <div className="p-3 bg-white/5 border border-white/10 rounded-[var(--radius-card)] space-y-1">
-                    <div className="text-xxs uppercase tracking-wider font-extrabold text-muted-foreground">Posição no Grid</div>
-                    <div className="text-xs font-semibold text-foreground">
-                      Linha {selectedCell.r + 1}, Coluna {selectedCell.c + 1} ({selectedCell.deck === 1 ? "1º Andar" : "2º Andar"})
-                    </div>
+            {selectedCell ? (
+              <div className="space-y-4">
+                <div className="p-3 bg-surface-alt/50 border border-border rounded-[var(--radius-card)] space-y-1">
+                  <div className="text-[10px] uppercase tracking-wider font-bold text-muted-foreground">Posição no Grid</div>
+                  <div className="text-xs font-semibold text-foreground">
+                    Linha {selectedCell.r + 1}, Coluna {selectedCell.c + 1} ({selectedCell.deck === 1 ? "1º Andar" : "2º Andar"})
                   </div>
+                </div>
 
-                  <Field label="Tipo do Elemento">
-                    <Select
-                      value={selectedCell.type}
-                      onChange={(e) => handleInspectorChange("type", e.target.value)}
-                      className="text-xs font-semibold w-full"
-                    >
-                      <option value="seat">💺 Poltrona</option>
-                      <option value="aisle">⬜ Corredor</option>
-                      <option value="wc">🚻 Banheiro</option>
-                      <option value="door">🚪 Porta</option>
-                      <option value="driver">🧑‍✈️ Motorista</option>
-                      <option value="stairs">🪜 Escada</option>
-                      <option value="kitchen">☕ Cozinha</option>
-                      <option value="guide">🎙️ Guia</option>
-                      <option value="empty">🚫 Vazio</option>
-                    </Select>
-                  </Field>
+                <Field label="Tipo do Elemento">
+                  <Select
+                    value={selectedCell.type}
+                    onChange={(e) => handleInspectorChange("type", e.target.value)}
+                    className="text-xs font-medium w-full bg-surface-alt/50 border-border h-8"
+                  >
+                    <option value="seat">💺 Poltrona</option>
+                    <option value="aisle">⬜ Corredor</option>
+                    <option value="wc">🚻 Banheiro</option>
+                    <option value="door">🚪 Porta</option>
+                    <option value="driver">🧑‍✈️ Motorista</option>
+                    <option value="stairs">🪜 Escada</option>
+                    <option value="kitchen">☕ Cozinha</option>
+                    <option value="guide">🎙️ Guia</option>
+                    <option value="empty">🚫 Vazio</option>
+                  </Select>
+                </Field>
 
-                  {selectedCell.type === "seat" && (
-                    <>
-                      <Field label="Identificador / Número">
-                        <Input
-                          type="text"
-                          value={selectedCell.label}
-                          onChange={(e) => handleInspectorChange("label", e.target.value)}
-                          maxLength={4}
-                          className="font-mono text-center font-bold text-brand"
-                        />
-                      </Field>
-
-                      <Field label="Categoria de Assento">
-                        <Select
-                          value={selectedCell.category || "convencional"}
-                          onChange={(e) => handleInspectorChange("category", e.target.value)}
-                          className="text-xs font-semibold w-full"
-                        >
-                          <option value="convencional">Convencional</option>
-                          <option value="executivo">Executivo</option>
-                          <option value="semi_leito">Semi-Leito</option>
-                          <option value="leito">Leito</option>
-                          <option value="leito_cama">Leito-Cama</option>
-                        </Select>
-                      </Field>
-
-                      <Field label="Status do Assento">
-                        <Select
-                          value={selectedCell.status || "available"}
-                          onChange={(e) => handleInspectorChange("status", e.target.value)}
-                          className="text-xs font-semibold w-full"
-                        >
-                          <option value="available">Disponível</option>
-                          <option value="blocked">Bloqueado</option>
-                          <option value="accessible">PCD / Acessível</option>
-                        </Select>
-                      </Field>
-                    </>
-                  )}
-                  
-                  {selectedCell.type !== "seat" && selectedCell.type !== "aisle" && (
-                    <Field label="Etiqueta / Nome">
+                {selectedCell.type === "seat" && (
+                  <>
+                    <Field label="Identificador / Número">
                       <Input
                         type="text"
                         value={selectedCell.label}
                         onChange={(e) => handleInspectorChange("label", e.target.value)}
+                        maxLength={4}
+                        className="font-mono text-center font-bold text-primary h-8"
                       />
                     </Field>
-                  )}
-                </div>
-              ) : (
-                <div className="text-center py-12 px-4 rounded-[var(--radius-card)] border border-dashed border-white/10 text-xs text-muted-foreground">
-                  Clique em qualquer elemento do mapa do veículo para visualizar e alterar suas propriedades.
-                </div>
-              )}
-            </div>
 
+                    <Field label="Categoria de Assento">
+                      <Select
+                        value={selectedCell.category || "convencional"}
+                        onChange={(e) => handleInspectorChange("category", e.target.value)}
+                        className="text-xs font-medium w-full bg-surface-alt/50 border-border h-8"
+                      >
+                        <option value="convencional">Convencional</option>
+                        <option value="executivo">Executivo</option>
+                        <option value="semi_leito">Semi-Leito</option>
+                        <option value="leito">Leito</option>
+                        <option value="leito_cama">Leito-Cama</option>
+                      </Select>
+                    </Field>
+
+                    <Field label="Status do Assento">
+                      <Select
+                        value={selectedCell.status || "available"}
+                        onChange={(e) => handleInspectorChange("status", e.target.value)}
+                        className="text-xs font-medium w-full bg-surface-alt/50 border-border h-8"
+                      >
+                        <option value="available">Disponível</option>
+                        <option value="blocked">Bloqueado</option>
+                        <option value="accessible">PCD / Acessível</option>
+                      </Select>
+                    </Field>
+                  </>
+                )}
+                
+                {selectedCell.type !== "seat" && selectedCell.type !== "aisle" && (
+                  <Field label="Etiqueta / Nome">
+                    <Input
+                      type="text"
+                      value={selectedCell.label}
+                      onChange={(e) => handleInspectorChange("label", e.target.value)}
+                      className="h-8"
+                    />
+                  </Field>
+                )}
+              </div>
+            ) : (
+              <div className="text-center py-12 px-4 rounded-[var(--radius-card)] border border-dashed border-border bg-surface-alt/30 text-xs text-muted-foreground leading-normal">
+                Clique em qualquer elemento do mapa do veículo para visualizar e alterar suas propriedades.
+              </div>
+            )}
+          </div>
+
+          <div className="mt-auto pt-4">
             {selectedCell && (
-              <GhostButton
+              <Button
+                variant="outline"
                 onClick={() => setSelectedCellIndex(null)}
-                className="w-full text-xs font-bold h-9 border border-white/10 text-muted-foreground hover:text-foreground"
+                className="w-full text-xs font-medium h-8 cursor-pointer"
               >
                 Limpar Seleção
-              </GhostButton>
+              </Button>
             )}
           </div>
         </div>
-
       </div>
 
       {editOpen && (
@@ -826,12 +839,12 @@ export function EditVehicleModal({
           Aviso: Alterar o número de fileiras ou colunas preservará os assentos configurados nas posições correspondentes e adaptará a grade automaticamente.
         </p>
         <div className="flex justify-end gap-2 pt-4">
-          <GhostButton type="button" onClick={onClose}>
+          <Button variant="ghost" type="button" onClick={onClose}>
             Cancelar
-          </GhostButton>
-          <PrimaryButton type="submit" disabled={submitting}>
+          </Button>
+          <Button variant="default" type="submit" disabled={submitting}>
             {submitting ? "Salvando…" : "Salvar Alterações"}
-          </PrimaryButton>
+          </Button>
         </div>
       </form>
     </Sheet>

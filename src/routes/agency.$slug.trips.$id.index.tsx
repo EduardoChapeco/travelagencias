@@ -9,10 +9,10 @@ import { Field } from "@/components/ui/field";
 import { FormInput as Input } from "@/components/ui/input";
 import { NativeSelect as Select } from "@/components/ui/select";
 import { FormTextarea as Textarea } from "@/components/ui/textarea";
-import { PrimaryButton } from "@/components/ui/button";
+import { Button } from "@/components/ui/button";
 import { StatusBadge } from "@/components/ui/badge";
 import { TRIP_STATUS_MAP } from "@/lib/constants/status";
-import { fmtDate, money } from "@/lib/formatters";
+import { formatDate, formatCurrency } from "@/lib/formatters";
 import { cn } from "@/lib/utils";
 
 function getDaysToTrip(travelStart?: string | null): number | null {
@@ -65,8 +65,23 @@ function TripOverview() {
 
   const save = useMutation({
     mutationFn: async (patch: any) => {
-      const { error } = await supabase.from("trips").update(patch).eq("id", id);
-      if (error) throw error;
+      const { total_sale, total_cost, ...metadata } = patch;
+      
+      // 1. Atualiza metadados (destination, dates, status, notes)
+      if (Object.keys(metadata).length > 0) {
+        const { error: metaError } = await supabase.from("trips").update(metadata).eq("id", id);
+        if (metaError) throw metaError;
+      }
+      
+      // 2. Atualiza finanças com autoridade Server-Side (RPC)
+      if (total_sale !== undefined && total_cost !== undefined) {
+        const { error: rpcError } = await supabase.rpc("update_trip_financials", {
+          p_trip_id: id,
+          p_total_sale: total_sale,
+          p_total_cost: total_cost
+        });
+        if (rpcError) throw rpcError;
+      }
     },
     onSuccess: () => {
       toast.success("Salvo com sucesso");
@@ -208,7 +223,7 @@ function TripOverview() {
             />
           </Field>
           <div className="pt-2 flex justify-end">
-            <PrimaryButton type="submit" disabled={save.isPending}>
+            <Button variant="default" type="submit" disabled={save.isPending}>
               {save.isPending ? (
                 "Salvando…"
               ) : (
@@ -216,7 +231,7 @@ function TripOverview() {
                   <Save className="mr-2 h-4 w-4" /> Salvar Alterações
                 </>
               )}
-            </PrimaryButton>
+            </Button>
           </div>
         </form>
 
@@ -246,8 +261,8 @@ function TripOverview() {
                 <div className="flex items-center gap-2">
                   <CalendarDays className="h-3.5 w-3.5 text-muted-foreground/60 shrink-0" />
                   <span>
-                    {t.travel_start ? fmtDate(t.travel_start) : "—"} →{" "}
-                    {t.travel_end ? fmtDate(t.travel_end) : "—"}
+                    {t.travel_start ? formatDate(t.travel_start) : "—"} →{" "}
+                    {t.travel_end ? formatDate(t.travel_end) : "—"}
                   </span>
                 </div>
               )}
@@ -301,11 +316,11 @@ function TripOverview() {
             <div className="space-y-3">
               <div className="flex items-center justify-between text-sm">
                 <span className="text-muted-foreground">Volume Vendido</span>
-                <span className="font-mono">{money(Number(t.total_sale), t.currency)}</span>
+                <span className="font-mono">{formatCurrency(Number(t.total_sale), t.currency)}</span>
               </div>
               <div className="flex items-center justify-between text-sm">
                 <span className="text-muted-foreground">Custo Fornecedores</span>
-                <span className="font-mono">{money(Number(t.total_cost), t.currency)}</span>
+                <span className="font-mono">{formatCurrency(Number(t.total_cost), t.currency)}</span>
               </div>
               <div className="mt-2 flex items-center justify-between border-t border-border pt-3">
                 <span className="text-sm font-semibold">Lucro Líquido Estimado</span>
@@ -313,7 +328,7 @@ function TripOverview() {
                   className={`font-mono text-base font-bold ${margin > 0 ? "text-success" : margin < 0 ? "text-danger" : "text-muted-foreground"}`}
                 >
                   {margin > 0 ? "+" : ""}
-                  {money(margin, t.currency)}
+                  {formatCurrency(margin, t.currency)}
                 </span>
               </div>
             </div>

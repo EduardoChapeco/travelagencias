@@ -11,9 +11,9 @@ import {
   DndContext, DragOverlay, PointerSensor, TouchSensor, useSensor, useSensors, closestCorners, type DragEndEvent, type DragStartEvent, } from "@dnd-kit/core";
 import { arrayMove } from "@dnd-kit/sortable";
 import { useAgency } from "@/lib/agency-context";
-import { PrimaryButton , Button } from "@/components/ui/button";
+import { Button } from "@/components/ui/button";
 import { StatusBadge } from "@/components/ui/badge";
-import { fmtDate } from "@/lib/formatters";
+import { formatDate } from "@/lib/formatters";
 
 import {
   fetchBoardingCards,
@@ -372,7 +372,7 @@ function BoardingKanbanPage() {
                               {card.passengers_count ?? "—"}
                             </td>
                             <td className="p-4 text-foreground">
-                              {card.departure_date ? fmtDate(card.departure_date) : "—"}
+                              {card.departure_date ? formatDate(card.departure_date) : "—"}
                             </td>
                             <td className="p-4">
                               <div className="flex items-center gap-1.5">

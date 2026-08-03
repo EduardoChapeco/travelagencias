@@ -7,7 +7,7 @@ import { Field } from "@/components/ui/field";
 import { FormInput as Input } from "@/components/ui/input";
 import { NativeSelect as Select } from "@/components/ui/select";
 import { FormTextarea as Textarea } from "@/components/ui/textarea";
-import { PrimaryButton, GhostButton } from "@/components/ui/button";
+import { Button } from "@/components/ui/button";
 
 const INTEREST_TYPES = [
   { v: "flights", label: "Passagens Aéreas" },
@@ -246,12 +246,12 @@ export function LeadForm({
       </Field>
 
       <div className="flex justify-end gap-2.5 pt-4 border-t border-border">
-        <GhostButton type="button" onClick={onCancel}>
+        <Button variant="ghost" type="button" onClick={onCancel}>
           Cancelar
-        </GhostButton>
-        <PrimaryButton type="submit" disabled={isSubmitting}>
+        </Button>
+        <Button variant="default" type="submit" disabled={isSubmitting}>
           {isSubmitting ? "Salvando..." : "Salvar Alterações"}
-        </PrimaryButton>
+        </Button>
       </div>
     </form>
   );

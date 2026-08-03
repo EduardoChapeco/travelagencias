@@ -4,7 +4,7 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useAgency } from "@/lib/agency-context";
 import { StatusBadge } from "@/components/ui/badge";
-import { fmtDate } from "@/lib/formatters";
+import { formatDate } from "@/lib/formatters";
 import {
   fetchChangeCases,
   createChangeCase,
@@ -485,7 +485,7 @@ function TripReaccommodationPage() {
                     <div>
                       Aberto em:{" "}
                       <span className="font-semibold text-foreground">
-                        {fmtDate(c.detected_at)}
+                        {formatDate(c.detected_at)}
                       </span>
                     </div>
                   </div>
@@ -517,7 +517,7 @@ function TripReaccommodationPage() {
                         <div className="text-xs text-muted-foreground">Partida Original</div>
                         <div className="font-semibold text-foreground text-sm mt-1">
                           {c.original_itinerary.segments?.[0]
-                            ? `${fmtDate(c.original_itinerary.segments[0].departure_at)} às ${new Date(c.original_itinerary.segments[0].departure_at).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}`
+                            ? `${formatDate(c.original_itinerary.segments[0].departure_at)} às ${new Date(c.original_itinerary.segments[0].departure_at).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}`
                             : "-"}
                         </div>
                       </div>
@@ -796,7 +796,7 @@ function TripReaccommodationPage() {
                             Data/Hora de Registro:
                           </span>{" "}
                           <span className="font-medium text-foreground">
-                            {fmtDate(activeDecision.accepted_at)}
+                            {formatDate(activeDecision.accepted_at)}
                           </span>
                         </div>
                         <div>
@@ -897,7 +897,7 @@ function TripReaccommodationPage() {
                           </span>
                           <span className="mx-2 text-muted-foreground">|</span>
                           <span className="text-muted-foreground">Enviado em: </span>
-                          <span>{fmtDate(req.requested_at)}</span>
+                          <span>{formatDate(req.requested_at)}</span>
                         </div>
                         <div className="flex items-center gap-3">
                           <span className="font-semibold capitalize text-foreground glass-card border-none px-2 py-0.5 rounded border-none/40">

@@ -19,7 +19,7 @@ import { Field } from "@/components/ui/field";
 import { FormInput as Input } from "@/components/ui/input";
 import { NativeSelect as Select } from "@/components/ui/select";
 import { FormTextarea as Textarea } from "@/components/ui/textarea";
-import { PrimaryButton, GhostButton , Button } from "@/components/ui/button";
+import { Button } from "@/components/ui/button";
 import { StatusBadge } from "@/components/ui/badge";
 import { toast } from "sonner";
 
@@ -214,12 +214,12 @@ export function ContractClauseLibrary({
           </p>
         </div>
         {!formOpen && (
-          <PrimaryButton
+          <Button variant="default"
             onClick={() => setFormOpen(true)}
             className="gap-1.5 h-8 text-xs font-semibold"
           >
             <Plus className="h-3.5 w-3.5" /> Adicionar Cláusula
-          </PrimaryButton>
+          </Button>
         )}
       </div>
 
@@ -298,16 +298,16 @@ export function ContractClauseLibrary({
                 </div>
               )}
               <div className="flex gap-2 ml-auto">
-                <GhostButton type="button" onClick={resetForm} className="h-8 text-xs font-semibold">
+                <Button variant="ghost" type="button" onClick={resetForm} className="h-8 text-xs font-semibold">
                   Cancelar
-                </GhostButton>
-                <PrimaryButton
+                </Button>
+                <Button variant="default"
                   type="submit"
                   disabled={createMut.isPending || updateMut.isPending}
                   className="h-8 text-xs font-semibold"
                 >
                   {createMut.isPending || updateMut.isPending ? "Salvando..." : "Salvar Cláusula"}
-                </PrimaryButton>
+                </Button>
               </div>
             </div>
           </form>

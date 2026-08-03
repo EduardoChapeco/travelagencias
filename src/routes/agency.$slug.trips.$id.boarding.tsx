@@ -3,7 +3,7 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useAgency } from "@/lib/agency-context";
 import { StatusBadge } from "@/components/ui/badge";
-import { fmtDate } from "@/lib/formatters";
+import { formatDate } from "@/lib/formatters";
 import { useState } from "react";
 import {
   Navigation,
@@ -381,7 +381,7 @@ function TripBoardingPage() {
                             {card.departure_date && (
                               <div className="flex items-center gap-1.5">
                                 <Calendar className="h-3.5 w-3.5" />
-                                Embarque: {fmtDate(card.departure_date)}
+                                Embarque: {formatDate(card.departure_date)}
                               </div>
                             )}
                             {card.flight_class && (
@@ -408,7 +408,7 @@ function TripBoardingPage() {
                             <div className="text-xs">
                               {card.briefing_date && (
                                 <p className="text-muted-foreground">
-                                  Agendado: {fmtDate(card.briefing_date)}
+                                  Agendado: {formatDate(card.briefing_date)}
                                 </p>
                               )}
                               {card.briefing_url && (

@@ -16,7 +16,7 @@ import { useAgency } from "@/lib/agency-context";
 import { Field } from "@/components/ui/field";
 import { FormInput as Input } from "@/components/ui/input";
 import { NativeSelect as Select } from "@/components/ui/select";
-import { PrimaryButton , Button } from "@/components/ui/button";
+import { Button } from "@/components/ui/button";
 
 export const Route = createFileRoute("/agency/$slug/brand")({
   head: ({ context }: any) => ({ meta: [{ title: `Identidade visual · ${context?.brand?.platform_name || 'Turis'}` }] }),

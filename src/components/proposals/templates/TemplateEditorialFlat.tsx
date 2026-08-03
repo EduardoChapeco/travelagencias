@@ -3,7 +3,7 @@
  * Layout Split (Meio a Meio) na capa, design limpo, tipografia Playfair
  */
 import { type Proposal } from "@/services/proposals";
-import { money, fmtDate } from "@/lib/formatters";
+import { formatCurrency, formatDate } from "@/lib/formatters";
 import { buildBaseViewModel } from "@/lib/adapters";
 import { Plane, Hotel, Compass, Check, X, PhoneCall } from "lucide-react";
 
@@ -111,7 +111,7 @@ export default function TemplateEditorialFlat({ proposal: p, agency }: TemplateP
                 Saída
               </div>
               <div className="font-semibold text-slate-900">
-                {p.travel_start ? fmtDate(p.travel_start) : "—"}
+                {p.travel_start ? formatDate(p.travel_start) : "—"}
               </div>
             </div>
             <div>
@@ -119,7 +119,7 @@ export default function TemplateEditorialFlat({ proposal: p, agency }: TemplateP
                 Retorno
               </div>
               <div className="font-semibold text-slate-900">
-                {p.travel_end ? fmtDate(p.travel_end) : "—"}
+                {p.travel_end ? formatDate(p.travel_end) : "—"}
               </div>
             </div>
           </div>
@@ -167,7 +167,7 @@ export default function TemplateEditorialFlat({ proposal: p, agency }: TemplateP
                           {f.departure_time || "--:--"}
                         </div>
                         {f.date && (
-                          <div className="text-xs text-slate-500 mt-1">{fmtDate(f.date)}</div>
+                          <div className="text-xs text-slate-500 mt-1">{formatDate(f.date)}</div>
                         )}
                       </div>
                       <div className="flex-1 flex flex-col items-center relative px-4">
@@ -219,13 +219,13 @@ export default function TemplateEditorialFlat({ proposal: p, agency }: TemplateP
                           <div className="ds-meta uppercase text-slate-500 font-bold mb-1">
                             Check-in
                           </div>
-                          <div className="font-semibold text-slate-900">{fmtDate(h.checkin)}</div>
+                          <div className="font-semibold text-slate-900">{formatDate(h.checkin)}</div>
                         </div>
                         <div className="bg-slate-50 p-4">
                           <div className="ds-meta uppercase text-slate-500 font-bold mb-1">
                             Check-out
                           </div>
-                          <div className="font-semibold text-slate-900">{fmtDate(h.checkout)}</div>
+                          <div className="font-semibold text-slate-900">{formatDate(h.checkout)}</div>
                         </div>
                         <div className="bg-slate-50 p-4">
                           <div className="ds-meta uppercase text-slate-500 font-bold mb-1">
@@ -355,7 +355,7 @@ export default function TemplateEditorialFlat({ proposal: p, agency }: TemplateP
                   Total à Vista (PIX)
                 </div>
                 <div className="text-5xl font-light text-slate-800 mb-2">
-                  {money(vm.totals.totalPix, p.currency)}
+                  {formatCurrency(vm.totals.totalPix, p.currency)}
                 </div>
                 <div className="inline-block bg-emerald-100 text-emerald-800 px-2 py-0.5 rounded ds-meta font-bold">
                   Com desconto de {vm.totals.descontoPixPercentual}%
@@ -366,7 +366,7 @@ export default function TemplateEditorialFlat({ proposal: p, agency }: TemplateP
                   Cartão de Crédito
                 </div>
                 <div className="text-xl font-semibold text-slate-800">
-                  {vm.totals.parcelasCartao}x de {money(vm.totals.valorParcelaCartao, p.currency)}
+                  {vm.totals.parcelasCartao}x de {formatCurrency(vm.totals.valorParcelaCartao, p.currency)}
                 </div>
               </div>
             </div>

@@ -3,7 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 import { Plane, CreditCard, FileText, Gift, Shield } from "lucide-react";
 import { fetchClientDashboard } from "@/services/client-area";
 import { PageHeader } from "@/components/shell/PageHeader";
-import { money, fmtDate } from "@/lib/formatters";
+import { formatCurrency, formatDate } from "@/lib/formatters";
 
 export const Route = createFileRoute("/client/")({
   head: ({ context }: any) => ({ meta: [{ title: `Área do cliente · ${context?.brand?.platform_name || 'Turis'}` }] }),
@@ -57,10 +57,10 @@ function ClientHome() {
             <div>
               <div className="text-xs text-muted-foreground">{t.code}</div>
               <div className="font-medium">{t.title}</div>
-              <div className="text-xs text-muted-foreground">{fmtDate(t.travel_start)}</div>
+              <div className="text-xs text-muted-foreground">{formatDate(t.travel_start)}</div>
             </div>
             <div className="font-mono text-sm">
-              {money(Number(t.total_sale ?? 0), t.currency ?? "BRL")}
+              {formatCurrency(Number(t.total_sale ?? 0), t.currency ?? "BRL")}
             </div>
           </Link>
         ))}

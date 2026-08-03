@@ -13,7 +13,7 @@ import { FormInput as Input } from "@/components/ui/input";
 import { NativeSelect as Select } from "@/components/ui/select";
 import { FormTextarea as Textarea } from "@/components/ui/textarea";
 import { SimpleSheet as Sheet } from "@/components/ui/sheet";
-import { fmtDate } from "@/lib/formatters";
+import { formatDate } from "@/lib/formatters";
 import { useDebounce } from "@/hooks/use-debounce";
 import { ClientFormSheet } from "@/components/clients/ClientFormSheet";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -184,7 +184,7 @@ function ClientsPage() {
       accessorKey: "created_at",
       header: ({ column }) => <DataTableColumnHeader column={column} title="Criado" />,
       cell: ({ row }) => (
-        <span className="text-xs text-muted-foreground">{fmtDate(row.original.created_at)}</span>
+        <span className="text-xs text-muted-foreground">{formatDate(row.original.created_at)}</span>
       ),
     },
   ];
@@ -241,7 +241,7 @@ function ClientsPage() {
           }
         />
 
-      <div className="flex-1 overflow-hidden px-4  md:pr-6 py-4 flex flex-col min-h-0 pb-24">
+      <div className="page-content dock-offset flex flex-col">
         {list.isLoading && (
           <div className="flex flex-col gap-2">
             <Skeleton className="h-12 w-full" />

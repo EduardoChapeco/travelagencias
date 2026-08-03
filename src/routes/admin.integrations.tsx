@@ -11,7 +11,7 @@ import {
 import { PageHeader } from "@/components/shell/PageHeader";
 import { Field } from "@/components/ui/field";
 import { FormInput as Input } from "@/components/ui/input";
-import { PrimaryButton } from "@/components/ui/button";
+import { Button } from "@/components/ui/button";
 
 export const Route = createFileRoute("/admin/integrations")({
   head: () => ({ meta: [{ title: "Integrações & APIs · Admin" }] }),
@@ -162,10 +162,10 @@ function Page() {
         </section>
 
         <div className="flex justify-end pt-4">
-          <PrimaryButton type="submit" disabled={busy} className="gap-1.5">
+          <Button variant="default" type="submit" disabled={busy} className="gap-1.5">
             <Save className="h-4 w-4" />
             {busy ? "Salvando…" : "Salvar Configurações"}
-          </PrimaryButton>
+          </Button>
         </div>
       </form>
     </>

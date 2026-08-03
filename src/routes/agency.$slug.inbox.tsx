@@ -6,7 +6,7 @@ import { useInbox } from "@/hooks/use-inbox";
 import { useAgency } from "@/lib/agency-context";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
-import { money } from "@/lib/formatters";
+import { formatCurrency } from "@/lib/formatters";
 import {
   MessageSquare,
   Send,
@@ -233,9 +233,9 @@ function InboxModule() {
           </div>
         </div>
       )}
-      {/* ── LEFT COLUMN: Conversations List (Width 320px) ────────────────────── */}
+      {/* ── LEFT COLUMN: Conversations List (Width 280px) ────────────────────── */}
       <aside className={cn(
-        "flex flex-col border-r border-border shrink-0 bg-surface/30 w-full md:w-[320px] h-full",
+        "flex flex-col border-r border-border shrink-0 bg-surface/30 w-full md:w-[280px] h-full",
         selectedId ? "hidden md:flex" : "flex"
       )}>
         {/* Header & Connection button */}
@@ -1132,7 +1132,7 @@ function InboxModule() {
           </div>
         ) : (
           /* Empty Chat State */
-          <div className="flex flex-1 flex-col items-center justify-center p-10 text-center glass-card border-none border-r border-border h-full">
+<div className="flex flex-1 flex-col items-center justify-center p-10 text-center glass-card border-none border-r border-border h-full">
             <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-[var(--radius-card)] glass bg-white/5 border-white/10">
               <MessageSquare className="h-8 w-8 text-muted-foreground/40" />
             </div>
@@ -1146,7 +1146,7 @@ function InboxModule() {
 
       {/* ── RIGHT COLUMN: Collapsible Contact Info Panel (Width 320px) ───────────────── */}
       {selectedId && showDetails && (
-        <aside className="fixed inset-y-0 right-0 z-40 flex w-full flex-col border-l border-border bg-surface/30 overflow-hidden md:relative md:w-80 md:z-0 md:flex shadow-2xl md:shadow-none h-full">
+        <aside className="fixed inset-y-0 right-0 z-40 flex w-full max-w-[320px] flex-col border-l border-border bg-surface/95 backdrop-blur-xl overflow-hidden lg:relative lg:w-[280px] lg:z-0 lg:flex shadow-2xl lg:shadow-none h-full lg:bg-surface/30 lg:backdrop-blur-none">
           {/* Header */}
           <div className="flex items-center justify-between border-b border-border px-4 min-h-[var(--ds-toolbar-height)] glass-toolbar shrink-0">
             <h3 className="ds-meta font-extrabold uppercase tracking-wider text-muted-foreground">

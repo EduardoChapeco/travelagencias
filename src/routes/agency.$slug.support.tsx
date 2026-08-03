@@ -7,7 +7,7 @@ import { Search, AlertTriangle, Clock, CheckCircle2, Ticket, User, Star, Plus, A
 import { FormInput as Input } from "@/components/ui/input";
 import { NativeSelect as Select } from "@/components/ui/select";
 import { StatusBadge } from "@/components/ui/badge";
-import { PrimaryButton } from "@/components/ui/button";
+import { Button } from "@/components/ui/button";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import { PageHeader, ModuleActionButton } from "@/components/shell/PageHeader";

@@ -18,7 +18,7 @@ import {
   Calculator,
 } from "lucide-react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { money } from "@/lib/formatters";
+import { formatCurrency } from "@/lib/formatters";
 import { PageHeader, ModuleActionButton } from "@/components/shell/PageHeader";
 import { Field } from "@/components/ui/field";
 import { FormInput as Input } from "@/components/ui/input";
@@ -29,7 +29,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { PrimaryButton, GhostButton , Button } from "@/components/ui/button";
+import { Button } from "@/components/ui/button";
 import { StatusBadge } from "@/components/ui/badge";
 
 export const Route = createFileRoute("/agency/$slug/settings/financial")({
@@ -576,19 +576,19 @@ function FinancialSettingsPage() {
               </div>
 
               <div className="flex gap-2.5 pt-2 border-t border-border mt-3">
-                <GhostButton
+                <Button variant="ghost"
                   onClick={() => setShowPlanModal(false)}
                   className="flex-1 h-10 text-xs"
                 >
                   Cancelar
-                </GhostButton>
-                <PrimaryButton
+                </Button>
+                <Button variant="default"
                   onClick={() => createPlan.mutate()}
                   disabled={createPlan.isPending || !newPlanName || !selectedSeller}
                   className="flex-1 h-10 ds-label-caps tracking-wider bg-brand hover:opacity-90 text-brand-foreground rounded-[var(--radius-card)]"
                 >
                   {createPlan.isPending ? "Criando..." : "Salvar Plano"}
-                </PrimaryButton>
+                </Button>
               </div>
             </div>
         </DialogContent>

@@ -45,7 +45,7 @@ import {
 import { Field } from "@/components/ui/field";
 import { FormInput as Input } from "@/components/ui/input";
 import { NativeSelect as Select } from "@/components/ui/select";
-import { PrimaryButton, GhostButton , Button } from "@/components/ui/button";
+import { Button } from "@/components/ui/button";
 
 export const Route = createFileRoute("/agency/$slug/calendar")({
   head: ({ context }: any) => ({ meta: [{ title: `Agenda · ${context?.brand?.platform_name || 'Turis'}` }] }),
@@ -559,12 +559,12 @@ function CalendarPage() {
             </div>
 
             <div className="flex justify-end gap-2 border-t border-border/40 pt-4">
-              <GhostButton
+              <Button variant="ghost"
                 onClick={() => setSelectedMeeting(null)}
                 className="h-8 text-xs font-bold"
               >
                 Fechar
-              </GhostButton>
+              </Button>
               <Button
                 onClick={() => {
                   confirm({
@@ -702,19 +702,19 @@ function CalendarPage() {
             </div>
 
             <div className="flex justify-end gap-2 border-t border-border/40 pt-4">
-              <GhostButton
+              <Button variant="ghost"
                 type="button"
                 onClick={() => setNewEventOpen(false)}
                 className="h-8 text-xs font-bold"
               >
                 Cancelar
-              </GhostButton>
-              <PrimaryButton
+              </Button>
+              <Button variant="default"
                 type="submit"
                 disabled={!meetingForm.title || !meetingForm.scheduled_at || !meetingForm.lead_id}
               >
                 Agendar
-              </PrimaryButton>
+              </Button>
             </div>
           </form>
         </DialogContent>

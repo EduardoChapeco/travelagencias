@@ -8,8 +8,8 @@ import { FormInput as Input } from "@/components/ui/input";
 import { NativeSelect as Select } from "@/components/ui/select";
 import { Field } from "@/components/ui/field";
 import { StatusBadge } from "@/components/ui/badge";
-import { GhostButton, PrimaryButton , Button } from "@/components/ui/button";
-import { fmtDate, money } from "@/lib/formatters";
+import { Button } from "@/components/ui/button";
+import { formatDate, formatCurrency } from "@/lib/formatters";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import {
@@ -604,12 +604,12 @@ Resuma de forma profissional e persuasiva (estilo consultor premium de turismo) 
             Cotações
           </Link>
           
-          <GhostButton onClick={() => setRulesOpen(true)} className="gap-1.5 text-xs h-8 border-none">
+          <Button variant="ghost" onClick={() => setRulesOpen(true)} className="gap-1.5 text-xs h-8 border-none">
             <ShieldCheck className="h-3.5 w-3.5 text-brand animate-pulse" />
             Revisar Regras
-          </GhostButton>
+          </Button>
 
-          <PrimaryButton onClick={handleAutoPackage} disabled={packaging} className="gap-1.5">
+          <Button variant="default" onClick={handleAutoPackage} disabled={packaging} className="gap-1.5">
             {packaging ? (
               <>
                 <Loader2 className="h-3.5 w-3.5 animate-spin" />
@@ -621,7 +621,7 @@ Resuma de forma profissional e persuasiva (estilo consultor premium de turismo) 
                 Gerar Alternativas Prontas
               </>
             )}
-          </PrimaryButton>
+          </Button>
         </div>
       
       {/* Header Info */}
@@ -642,9 +642,9 @@ Resuma de forma profissional e persuasiva (estilo consultor premium de turismo) 
           </span>
           <div className="flex items-center gap-1.5 text-xs font-medium text-foreground mt-0.5">
             <Calendar className="h-4 w-4 text-muted-foreground shrink-0" />
-            <span>{fmtDate(startStr)}</span>
+            <span>{formatDate(startStr)}</span>
             <ArrowRight className="h-3 w-3 text-muted-foreground" />
-            <span>{fmtDate(endStr)}</span>
+            <span>{formatDate(endStr)}</span>
           </div>
         </div>
 
@@ -695,12 +695,12 @@ Resuma de forma profissional e persuasiva (estilo consultor premium de turismo) 
               <p className="ds-meta text-muted-foreground">
                 Nenhum cenário configurado para esta cotação.
               </p>
-              <PrimaryButton
+              <Button variant="default"
                 onClick={() => createScenariosMut.mutate()}
                 className="mt-3 h-8 ds-meta w-full"
               >
                 Configurar Cenários Padrão
-              </PrimaryButton>
+              </Button>
             </div>
           ) : (
             <div className="space-y-4">
@@ -738,7 +738,7 @@ Resuma de forma profissional e persuasiva (estilo consultor premium de turismo) 
                     </div>
 
                     <div className="grid grid-cols-2 gap-2 mt-3 pt-3 border-t border-border/60">
-                      <GhostButton
+                      <Button variant="ghost"
                         onClick={() =>
                           handleExecuteSearch(sc.id, "flight", {
                             origin: sc.parameters.origin,
@@ -757,9 +757,9 @@ Resuma de forma profissional e persuasiva (estilo consultor premium de turismo) 
                             Aéreo
                           </>
                         )}
-                      </GhostButton>
+                      </Button>
 
-                      <GhostButton
+                      <Button variant="ghost"
                         onClick={() =>
                           handleExecuteSearch(sc.id, "hotel", {
                             city: sc.parameters.destination,
@@ -778,9 +778,9 @@ Resuma de forma profissional e persuasiva (estilo consultor premium de turismo) 
                             Hotel
                           </>
                         )}
-                      </GhostButton>
+                      </Button>
 
-                      <GhostButton
+                      <Button variant="ghost"
                         onClick={() =>
                           handleExecuteSearch(sc.id, "transfer", {
                             destination: sc.parameters.destination,
@@ -800,9 +800,9 @@ Resuma de forma profissional e persuasiva (estilo consultor premium de turismo) 
                             Traslado
                           </>
                         )}
-                      </GhostButton>
+                      </Button>
 
-                      <GhostButton
+                      <Button variant="ghost"
                         onClick={() =>
                           handleExecuteSearch(sc.id, "activity", {
                             destination: sc.parameters.destination,
@@ -822,7 +822,7 @@ Resuma de forma profissional e persuasiva (estilo consultor premium de turismo) 
                             Passeio
                           </>
                         )}
-                      </GhostButton>
+                      </Button>
                     </div>
                   </div>
                 );
@@ -958,7 +958,7 @@ Resuma de forma profissional e persuasiva (estilo consultor premium de turismo) 
                             Preço Total Estimado
                           </span>
                           <span className="text-lg font-bold text-foreground">
-                            {money(cand.total_price, cand.currency)}
+                            {formatCurrency(cand.total_price, cand.currency)}
                           </span>
                         </div>
 
@@ -1061,7 +1061,7 @@ Resuma de forma profissional e persuasiva (estilo consultor premium de turismo) 
                       {/* Candidate Footer Actions */}
                       <div className="p-4 border-t border-border glass bg-white/5 border-white/10/25 flex gap-2">
                         {cand.status !== "invalid" && (
-                          <GhostButton
+                          <Button variant="ghost"
                             onClick={() => {
                               const reason = prompt(
                                 "Por que você deseja rejeitar esta alternativa?",
@@ -1078,9 +1078,9 @@ Resuma de forma profissional e persuasiva (estilo consultor premium de turismo) 
                             ) : (
                               "Rejeitar"
                             )}
-                          </GhostButton>
+                          </Button>
                         )}
-                        <PrimaryButton
+                        <Button variant="default"
                           onClick={() => {
                             if (converting !== null || convertMut.isPending) return;
                             convertMut.mutate(cand);
@@ -1102,7 +1102,7 @@ Resuma de forma profissional e persuasiva (estilo consultor premium de turismo) 
                           ) : (
                             "Converter em Proposta"
                           )}
-                        </PrimaryButton>
+                        </Button>
                       </div>
                     </div>
                   );
@@ -1123,7 +1123,7 @@ Resuma de forma profissional e persuasiva (estilo consultor premium de turismo) 
                     gerados para validar objeções.
                   </p>
                 </div>
-                <PrimaryButton
+                <Button variant="default"
                   onClick={() => runSimulationMut.mutate()}
                   disabled={
                     simulating || candidates.filter((c: any) => c.status !== "invalid").length === 0
@@ -1141,7 +1141,7 @@ Resuma de forma profissional e persuasiva (estilo consultor premium de turismo) 
                       Rodar Simulação Manual
                     </>
                   )}
-                </PrimaryButton>
+                </Button>
               </div>
 
               {isSimsError ? (
@@ -1468,17 +1468,17 @@ Resuma de forma profissional e persuasiva (estilo consultor premium de turismo) 
             </div>
 
             <div className="border-t border-border pt-4 mt-8 flex justify-end gap-3 shrink-0">
-              <GhostButton type="button" onClick={() => setRulesOpen(false)}>
+              <Button variant="ghost" type="button" onClick={() => setRulesOpen(false)}>
                 Cancelar
-              </GhostButton>
-              <PrimaryButton
+              </Button>
+              <Button variant="default"
                 type="button"
                 onClick={() => saveRulesMut.mutate()}
                 disabled={saveRulesMut.isPending || comfortWeight + priceWeight + logisticsWeight !== 100}
                 className="text-xs h-9"
               >
                 {saveRulesMut.isPending ? "Re-calculando..." : "Salvar e Re-avaliar"}
-              </PrimaryButton>
+              </Button>
             </div>
           </div>
         </div>

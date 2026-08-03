@@ -22,7 +22,7 @@ import { Field } from "@/components/ui/field";
 import { FormInput as Input } from "@/components/ui/input";
 import { FormTextarea as Textarea } from "@/components/ui/textarea";
 import { NativeSelect as Select } from "@/components/ui/select";
-import { PrimaryButton , Button } from "@/components/ui/button";
+import { Button } from "@/components/ui/button";
 
 export const Route = createFileRoute("/agency/$slug/portal/settings")({
   head: ({ context }: any) => ({ meta: [{ title: `Configurações do Portal · ${context?.brand?.platform_name || 'Turis'}` }] }),

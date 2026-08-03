@@ -9,9 +9,9 @@ import { useState } from "react";
 import { FormTextarea as Textarea } from "@/components/ui/textarea";
 import { FormInput as Input } from "@/components/ui/input";
 import { NativeSelect as Select } from "@/components/ui/select";
-import { PrimaryButton, GhostButton , Button } from "@/components/ui/button";
+import { Button } from "@/components/ui/button";
 import { StatusBadge } from "@/components/ui/badge";
-import { fmtDate } from "@/lib/formatters";
+import { formatDate } from "@/lib/formatters";
 
 import { useConfirm } from "@/hooks/use-confirm";
 
@@ -160,7 +160,7 @@ function RfpDetailPage() {
               <option value="lost">Perdido / Recusado</option>
             </Select>
             {rfp.status === "negotiating" && (
-              <PrimaryButton
+              <Button variant="default"
                 className="h-9 text-xs gap-1.5 bg-success hover:bg-success/90 text-success-foreground border-none"
                 onClick={() => {
                   navigator.clipboard.writeText(
@@ -170,7 +170,7 @@ function RfpDetailPage() {
                 }}
               >
                 <Send className="w-3.5 h-3.5" /> Link do Cliente
-              </PrimaryButton>
+              </Button>
             )}
           </div>
         </div>
@@ -262,12 +262,12 @@ function RfpDetailPage() {
                   <DollarSign className="w-4 h-4 text-brand" /> Opções Propostas
                 </h3>
                 {!addingOption && rfp.status !== "approved" && (
-                  <GhostButton
+                  <Button variant="ghost"
                     className="h-8 text-xs gap-1.5"
                     onClick={() => setAddingOption(true)}
                   >
                     <Plus className="w-3.5 h-3.5" /> Nova Opção
-                  </GhostButton>
+                  </Button>
                 )}
               </div>
 
@@ -307,12 +307,12 @@ function RfpDetailPage() {
                     />
                   </div>
                   <div className="flex justify-end gap-2 pt-2">
-                    <GhostButton className="h-8 text-xs" onClick={() => setAddingOption(false)}>
+                    <Button variant="ghost" className="h-8 text-xs" onClick={() => setAddingOption(false)}>
                       Cancelar
-                    </GhostButton>
-                    <PrimaryButton className="h-8 text-xs" onClick={addOption}>
+                    </Button>
+                    <Button variant="default" className="h-8 text-xs" onClick={addOption}>
                       Adicionar
-                    </PrimaryButton>
+                    </Button>
                   </div>
                 </div>
               )}

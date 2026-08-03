@@ -1,5 +1,5 @@
 import { type Proposal } from "@/services/proposals";
-import { money, fmtDate } from "@/lib/formatters";
+import { formatCurrency, formatDate } from "@/lib/formatters";
 import { buildBaseViewModel } from "@/lib/adapters";
 import { Check, X, PhoneCall, Calendar, MapPin, Plane, Hotel } from "lucide-react";
 
@@ -38,8 +38,8 @@ export default function TemplateVerticalPremium({ proposal: p, agency }: Templat
             >
               <Calendar className="w-4 h-4" />
               <span className="text-[14px] font-semibold tracking-wide">
-                {p.travel_start ? fmtDate(p.travel_start) : "Data a definir"}
-                {p.travel_end && ` a ${fmtDate(p.travel_end)}`}
+                {p.travel_start ? formatDate(p.travel_start) : "Data a definir"}
+                {p.travel_end && ` a ${formatDate(p.travel_end)}`}
               </span>
             </div>
 
@@ -291,11 +291,11 @@ export default function TemplateVerticalPremium({ proposal: p, agency }: Templat
                       <div className="grid grid-cols-2 gap-4 bg-slate-50 p-4 rounded-[var(--radius-card)] border border-slate-100">
                         <div>
                           <span className="block text-[14px] uppercase font-bold text-slate-400">Check-in</span>
-                          <span className="text-[18px] font-semibold text-slate-800">{fmtDate(h.checkin)}</span>
+                          <span className="text-[18px] font-semibold text-slate-800">{formatDate(h.checkin)}</span>
                         </div>
                         <div>
                           <span className="block text-[14px] uppercase font-bold text-slate-400">Check-out</span>
-                          <span className="text-[18px] font-semibold text-slate-800">{fmtDate(h.checkout)}</span>
+                          <span className="text-[18px] font-semibold text-slate-800">{formatDate(h.checkout)}</span>
                         </div>
                       </div>
                     </div>
@@ -324,7 +324,7 @@ export default function TemplateVerticalPremium({ proposal: p, agency }: Templat
                 A partir de
               </div>
               <div className="text-[76px] font-semibold leading-none mb-4">
-                {money(vm.totals.totalPix, p.currency)}
+                {formatCurrency(vm.totals.totalPix, p.currency)}
               </div>
               <div className="text-[20px] opacity-90 font-medium">
                 por pessoa em apartamento duplo
@@ -340,7 +340,7 @@ export default function TemplateVerticalPremium({ proposal: p, agency }: Templat
                 Cartão de Crédito em até {vm.totals.parcelasCartao}x
               </div>
               <div className="text-[24px] font-medium text-slate-600 mb-6">
-                Parcelas de {money(vm.totals.valorParcelaCartao, p.currency)}
+                Parcelas de {formatCurrency(vm.totals.valorParcelaCartao, p.currency)}
               </div>
               <p className="text-[18px] text-slate-500 leading-relaxed">
                 Pagamento facilitado diretamente com a agência. A última parcela deve ser quitada até a data de embarque.

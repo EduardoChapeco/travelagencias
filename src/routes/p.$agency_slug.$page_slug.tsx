@@ -4,7 +4,7 @@ import { useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { fetchPublicDynamicPage, fetchPublicDynamicPageSeo } from "@/services/public";
 import { BlockRenderer, PortalBlock } from "@/components/portal/BlockRenderer";
-import { GhostButton } from "@/components/ui/button";
+import { Button } from "@/components/ui/button";
 import { Link } from "@tanstack/react-router";
 import { ArrowLeft } from "lucide-react";
 
@@ -171,9 +171,9 @@ function DynamicPage() {
         <h1 className="text-2xl font-bold tracking-tight">Página não encontrada</h1>
         <p className="text-muted-foreground">Esta página não existe ou foi despublicada.</p>
         <Link to="/p/$agency_slug" params={{ agency_slug }}>
-          <GhostButton>
+          <Button variant="ghost">
             <ArrowLeft className="h-4 w-4 mr-2" /> Voltar ao início
-          </GhostButton>
+          </Button>
         </Link>
       </div>
     );

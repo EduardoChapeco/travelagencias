@@ -2,7 +2,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { MapPin, ArrowLeft, CheckCircle2 } from "lucide-react";
-import { money } from "@/lib/formatters";
+import { formatCurrency } from "@/lib/formatters";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
@@ -201,7 +201,7 @@ function PublicStoreItemDetail() {
             <div className="flex items-baseline gap-2 mb-6">
               <span className="text-sm font-bold text-muted-foreground uppercase tracking-widest">A partir de</span>
               <span className="text-3xl font-black text-brand">
-                {item.store_price ? money(item.store_price) : "Sob consulta"}
+                {item.store_price ? formatCurrency(item.store_price) : "Sob consulta"}
               </span>
             </div>
 

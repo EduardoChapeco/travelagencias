@@ -3,9 +3,9 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { Shield, FileText, CheckCircle2, Clock, ShieldAlert, Check } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { PageHeader, EmptyState } from "@/components/shell/PageHeader";
-import { PrimaryButton } from "@/components/ui/button";
+import { Button } from "@/components/ui/button";
 import { StatusBadge } from "@/components/ui/badge";
-import { fmtDate } from "@/lib/formatters";
+import { formatDate } from "@/lib/formatters";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
 
@@ -156,13 +156,13 @@ function ClientConsentsPage() {
                     </p>
                   </div>
                 </div>
-                <PrimaryButton
+                <Button variant="default"
                   disabled={acceptM.isPending}
                   onClick={() => acceptM.mutate(m.id)}
                   className="w-full md:w-auto shrink-0 gap-2 h-11 px-6"
                 >
                   <Check className="h-4 w-4" /> Aceitar e Assinar
-                </PrimaryButton>
+                </Button>
               </div>
             ))}
           </div>
@@ -201,7 +201,7 @@ function ClientConsentsPage() {
                     </div>
                     <div className="text-xs text-muted-foreground mt-2 flex flex-wrap items-center gap-3">
                       <span className="flex items-center gap-1.5">
-                        <Clock className="h-3.5 w-3.5" /> {fmtDate(a.accepted_at)}
+                        <Clock className="h-3.5 w-3.5" /> {formatDate(a.accepted_at)}
                       </span>
                       {a.ip_address && (
                         <span className="font-mono ds-meta glass bg-white/5 border-white/10 px-2 py-0.5 rounded border-none">

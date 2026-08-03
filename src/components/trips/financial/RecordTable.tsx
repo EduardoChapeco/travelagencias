@@ -1,6 +1,6 @@
 import { Trash2, Check } from "lucide-react";
 import { StatusBadge } from "@/components/ui/badge";
-import { money, fmtDate } from "@/lib/formatters";
+import { formatCurrency, formatDate } from "@/lib/formatters";
 import { type FinancialRecord } from "@/services/trips";
 import { Button } from "@/components/ui/button";
 
@@ -36,14 +36,14 @@ export function RecordTable({
           <tr key={r.id} className="border-b border-border/50 hover:bg-surface-alt/40">
             <td className="py-2 pr-3 text-foreground">{r.description ?? "—"}</td>
             <td className="py-2 pr-3 text-muted-foreground">{r.category ?? "—"}</td>
-            <td className="py-2 pr-3 text-muted-foreground font-mono">{fmtDate(r.due_date)}</td>
+            <td className="py-2 pr-3 text-muted-foreground font-mono">{formatDate(r.due_date)}</td>
             <td className="py-2 pr-3">
               <StatusBadge tone={r.status === "confirmed" ? "success" : "warning"}>
                 {r.status === "confirmed" ? "Pago" : "Pendente"}
               </StatusBadge>
             </td>
             <td className="py-2 text-right font-mono font-semibold text-foreground">
-              {money(r.amount_brl ?? r.amount, currency)}
+              {formatCurrency(r.amount_brl ?? r.amount, currency)}
             </td>
             <td className="py-2 text-right">
               <div className="flex justify-end items-center gap-2">

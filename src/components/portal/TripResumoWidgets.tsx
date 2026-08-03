@@ -16,7 +16,7 @@ import {
   MapPin,
   Lightbulb,
 } from "lucide-react";
-import { fmtDate } from "@/lib/formatters";
+import { formatDate } from "@/lib/formatters";
 import { AppWidget } from "@/components/portal/TripPortalShared";
 import { Button } from "@/components/ui/button";
 
@@ -329,7 +329,7 @@ export function TripVoucherFlights({ pnr, flights }: { pnr?: string; flights: an
                 </div>
               </div>
               <div className="text-right">
-                <div className="text-xs font-bold text-foreground">{fmtDate(f.date)}</div>
+                <div className="text-xs font-bold text-foreground">{formatDate(f.date)}</div>
                 <div className="ds-meta font-bold text-muted-foreground mt-0.5">
                   {f.departure_time} - {f.arrival_time}
                 </div>
@@ -638,14 +638,14 @@ export function TripAccommodation({ hotels }: { hotels: any[] }) {
                   <div className="ds-label-caps text-muted-foreground mb-1">
                     Check-in
                   </div>
-                  <div>{fmtDate(h.checkin)}</div>
+                  <div>{formatDate(h.checkin)}</div>
                 </div>
                 <ArrowLeft className="h-4 w-4 rotate-180 text-muted-foreground" />
                 <div className="text-center">
                   <div className="ds-label-caps text-muted-foreground mb-1">
                     Check-out
                   </div>
-                  <div>{fmtDate(h.checkout)}</div>
+                  <div>{formatDate(h.checkout)}</div>
                 </div>
               </div>
             </div>
@@ -688,14 +688,14 @@ export function TripVoucherAccommodation({ hotels }: { hotels: any[] }) {
                   <div className="ds-label-caps text-muted-foreground mb-1">
                     Check-in
                   </div>
-                  <div>{fmtDate(h.checkin)}</div>
+                  <div>{formatDate(h.checkin)}</div>
                 </div>
                 <ArrowLeft className="h-4 w-4 rotate-180 text-muted-foreground" />
                 <div className="text-center">
                   <div className="ds-label-caps text-muted-foreground mb-1">
                     Check-out
                   </div>
-                  <div>{fmtDate(h.checkout)}</div>
+                  <div>{formatDate(h.checkout)}</div>
                 </div>
               </div>
             </div>

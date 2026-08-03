@@ -3,7 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 import { fetchClientPayments } from "@/services/client-area";
 import { PageHeader, EmptyState } from "@/components/shell/PageHeader";
 import { StatusBadge } from "@/components/ui/badge";
-import { money, fmtDate } from "@/lib/formatters";
+import { formatCurrency, formatDate } from "@/lib/formatters";
 
 export const Route = createFileRoute("/client/payments")({
   head: ({ context }: any) => ({ meta: [{ title: `Pagamentos · ${context?.brand?.platform_name || 'Turis'}` }] }),
@@ -41,8 +41,8 @@ function ClientPaymentsPage() {
               {q.data.map((p) => (
                 <tr key={p.id} className="border-t border-border">
                   <td className="px-3 py-2.5 font-mono text-xs">#{p.number}</td>
-                  <td className="px-3 py-2.5 text-xs">{fmtDate(p.due_date)}</td>
-                  <td className="px-3 py-2.5 text-right font-mono">{money(Number(p.amount))}</td>
+                  <td className="px-3 py-2.5 text-xs">{formatDate(p.due_date)}</td>
+                  <td className="px-3 py-2.5 text-right font-mono">{formatCurrency(Number(p.amount))}</td>
                   <td className="px-3 py-2.5 text-xs text-muted-foreground">
                     {p.payment_method ?? "—"}
                   </td>

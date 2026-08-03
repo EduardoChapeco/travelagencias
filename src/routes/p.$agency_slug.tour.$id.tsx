@@ -7,8 +7,8 @@ import { Field } from "@/components/ui/field";
 import { FormInput as Input } from "@/components/ui/input";
 import { FormTextarea as Textarea } from "@/components/ui/textarea";
 import { NativeSelect as Select } from "@/components/ui/select";
-import { PrimaryButton, GhostButton , Button } from "@/components/ui/button";
-import { money } from "@/lib/formatters";
+import { Button } from "@/components/ui/button";
+import { formatCurrency } from "@/lib/formatters";
 import { cn } from "@/lib/utils";
 import {
   Check,
@@ -254,12 +254,12 @@ function Page() {
 
     let finalNotes = form.notes || "";
     if (selectedPricingTier) {
-      finalNotes += `\nAcomodação: ${selectedPricingTier.name} (${money(Number(selectedPricingTier.price))})`;
+      finalNotes += `\nAcomodação: ${selectedPricingTier.name} (${formatCurrency(Number(selectedPricingTier.price))})`;
     }
     if (selectedExtras.length > 0) {
       finalNotes +=
         `\nOpcionais:\n` +
-        selectedExtras.map((ext) => `- ${ext.name}: ${money(Number(ext.price))}`).join("\n");
+        selectedExtras.map((ext) => `- ${ext.name}: ${formatCurrency(Number(ext.price))}`).join("\n");
     }
     if (extraPassengers.length > 0) {
       finalNotes +=
@@ -605,7 +605,7 @@ function Page() {
                     Reservas Online
                   </span>
                   <div className="text-3xl font-mono font-black text-[var(--color-brand)] mt-1">
-                    {money(totalPrice)}
+                    {formatCurrency(totalPrice)}
                   </div>
                   <div className="text-[9px] uppercase font-extrabold text-slate-400 tracking-wider mt-1">
                     Subtotal com taxas inclusas
@@ -679,7 +679,7 @@ function Page() {
                             <div className="flex items-center justify-between w-full">
                               <span className="text-xs font-bold text-slate-800">{tier.name}</span>
                               <span className="text-xs font-mono font-bold text-brand">
-                                {money(tier.price)}
+                                {formatCurrency(tier.price)}
                               </span>
                             </div>
                             {tier.description && (
@@ -695,7 +695,7 @@ function Page() {
                 ) : (
                   <div className="space-y-1 bg-slate-50 border border-slate-100 rounded-[var(--radius-card)] p-3 text-xs text-slate-655 text-center">
                     Tarifa Base Individual:{" "}
-                    <strong className="text-brand font-mono">{money(Number(t.base_price))}</strong>
+                    <strong className="text-brand font-mono">{formatCurrency(Number(t.base_price))}</strong>
                   </div>
                 )}
 
@@ -739,7 +739,7 @@ function Page() {
                               )}
                             </div>
                             <span className="text-xs font-mono font-bold text-emerald-700 shrink-0">
-                              +{money(ext.price)}
+                              +{formatCurrency(ext.price)}
                             </span>
                           </Button>
                         );
@@ -992,13 +992,13 @@ function Page() {
                 </p>
               )}
 
-              <PrimaryButton
+              <Button variant="default"
                 type="submit"
                 disabled={!lgpdConsent}
                 className="w-full h-12 text-sm uppercase tracking-widest font-bold bg-[var(--color-brand)] text-[var(--color-brand-foreground)] rounded-[var(--radius-card)] transition-all cursor-pointer disabled:opacity-40"
               >
-                Avançar para Pagamento — {money(totalPrice)}
-              </PrimaryButton>
+                Avançar para Pagamento — {formatCurrency(totalPrice)}
+              </Button>
 
               {agency?.whatsapp && (
                 <a
@@ -1031,7 +1031,7 @@ function Page() {
               </h2>
               <p className="text-xs text-slate-500 mt-1 font-semibold">
                 Conclua sua compra enviando a transferência instantânea Pix no valor de{" "}
-                <strong>{money(totalPrice)}</strong>.
+                <strong>{formatCurrency(totalPrice)}</strong>.
               </p>
             </div>
 
@@ -1107,16 +1107,16 @@ function Page() {
             </div>
 
             <div className="flex items-center gap-2.5 pt-2 border-t border-slate-100">
-              <GhostButton onClick={() => setCheckoutStep("form")} className="w-1/3 h-11 text-xs">
+              <Button variant="ghost" onClick={() => setCheckoutStep("form")} className="w-1/3 h-11 text-xs">
                 Voltar
-              </GhostButton>
-              <PrimaryButton
+              </Button>
+              <Button variant="default"
                 onClick={handleFinalEnrollment}
                 disabled={busy || !uploadedFile}
                 className="flex-1 h-11 ds-label-caps tracking-wider bg-emerald-600 hover:bg-emerald-700 text-white rounded-[var(--radius-card)] cursor-pointer disabled:opacity-40"
               >
                 {busy ? "Enviando..." : "Confirmar Inscrição"}
-              </PrimaryButton>
+              </Button>
             </div>
           </div>
         )}
@@ -1164,7 +1164,7 @@ function Page() {
               </div>
               <div className="flex justify-between gap-3 border-t border-slate-200 pt-2.5 font-bold font-sans">
                 <span className="text-slate-800">Total Pago:</span>
-                <strong className="text-emerald-700 font-mono text-sm">{money(totalPrice)}</strong>
+                <strong className="text-emerald-700 font-mono text-sm">{formatCurrency(totalPrice)}</strong>
               </div>
             </div>
 
@@ -1192,7 +1192,7 @@ function Page() {
                 Subtotal
               </span>
               <span className="text-lg font-mono font-black text-[var(--color-brand)] mt-1">
-                {money(totalPrice)}
+                {formatCurrency(totalPrice)}
               </span>
             </div>
             <Button

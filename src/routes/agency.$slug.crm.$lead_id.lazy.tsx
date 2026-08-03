@@ -22,8 +22,8 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { FormTextarea as Textarea } from "@/components/ui/textarea";
-import { PrimaryButton, GhostButton , Button } from "@/components/ui/button";
-import { fmtDate, money } from "@/lib/formatters";
+import { Button } from "@/components/ui/button";
+import { formatDate, formatCurrency } from "@/lib/formatters";
 import { SheetPage } from "@/components/ui/sheet";
 import { NewProposalSheet } from "@/components/proposals/NewProposalSheet";
 
@@ -222,7 +222,7 @@ function LeadDetailPage() {
                 <FileText className="h-3.5 w-3.5" /> Link Form
               </Button>
 
-              <PrimaryButton
+              <Button variant="default"
                 onClick={() =>
                   navigate({
                     to: "/agency/$slug/proposals/new",
@@ -233,26 +233,26 @@ function LeadDetailPage() {
                 className="gap-1.5 text-xs font-bold h-9 bg-brand hover:bg-brand/90 text-brand-foreground"
               >
                 <Sparkles className="h-4 w-4" /> Nova Cotação
-              </PrimaryButton>
+              </Button>
               {!lead.client_id ? (
-                <PrimaryButton
+                <Button variant="default"
                   onClick={() => setConfirmConvertOpen(true)}
                   className="gap-1.5 text-xs font-bold h-9"
                 >
                   <UserCheck className="h-4 w-4" /> Converter em Cliente
-                </PrimaryButton>
+                </Button>
               ) : (
                 <span className="text-xs font-bold bg-success/10 border border-success/30 text-success rounded-full px-4 py-1.5 flex items-center gap-1">
                   <Check className="h-3.5 w-3.5" /> Convertido
                 </span>
               )}
-              <GhostButton
+              <Button variant="ghost"
                 onClick={() => setEditing((e) => !e)}
                 className="h-9 w-9 p-0 flex items-center justify-center rounded-full hover:bg-muted text-muted-foreground hover:text-foreground transition-colors"
                 title={editing ? "Fechar edição" : "Editar"}
               >
                 {editing ? <X className="h-4 w-4" /> : <Pencil className="h-4 w-4" />}
-              </GhostButton>
+              </Button>
             </div>
           </div>
 
@@ -364,12 +364,12 @@ function LeadDetailPage() {
                         .
                       </span>
                     </div>
-                    <GhostButton
+                    <Button variant="ghost"
                       onClick={() => handleReactivateLead()}
                       className="text-xs font-bold h-8 px-3 rounded-[var(--radius-card)]"
                     >
                       Re-ativar Lead
-                    </GhostButton>
+                    </Button>
                   </div>
                 )}
 
@@ -505,13 +505,13 @@ function LeadDetailPage() {
                       ))}
                     </div>
 
-                    <GhostButton
+                    <Button variant="ghost"
                       onClick={addTag}
                       disabled={!newTagName.trim()}
                       className="w-full h-8 rounded-[var(--radius-card)] text-xs font-bold"
                     >
                       <Plus className="h-3.5 w-3.5 mr-1 inline" /> Criar Tag
-                    </GhostButton>
+                    </Button>
                   </div>
                 </div>
 
@@ -541,12 +541,12 @@ function LeadDetailPage() {
                     autônoma.
                   </p>
                   <div className="flex gap-2">
-                    <GhostButton
+                    <Button variant="ghost"
                       onClick={handleCopyFormLink}
                       className="h-8 px-3 rounded-[var(--radius-card)] text-xs font-bold border-brand/20 bg-brand/5 hover:bg-brand/10"
                     >
                       <FileText className="h-3.5 w-3.5 mr-1" /> Copiar Link Form
-                    </GhostButton>
+                    </Button>
                     {lead.phone && (
                       <Button
                         onClick={handleShareFormWhatsApp}
@@ -709,9 +709,9 @@ function LeadDetailPage() {
                           </SelectContent>
                         </Select>
                       </Field>
-                      <PrimaryButton type="submit" className="w-full text-xs h-9">
+                      <Button variant="default" type="submit" className="w-full text-xs h-9">
                         Adicionar Acompanhante
-                      </PrimaryButton>
+                      </Button>
                     </form>
                   )}
                 </div>
@@ -803,9 +803,9 @@ function LeadDetailPage() {
                           </SelectContent>
                         </Select>
                       </Field>
-                      <PrimaryButton type="submit" className="w-full text-xs h-9">
+                      <Button variant="default" type="submit" className="w-full text-xs h-9">
                         Agendar Evento
-                      </PrimaryButton>
+                      </Button>
                     </form>
                   )}
 
@@ -938,12 +938,12 @@ function LeadDetailPage() {
                           <div className="flex items-center justify-between font-bold">
                             <span className="text-foreground truncate">{prop.title}</span>
                             <span className="font-mono text-brand font-extrabold">
-                              {money(prop.total ?? 0)}
+                              {formatCurrency(prop.total ?? 0)}
                             </span>
                           </div>
                           <div className="flex items-center justify-between ds-meta text-muted-foreground">
                             <span>
-                              #{prop.number} · {fmtDate(prop.created_at)}
+                              #{prop.number} · {formatDate(prop.created_at)}
                             </span>
                             <span className="uppercase text-[9px] font-bold px-1.5 py-0.5 glass-card border-none rounded border-none">
                               {prop.status}
@@ -1192,10 +1192,10 @@ function LeadDetailPage() {
               </div>
 
               <div className="flex justify-end gap-2.5 pt-4 border-t border-border mt-4">
-                <GhostButton onClick={() => setConfirmConvertOpen(false)} className="h-9 text-xs">
+                <Button variant="ghost" onClick={() => setConfirmConvertOpen(false)} className="h-9 text-xs">
                   Cancelar
-                </GhostButton>
-                <PrimaryButton
+                </Button>
+                <Button variant="default"
                   onClick={async () => {
                     const missing: string[] = [];
                     if (!clientPayload.full_name?.trim()) missing.push("Nome completo");
@@ -1225,7 +1225,7 @@ function LeadDetailPage() {
                   className="h-9 text-xs"
                 >
                   Converter Agora
-                </PrimaryButton>
+                </Button>
               </div>
             </div>
           </SheetPage>

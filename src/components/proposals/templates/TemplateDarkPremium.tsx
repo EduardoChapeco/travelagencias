@@ -3,7 +3,7 @@
  * Focado em luxo, contraste, capa dramática e resumo flutuante
  */
 import { type Proposal } from "@/services/proposals";
-import { money, fmtDate } from "@/lib/formatters";
+import { formatCurrency, formatDate } from "@/lib/formatters";
 import { buildBaseViewModel } from "@/lib/adapters";
 import { Plane, Hotel, Car, Compass, Check, X, PhoneCall } from "lucide-react";
 
@@ -112,8 +112,8 @@ export default function TemplateDarkPremium({ proposal: p, agency }: TemplatePro
               Período
             </div>
             <div className="font-semibold text-slate-900 text-sm">
-              {p.travel_start ? fmtDate(p.travel_start) : "—"} <br />{" "}
-              {p.travel_end ? fmtDate(p.travel_end) : "—"}
+              {p.travel_start ? formatDate(p.travel_start) : "—"} <br />{" "}
+              {p.travel_end ? formatDate(p.travel_end) : "—"}
             </div>
           </div>
           <div>
@@ -129,7 +129,7 @@ export default function TemplateDarkPremium({ proposal: p, agency }: TemplatePro
               Válido até
             </div>
             <div className="font-semibold text-slate-900 text-sm text-red-500">
-              {p.valid_until ? fmtDate(p.valid_until) : "—"}
+              {p.valid_until ? formatDate(p.valid_until) : "—"}
             </div>
           </div>
         </div>
@@ -172,7 +172,7 @@ export default function TemplateDarkPremium({ proposal: p, agency }: TemplatePro
                     <div className="flex-1 px-4 relative flex items-center justify-center">
                       <div className="w-full border-t border-dashed border-slate-300 absolute" />
                       <div className="bg-white border border-slate-200 px-4 py-1 rounded-full z-10 ds-meta font-bold text-slate-400 uppercase tracking-widest">
-                        {f.date ? fmtDate(f.date) : "—"}
+                        {f.date ? formatDate(f.date) : "—"}
                       </div>
                     </div>
                     <div className="w-[30%] text-center">
@@ -220,13 +220,13 @@ export default function TemplateDarkPremium({ proposal: p, agency }: TemplatePro
                         <div className="ds-meta uppercase font-bold text-slate-400">
                           Check-in
                         </div>
-                        <div className="font-semibold text-slate-800">{fmtDate(h.checkin)}</div>
+                        <div className="font-semibold text-slate-800">{formatDate(h.checkin)}</div>
                       </div>
                       <div>
                         <div className="ds-meta uppercase font-bold text-slate-400">
                           Check-out
                         </div>
-                        <div className="font-semibold text-slate-800">{fmtDate(h.checkout)}</div>
+                        <div className="font-semibold text-slate-800">{formatDate(h.checkout)}</div>
                       </div>
                       <div>
                         <div className="ds-meta uppercase font-bold text-slate-400">
@@ -283,7 +283,7 @@ export default function TemplateDarkPremium({ proposal: p, agency }: TemplatePro
                   Total do Pacote
                 </div>
                 <div className="text-5xl font-light text-white mb-6">
-                  {money(vm.totals.total, p.currency)}
+                  {formatCurrency(vm.totals.total, p.currency)}
                 </div>
               </div>
             </div>
@@ -297,7 +297,7 @@ export default function TemplateDarkPremium({ proposal: p, agency }: TemplatePro
                   Parcelamento
                 </div>
                 <div className="text-lg font-semibold text-white">
-                  {vm.totals.parcelasCartao}x de {money(vm.totals.valorParcelaCartao, p.currency)}
+                  {vm.totals.parcelasCartao}x de {formatCurrency(vm.totals.valorParcelaCartao, p.currency)}
                 </div>
               </div>
               <div className="bg-[#D4AF37]/10 rounded-3xl p-6 border border-[#D4AF37]/30 backdrop-blur relative">
@@ -311,7 +311,7 @@ export default function TemplateDarkPremium({ proposal: p, agency }: TemplatePro
                   -{vm.totals.descontoPixPercentual}%
                 </div>
                 <div className="text-xl font-bold" style={{ color: brand }}>
-                  {money(vm.totals.totalPix, p.currency)}
+                  {formatCurrency(vm.totals.totalPix, p.currency)}
                 </div>
               </div>
             </div>

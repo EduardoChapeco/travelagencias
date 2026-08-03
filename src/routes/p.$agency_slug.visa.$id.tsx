@@ -6,7 +6,7 @@ import { fetchPublicLeadForm, submitPublicLeadForm } from "@/services/public";
 import { Field } from "@/components/ui/field";
 import { FormInput as Input } from "@/components/ui/input";
 import { FormTextarea as Textarea } from "@/components/ui/textarea";
-import { PrimaryButton , Button } from "@/components/ui/button";
+import { Button } from "@/components/ui/button";
 
 export const Route = createFileRoute("/p/$agency_slug/visa/$id")({
   head: ({ context }: any) => ({ meta: [{ title: `Solicitação de visto · ${context?.brand?.platform_name || 'Turis'}` }] }),
@@ -175,9 +175,9 @@ function Page() {
             )}
           </Field>
         ))}
-        <PrimaryButton disabled={busy} className="w-full">
+        <Button variant="default" disabled={busy} className="w-full">
           {busy ? "Enviando…" : "Enviar solicitação"}
-        </PrimaryButton>
+        </Button>
       </form>
     </div>
   );

@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Plus, Trash2, Shield, ChevronDown, ChevronRight } from "lucide-react";
-import { money } from "@/lib/formatters";
+import { formatCurrency } from "@/lib/formatters";
 import { Button } from "@/components/ui/button";
 import { FormInput as Input } from "@/components/ui/input";
 import { FormTextarea as Textarea } from "@/components/ui/textarea";
@@ -165,7 +165,7 @@ export function ContractEditor({
         <div className="mb-3 rounded-full bg-surface-alt px-3 py-2 text-sm">
           <span className="text-muted-foreground">Valor total: </span>
           <span className="font-semibold font-mono text-foreground">
-            {money(tripTotal, tripCurrency)}
+            {formatCurrency(tripTotal, tripCurrency)}
           </span>
           {totalPax > 0 && (
             <span className="ml-2 text-xs text-muted-foreground">

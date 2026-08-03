@@ -3,7 +3,7 @@
  * Estilo clássico, analítico, focado em dados (baseado no PDF COT-161CF5)
  */
 import { type Proposal } from "@/services/proposals";
-import { money, fmtDate } from "@/lib/formatters";
+import { formatCurrency, formatDate } from "@/lib/formatters";
 import { Plane, Hotel, Car, Compass, Check, X, PhoneCall } from "lucide-react";
 import { buildBaseViewModel } from "@/lib/adapters";
 
@@ -76,8 +76,8 @@ export default function TemplateExecutivo({ proposal: p, agency }: TemplateProps
               Período
             </div>
             <div className="font-semibold text-slate-900">
-              {p.travel_start ? fmtDate(p.travel_start) : "—"} a{" "}
-              {p.travel_end ? fmtDate(p.travel_end) : "—"}
+              {p.travel_start ? formatDate(p.travel_start) : "—"} a{" "}
+              {p.travel_end ? formatDate(p.travel_end) : "—"}
             </div>
           </div>
           <div>
@@ -171,7 +171,7 @@ export default function TemplateExecutivo({ proposal: p, agency }: TemplateProps
                           Check-in
                         </div>
                         <div className="text-sm font-semibold text-slate-700">
-                          {fmtDate(h.checkin)}
+                          {formatDate(h.checkin)}
                         </div>
                       </div>
                       <div>
@@ -179,7 +179,7 @@ export default function TemplateExecutivo({ proposal: p, agency }: TemplateProps
                           Check-out
                         </div>
                         <div className="text-sm font-semibold text-slate-700">
-                          {fmtDate(h.checkout)}
+                          {formatDate(h.checkout)}
                         </div>
                       </div>
                     </div>
@@ -214,7 +214,7 @@ export default function TemplateExecutivo({ proposal: p, agency }: TemplateProps
                     <div className="font-semibold text-slate-900">{t.description}</div>
                     <div className="text-xs text-slate-500 mt-1">
                       {t.type === "private" ? "Privativo" : "Regular"} · {t.vehicle}{" "}
-                      {t.date ? `· ${fmtDate(t.date)}` : ""}
+                      {t.date ? `· ${formatDate(t.date)}` : ""}
                     </div>
                   </div>
                 </div>
@@ -229,7 +229,7 @@ export default function TemplateExecutivo({ proposal: p, agency }: TemplateProps
                   </div>
                   <div>
                     <div className="font-semibold text-slate-900">{t.description}</div>
-                    {t.date && <div className="text-xs text-slate-500 mt-1">{fmtDate(t.date)}</div>}
+                    {t.date && <div className="text-xs text-slate-500 mt-1">{formatDate(t.date)}</div>}
                   </div>
                 </div>
               ))}
@@ -256,12 +256,12 @@ export default function TemplateExecutivo({ proposal: p, agency }: TemplateProps
                     color: brand === "#0f172a" ? "#38bdf8" : brand,
                   }}
                 >
-                  {money(vm.totals.total, p.currency)}
+                  {formatCurrency(vm.totals.total, p.currency)}
                 </div>
                 {p.valid_until && (
                   <div className="text-xs text-slate-400 flex items-center gap-2">
                     <span className="w-2 h-2 rounded-full bg-amber-500" />
-                    Válida até {fmtDate(p.valid_until)}
+                    Válida até {formatDate(p.valid_until)}
                   </div>
                 )}
               </div>
@@ -272,7 +272,7 @@ export default function TemplateExecutivo({ proposal: p, agency }: TemplateProps
                     Cartão de Crédito
                   </div>
                   <div className="text-lg font-semibold text-white">
-                    {vm.totals.parcelasCartao}x de {money(vm.totals.valorParcelaCartao, p.currency)}
+                    {vm.totals.parcelasCartao}x de {formatCurrency(vm.totals.valorParcelaCartao, p.currency)}
                   </div>
                 </div>
 
@@ -288,7 +288,7 @@ export default function TemplateExecutivo({ proposal: p, agency }: TemplateProps
                       -{vm.totals.descontoPixPercentual}%
                     </div>
                   </div>
-                  <div className="text-2xl font-bold">{money(vm.totals.totalPix, p.currency)}</div>
+                  <div className="text-2xl font-bold">{formatCurrency(vm.totals.totalPix, p.currency)}</div>
                 </div>
               </div>
             </div>

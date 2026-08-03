@@ -5,8 +5,8 @@ import { toast } from "sonner";
 import {
   X, Clock, Users, AlertTriangle, Link as LinkIcon, CheckSquare, Square, Pencil, Check, Hotel, Bus, UserCheck, Phone, Plane, MapPin, Upload, Ticket, Loader2, Trash2, Globe, FileText, } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
-import { PrimaryButton, GhostButton , Button } from "@/components/ui/button";
-import { fmtDate } from "@/lib/formatters";
+import { Button } from "@/components/ui/button";
+import { formatDate } from "@/lib/formatters";
 import {
   type BoardingCard as Card,
   type ChecklistItem,
@@ -1285,7 +1285,7 @@ export function CardDetailPanel({
             )}
 
             {/* Web Check-in Link */}
-            <PrimaryButton
+            <Button variant="default"
               className="w-full h-9 text-xs gap-2 font-bold uppercase tracking-widest bg-brand/10 text-brand hover:bg-brand/20 border-none"
               onClick={() => {
                 const url = `${window.location.origin}/m/checkin/${card.id}`;
@@ -1294,7 +1294,7 @@ export function CardDetailPanel({
               }}
             >
               <LinkIcon className="w-3.5 h-3.5" /> Link Web Check-in (Cliente)
-            </PrimaryButton>
+            </Button>
 
             {/* CHECKLIST */}
             <div>

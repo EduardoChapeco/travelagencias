@@ -3,7 +3,7 @@ import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useAgency } from "@/lib/agency-context";
-import { money } from "@/lib/formatters";
+import { formatCurrency } from "@/lib/formatters";
 import { PageHeader } from "@/components/shell/PageHeader";
 
 export const Route = createFileRoute("/agency/$slug/financial/dre")({
@@ -59,13 +59,13 @@ function DREPage() {
           <div className="rounded-[var(--radius-card)] border-none glass-card border-none p-4">
             <div className="ds-meta uppercase tracking-wide text-muted-foreground">Receita</div>
             <div className="mt-1 font-mono text-xl font-semibold text-success">
-              {money(q.data?.income ?? 0)}
+              {formatCurrency(q.data?.income ?? 0)}
             </div>
           </div>
           <div className="rounded-[var(--radius-card)] border-none glass-card border-none p-4">
             <div className="ds-meta uppercase tracking-wide text-muted-foreground">Despesa</div>
             <div className="mt-1 font-mono text-xl font-semibold text-danger">
-              {money(q.data?.expense ?? 0)}
+              {formatCurrency(q.data?.expense ?? 0)}
             </div>
           </div>
           <div className="rounded-[var(--radius-card)] border-none glass-card border-none p-4">
@@ -75,7 +75,7 @@ function DREPage() {
             <div
               className={`mt-1 font-mono text-xl font-semibold ${(q.data?.net ?? 0) >= 0 ? "text-success" : "text-danger"}`}
             >
-              {money(q.data?.net ?? 0)}
+              {formatCurrency(q.data?.net ?? 0)}
             </div>
           </div>
         </div>
@@ -100,13 +100,13 @@ function DREPage() {
                     <tr key={cat} className="border-t border-border hover:glass bg-white/5 border-white/10/30">
                       <td className="px-3 py-2.5 font-medium">{cat}</td>
                       <td className="px-3 py-2.5 text-right font-mono text-xs text-success">
-                        {money(v.income)}
+                        {formatCurrency(v.income)}
                       </td>
                       <td className="px-3 py-2.5 text-right font-mono text-xs text-danger">
-                        {money(v.expense)}
+                        {formatCurrency(v.expense)}
                       </td>
                       <td className="px-3 py-2.5 text-right font-mono text-xs">
-                        {money(v.income - v.expense)}
+                        {formatCurrency(v.income - v.expense)}
                       </td>
                     </tr>
                   ))}

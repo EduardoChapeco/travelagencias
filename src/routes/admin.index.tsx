@@ -6,7 +6,7 @@ import { Bar, BarChart, CartesianGrid, XAxis, YAxis } from "recharts";
 import { fetchAdminOverview } from "@/services/admin";
 import { PageHeader } from "@/components/shell/PageHeader";
 import { StatusBadge } from "@/components/ui/badge";
-import { fmtDate, money } from "@/lib/formatters";
+import { formatDate, formatCurrency } from "@/lib/formatters";
 import { ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/ui/chart";
 
 export const Route = createFileRoute("/admin/")({
@@ -66,7 +66,7 @@ function Page() {
         <StatCard
           icon={Wallet}
           label="Receita total"
-          value={d ? money(d.totalRevenue) : "—"}
+          value={d ? formatCurrency(d.totalRevenue) : "—"}
           sub={
             d?.revGrowth !== undefined
               ? `${d.revGrowth >= 0 ? "+" : ""}${d.revGrowth}% vs mês anterior`
@@ -95,7 +95,7 @@ function Page() {
         <MiniStat
           icon={TrendingUp}
           label="Receita este mês"
-          value={d ? money(d.currentMonthRevenue) : "—"}
+          value={d ? formatCurrency(d.currentMonthRevenue) : "—"}
         />
       </div>
 
@@ -137,7 +137,7 @@ function Page() {
                     cursor={{ fill: "var(--color-surface-alt)", opacity: 0.4 }}
                     content={
                       <ChartTooltipContent
-                        formatter={(value) => money(Number(value))}
+                        formatter={(value) => formatCurrency(Number(value))}
                         hideIndicator
                       />
                     }
@@ -157,7 +157,7 @@ function Page() {
           {d && (
             <div className="mt-3 text-right text-xs text-muted-foreground">
               Mês atual:{" "}
-              <span className="font-semibold text-foreground">{money(d.currentMonthRevenue)}</span>
+              <span className="font-semibold text-foreground">{formatCurrency(d.currentMonthRevenue)}</span>
               {d.revGrowth !== 0 && (
                 <span className={`ml-1.5 ${d.revGrowth > 0 ? "text-success" : "text-danger"}`}>
                   ({d.revGrowth > 0 ? "+" : ""}
@@ -201,7 +201,7 @@ function Page() {
                     <div className="ds-meta text-muted-foreground">/{a.slug}</div>
                   </div>
                   <div className="ds-meta text-muted-foreground shrink-0">
-                    {fmtDate(a.created_at)}
+                    {formatDate(a.created_at)}
                   </div>
                 </Link>
               ))}

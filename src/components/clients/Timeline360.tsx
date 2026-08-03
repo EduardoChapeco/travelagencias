@@ -1,7 +1,7 @@
 import { Link } from "@tanstack/react-router";
 import { FileSignature, Calendar, ShieldCheck, Ticket as TicketIcon } from "lucide-react";
 import { StatusBadge } from "@/components/ui/badge";
-import { fmtDate, money } from "@/lib/formatters";
+import { formatDate, formatCurrency } from "@/lib/formatters";
 
 type TimelineEvent = {
   type: "proposal" | "trip" | "lgpd" | "ticket";
@@ -65,9 +65,9 @@ export function Timeline360({
                     </StatusBadge>
                   </div>
                   <div className="mt-3 text-xs text-muted-foreground flex items-center gap-3">
-                    <span>{fmtDate(event.date)}</span>
+                    <span>{formatDate(event.date)}</span>
                     <span className="font-medium text-foreground">
-                      {money(Number(event.data.total), event.data.currency)}
+                      {formatCurrency(Number(event.data.total), event.data.currency)}
                     </span>
                   </div>
                 </Link>
@@ -99,8 +99,8 @@ export function Timeline360({
                     </StatusBadge>
                   </div>
                   <div className="mt-3 text-xs text-muted-foreground flex items-center gap-3">
-                    <span>Emissão: {fmtDate(event.date)}</span>
-                    <span>Embarque: {fmtDate(event.data.travel_start)}</span>
+                    <span>Emissão: {formatDate(event.date)}</span>
+                    <span>Embarque: {formatDate(event.data.travel_start)}</span>
                   </div>
                 </Link>
               )}
@@ -122,7 +122,7 @@ export function Timeline360({
                       {event.data.status}
                     </StatusBadge>
                   </div>
-                  <div className="mt-3 text-xs text-muted-foreground">{fmtDate(event.date)}</div>
+                  <div className="mt-3 text-xs text-muted-foreground">{formatDate(event.date)}</div>
                 </Link>
               )}
 
@@ -132,7 +132,7 @@ export function Timeline360({
                   <div className="font-semibold text-sm">
                     Aceitou Política via {event.data.context}
                   </div>
-                  <div className="mt-3 text-xs text-muted-foreground">{fmtDate(event.date)}</div>
+                  <div className="mt-3 text-xs text-muted-foreground">{formatDate(event.date)}</div>
                 </div>
               )}
             </div>

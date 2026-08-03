@@ -8,7 +8,7 @@ import { Field } from "@/components/ui/field";
 import { FormInput as Input } from "@/components/ui/input";
 import { NativeSelect as Select } from "@/components/ui/select";
 import { FormTextarea as Textarea } from "@/components/ui/textarea";
-import { PrimaryButton, GhostButton } from "@/components/ui/button";
+import { Button } from "@/components/ui/button";
 import { Loader2 } from "lucide-react";
 
 interface NewTicketSheetProps {
@@ -216,10 +216,10 @@ export function NewTicketSheet({ isOpen, onClose, initialClientId }: NewTicketSh
         </div>
 
         <div className="flex justify-end gap-3 pt-6 border-t border-border mt-6">
-          <GhostButton type="button" onClick={onClose} disabled={isPending}>
+          <Button variant="ghost" type="button" onClick={onClose} disabled={isPending}>
             Cancelar
-          </GhostButton>
-          <PrimaryButton
+          </Button>
+          <Button variant="default"
             type="button"
             onClick={() => createMutation.mutate()}
             disabled={isPending || !title.trim()}
@@ -231,7 +231,7 @@ export function NewTicketSheet({ isOpen, onClose, initialClientId }: NewTicketSh
             ) : (
               "Criar Ticket"
             )}
-          </PrimaryButton>
+          </Button>
         </div>
       </div>
     </SheetPage>

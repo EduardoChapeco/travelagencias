@@ -213,3 +213,86 @@ Ver `.agents/docs/agent-catalog.md` para os 12 agentes especialistas:
 - **SALES** — Auditoria do funil CRM e fluxo de propostas
 - **LEGAL** — Conformidade LGPD, contratos eletrônicos, hash de integridade
 - **PERFORMANCE** — SRE: queries, paginação, bundle, N+1, timeouts
+
+---
+
+## 🏆 REGRAS CONSOLIDADAS — Melhores Práticas dos Projetos Jah e HR Shoes
+
+> Estas regras foram importadas e adaptadas dos projetos irmãos (Jah Community Platform e HR Shoes Commerce).
+> Em caso de conflito com qualquer regra acima, a regra mais restritiva sempre prevalece.
+
+### FONTES ÚNICAS DE VERDADE
+
+| Assunto                                            | Documento                                  |
+| -------------------------------------------------- | ------------------------------------------ |
+| Tokens de design, tipografia, estados, responsivo  | `DESIGN.md` + `src/styles/index.css`       |
+| Plano, escopo, critérios de aceite                 | `.agents/constitution/TRAVELOS_CONSTITUTION.md` |
+| Regras de negócio turístico                        | `.agents/constitution/TRAVEL_BUSINESS_RULES.md` |
+| Segurança, RBAC/RLS, LGPD, uploads                 | `.agents/constitution/DEFINITION_OF_SECURE.md` |
+| Componentes e estados canônicos                    | `.agents/constitution/DEFINITION_OF_PREMIUM.md` |
+| Definition of Done (DoD)                           | `.agents/constitution/DEFINITION_OF_DONE.md` |
+
+### REGRAS INVIOLÁVEIS (Consolidadas de Jah + HR Shoes)
+
+1. **Sem acesso direto ao Supabase em componentes React.** Toda mutação sensível passa por RPC (`SECURITY DEFINER`) ou `src/services/*`. O cliente Supabase da anon key é somente para leitura pública e operações RLS-protegidas.
+
+2. **Nenhum cálculo financeiro/operacional no cliente.** Comissões, totais, descontos, lucro, impostos — calculados exclusivamente no servidor via trigger ou RPC. Violação = fraude potencial.
+
+3. **Dinheiro = numeric(12,2) no banco / integer cents no frontend** quando usado para comparação. Nunca float. Formatação via `src/lib/formatters.ts`.
+
+4. **Datas** ISO UTC no armazenamento; exibição em `America/Sao_Paulo` via `src/lib/formatters.ts`.
+
+5. **Sem dados fictícios, "Em breve" ou placeholders visuais.** Botão que aparece deve ter ação real. Feature incompleta deve ser oculta da navegação.
+
+6. **Integrações** (WhatsApp, Email, GDS, Pagamento) têm status `unconfigured | testing | active | error`. Sem credencial = UI de integração desaparece ou mostra estado "configuração ausente".
+
+7. **Design Flat Premium.** Sem `shadow-*`, sem `bg-gradient-*`. Cores via design tokens de `src/styles/index.css`. Nunca hex hardcoded em componentes. O usuário explicitamente rejeita sombras e gradientes.
+
+8. **Idempotência e transação** em toda operação financeira/pagamento/comissão.
+
+9. **Segredos nunca no bundle/logs.** `service_role` key somente em `client.server.ts` e Edge Functions.
+
+10. **UUID não substitui autorização.** `agency_id` + `auth.uid()` verificados no servidor sempre.
+
+11. **Nunca inventariar depois de criar.** Antes de criar componente, tabela, hook, serviço, migration — verificar se já existe.
+
+12. **Nada de `any`, `@ts-ignore` ou cast para esconder schema quebrado.** Corrigir o tipo, não silenciar o TypeScript.
+
+13. **Empty/loading/error states são obrigatórios** em toda tela que busca dados.
+
+14. **Toast de sucesso só após confirmação real do backend.** Nunca otimista sem fallback real.
+
+15. **Toda política RLS deve ter cenário de acesso e bloqueio documentado.** Nenhuma tabela nova sem `ENABLE ROW LEVEL SECURITY` + policies por role.
+
+16. **`USING (true)` proibido** exceto em tabelas de leitura genuinamente públicas (planos, branding da plataforma, configurações globais de leitura). Nunca em operações de escrita sem filtro de role.
+
+17. **Nenhum agente pode autoaprovar sua própria entrega.** Toda entrega relevante passa pelo Release Gate (`.agents/constitution/NO_SELF_APPROVAL_POLICY.md`).
+
+18. **Código limpo = código leve.** Componentes focados (< 200 linhas idealmente), funções com responsabilidade única. Código morto (dead code) é proibido em produção.
+
+19. **Subscriptions Realtime precisam de cleanup.** Toda `supabase.channel().subscribe()` deve ter `return () => supabase.removeChannel(channel)` no cleanup do `useEffect`.
+
+20. **Contexto multi-tenant é inviolável.** Nenhum agente/cliente vê dados de outra agência. `agency_id` é sempre filtrado no banco, nunca dependendo apenas do frontend.
+
+### PROCESSO DE EXECUÇÃO OBRIGATÓRIO
+
+Antes de qualquer entrega, percorrer este ciclo:
+
+```
+1. INVENTORY → verificar se já existe
+2. IMPACT → mapear raio de impacto (tabelas, hooks, componentes, RLS)
+3. PLAN → plano detalhado por microfase
+4. IMPLEMENT → com precisão cirúrgica
+5. TYPECHECK → npm run typecheck sem erros
+6. SECURITY SWEEP → RLS, IDOR, XSS, service_role
+7. MATCH GLOBAL → schema ↔ supabase.ts ↔ frontend ↔ migrations
+8. RELEASE GATE → evidência real (não declaração)
+```
+
+### CONVENÇÕES DE CÓDIGO
+
+- `TypeScript strict`; sem `any` implícito; DTOs distintos das entidades.
+- Validação compartilhada por schema (`zod`).
+- Rotas refletem estritamente o estado funcional. Features planejadas não vazam para o registro de rotas.
+- Acessibilidade WCAG 2.2 AA. Botões com `whitespace-nowrap` (sem quebra de linha).
+- Componentes de dado/ação implementam: `loading`, `empty`, `error`, `permission`, `disabled`, `unconfigured`.

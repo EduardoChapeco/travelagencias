@@ -6,9 +6,9 @@ import { Shield, FileText, Scale, Save, Eye, EyeOff, Clock, History, AlertCircle
 import { PageHeader } from "@/components/shell/PageHeader";
 import { Field } from "@/components/ui/field";
 import { FormInput as Input } from "@/components/ui/input";
-import { PrimaryButton, GhostButton , Button } from "@/components/ui/button";
+import { Button } from "@/components/ui/button";
 import { StatusBadge } from "@/components/ui/badge";
-import { fmtDate } from "@/lib/formatters";
+import { formatDate } from "@/lib/formatters";
 import { RichTextEditor } from "@/components/ui/RichTextEditor";
 import { sanitizeHtml } from "@/lib/sanitize";
 import { usePrompt } from "@/hooks/use-prompt";
@@ -196,12 +196,12 @@ function Page() {
                 </Field>
                 <div className="text-xs text-muted-foreground flex items-center gap-1.5">
                   <Clock className="h-3.5 w-3.5" />
-                  {activeDoc.effective_at ? fmtDate(activeDoc.effective_at) : "Sem publicacao"}
+                  {activeDoc.effective_at ? formatDate(activeDoc.effective_at) : "Sem publicacao"}
                 </div>
                 {activeDoc.is_published && activeDoc.effective_at && (
                   <div className="text-xs text-success flex items-center gap-1.5">
                     <Eye className="h-3.5 w-3.5" />
-                    Publicado em {fmtDate(activeDoc.effective_at)}
+                    Publicado em {formatDate(activeDoc.effective_at)}
                   </div>
                 )}
               </div>
@@ -219,23 +219,23 @@ function Page() {
                   {previewMode ? "Editar" : "Previa"}
                 </Button>
                 {activeDoc.is_published ? (
-                  <GhostButton type="button" onClick={unpublish} className="text-xs">
+                  <Button variant="ghost" type="button" onClick={unpublish} className="text-xs">
                     Despublicar
-                  </GhostButton>
+                  </Button>
                 ) : (
-                  <GhostButton type="button" onClick={publish} className="text-xs gap-1.5">
+                  <Button variant="ghost" type="button" onClick={publish} className="text-xs gap-1.5">
                     <Eye className="h-3.5 w-3.5" /> Publicar
-                  </GhostButton>
+                  </Button>
                 )}
-                <GhostButton
+                <Button variant="ghost"
                   type="button"
                   onClick={saveAsNewVersion}
                   disabled={busy}
                   className="gap-1.5 text-xs"
                 >
                   <History className="h-3.5 w-3.5" /> Nova Versao
-                </GhostButton>
-                <PrimaryButton
+                </Button>
+                <Button variant="default"
                   type="button"
                   onClick={save}
                   disabled={busy}
@@ -243,7 +243,7 @@ function Page() {
                 >
                   <Save className="h-3.5 w-3.5" />
                   {busy ? "Salvando..." : "Salvar"}
-                </PrimaryButton>
+                </Button>
               </div>
             </div>
 

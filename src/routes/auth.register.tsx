@@ -4,7 +4,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { Field } from "@/components/ui/field";
 import { FormInput as Input } from "@/components/ui/input";
-import { PrimaryButton } from "@/components/ui/button";
+import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { useForm, Controller } from "react-hook-form";
 import { z } from "zod";
@@ -265,13 +265,13 @@ function RegisterPage() {
               )}
             </div>
 
-            <PrimaryButton
+            <Button variant="default"
               type="submit"
               disabled={isSubmitting}
               className="w-full h-11 ds-label-caps tracking-wider rounded-full bg-primary hover:bg-primary/95 text-primary-foreground active:scale-[0.98] transition-all duration-200 mt-6 cursor-pointer"
             >
               {isSubmitting ? "Criando conta…" : "Criar conta"}
-            </PrimaryButton>
+            </Button>
           </form>
 
           <p className="mt-6 text-center text-xs text-muted-foreground font-semibold">

@@ -3,7 +3,7 @@
  * Focado em venda massiva (Catálogo de Grupos). Muita foto, botão de ação rápido, layout compacto.
  */
 import { type Proposal } from "@/services/proposals";
-import { money, fmtDate } from "@/lib/formatters";
+import { formatCurrency, formatDate } from "@/lib/formatters";
 import { buildBaseViewModel } from "@/lib/adapters";
 import { Users, MapPin, Calendar, Clock, Bus, CheckCircle2, Building2 } from "lucide-react";
 
@@ -62,7 +62,7 @@ export default function TemplateGroupCatalog({ proposal: p, agency }: TemplatePr
             <div className="w-1.5 h-1.5 rounded-full bg-white/50" />
             <div className="flex items-center gap-1.5">
               <Calendar className="w-5 h-5 text-red-500" />{" "}
-              {p.travel_start ? fmtDate(p.travel_start) : "A definir"}
+              {p.travel_start ? formatDate(p.travel_start) : "A definir"}
             </div>
           </div>
         </div>
@@ -138,13 +138,13 @@ export default function TemplateGroupCatalog({ proposal: p, agency }: TemplatePr
               <div className="flex items-center justify-between text-sm">
                 <span className="text-slate-500 font-bold">À vista no PIX</span>
                 <span className="font-black text-emerald-600">
-                  {money(vm.totals.totalPix, p.currency)}
+                  {formatCurrency(vm.totals.totalPix, p.currency)}
                 </span>
               </div>
               <div className="flex items-center justify-between text-sm">
                 <span className="text-slate-500 font-bold">Valor Total Parcelado</span>
                 <span className="font-black text-slate-900">
-                  {money(vm.totals.total, p.currency)}
+                  {formatCurrency(vm.totals.total, p.currency)}
                 </span>
               </div>
             </div>

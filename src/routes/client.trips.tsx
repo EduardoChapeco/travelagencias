@@ -4,7 +4,7 @@ import { Plane } from "lucide-react";
 import { fetchClientTrips } from "@/services/client-area";
 import { PageHeader, EmptyState } from "@/components/shell/PageHeader";
 import { StatusBadge } from "@/components/ui/badge";
-import { fmtDate, money } from "@/lib/formatters";
+import { formatDate, formatCurrency } from "@/lib/formatters";
 
 export const Route = createFileRoute("/client/trips")({
   head: ({ context }: any) => ({ meta: [{ title: `Minhas viagens · ${context?.brand?.platform_name || 'Turis'}` }] }),
@@ -50,16 +50,16 @@ function ClientTripsPage() {
             <div className="mt-3 grid grid-cols-3 gap-2 text-xs">
               <div>
                 <div className="text-muted-foreground">Saída</div>
-                <div>{fmtDate(t.travel_start)}</div>
+                <div>{formatDate(t.travel_start)}</div>
               </div>
               <div>
                 <div className="text-muted-foreground">Retorno</div>
-                <div>{fmtDate(t.travel_end)}</div>
+                <div>{formatDate(t.travel_end)}</div>
               </div>
               <div>
                 <div className="text-muted-foreground">Valor</div>
                 <div className="font-mono">
-                  {money(Number(t.total_sale ?? 0), t.currency ?? "BRL")}
+                  {formatCurrency(Number(t.total_sale ?? 0), t.currency ?? "BRL")}
                 </div>
               </div>
             </div>

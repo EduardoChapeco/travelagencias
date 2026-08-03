@@ -26,7 +26,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { FormTextarea as Textarea } from "@/components/ui/textarea";
-import { PrimaryButton, GhostButton , Button } from "@/components/ui/button";
+import { Button } from "@/components/ui/button";
 import { SearchableSelect } from "@/components/ui/searchable-select";
 import { SheetPage } from "@/components/ui/sheet";
 import { toast } from "sonner";
@@ -322,7 +322,7 @@ function CRMPage() {
                           {l.deleted_at ? new Date(l.deleted_at).toLocaleDateString("pt-BR") : "—"}
                         </td>
                         <td className="py-4 px-4 text-right space-x-2">
-                          <GhostButton
+                          <Button variant="ghost"
                             onClick={async () => {
                               try {
                                 await restoreLead(l.id);
@@ -335,8 +335,8 @@ function CRMPage() {
                             className="h-8 px-3 text-xs border-success/30 hover:bg-success/10 text-success font-semibold"
                           >
                             Restaurar
-                          </GhostButton>
-                          <GhostButton
+                          </Button>
+                          <Button variant="ghost"
                             onClick={() => {
                               confirm({
                                 title: "Excluir Permanentemente",
@@ -357,7 +357,7 @@ function CRMPage() {
                             className="h-8 px-3 text-xs border-danger/30 hover:bg-danger/10 text-danger font-semibold"
                           >
                             Excluir
-                          </GhostButton>
+                          </Button>
                         </td>
                       </tr>
                     ))}
@@ -376,9 +376,9 @@ function CRMPage() {
             title="CRM Não Configurado"
             description="Seu funil de vendas não possui nenhuma coluna configurada. Inicialize-o agora para começar a gerenciar seus leads."
             action={
-              <PrimaryButton onClick={() => initStages.mutate()} disabled={initStages.isPending}>
+              <Button variant="default" onClick={() => initStages.mutate()} disabled={initStages.isPending}>
                 {initStages.isPending ? "Inicializando..." : "Criar Funil Padrão"}
-              </PrimaryButton>
+              </Button>
             }
           />
         </div>
@@ -732,12 +732,12 @@ function NewLeadSheet({
         </div>
 
         <div className="sticky bottom-0 left-0 right-0 bg-background/80 backdrop-blur-md p-4 border-t border-border flex justify-end gap-3 z-10 -mx-6 -mb-6">
-          <GhostButton type="button" onClick={onClose}>
+          <Button variant="ghost" type="button" onClick={onClose}>
             Cancelar
-          </GhostButton>
-          <PrimaryButton type="submit" disabled={isSubmitting}>
+          </Button>
+          <Button variant="default" type="submit" disabled={isSubmitting}>
             {isSubmitting ? "Salvando..." : "Salvar Oportunidade"}
-          </PrimaryButton>
+          </Button>
         </div>
       </form>
     </SheetPage>
@@ -932,13 +932,13 @@ function StageSettingsPanel({
             </div>
           ))}
 
-          <GhostButton
+          <Button variant="ghost"
             type="button"
             onClick={handleAdd}
             className="w-full mt-4 border-2 border-dashed border-border text-xs uppercase tracking-widest font-bold animate-pulse"
           >
             <Plus className="h-4 w-4 mr-2 inline" /> Adicionar Estágio
-          </GhostButton>
+          </Button>
         </div>
 
         <div className="pt-4 border-t border-border flex items-center justify-between">
@@ -946,12 +946,12 @@ function StageSettingsPanel({
             Nota: Não é possível excluir estágios de sistema (Ganho/Perdido).
           </p>
           <div className="flex gap-3">
-            <GhostButton type="button" onClick={onClose} disabled={busy}>
+            <Button variant="ghost" type="button" onClick={onClose} disabled={busy}>
               Cancelar
-            </GhostButton>
-            <PrimaryButton type="button" onClick={handleSave} disabled={busy} className="w-32">
+            </Button>
+            <Button variant="default" type="button" onClick={handleSave} disabled={busy} className="w-32">
               {busy ? "Salvando..." : "Salvar Funil"}
-            </PrimaryButton>
+            </Button>
           </div>
         </div>
       </div>

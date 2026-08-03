@@ -12,9 +12,9 @@ import { CSS } from "@dnd-kit/utilities";
 import { fetchVisaStages, fetchVisas, persistVisaMove } from "@/services/visas";
 import { useAgency } from "@/lib/agency-context";
 import { toast } from "sonner";
-import { PrimaryButton , Button } from "@/components/ui/button";
+import { Button } from "@/components/ui/button";
 import { StatusBadge } from "@/components/ui/badge";
-import { fmtDate } from "@/lib/formatters";
+import { formatDate } from "@/lib/formatters";
 import { NewVisaWizard } from "@/components/visas/NewVisaWizard";
 
 export const Route = createFileRoute("/agency/$slug/visas")({
@@ -316,7 +316,7 @@ function VisaCard({ visa, isOverlay }: { visa: Visa; isOverlay?: boolean }) {
         </div>
         {visa.expected_date && (
           <div className="flex items-center gap-1 text-orange-500">
-            <Clock className="h-3 w-3" /> {fmtDate(visa.expected_date)}
+            <Clock className="h-3 w-3" /> {formatDate(visa.expected_date)}
           </div>
         )}
       </div>

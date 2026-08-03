@@ -7,9 +7,9 @@ import { Field } from "@/components/ui/field";
 import { FormInput as Input } from "@/components/ui/input";
 import { NativeSelect as Select } from "@/components/ui/select";
 import { FormTextarea as Textarea } from "@/components/ui/textarea";
-import { PrimaryButton, GhostButton , Button } from "@/components/ui/button";
+import { Button } from "@/components/ui/button";
 import { StatusBadge } from "@/components/ui/badge";
-import { fmtDate, money } from "@/lib/formatters";
+import { formatDate, formatCurrency } from "@/lib/formatters";
 import { SheetPage } from "@/components/ui/sheet";
 import { toast } from "sonner";
 import { useForm } from "react-hook-form";
@@ -481,9 +481,9 @@ export function NewGroupTourWizard({
                       /tour/
                     </span>
                     <Input {...register("slug")} placeholder="reveillon-gramado-2027" />
-                    <GhostButton type="button" onClick={generateSlug} className="shrink-0 h-9">
+                    <Button variant="ghost" type="button" onClick={generateSlug} className="shrink-0 h-9">
                       Gerar
-                    </GhostButton>
+                    </Button>
                   </div>
                 </Field>
               </div>
@@ -633,13 +633,13 @@ export function NewGroupTourWizard({
                     <BedDouble className="h-5 w-5 text-brand" />
                     <h3 className="font-semibold text-base">Acomodações & Tarifas</h3>
                   </div>
-                  <GhostButton
+                  <Button variant="ghost"
                     type="button"
                     onClick={populateDefaultPricingTiers}
                     className="h-8 text-xs text-brand border border-brand/20 hover:bg-brand/5"
                   >
                     Gerar Tarifas Padrão
-                  </GhostButton>
+                  </Button>
                 </div>
 
                 {/* Form to add a new pricing tier */}
@@ -675,7 +675,7 @@ export function NewGroupTourWizard({
                       onChange={(e) => setNewTierDesc(e.target.value)}
                       className="flex-1"
                     />
-                    <GhostButton
+                    <Button variant="ghost"
                       type="button"
                       onClick={() => {
                         if (!newTierName.trim() || newTierPrice === "") {
@@ -703,7 +703,7 @@ export function NewGroupTourWizard({
                       className="h-9 text-xs border border-border px-3 shrink-0"
                     >
                       <Plus className="h-4 w-4 mr-1" /> Adicionar
-                    </GhostButton>
+                    </Button>
                   </div>
                 </div>
 
@@ -723,7 +723,7 @@ export function NewGroupTourWizard({
                         </div>
                         <div className="flex items-center gap-3">
                           <span className="font-mono font-bold text-brand text-sm">
-                            {money(tier.price)}
+                            {formatCurrency(tier.price)}
                           </span>
                           <Button
                             type="button"
@@ -786,7 +786,7 @@ export function NewGroupTourWizard({
                       onChange={(e) => setNewExtraDesc(e.target.value)}
                       className="flex-1"
                     />
-                    <GhostButton
+                    <Button variant="ghost"
                       type="button"
                       onClick={() => {
                         if (!newExtraName.trim() || newExtraPrice === "") {
@@ -814,7 +814,7 @@ export function NewGroupTourWizard({
                       className="h-9 text-xs border border-border px-3 shrink-0"
                     >
                       <Plus className="h-4 w-4 mr-1" /> Adicionar
-                    </GhostButton>
+                    </Button>
                   </div>
                 </div>
 
@@ -834,7 +834,7 @@ export function NewGroupTourWizard({
                         </div>
                         <div className="flex items-center gap-3">
                           <span className="font-mono font-bold text-success text-sm">
-                            +{money(ext.price)}
+                            +{formatCurrency(ext.price)}
                           </span>
                           <Button
                             type="button"
@@ -903,7 +903,7 @@ export function NewGroupTourWizard({
                           }}
                           placeholder="Ex: Café da manhã"
                         />
-                        <GhostButton
+                        <Button variant="ghost"
                           type="button"
                           onClick={() => {
                             if (newInclude.trim()) {
@@ -915,7 +915,7 @@ export function NewGroupTourWizard({
                           }}
                         >
                           <Plus className="h-4 w-4" />
-                        </GhostButton>
+                        </Button>
                       </div>
                     </Field>
                     <div className="flex flex-col gap-1.5">
@@ -970,7 +970,7 @@ export function NewGroupTourWizard({
                           }}
                           placeholder="Ex: Taxa de turismo"
                         />
-                        <GhostButton
+                        <Button variant="ghost"
                           type="button"
                           onClick={() => {
                             if (newExclude.trim()) {
@@ -982,7 +982,7 @@ export function NewGroupTourWizard({
                           }}
                         >
                           <Plus className="h-4 w-4" />
-                        </GhostButton>
+                        </Button>
                       </div>
                     </Field>
                     <div className="flex flex-col gap-1.5">
@@ -1070,7 +1070,7 @@ export function NewGroupTourWizard({
                 <div className="border-t border-border pt-5">
                   <div className="flex items-center justify-between mb-3">
                     <h4 className="font-semibold text-sm">Itinerário Dia-a-Dia</h4>
-                    <GhostButton
+                    <Button variant="ghost"
                       type="button"
                       onClick={() =>
                         setValue(
@@ -1085,7 +1085,7 @@ export function NewGroupTourWizard({
                       className="h-8 text-xs gap-1.5 border border-border"
                     >
                       <Plus className="h-3.5 w-3.5" /> Adicionar Dia
-                    </GhostButton>
+                    </Button>
                   </div>
 
                   <div className="space-y-4">
@@ -1237,7 +1237,7 @@ export function NewGroupTourWizard({
                           className="bg-surface-alt/40 p-2.5 rounded-2xl flex justify-between items-center"
                         >
                           <span>{t.name}</span>
-                          <strong className="font-mono text-brand">{money(t.price)}</strong>
+                          <strong className="font-mono text-brand">{formatCurrency(t.price)}</strong>
                         </div>
                       ))}
                     </div>
@@ -1257,7 +1257,7 @@ export function NewGroupTourWizard({
                           className="bg-surface-alt/40 p-2.5 rounded-2xl flex justify-between items-center"
                         >
                           <span>{e.name}</span>
-                          <strong className="font-mono text-success">+{money(e.price)}</strong>
+                          <strong className="font-mono text-success">+{formatCurrency(e.price)}</strong>
                         </div>
                       ))}
                     </div>
@@ -1300,31 +1300,31 @@ export function NewGroupTourWizard({
 
         {/* Footer Actions */}
         <div className="flex items-center justify-between border-t border-border bg-surface-alt/30 px-6 py-4 shrink-0">
-          <GhostButton
+          <Button variant="ghost"
             type="button"
             onClick={handleBack}
             disabled={step === 0}
             className="gap-2 w-28"
           >
             <ChevronLeft className="h-4 w-4" /> Voltar
-          </GhostButton>
+          </Button>
 
           <div className="flex gap-3">
-            <GhostButton type="button" onClick={onClose} disabled={submitting}>
+            <Button variant="ghost" type="button" onClick={onClose} disabled={submitting}>
               Cancelar
-            </GhostButton>
+            </Button>
             {step < STEPS.length - 1 ? (
-              <PrimaryButton type="button" onClick={handleNext} className="gap-2 w-32">
+              <Button variant="default" type="button" onClick={handleNext} className="gap-2 w-32">
                 Próximo <ChevronRight className="h-4 w-4" />
-              </PrimaryButton>
+              </Button>
             ) : (
-              <PrimaryButton
+              <Button variant="default"
                 type="submit"
                 disabled={submitting}
                 className="w-40 font-bold tracking-wider"
               >
                 {submitting ? "SALVANDO..." : "CRIAR EXCURSÃO"}
-              </PrimaryButton>
+              </Button>
             )}
           </div>
         </div>

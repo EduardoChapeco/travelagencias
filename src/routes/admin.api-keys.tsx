@@ -7,7 +7,7 @@ import { Plus, Trash2, KeyRound, AlertCircle } from "lucide-react";
 import { PageHeader, EmptyState } from "@/components/shell/PageHeader";
 import { Field } from "@/components/ui/field";
 import { FormInput as Input } from "@/components/ui/input";
-import { PrimaryButton, GhostButton } from "@/components/ui/button";
+import { Button } from "@/components/ui/button";
 import {
   fetchGlobalApiKeys,
   saveGlobalApiKey,
@@ -146,12 +146,12 @@ function Page() {
             />
           </Field>
           <div>
-            <PrimaryButton
+            <Button variant="default"
               disabled={busy}
               className="w-full h-9 flex items-center justify-center gap-1.5"
             >
               <Plus className="h-4 w-4" /> Adicionar
-            </PrimaryButton>
+            </Button>
           </div>
         </form>
 
@@ -204,14 +204,14 @@ function Page() {
                       />
                     </td>
                     <td className="px-4 py-3 text-right">
-                      <GhostButton
+                      <Button variant="ghost"
                         type="button"
                         onClick={() => remove(k.id)}
                         className="h-8 w-8 p-0 text-danger hover:bg-danger/10 flex items-center justify-center rounded-full"
                         aria-label="Remover chave"
                       >
                         <Trash2 className="h-3.5 w-3.5" />
-                      </GhostButton>
+                      </Button>
                     </td>
                   </tr>
                 ))}

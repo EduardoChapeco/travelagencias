@@ -6,7 +6,7 @@ import { Field } from "@/components/ui/field";
 import { FormInput as Input } from "@/components/ui/input";
 import { NativeSelect as Select } from "@/components/ui/select";
 import { FormTextarea as Textarea } from "@/components/ui/textarea";
-import { PrimaryButton , Button } from "@/components/ui/button";
+import { Button } from "@/components/ui/button";
 import { ShieldCheck, Calendar, Users, MapPin, Sparkles, Heart, X, Plus } from "lucide-react";
 
 export const Route = createFileRoute("/m/lead/$lead_id")({
@@ -508,7 +508,7 @@ function PublicLeadFormPage() {
                       <option value="other">Outro</option>
                     </Select>
                   </Field>
-                  <PrimaryButton
+                  <Button variant="default"
                     type="button"
                     onClick={() => {
                       if (!paxForm.full_name) {
@@ -530,7 +530,7 @@ function PublicLeadFormPage() {
                     className="w-full text-xs h-9"
                   >
                     Adicionar Acompanhante
-                  </PrimaryButton>
+                  </Button>
                 </div>
               )}
             </div>
@@ -622,13 +622,13 @@ function PublicLeadFormPage() {
             </div>
 
             {/* Submit Button */}
-            <PrimaryButton
+            <Button variant="default"
               type="submit"
               disabled={saving}
               className="w-full h-11 rounded-[var(--radius-card)] font-bold uppercase tracking-wider text-xs"
             >
               {saving ? "Salvando suas respostas..." : "Enviar Preferências"}
-            </PrimaryButton>
+            </Button>
           </form>
         )}
       </main>

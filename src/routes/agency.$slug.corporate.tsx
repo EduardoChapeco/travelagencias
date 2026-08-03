@@ -18,9 +18,9 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { CORPORATE_STATUS_MAP } from "@/lib/constants/status";
-import { PrimaryButton, GhostButton , Button } from "@/components/ui/button";
+import { Button } from "@/components/ui/button";
 import { StatusBadge } from "@/components/ui/badge";
-import { fmtDate } from "@/lib/formatters";
+import { formatDate } from "@/lib/formatters";
 import { NewCorporateRfpWizard } from "@/components/corporate/NewCorporateRfpWizard";
 import { useDebounce } from "@/hooks/use-debounce";
 
@@ -206,7 +206,7 @@ function CorporatePage() {
                 </div>
                 <div>
                   <div className="text-muted-foreground mb-0.5">Partida</div>
-                  <div className="font-medium">{fmtDate(rfp.departure_date)}</div>
+                  <div className="font-medium">{formatDate(rfp.departure_date)}</div>
                 </div>
                 <div>
                   <div className="text-muted-foreground mb-0.5">Orçamento Máx</div>
@@ -220,20 +220,20 @@ function CorporatePage() {
 
               <div className="flex flex-wrap gap-2 mt-auto pt-2 border-t border-border/50">
                 {rfp.status === "pending" && (
-                  <GhostButton
+                  <Button variant="ghost"
                     className="text-xs h-8 flex-1"
                     onClick={() => updateStatus.mutate({ id: rfp.id, status: "quoting" })}
                   >
                     Iniciar Cotação
-                  </GhostButton>
+                  </Button>
                 )}
                 {rfp.status === "quoting" && (
-                  <GhostButton
+                  <Button variant="ghost"
                     className="text-xs h-8 flex-1 text-primary hover:text-primary"
                     onClick={() => sendForApproval(rfp)}
                   >
                     <Send className="h-3 w-3 mr-1" /> Enviar p/ Aprovação
-                  </GhostButton>
+                  </Button>
                 )}
                 <div className="w-full text-center mt-2">
                   <Link
@@ -257,20 +257,20 @@ function CorporatePage() {
               {Math.ceil((rfpsQ.data?.count ?? 0) / pageSize) || 1}
             </div>
             <div className="flex items-center gap-2">
-              <GhostButton
+              <Button variant="ghost"
                 disabled={page === 1}
                 onClick={() => setPage((p) => Math.max(1, p - 1))}
                 className="h-9 px-4 text-xs font-semibold rounded-full border-none"
               >
                 Anterior
-              </GhostButton>
-              <GhostButton
+              </Button>
+              <Button variant="ghost"
                 disabled={page * pageSize >= (rfpsQ.data?.count ?? 0)}
                 onClick={() => setPage((p) => p + 1)}
                 className="h-9 px-4 text-xs font-semibold rounded-full border-none"
               >
                 Próxima
-              </GhostButton>
+              </Button>
             </div>
           </div>
         )}

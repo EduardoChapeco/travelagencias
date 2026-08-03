@@ -15,7 +15,7 @@ import {
 import { supabase } from "@/integrations/supabase/client";
 import { useAgency } from "@/lib/agency-context";
 import { PageHeader } from "@/components/shell/PageHeader";
-import { PrimaryButton , Button } from "@/components/ui/button";
+import { Button } from "@/components/ui/button";
 
 import { DraggableList, DraggableItem } from "@/components/ui/DraggableList";
 import { UniversalDevicePreview } from "@/components/ui/universal-device-preview";
@@ -131,14 +131,14 @@ function ClientAppBuilderPage() {
               <PageHeader
           title="App Builder"
           actions={
-            <PrimaryButton
+            <Button variant="default"
               onClick={saveSettings}
               disabled={busy}
               className="flex h-7 items-center gap-1.5 px-3 text-xs font-semibold cursor-pointer"
             >
               {busy ? <div className="h-3.5 w-3.5 border-2 border-white border-t-transparent animate-spin rounded-full" /> : <Save className="h-3.5 w-3.5" />}
               Salvar
-            </PrimaryButton>
+            </Button>
           }
         />
       

@@ -31,7 +31,7 @@ import { useAgency } from "@/lib/agency-context";
 import { Field } from "@/components/ui/field";
 import { FormInput as Input } from "@/components/ui/input";
 import { NativeSelect as Select } from "@/components/ui/select";
-import { PrimaryButton, GhostButton , Button } from "@/components/ui/button";
+import { Button } from "@/components/ui/button";
 import { StatusBadge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { FormTextarea as Textarea } from "@/components/ui/textarea";
@@ -246,7 +246,7 @@ function IntegrationRow({
       </div>
       <div className="flex items-center gap-2 pb-0.5">
         {existing && <StatusBadge tone="success">ativa</StatusBadge>}
-        <PrimaryButton
+        <Button variant="default"
           type="button"
           disabled={busy || !v.trim()}
           onClick={async () => {
@@ -257,7 +257,7 @@ function IntegrationRow({
           }}
         >
           {existing ? "Atualizar" : "Salvar"}
-        </PrimaryButton>
+        </Button>
       </div>
     </div>
   );
@@ -640,9 +640,9 @@ function WhatsAppTab({ agencyId }: { agencyId: string }) {
         </div>
       )}
 
-      <PrimaryButton disabled={busy} className="w-full">
+      <Button variant="default" disabled={busy} className="w-full">
         {busy ? "Salvando..." : "Salvar configurações de WhatsApp"}
-      </PrimaryButton>
+      </Button>
     </form>
   );
 }
@@ -751,9 +751,9 @@ function ApiKeysTab({ agencyId }: { agencyId: string }) {
           />
         </Field>
         <div className="flex items-end">
-          <PrimaryButton disabled={busy} className="w-full">
+          <Button variant="default" disabled={busy} className="w-full">
             <Plus className="mr-1 inline h-3 w-3" /> Adicionar
-          </PrimaryButton>
+          </Button>
         </div>
       </form>
 
@@ -796,14 +796,14 @@ function ApiKeysTab({ agencyId }: { agencyId: string }) {
                     />
                   </td>
                   <td className="px-3 py-2.5 text-right">
-                    <GhostButton
+                    <Button variant="ghost"
                       type="button"
                       onClick={() => remove(k.id)}
                       className="p-1 text-destructive hover:bg-destructive/10"
                       aria-label="Remover"
                     >
                       <Trash2 className="h-3.5 w-3.5" />
-                    </GhostButton>
+                    </Button>
                   </td>
                 </tr>
               ))}
@@ -927,9 +927,9 @@ function AiAgentSettingsSection({ agencyId }: { agencyId: string }) {
         </p>
       </Field>
 
-      <PrimaryButton type="button" disabled={busy} onClick={saveSettings} className="w-full">
+      <Button variant="default" type="button" disabled={busy} onClick={saveSettings} className="w-full">
         {busy ? "Salvando..." : "Salvar Configurações do Assistente"}
-      </PrimaryButton>
+      </Button>
     </div>
   );
 }
@@ -1309,9 +1309,9 @@ function InfotravelTab({ agencyId }: { agencyId: string }) {
           </div>
 
           <div className="flex gap-2 pt-2">
-            <PrimaryButton disabled={formBusy} className="flex-1">
+            <Button variant="default" disabled={formBusy} className="flex-1">
               {formBusy ? "Salvando..." : editingOperatorId ? "Salvar Alterações" : "Adicionar Operadora"}
-            </PrimaryButton>
+            </Button>
           </div>
         </form>
       )}

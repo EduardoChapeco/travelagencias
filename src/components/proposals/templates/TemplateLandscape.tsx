@@ -3,7 +3,7 @@
  * Focado em visualização na tela (16:9 ou A4 Landscape), com fotos enormes e slides separados.
  */
 import { type Proposal } from "@/services/proposals";
-import { money, fmtDate } from "@/lib/formatters";
+import { formatCurrency, formatDate } from "@/lib/formatters";
 import { buildBaseViewModel } from "@/lib/adapters";
 import {
   Plane,
@@ -101,8 +101,8 @@ export default function TemplateLandscape({ proposal: p, agency }: TemplateProps
             <div className="flex flex-wrap items-center gap-6 text-lg text-slate-200 pt-2 font-medium">
               <span className="flex items-center gap-1.5">
                 <Calendar className="w-5 h-5 opacity-70" />
-                {p.travel_start ? fmtDate(p.travel_start) : ""} —{" "}
-                {p.travel_end ? fmtDate(p.travel_end) : ""}
+                {p.travel_start ? formatDate(p.travel_start) : ""} —{" "}
+                {p.travel_end ? formatDate(p.travel_end) : ""}
               </span>
               <span className="w-1.5 h-1.5 rounded-full bg-slate-400" />
               <span>
@@ -226,7 +226,7 @@ export default function TemplateLandscape({ proposal: p, agency }: TemplateProps
                         </div>
                         <div className="text-xs text-slate-400 space-y-1">
                           <div>
-                            <strong>Período:</strong> {fmtDate(h.checkin)} a {fmtDate(h.checkout)}
+                            <strong>Período:</strong> {formatDate(h.checkin)} a {formatDate(h.checkout)}
                           </div>
                           <div>
                             <strong>Acomodação:</strong>{" "}
@@ -298,7 +298,7 @@ export default function TemplateLandscape({ proposal: p, agency }: TemplateProps
                           {f.stops === 0 ? "Direto" : `${f.stops} Parada${f.stops > 1 ? "s" : ""}`}
                         </span>
                         <span className="text-[9px] text-slate-500 font-bold mt-2">
-                          {f.date ? fmtDate(f.date) : ""}
+                          {f.date ? formatDate(f.date) : ""}
                         </span>
                       </div>
 
@@ -414,11 +414,11 @@ export default function TemplateLandscape({ proposal: p, agency }: TemplateProps
                 className="text-7xl font-black tracking-tighter leading-none"
                 style={{ color: brand !== "#18181b" ? brand : "#38bdf8" }}
               >
-                {money(vm.totals.total, p.currency)}
+                {formatCurrency(vm.totals.total, p.currency)}
               </div>
               {p.valid_until && (
                 <span className="text-xs font-bold text-amber-500 block pt-2">
-                  * Tarifa garantida até {fmtDate(p.valid_until)}
+                  * Tarifa garantida até {formatDate(p.valid_until)}
                 </span>
               )}
             </div>
@@ -433,7 +433,7 @@ export default function TemplateLandscape({ proposal: p, agency }: TemplateProps
                   {vm.totals.parcelasCartao}x de
                 </div>
                 <div className="text-xl font-bold text-slate-200 mt-1">
-                  {money(vm.totals.valorParcelaCartao, p.currency)}
+                  {formatCurrency(vm.totals.valorParcelaCartao, p.currency)}
                 </div>
               </div>
 
@@ -450,7 +450,7 @@ export default function TemplateLandscape({ proposal: p, agency }: TemplateProps
                   </span>
                 </div>
                 <div className="text-2xl font-black leading-none">
-                  {money(vm.totals.totalPix, p.currency)}
+                  {formatCurrency(vm.totals.totalPix, p.currency)}
                 </div>
               </div>
             </div>

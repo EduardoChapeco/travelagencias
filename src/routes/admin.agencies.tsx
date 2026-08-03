@@ -2,7 +2,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery, queryOptions } from "@tanstack/react-query";
 import { fetchAdminAgencies, createAgencyAndInvite } from "@/services/admin";
 import { PageHeader, EmptyState } from "@/components/shell/PageHeader";
-import { fmtDate } from "@/lib/formatters";
+import { formatDate } from "@/lib/formatters";
 
 import { useState } from "react";
 import { Plus, AlertCircle } from "lucide-react";
@@ -270,7 +270,7 @@ function Page() {
                     <div className="text-muted-foreground">{a.priv?.phone ?? ""}</div>
                   </td>
                   <td className="px-3 py-2.5 text-xs text-muted-foreground">
-                    {fmtDate(a.created_at)}
+                    {formatDate(a.created_at)}
                   </td>
                 </tr>
               ))}

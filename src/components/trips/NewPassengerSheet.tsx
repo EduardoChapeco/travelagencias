@@ -5,7 +5,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { Field } from "@/components/ui/field";
 import { FormInput as Input } from "@/components/ui/input";
 import { NativeSelect as Select } from "@/components/ui/select";
-import { PrimaryButton, GhostButton } from "@/components/ui/button";
+import { Button } from "@/components/ui/button";
 import { SheetPage } from "@/components/ui/sheet";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
@@ -160,12 +160,12 @@ export function NewPassengerSheet({
         </div>
 
         <div className="flex items-center justify-end gap-3 border-t border-border bg-surface-alt/30 px-6 py-4 shrink-0">
-          <GhostButton type="button" onClick={onClose}>
+          <Button variant="ghost" type="button" onClick={onClose}>
             Cancelar
-          </GhostButton>
-          <PrimaryButton type="submit" disabled={submitting}>
+          </Button>
+          <Button variant="default" type="submit" disabled={submitting}>
             {submitting ? "Salvando..." : "Adicionar Passageiro"}
-          </PrimaryButton>
+          </Button>
         </div>
       </form>
     </SheetPage>

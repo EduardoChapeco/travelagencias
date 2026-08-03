@@ -4,7 +4,7 @@ import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { Field } from "@/components/ui/field";
 import { FormInput as Input } from "@/components/ui/input";
-import { PrimaryButton , Button } from "@/components/ui/button";
+import { Button } from "@/components/ui/button";
 import { slugify } from "@/lib/slug";
 import { resolveSignedInAgency } from "@/lib/auth-routing";
 import { validateCNPJ, formatCNPJ, fetchCNPJData } from "@/lib/validations/document";
@@ -348,9 +348,9 @@ function Page() {
                 Voltar
               </Button>
             )}
-            <PrimaryButton type="submit" disabled={isSubmitting} className="flex-1 cursor-pointer">
+            <Button variant="default" type="submit" disabled={isSubmitting} className="flex-1 cursor-pointer">
               {isSubmitting ? "Salvando…" : step === 3 ? "Finalizar e Entrar" : "Próximo"}
-            </PrimaryButton>
+            </Button>
           </div>
         </form>
       </div>

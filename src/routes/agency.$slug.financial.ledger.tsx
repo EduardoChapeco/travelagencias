@@ -13,8 +13,8 @@ import {
   RefreshCw,
   AlertCircle,
 } from "lucide-react";
-import { GhostButton } from "@/components/ui/button";
-import { money } from "@/lib/formatters";
+import { Button } from "@/components/ui/button";
+import { formatCurrency } from "@/lib/formatters";
 import { cn } from "@/lib/utils";
 import { PageHeader } from "@/components/shell/PageHeader";
 import { FormInput as Input } from "@/components/ui/input";
@@ -129,7 +129,7 @@ export function LedgerDashboard() {
             <ArrowDownCircle className="w-3.5 h-3.5 text-success" /> Total de Débitos (D)
           </span>
           <strong className="text-2xl font-mono block mt-1.5 text-success">
-            {money(totals.totalDebits)}
+            {formatCurrency(totals.totalDebits)}
           </strong>
           <span className="ds-meta text-muted-foreground mt-1 block">
             Aplicações de recursos registradas
@@ -141,7 +141,7 @@ export function LedgerDashboard() {
             <ArrowUpCircle className="w-3.5 h-3.5 text-danger" /> Total de Créditos (C)
           </span>
           <strong className="text-2xl font-mono block mt-1.5 text-danger">
-            {money(totals.totalCredits)}
+            {formatCurrency(totals.totalCredits)}
           </strong>
           <span className="ds-meta text-muted-foreground mt-1 block">
             Origens de recursos registradas
@@ -158,7 +158,7 @@ export function LedgerDashboard() {
               totals.balance === 0 ? "text-success" : "text-brand",
             )}
           >
-            {money(totals.balance)}
+            {formatCurrency(totals.balance)}
           </strong>
           <span className="ds-meta text-muted-foreground mt-1 block">
             Diferença consolidada entre D e C
@@ -209,13 +209,13 @@ export function LedgerDashboard() {
 
             {/* Reset button */}
             {(search || accountCode) && (
-              <GhostButton
+              <Button variant="ghost"
                 onClick={resetFilters}
                 className="h-8 !px-2.5 hover:glass bg-white/5 border-white/10 transition cursor-pointer"
                 title="Limpar filtros"
               >
                 <RefreshCw className="w-3.5 h-3.5" />
-              </GhostButton>
+              </Button>
             )}
           </div>
         </div>
@@ -274,12 +274,12 @@ export function LedgerDashboard() {
                     </td>
                     <td className="px-5 py-3.5 text-right font-mono text-xs font-semibold text-success">
                       {Number(entry.debit_amount) > 0
-                        ? `+ ${money(Number(entry.debit_amount))}`
+                        ? `+ ${formatCurrency(Number(entry.debit_amount))}`
                         : "—"}
                     </td>
                     <td className="px-5 py-3.5 text-right font-mono text-xs font-semibold text-danger">
                       {Number(entry.credit_amount) > 0
-                        ? `+ ${money(Number(entry.credit_amount))}`
+                        ? `+ ${formatCurrency(Number(entry.credit_amount))}`
                         : "—"}
                     </td>
                   </tr>
@@ -296,23 +296,23 @@ export function LedgerDashboard() {
               Mostrando {entries.length} de {totalCount} resultados
             </span>
             <div className="flex items-center gap-2">
-              <GhostButton
+              <Button variant="ghost"
                 onClick={() => setPage((p) => Math.max(1, p - 1))}
                 disabled={page === 1}
                 className="h-8 !px-3 font-semibold text-foreground disabled:opacity-50 transition cursor-pointer"
               >
                 Anterior
-              </GhostButton>
+              </Button>
               <span className="text-xs text-muted-foreground font-semibold">
                 Página {page} de {totalPages}
               </span>
-              <GhostButton
+              <Button variant="ghost"
                 onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
                 disabled={page === totalPages}
                 className="h-8 !px-3 font-semibold text-foreground disabled:opacity-50 transition cursor-pointer"
               >
                 Próxima
-              </GhostButton>
+              </Button>
             </div>
           </div>
         )}

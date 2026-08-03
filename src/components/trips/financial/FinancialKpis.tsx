@@ -1,5 +1,5 @@
 import { TrendingUp, TrendingDown, DollarSign, CreditCard } from "lucide-react";
-import { money } from "@/lib/formatters";
+import { formatCurrency } from "@/lib/formatters";
 
 export function FinancialKpis({
   totalIncome,
@@ -20,25 +20,25 @@ export function FinancialKpis({
     <div className="mb-6 grid grid-cols-2 gap-3 lg:grid-cols-4">
       <KpiCard
         label="Receita total"
-        value={money(totalIncome, currency)}
+        value={formatCurrency(totalIncome, currency)}
         icon={<TrendingUp className="h-4 w-4 text-success" />}
         tone="success"
       />
       <KpiCard
         label="Custo total"
-        value={money(totalExpense, currency)}
+        value={formatCurrency(totalExpense, currency)}
         icon={<TrendingDown className="h-4 w-4 text-danger" />}
         tone="danger"
       />
       <KpiCard
         label={`Margem (${marginPct}%)`}
-        value={money(margin, currency)}
+        value={formatCurrency(margin, currency)}
         icon={<DollarSign className="h-4 w-4 text-info" />}
         tone={margin >= 0 ? "success" : "danger"}
       />
       <KpiCard
         label="A receber"
-        value={money(outstanding, currency)}
+        value={formatCurrency(outstanding, currency)}
         icon={<CreditCard className="h-4 w-4 text-warning" />}
         tone={outstanding > 0 ? "warning" : "neutral"}
       />

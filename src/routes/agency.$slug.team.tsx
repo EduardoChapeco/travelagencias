@@ -12,9 +12,9 @@ import { Field } from "@/components/ui/field";
 import { FormInput as Input } from "@/components/ui/input";
 import { NativeSelect as Select } from "@/components/ui/select";
 import { SimpleSheet as Sheet } from "@/components/ui/sheet";
-import { PrimaryButton, GhostButton , Button } from "@/components/ui/button";
+import { Button } from "@/components/ui/button";
 import { StatusBadge } from "@/components/ui/badge";
-import { fmtDate } from "@/lib/formatters";
+import { formatDate } from "@/lib/formatters";
 import { supabase } from "@/integrations/supabase/client";
 import { useConfirm } from "@/hooks/use-confirm";
 
@@ -207,7 +207,7 @@ function TeamPage() {
                       )}
                     </td>
                     <td className="px-3 py-2.5 text-xs text-muted-foreground">
-                      {fmtDate(m.created_at)}
+                      {formatDate(m.created_at)}
                     </td>
                     <td className="px-3 py-2.5 text-right">
                       <Button
@@ -254,7 +254,7 @@ function TeamPage() {
                       </StatusBadge>
                     </td>
                     <td className="px-3 py-2.5 text-xs text-muted-foreground">
-                      {fmtDate(i.expires_at)}
+                      {formatDate(i.expires_at)}
                     </td>
                     <td className="px-3 py-2.5 text-right">
                       <div className="flex items-center justify-end gap-3">
@@ -510,12 +510,12 @@ function AgentCommissionSheet({
           )}
 
           <div className="flex justify-end gap-2 pt-2 border-t border-border/50">
-            <GhostButton type="button" onClick={onClose}>
+            <Button variant="ghost" type="button" onClick={onClose}>
               Cancelar
-            </GhostButton>
-            <PrimaryButton type="submit" disabled={submitting}>
+            </Button>
+            <Button variant="default" type="submit" disabled={submitting}>
               {submitting ? "Salvando…" : "Salvar Configuração"}
-            </PrimaryButton>
+            </Button>
           </div>
         </form>
       )}
@@ -564,12 +564,12 @@ function NewInvite({
           </Select>
         </Field>
         <div className="flex justify-end gap-2 pt-2">
-          <GhostButton type="button" onClick={onClose}>
+          <Button variant="ghost" type="button" onClick={onClose}>
             Cancelar
-          </GhostButton>
-          <PrimaryButton type="submit" disabled={submitting}>
+          </Button>
+          <Button variant="default" type="submit" disabled={submitting}>
             {submitting ? "Criando…" : "Criar convite"}
-          </PrimaryButton>
+          </Button>
         </div>
       </form>
     </Sheet>

@@ -2,7 +2,7 @@ import { createFileRoute, Link, useParams } from "@tanstack/react-router";
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import {
-  Search, Filter, FileText, Building2, Calendar, FileSignature, ArrowRight, User, Settings2, ChevronDown, BookOpen, AlertCircle, } from "lucide-react";
+  Search, Filter, FileText, Building2, Calendar, FileSignature, ArrowRight, User, Settings2, ChevronDown, BookOpen, AlertCircle, Eye, Trash2, Copy, Archive, MoreHorizontal, Edit2 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAgency } from "@/lib/agency-context";
 import { EmptyState } from "@/components/shell/PageHeader";
@@ -12,12 +12,21 @@ import { FormInput as Input } from "@/components/ui/input";
 import { NativeSelect as Select } from "@/components/ui/select";
 import { StatusBadge } from "@/components/ui/badge";
 import { CONTRACT_STATUS_MAP } from "@/lib/constants/status";
-import { GhostButton } from "@/components/ui/button";
-import { money, fmtDate } from "@/lib/formatters";
+import { Button } from "@/components/ui/button";
+import { formatCurrency, formatDate } from "@/lib/formatters";
 import { cn } from "@/lib/utils";
 import { useDebounce } from "@/hooks/use-debounce";
+import { DataTable, DataTableColumnHeader } from "@/components/ui/data-table";
+import { type ColumnDef } from "@tanstack/react-table";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ContractClauseLibrary } from "@/components/contracts/ContractClauseLibrary";
-import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 export const Route = createFileRoute("/agency/$slug/contracts")({
   head: ({ context }: any) => ({ meta: [{ title: `Contratos · ${context?.brand?.platform_name || 'Turis'}` }] }),
@@ -77,6 +86,90 @@ function ContractsPage() {
     },
   });
 
+  const columns: ColumnDef<ContractRow>[] = [
+    {
+      accessorKey: "version",
+      header: ({ column }) => <DataTableColumnHeader column={column} title="Contrato" />,
+      cell: ({ row }) => (
+        <div className="flex flex-col">
+          <span className="font-medium text-foreground">v{row.getValue("version")}</span>
+          <span className="ds-meta text-muted-foreground">{formatDate(row.original.created_at)}</span>
+        </div>
+      ),
+      size: 100,
+    },
+    {
+      id: "client",
+      header: ({ column }) => <DataTableColumnHeader column={column} title="Cliente" />,
+      cell: ({ row }) => {
+        const clientNames = Array.isArray(row.original.client_data)
+          ? row.original.client_data.map((x: any) => x.name || x.full_name || "").filter(Boolean).join(", ")
+          : (row.original.client_data as any)?.name;
+        const displayNames = clientNames || "Não identificado";
+        return (
+          <span className="font-medium text-foreground truncate max-w-[200px] block" title={displayNames}>
+            {displayNames}
+          </span>
+        );
+      },
+    },
+    {
+      accessorKey: "package_summary",
+      header: ({ column }) => <DataTableColumnHeader column={column} title="Viagem Vinculada" />,
+      cell: ({ row }) => (
+        <div className="flex flex-col">
+          <Link
+            to="/agency/$slug/trips/$id"
+            params={{ slug: slug as string, id: row.original.trip_id }}
+            className="text-sm font-medium text-foreground hover:underline line-clamp-1"
+          >
+            {row.original.package_summary || "Ver Detalhes"}
+          </Link>
+        </div>
+      ),
+    },
+    {
+      accessorKey: "status",
+      header: ({ column }) => <DataTableColumnHeader column={column} title="Status" />,
+      cell: ({ row }) => {
+        const status = row.getValue("status") as string;
+        const statusInfo = CONTRACT_STATUS_MAP[status] || { label: status, tone: "neutral" };
+        return (
+          <StatusBadge tone={statusInfo.tone}>
+            {statusInfo.label}
+          </StatusBadge>
+        );
+      },
+    },
+    {
+      accessorKey: "total_value",
+      header: ({ column }) => <DataTableColumnHeader column={column} title="Valor Total" className="justify-end" />,
+      cell: ({ row }) => (
+        <div className="text-right font-mono text-xs whitespace-nowrap">
+          {formatCurrency(Number(row.getValue("total_value")))}
+        </div>
+      ),
+    },
+    {
+      id: "actions",
+      header: ({ column }) => <DataTableColumnHeader column={column} title="Ações" className="justify-end" />,
+      cell: ({ row }) => {
+        const c = row.original;
+        return (
+          <div className="flex justify-end">
+            <Link
+              to="/agency/$slug/trips/$id/contract"
+              params={{ slug: slug as string, id: c.trip_id }}
+              className="inline-flex items-center justify-center gap-1.5 rounded-full bg-brand/10 text-brand px-3 py-1.5 text-xs font-bold transition-colors hover:bg-brand hover:text-brand-foreground"
+            >
+              Acessar <ArrowRight className="h-3 w-3" />
+            </Link>
+          </div>
+        );
+      },
+    },
+  ];
+
   return (
     <div className="w-full flex h-full flex-col overflow-hidden">
               <PageHeader
@@ -120,166 +213,53 @@ function ContractsPage() {
         />
       
       <Tabs value={activeTab} onValueChange={setActiveTab} className="flex flex-col flex-1 min-h-0">
-        {/* ── Visualização de Lista de Contratos (Pesquisa e Filtros) ──────────────────── */}
         {activeTab === "list" && (
-          <>
-            <div className="page-content page-section dock-offset min-h-0">
-              {q.isLoading && <div className="text-sm text-muted-foreground p-4">Carregando…</div>}
+          <div className="page-content page-section dock-offset">
+            {q.isLoading && <div className="text-sm text-muted-foreground p-4">Carregando…</div>}
 
-              {q.isError && (
-                <div className="flex flex-col items-center justify-center py-12 px-6 text-center rounded-[var(--radius-card)] border border-red-200 bg-red-50/60">
-                  <div className="h-9 w-9 rounded-full bg-red-100 flex items-center justify-center mb-2">
-                    <AlertCircle className="h-4 w-4 text-red-600" />
-                  </div>
-                  <h3 className="text-sm font-bold text-red-800">Falha ao Carregar Contratos</h3>
-                  <p className="text-xs text-red-600 mt-1">
-                    {q.error instanceof Error ? q.error.message : "Erro desconhecido."}
-                  </p>
+            {q.isError && (
+              <div className="flex flex-col items-center justify-center py-12 px-6 text-center rounded-[var(--radius-card)] border border-red-200 bg-red-50/60">
+                <div className="h-9 w-9 rounded-full bg-red-100 flex items-center justify-center mb-2">
+                  <AlertCircle className="h-4 w-4 text-red-600" />
                 </div>
-              )}
-
-              {q.data?.data.length === 0 && !debouncedSearch && statusFilter === "all" ? (
-                <EmptyState
-                  title="Nenhum contrato gerado"
-                  description="Acesse uma viagem confirmada e clique em 'Gerar Contrato' para iniciar o fluxo de assinaturas."
-                />
-              ) : q.data?.data.length === 0 ? (
-                <EmptyState
-                  title="Nenhum contrato encontrado"
-                  description="Altere os filtros ou a busca para ver resultados."
-                />
-              ) : null}
-
-        {q.data && q.data.data.length > 0 && (
-          <>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {q.data.data.map((c) => {
-                const statusInfo = CONTRACT_STATUS_MAP[c.status] || { label: c.status, tone: "neutral" };
-
-                return (
-                  <div
-                    key={c.id}
-                    className="group flex flex-col rounded-[var(--radius-card)] border-none glass-card border-none p-5 transition-all hover:border-brand/40 shadow-xs"
-                  >
-                    <div className="flex items-start justify-between mb-4">
-                      <div className="flex items-center gap-3">
-                        <div
-                          className={cn(
-                            "flex h-10 w-10 items-center justify-center rounded-[var(--radius-card)] border-none",
-                            c.status === "signed"
-                              ? "bg-success/10 text-success"
-                              : "glass bg-white/5 border-white/10 text-muted-foreground",
-                          )}
-                        >
-                          {c.status === "signed" ? (
-                            <FileSignature className="h-5 w-5" />
-                          ) : (
-                            <FileText className="h-5 w-5" />
-                          )}
-                        </div>
-                        <div>
-                          <h3 className="font-bold text-foreground line-clamp-1 group-hover:text-brand transition-colors">
-                            Contrato v{c.version}
-                          </h3>
-                          <div className="ds-meta uppercase tracking-widest font-semibold text-muted-foreground">
-                            Viagem vinculada
-                          </div>
-                        </div>
-                      </div>
-                      <StatusBadge tone={statusInfo.tone}>{statusInfo.label}</StatusBadge>
-                    </div>
-
-                    {c.package_summary && (
-                      <p className="text-sm text-foreground/80 leading-relaxed mb-4 line-clamp-2 min-h-[40px]">
-                        {c.package_summary}
-                      </p>
-                    )}
-
-                    <div className="space-y-3 mb-5 mt-auto glass bg-white/5 border-white/10/40 rounded-[var(--radius-card)] p-4 border-none/50">
-                      <div className="flex items-center justify-between text-sm">
-                        <span className="flex items-center gap-2 text-muted-foreground font-medium whitespace-nowrap">
-                          <User className="h-4 w-4" /> Cliente
-                        </span>
-                        {(() => {
-                          const clientNames = Array.isArray(c.client_data)
-                            ? c.client_data.map((x: any) => x.name || x.full_name || "").filter(Boolean).join(", ")
-                            : (c.client_data as any)?.name;
-                          const displayNames = clientNames || "Não identificado";
-                          return (
-                            <span
-                              className="font-semibold text-foreground truncate max-w-[150px] text-right"
-                              title={displayNames}
-                            >
-                              {displayNames}
-                            </span>
-                          );
-                        })()}
-                      </div>
-                      <div className="flex items-center justify-between text-sm">
-                        <span className="flex items-center gap-2 text-muted-foreground font-medium">
-                          <Calendar className="h-4 w-4" /> Gerado em
-                        </span>
-                        <span className="text-foreground">{fmtDate(c.created_at)}</span>
-                      </div>
-                      {c.signed_at && (
-                        <div className="flex items-center justify-between text-sm">
-                          <span className="flex items-center gap-2 text-muted-foreground font-medium">
-                            <FileSignature className="h-4 w-4 text-success" /> Assinado
-                          </span>
-                          <span className="text-foreground">{fmtDate(c.signed_at)}</span>
-                        </div>
-                      )}
-                    </div>
-
-                    <div className="flex items-center justify-between pt-4 border-t border-border/50">
-                      <div className="flex flex-col">
-                        <span className="ds-meta font-bold text-muted-foreground uppercase tracking-widest mb-0.5">
-                          Valor Total
-                        </span>
-                        <span className="font-mono text-lg font-bold text-foreground">
-                          {money(Number(c.total_value))}
-                        </span>
-                      </div>
-                      <Link
-                        to="/agency/$slug/trips/$id/contract"
-                        params={{ slug, id: c.trip_id }}
-                        className="inline-flex items-center justify-center gap-1.5 rounded-full bg-brand/10 text-brand px-4 py-2 text-xs font-bold transition-colors hover:bg-brand hover:text-brand-foreground"
-                      >
-                        Acessar <ArrowRight className="h-3.5 w-3.5" />
-                      </Link>
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
-
-            <div className="mt-8 flex items-center justify-between border-t border-border/40 pt-6">
-              <div className="text-xs text-muted-foreground font-medium">
-                Mostrando página <span className="font-bold text-foreground">{page}</span> de{" "}
-                {Math.ceil(q.data.count / pageSize) || 1}
+                <h3 className="text-sm font-bold text-red-800">Falha ao Carregar Contratos</h3>
+                <p className="text-xs text-red-600 mt-1">
+                  {q.error instanceof Error ? q.error.message : "Erro desconhecido."}
+                </p>
               </div>
-              <div className="flex items-center gap-2">
-                <GhostButton
-                  disabled={page === 1}
-                  onClick={() => setPage((p) => Math.max(1, p - 1))}
-                  className="h-9 px-4 text-xs font-semibold rounded-full border-none"
-                >
-                  Anterior
-                </GhostButton>
-                <GhostButton
-                  disabled={page * pageSize >= q.data.count}
-                  onClick={() => setPage((p) => p + 1)}
-                  className="h-9 px-4 text-xs font-semibold rounded-full border-none"
-                >
-                  Próxima
-                </GhostButton>
-              </div>
-            </div>
-          </>
+            )}
+
+            {q.data?.data.length === 0 && !debouncedSearch && statusFilter === "all" ? (
+              <EmptyState
+                title="Nenhum contrato gerado"
+                description="Acesse uma viagem confirmada e clique em 'Gerar Contrato' para iniciar o fluxo de assinaturas."
+              />
+            ) : q.data?.data.length === 0 ? (
+              <EmptyState
+                title="Nenhum contrato encontrado"
+                description="Altere os filtros ou a busca para ver resultados."
+              />
+            ) : null}
+
+            {q.data && q.data.data.length > 0 && (
+              <DataTable
+                columns={columns}
+                data={q.data.data}
+                isLoading={q.isFetching}
+                pageCount={Math.ceil(q.data.count / pageSize)}
+                pagination={{ pageIndex: page - 1, pageSize }}
+                onPaginationChange={(updater) => {
+                  if (typeof updater === "function") {
+                    const newState = updater({ pageIndex: page - 1, pageSize });
+                    setPage(newState.pageIndex + 1);
+                  } else {
+                    setPage(updater.pageIndex + 1);
+                  }
+                }}
+              />
+            )}
+          </div>
         )}
-      </div>
-    </>
-  )}
 
         {/* ── Visualização de Biblioteca de Cláusulas Contratuais (Inline) ───────────── */}
         {activeTab === "clauses" && agency && (

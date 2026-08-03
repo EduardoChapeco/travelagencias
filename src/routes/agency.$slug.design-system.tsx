@@ -26,7 +26,7 @@ import { Field } from "@/components/ui/field";
 import { FormInput as Input } from "@/components/ui/input";
 import { NativeSelect as Select } from "@/components/ui/select";
 import { FormTextarea as Textarea } from "@/components/ui/textarea";
-import { PrimaryButton, GhostButton , Button } from "@/components/ui/button";
+import { Button } from "@/components/ui/button";
 import { StatusBadge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
 
@@ -406,14 +406,14 @@ function DesignSystemPage() {
                   Variáveis CSS centralizadas que sustentam os temas Light e Dark.
                 </p>
               </div>
-              <GhostButton
+              <Button variant="ghost"
                 onClick={() =>
                   copyToClipboard(COLOR_TOKENS.map((t) => `${t.name}: var(${t.name});`).join("\n"))
                 }
                 className="text-xs gap-1.5 h-8"
               >
                 <Copy className="h-3 w-3" /> Copiar Todas as Variáveis
-              </GhostButton>
+              </Button>
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
@@ -568,8 +568,8 @@ function DesignSystemPage() {
                 </p>
                 <pre className="glass bg-white/5 border-white/10 p-3 rounded border-none/80 font-mono text-[10.5px] leading-relaxed text-brand overflow-x-auto">
                   {`  <div className="flex items-center gap-2">
-    <GhostButton>Voltar</GhostButton>
-    <PrimaryButton>Salvar Dados</PrimaryButton>
+    <Button variant="ghost">Voltar</Button>
+    <Button variant="default">Salvar Dados</Button>
   </div>
 `}
                 </pre>
@@ -597,20 +597,20 @@ function DesignSystemPage() {
                 <h4 className="text-xs font-bold text-foreground uppercase tracking-wider">
                   Botões Interativos
                 </h4>
-                <GhostButton
+                <Button variant="ghost"
                   onClick={() => toggleCode("buttons")}
                   className="h-7 ds-meta gap-1"
                 >
                   <Code className="h-3 w-3" />{" "}
                   {showCode["buttons"] ? "Ocultar Código" : "Ver Código"}
-                </GhostButton>
+                </Button>
               </div>
 
               <div className="flex flex-wrap items-center gap-3">
-                <PrimaryButton>Primary Button</PrimaryButton>
-                <PrimaryButton disabled>Disabled Primary</PrimaryButton>
-                <GhostButton>Ghost Button</GhostButton>
-                <GhostButton disabled>Disabled Ghost</GhostButton>
+                <Button variant="default">Primary Button</Button>
+                <Button variant="default" disabled>Disabled Primary</Button>
+                <Button variant="ghost">Ghost Button</Button>
+                <Button variant="ghost" disabled>Disabled Ghost</Button>
               </div>
 
               {showCode["buttons"] && (
@@ -618,11 +618,11 @@ function DesignSystemPage() {
                   {`import { PrimaryButton, GhostButton } from "@/components/ui/form";
 
 // Uso dos botões padrão:
-<PrimaryButton onClick={handleSave}>Salvar Alterações</PrimaryButton>
-<PrimaryButton disabled>Salvando...</PrimaryButton>
+<Button variant="default" onClick={handleSave}>Salvar Alterações</Button>
+<Button variant="default" disabled>Salvando...</Button>
 
-<GhostButton onClick={handleCancel}>Voltar</GhostButton>
-<GhostButton disabled>Indisponível</GhostButton>`}
+<Button variant="ghost" onClick={handleCancel}>Voltar</Button>
+<Button variant="ghost" disabled>Indisponível</Button>`}
                 </pre>
               )}
             </div>
@@ -633,9 +633,9 @@ function DesignSystemPage() {
                 <h4 className="text-xs font-bold text-foreground uppercase tracking-wider">
                   Campos de Formulário e Validação
                 </h4>
-                <GhostButton onClick={() => toggleCode("forms")} className="h-7 ds-meta gap-1">
+                <Button variant="ghost" onClick={() => toggleCode("forms")} className="h-7 ds-meta gap-1">
                   <Code className="h-3 w-3" /> {showCode["forms"] ? "Ocultar Código" : "Ver Código"}
-                </GhostButton>
+                </Button>
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -675,10 +675,10 @@ function DesignSystemPage() {
                 <h4 className="text-xs font-bold text-foreground uppercase tracking-wider">
                   Status Badges
                 </h4>
-                <GhostButton onClick={() => toggleCode("badges")} className="h-7 ds-meta gap-1">
+                <Button variant="ghost" onClick={() => toggleCode("badges")} className="h-7 ds-meta gap-1">
                   <Code className="h-3 w-3" />{" "}
                   {showCode["badges"] ? "Ocultar Código" : "Ver Código"}
-                </GhostButton>
+                </Button>
               </div>
 
               <div className="flex flex-wrap items-center gap-3">
@@ -708,10 +708,10 @@ function DesignSystemPage() {
                 <h4 className="text-xs font-bold text-foreground uppercase tracking-wider">
                   Alertas Planos (Sem Sombras)
                 </h4>
-                <GhostButton onClick={() => toggleCode("alerts")} className="h-7 ds-meta gap-1">
+                <Button variant="ghost" onClick={() => toggleCode("alerts")} className="h-7 ds-meta gap-1">
                   <Code className="h-3 w-3" />{" "}
                   {showCode["alerts"] ? "Ocultar Código" : "Ver Código"}
-                </GhostButton>
+                </Button>
               </div>
 
               <div className="space-y-3 text-xs leading-relaxed">

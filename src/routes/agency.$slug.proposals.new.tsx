@@ -19,7 +19,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { FormTextarea as Textarea } from "@/components/ui/textarea";
-import { PrimaryButton, GhostButton , Button } from "@/components/ui/button";
+import { Button } from "@/components/ui/button";
 import { PageHeader, ModuleActionButton } from "@/components/shell/PageHeader";
 import { SheetPage } from "@/components/ui/sheet";
 import {
@@ -472,15 +472,15 @@ function NewProposal() {
           <Textarea {...register("notes")} />
         </Field>
         <div className="mt-8 pt-6 border-t border-white/5 flex justify-end gap-3">
-          <GhostButton type="button" onClick={() => navigate({ to: "/agency/$slug/proposals", params: { slug } })}>
+          <Button variant="ghost" type="button" onClick={() => navigate({ to: "/agency/$slug/proposals", params: { slug } })}>
             Cancelar
-          </GhostButton>
-          <PrimaryButton onClick={handleSubmit(onSubmit)} disabled={isSubmitting}>
+          </Button>
+          <Button variant="default" onClick={handleSubmit(onSubmit)} disabled={isSubmitting}>
             {isSubmitting ? (
               <Loader2 className="h-4 w-4 animate-spin mr-2" />
             ) : null}
             Avançar para Montagem
-          </PrimaryButton>
+          </Button>
         </div>
       </form>
     </div>

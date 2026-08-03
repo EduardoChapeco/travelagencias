@@ -13,10 +13,10 @@ import { Field } from "@/components/ui/field";
 import { FormInput as Input } from "@/components/ui/input";
 import { NativeSelect as Select } from "@/components/ui/select";
 import { FormTextarea as Textarea } from "@/components/ui/textarea";
-import { PrimaryButton, GhostButton , Button } from "@/components/ui/button";
+import { Button } from "@/components/ui/button";
 import { SheetPage } from "@/components/ui/sheet";
 import { StatusBadge } from "@/components/ui/badge";
-import { fmtDate } from "@/lib/formatters";
+import { formatDate } from "@/lib/formatters";
 import { FileUploader } from "@/components/uploads/FileUploader";
 import { RichTextEditor } from "@/components/ui/RichTextEditor";
 
@@ -220,7 +220,7 @@ function BlogPage() {
                   </div>
                   {p.published_at && (
                     <div className="mt-1.5 ds-meta text-muted-foreground uppercase tracking-wide">
-                      {fmtDate(p.published_at)}
+                      {formatDate(p.published_at)}
                     </div>
                   )}
                 </div>
@@ -566,12 +566,12 @@ function BlogSheet({
             )}
           </div>
           <div className="flex items-center gap-2">
-            <GhostButton type="button" onClick={onClose}>
+            <Button variant="ghost" type="button" onClick={onClose}>
               Cancelar
-            </GhostButton>
-            <PrimaryButton type="submit" form="blog-form" disabled={submitting} className="gap-1.5">
+            </Button>
+            <Button variant="default" type="submit" form="blog-form" disabled={submitting} className="gap-1.5">
               {submitting ? "Salvando…" : post ? "Salvar alterações" : "Criar artigo"}
-            </PrimaryButton>
+            </Button>
           </div>
         </div>
       </div>

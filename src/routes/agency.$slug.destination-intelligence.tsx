@@ -29,7 +29,7 @@ import { Field } from "@/components/ui/field";
 import { FormInput as Input } from "@/components/ui/input";
 import { NativeSelect as Select } from "@/components/ui/select";
 import { FormTextarea as Textarea } from "@/components/ui/textarea";
-import { PrimaryButton, GhostButton , Button } from "@/components/ui/button";
+import { Button } from "@/components/ui/button";
 import { StatusBadge } from "@/components/ui/badge";
 import { SheetPage } from "@/components/ui/sheet";
 import { PageHeader, ModuleActionButton } from "@/components/shell/PageHeader";
@@ -844,17 +844,17 @@ function DestinationIntelligencePage() {
               </div>
 
               <div className="flex gap-2 pt-2">
-                <GhostButton onClick={closeForm} className="flex-1">
+                <Button variant="ghost" onClick={closeForm} className="flex-1">
                   Cancelar
-                </GhostButton>
-                <PrimaryButton
+                </Button>
+                <Button variant="default"
                   onClick={() => saveMut.mutate()}
                   disabled={saveMut.isPending || !form.destination?.trim()}
                   className="flex-1 gap-2"
                 >
                   <Save className="h-4 w-4" />
                   {saveMut.isPending ? "Salvando…" : "Salvar Destino"}
-                </PrimaryButton>
+                </Button>
               </div>
           </div>
         </div>

@@ -2,7 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { fetchBillingSummary } from "@/services/admin";
 import { PageHeader } from "@/components/shell/PageHeader";
-import { money } from "@/lib/formatters";
+import { formatCurrency } from "@/lib/formatters";
 import { Skeleton } from "@/components/ui/skeleton";
 import { AlertCircle } from "lucide-react";
 
@@ -57,13 +57,13 @@ function Page() {
               {q.data.map((r: any) => (
                 <tr key={r.agency_id} className="border-t border-border">
                   <td className="px-3 py-2.5 text-xs">{r.agency_name}</td>
-                  <td className="px-3 py-2.5 text-right text-xs font-mono">{money(r.income)}</td>
-                  <td className="px-3 py-2.5 text-right text-xs font-mono">{money(r.expense)}</td>
+                  <td className="px-3 py-2.5 text-right text-xs font-mono">{formatCurrency(r.income)}</td>
+                  <td className="px-3 py-2.5 text-right text-xs font-mono">{formatCurrency(r.expense)}</td>
                   <td className="px-3 py-2.5 text-right text-xs font-mono text-muted-foreground">
-                    {money(r.pending)}
+                    {formatCurrency(r.pending)}
                   </td>
                   <td className="px-3 py-2.5 text-right text-xs font-semibold font-mono">
-                    {money(r.net)}
+                    {formatCurrency(r.net)}
                   </td>
                 </tr>
               ))}

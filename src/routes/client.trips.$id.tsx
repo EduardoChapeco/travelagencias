@@ -33,7 +33,7 @@ import {
   addTripMemories,
 } from "@/services/client-area";
 import { StatusBadge } from "@/components/ui/badge";
-import { fmtDate } from "@/lib/formatters";
+import { formatDate } from "@/lib/formatters";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -422,14 +422,10 @@ function ClientTripDetail() {
       // Store the storage path (NOT a public URL) so that handleViewReceipt()
       // can generate a signed URL on demand from the private bucket.
       const storagePath = uploadData.path;
-      const { error } = await supabase
-        .from("payment_installments")
-        .update({
-          receipt_url: storagePath,
-          receipt_status: "pending",
-          receipt_uploaded_at: new Date().toISOString(),
-        } as any)
-        .eq("id", instId);
+      const { error } = await supabase.rpc("client_upload_receipt", {
+        _installment_id: instId,
+        _receipt_url: storagePath,
+      });
       if (error) throw error;
     },
     onSuccess: () => {
@@ -508,13 +504,11 @@ function ClientTripDetail() {
 
       if (error) throw error;
 
-      // 4. Update the case workflow_status in the DB
-      const { error: caseError } = await supabase
-        .from("flight_change_cases")
-        .update({
-          workflow_status: payload.status === "accepted" ? "client_accepted" : "client_rejected",
-        })
-        .eq("id", payload.caseId);
+      // 4. Update the case workflow_status in the DB via secure gateway
+      const { error: caseError } = await supabase.rpc("client_decide_flight_change", {
+        _case_id: payload.caseId,
+        _status: payload.status === "accepted" ? "client_accepted" : "client_rejected",
+      });
 
       if (caseError) throw caseError;
 
@@ -642,8 +636,8 @@ function ClientTripDetail() {
             )}
             {trip.travel_start && (
               <span className="flex items-center gap-1.5">
-                <Calendar className="h-4 w-4 text-brand-light" /> {fmtDate(trip.travel_start)} →{" "}
-                {fmtDate(trip.travel_end)}
+                <Calendar className="h-4 w-4 text-brand-light" /> {formatDate(trip.travel_start)} →{" "}
+                {formatDate(trip.travel_end)}
               </span>
             )}
           </div>
@@ -1013,7 +1007,7 @@ function ClientTripDetail() {
                               <div>
                                 Partida:{" "}
                                 <span className="font-medium text-foreground">
-                                  {fmtDate(seg.departure_at)} às{" "}
+                                  {formatDate(seg.departure_at)} às{" "}
                                   {new Date(seg.departure_at).toLocaleTimeString([], {
                                     hour: "2-digit",
                                     minute: "2-digit",
@@ -1023,7 +1017,7 @@ function ClientTripDetail() {
                               <div>
                                 Chegada:{" "}
                                 <span className="font-medium text-foreground">
-                                  {fmtDate(seg.arrival_at)} às{" "}
+                                  {formatDate(seg.arrival_at)} às{" "}
                                   {new Date(seg.arrival_at).toLocaleTimeString([], {
                                     hour: "2-digit",
                                     minute: "2-digit",
@@ -1066,7 +1060,7 @@ function ClientTripDetail() {
                               <div>
                                 Partida:{" "}
                                 <span className="font-medium text-foreground">
-                                  {fmtDate(seg.departure_at)} às{" "}
+                                  {formatDate(seg.departure_at)} às{" "}
                                   {new Date(seg.departure_at).toLocaleTimeString([], {
                                     hour: "2-digit",
                                     minute: "2-digit",
@@ -1076,7 +1070,7 @@ function ClientTripDetail() {
                               <div>
                                 Chegada:{" "}
                                 <span className="font-medium text-foreground">
-                                  {fmtDate(seg.arrival_at)} às{" "}
+                                  {formatDate(seg.arrival_at)} às{" "}
                                   {new Date(seg.arrival_at).toLocaleTimeString([], {
                                     hour: "2-digit",
                                     minute: "2-digit",

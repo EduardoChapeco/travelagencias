@@ -1,8 +1,8 @@
 import { MapPin } from "lucide-react";
-function money(v: number) {
+function formatCurrency(v: number) {
   return new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" }).format(v);
 }
-function fmtDate(d: string) {
+function formatDate(d: string) {
   return new Date(d).toLocaleDateString("pt-BR", {
     day: "2-digit",
     month: "short",
@@ -30,7 +30,7 @@ function Row({ k, v }: { k: string; v: React.ReactNode }) {
 export function LeadInterestCard({ lead }: { lead: any }) {
   const interestPeriod = (lead.custom_fields as any)?.interest_period;
   const datesStr = lead.travel_start
-    ? `${fmtDate(lead.travel_start)} até ${lead.travel_end ? fmtDate(lead.travel_end) : "Indefinido"}`
+    ? `${formatDate(lead.travel_start)} até ${lead.travel_end ? formatDate(lead.travel_end) : "Indefinido"}`
     : null;
 
   const travelPeriodDisplay = interestPeriod
@@ -60,7 +60,7 @@ export function LeadInterestCard({ lead }: { lead: any }) {
           k="Tipo de Interesse"
           v={INTEREST_TYPES.find((t) => t.v === lead.interest_type)?.label || "Não informado"}
         />
-        <Row k="Orçamento Estimado" v={money(lead.estimated_value || 0)} />
+        <Row k="Orçamento Estimado" v={formatCurrency(lead.estimated_value || 0)} />
         <Row k="Período" v={travelPeriodDisplay} />
         <Row k="Passageiros" v={paxBreakdown} />
         {lead.pax_ages && lead.pax_ages.length > 0 && (

@@ -21,8 +21,8 @@ import {
 } from "@/services/admin";
 import { PageHeader } from "@/components/shell/PageHeader";
 import { StatusBadge } from "@/components/ui/badge";
-import { PrimaryButton, GhostButton } from "@/components/ui/button";
-import { fmtDate } from "@/lib/formatters";
+import { Button } from "@/components/ui/button";
+import { formatDate } from "@/lib/formatters";
 import { toast } from "sonner";
 import { useState } from "react";
 import { useConfirm } from "@/hooks/use-confirm";
@@ -97,7 +97,7 @@ function Page() {
       <div className="flex items-start justify-between mb-4">
         <PageHeader
           title={agency.name}
-          description={`/${agency.slug} · criada em ${fmtDate(agency.created_at)}`}
+          description={`/${agency.slug} · criada em ${formatDate(agency.created_at)}`}
         />
         <Link
           to="/agency/$slug"
@@ -202,7 +202,7 @@ function Page() {
               {subscription.status === "trialing" && subscription.trial_ends_at && (
                 <div className="flex justify-between items-center">
                   <dt className="text-muted-foreground">Trial expira em</dt>
-                  <dd>{fmtDate(subscription.trial_ends_at)}</dd>
+                  <dd>{formatDate(subscription.trial_ends_at)}</dd>
                 </div>
               )}
             </dl>
@@ -233,7 +233,7 @@ function Page() {
                   <td className="px-3 py-2.5">{m.name}</td>
                   <td className="px-3 py-2.5 text-xs">{m.role}</td>
                   <td className="px-3 py-2.5 text-xs text-muted-foreground">
-                    {fmtDate(m.created_at)}
+                    {formatDate(m.created_at)}
                   </td>
                 </tr>
               ))}
@@ -403,13 +403,13 @@ function DangerZone({ agency, priv, subscription, plans }: any) {
         {!subscription ? (
           <div className="space-y-3 border-b border-danger/10 pb-4 mb-4">
             <div className="text-xs font-semibold text-foreground">Resolver Assinatura Ausente</div>
-            <PrimaryButton
+            <Button variant="default"
               onClick={handleProvisionTrial}
               disabled={busy}
               className="w-full text-xs"
             >
               Provisionar Trial Essencial
-            </PrimaryButton>
+            </Button>
           </div>
         ) : (
           <div className="space-y-4">
@@ -437,20 +437,20 @@ function DangerZone({ agency, priv, subscription, plans }: any) {
                 Forçar Status da Assinatura
               </div>
               <div className="grid grid-cols-2 gap-2">
-                <GhostButton
+                <Button variant="ghost"
                   onClick={() => handleStatusChange("canceled")}
                   disabled={busy || subscription.status === "canceled"}
                   className="text-xs text-danger hover:text-danger hover:bg-danger/10 justify-start"
                 >
                   <Ban className="h-3.5 w-3.5 mr-1" /> Bloquear (Cancel)
-                </GhostButton>
-                <GhostButton
+                </Button>
+                <Button variant="ghost"
                   onClick={() => handleStatusChange("active")}
                   disabled={busy || subscription.status === "active"}
                   className="text-xs text-success hover:text-success hover:bg-success/10 justify-start"
                 >
                   <AlertTriangle className="h-3.5 w-3.5 mr-1" /> Reativar
-                </GhostButton>
+                </Button>
               </div>
             </div>
 
@@ -459,7 +459,7 @@ function DangerZone({ agency, priv, subscription, plans }: any) {
                 Status Administrativo da Agência
               </div>
               <div className="grid grid-cols-2 gap-2">
-                <GhostButton
+                <Button variant="ghost"
                   onClick={() =>
                     handleAgencyBlockedStatusChange(
                       agency.status === "blocked" ? "active" : "blocked",
@@ -470,7 +470,7 @@ function DangerZone({ agency, priv, subscription, plans }: any) {
                 >
                   <Ban className="h-3.5 w-3.5 mr-1" />
                   {agency.status === "blocked" ? "Reativar Agência" : "Bloquear Agência"}
-                </GhostButton>
+                </Button>
               </div>
             </div>
           </div>
@@ -478,14 +478,14 @@ function DangerZone({ agency, priv, subscription, plans }: any) {
 
         <div className="space-y-1.5 pt-4 mt-4 border-t border-danger/10">
           <div className="text-xs font-semibold text-foreground mb-2">Gestão de Acesso</div>
-          <GhostButton
+          <Button variant="ghost"
             onClick={handleResetPassword}
             disabled={busy}
             className="w-full text-xs text-foreground justify-start"
           >
             <KeyRound className="h-3.5 w-3.5 mr-1.5 text-muted-foreground" />
             Enviar Reset de Senha (Owner)
-          </GhostButton>
+          </Button>
         </div>
       </section>
       <ConfirmDialog />

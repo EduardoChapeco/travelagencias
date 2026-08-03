@@ -6,8 +6,8 @@ import { useAgency } from "@/lib/agency-context";
 import { toast } from "sonner";
 import { EmptyState } from "@/components/shell/PageHeader";
 import { StatusBadge } from "@/components/ui/badge";
-import { GhostButton } from "@/components/ui/button";
-import { money, fmtDate } from "@/lib/formatters";
+import { Button } from "@/components/ui/button";
+import { formatCurrency, formatDate } from "@/lib/formatters";
 import { Plus } from "lucide-react";
 import { PageHeader, ModuleActionButton } from "@/components/shell/PageHeader";
 
@@ -107,13 +107,13 @@ function InvoicesPage() {
                         </StatusBadge>
                       </td>
                       <td className="px-3 py-2.5 text-xs text-muted-foreground">
-                        {fmtDate(i.due_date)}
+                        {formatDate(i.due_date)}
                       </td>
                       <td className="px-3 py-2.5 text-xs text-muted-foreground">
-                        {fmtDate(i.paid_at)}
+                        {formatDate(i.paid_at)}
                       </td>
                       <td className="px-3 py-2.5 text-right font-mono text-xs">
-                        {money(Number(i.amount), i.currency)}
+                        {formatCurrency(Number(i.amount), i.currency)}
                       </td>
                     </tr>
                   ))}
@@ -127,20 +127,20 @@ function InvoicesPage() {
                 {Math.ceil(q.data.count / pageSize) || 1}
               </div>
               <div className="flex items-center gap-2">
-                <GhostButton
+                <Button variant="ghost"
                   disabled={page === 1}
                   onClick={() => setPage((p) => Math.max(1, p - 1))}
                   className="h-8 px-3 text-xs"
                 >
                   Anterior
-                </GhostButton>
-                <GhostButton
+                </Button>
+                <Button variant="ghost"
                   disabled={page * pageSize >= q.data.count}
                   onClick={() => setPage((p) => p + 1)}
                   className="h-8 px-3 text-xs"
                 >
                   Próxima
-                </GhostButton>
+                </Button>
               </div>
             </div>
           </>

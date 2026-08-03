@@ -13,7 +13,7 @@ import { NativeSelect as Select } from "@/components/ui/select";
 import { FormTextarea as Textarea } from "@/components/ui/textarea";
 import { FormInput as Input } from "@/components/ui/input";
 import { StatusBadge } from "@/components/ui/badge";
-import { PrimaryButton, Button } from "@/components/ui/button";
+import { Button } from "@/components/ui/button";
 import { format, isPast } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import { cn } from "@/lib/utils";
@@ -448,7 +448,7 @@ function TicketAdvancedRoute() {
                   <Zap className="w-4 h-4 text-brand" />
                 </Button>
               </div>
-              <PrimaryButton
+              <Button variant="default"
                 onClick={() => addTimelineEvent.mutate()}
                 disabled={!replyText.trim() || addTimelineEvent.isPending}
                 className="absolute bottom-3 right-3 h-8 text-xs gap-1.5"
@@ -458,7 +458,7 @@ function TicketAdvancedRoute() {
                   : <Send className="w-3.5 h-3.5" />
                 }
                 {replyType === "internal" ? "Salvar Nota" : "Enviar Resposta"}
-              </PrimaryButton>
+              </Button>
             </div>
           </div>
         </div>

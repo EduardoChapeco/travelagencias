@@ -27,7 +27,7 @@ import { useAgency } from "@/lib/agency-context";
 import { FormInput as Input } from "@/components/ui/input";
 import { NativeSelect as Select } from "@/components/ui/select";
 import { StatusBadge } from "@/components/ui/badge";
-import { PrimaryButton, GhostButton , Button } from "@/components/ui/button";
+import { Button } from "@/components/ui/button";
 import { CMS_TEMPLATES, getTemplateById } from "@/lib/cms-templates";
 import { savePortalPageDraft } from "@/services/portal";
 import { SheetPage } from "@/components/ui/sheet";
@@ -773,12 +773,12 @@ function PagesPage() {
             </div>
 
             <div className="pt-6 border-t border-border mt-6 flex justify-end gap-2">
-              <GhostButton type="button" onClick={() => setCreateModalOpen(false)}>
+              <Button variant="ghost" type="button" onClick={() => setCreateModalOpen(false)}>
                 Cancelar
-              </GhostButton>
-              <PrimaryButton type="submit" disabled={submitting}>
+              </Button>
+              <Button variant="default" type="submit" disabled={submitting}>
                 {submitting ? "Criando..." : "Criar e Editar"}
-              </PrimaryButton>
+              </Button>
             </div>
           </form>
         </SheetPage>
@@ -800,16 +800,16 @@ function PagesPage() {
               serão excluídos.
             </p>
             <div className="pt-6 border-t border-border mt-6 flex justify-end gap-2">
-              <GhostButton type="button" onClick={() => setDeleteConfirmPage(null)}>
+              <Button variant="ghost" type="button" onClick={() => setDeleteConfirmPage(null)}>
                 Cancelar
-              </GhostButton>
-              <PrimaryButton
+              </Button>
+              <Button variant="default"
                 type="button"
                 onClick={handleDeleteConfirm}
                 className="bg-danger hover:bg-danger/90 text-white"
               >
                 Confirmar Exclusão
-              </PrimaryButton>
+              </Button>
             </div>
           </div>
         </SheetPage>

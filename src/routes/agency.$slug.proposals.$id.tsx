@@ -74,17 +74,11 @@ function ProposalEditor() {
 
       const nextState = { ...draft, ...patch };
 
-      // Auto-calculate totals if there is any change that affects them
-      const totals = calculateQuoteTotals(nextState);
-
-      // We only merge subtotal, total, and discount to the backend, the rest are derived view models
-      const finalPatch = {
-        ...patch,
-        subtotal: totals.subtotal,
-        total: totals.total,
-      };
-
-      const finalState = { ...nextState, subtotal: totals.subtotal, total: totals.total };
+      // Removemos o envio de subtotal e total para o backend, pois 
+      // a autoridade do cálculo é inteiramente do servidor (via trigger recalculate_proposal_totals).
+      const finalPatch = { ...patch };
+      
+      const finalState = { ...nextState };
 
       setDraft(finalState);
       persist.mutate(finalPatch);

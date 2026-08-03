@@ -5,7 +5,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { Plus } from "lucide-react";
 import { FormInput as Input } from "@/components/ui/input";
 import { Field } from "@/components/ui/field";
-import { PrimaryButton, GhostButton, Button } from "@/components/ui/button";
+import { Button } from "@/components/ui/button";
 import { CONTRACT_STATUS_MAP } from "@/lib/constants/status";
 import { StatusBadge } from "@/components/ui/badge";
 import { FormTextarea as Textarea } from "@/components/ui/textarea";
@@ -108,15 +108,15 @@ export function ContractAddendums({
             />
           </Field>
           <div className="flex gap-2">
-            <PrimaryButton
+            <Button variant="default"
               disabled={createAddendum.isPending || !addendumTitle || !addendumContent}
               onClick={() =>
                 createAddendum.mutate({ title: addendumTitle, content: addendumContent })
               }
             >
               {createAddendum.isPending ? "Criando..." : "Enviar Aditivo"}
-            </PrimaryButton>
-            <GhostButton
+            </Button>
+            <Button variant="ghost"
               onClick={() => {
                 setShowAddForm(false);
                 setAddendumTitle("");
@@ -124,7 +124,7 @@ export function ContractAddendums({
               }}
             >
               Cancelar
-            </GhostButton>
+            </Button>
           </div>
         </div>
       )}

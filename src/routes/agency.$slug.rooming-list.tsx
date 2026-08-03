@@ -33,7 +33,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAgency } from "@/lib/agency-context";
 import { FormInput as Input } from "@/components/ui/input";
 import { Field } from "@/components/ui/field";
-import { PrimaryButton, GhostButton , Button } from "@/components/ui/button";
+import { Button } from "@/components/ui/button";
 import { StatusBadge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
 import { PageHeader } from "@/components/shell/PageHeader";
@@ -78,7 +78,7 @@ type Tour = Database["public"]["Tables"]["group_tours"]["Row"] & {
   enrollments?: any[];
 };
 
-function fmtDate(d: string | null | undefined) {
+function formatDate(d: string | null | undefined) {
   if (!d) return "—";
   return new Date(d).toLocaleDateString("pt-BR", {
     day: "2-digit",
@@ -541,7 +541,7 @@ function TourPanel({ tour, slug }: TourPanelProps) {
               <span className="text-muted-foreground/30">•</span>
               <span className="flex items-center gap-1">
                 <Calendar className="h-3 w-3" />
-                {fmtDate(tour.departure_date)} → {fmtDate(tour.return_date)}
+                {formatDate(tour.departure_date)} → {formatDate(tour.return_date)}
               </span>
             </p>
           </div>
@@ -770,20 +770,20 @@ function TourPanel({ tour, slug }: TourPanelProps) {
                     </Field>
                   </div>
                   <div className="flex gap-2 justify-end">
-                    <GhostButton
+                    <Button variant="ghost"
                       type="button"
                       onClick={() => setAddOpen(false)}
                       className="h-8 text-xs"
                     >
                       Cancelar
-                    </GhostButton>
-                    <PrimaryButton
+                    </Button>
+                    <Button variant="default"
                       type="submit"
                       disabled={addRoomMutation.isPending}
                       className="h-8 text-xs"
                     >
                       Salvar
-                    </PrimaryButton>
+                    </Button>
                   </div>
                 </form>
               </div>
@@ -918,8 +918,8 @@ function TourPanel({ tour, slug }: TourPanelProps) {
                               {room.hotel_name}
                             </span>
                           )}
-                          {room.checkin_date && <span>In: {fmtDate(room.checkin_date)}</span>}
-                          {room.checkout_date && <span>Out: {fmtDate(room.checkout_date)}</span>}
+                          {room.checkin_date && <span>In: {formatDate(room.checkin_date)}</span>}
+                          {room.checkout_date && <span>Out: {formatDate(room.checkout_date)}</span>}
                         </div>
                       )}
                     </DroppableRoom>
@@ -1063,20 +1063,20 @@ function TourPanel({ tour, slug }: TourPanelProps) {
                     />
                   </Field>
                   <div className="flex gap-2 justify-end pt-2">
-                    <GhostButton
+                    <Button variant="ghost"
                       type="button"
                       onClick={() => setEditingRoom(null)}
                       className="h-9 text-xs"
                     >
                       Cancelar
-                    </GhostButton>
-                    <PrimaryButton
+                    </Button>
+                    <Button variant="default"
                       type="submit"
                       disabled={updateRoomMutation.isPending}
                       className="h-9 text-xs"
                     >
                       Salvar Alterações
-                    </PrimaryButton>
+                    </Button>
                   </div>
                 </form>
                 </div>
@@ -1147,13 +1147,13 @@ function RoomingListDashboard() {
           activeFilter={statusFilter}
           onFilterChange={setStatusFilter}
           actions={
-            <GhostButton
+            <Button variant="ghost"
               onClick={handlePrint}
               className="h-7 px-2.5 flex items-center gap-1 rounded-full border border-white/15 text-white/60 hover:text-white hover:bg-white/10 transition-colors cursor-pointer ds-meta font-semibold"
             >
               <Printer className="h-3 w-3" />
               Imprimir
-            </GhostButton>
+            </Button>
           }
         />
       

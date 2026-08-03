@@ -8,7 +8,7 @@ import {
   Clock,
   ChevronRight,
 } from "lucide-react";
-import { fmtDate } from "@/lib/formatters";
+import { formatDate } from "@/lib/formatters";
 import { type BoardingCard as Card, type ChecklistItem } from "@/services/boarding";
 import { Button } from "@/components/ui/button";
 
@@ -108,7 +108,7 @@ export function CardView({
         {card.departure_date && (
           <span className="flex items-center gap-1">
             <Calendar className="h-3 w-3" />
-            {fmtDate(card.departure_date)}
+            {formatDate(card.departure_date)}
           </span>
         )}
         {checklist.length > 0 && (

@@ -3,7 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 import { ArrowLeft, ExternalLink, Copy, Eye } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
-import { money, fmtDate } from "@/lib/formatters";
+import { formatCurrency, formatDate } from "@/lib/formatters";
 import { Button } from "@/components/ui/button";
 import { HeaderPortal } from "@/components/shell/HeaderPortal";
 
@@ -254,7 +254,7 @@ function ProposalPreview() {
               {p.travel_start && (
                 <>
                   {" "}
-                  · {fmtDate(p.travel_start)} → {fmtDate(p.travel_end)}
+                  · {formatDate(p.travel_start)} → {formatDate(p.travel_end)}
                 </>
               )}
               {totalPax > 0 && (
@@ -293,7 +293,7 @@ function ProposalPreview() {
                       <td className="py-2 text-muted-foreground">
                         {f.airline} {f.flight_number}
                       </td>
-                      <td className="py-2 text-muted-foreground">{fmtDate(f.date)}</td>
+                      <td className="py-2 text-muted-foreground">{formatDate(f.date)}</td>
                       <td className="py-2 text-muted-foreground">
                         {f.departure_time} – {f.arrival_time}
                       </td>
@@ -320,7 +320,7 @@ function ProposalPreview() {
                         <span className="text-xs text-muted-foreground">{h.city}</span>
                       </div>
                       <div className="mt-1 text-xs text-muted-foreground">
-                        {fmtDate(h.checkin)} → {fmtDate(h.checkout)} · {h.meal_plan}
+                        {formatDate(h.checkin)} → {formatDate(h.checkout)} · {h.meal_plan}
                       </div>
                       {h.rooms.length > 0 && (
                         <div className="mt-1 text-xs text-muted-foreground">
@@ -402,7 +402,7 @@ function ProposalPreview() {
                 Total à vista (Pix)
               </span>
               <span className="font-mono text-2xl font-bold" style={{ color: accentFg }}>
-                {money(p.total, p.currency)}
+                {formatCurrency(p.total, p.currency)}
               </span>
             </div>
             {p.pix_discount_percent > 0 && (
@@ -422,7 +422,7 @@ function ProposalPreview() {
             )}
             {p.valid_until && (
               <div className="mt-3 ds-meta" style={{ color: `${accentFg}88` }}>
-                Válida até {fmtDate(p.valid_until)}
+                Válida até {formatDate(p.valid_until)}
               </div>
             )}
           </div>

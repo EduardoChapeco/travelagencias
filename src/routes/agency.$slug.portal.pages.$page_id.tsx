@@ -59,7 +59,7 @@ import { Field } from "@/components/ui/field";
 import { FormInput as Input } from "@/components/ui/input";
 import { NativeSelect as Select } from "@/components/ui/select";
 import { FormTextarea as Textarea } from "@/components/ui/textarea";
-import { PrimaryButton, GhostButton , Button } from "@/components/ui/button";
+import { Button } from "@/components/ui/button";
 import { StatusBadge } from "@/components/ui/badge";
 import { BlockRenderer } from "@/components/portal/BlockRenderer";
 import { AILandingPageSheet } from "@/components/ui/AILandingPageSheet";
@@ -852,22 +852,22 @@ function PageEditorRoute() {
             </a>
           )}
 
-          <GhostButton
+          <Button variant="ghost"
             type="button"
             onClick={saveDraftOnly}
             disabled={submitting}
             className="h-7 py-0 px-2.5 text-[9px] uppercase tracking-wider"
           >
             Salvar Rascunho
-          </GhostButton>
-          <PrimaryButton
+          </Button>
+          <Button variant="default"
             type="button"
             onClick={publishPage}
             disabled={submitting}
             className="h-7 py-0 px-2.5 text-[9px] uppercase tracking-wider"
           >
             {submitting ? "Salvando..." : "Publicar"}
-          </PrimaryButton>
+          </Button>
         </div>
       </div>
 
@@ -1363,7 +1363,7 @@ function PageEditorRoute() {
 
                 {/* Footer actions */}
                 <div className="px-5 py-3 border-t border-border shrink-0 flex gap-2">
-                  <GhostButton
+                  <Button variant="ghost"
                     type="button"
                     onClick={() => {
                       removeBlock(selectedBlockId);
@@ -1372,14 +1372,14 @@ function PageEditorRoute() {
                     className="flex-1 justify-center text-destructive hover:bg-destructive/5 hover:border-destructive/30 ds-label-caps font-bold"
                   >
                     <Trash2 className="w-3.5 h-3.5 mr-1.5" /> Excluir
-                  </GhostButton>
-                  <PrimaryButton
+                  </Button>
+                  <Button variant="default"
                     type="button"
                     onClick={() => setSelectedBlockId(null)}
                     className="flex-1 justify-center ds-label-caps font-bold"
                   >
                     Concluído
-                  </PrimaryButton>
+                  </Button>
                 </div>
               </div>
             );
@@ -1402,10 +1402,10 @@ function PageEditorRoute() {
             template.
           </p>
           <div className="pt-6 border-t border-border mt-6 flex justify-end gap-2">
-            <GhostButton type="button" onClick={() => setApplyConfirmTemplate(null)}>
+            <Button variant="ghost" type="button" onClick={() => setApplyConfirmTemplate(null)}>
               Cancelar
-            </GhostButton>
-            <PrimaryButton
+            </Button>
+            <Button variant="default"
               type="button"
               onClick={() => {
                 if (!applyConfirmTemplate) return;
@@ -1426,7 +1426,7 @@ function PageEditorRoute() {
               }}
             >
               Aplicar Template
-            </PrimaryButton>
+            </Button>
           </div>
         </div>
       </SheetPage>
@@ -1450,10 +1450,10 @@ function PageEditorRoute() {
             Todo o conteúdo atual no editor será substituído pelo conteúdo desta versão.
           </p>
           <div className="pt-6 border-t border-border mt-6 flex justify-end gap-2">
-            <GhostButton type="button" onClick={() => setRevertConfirmVersion(null)}>
+            <Button variant="ghost" type="button" onClick={() => setRevertConfirmVersion(null)}>
               Cancelar
-            </GhostButton>
-            <PrimaryButton
+            </Button>
+            <Button variant="default"
               type="button"
               disabled={submitting}
               onClick={async () => {
@@ -1480,7 +1480,7 @@ function PageEditorRoute() {
               }}
             >
               {submitting ? "Revertendo..." : "Confirmar Reversão"}
-            </PrimaryButton>
+            </Button>
           </div>
         </div>
       </SheetPage>
@@ -1531,9 +1531,9 @@ function PageEditorRoute() {
             </Field>
           </div>
           <div className="pt-6 border-t border-border mt-6 flex justify-end">
-            <PrimaryButton type="button" onClick={() => setPageSettingsOpen(false)}>
+            <Button variant="default" type="button" onClick={() => setPageSettingsOpen(false)}>
               Concluído
-            </PrimaryButton>
+            </Button>
           </div>
         </div>
       </SheetPage>
@@ -1606,9 +1606,9 @@ function PageEditorRoute() {
             </Field>
           </div>
           <div className="pt-6 border-t border-border mt-6 flex justify-end">
-            <PrimaryButton type="button" onClick={() => setSeoSettingsOpen(false)}>
+            <Button variant="default" type="button" onClick={() => setSeoSettingsOpen(false)}>
               Concluído
-            </PrimaryButton>
+            </Button>
           </div>
         </div>
       </SheetPage>
@@ -1659,9 +1659,9 @@ function PageEditorRoute() {
             ))}
           </div>
           <div className="pt-6 border-t border-border mt-6 flex justify-end">
-            <GhostButton type="button" onClick={() => setHistorySettingsOpen(false)}>
+            <Button variant="ghost" type="button" onClick={() => setHistorySettingsOpen(false)}>
               Fechar
-            </GhostButton>
+            </Button>
           </div>
         </div>
       </SheetPage>
@@ -1722,12 +1722,12 @@ function PageEditorRoute() {
               </Field>
             </div>
             <div className="flex justify-end gap-2 pt-2">
-              <GhostButton type="button" onClick={() => setShowNewPageModal(false)}>
+              <Button variant="ghost" type="button" onClick={() => setShowNewPageModal(false)}>
                 Cancelar
-              </GhostButton>
-              <PrimaryButton type="button" onClick={handleCreatePage}>
+              </Button>
+              <Button variant="default" type="button" onClick={handleCreatePage}>
                 Criar Página
-              </PrimaryButton>
+              </Button>
             </div>
           </div>
         </DialogContent>
@@ -1752,12 +1752,12 @@ function PageEditorRoute() {
               </Field>
             </div>
             <div className="flex justify-end gap-2 pt-2">
-              <GhostButton type="button" onClick={() => setShowRenameModal(null)}>
+              <Button variant="ghost" type="button" onClick={() => setShowRenameModal(null)}>
                 Cancelar
-              </GhostButton>
-              <PrimaryButton type="button" onClick={handleRenamePage}>
+              </Button>
+              <Button variant="default" type="button" onClick={handleRenamePage}>
                 Salvar Alterações
-              </PrimaryButton>
+              </Button>
             </div>
           </div>
         </DialogContent>
@@ -1779,22 +1779,22 @@ function PageEditorRoute() {
           )}
         </div>
         <div className="flex items-center gap-2 shrink-0">
-          <GhostButton
+          <Button variant="ghost"
             type="button"
             onClick={saveDraftOnly}
             disabled={submitting}
             className="h-8 py-0 px-3 text-[9px] uppercase tracking-wider rounded-[var(--radius-card)]"
           >
             Salvar
-          </GhostButton>
-          <PrimaryButton
+          </Button>
+          <Button variant="default"
             type="button"
             onClick={publishPage}
             disabled={submitting}
             className="h-8 py-0 px-3 text-[9px] uppercase tracking-wider rounded-[var(--radius-card)]"
           >
             {submitting ? "..." : "Publicar"}
-          </PrimaryButton>
+          </Button>
         </div>
       </div>
     </div>

@@ -4,7 +4,7 @@ import { Field } from "@/components/ui/field";
 import { FormInput as Input } from "@/components/ui/input";
 import { FormTextarea as Textarea } from "@/components/ui/textarea";
 import { NativeSelect as Select } from "@/components/ui/select";
-import { PrimaryButton, GhostButton , Button } from "@/components/ui/button";
+import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { Wand2, Link as LinkIcon, Sparkles } from "lucide-react";
@@ -184,13 +184,13 @@ Retorne **SOMENTE** um array JSON válido sem markdown em volta. A estrutura EXA
         </div>
 
         <div className="pt-4 flex justify-end gap-3 border-t border-border mt-4">
-          <GhostButton type="button" onClick={() => onOpenChange(false)} disabled={loading}>
+          <Button variant="ghost" type="button" onClick={() => onOpenChange(false)} disabled={loading}>
             Cancelar
-          </GhostButton>
-          <PrimaryButton type="submit" disabled={loading} className="gap-2">
+          </Button>
+          <Button variant="default" type="submit" disabled={loading} className="gap-2">
             <Wand2 className="w-4 h-4" />
             {loading ? "Minerando..." : "Gerar Itinerário"}
-          </PrimaryButton>
+          </Button>
         </div>
       </form>
     </SheetPage>

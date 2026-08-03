@@ -16,7 +16,7 @@ import {
 import { Field } from "@/components/ui/field";
 import { FormInput as Input } from "@/components/ui/input";
 import { NativeSelect as Select } from "@/components/ui/select";
-import { PrimaryButton, GhostButton , Button } from "@/components/ui/button";
+import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 import { createPortal } from "react-dom";
@@ -513,31 +513,31 @@ export function NewTripWizard({
 
           {/* Footer */}
           <div className="flex items-center justify-between border-t border-border bg-surface-alt/30 px-6 py-4 shrink-0">
-            <GhostButton
+            <Button variant="ghost"
               type="button"
               onClick={handleBack}
               disabled={step === 0}
               className="gap-2 w-28"
             >
               <ChevronLeft className="h-4 w-4" /> Voltar
-            </GhostButton>
+            </Button>
 
             <div className="flex gap-3">
-              <GhostButton type="button" onClick={onClose} disabled={submitting}>
+              <Button variant="ghost" type="button" onClick={onClose} disabled={submitting}>
                 Cancelar
-              </GhostButton>
+              </Button>
               {step < STEPS.length - 1 ? (
-                <PrimaryButton type="button" onClick={handleNext} className="gap-2 w-32">
+                <Button variant="default" type="button" onClick={handleNext} className="gap-2 w-32">
                   Próximo <ChevronRight className="h-4 w-4" />
-                </PrimaryButton>
+                </Button>
               ) : (
-                <PrimaryButton
+                <Button variant="default"
                   type="submit"
                   disabled={submitting}
                   className="w-48 font-bold tracking-wider"
                 >
                   {submitting ? "CRIANDO..." : "✈ CRIAR ROTEIRO"}
-                </PrimaryButton>
+                </Button>
               )}
             </div>
           </div>

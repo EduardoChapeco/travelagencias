@@ -21,7 +21,7 @@ import {
 import { supabase } from "@/integrations/supabase/client";
 import { useAgency, getModuleName } from "@/lib/agency-context";
 import { StatusBadge } from "@/components/ui/badge";
-import { fmtDate } from "@/lib/formatters";
+import { formatDate } from "@/lib/formatters";
 import { processPassengerWithAI } from "@/lib/ocr-ai";
 import { NewPassengerSheet } from "@/components/trips/NewPassengerSheet";
 import { toast } from "sonner";
@@ -433,7 +433,7 @@ function PassengersPage() {
                           Nascimento
                         </div>
                         <div className="text-xs font-medium truncate">
-                          {p.birth_date ? fmtDate(p.birth_date) : "—"}
+                          {p.birth_date ? formatDate(p.birth_date) : "—"}
                         </div>
                       </div>
                     </div>

@@ -4,13 +4,13 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import {
   Search, Filter, Plus, Link2, Edit2, Eye, MoreHorizontal, Copy, Trash2, PencilLine, History, Settings2, ChevronDown, AlertCircle, } from "lucide-react";
 import { useAgency } from "@/lib/agency-context";
-import { Button, GhostButton } from "@/components/ui/button";
+import { Button } from "@/components/ui/button";
 import { ModuleAdminPanel } from "@/components/shell/ModuleAdminPanel";
 import { PageHeader, EmptyState, ModuleActionButton } from "@/components/shell/PageHeader";
 import { FormInput as Input } from "@/components/ui/input";
 import { PROPOSAL_STATUS_MAP } from "@/lib/constants/status";
 import { StatusBadge } from "@/components/ui/badge";
-import { money, fmtDate } from "@/lib/formatters";
+import { formatCurrency, formatDate } from "@/lib/formatters";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import {
   fetchProposalsList,
@@ -219,12 +219,12 @@ function ProposalsList() {
                             {p.title}
                           </Link>
                           <div className="text-xs text-muted-foreground">
-                            criada em {fmtDate(p.created_at)}
+                            criada em {formatDate(p.created_at)}
                           </div>
                         </td>
                         <td className="px-3 py-2.5 text-xs">{p.destination ?? "—"}</td>
                         <td className="px-3 py-2.5 text-xs text-muted-foreground">
-                          {fmtDate(p.travel_start)} → {fmtDate(p.travel_end)}
+                          {formatDate(p.travel_start)} → {formatDate(p.travel_end)}
                         </td>
                         <td className="px-3 py-2.5">
                           <StatusBadge tone={PROPOSAL_STATUS_MAP[p.status]?.tone ?? "neutral"}>
@@ -247,14 +247,14 @@ function ProposalsList() {
                           )}
                         </td>
                         <td className="px-3 py-2.5 text-right font-mono text-xs">
-                          {money(Number(p.total), p.currency)}
+                          {formatCurrency(Number(p.total), p.currency)}
                         </td>
                         <td className="px-3 py-2.5 text-right">
                           <DropdownMenu>
                             <DropdownMenuTrigger asChild>
-                              <GhostButton className="h-7 w-7 p-0 hover:glass bg-white/5 border-white/10">
+                              <Button variant="ghost" className="h-7 w-7 p-0 hover:glass bg-white/5 border-white/10">
                                 <MoreHorizontal className="h-4 w-4 text-muted-foreground" />
-                              </GhostButton>
+                              </Button>
                             </DropdownMenuTrigger>
                             <DropdownMenuContent align="end" className="w-48">
                               <DropdownMenuItem asChild>
@@ -339,20 +339,20 @@ function ProposalsList() {
                 {Math.ceil((list.data?.count ?? 0) / pageSize) || 1}
               </div>
               <div className="flex items-center gap-2">
-                <GhostButton
+                <Button variant="ghost"
                   disabled={page === 1}
                   onClick={() => setPage((p) => Math.max(1, p - 1))}
                   className="h-7 px-3 text-xs rounded-full"
                 >
                   Anterior
-                </GhostButton>
-                <GhostButton
+                </Button>
+                <Button variant="ghost"
                   disabled={page * pageSize >= (list.data?.count ?? 0)}
                   onClick={() => setPage((p) => p + 1)}
                   className="h-7 px-3 text-xs rounded-full"
                 >
                   Próxima
-                </GhostButton>
+                </Button>
               </div>
             </div>
           </div>

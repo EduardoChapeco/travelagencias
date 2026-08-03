@@ -4,7 +4,7 @@ import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { Field } from "@/components/ui/field";
 import { FormInput as Input } from "@/components/ui/input";
-import { PrimaryButton, GhostButton , Button } from "@/components/ui/button";
+import { Button } from "@/components/ui/button";
 import { StatusBadge } from "@/components/ui/badge";
 import { generateContractHash, generateContractPdf } from "@/lib/pdf-generator";
 import {
@@ -1302,13 +1302,13 @@ function Page() {
                       <div className="ds-meta text-muted-foreground">
                         Tire uma foto nítida do seu rosto para autenticidade da assinatura.
                       </div>
-                      <GhostButton
+                      <Button variant="ghost"
                         type="button"
                         onClick={takeSelfie}
                         className="rounded-full border-none/50 glass-card border-none text-xs h-9"
                       >
                         📷 Tirar Selfie
-                      </GhostButton>
+                      </Button>
                     </div>
                   )}
                 </div>
@@ -1397,13 +1397,13 @@ function Page() {
                           </div>
                         ) : (
                           <>
-                            <GhostButton
+                            <Button variant="ghost"
                               type="button"
                               onClick={startVideoRecording}
                               className="h-9 text-xs font-semibold rounded-full border-none gap-1.5 glass-card border-none"
                             >
                               <Video className="h-4 w-4" /> Gravar Vídeo
-                            </GhostButton>
+                            </Button>
 
                             <label className="flex items-center justify-center px-3 h-9 rounded-full border border-dashed border-border glass-card border-none cursor-pointer hover:glass bg-white/5 border-white/10/25 transition-colors text-xs font-semibold text-muted-foreground gap-1.5">
                               <Upload className="h-4 w-4" /> Enviar Vídeo
@@ -1506,7 +1506,7 @@ function Page() {
             </Field>
 
             <div className="border-t border-border/50 pt-5 mt-5">
-              <PrimaryButton
+              <Button variant="default"
                 disabled={
                   signing ||
                   !selfie ||
@@ -1519,7 +1519,7 @@ function Page() {
                 className="w-full py-6 text-sm font-bold uppercase tracking-widest"
               >
                 {signing ? "Processando Chancelas…" : "Li, concordo e assino o contrato"}
-              </PrimaryButton>
+              </Button>
               <p className="mt-3 text-center ds-meta text-muted-foreground font-sans">
                 Ao clicar no botão acima, você concorda com a validade jurídica desta assinatura
                 digital, atrelada ao seu IP, Dispositivo e biometria facial/vídeo, nos termos da MP
@@ -1660,9 +1660,9 @@ function AdendumSignerPanel({
           Limpar
         </Button>
       </div>
-      <PrimaryButton disabled={signing} onClick={handleSign} className="w-full text-xs py-2">
+      <Button variant="default" disabled={signing} onClick={handleSign} className="w-full text-xs py-2">
         {signing ? "Assinando..." : "Assinar Aditivo"}
-      </PrimaryButton>
+      </Button>
     </div>
   );
 }

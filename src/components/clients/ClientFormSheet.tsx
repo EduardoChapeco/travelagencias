@@ -3,7 +3,7 @@ import { Field } from "@/components/ui/field";
 import { FormInput as Input } from "@/components/ui/input";
 import { NativeSelect as Select } from "@/components/ui/select";
 import { FormTextarea as Textarea } from "@/components/ui/textarea";
-import { PrimaryButton, GhostButton } from "@/components/ui/button";
+import { Button } from "@/components/ui/button";
 import { useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
@@ -173,12 +173,12 @@ export function ClientFormSheet({
         </Field>
 
         <div className="flex justify-end gap-2 pt-2">
-          <GhostButton type="button" onClick={onClose}>
+          <Button variant="ghost" type="button" onClick={onClose}>
             Cancelar
-          </GhostButton>
-          <PrimaryButton type="submit" disabled={submitting}>
+          </Button>
+          <Button variant="default" type="submit" disabled={submitting}>
             {submitting ? "Criando…" : "Criar cliente"}
-          </PrimaryButton>
+          </Button>
         </div>
       </form>
     </Sheet>

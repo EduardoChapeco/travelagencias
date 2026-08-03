@@ -26,7 +26,7 @@ import { SheetPage } from "@/components/ui/sheet";
 import { Field } from "@/components/ui/field";
 import { FormInput as Input } from "@/components/ui/input";
 import { FormTextarea as Textarea } from "@/components/ui/textarea";
-import { PrimaryButton, GhostButton , Button } from "@/components/ui/button";
+import { Button } from "@/components/ui/button";
 import { StatusBadge } from "@/components/ui/badge";
 import { useForm, useFieldArray } from "react-hook-form";
 import { z } from "zod";
@@ -128,9 +128,9 @@ function Page() {
         title="Planos"
         description="Gestão de planos e limites de uso da plataforma."
         actions={
-          <PrimaryButton onClick={() => setCreating(true)} className="gap-1.5">
+          <Button variant="default" onClick={() => setCreating(true)} className="gap-1.5">
             <Plus className="h-3.5 w-3.5" /> Novo plano
-          </PrimaryButton>
+          </Button>
         }
       />
 
@@ -213,13 +213,13 @@ function Page() {
             </div>
 
             <div className="mt-auto flex gap-2 pt-2 border-t border-border">
-              <GhostButton
+              <Button variant="ghost"
                 type="button"
                 onClick={() => setEditing(plan)}
                 className="flex-1 gap-1.5 text-xs"
               >
                 <Edit2 className="h-3.5 w-3.5" /> Editar
-              </GhostButton>
+              </Button>
               <Button
                 type="button"
                 onClick={() => handleToggleActive(plan)}
@@ -432,12 +432,12 @@ function PlanEditor({
           </div>
 
           <div className="flex justify-end gap-2 pt-2 mt-auto">
-            <GhostButton type="button" onClick={onClose}>
+            <Button variant="ghost" type="button" onClick={onClose}>
               Cancelar
-            </GhostButton>
-            <PrimaryButton type="submit" disabled={isSubmitting}>
+            </Button>
+            <Button variant="default" type="submit" disabled={isSubmitting}>
               {isSubmitting ? "Salvando…" : isNew ? "Criar plano" : "Salvar"}
-            </PrimaryButton>
+            </Button>
           </div>
         </form>
       </div>

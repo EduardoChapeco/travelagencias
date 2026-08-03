@@ -8,7 +8,7 @@ import {
 import { Copy, CheckCircle2, AlertCircle, CreditCard, ExternalLink, QrCode } from "lucide-react";
 import { toast } from "sonner";
 import { SimpleSheet as Sheet } from "@/components/ui/sheet";
-import { PrimaryButton , Button } from "@/components/ui/button";
+import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
 import { FormInput as Input } from "@/components/ui/input";
 
@@ -249,12 +249,12 @@ function Page() {
                   <div className="break-all rounded-full glass-card border-none p-3 font-mono ds-meta text-foreground ring-1 ring-border ">
                     {selectedInst.external_link}
                   </div>
-                  <PrimaryButton
+                  <Button variant="default"
                     onClick={() => copyToClipboard(selectedInst.external_link!)}
                     className="mt-4 w-full gap-2"
                   >
                     <Copy className="h-4 w-4" /> Copiar Código
-                  </PrimaryButton>
+                  </Button>
 
                   <div className="mt-6 border-t border-border/50 pt-4 text-left">
                     <label className="block ds-label-caps tracking-wider text-muted-foreground mb-2">
@@ -288,12 +288,12 @@ function Page() {
                   <p className="mb-4 text-sm text-muted-foreground">
                     Você será redirecionado para o ambiente seguro do banco.
                   </p>
-                  <PrimaryButton
+                  <Button variant="default"
                     onClick={() => window.open(selectedInst.external_link!, "_blank")}
                     className="w-full gap-2"
                   >
                     <ExternalLink className="h-4 w-4" /> Acessar Link Seguro
-                  </PrimaryButton>
+                  </Button>
                 </div>
               ) : (
                 <div className="text-center text-sm text-muted-foreground">

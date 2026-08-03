@@ -18,7 +18,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 
-import { GhostButton , Button } from "@/components/ui/button";
+import { Button } from "@/components/ui/button";
 import {
   ChevronLeft,
   ChevronRight,
@@ -139,38 +139,38 @@ export function DataTable<TData, TValue>({
             Página {table.getState().pagination.pageIndex + 1} de {table.getPageCount() || 1}
           </div>
           <div className="flex items-center space-x-1">
-            <GhostButton
+            <Button variant="ghost"
               className="hidden h-7 w-7 p-0 lg:flex rounded-full"
               onClick={() => table.setPageIndex(0)}
               disabled={!table.getCanPreviousPage()}
             >
               <span className="sr-only">Ir para a primeira página</span>
               <ChevronsLeft className="h-3.5 w-3.5" />
-            </GhostButton>
-            <GhostButton
+            </Button>
+            <Button variant="ghost"
               className="h-7 w-7 p-0 rounded-full"
               onClick={() => table.previousPage()}
               disabled={!table.getCanPreviousPage()}
             >
               <span className="sr-only">Voltar uma página</span>
               <ChevronLeft className="h-3.5 w-3.5" />
-            </GhostButton>
-            <GhostButton
+            </Button>
+            <Button variant="ghost"
               className="h-7 w-7 p-0 rounded-full"
               onClick={() => table.nextPage()}
               disabled={!table.getCanNextPage()}
             >
               <span className="sr-only">Ir para a próxima página</span>
               <ChevronRight className="h-3.5 w-3.5" />
-            </GhostButton>
-            <GhostButton
+            </Button>
+            <Button variant="ghost"
               className="hidden h-7 w-7 p-0 lg:flex rounded-full"
               onClick={() => table.setPageIndex(table.getPageCount() - 1)}
               disabled={!table.getCanNextPage()}
             >
               <span className="sr-only">Ir para a última página</span>
               <ChevronsRight className="h-3.5 w-3.5" />
-            </GhostButton>
+            </Button>
           </div>
         </div>
       </div>
@@ -192,8 +192,7 @@ export function DataTableColumnHeader<TData, TValue>({
 
   return (
     <div className={`flex items-center space-x-2 ${className}`}>
-      <Button
-        variant="ghost"
+      <Button variant="ghost"
         onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
         className="flex items-center gap-1 hover:text-foreground hover:bg-surface-alt px-1.5 py-1 -ml-1.5 rounded-full transition-colors shadow-none"
       >

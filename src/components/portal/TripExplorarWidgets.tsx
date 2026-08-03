@@ -1,5 +1,5 @@
 import { Plane, ShieldAlert, Globe, Heart, Map, Lightbulb } from "lucide-react";
-import { fmtDate } from "@/lib/formatters";
+import { formatDate } from "@/lib/formatters";
 import { AppWidget } from "@/components/portal/TripPortalShared";
 
 // ─── Boarding-Pass Style Flight Card ─────────────────────────────────────────
@@ -53,7 +53,7 @@ export function TripFlightCard({ flight, pnr }: { flight: any; pnr?: string }) {
             <Plane className="h-4 w-4 text-brand rotate-90 mx-auto relative z-10 bg-surface px-0.5" />
           </div>
           <span className="text-[9px] font-medium text-muted-foreground mt-1">
-            {f.date ? fmtDate(f.date) : "—"}
+            {f.date ? formatDate(f.date) : "—"}
           </span>
         </div>
 

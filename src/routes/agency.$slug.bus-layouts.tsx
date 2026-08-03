@@ -12,7 +12,7 @@ import { Field } from "@/components/ui/field";
 import { FormInput as Input } from "@/components/ui/input";
 import { NativeSelect as Select } from "@/components/ui/select";
 import { SimpleSheet as Sheet } from "@/components/ui/sheet";
-import { PrimaryButton, GhostButton , Button } from "@/components/ui/button";
+import { Button } from "@/components/ui/button";
 import { EditVehicleModal } from "./agency.$slug.bus-layouts.$id";
 
 export const Route = createFileRoute("/agency/$slug/bus-layouts")({
@@ -265,12 +265,12 @@ function NewLayout({
           poderá editar as poltronas uma a uma no próximo passo.
         </p>
         <div className="flex justify-end gap-2 pt-4">
-          <GhostButton type="button" onClick={onClose}>
+          <Button variant="ghost" type="button" onClick={onClose}>
             Cancelar
-          </GhostButton>
-          <PrimaryButton type="submit" disabled={submitting}>
+          </Button>
+          <Button variant="default" type="submit" disabled={submitting}>
             {submitting ? "Criando…" : "Criar Matriz"}
-          </PrimaryButton>
+          </Button>
         </div>
       </form>
     </Sheet>

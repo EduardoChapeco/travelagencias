@@ -1,7 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { createFileRoute, Link, Outlet, useNavigate, useParams, useLocation } from "@tanstack/react-router";
-import { DetailShell, type DetailTab } from "@/components/shell/DetailShell";
 import { useState, useEffect } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { Info, AlertCircle, RefreshCw, Wifi, Link2, Plus, Download, Mail, Plane, ArrowLeft, MapPin, CalendarDays, ReceiptText, Users, Ticket, FileSignature, MoreHorizontal, Copy, Trash2, Pencil, Eye, Send, Clock, Hotel, CheckCircle2, Navigation, Loader2 } from "lucide-react";
@@ -14,7 +13,7 @@ import {
 } from "@/services/infotravel";
 import { StatusBadge } from "@/components/ui/badge";
 import { TRIP_STATUS_MAP } from "@/lib/constants/status";
-import { fmtDate } from "@/lib/formatters";
+import { formatDate } from "@/lib/formatters";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
 import { useConfirm } from "@/hooks/use-confirm";
@@ -411,11 +410,39 @@ function TripLayout() {
 
 
   return (
-    <DetailShell
-      tabs={tabs.map(t => ({ ...t, params: { slug, id } }))}
-      header={tripHeader}
-    >
-      <Outlet />
+    <div className="flex flex-col h-full overflow-hidden w-full">
+      <div className="flex-shrink-0 z-10">
+        {tripHeader}
+      </div>
+
+      {/* Tabs */}
+      <div className="flex-shrink-0 px-4 md:px-6 pb-3 pt-2 mb-2 overflow-x-auto no-scrollbar">
+        <div className="flex items-center gap-2 border-b border-border/50 pb-2">
+          {tabs.map((t) => (
+            <Link
+              key={t.id}
+              to={t.to as any}
+              params={{ slug, id } as any}
+              activeProps={{
+                className: "bg-white/10 text-white border border-white/5 shadow-xs"
+              }}
+              inactiveProps={{
+                className: "text-muted-foreground hover:text-foreground hover:bg-white/5 border border-transparent"
+              }}
+              activeOptions={{ exact: t.exact }}
+              className="inline-flex items-center justify-center h-8 px-4 text-xs font-semibold rounded-full transition-all gap-1.5 whitespace-nowrap cursor-pointer"
+            >
+              {t.icon}
+              {t.label}
+            </Link>
+          ))}
+        </div>
+      </div>
+
+      {/* Content Area */}
+      <div className="page-content dock-offset max-w-7xl mx-auto w-full flex-1">
+        <Outlet />
+      </div>
 
       {/* Modal de Importação de Reserva GDS */}
       <Dialog open={showImportModal} onOpenChange={setShowImportModal}>
@@ -595,6 +622,6 @@ function TripLayout() {
           </div>
         </DialogContent>
       </Dialog>
-    </DetailShell>
+    </div>
   );
 }

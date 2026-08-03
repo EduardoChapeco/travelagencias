@@ -2,7 +2,7 @@ import { createFileRoute, useParams, useNavigate } from "@tanstack/react-router"
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
-import { PrimaryButton, GhostButton } from "@/components/ui/button";
+import { Button } from "@/components/ui/button";
 
 export const Route = createFileRoute("/m/invite/$token")({
   head: ({ context }: any) => ({ meta: [{ title: `Aceitar convite · ${context?.brand?.platform_name || 'Turis'}` }] }),
@@ -83,10 +83,10 @@ function AcceptInvitePage() {
           <div className="rounded bg-warning/10 p-3 text-sm">
             Entre ou cadastre-se com o email <strong>{invite.email}</strong> para aceitar.
           </div>
-          <GhostButton onClick={() => navigate({ to: "/auth/login" })}>Entrar</GhostButton>
-          <PrimaryButton onClick={() => navigate({ to: "/auth/register" })}>
+          <Button variant="ghost" onClick={() => navigate({ to: "/auth/login" })}>Entrar</Button>
+          <Button variant="default" onClick={() => navigate({ to: "/auth/register" })}>
             Criar conta
-          </PrimaryButton>
+          </Button>
         </div>
       )}
 
@@ -97,9 +97,9 @@ function AcceptInvitePage() {
       )}
 
       {userEmail && !emailMismatch && !invite.accepted_at && !expired && (
-        <PrimaryButton onClick={accept} disabled={submitting} className="mt-4 w-full">
+        <Button variant="default" onClick={accept} disabled={submitting} className="mt-4 w-full">
           {submitting ? "Aceitando…" : "Aceitar convite"}
-        </PrimaryButton>
+        </Button>
       )}
     </div>
   );

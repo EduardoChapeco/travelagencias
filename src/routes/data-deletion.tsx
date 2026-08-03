@@ -6,7 +6,7 @@ import { Trash2, Search, ArrowRight, ShieldAlert, Loader2, CheckCircle2 } from "
 import { Field } from "@/components/ui/field";
 import { FormInput as Input } from "@/components/ui/input";
 import { NativeSelect as Select } from "@/components/ui/select";
-import { PrimaryButton } from "@/components/ui/button";
+import { Button } from "@/components/ui/button";
 import { FormTextarea as Textarea } from "@/components/ui/textarea";
 
 // @ts-ignore: Route path may not be regenerated in routeTree yet
@@ -148,9 +148,9 @@ function DataDeletionPage() {
                 />
               </Field>
 
-              <PrimaryButton disabled={submitting} className="w-full h-9">
+              <Button variant="default" disabled={submitting} className="w-full h-9">
                 {submitting ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : "Confirmar Solicitação de Exclusão"}
-              </PrimaryButton>
+              </Button>
             </form>
           )}
         </div>
@@ -174,9 +174,9 @@ function DataDeletionPage() {
               onChange={(e) => setSearchProtocol(e.target.value)}
               className="flex-1 rounded-[var(--radius-card)] border-none focus:ring-brand glass-card border-none placeholder-muted-foreground font-mono"
             />
-            <PrimaryButton disabled={searching} className="h-9 px-4 shrink-0">
+            <Button variant="default" disabled={searching} className="h-9 px-4 shrink-0">
               {searching ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <ArrowRight className="h-4 w-4" />}
-            </PrimaryButton>
+            </Button>
           </form>
 
           {searchResult && (

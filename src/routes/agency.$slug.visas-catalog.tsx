@@ -13,7 +13,7 @@ import { FormInput as Input } from "@/components/ui/input";
 import { NativeSelect as Select } from "@/components/ui/select";
 import { FormTextarea as Textarea } from "@/components/ui/textarea";
 import { SimpleSheet as Sheet } from "@/components/ui/sheet";
-import { PrimaryButton, GhostButton , Button } from "@/components/ui/button";
+import { Button } from "@/components/ui/button";
 
 export const Route = createFileRoute("/agency/$slug/visas-catalog")({
   head: ({ context }: any) => ({ meta: [{ title: `Catálogo de Requisitos · ${context?.brand?.platform_name || 'Turis'}` }] }),
@@ -338,12 +338,12 @@ function RequirementFormSheet({
         </Field>
 
         <div className="border-t border-border pt-5 mt-6 flex justify-end gap-2">
-          <GhostButton type="button" onClick={onClose} disabled={busy}>
+          <Button variant="ghost" type="button" onClick={onClose} disabled={busy}>
             Cancelar
-          </GhostButton>
-          <PrimaryButton type="submit" disabled={busy} className="gap-2">
+          </Button>
+          <Button variant="default" type="submit" disabled={busy} className="gap-2">
             <Save className="h-4 w-4" /> Salvar Requisito
-          </PrimaryButton>
+          </Button>
         </div>
       </form>
     </Sheet>

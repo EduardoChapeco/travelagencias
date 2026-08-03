@@ -17,7 +17,7 @@ import { useState, useEffect } from "react";
 import { StudioUnsplashPicker } from "@/components/studio/StudioUnsplashPicker";
 import { infotravelSearchHotels } from "@/services/infotravel";
 import { toast } from "sonner";
-import { PrimaryButton , Button } from "@/components/ui/button";
+import { Button } from "@/components/ui/button";
 import { FormInput as Input } from "@/components/ui/input";
 import { NativeSelect as Select } from "@/components/ui/select";
 import {
@@ -354,7 +354,7 @@ export function SectionHotels({ draft, save }: Props) {
                 </L>
               </div>
 
-              <PrimaryButton
+              <Button variant="default"
                 type="button"
                 className="w-full"
                 disabled={
@@ -363,7 +363,7 @@ export function SectionHotels({ draft, save }: Props) {
                 onClick={handleSearch}
               >
                 {searching ? "Buscando tarifas..." : "Pesquisar Tarifas"}
-              </PrimaryButton>
+              </Button>
 
               <div className="space-y-2 pt-2">
                 {results.length === 0 && !searching && (

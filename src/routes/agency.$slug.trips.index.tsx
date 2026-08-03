@@ -12,11 +12,11 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAgency } from "@/lib/agency-context";
 import { PageHeader, ModuleActionButton, EmptyState } from "@/components/shell/PageHeader";
 import { ModuleAdminPanel } from "@/components/shell/ModuleAdminPanel";
-import { Button, GhostButton } from "@/components/ui/button";
+import { Button } from "@/components/ui/button";
 import { TRIP_STATUS_MAP } from "@/lib/constants/status";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { StatusBadge } from "@/components/ui/badge";
-import { money, fmtDate } from "@/lib/formatters";
+import { formatCurrency, formatDate } from "@/lib/formatters";
 import { DataTable, DataTableColumnHeader } from "@/components/ui/data-table";
 import { ColumnDef } from "@tanstack/react-table";
 import { NewTripWizard } from "@/components/trips/NewTripWizard";
@@ -351,10 +351,10 @@ function TripsList() {
     },
     {
       id: "dates",
-      header: "Datas",
+      header: ({ column }) => <DataTableColumnHeader column={column} title="Datas" />,
       cell: ({ row }) => (
         <span className="text-xs text-muted-foreground whitespace-nowrap">
-          {fmtDate(row.original.travel_start)} → {fmtDate(row.original.travel_end)}
+          {formatDate(row.original.travel_start)} → {formatDate(row.original.travel_end)}
         </span>
       ),
     },
@@ -372,25 +372,25 @@ function TripsList() {
     },
     {
       accessorKey: "total_sale",
-      header: () => <div className="text-right">Venda</div>,
+      header: ({ column }) => <DataTableColumnHeader column={column} title="Venda" className="justify-end" />,
       cell: ({ row }) => (
         <div className="text-right font-mono text-xs whitespace-nowrap">
-          {money(Number(row.getValue("total_sale")), row.original.currency)}
+          {formatCurrency(Number(row.getValue("total_sale")), row.original.currency)}
         </div>
       ),
     },
     {
       id: "actions",
-      header: () => <div className="text-right">Ações</div>,
+      header: ({ column }) => <DataTableColumnHeader column={column} title="Ações" className="justify-end" />,
       cell: ({ row }) => {
         const trip = row.original;
         return (
           <div className="flex justify-end">
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <GhostButton className="h-7 w-7 p-0 hover:glass bg-white/5 border-white/10">
+                <Button variant="ghost" className="h-7 w-7 p-0 hover:glass bg-white/5 border-white/10">
                   <MoreHorizontal className="h-4 w-4 text-muted-foreground" />
-                </GhostButton>
+                </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end" className="w-52">
                 <DropdownMenuItem asChild>

@@ -4,7 +4,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { Field } from "@/components/ui/field";
 import { FormInput as Input } from "@/components/ui/input";
-import { PrimaryButton } from "@/components/ui/button";
+import { Button } from "@/components/ui/button";
 import { resolveSignedInAgency } from "@/lib/auth-routing";
 import { useForm } from "react-hook-form";
 import { useBrand } from "@/hooks/use-brand";
@@ -216,14 +216,14 @@ function LoginPage() {
             )}
           </div>
 
-          <PrimaryButton
+          <Button variant="default"
             id="login-submit"
             type="submit"
             disabled={isSubmitting}
             className="w-full h-12 ds-label-caps tracking-wider rounded-full bg-brand hover:bg-brand/95 text-white active:scale-[0.98] transition-all duration-200 mt-6 cursor-pointer"
           >
             {isSubmitting ? "Entrando..." : "Acessar Workspace"}
-          </PrimaryButton>
+          </Button>
         </form>
 
         <div className="h-px w-full bg-white/10 my-6" />

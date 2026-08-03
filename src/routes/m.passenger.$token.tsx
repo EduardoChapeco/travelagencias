@@ -4,7 +4,7 @@ import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { Field } from "@/components/ui/field";
 import { FormInput as Input } from "@/components/ui/input";
-import { PrimaryButton } from "@/components/ui/button";
+import { Button } from "@/components/ui/button";
 
 export const Route = createFileRoute("/m/passenger/$token")({
   head: ({ context }: any) => ({ meta: [{ title: `Dados do passageiro · ${context?.brand?.platform_name || 'Turis'}` }] }),
@@ -234,12 +234,12 @@ function Page() {
               <span>⚠</span> Aceite o consentimento LGPD para enviar seus dados.
             </p>
           )}
-          <PrimaryButton
+          <Button variant="default"
             disabled={saving || !lgpdConsent}
             className={`w-full ${!lgpdConsent ? "opacity-40 cursor-not-allowed" : ""}`}
           >
             {saving ? "Enviando…" : "Enviar dados"}
-          </PrimaryButton>
+          </Button>
         </form>
       )}
     </div>

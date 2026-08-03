@@ -1,5 +1,5 @@
 import { AlertTriangle } from "lucide-react";
-import { money, fmtDate } from "@/lib/formatters";
+import { formatCurrency, formatDate } from "@/lib/formatters";
 
 type Client = {
   id: string;
@@ -90,15 +90,15 @@ export function ContractSidebar({
           </div>
           <div>
             <span className="text-muted-foreground">Embarque: </span>
-            {fmtDate(trip.travel_start)}
+            {formatDate(trip.travel_start)}
           </div>
           <div>
             <span className="text-muted-foreground">Retorno: </span>
-            {fmtDate(trip.travel_end)}
+            {formatDate(trip.travel_end)}
           </div>
           <div className="mt-2 flex items-center justify-between border-t border-border pt-2 text-foreground font-bold">
             <span>Valor total</span>
-            <span className="font-mono">{money(trip.total_sale, trip.currency)}</span>
+            <span className="font-mono">{formatCurrency(trip.total_sale, trip.currency)}</span>
           </div>
         </div>
       </div>

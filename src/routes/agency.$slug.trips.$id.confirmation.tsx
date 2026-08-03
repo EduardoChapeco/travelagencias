@@ -3,7 +3,7 @@ import { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useAgency } from "@/lib/agency-context";
 import { StatusBadge } from "@/components/ui/badge";
-import { fmtDate } from "@/lib/formatters";
+import { formatDate } from "@/lib/formatters";
 import {
   createConfirmationItem,
   updateConfirmationItem,
@@ -31,7 +31,7 @@ import {
 } from "lucide-react";
 import { toast } from "sonner";
 import { logTripAudit } from "@/services/audit";
-import { GhostButton, PrimaryButton, Button } from "@/components/ui/button";
+import { Button } from "@/components/ui/button";
 import { CONFIRMATION_STATUS_MAP } from "@/lib/constants/status";
 import { FormInput as Input } from "@/components/ui/input";
 import { NativeSelect as Select } from "@/components/ui/select";
@@ -507,7 +507,7 @@ function TripConfirmationPage() {
                       <>
                         <span className="text-muted-foreground/40 text-xs">·</span>
                         <span className="ds-meta font-mono text-muted-foreground">
-                          {fmtDate(item.service_date)}
+                          {formatDate(item.service_date)}
                         </span>
                       </>
                     )}

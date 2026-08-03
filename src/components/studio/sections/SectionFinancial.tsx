@@ -1,6 +1,6 @@
 import { type Proposal } from "@/services/proposals";
 import { Accordion, L, SMALL_INPUT } from "@/components/proposals/ProposalFormFields";
-import { money } from "@/lib/formatters";
+import { formatCurrency } from "@/lib/formatters";
 import { DollarSign } from "lucide-react";
 import { FormInput as Input } from "@/components/ui/input";
 import { NativeSelect as Select } from "@/components/ui/select";
@@ -26,18 +26,18 @@ export function SectionFinancial({ draft, save }: Props) {
           <div className="space-y-1.5 text-xs">
             <div className="flex justify-between text-muted-foreground">
               <span>Subtotal</span>
-              <span className="font-mono">{money(draft.subtotal, draft.currency)}</span>
+              <span className="font-mono">{formatCurrency(draft.subtotal, draft.currency)}</span>
             </div>
             {(draft.discount ?? 0) > 0 && (
               <div className="flex justify-between text-emerald-600">
                 <span>Desconto Pix</span>
-                <span className="font-mono">−{money(draft.discount, draft.currency)}</span>
+                <span className="font-mono">−{formatCurrency(draft.discount, draft.currency)}</span>
               </div>
             )}
             <div className="flex justify-between border-t border-border/40 pt-2 font-bold text-sm">
               <span>Total</span>
               <span className="font-mono text-foreground">
-                {money(draft.total, draft.currency)}
+                {formatCurrency(draft.total, draft.currency)}
               </span>
             </div>
           </div>

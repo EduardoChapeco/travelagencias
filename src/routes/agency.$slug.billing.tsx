@@ -21,7 +21,7 @@ import {
 } from "lucide-react";
 import { useAgency } from "@/lib/agency-context";
 import { PageHeader } from "@/components/shell/PageHeader";
-import { PrimaryButton, GhostButton , Button } from "@/components/ui/button";
+import { Button } from "@/components/ui/button";
 import { StatusBadge } from "@/components/ui/badge";
 import { SheetPage } from "@/components/ui/sheet";
 import { FormInput as Input } from "@/components/ui/input";
@@ -374,7 +374,7 @@ function BillingPage() {
                       Plano Atual
                     </Button>
                   ) : (
-                    <PrimaryButton
+                    <Button variant="default"
                       onClick={() => {
                         setCheckoutSuccess(null);
                         setCheckoutError(null);
@@ -383,7 +383,7 @@ function BillingPage() {
                       className="w-full h-10 text-xs font-bold rounded-[var(--radius-card)]"
                     >
                       Selecionar Plano <ArrowRight className="h-3.5 w-3.5 ml-1.5" />
-                    </PrimaryButton>
+                    </Button>
                   )}
                 </div>
               </div>
@@ -453,9 +453,9 @@ function BillingPage() {
                       </StatusBadge>
                     </td>
                     <td className="px-5 py-3.5 text-right">
-                      <GhostButton className="h-7 ds-meta font-bold rounded">
+                      <Button variant="ghost" className="h-7 ds-meta font-bold rounded">
                         Recibo
-                      </GhostButton>
+                      </Button>
                     </td>
                   </tr>
                 ))}
@@ -502,12 +502,12 @@ function BillingPage() {
                     </span>
                   </div>
                 </div>
-                <PrimaryButton
+                <Button variant="default"
                   onClick={() => setCheckoutPlan(null)}
                   className="w-full h-10 text-xs font-bold rounded-[var(--radius-card)] mt-4"
                 >
                   Concluir e Voltar
-                </PrimaryButton>
+                </Button>
               </div>
             ) : (
               /* Checkout Form & Proration Math */
@@ -623,20 +623,20 @@ function BillingPage() {
                 </div>
 
                 <div className="pt-4 flex justify-end gap-2 border-t border-border">
-                  <GhostButton
+                  <Button variant="ghost"
                     onClick={() => setCheckoutPlan(null)}
                     disabled={isProcessing}
                     className="h-10 text-xs font-bold rounded-[var(--radius-card)]"
                   >
                     Cancelar
-                  </GhostButton>
-                  <PrimaryButton
+                  </Button>
+                  <Button variant="default"
                     onClick={() => checkoutMut.mutate()}
                     disabled={isProcessing}
                     className="h-10 text-xs font-bold rounded-[var(--radius-card)] px-6"
                   >
                     {isProcessing ? "Processando..." : "Confirmar Upgrade"}
-                  </PrimaryButton>
+                  </Button>
                 </div>
               </div>
             )}

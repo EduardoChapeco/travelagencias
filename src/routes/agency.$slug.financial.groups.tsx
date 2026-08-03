@@ -4,8 +4,8 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAgency } from "@/lib/agency-context";
 import { useState } from "react";
 import { TrendingUp, DollarSign, Landmark, Target, Eye, Search, Loader2, AlertCircle } from "lucide-react";
-import { GhostButton } from "@/components/ui/button";
-import { money } from "@/lib/formatters";
+import { Button } from "@/components/ui/button";
+import { formatCurrency } from "@/lib/formatters";
 import { cn } from "@/lib/utils";
 import { PageHeader } from "@/components/shell/PageHeader";
 import { FormInput as Input } from "@/components/ui/input";
@@ -30,7 +30,7 @@ type JoinedRecord = {
   } | null;
 };
 
-function fmtDate(d: string | null | undefined) {
+function formatDate(d: string | null | undefined) {
   if (!d) return "—";
   return new Date(d).toLocaleDateString("pt-BR", {
     day: "2-digit",
@@ -137,7 +137,7 @@ export function GroupFinancialsDashboard() {
     }
     return (
       <strong className={cn("text-2xl font-mono block mt-1.5", colorClass)}>
-        {typeof value === "number" ? money(value) : value}
+        {typeof value === "number" ? formatCurrency(value) : value}
       </strong>
     );
   };
@@ -280,17 +280,17 @@ export function GroupFinancialsDashboard() {
                       </span>
                     </td>
                     <td className="px-5 py-3.5 text-xs text-muted-foreground whitespace-nowrap">
-                      {fmtDate(t.departure_date)}
+                      {formatDate(t.departure_date)}
                     </td>
                     <td className="px-5 py-3.5 text-xs whitespace-nowrap">
                       <strong className="text-foreground">{t.pax_count}</strong>
                       <span className="text-muted-foreground">/{t.total_seats || "—"}</span>
                     </td>
                     <td className="px-5 py-3.5 text-right font-mono text-xs font-semibold text-success">
-                      {money(Number(t.revenue))}
+                      {formatCurrency(Number(t.revenue))}
                     </td>
                     <td className="px-5 py-3.5 text-right font-mono text-xs font-semibold text-danger">
-                      {money(Number(t.total_cost))}
+                      {formatCurrency(Number(t.total_cost))}
                     </td>
                     <td
                       className={cn(
@@ -298,7 +298,7 @@ export function GroupFinancialsDashboard() {
                         Number(t.net_profit) >= 0 ? "text-foreground" : "text-danger",
                       )}
                     >
-                      {money(Number(t.net_profit))}
+                      {formatCurrency(Number(t.net_profit))}
                     </td>
                     <td className="px-5 py-3.5 text-center whitespace-nowrap">
                       <span
@@ -315,10 +315,10 @@ export function GroupFinancialsDashboard() {
                       </span>
                     </td>
                     <td className="px-5 py-3.5 text-right font-mono text-xs font-semibold text-brand">
-                      {money(Number(t.target_poupanca_balance) || 0)}
+                      {formatCurrency(Number(t.target_poupanca_balance) || 0)}
                     </td>
                     <td className="px-5 py-3.5 text-right font-mono text-xs font-semibold text-amber-700">
-                      {money(Number(t.ads_budget) || 0)}
+                      {formatCurrency(Number(t.ads_budget) || 0)}
                     </td>
                     <td className="px-5 py-3.5 text-center">
                       <Link
@@ -345,23 +345,23 @@ export function GroupFinancialsDashboard() {
               Mostrando {toursDataMap.length} de {totalCount} resultados
             </span>
             <div className="flex items-center gap-2">
-              <GhostButton
+              <Button variant="ghost"
                 onClick={() => setPage((p) => Math.max(1, p - 1))}
                 disabled={page === 1}
                 className="h-8 !px-3 font-semibold text-foreground disabled:opacity-50 transition cursor-pointer"
               >
                 Anterior
-              </GhostButton>
+              </Button>
               <span className="text-xs text-muted-foreground font-semibold">
                 Página {page} de {totalPages}
               </span>
-              <GhostButton
+              <Button variant="ghost"
                 onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
                 disabled={page === totalPages}
                 className="h-8 !px-3 font-semibold text-foreground disabled:opacity-50 transition cursor-pointer"
               >
                 Próxima
-              </GhostButton>
+              </Button>
             </div>
           </div>
         )}
@@ -431,7 +431,7 @@ export function GroupFinancialsDashboard() {
                     </td>
                     <td className="px-5 py-3.5 whitespace-nowrap text-right font-mono text-xs font-semibold">
                       <span className={tx.type === "income" ? "text-success" : "text-danger"}>
-                        {tx.type === "income" ? "+" : "−"} {money(Number(tx.amount))}
+                        {tx.type === "income" ? "+" : "−"} {formatCurrency(Number(tx.amount))}
                       </span>
                     </td>
                   </tr>

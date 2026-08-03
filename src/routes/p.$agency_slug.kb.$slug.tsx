@@ -3,7 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 import { fetchKbArticle, voteKbArticle } from "@/services/public";
 import { ArrowLeft, BookOpen, Info, ThumbsUp, ThumbsDown } from "lucide-react";
 import { sanitizeHtml } from "@/lib/sanitize";
-import { fmtDate } from "@/lib/formatters";
+import { formatDate } from "@/lib/formatters";
 import { useState } from "react";
 import { useMutation } from "@tanstack/react-query";
 import { toast } from "sonner";
@@ -104,7 +104,7 @@ function PublicKnowledgeArticle() {
                   {article.category || "Guia Geral"}
                 </span>
                 <div className="text-xs font-semibold text-muted-foreground flex items-center gap-1">
-                  Atualizado em {fmtDate(article.updated_at)}
+                  Atualizado em {formatDate(article.updated_at)}
                 </div>
               </div>
             </div>

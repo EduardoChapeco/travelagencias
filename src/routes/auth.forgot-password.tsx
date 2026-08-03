@@ -4,7 +4,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { Field } from "@/components/ui/field";
 import { FormInput as Input } from "@/components/ui/input";
-import { PrimaryButton , Button } from "@/components/ui/button";
+import { Button } from "@/components/ui/button";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -66,9 +66,9 @@ function ForgotPage() {
             <Field label="Email" error={errors.email?.message}>
               <Input type="email" placeholder="seu@email.com" {...register("email")} />
             </Field>
-            <PrimaryButton type="submit" disabled={isSubmitting} className="w-full">
+            <Button variant="default" type="submit" disabled={isSubmitting} className="w-full">
               {isSubmitting ? "Enviando…" : "Enviar link"}
-            </PrimaryButton>
+            </Button>
             <div className="text-center">
               <Link
                 to="/auth/login"

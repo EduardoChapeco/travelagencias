@@ -14,7 +14,7 @@ import {
   Sparkles,
 } from "lucide-react";
 import { FormInput as Input } from "@/components/ui/input";
-import { PrimaryButton } from "@/components/ui/button";
+import { Button } from "@/components/ui/button";
 import { PageHeader } from "@/components/shell/PageHeader";
 
 export const Route = createFileRoute("/agency/$slug/competitors")({
@@ -128,10 +128,10 @@ Retorne EXATAMENTE UM JSON com as seguintes chaves precisas (sem markdown em vol
           type="url"
           required
         />
-        <PrimaryButton type="submit" disabled={loading} className="gap-2 shrink-0 rounded-[var(--radius-card)] px-6">
+        <Button variant="default" type="submit" disabled={loading} className="gap-2 shrink-0 rounded-[var(--radius-card)] px-6">
           {loading ? <RefreshCw className="w-4 h-4 animate-spin" /> : <Radar className="w-4 h-4" />}
           {loading ? "Espiando..." : "Analisar Concorrente"}
-        </PrimaryButton>
+        </Button>
       </form>
 
       {analysis && (

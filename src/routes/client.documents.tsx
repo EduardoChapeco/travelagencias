@@ -4,7 +4,7 @@ import { FileText, Download } from "lucide-react";
 import { fetchClientDocuments } from "@/services/client-area";
 import { PageHeader, EmptyState } from "@/components/shell/PageHeader";
 import { StatusBadge } from "@/components/ui/badge";
-import { fmtDate } from "@/lib/formatters";
+import { formatDate } from "@/lib/formatters";
 import { supabase } from "@/integrations/supabase/client";
 
 export const Route = createFileRoute("/client/documents")({
@@ -57,7 +57,7 @@ function ClientDocumentsPage() {
                   <div>
                     <div className="text-sm font-bold text-foreground">Contrato de Prestação de Serviços</div>
                     <div className="text-xs text-muted-foreground mt-0.5">
-                      {c.signed_at ? `Assinado em ${fmtDate(c.signed_at)}` : "Aguardando assinatura digital"}
+                      {c.signed_at ? `Assinado em ${formatDate(c.signed_at)}` : "Aguardando assinatura digital"}
                     </div>
                   </div>
                 </div>
@@ -111,7 +111,7 @@ function ClientDocumentsPage() {
                   <div>
                     <div className="text-sm font-bold text-foreground capitalize">{v.source_type ?? "Voucher de Serviço"}</div>
                     <div className="text-xs text-muted-foreground mt-0.5">
-                      {v.generated_at ? `Emitido em ${fmtDate(v.generated_at)}` : "—"}
+                      {v.generated_at ? `Emitido em ${formatDate(v.generated_at)}` : "—"}
                     </div>
                   </div>
                 </div>

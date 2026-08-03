@@ -7,7 +7,7 @@ import { Field } from "@/components/ui/field";
 import { FormInput as Input } from "@/components/ui/input";
 import { NativeSelect as Select } from "@/components/ui/select";
 import { FormTextarea as Textarea } from "@/components/ui/textarea";
-import { PrimaryButton, GhostButton , Button } from "@/components/ui/button";
+import { Button } from "@/components/ui/button";
 import { SheetPage } from "@/components/ui/sheet";
 import { createProposal, fetchClientsPick, fetchLeadsPick } from "@/services/proposals";
 import {
@@ -198,21 +198,21 @@ function ClientCombobox({
                 onChange={(e) => setQuickPhone(e.target.value)}
               />
               <div className="flex gap-2 pt-1">
-                <GhostButton
+                <Button variant="ghost"
                   type="button"
                   onClick={() => setShowQuickCreate(false)}
                   className="flex-1 h-8 text-xs"
                 >
                   Cancelar
-                </GhostButton>
-                <PrimaryButton
+                </Button>
+                <Button variant="default"
                   type="button"
                   onClick={handleQuickCreate}
                   disabled={creating || !quickName.trim()}
                   className="flex-1 h-8 text-xs"
                 >
                   {creating ? "Criando…" : "Criar"}
-                </PrimaryButton>
+                </Button>
               </div>
             </div>
           )}
@@ -775,12 +775,12 @@ export function NewProposalSheet({
 
         {/* Actions */}
         <div className="flex justify-end gap-2 pt-4 border-t border-border">
-          <GhostButton type="button" onClick={onClose}>
+          <Button variant="ghost" type="button" onClick={onClose}>
             Cancelar
-          </GhostButton>
-          <PrimaryButton type="submit" disabled={submitting || !title.trim() || ocrLoading}>
+          </Button>
+          <Button variant="default" type="submit" disabled={submitting || !title.trim() || ocrLoading}>
             {submitting ? "Criando…" : "Criar cotação →"}
-          </PrimaryButton>
+          </Button>
         </div>
       </form>
     </SheetPage>

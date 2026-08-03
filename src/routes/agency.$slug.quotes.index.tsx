@@ -4,7 +4,7 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import {
   Search, Plus, Sparkles, Loader2, Calendar, Users, Compass, ArrowRight, Brain, Trash2, BookOpen, ShieldCheck, UserCheck, Zap, Bell, BellOff, CheckCircle2, XCircle, ToggleLeft, ToggleRight, AlertTriangle, TrendingDown, Eye, } from "lucide-react";
 import { useAgency } from "@/lib/agency-context";
-import { Button, GhostButton, PrimaryButton } from "@/components/ui/button";
+import { Button } from "@/components/ui/button";
 import { PageHeader, EmptyState, ModuleActionButton } from "@/components/shell/PageHeader";
 import { ModuleAdminPanel } from "@/components/shell/ModuleAdminPanel";
 import { FormInput as Input } from "@/components/ui/input";
@@ -19,7 +19,7 @@ import {
 import { FormTextarea as Textarea } from "@/components/ui/textarea";
 import { Field } from "@/components/ui/field";
 import { StatusBadge } from "@/components/ui/badge";
-import { fmtDate } from "@/lib/formatters";
+import { formatDate } from "@/lib/formatters";
 import { toast } from "sonner";
 import { useDebounce } from "@/hooks/use-debounce";
 import { fetchQuoteRequestsList, createQuoteRequest, deleteQuoteRequest, getCurrentUserRole, getCurrentUserId, invokeAiOrchestrator } from "@/services/quotes";
@@ -571,7 +571,7 @@ Texto: "${aiText}"`;
             <EmptyState
               title="Nenhuma cotação cadastrada"
               description="Crie uma cotação rápida baseada em IA ou configure cenários logísticos."
-              action={<PrimaryButton onClick={() => setNewOpen(true)}>Criar Cotação</PrimaryButton>}
+              action={<Button variant="default" onClick={() => setNewOpen(true)}>Criar Cotação</Button>}
             />
           ) : (
             <div className="flex-1 rounded-[var(--radius-card)] glass text-white bg-black/40 backdrop-blur-2xl-panel overflow-hidden flex flex-col">
@@ -620,9 +620,9 @@ Texto: "${aiText}"`;
                         <td className="px-4 py-3.5">
                           <div className="flex items-center gap-1.5 text-foreground">
                             <Calendar className="h-3.5 w-3.5 text-muted-foreground shrink-0" />
-                            <span>{fmtDate(startStr)}</span>
+                            <span>{formatDate(startStr)}</span>
                             <ArrowRight className="h-3 w-3 text-muted-foreground" />
-                            <span>{fmtDate(endStr)}</span>
+                            <span>{formatDate(endStr)}</span>
                           </div>
                         </td>
                         <td className="px-4 py-3.5 text-muted-foreground">
@@ -686,7 +686,7 @@ Texto: "${aiText}"`;
             description="Escreva diretrizes logísticas ou revisões de hotéis para alimentar o RAG e o validador."
             action={
               <div className="flex gap-2 justify-center">
-                <GhostButton
+                <Button variant="ghost"
                   onClick={handleFeedDefaultGuidelines}
                   disabled={feedingDefaults}
                   className="border-none"
@@ -697,10 +697,10 @@ Texto: "${aiText}"`;
                     <Plus className="mr-2 h-4 w-4" />
                   )}
                   Carregar Regras Padrão
-                </GhostButton>
-                <PrimaryButton onClick={() => setNewKnowledgeOpen(true)}>
+                </Button>
+                <Button variant="default" onClick={() => setNewKnowledgeOpen(true)}>
                   Adicionar Diretriz
-                </PrimaryButton>
+                </Button>
               </div>
             }
           />
@@ -967,10 +967,10 @@ Texto: "${aiText}"`;
                   <Bell className="h-8 w-8 text-muted-foreground mx-auto mb-2 opacity-40" />
                   <p className="text-xs text-muted-foreground">Nenhum alerta configurado.</p>
                   <p className="ds-meta text-muted-foreground mt-1 mb-4">Configure alertas para monitorar tarifas e oportunidades automáticas.</p>
-                  <PrimaryButton onClick={() => setWatcherOpen(true)} className="gap-1.5">
+                  <Button variant="default" onClick={() => setWatcherOpen(true)} className="gap-1.5">
                     <Bell className="h-3.5 w-3.5" />
                     Criar Primeiro Alerta
-                  </PrimaryButton>
+                  </Button>
                 </div>
               ) : (
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -1196,7 +1196,7 @@ Texto: "${aiText}"`;
                   className="min-h-[80px]"
                 />
                 <div className="flex justify-end mt-2">
-                  <PrimaryButton
+                  <Button variant="default"
                     type="button"
                     onClick={handleAiInterpret}
                     disabled={interpreting || !aiText.trim()}
@@ -1213,7 +1213,7 @@ Texto: "${aiText}"`;
                         Auto-Preencher via IA
                       </>
                     )}
-                  </PrimaryButton>
+                  </Button>
                 </div>
               </div>
 
@@ -1312,16 +1312,16 @@ Texto: "${aiText}"`;
             </div>
 
             <div className="border-t border-border pt-4 mt-8 flex justify-end gap-3 shrink-0">
-              <GhostButton type="button" onClick={() => setNewOpen(false)}>
+              <Button variant="ghost" type="button" onClick={() => setNewOpen(false)}>
                 Cancelar
-              </GhostButton>
-              <PrimaryButton
+              </Button>
+              <Button variant="default"
                 type="button"
                 onClick={() => saveMut.mutate()}
                 disabled={saveMut.isPending || !destination}
               >
                 {saveMut.isPending ? "Criando..." : "Salvar e Configurar Cenários"}
-              </PrimaryButton>
+              </Button>
             </div>
           </div>
         </div>
@@ -1416,10 +1416,10 @@ Texto: "${aiText}"`;
             </div>
 
             <div className="border-t border-border pt-4 mt-8 flex justify-end gap-3 shrink-0">
-              <GhostButton type="button" onClick={() => setNewKnowledgeOpen(false)}>
+              <Button variant="ghost" type="button" onClick={() => setNewKnowledgeOpen(false)}>
                 Cancelar
-              </GhostButton>
-              <PrimaryButton
+              </Button>
+              <Button variant="default"
                 type="button"
                 onClick={handleIngestKnowledge}
                 disabled={ingesting || !knowledgeTitle.trim() || !knowledgeContent.trim()}
@@ -1432,7 +1432,7 @@ Texto: "${aiText}"`;
                 ) : (
                   "Salvar e Sincronizar Cérebro"
                 )}
-              </PrimaryButton>
+              </Button>
             </div>
           </div>
         </div>
@@ -1542,10 +1542,10 @@ Texto: "${aiText}"`;
             </div>
 
             <div className="border-t border-border pt-4 mt-8 flex justify-end gap-3 shrink-0">
-              <GhostButton type="button" onClick={() => setWatcherOpen(false)}>
+              <Button variant="ghost" type="button" onClick={() => setWatcherOpen(false)}>
                 Cancelar
-              </GhostButton>
-              <PrimaryButton
+              </Button>
+              <Button variant="default"
                 type="button"
                 onClick={() => createWatcherMut.mutate()}
                 disabled={createWatcherMut.isPending || !watcherName.trim() || !watcherDest.trim()}
@@ -1558,7 +1558,7 @@ Texto: "${aiText}"`;
                 ) : (
                   "Ativar Monitoramento"
                 )}
-              </PrimaryButton>
+              </Button>
             </div>
           </div>
         </div>

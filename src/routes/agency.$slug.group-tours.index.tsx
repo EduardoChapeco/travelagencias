@@ -8,7 +8,7 @@ import { EmptyState } from "@/components/shell/PageHeader";
 import { ModuleAdminPanel } from "@/components/shell/ModuleAdminPanel";
 import { NewGroupTourWizard } from "@/components/group-tours/NewGroupTourWizard";
 import { StatusBadge } from "@/components/ui/badge";
-import { fmtDate, money } from "@/lib/formatters";
+import { formatDate, formatCurrency } from "@/lib/formatters";
 import { PageHeader, ModuleActionButton } from "@/components/shell/PageHeader";
 import { Button } from "@/components/ui/button";
 
@@ -164,15 +164,15 @@ function GroupToursPage() {
                   <div className="mt-3 grid grid-cols-2 gap-2 text-xs">
                     <div>
                       <div className="text-muted-foreground">Saída</div>
-                      <div>{fmtDate(t.departure_date)}</div>
+                      <div>{formatDate(t.departure_date)}</div>
                     </div>
                     <div>
                       <div className="text-muted-foreground">Retorno</div>
-                      <div>{fmtDate(t.return_date)}</div>
+                      <div>{formatDate(t.return_date)}</div>
                     </div>
                     <div>
                       <div className="text-muted-foreground">Preço</div>
-                      <div className="font-mono">{money(Number(t.base_price))}</div>
+                      <div className="font-mono">{formatCurrency(Number(t.base_price))}</div>
                     </div>
                     <div>
                       <div className="text-muted-foreground flex items-center gap-1">

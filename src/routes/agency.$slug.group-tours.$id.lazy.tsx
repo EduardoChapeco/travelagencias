@@ -19,9 +19,9 @@ import { FormInput as Input } from "@/components/ui/input";
 import { NativeSelect as Select } from "@/components/ui/select";
 import { SimpleSheet as Sheet } from "@/components/ui/sheet";
 import { FormTextarea as Textarea } from "@/components/ui/textarea";
-import { PrimaryButton, GhostButton , Button } from "@/components/ui/button";
+import { Button } from "@/components/ui/button";
 import { StatusBadge } from "@/components/ui/badge";
-import { fmtDate, money } from "@/lib/formatters";
+import { formatDate, formatCurrency } from "@/lib/formatters";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { cn } from "@/lib/utils";
 import {
@@ -210,10 +210,11 @@ function TourDetailPage() {
 
   // Savings / Ads updates
   async function saveSavings(val: number) {
-    const { error } = await supabase
-      .from("group_tours")
-      .update({ target_poupanca_balance: val } as any)
-      .eq("id", id);
+    const { error } = await supabase.rpc("update_group_tour_budget", {
+      p_tour_id: id,
+      p_ads_budget: tourQ.data?.ads_budget || 0,
+      p_target_poupanca_balance: val
+    });
     if (error) {
       // Fallback update
       const updatedTour = { ...tourQ.data, target_poupanca_balance: val };
@@ -224,10 +225,11 @@ function TourDetailPage() {
   }
 
   async function saveAdsBudget(val: number) {
-    const { error } = await supabase
-      .from("group_tours")
-      .update({ ads_budget: val } as any)
-      .eq("id", id);
+    const { error } = await supabase.rpc("update_group_tour_budget", {
+      p_tour_id: id,
+      p_ads_budget: val,
+      p_target_poupanca_balance: tourQ.data?.target_poupanca_balance || 0
+    });
     if (error) return toast.error(error.message);
     toast.success("Gasto Ads atualizado!");
     setAdsSheet(false);
@@ -387,13 +389,13 @@ function TourDetailPage() {
             <option value="completed">Concluída / Encerrada</option>
             <option value="cancelled">Cancelada</option>
           </Select>
-          <GhostButton
+          <Button variant="ghost"
             onClick={togglePublic}
             type="button"
             className="shrink-0 h-8 text-xs border-none glass-card border-none text-foreground hover:glass bg-white/5 border-white/10"
           >
             {t.is_public ? "Tornar privada" : "Publicar"}
-          </GhostButton>
+          </Button>
           <Button
             onClick={() => setOpen(true)}
             className="flex h-8 items-center gap-1.5 rounded-full bg-brand px-3 text-xs font-semibold text-brand-foreground transition-colors shrink-0 cursor-pointer hover:opacity-90"
@@ -405,9 +407,9 @@ function TourDetailPage() {
       <PageHeader title={t.title} description={t.destination ?? "Excursão em grupo terrestre"} />
 
       <div className="grid grid-cols-1 xs:grid-cols-2 lg:grid-cols-4 gap-3 text-sm mb-6">
-        <Stat label="Saída" value={fmtDate(t.departure_date)} />
-        <Stat label="Retorno" value={fmtDate(t.return_date)} />
-        <Stat label="Preço base" value={money(Number(t.base_price))} />
+        <Stat label="Saída" value={formatDate(t.departure_date)} />
+        <Stat label="Retorno" value={formatDate(t.return_date)} />
+        <Stat label="Preço base" value={formatCurrency(Number(t.base_price))} />
         <Stat
           label="Ocupação"
           value={
@@ -578,7 +580,7 @@ function TourDetailPage() {
               <div className="flex items-center gap-2 rounded-[var(--radius-card)] border border-amber-500/20 bg-amber-500/5 px-4 py-3 text-xs text-amber-800">
                 <span>
                   ⚠️ Lembrete: De acordo com o contrato, todos os saldos terrestres devem ser
-                  integralmente quitados antes do embarque ({fmtDate(t.departure_date)}).
+                  integralmente quitados antes do embarque ({formatDate(t.departure_date)}).
                 </span>
               </div>
 
@@ -652,7 +654,7 @@ function TourDetailPage() {
                             {e.room_type || "Standard"}
                           </td>
                           <td className="px-3 py-2.5 text-right font-mono text-xs">
-                            {money(Number(e.total_paid))}
+                            {formatCurrency(Number(e.total_paid))}
                           </td>
                           <td className="px-3 py-2.5">
                             <Select
@@ -777,7 +779,7 @@ function TourDetailPage() {
                     Faturamento Bruto
                   </span>
                   <strong className="block text-lg mt-1 font-mono text-gray-900">
-                    {money(totalRevenue)}
+                    {formatCurrency(totalRevenue)}
                   </strong>
                 </div>
                 <div className="p-3 bg-gray-50 rounded-[var(--radius-card)]">
@@ -785,7 +787,7 @@ function TourDetailPage() {
                     Custos Operacionais
                   </span>
                   <strong className="block text-lg mt-1 font-mono text-rose-600">
-                    {money(totalCosts)}
+                    {formatCurrency(totalCosts)}
                   </strong>
                 </div>
                 <div className="p-3 bg-[#e8f3f1] rounded-[var(--radius-card)]">
@@ -793,7 +795,7 @@ function TourDetailPage() {
                     Resultado Líquido
                   </span>
                   <strong className="block text-lg mt-1 font-mono text-teal-700">
-                    {money(netProfit)}
+                    {formatCurrency(netProfit)}
                   </strong>
                 </div>
               </div>
@@ -809,12 +811,12 @@ function TourDetailPage() {
                       Listagem de despesas fixas da excursão e taxas por passageiro.
                     </p>
                   </div>
-                  <GhostButton
+                  <Button variant="ghost"
                     onClick={() => setAddCostSheet(true)}
                     className="h-7 ds-meta font-bold"
                   >
                     + Novo Custo
-                  </GhostButton>
+                  </Button>
                 </div>
 
                 <div className="divide-y divide-border">
@@ -842,14 +844,14 @@ function TourDetailPage() {
                           <div className="ds-meta text-muted-foreground mt-0.5">
                             {cost.type === "fixed"
                               ? "Custo Fixo"
-                              : `Variável (${money(Number(cost.amount))} x ${pCount} pax)`}
+                              : `Variável (${formatCurrency(Number(cost.amount))} x ${pCount} pax)`}
                           </div>
                         </div>
                         <div className="flex items-center gap-3">
                           <strong className="font-mono text-gray-900">
                             {cost.type === "fixed"
-                              ? money(Number(cost.amount))
-                              : money(Number(cost.amount) * pCount)}
+                              ? formatCurrency(Number(cost.amount))
+                              : formatCurrency(Number(cost.amount) * pCount)}
                           </strong>
                           <Button
                             onClick={() => deleteCost(cost.id)}
@@ -871,7 +873,7 @@ function TourDetailPage() {
                           Custo de captação integrado
                         </div>
                       </div>
-                      <strong className="font-mono text-amber-900">{money(adsSpend)}</strong>
+                      <strong className="font-mono text-amber-900">{formatCurrency(adsSpend)}</strong>
                     </div>
                   )}
                 </div>
@@ -884,19 +886,19 @@ function TourDetailPage() {
               <div className="bg-white border-none rounded-[var(--radius-card)] p-5 space-y-4">
                 <div className="flex items-center justify-between">
                   <Landmark className="w-5 h-5 text-gray-400" />
-                  <GhostButton
+                  <Button variant="ghost"
                     onClick={() => setVaultSheet(true)}
                     className="h-6 ds-meta font-bold"
                   >
                     Ajustar Saldo
-                  </GhostButton>
+                  </Button>
                 </div>
                 <div>
                   <span className="ds-meta text-muted-foreground uppercase font-bold block">
                     Poupança do Grupo (Vault)
                   </span>
                   <strong className="text-xl font-mono text-gray-900 block mt-1">
-                    {money(Number((t as any).target_poupanca_balance) || 0)}
+                    {formatCurrency(Number((t as any).target_poupanca_balance) || 0)}
                   </strong>
                   <p className="ds-meta text-muted-foreground mt-2 leading-relaxed">
                     Saldos e parcelas de grupos terrestres ficam retidos nesta conta garantidora até
@@ -909,12 +911,12 @@ function TourDetailPage() {
               <div className="bg-white border-none rounded-[var(--radius-card)] p-5 space-y-4">
                 <div className="flex items-center justify-between">
                   <Target className="w-5 h-5 text-gray-400" />
-                  <GhostButton
+                  <Button variant="ghost"
                     onClick={() => setAdsSheet(true)}
                     className="h-6 ds-meta font-bold"
                   >
                     Lançar Gastos Ads
-                  </GhostButton>
+                  </Button>
                 </div>
                 <div>
                   <span className="ds-meta text-muted-foreground uppercase font-bold block">
@@ -937,7 +939,7 @@ function TourDetailPage() {
                         CAC (Por Cliente)
                       </span>
                       <strong className="block text-sm font-semibold font-mono">
-                        {money(cac)}
+                        {formatCurrency(cac)}
                       </strong>
                     </div>
                   </div>
@@ -1034,10 +1036,10 @@ function TourDetailPage() {
               </Field>
             </div>
             <div className="flex justify-end gap-2 pt-2">
-              <GhostButton type="button" onClick={() => setAddCostSheet(false)}>
+              <Button variant="ghost" type="button" onClick={() => setAddCostSheet(false)}>
                 Cancelar
-              </GhostButton>
-              <PrimaryButton type="submit">Adicionar Custo</PrimaryButton>
+              </Button>
+              <Button variant="default" type="submit">Adicionar Custo</Button>
             </div>
           </form>
         </Sheet>
@@ -1065,10 +1067,10 @@ function TourDetailPage() {
               />
             </Field>
             <div className="flex justify-end gap-2 pt-2">
-              <GhostButton type="button" onClick={() => setVaultSheet(false)}>
+              <Button variant="ghost" type="button" onClick={() => setVaultSheet(false)}>
                 Cancelar
-              </GhostButton>
-              <PrimaryButton type="submit">Salvar Saldo</PrimaryButton>
+              </Button>
+              <Button variant="default" type="submit">Salvar Saldo</Button>
             </div>
           </form>
         </Sheet>
@@ -1096,10 +1098,10 @@ function TourDetailPage() {
               />
             </Field>
             <div className="flex justify-end gap-2 pt-2">
-              <GhostButton type="button" onClick={() => setAdsSheet(false)}>
+              <Button variant="ghost" type="button" onClick={() => setAdsSheet(false)}>
                 Cancelar
-              </GhostButton>
-              <PrimaryButton type="submit">Salvar Gastos</PrimaryButton>
+              </Button>
+              <Button variant="default" type="submit">Salvar Gastos</Button>
             </div>
           </form>
         </Sheet>
@@ -1308,7 +1310,7 @@ function FlyersTabContent({ tour, agency }: { tour: any; agency: any }) {
               <div className="flex flex-wrap items-center gap-1.5 mt-1.5">
                 <span className="bg-white/10 backdrop-blur-xs text-white rounded-full px-1.5 py-0.5 text-[8px] font-bold border border-white/5 flex items-center gap-1">
                   <Calendar className="h-2.5 w-2.5 text-amber-400" />
-                  {fmtDate(tour.departure_date)} a {fmtDate(tour.return_date)}
+                  {formatDate(tour.departure_date)} a {formatDate(tour.return_date)}
                 </span>
 
                 {tour.transport_type && (
@@ -1350,7 +1352,7 @@ function FlyersTabContent({ tour, agency }: { tour: any; agency: any }) {
               <strong
                 className={`text-lg font-black font-mono mt-0.5 block drop-shadow-none ${currentTheme.accentText}`}
               >
-                {money(Number(tour.base_price))}
+                {formatCurrency(Number(tour.base_price))}
               </strong>
             </div>
 
@@ -1581,10 +1583,11 @@ function HotelPricingTabContent({ tour, onUpdate }: { tour: any; onUpdate: () =>
         ...pricingTiers,
         { name: tierName.trim(), price: Number(tierPrice), description: tierDesc.trim() },
       ];
-      const { error } = await supabase
-        .from("group_tours")
-        .update({ pricing_tiers: nextTiers })
-        .eq("id", tour.id);
+      const { error } = await supabase.rpc("update_group_tour_pricing", {
+        p_tour_id: tour.id,
+        p_pricing_tiers: nextTiers,
+        p_extra_options: extraOptions
+      });
 
       if (error) throw error;
       toast.success("Tarifa adicionada!");
@@ -1600,10 +1603,11 @@ function HotelPricingTabContent({ tour, onUpdate }: { tour: any; onUpdate: () =>
   const handleDeleteTier = async (idx: number) => {
     try {
       const nextTiers = pricingTiers.filter((_: any, i: number) => i !== idx);
-      const { error } = await supabase
-        .from("group_tours")
-        .update({ pricing_tiers: nextTiers })
-        .eq("id", tour.id);
+      const { error } = await supabase.rpc("update_group_tour_pricing", {
+        p_tour_id: tour.id,
+        p_pricing_tiers: nextTiers,
+        p_extra_options: extraOptions
+      });
 
       if (error) throw error;
       toast.success("Tarifa removida!");
@@ -1638,10 +1642,11 @@ function HotelPricingTabContent({ tour, onUpdate }: { tour: any; onUpdate: () =>
       },
     ];
     try {
-      const { error } = await supabase
-        .from("group_tours")
-        .update({ pricing_tiers: defaults })
-        .eq("id", tour.id);
+      const { error } = await supabase.rpc("update_group_tour_pricing", {
+        p_tour_id: tour.id,
+        p_pricing_tiers: defaults,
+        p_extra_options: extraOptions
+      });
 
       if (error) throw error;
       toast.success("Tarifas sugeridas geradas!");
@@ -1661,10 +1666,11 @@ function HotelPricingTabContent({ tour, onUpdate }: { tour: any; onUpdate: () =>
         ...extraOptions,
         { name: extraName.trim(), price: Number(extraPrice), description: extraDesc.trim() },
       ];
-      const { error } = await supabase
-        .from("group_tours")
-        .update({ extra_options: nextExtras })
-        .eq("id", tour.id);
+      const { error } = await supabase.rpc("update_group_tour_pricing", {
+        p_tour_id: tour.id,
+        p_pricing_tiers: pricingTiers,
+        p_extra_options: nextExtras
+      });
 
       if (error) throw error;
       toast.success("Opcional adicionado!");
@@ -1680,10 +1686,11 @@ function HotelPricingTabContent({ tour, onUpdate }: { tour: any; onUpdate: () =>
   const handleDeleteExtra = async (idx: number) => {
     try {
       const nextExtras = extraOptions.filter((_: any, i: number) => i !== idx);
-      const { error } = await supabase
-        .from("group_tours")
-        .update({ extra_options: nextExtras })
-        .eq("id", tour.id);
+      const { error } = await supabase.rpc("update_group_tour_pricing", {
+        p_tour_id: tour.id,
+        p_pricing_tiers: pricingTiers,
+        p_extra_options: nextExtras
+      });
 
       if (error) throw error;
       toast.success("Opcional removido!");
@@ -1808,9 +1815,9 @@ function HotelPricingTabContent({ tour, onUpdate }: { tour: any; onUpdate: () =>
             </div>
           </div>
 
-          <PrimaryButton type="submit" disabled={savingHotel} className="w-full h-10 text-xs">
+          <Button variant="default" type="submit" disabled={savingHotel} className="w-full h-10 text-xs">
             {savingHotel ? "Salvando..." : "Salvar Hospedagem"}
-          </PrimaryButton>
+          </Button>
         </form>
       </div>
 
@@ -1825,12 +1832,12 @@ function HotelPricingTabContent({ tour, onUpdate }: { tour: any; onUpdate: () =>
                 Acomodações & Tarifas Diferenciadas
               </h3>
             </div>
-            <GhostButton
+            <Button variant="ghost"
               onClick={handlePopulateDefaultTiers}
               className="h-7 ds-meta border border-brand/20 text-brand"
             >
               Gerar Padrão
-            </GhostButton>
+            </Button>
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -1866,9 +1873,9 @@ function HotelPricingTabContent({ tour, onUpdate }: { tour: any; onUpdate: () =>
                   
                 />
               </Field>
-              <PrimaryButton onClick={handleAddTier} className="w-full h-8 text-xs">
+              <Button variant="default" onClick={handleAddTier} className="w-full h-8 text-xs">
                 Adicionar
-              </PrimaryButton>
+              </Button>
             </div>
 
             {/* List */}
@@ -1890,7 +1897,7 @@ function HotelPricingTabContent({ tour, onUpdate }: { tour: any; onUpdate: () =>
                       )}
                     </div>
                     <div className="flex items-center gap-2.5 shrink-0 ml-2">
-                      <span className="font-mono font-bold text-brand">{money(t.price)}</span>
+                      <span className="font-mono font-bold text-brand">{formatCurrency(t.price)}</span>
                       <Button
                         onClick={() => handleDeleteTier(i)}
                         className="text-muted-foreground hover:text-danger p-1"
@@ -1951,9 +1958,9 @@ function HotelPricingTabContent({ tour, onUpdate }: { tour: any; onUpdate: () =>
                   
                 />
               </Field>
-              <PrimaryButton onClick={handleAddExtra} className="w-full h-8 text-xs">
+              <Button variant="default" onClick={handleAddExtra} className="w-full h-8 text-xs">
                 Adicionar
-              </PrimaryButton>
+              </Button>
             </div>
 
             {/* List */}
@@ -1975,7 +1982,7 @@ function HotelPricingTabContent({ tour, onUpdate }: { tour: any; onUpdate: () =>
                       )}
                     </div>
                     <div className="flex items-center gap-2.5 shrink-0 ml-2">
-                      <span className="font-mono font-bold text-success">+{money(e.price)}</span>
+                      <span className="font-mono font-bold text-success">+{formatCurrency(e.price)}</span>
                       <Button
                         onClick={() => handleDeleteExtra(i)}
                         className="text-muted-foreground hover:text-danger p-1"
@@ -2159,7 +2166,7 @@ function ItineraryEditor({
               onChange={(e) => setAiInput(e.target.value)}
               rows={2}
             />
-            <PrimaryButton
+            <Button variant="default"
               type="button"
               onClick={generateWithAI}
               disabled={aiGenerating}
@@ -2167,7 +2174,7 @@ function ItineraryEditor({
             >
               <Wand2 className="h-4 w-4" />{" "}
               {aiGenerating ? "Minerando e Redigindo Roteiro..." : "Gerar Itinerário Completo"}
-            </PrimaryButton>
+            </Button>
             <p className="ds-meta text-muted-foreground text-center">
               Isso irá sobrescrever os dias atuais do roteiro.
             </p>
@@ -2233,10 +2240,10 @@ function ItineraryEditor({
             />
           </Field>
           <div className="flex justify-end gap-2">
-            <GhostButton type="button" onClick={() => setAdding(false)}>
+            <Button variant="ghost" type="button" onClick={() => setAdding(false)}>
               Cancelar
-            </GhostButton>
-            <PrimaryButton type="submit">Salvar Dia</PrimaryButton>
+            </Button>
+            <Button variant="default" type="submit">Salvar Dia</Button>
           </div>
         </form>
       )}
@@ -2297,12 +2304,12 @@ function NewEnrol({
           <Input value={cpf} onChange={(e) => setCpf(e.target.value)} />
         </Field>
         <div className="flex justify-end gap-2 pt-2">
-          <GhostButton type="button" onClick={onClose}>
+          <Button variant="ghost" type="button" onClick={onClose}>
             Cancelar
-          </GhostButton>
-          <PrimaryButton type="submit" disabled={submitting}>
+          </Button>
+          <Button variant="default" type="submit" disabled={submitting}>
             {submitting ? "Salvando…" : "Inscrever"}
-          </PrimaryButton>
+          </Button>
         </div>
       </form>
     </Sheet>
@@ -2547,12 +2554,12 @@ function BusSeatManager({
             </Field>
 
             <div className="mt-4 flex gap-2">
-              <GhostButton onClick={() => setSelectedSeat(null)} className="flex-1 text-xs font-bold h-9">
+              <Button variant="ghost" onClick={() => setSelectedSeat(null)} className="flex-1 text-xs font-bold h-9">
                 Cancelar
-              </GhostButton>
-              <PrimaryButton onClick={assignSeat} className="flex-1 text-xs font-bold h-9">
+              </Button>
+              <Button variant="default" onClick={assignSeat} className="flex-1 text-xs font-bold h-9">
                 Confirmar
-              </PrimaryButton>
+              </Button>
             </div>
           </div>
         ) : (
@@ -3014,12 +3021,12 @@ function EditTour({
         </div>
 
         <div className="mt-6 flex justify-end gap-3 pt-2">
-          <GhostButton type="button" onClick={onClose}>
+          <Button variant="ghost" type="button" onClick={onClose}>
             Cancelar
-          </GhostButton>
-          <PrimaryButton disabled={busy}>
+          </Button>
+          <Button variant="default" disabled={busy}>
             {busy ? "Salvando..." : "Salvar Alterações"}
-          </PrimaryButton>
+          </Button>
         </div>
       </form>
     </Sheet>
@@ -3572,12 +3579,12 @@ function RoomingListManager({
                 </Field>
               </div>
               <div className="flex gap-2 justify-end">
-                <GhostButton type="button" onClick={() => setAddOpen(false)}>
+                <Button variant="ghost" type="button" onClick={() => setAddOpen(false)}>
                   Cancelar
-                </GhostButton>
-                <PrimaryButton type="submit" disabled={addRoomMutation.isPending}>
+                </Button>
+                <Button variant="default" type="submit" disabled={addRoomMutation.isPending}>
                   {addRoomMutation.isPending ? "Salvando..." : "Adicionar Quarto"}
-                </PrimaryButton>
+                </Button>
               </div>
             </form>
           </div>

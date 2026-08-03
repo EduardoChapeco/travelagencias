@@ -16,7 +16,7 @@ import { useAgency } from "@/lib/agency-context";
 import { getAgencyMarkup, calculateMarkup } from "@/utils/pricing";
 import { infotravelSearchFlights } from "@/services/infotravel";
 import { toast } from "sonner";
-import { PrimaryButton , Button } from "@/components/ui/button";
+import { Button } from "@/components/ui/button";
 import { FormInput as Input } from "@/components/ui/input";
 import { NativeSelect as Select } from "@/components/ui/select";
 import {
@@ -278,7 +278,7 @@ export function SectionFlights({ draft, save }: Props) {
                 </div>
               </div>
 
-              <PrimaryButton
+              <Button variant="default"
                 type="button"
                 className="w-full"
                 disabled={
@@ -290,7 +290,7 @@ export function SectionFlights({ draft, save }: Props) {
                 onClick={handleSearch}
               >
                 {searching ? "Buscando tarifas..." : "Pesquisar Tarifas"}
-              </PrimaryButton>
+              </Button>
 
               <div className="space-y-2 pt-2">
                 {results.length === 0 && !searching && (

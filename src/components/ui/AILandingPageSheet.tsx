@@ -3,7 +3,7 @@ import { SheetPage } from "./sheet";
 import { Field } from "@/components/ui/field";
 import { FormInput as Input } from "@/components/ui/input";
 import { FormTextarea as Textarea } from "@/components/ui/textarea";
-import { PrimaryButton, GhostButton , Button } from "@/components/ui/button";
+import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { Wand2, Copy } from "lucide-react";
@@ -123,17 +123,17 @@ export function AILandingPageSheet({
         )}
 
         <div className="pt-4 flex justify-end gap-3 border-t border-border mt-4">
-          <GhostButton type="button" onClick={() => onOpenChange(false)} disabled={loading}>
+          <Button variant="ghost" type="button" onClick={() => onOpenChange(false)} disabled={loading}>
             Cancelar
-          </GhostButton>
-          <PrimaryButton type="submit" disabled={loading} className="gap-2">
+          </Button>
+          <Button variant="default" type="submit" disabled={loading} className="gap-2">
             {mode === "clone" ? <Copy className="w-4 h-4" /> : <Wand2 className="w-4 h-4" />}
             {loading
               ? "Processando..."
               : mode === "clone"
                 ? "Clonar Layout"
                 : "Gerar Landing Page Inteira"}
-          </PrimaryButton>
+          </Button>
         </div>
       </form>
     </SheetPage>

@@ -7,7 +7,7 @@ import { BookOpen, Workflow, Settings2, Trash2, Edit2, Plus, ArrowLeft } from "l
 import { Field } from "@/components/ui/field";
 import { FormInput as Input } from "@/components/ui/input";
 import { FormTextarea as Textarea } from "@/components/ui/textarea";
-import { PrimaryButton, GhostButton , Button } from "@/components/ui/button";
+import { Button } from "@/components/ui/button";
 import { useConfirm } from "@/hooks/use-confirm";
 import { useAgency, DEFAULT_MODULE_NAMES } from "@/lib/agency-context";
 
@@ -219,12 +219,12 @@ export function ModuleAdminPanel({
                       {displayName}.
                     </p>
                   </div>
-                  <PrimaryButton
+                  <Button variant="default"
                     onClick={() => setIsCreatingPlaybook(true)}
                     className="h-8 ds-meta font-bold gap-1 rounded-2xl"
                   >
                     <Plus className="w-3.5 h-3.5" /> Novo Playbook
-                  </PrimaryButton>
+                  </Button>
                 </div>
 
                 {/* Scoped Playbooks List */}
@@ -353,21 +353,21 @@ export function ModuleAdminPanel({
 
               <div className="flex justify-end gap-2">
                 {customName !== currentCustomName && (
-                  <GhostButton
+                  <Button variant="ghost"
                     type="button"
                     onClick={() => setCustomName(currentCustomName)}
                     className="h-8 text-xs font-bold"
                   >
                     Descartar
-                  </GhostButton>
+                  </Button>
                 )}
-                <PrimaryButton
+                <Button variant="default"
                   type="submit"
                   disabled={savingName || customName === currentCustomName}
                   className="h-8 text-xs font-bold"
                 >
                   {savingName ? "Salvando..." : "Salvar Nome"}
-                </PrimaryButton>
+                </Button>
               </div>
             </form>
 
@@ -530,13 +530,13 @@ function PlaybookForm({
             <label className="text-xs font-extrabold text-foreground uppercase tracking-wider">
               Etapas e Diretrizes do Processo
             </label>
-            <GhostButton
+            <Button variant="ghost"
               type="button"
               onClick={addStep}
               className="h-7 ds-meta font-bold cursor-pointer"
             >
               + Adicionar Etapa
-            </GhostButton>
+            </Button>
           </div>
 
           <div className="space-y-3 max-h-[300px] overflow-y-auto pr-1 no-scrollbar">
@@ -581,12 +581,12 @@ function PlaybookForm({
         </div>
 
         <div className="pt-3 border-t border-border flex justify-end gap-2">
-          <GhostButton type="button" onClick={onClose} className="h-8 text-xs font-bold">
+          <Button variant="ghost" type="button" onClick={onClose} className="h-8 text-xs font-bold">
             Cancelar
-          </GhostButton>
-          <PrimaryButton type="submit" disabled={submitting} className="h-8 text-xs font-bold">
+          </Button>
+          <Button variant="default" type="submit" disabled={submitting} className="h-8 text-xs font-bold">
             {submitting ? "Salvando..." : "Salvar Playbook"}
-          </PrimaryButton>
+          </Button>
         </div>
       </form>
     </div>

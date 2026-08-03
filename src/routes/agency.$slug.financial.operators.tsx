@@ -14,7 +14,7 @@ import {
 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAgency } from "@/lib/agency-context";
-import { money } from "@/lib/formatters";
+import { formatCurrency } from "@/lib/formatters";
 import { PageHeader } from "@/components/shell/PageHeader";
 import { useConfirm } from "@/hooks/use-confirm";
 
@@ -202,7 +202,7 @@ function OperatorsFinancial() {
                     Volume Total de Operações
                   </span>
                 </div>
-                <p className="text-2xl font-extrabold text-foreground">{money(totalVolume, "BRL")}</p>
+                <p className="text-2xl font-extrabold text-foreground">{formatCurrency(totalVolume, "BRL")}</p>
                 <p className="ds-meta text-muted-foreground mt-0.5">
                   Soma de todos os lançamentos via operadoras
                 </p>
@@ -215,7 +215,7 @@ function OperatorsFinancial() {
                     Recebido via Operadoras
                   </span>
                 </div>
-                <p className="text-2xl font-extrabold text-emerald-600">{money(totalPaid, "BRL")}</p>
+                <p className="text-2xl font-extrabold text-emerald-600">{formatCurrency(totalPaid, "BRL")}</p>
                 <p className="ds-meta text-muted-foreground mt-0.5">
                   Parcelas confirmadas como pagas
                 </p>
@@ -228,7 +228,7 @@ function OperatorsFinancial() {
                     A Receber (Operadoras)
                   </span>
                 </div>
-                <p className="text-2xl font-extrabold text-amber-600">{money(totalPending, "BRL")}</p>
+                <p className="text-2xl font-extrabold text-amber-600">{formatCurrency(totalPending, "BRL")}</p>
                 <p className="ds-meta text-muted-foreground mt-0.5">
                   Parcelas pendentes via operadoras
                 </p>
@@ -284,7 +284,7 @@ function OperatorsFinancial() {
                           </span>
                         </td>
                         <td className="p-4 text-right font-mono font-semibold text-foreground">
-                          {money(r.amount_brl ?? r.amount, r.currency ?? "BRL")}
+                          {formatCurrency(r.amount_brl ?? r.amount, r.currency ?? "BRL")}
                         </td>
                         <td className="p-4">
                           <StatusBadge tone={PAYABLE_STATUS_MAP[r.status]?.tone ?? "neutral"}>
@@ -355,7 +355,7 @@ function OperatorsFinancial() {
                           {i.payment_method?.replace("_", " ") ?? "—"}
                         </td>
                         <td className="p-4 text-right font-mono font-semibold text-foreground">
-                          {money(i.amount, "BRL")}
+                          {formatCurrency(i.amount, "BRL")}
                         </td>
                         <td className="p-4">
                           <StatusBadge tone={PAYABLE_STATUS_MAP[i.status]?.tone ?? "neutral"}>

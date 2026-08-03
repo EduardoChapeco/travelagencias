@@ -3,7 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 import { fetchClientGiftCards } from "@/services/client-area";
 import { PageHeader, EmptyState } from "@/components/shell/PageHeader";
 import { StatusBadge } from "@/components/ui/badge";
-import { money } from "@/lib/formatters";
+import { formatCurrency } from "@/lib/formatters";
 
 export const Route = createFileRoute("/client/giftcards")({
   head: ({ context }: any) => ({ meta: [{ title: `Gift cards · ${context?.brand?.platform_name || 'Turis'}` }] }),
@@ -37,10 +37,10 @@ function Page() {
                 </StatusBadge>
               </div>
               <div className="mt-4 text-3xl font-semibold">
-                {money(Number(g.balance), g.currency)}
+                {formatCurrency(Number(g.balance), g.currency)}
               </div>
               <div className="text-xs text-muted-foreground">
-                de {money(Number(g.initial_value), g.currency)}
+                de {formatCurrency(Number(g.initial_value), g.currency)}
               </div>
               {g.recipient_name && <div className="mt-3 text-sm">Para: {g.recipient_name}</div>}
               {g.message && <p className="mt-2 italic text-xs">"{g.message}"</p>}
