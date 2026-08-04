@@ -13,7 +13,9 @@ import { supabase } from "@/integrations/supabase/client";
 import { FormInput as Input } from "@/components/ui/input";
 
 export const Route = createFileRoute("/m/payment/$token")({
-  head: ({ context }: any) => ({ meta: [{ title: `Meu Carnê Digital · ${context?.brand?.platform_name || 'Turis'}` }] }),
+  head: ({ context }: any) => ({
+    meta: [{ title: `Meu Carnê Digital · ${context?.brand?.platform_name || "Turis"}` }],
+  }),
   component: Page,
 });
 
@@ -142,17 +144,13 @@ function Page() {
 
       <section className="mb-8 grid grid-cols-2 gap-4">
         <div className="rounded-[var(--radius-card)] border-none/50 glass-card border-none p-5 text-center ">
-          <div className="ds-label-caps text-muted-foreground">
-            Total Pago
-          </div>
+          <div className="ds-label-caps text-muted-foreground">Total Pago</div>
           <div className="mt-2 text-lg font-bold text-success">
             {totalPaid.toLocaleString("pt-BR", { style: "currency", currency: "BRL" })}
           </div>
         </div>
         <div className="rounded-[var(--radius-card)] border-none/50 glass-card border-none p-5 text-center ">
-          <div className="ds-label-caps text-muted-foreground">
-            Restante
-          </div>
+          <div className="ds-label-caps text-muted-foreground">Restante</div>
           <div className="mt-2 text-lg font-bold text-foreground">
             {totalDue.toLocaleString("pt-BR", { style: "currency", currency: "BRL" })}
           </div>
@@ -186,17 +184,11 @@ function Page() {
                 className={`w-[calc(100%-3rem)] md:w-[calc(50%-2rem)] rounded-[var(--radius-card)] border glass-card border-none p-4  transition-all hover: ${isPaid ? "border-success/30 bg-success/5" : isOverdue ? "border-danger/40 bg-danger/5" : "border-border/50 hover:border-brand/40"}`}
               >
                 <div className="flex items-center justify-between mb-2">
-                  <div className="ds-label-caps text-muted-foreground">
-                    Parcela {index + 1}
-                  </div>
+                  <div className="ds-label-caps text-muted-foreground">Parcela {index + 1}</div>
                   {isPaid ? (
-                    <span className="ds-label-caps text-success">
-                      Quitada
-                    </span>
+                    <span className="ds-label-caps text-success">Quitada</span>
                   ) : (
-                    <span
-                      className={`ds-label-caps ${isOverdue ? "text-danger" : "text-warning"}`}
-                    >
+                    <span className={`ds-label-caps ${isOverdue ? "text-danger" : "text-warning"}`}>
                       {isOverdue ? "Atrasada" : "Pendente"}
                     </span>
                   )}
@@ -211,7 +203,7 @@ function Page() {
                     </div>
                   </div>
                   {!isPaid && (
-                    <Button className="flex h-8 w-8 items-center justify-center rounded-full glass bg-white/5 border-white/10 text-brand transition-colors hover:bg-brand hover:text-white">
+                    <Button className="flex h-8 w-8 items-center justify-center rounded-full glass text-brand transition-colors hover:bg-brand hover:text-white">
                       <QrCode className="h-4 w-4" />
                     </Button>
                   )}
@@ -226,7 +218,7 @@ function Page() {
         <Sheet onClose={() => setSelectedInst(null)} title="Pagamento">
           <div className="p-6">
             <div className="mb-8 text-center">
-              <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full glass bg-white/5 border-white/10 text-brand">
+              <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full glass text-brand">
                 <QrCode className="h-8 w-8" />
               </div>
               <h2 className="text-2xl font-bold text-foreground">
@@ -242,14 +234,15 @@ function Page() {
 
             <div className="space-y-4">
               {selectedInst.payment_method === "pix" && selectedInst.external_link ? (
-                <div className="rounded-[var(--radius-card)] border-none/50 glass bg-white/5 border-white/10/30 p-5 text-center">
+                <div className="rounded-[var(--radius-card)] border-none/50 glass/30 p-5 text-center">
                   <div className="mb-4 text-xs font-semibold uppercase tracking-widest text-muted-foreground">
                     PIX Copia e Cola
                   </div>
                   <div className="break-all rounded-full glass-card border-none p-3 font-mono ds-meta text-foreground ring-1 ring-border ">
                     {selectedInst.external_link}
                   </div>
-                  <Button variant="default"
+                  <Button
+                    variant="default"
                     onClick={() => copyToClipboard(selectedInst.external_link!)}
                     className="mt-4 w-full gap-2"
                   >
@@ -261,7 +254,7 @@ function Page() {
                       Enviar Comprovante de Pagamento
                     </label>
                     <div className="space-y-2">
-                      <label className="flex flex-col items-center justify-center border-2 border-dashed border-border rounded-[var(--radius-card)] p-4 glass-card border-none hover:glass bg-white/5 border-white/10 transition-colors cursor-pointer text-center">
+                      <label className="flex flex-col items-center justify-center border-2 border-dashed border-border rounded-[var(--radius-card)] p-4 glass-card border-none hover:glass transition-colors cursor-pointer text-center">
                         <span className="text-xs font-bold text-brand">
                           {isUploading ? "Enviando..." : "Selecionar Comprovante (Imagem/PDF)"}
                         </span>
@@ -281,14 +274,15 @@ function Page() {
                   </div>
                 </div>
               ) : selectedInst.payment_method === "credit_card" && selectedInst.external_link ? (
-                <div className="rounded-[var(--radius-card)] border-none/50 glass bg-white/5 border-white/10/30 p-5 text-center">
+                <div className="rounded-[var(--radius-card)] border-none/50 glass/30 p-5 text-center">
                   <div className="mb-4 text-xs font-semibold uppercase tracking-widest text-muted-foreground">
                     Pagamento via Cartão
                   </div>
                   <p className="mb-4 text-sm text-muted-foreground">
                     Você será redirecionado para o ambiente seguro do banco.
                   </p>
-                  <Button variant="default"
+                  <Button
+                    variant="default"
                     onClick={() => window.open(selectedInst.external_link!, "_blank")}
                     className="w-full gap-2"
                   >

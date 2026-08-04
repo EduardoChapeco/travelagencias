@@ -4,16 +4,16 @@ Esta matriz verifica se os componentes fundamentais e utilitários da plataforma
 
 ## Mapeamento de Conformidade por Primitiva
 
-| Componente | Uso de Cor Canônico | Uso de Border Radius | Uso de Shadow (Nulo) | Uso de Glassmorphism | Estado de Conformidade |
-| :--- | :--- | :--- | :--- | :--- | :--- |
-| **Button (`button.tsx`)** | `var(--color-primary)` | `var(--radius-button)` | `shadow-none` (nulo) | Não se aplica | 🟢 EM CONFORMIDADE |
-| **Badge (`badge.tsx`)** | `var(--color-success)` etc. | `var(--radius-badge)` | `shadow-none` (nulo) | Não se aplica | 🟢 EM CONFORMIDADE |
-| **Dialog (`dialog.tsx`)** | `var(--color-foreground)` | `var(--radius-card)` | `shadow-none` (nulo) | `.mac-glass-modal` | 🟢 EM CONFORMIDADE |
-| **AlertDialog (`alert-dialog.tsx`)** | `var(--color-foreground)` | `var(--radius-card)` | `shadow-none` (nulo) | `.mac-glass-modal` | 🟢 EM CONFORMIDADE |
-| **Sheet (`sheet.tsx`)** | `var(--color-foreground)` | `var(--radius-sheet)` | `shadow-none` (nulo) | `.mac-glass-modal` | 🟢 EM CONFORMIDADE |
-| **Popover (`popover.tsx`)** | `var(--color-foreground)` | `rounded-[20px]` (hardcode) | `shadow-none` (nulo) | `.mac-glass-modal` | 🟡 PARCIAL (Hardcode radius) |
-| **Select (`select.tsx`)** | `var(--color-foreground)` | `rounded-[20px]` (hardcode) | `shadow-none` (nulo) | `.mac-glass-modal` | 🟡 PARCIAL (Hardcode radius) |
-| **Inputs (`form.tsx`)** | `var(--color-border)` | `var(--radius-input)` | `shadow-none` (nulo) | Transparent/Sólido | 🟢 EM CONFORMIDADE |
+| Componente                           | Uso de Cor Canônico         | Uso de Border Radius        | Uso de Shadow (Nulo) | Uso de Glassmorphism | Estado de Conformidade       |
+| :----------------------------------- | :-------------------------- | :-------------------------- | :------------------- | :------------------- | :--------------------------- |
+| **Button (`button.tsx`)**            | `var(--color-primary)`      | `var(--radius-button)`      | `shadow-none` (nulo) | Não se aplica        | 🟢 EM CONFORMIDADE           |
+| **Badge (`badge.tsx`)**              | `var(--color-success)` etc. | `var(--radius-badge)`       | `shadow-none` (nulo) | Não se aplica        | 🟢 EM CONFORMIDADE           |
+| **Dialog (`dialog.tsx`)**            | `var(--color-foreground)`   | `var(--radius-card)`        | `shadow-none` (nulo) | `.mac-glass-modal`   | 🟢 EM CONFORMIDADE           |
+| **AlertDialog (`alert-dialog.tsx`)** | `var(--color-foreground)`   | `var(--radius-card)`        | `shadow-none` (nulo) | `.mac-glass-modal`   | 🟢 EM CONFORMIDADE           |
+| **Sheet (`sheet.tsx`)**              | `var(--color-foreground)`   | `var(--radius-sheet)`       | `shadow-none` (nulo) | `.mac-glass-modal`   | 🟢 EM CONFORMIDADE           |
+| **Popover (`popover.tsx`)**          | `var(--color-foreground)`   | `rounded-[20px]` (hardcode) | `shadow-none` (nulo) | `.mac-glass-modal`   | 🟡 PARCIAL (Hardcode radius) |
+| **Select (`select.tsx`)**            | `var(--color-foreground)`   | `rounded-[20px]` (hardcode) | `shadow-none` (nulo) | `.mac-glass-modal`   | 🟡 PARCIAL (Hardcode radius) |
+| **Inputs (`form.tsx`)**              | `var(--color-border)`       | `var(--radius-input)`       | `shadow-none` (nulo) | Transparent/Sólido   | 🟢 EM CONFORMIDADE           |
 
 ---
 

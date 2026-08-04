@@ -33,7 +33,7 @@ serve(async (req) => {
 
     // Create user-scoped client using the caller's JWT to enforce RLS
     const userClient = createClient(supabaseUrl, anonKey, {
-      global: { headers: { Authorization: authHeader } }
+      global: { headers: { Authorization: authHeader } },
     });
 
     // Attempt to select the quote request. If RLS blocks it, the user is unauthorized.
@@ -44,7 +44,9 @@ serve(async (req) => {
       .single();
 
     if (userReqErr || !userRequest) {
-      console.warn(`Acesso negado ou cotação inexistente para quote_request_id: ${quote_request_id}`);
+      console.warn(
+        `Acesso negado ou cotação inexistente para quote_request_id: ${quote_request_id}`,
+      );
       return new Response(JSON.stringify({ error: "Cotação não encontrada ou acesso negado." }), {
         headers: { ...corsHeaders, "Content-Type": "application/json" },
         status: 403,
@@ -54,11 +56,13 @@ serve(async (req) => {
     // 2. Fetch Quote Request com dados de Leads/Clientes
     const { data: request, error: reqErr } = await supabaseAdmin
       .from("quote_requests")
-      .select(`
+      .select(
+        `
         *,
         lead:lead_id (name, phone, email),
         client:client_id (full_name)
-      `)
+      `,
+      )
       .eq("id", quote_request_id)
       .single();
 
@@ -68,17 +72,23 @@ serve(async (req) => {
 
     const agencyId = request.agency_id;
     const intent = request.normalized_intent || {};
-    
+
     // 3. Extrair dados da Intenção de Viagem (com fallbacks inteligentes)
     const originName = intent.origin?.[0]?.name || "São Paulo";
     const destName = intent.destinations?.[0]?.name || "Jericoacoara";
-    const checkin = intent.dateWindow?.start || new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0];
-    const checkout = intent.dateWindow?.end || new Date(Date.now() + 37 * 24 * 60 * 60 * 1000).toISOString().split('T')[0];
+    const checkin =
+      intent.dateWindow?.start ||
+      new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString().split("T")[0];
+    const checkout =
+      intent.dateWindow?.end ||
+      new Date(Date.now() + 37 * 24 * 60 * 60 * 1000).toISOString().split("T")[0];
     const adults = intent.travelers?.adults || 2;
     const budgetLimit = intent.budget?.amount || 10000;
     const currency = intent.budget?.currency || "BRL";
 
-    console.log(`Iniciando motor inteligente para a agência ${agencyId}. Destino: ${destName}, Checkin: ${checkin}`);
+    console.log(
+      `Iniciando motor inteligente para a agência ${agencyId}. Destino: ${destName}, Checkin: ${checkin}`,
+    );
 
     // 4. Verificar se a agência possui credenciais reais configuradas no banco
     const { data: apiKeys } = await supabaseAdmin
@@ -87,8 +97,15 @@ serve(async (req) => {
       .eq("agency_id", agencyId)
       .in("provider", ["infotravel_username", "infotravel_password"]);
 
-    const hasRealKeys = apiKeys && apiKeys.length >= 2 && 
-      apiKeys.every(k => k.key_value && k.key_value.toLowerCase() !== "test" && k.key_value.toLowerCase() !== "sandbox");
+    const hasRealKeys =
+      apiKeys &&
+      apiKeys.length >= 2 &&
+      apiKeys.every(
+        (k) =>
+          k.key_value &&
+          k.key_value.toLowerCase() !== "test" &&
+          k.key_value.toLowerCase() !== "sandbox",
+      );
 
     let hotels: any[] = [];
     let isSimulated = true;
@@ -99,19 +116,19 @@ serve(async (req) => {
       try {
         console.log("Credenciais reais encontradas. Invocando infotravel-connector...");
         const connectorUrl = `${supabaseUrl}/functions/v1/infotravel-connector`;
-        
+
         // Chamada de busca de hotéis
         const hotelRes = await fetch(connectorUrl, {
           method: "POST",
           headers: {
-            "Authorization": `Bearer ${serviceRoleKey}`,
-            "Content-Type": "application/json"
+            Authorization: `Bearer ${serviceRoleKey}`,
+            "Content-Type": "application/json",
           },
           body: JSON.stringify({
             action: "search_hotels",
             agencyId,
-            params: { checkin, checkout, destination: destName, quoteRequestId: quote_request_id }
-          })
+            params: { checkin, checkout, destination: destName, quoteRequestId: quote_request_id },
+          }),
         });
 
         if (hotelRes.ok) {
@@ -129,14 +146,18 @@ serve(async (req) => {
         warnings.push("Erro de conexão com o GDS. Usando simulação inteligente.");
       }
     } else {
-      console.log("Nenhuma credencial ativa ou credenciais de simulação. Gerando alternativas dinâmicas...");
-      warnings.push("Usando dados operacionais simulados (Credenciais GDS ausentes ou em modo sandbox).");
+      console.log(
+        "Nenhuma credencial ativa ou credenciais de simulação. Gerando alternativas dinâmicas...",
+      );
+      warnings.push(
+        "Usando dados operacionais simulados (Credenciais GDS ausentes ou em modo sandbox).",
+      );
     }
 
     // 6. Gerador Dinâmico de Alternativas Logísticas (Fallback Estruturado Não-Estático)
     // Evita hardcodes estáticos. Gera alternativas combinatórias baseadas no orçamento real do cliente.
     const candidatesToInsert = [];
-    
+
     if (isSimulated || hotels.length === 0) {
       // Alternativa A: Pacote Conforto Premium (Foco em Hotelaria Superior)
       const priceA = Math.round(budgetLimit * 0.85 * 100) / 100;
@@ -149,15 +170,19 @@ serve(async (req) => {
         warnings: [...warnings, "Opção de voo com melhor tempo de conexão."],
         // Scorecard Heurístico
         scorecard: {
-          explanation: "Excelente equilíbrio. Voo direto economiza tempo de layover e o hotel possui excelente padrão de conforto.",
+          explanation:
+            "Excelente equilíbrio. Voo direto economiza tempo de layover e o hotel possui excelente padrão de conforto.",
           dimensions: { flight_score: 95, hotel_score: 90, logistics_score: 92 },
-          bonuses: [{ reason: "Voo Direto (Sem Conexão)", impact: 15 }, { reason: "Localização Central do Hotel", impact: 10 }],
-          penalties: []
-        }
+          bonuses: [
+            { reason: "Voo Direto (Sem Conexão)", impact: 15 },
+            { reason: "Localização Central do Hotel", impact: 10 },
+          ],
+          penalties: [],
+        },
       });
 
       // Alternativa B: Pacote Econômico Inteligente (Foco em Preço)
-      const priceB = Math.round(budgetLimit * 0.60 * 100) / 100;
+      const priceB = Math.round(budgetLimit * 0.6 * 100) / 100;
       candidatesToInsert.push({
         name: `Pacote Smart: Voo com Conexão + Hotel Categoria Turística em ${destName}`,
         description: `Melhor custo-benefício para viajantes econômicos. Inclui diárias em pousada charmosa e voos com conexão rápida.`,
@@ -167,11 +192,15 @@ serve(async (req) => {
         warnings: [...warnings, "Requer atenção ao tempo de conexão na ida."],
         // Scorecard Heurístico
         scorecard: {
-          explanation: "Preço altamente competitivo. Contudo, possui escala de 3h em aeroporto gateway e hotel de categoria básica.",
+          explanation:
+            "Preço altamente competitivo. Contudo, possui escala de 3h em aeroporto gateway e hotel de categoria básica.",
           dimensions: { flight_score: 65, hotel_score: 75, logistics_score: 70 },
           bonuses: [{ reason: "Economia substancial de tarifa", impact: 20 }],
-          penalties: [{ reason: "Layover de conexão prolongado (>2h)", impact: 10 }, { reason: "Hotel sem regime de pensão completa", impact: 5 }]
-        }
+          penalties: [
+            { reason: "Layover de conexão prolongado (>2h)", impact: 10 },
+            { reason: "Hotel sem regime de pensão completa", impact: 5 },
+          ],
+        },
       });
     }
 
@@ -189,10 +218,13 @@ serve(async (req) => {
     // CORRIGE OS BUGS DE CONTRATO P0 AUDITADOS
     for (const pkg of candidatesToInsert) {
       // A. Calcular Score Final Baseado nas Regras Reais do Banco
-      const rawScore = (pkg.scorecard.dimensions.flight_score * (weights.logistics || 0.2)) + 
-                       (pkg.scorecard.dimensions.hotel_score * (weights.comfort || 0.4)) +
-                       (pkg.total_price <= budgetLimit ? 100 * (weights.price || 0.4) : 50 * (weights.price || 0.4));
-      
+      const rawScore =
+        pkg.scorecard.dimensions.flight_score * (weights.logistics || 0.2) +
+        pkg.scorecard.dimensions.hotel_score * (weights.comfort || 0.4) +
+        (pkg.total_price <= budgetLimit
+          ? 100 * (weights.price || 0.4)
+          : 50 * (weights.price || 0.4));
+
       const finalScore = Math.min(100, Math.max(10, Math.round(rawScore)));
 
       // B. Inserção na tabela package_candidates (com colunas corrigidas)
@@ -206,7 +238,7 @@ serve(async (req) => {
           currency: pkg.currency,
           provider_references: pkg.provider_references, // Correção: Coluna agora existe
           score: finalScore,
-          warnings: pkg.warnings
+          warnings: pkg.warnings,
         })
         .select("id")
         .single();
@@ -214,17 +246,15 @@ serve(async (req) => {
       if (pkgErr) throw new Error(`Falha ao salvar candidato a pacote: ${pkgErr.message}`);
 
       // C. Inserção na tabela package_scorecards (com nomes de colunas corretos)
-      const { error: cardErr } = await supabaseAdmin
-        .from("package_scorecards")
-        .insert({
-          package_candidate_id: insertedPkg.id, // Correção: candidate_id -> package_candidate_id
-          rule_version_set: activeProfile?.version?.toString() || "v1.0-master", // Correção: Campo obrigatório preenchido
-          dimensions: pkg.scorecard.dimensions,
-          penalties: pkg.scorecard.penalties,
-          bonuses: pkg.scorecard.bonuses,
-          final_score: finalScore,
-          explanation: pkg.scorecard.explanation
-        });
+      const { error: cardErr } = await supabaseAdmin.from("package_scorecards").insert({
+        package_candidate_id: insertedPkg.id, // Correção: candidate_id -> package_candidate_id
+        rule_version_set: activeProfile?.version?.toString() || "v1.0-master", // Correção: Campo obrigatório preenchido
+        dimensions: pkg.scorecard.dimensions,
+        penalties: pkg.scorecard.penalties,
+        bonuses: pkg.scorecard.bonuses,
+        final_score: finalScore,
+        explanation: pkg.scorecard.explanation,
+      });
 
       if (cardErr) {
         throw new Error(`Falha ao salvar scorecard do candidato: ${cardErr.message}`);
@@ -241,17 +271,23 @@ serve(async (req) => {
 
     console.log(`Motor de cotações concluído com sucesso para o ID: ${quote_request_id}`);
 
-    return new Response(JSON.stringify({ success: true, message: "Cotação inteligente gerada e persistida com sucesso." }), {
-      headers: { ...corsHeaders, "Content-Type": "application/json" },
-      status: 200,
-    });
-
+    return new Response(
+      JSON.stringify({
+        success: true,
+        message: "Cotação inteligente gerada e persistida com sucesso.",
+      }),
+      {
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+        status: 200,
+      },
+    );
   } catch (error: any) {
     console.error("Erro fatal no motor de cotações:", error);
     // Mascara mensagens de erro brutas do banco de dados (Segurança P3)
-    const safeErrorMessage = error.message.includes("does not exist") || error.message.includes("violates") 
-      ? "Erro interno de consistência de schema de banco de dados. Contate o administrador."
-      : error.message;
+    const safeErrorMessage =
+      error.message.includes("does not exist") || error.message.includes("violates")
+        ? "Erro interno de consistência de schema de banco de dados. Contate o administrador."
+        : error.message;
 
     return new Response(JSON.stringify({ error: safeErrorMessage }), {
       headers: { ...corsHeaders, "Content-Type": "application/json" },

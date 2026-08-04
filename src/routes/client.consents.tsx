@@ -10,7 +10,9 @@ import { cn } from "@/lib/utils";
 import { toast } from "sonner";
 
 export const Route = createFileRoute("/client/consents")({
-  head: ({ context }: any) => ({ meta: [{ title: `Privacidade e LGPD · ${context?.brand?.platform_name || 'Turis'}` }] }),
+  head: ({ context }: any) => ({
+    meta: [{ title: `Privacidade e LGPD · ${context?.brand?.platform_name || "Turis"}` }],
+  }),
   component: ClientConsentsPage,
 });
 
@@ -116,7 +118,7 @@ function ClientConsentsPage() {
 
         {q.data?.missing.length === 0 && (
           <div className="relative overflow-hidden rounded-[var(--radius-card)] border border-success/30 bg-success/5 p-8 text-center transition-all hover:border-success/50">
-            <div className="absolute inset-0 glass bg-white/5 border-white/10/10 pointer-events-none" />
+            <div className="absolute inset-0 glass/10 pointer-events-none" />
             <div className="relative z-10 flex flex-col items-center">
               <div className="flex h-16 w-16 items-center justify-center rounded-full bg-success/10 text-success mb-4">
                 <CheckCircle2 className="h-8 w-8" />
@@ -145,7 +147,7 @@ function ClientConsentsPage() {
                   <div>
                     <h4 className="text-base font-bold text-foreground flex items-center gap-2">
                       {KIND_LABELS[m.kind] || m.kind}
-                      <span className="inline-flex items-center rounded-full glass bg-white/5 border-white/10 px-2 py-0.5 ds-meta font-semibold text-muted-foreground border-none">
+                      <span className="inline-flex items-center rounded-full glass px-2 py-0.5 ds-meta font-semibold text-muted-foreground border-none">
                         v{m.version}
                       </span>
                     </h4>
@@ -156,7 +158,8 @@ function ClientConsentsPage() {
                     </p>
                   </div>
                 </div>
-                <Button variant="default"
+                <Button
+                  variant="default"
                   disabled={acceptM.isPending}
                   onClick={() => acceptM.mutate(m.id)}
                   className="w-full md:w-auto shrink-0 gap-2 h-11 px-6"
@@ -204,7 +207,7 @@ function ClientConsentsPage() {
                         <Clock className="h-3.5 w-3.5" /> {formatDate(a.accepted_at)}
                       </span>
                       {a.ip_address && (
-                        <span className="font-mono ds-meta glass bg-white/5 border-white/10 px-2 py-0.5 rounded border-none">
+                        <span className="font-mono ds-meta glass px-2 py-0.5 rounded border-none">
                           IP: {a.ip_address}
                         </span>
                       )}

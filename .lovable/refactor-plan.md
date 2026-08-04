@@ -1,16 +1,17 @@
 # PLANO DE REFATORAÇÃO E ESTABILIZAÇÃO TOTAL (FASE B)
+
 Data: 2026-06-28
 Baseado no inventário gerado na FASE A.
 
 ## 2.1. Matriz de Decisão
 
-| ID | Problema | Severidade | Ação | Risco de quebra | Dependentes |
-|----|----------|------------|------|-----------------|-------------|
-| P01 | Tipagens Quebradas (`ticket_timeline`, `knowledge_documents`) | P0 | **IMPLEMENTAR REAL** | Alto | Support, AI Brain |
-| P02 | 156+ Mocks e Valores Falsos (`Math.random()`, TODOs) | P1 | **REMOVER/IMPLEMENTAR** | Médio | Componentes Visuais, CMS |
-| P03 | Múltiplas instâncias de `createClient()` | P1 | **MERGEAR** | Médio | Auth, APIs |
-| P04 | Edge Functions (Lógica Interna) | P2 | **MIGRAR** | Baixo | Client-side calls |
-| P05 | Dependências Órfãs no package.json | P2 | **REMOVER** | Baixo | - |
+| ID  | Problema                                                      | Severidade | Ação                    | Risco de quebra | Dependentes              |
+| --- | ------------------------------------------------------------- | ---------- | ----------------------- | --------------- | ------------------------ |
+| P01 | Tipagens Quebradas (`ticket_timeline`, `knowledge_documents`) | P0         | **IMPLEMENTAR REAL**    | Alto            | Support, AI Brain        |
+| P02 | 156+ Mocks e Valores Falsos (`Math.random()`, TODOs)          | P1         | **REMOVER/IMPLEMENTAR** | Médio           | Componentes Visuais, CMS |
+| P03 | Múltiplas instâncias de `createClient()`                      | P1         | **MERGEAR**             | Médio           | Auth, APIs               |
+| P04 | Edge Functions (Lógica Interna)                               | P2         | **MIGRAR**              | Baixo           | Client-side calls        |
+| P05 | Dependências Órfãs no package.json                            | P2         | **REMOVER**             | Baixo           | -                        |
 
 ## 2.2. Ordem de Execução (DAG)
 
@@ -33,4 +34,5 @@ Baseado no inventário gerado na FASE A.
    - Rodar `tsc --noEmit` garantindo Zero Warnings.
 
 ## 2.3. Feature Flags
+
 Todas as substituições visuais do Expurgo de Mocks (Onda 3) que não tiverem endpoint pronto serão escondidas sob Feature Flags (ex: exibição do Chatbot na landing page) ao invés de exibir "dados de brinquedo".

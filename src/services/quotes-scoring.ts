@@ -100,7 +100,7 @@ export async function scorePackageCandidate(
   let flightScore = 100;
   let hotelScore = 100;
   let logisticsScore = 100;
-  let experienceScore = 100;
+  const experienceScore = 100;
 
   // Analisar passageiros para regras condicionais (crianças)
   const intent = candidate.quote_requests?.normalized_intent as unknown as TravelIntent;
@@ -313,7 +313,9 @@ export async function scorePackageCandidate(
         .eq("agency_id", agencyId)
         .eq("status", "active");
 
-      const activeVersionIds = dbRules?.map((r) => r.current_version_id).filter(Boolean) as string[];
+      const activeVersionIds = dbRules
+        ?.map((r) => r.current_version_id)
+        .filter(Boolean) as string[];
 
       if (activeVersionIds && activeVersionIds.length > 0) {
         const { data: versions } = await supabase
@@ -332,13 +334,20 @@ export async function scorePackageCandidate(
               const valStr = String(offerValue).toLowerCase();
               const ruleStr = String(ruleValue).toLowerCase();
               switch (operator) {
-                case "eq": return offerValue === ruleValue;
-                case "neq": return offerValue !== ruleValue;
-                case "gt": return Number(offerValue) > Number(ruleValue);
-                case "lt": return Number(offerValue) < Number(ruleValue);
-                case "contains": return valStr.includes(ruleStr);
-                case "not_contains": return !valStr.includes(ruleStr);
-                default: return false;
+                case "eq":
+                  return offerValue === ruleValue;
+                case "neq":
+                  return offerValue !== ruleValue;
+                case "gt":
+                  return Number(offerValue) > Number(ruleValue);
+                case "lt":
+                  return Number(offerValue) < Number(ruleValue);
+                case "contains":
+                  return valStr.includes(ruleStr);
+                case "not_contains":
+                  return !valStr.includes(ruleStr);
+                default:
+                  return false;
               }
             };
 
@@ -371,7 +380,9 @@ export async function scorePackageCandidate(
               const hotels = offers.filter((o) => o.productType === "hotel");
               for (const h of hotels) {
                 for (const opt of h.accommodations || []) {
-                  const hasFreeCancellation = h.policies?.some((p) => p.type === "cancellation" && !p.isPenaltyActive) || false;
+                  const hasFreeCancellation =
+                    h.policies?.some((p) => p.type === "cancellation" && !p.isPenaltyActive) ||
+                    false;
                   const boardDesc = opt.rooms?.[0]?.boardDescription || "";
 
                   let val: any = null;

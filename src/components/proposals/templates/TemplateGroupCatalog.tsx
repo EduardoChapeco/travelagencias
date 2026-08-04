@@ -59,7 +59,7 @@ export default function TemplateGroupCatalog({ proposal: p, agency }: TemplatePr
             <div className="flex items-center gap-1.5">
               <MapPin className="w-5 h-5 text-red-500" /> {p.destination || "Destino"}
             </div>
-            <div className="w-1.5 h-1.5 rounded-full bg-white/50" />
+            <div className="w-1.5 h-1.5 rounded-full bg-foreground/50" />
             <div className="flex items-center gap-1.5">
               <Calendar className="w-5 h-5 text-red-500" />{" "}
               {p.travel_start ? formatDate(p.travel_start) : "A definir"}
@@ -119,9 +119,7 @@ export default function TemplateGroupCatalog({ proposal: p, agency }: TemplatePr
             style={{ borderColor: brand }}
           >
             <div className="text-center mb-6 border-b border-slate-100 pb-6">
-              <div className="ds-label-caps text-slate-400 mb-1">
-                A partir de
-              </div>
+              <div className="ds-label-caps text-slate-400 mb-1">A partir de</div>
               <div className="text-5xl font-black tracking-tighter text-slate-900">
                 <span className="text-2xl align-top">R$</span>{" "}
                 {Math.floor(vm.totals.valorParcelaCartao)}

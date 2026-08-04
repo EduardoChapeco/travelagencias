@@ -40,7 +40,7 @@ export function RichTextEditorInner({
     editorProps: {
       attributes: {
         class:
-          "prose prose-sm dark:prose-invert max-w-none min-h-[300px] p-4 outline-none focus:ring-0",
+          "prose prose-sm dark:prose-invert max-w-none min-h-72 p-4 outline-none focus:ring-0",
       },
     },
   });

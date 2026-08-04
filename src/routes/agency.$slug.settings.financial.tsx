@@ -33,7 +33,9 @@ import { Button } from "@/components/ui/button";
 import { StatusBadge } from "@/components/ui/badge";
 
 export const Route = createFileRoute("/agency/$slug/settings/financial")({
-  head: ({ context }: any) => ({ meta: [{ title: `Fechamentos & Comissões · ${context?.brand?.platform_name || 'Turis'}` }] }),
+  head: ({ context }: any) => ({
+    meta: [{ title: `Fechamentos & Comissões · ${context?.brand?.platform_name || "Turis"}` }],
+  }),
   component: FinancialSettingsPage,
 });
 
@@ -245,10 +247,7 @@ function FinancialSettingsPage() {
 
   const deletePlan = useMutation({
     mutationFn: async (planId: string) => {
-      const { error } = await supabase
-        .from("seller_commission_plans")
-        .delete()
-        .eq("id", planId);
+      const { error } = await supabase.from("seller_commission_plans").delete().eq("id", planId);
       if (error) throw error;
     },
     onSuccess: () => {
@@ -264,24 +263,24 @@ function FinancialSettingsPage() {
 
   return (
     <div className="flex h-full flex-col overflow-hidden">
-              <PageHeader
-          title="Finanças"
-          filters={[
-            { label: "Fechamento Mensal", value: "closing" },
-            { label: "Planos de Comissões", value: "commissions" },
-          ]}
-          activeFilter={activeTab}
-          onFilterChange={(v) => setActiveTab(v as any)}
-          primaryAction={
-            activeTab === "commissions" ? (
-              <ModuleActionButton
-                label="Novo Plano"
-                icon={<Plus className="h-3.5 w-3.5" />}
-                onClick={() => setShowPlanModal(true)}
-              />
-            ) : undefined
-          }
-        />
+      <PageHeader
+        title="Finanças"
+        filters={[
+          { label: "Fechamento Mensal", value: "closing" },
+          { label: "Planos de Comissões", value: "commissions" },
+        ]}
+        activeFilter={activeTab}
+        onFilterChange={(v) => setActiveTab(v as any)}
+        primaryAction={
+          activeTab === "commissions" ? (
+            <ModuleActionButton
+              label="Novo Plano"
+              icon={<Plus className="h-3.5 w-3.5" />}
+              onClick={() => setShowPlanModal(true)}
+            />
+          ) : undefined
+        }
+      />
 
       <div className="flex-1 overflow-y-auto px-4  md:pr-6 py-4 min-h-0">
         {/* ─────────────────────────────────────────────────────────────────────
@@ -306,7 +305,7 @@ function FinancialSettingsPage() {
               ) : (
                 <div className="overflow-hidden rounded-[var(--radius-card)] border-none glass-card">
                   <table className="w-full text-xs text-left">
-                    <thead className="glass bg-white/5 border-b border-white/10 ds-meta uppercase font-bold text-muted-foreground">
+                    <thead className="glass border-b border-border ds-meta uppercase font-bold text-muted-foreground">
                       <tr>
                         <th className="px-4 py-3">Mês / Ano</th>
                         <th className="px-4 py-3">Status</th>
@@ -405,7 +404,7 @@ function FinancialSettingsPage() {
                   Carregando planos de comissão...
                 </div>
               ) : (plansQ.data || []).length === 0 ? (
-                <div className="text-center py-10 border border-dashed border-border rounded-[var(--radius-card)] text-xs text-muted-foreground glass bg-white/5">
+                <div className="text-center py-10 border border-dashed border-border rounded-[var(--radius-card)] text-xs text-muted-foreground glass">
                   Nenhum plano de comissão configurado na agência. Clique em "Novo Plano" para
                   parametrizar.
                 </div>
@@ -417,7 +416,7 @@ function FinancialSettingsPage() {
                       className="border-none glass-card rounded-[var(--radius-card)] overflow-hidden text-white"
                     >
                       {/* Card header */}
-                      <div className="flex items-center justify-between px-4 py-3 bg-white/5 border-b border-white/10">
+                      <div className="flex items-center justify-between px-4 py-3 glass border-b border-border">
                         <div>
                           <strong className="text-xs text-white block">{plan.name}</strong>
                           <span className="ds-meta text-muted-foreground">
@@ -512,7 +511,7 @@ function FinancialSettingsPage() {
       {/* New Plan Modal Overlay */}
       <Dialog open={showPlanModal} onOpenChange={setShowPlanModal}>
         <DialogContent className="max-w-md p-0 overflow-hidden border-none/10 max-h-[90vh] glass dark:glass-dark text-white">
-          <DialogHeader className="px-5 py-4 border-b border-white/10 bg-white/5">
+          <DialogHeader className="px-5 py-4 border-b glass">
             <DialogTitle className="flex items-center gap-2">
               <Percent className="w-5 h-5 text-brand" />
               <span className="font-bold text-white text-sm uppercase tracking-wider">
@@ -522,75 +521,74 @@ function FinancialSettingsPage() {
           </DialogHeader>
 
           <div className="p-5 space-y-4 text-xs">
-              <Field label="Nome do Plano *">
-                <Input
-                  value={newPlanName}
-                  onChange={(e) => setNewPlanName(e.target.value)}
-                  placeholder="Ex: Tabela de Comissionamento 2026"
-                  required
-                />
-              </Field>
+            <Field label="Nome do Plano *">
+              <Input
+                value={newPlanName}
+                onChange={(e) => setNewPlanName(e.target.value)}
+                placeholder="Ex: Tabela de Comissionamento 2026"
+                required
+              />
+            </Field>
 
-              <Field label="Vendedor / Agente *">
+            <Field label="Vendedor / Agente *">
+              <Select value={selectedSeller} onValueChange={setSelectedSeller}>
+                <SelectTrigger className="w-full glass rounded-full border-none">
+                  <SelectValue placeholder="Selecione o vendedor..." />
+                </SelectTrigger>
+                <SelectContent>
+                  {sellersQ.data?.map((s: any) => (
+                    <SelectItem key={s.id} value={s.id}>
+                      {s.name}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </Field>
+
+            <div className="grid grid-cols-2 gap-3">
+              <Field label="Modo de Escala *">
                 <Select
-                  value={selectedSeller}
-                  onValueChange={setSelectedSeller}
+                  value={tierMode}
+                  onValueChange={(val) => setTierMode(val as "integral" | "progressive")}
                 >
-                  <SelectTrigger className="w-full bg-white/5 rounded-full border-none">
-                    <SelectValue placeholder="Selecione o vendedor..." />
+                  <SelectTrigger className="w-full glass rounded-full border-none">
+                    <SelectValue placeholder="Selecione o modo..." />
                   </SelectTrigger>
                   <SelectContent>
-                    {sellersQ.data?.map((s: any) => (
-                      <SelectItem key={s.id} value={s.id}>
-                        {s.name}
-                      </SelectItem>
-                    ))}
+                    <SelectItem value="progressive">Progressiva (por fatias)</SelectItem>
+                    <SelectItem value="integral">Integral (alíquota cheia)</SelectItem>
                   </SelectContent>
                 </Select>
               </Field>
 
-              <div className="grid grid-cols-2 gap-3">
-                <Field label="Modo de Escala *">
-                  <Select
-                    value={tierMode}
-                    onValueChange={(val) => setTierMode(val as "integral" | "progressive")}
-                  >
-                    <SelectTrigger className="w-full bg-white/5 rounded-full border-none">
-                      <SelectValue placeholder="Selecione o modo..." />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="progressive">Progressiva (por fatias)</SelectItem>
-                      <SelectItem value="integral">Integral (alíquota cheia)</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </Field>
-
-                <Field label="Vigência inicial *">
-                  <Input
-                    type="date"
-                    value={validFrom}
-                    onChange={(e) => setValidFrom(e.target.value)}
-                    required
-                  />
-                </Field>
-              </div>
-
-              <div className="flex gap-2.5 pt-2 border-t border-border mt-3">
-                <Button variant="ghost"
-                  onClick={() => setShowPlanModal(false)}
-                  className="flex-1 h-10 text-xs"
-                >
-                  Cancelar
-                </Button>
-                <Button variant="default"
-                  onClick={() => createPlan.mutate()}
-                  disabled={createPlan.isPending || !newPlanName || !selectedSeller}
-                  className="flex-1 h-10 ds-label-caps tracking-wider bg-brand hover:opacity-90 text-brand-foreground rounded-[var(--radius-card)]"
-                >
-                  {createPlan.isPending ? "Criando..." : "Salvar Plano"}
-                </Button>
-              </div>
+              <Field label="Vigência inicial *">
+                <Input
+                  type="date"
+                  value={validFrom}
+                  onChange={(e) => setValidFrom(e.target.value)}
+                  required
+                />
+              </Field>
             </div>
+
+            <div className="flex gap-2.5 pt-2 border-t border-border mt-3">
+              <Button
+                variant="ghost"
+                onClick={() => setShowPlanModal(false)}
+                className="flex-1 h-10 text-xs"
+              >
+                Cancelar
+              </Button>
+              <Button
+                variant="default"
+                onClick={() => createPlan.mutate()}
+                disabled={createPlan.isPending || !newPlanName || !selectedSeller}
+                className="flex-1 h-10 ds-label-caps tracking-wider bg-brand hover:opacity-90 text-brand-foreground rounded-[var(--radius-card)]"
+              >
+                {createPlan.isPending ? "Criando..." : "Salvar Plano"}
+              </Button>
+            </div>
+          </div>
         </DialogContent>
       </Dialog>
     </div>

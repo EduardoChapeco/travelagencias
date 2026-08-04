@@ -54,7 +54,8 @@ export function NumField({
       <Input
         type="number"
         min={0}
-        className={SMALL_INPUT} value={v}
+        className={SMALL_INPUT}
+        value={v}
         onChange={(e) => setV(e.target.value)}
         onBlur={() => onSave(parseInt(v) || 0)}
       />
@@ -84,7 +85,8 @@ export function TextField({
       </span>
       <Input
         type={type}
-        className={SMALL_INPUT} value={v}
+        className={SMALL_INPUT}
+        value={v}
         placeholder={placeholder}
         onChange={(e) => setV(e.target.value)}
         onBlur={() => onSave(v)}
@@ -110,7 +112,8 @@ export function Inp({
     <Input
       type={type}
       placeholder={ph}
-      className={SMALL_INPUT} value={v}
+      className={SMALL_INPUT}
+      value={v}
       onChange={(e) => setV(e.target.value)}
       onBlur={() => onChange(v)}
     />
@@ -275,7 +278,8 @@ export function TagsEditor({
         ))}
       </div>
       <Input
-        className={SMALL_INPUT} placeholder={placeholder}
+        className={SMALL_INPUT}
+        placeholder={placeholder}
         value={v}
         onChange={(e) => setV(e.target.value)}
         onKeyDown={(e) => {

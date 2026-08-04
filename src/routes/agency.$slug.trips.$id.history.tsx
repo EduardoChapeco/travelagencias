@@ -6,7 +6,9 @@ import { Clock, User, Activity, FileText, Settings, Shield } from "lucide-react"
 import { formatDate } from "@/lib/formatters";
 
 export const Route = createFileRoute("/agency/$slug/trips/$id/history")({
-  head: ({ context }: any) => ({ meta: [{ title: `Histórico · ${context?.brand?.platform_name || 'Turis'}` }] }),
+  head: ({ context }: any) => ({
+    meta: [{ title: `Histórico · ${context?.brand?.platform_name || "Turis"}` }],
+  }),
   component: TripHistoryPage,
 });
 

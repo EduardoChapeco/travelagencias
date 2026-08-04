@@ -16,7 +16,9 @@ import { Button } from "@/components/ui/button";
 import { EditVehicleModal } from "./agency.$slug.bus-layouts.$id";
 
 export const Route = createFileRoute("/agency/$slug/bus-layouts")({
-  head: ({ context }: any) => ({ meta: [{ title: `Frota & Ônibus · ${context?.brand?.platform_name || 'Turis'}` }] }),
+  head: ({ context }: any) => ({
+    meta: [{ title: `Frota & Ônibus · ${context?.brand?.platform_name || "Turis"}` }],
+  }),
   component: BusLayoutsPage,
 });
 
@@ -54,40 +56,40 @@ function BusLayoutsPage() {
 
   return (
     <div className="w-full flex h-full flex-col overflow-hidden">
-              <PageHeader
-          title="Frota & Ônibus"
-          search={{
-            value: qSearch,
-            onChange: setQSearch,
-            placeholder: "Buscar veículo...",
-          }}
-          filters={[
-            { label: "Todos", value: "all" },
-            { label: "Ônibus", value: "bus" },
-            { label: "Van", value: "van" },
-            { label: "Avião", value: "plane" },
-          ]}
-          activeFilter={typeFilter}
-          onFilterChange={setTypeFilter}
-          actions={
-            isAgencyAdmin ? (
-              <Button
-                onClick={() => setAdminPanelOpen(true)}
-                className="h-7 w-7 flex items-center justify-center rounded-full border border-white/15 text-white/60 hover:text-white hover:bg-white/10 transition-colors cursor-pointer"
-                title="Administrar layouts"
-              >
-                <Settings2 className="h-3.5 w-3.5" />
-              </Button>
-            ) : undefined
-          }
-          primaryAction={
-            <ModuleActionButton
-        label="Novo Layout"
-        icon={<Plus className="h-3.5 w-3.5" />}
-              onClick={() => setOpen(true)}
-            />
-          }
-        />
+      <PageHeader
+        title="Frota & Ônibus"
+        search={{
+          value: qSearch,
+          onChange: setQSearch,
+          placeholder: "Buscar veículo...",
+        }}
+        filters={[
+          { label: "Todos", value: "all" },
+          { label: "Ônibus", value: "bus" },
+          { label: "Van", value: "van" },
+          { label: "Avião", value: "plane" },
+        ]}
+        activeFilter={typeFilter}
+        onFilterChange={setTypeFilter}
+        actions={
+          isAgencyAdmin ? (
+            <Button
+              onClick={() => setAdminPanelOpen(true)}
+              className="h-7 w-7 flex items-center justify-center rounded-full border border-white/15 text-white/60 hover:text-white hover:glass-dark transition-colors cursor-pointer"
+              title="Administrar layouts"
+            >
+              <Settings2 className="h-3.5 w-3.5" />
+            </Button>
+          ) : undefined
+        }
+        primaryAction={
+          <ModuleActionButton
+            label="Novo Layout"
+            icon={<Plus className="h-3.5 w-3.5" />}
+            onClick={() => setOpen(true)}
+          />
+        }
+      />
 
       <div className="page-content page-section dock-offset">
         {q.isLoading && <div className="text-sm text-muted-foreground">Carregando…</div>}
@@ -106,30 +108,35 @@ function BusLayoutsPage() {
                 className="flex flex-col justify-between rounded-[var(--radius-card)] border-none glass-card border-none p-5 hover:border-border-strong transition-all shadow-xs"
               >
                 <div className="flex items-start justify-between gap-3">
-                  <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-[var(--radius-card)] glass bg-white/5 border-white/10">
+                  <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-[var(--radius-card)] glass">
                     <Bus className="h-5 w-5 text-muted-foreground" />
                   </div>
                   <div className="flex-1 text-right">
                     <div className="font-semibold text-base text-foreground">{l.name}</div>
                     <div className="text-xs uppercase tracking-wide text-muted-foreground mt-0.5">
-                      {l.vehicle_type === "bus" ? "Ônibus" : l.vehicle_type === "van" ? "Van" : "Avião"} · {l.rows}x{l.cols}
+                      {l.vehicle_type === "bus"
+                        ? "Ônibus"
+                        : l.vehicle_type === "van"
+                          ? "Van"
+                          : "Avião"}{" "}
+                      · {l.rows}x{l.cols}
                     </div>
                   </div>
                 </div>
                 <div className="mt-4 pt-3 border-t border-border flex justify-between items-center gap-2">
-                   <Button 
-                     onClick={() => setEditingLayout(l)} 
-                     className="ds-meta font-semibold text-muted-foreground hover:text-foreground flex items-center gap-1 transition-colors px-2.5 py-1.5 rounded-full hover:glass bg-white/5 border-white/10 cursor-pointer border-none glass-card border-none"
-                   >
-                     <Settings2 className="h-3 w-3" /> Cadastro
-                   </Button>
-                   <Link
-                     to="/agency/$slug/bus-layouts/$id"
-                     params={{ slug, id: l.id }}
-                     className="ds-meta font-bold text-brand hover:text-brand/90 flex items-center gap-1 px-3 py-1.5 rounded-full bg-brand/5 border border-brand/10 transition-colors cursor-pointer"
-                   >
-                     💺 Desenhar Mapa
-                   </Link>
+                  <Button
+                    onClick={() => setEditingLayout(l)}
+                    className="ds-meta font-semibold text-muted-foreground hover:text-foreground flex items-center gap-1 transition-colors px-2.5 py-1.5 rounded-full hover:glass cursor-pointer border-none glass-card border-none"
+                  >
+                    <Settings2 className="h-3 w-3" /> Cadastro
+                  </Button>
+                  <Link
+                    to="/agency/$slug/bus-layouts/$id"
+                    params={{ slug, id: l.id }}
+                    className="ds-meta font-bold text-brand hover:text-brand/90 flex items-center gap-1 px-3 py-1.5 rounded-full bg-brand/5 border border-brand/10 transition-colors cursor-pointer"
+                  >
+                    💺 Desenhar Mapa
+                  </Link>
                 </div>
               </div>
             ))}

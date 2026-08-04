@@ -4,11 +4,22 @@ import { useAgency } from "@/lib/agency-context";
 import { useState, useEffect } from "react";
 import { StickyNotesCanvas } from "@/components/dashboard/StickyNotesCanvas";
 import {
-  Users, PlaneTakeoff, Sparkles, Settings, Palette, Compass, MessageSquare, Bus, Wallet, Calendar
+  Users,
+  PlaneTakeoff,
+  Sparkles,
+  Settings,
+  Palette,
+  Compass,
+  MessageSquare,
+  Bus,
+  Wallet,
+  Calendar,
 } from "lucide-react";
 
 export const Route = createFileRoute("/agency/$slug/")({
-  head: ({ context }: any) => ({ meta: [{ title: `${context?.brand?.platform_name || "Turis"} · Início` }] }),
+  head: ({ context }: any) => ({
+    meta: [{ title: `${context?.brand?.platform_name || "Turis"} · Início` }],
+  }),
   component: HomeShell,
 } as any);
 
@@ -19,7 +30,7 @@ function HomeShell() {
   const [contextMenu, setContextMenu] = useState<{ x: number; y: number; visible: boolean }>({
     x: 0,
     y: 0,
-    visible: false
+    visible: false,
   });
 
   const handleContextMenu = (e: React.MouseEvent) => {
@@ -27,7 +38,7 @@ function HomeShell() {
     setContextMenu({
       x: e.clientX,
       y: e.clientY,
-      visible: true
+      visible: true,
     });
   };
 
@@ -43,7 +54,7 @@ function HomeShell() {
   // Parse links inside notes content (for Phase 3 rendering integration)
   const renderNoteLinkifiedContent = (content: string) => {
     if (!content) return "";
-    
+
     // Simple regex to match: [Label](type:UUID)
     const regex = /\[([^\]]+)\]\(([^)]+)\)/g;
     const parts = [];
@@ -53,7 +64,7 @@ function HomeShell() {
     while ((match = regex.exec(content)) !== null) {
       const text = match[1];
       const linkVal = match[2];
-      
+
       // Append text before the match
       if (match.index > lastIndex) {
         parts.push(content.substring(lastIndex, match.index));
@@ -77,10 +88,10 @@ function HomeShell() {
           <Link
             key={match.index}
             to={url as any}
-            className="text-brand font-black hover:underline cursor-pointer bg-white/20 px-1.5 py-0.5 rounded-md inline-flex items-center gap-0.5"
+            className="text-brand font-black hover:underline cursor-pointer glass-dark px-1.5 py-0.5 rounded-md inline-flex items-center gap-0.5"
           >
             {text}
-          </Link>
+          </Link>,
         );
       } else {
         parts.push(match[0]);
@@ -107,7 +118,7 @@ function HomeShell() {
       {/* macOS Finder-style context menu */}
       {contextMenu.visible && (
         <div
-          className="fixed z-50 w-52 glass dark:glass-dark border border-white/10 rounded-[var(--radius-card)] shadow-2xl p-1.5 flex flex-col text-white text-xs font-semibold select-none animate-fadeIn"
+          className="fixed z-50 w-52 glass dark:glass-dark border border-border rounded-[var(--radius-card)] shadow-2xl p-1.5 flex flex-col text-white text-xs font-semibold select-none animate-fadeIn"
           style={{ top: contextMenu.y, left: contextMenu.x }}
           onClick={(e) => e.stopPropagation()}
         >
@@ -123,7 +134,7 @@ function HomeShell() {
             onClick={closeContextMenu}
             to={`/agency/${slug}/quotes`}
           />
-          <div className="h-[1px] bg-white/10 my-1 mx-1 shrink-0" />
+          <div className="h-[1px] glass-dark my-1 mx-1 shrink-0" />
           <ContextMenuItem
             label="Falar com IA"
             icon={Sparkles}
@@ -175,7 +186,7 @@ function ContextMenuItem({
       <Link
         to={to as any}
         onClick={onClick}
-        className="flex items-center gap-2 px-3 py-2 rounded-[var(--radius-card)] hover:bg-white/10 hover:text-white transition-all text-white/80 group text-left"
+        className="flex items-center gap-2 px-3 py-2 rounded-[var(--radius-card)] hover:glass-dark hover:text-white transition-all text-white/80 group text-left"
       >
         {content}
       </Link>
@@ -185,7 +196,7 @@ function ContextMenuItem({
   return (
     <Button
       onClick={onClick}
-      className="flex items-center gap-2 w-full text-left px-3 py-2 rounded-[var(--radius-card)] hover:bg-white/10 hover:text-white transition-all text-white/80 group cursor-pointer"
+      className="flex items-center gap-2 w-full text-left px-3 py-2 rounded-[var(--radius-card)] hover:glass-dark hover:text-white transition-all text-white/80 group cursor-pointer"
     >
       {content}
     </Button>

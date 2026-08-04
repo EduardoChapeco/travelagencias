@@ -2,7 +2,23 @@ import React, { useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import {
-  X, Check, ChevronRight, ChevronLeft, Map, Plane, Plus, Trash2, Upload, Hotel, Star, Video, BedDouble, DollarSign, Info, Layers, } from "lucide-react";
+  X,
+  Check,
+  ChevronRight,
+  ChevronLeft,
+  Map,
+  Plane,
+  Plus,
+  Trash2,
+  Upload,
+  Hotel,
+  Star,
+  Video,
+  BedDouble,
+  DollarSign,
+  Info,
+  Layers,
+} from "lucide-react";
 import { Field } from "@/components/ui/field";
 import { FormInput as Input } from "@/components/ui/input";
 import { NativeSelect as Select } from "@/components/ui/select";
@@ -481,7 +497,12 @@ export function NewGroupTourWizard({
                       /tour/
                     </span>
                     <Input {...register("slug")} placeholder="reveillon-gramado-2027" />
-                    <Button variant="ghost" type="button" onClick={generateSlug} className="shrink-0 h-9">
+                    <Button
+                      variant="ghost"
+                      type="button"
+                      onClick={generateSlug}
+                      className="shrink-0 h-9"
+                    >
                       Gerar
                     </Button>
                   </div>
@@ -633,7 +654,8 @@ export function NewGroupTourWizard({
                     <BedDouble className="h-5 w-5 text-brand" />
                     <h3 className="font-semibold text-base">Acomodações & Tarifas</h3>
                   </div>
-                  <Button variant="ghost"
+                  <Button
+                    variant="ghost"
                     type="button"
                     onClick={populateDefaultPricingTiers}
                     className="h-8 text-xs text-brand border border-brand/20 hover:bg-brand/5"
@@ -653,7 +675,6 @@ export function NewGroupTourWizard({
                         placeholder="Nome da acomodação (ex: Quarto Individual)"
                         value={newTierName}
                         onChange={(e) => setNewTierName(e.target.value)}
-                        
                       />
                     </div>
                     <div>
@@ -675,7 +696,8 @@ export function NewGroupTourWizard({
                       onChange={(e) => setNewTierDesc(e.target.value)}
                       className="flex-1"
                     />
-                    <Button variant="ghost"
+                    <Button
+                      variant="ghost"
                       type="button"
                       onClick={() => {
                         if (!newTierName.trim() || newTierPrice === "") {
@@ -764,7 +786,6 @@ export function NewGroupTourWizard({
                         placeholder="Nome do opcional (ex: Seguro Viagem Premium)"
                         value={newExtraName}
                         onChange={(e) => setNewExtraName(e.target.value)}
-                        
                       />
                     </div>
                     <div>
@@ -786,7 +807,8 @@ export function NewGroupTourWizard({
                       onChange={(e) => setNewExtraDesc(e.target.value)}
                       className="flex-1"
                     />
-                    <Button variant="ghost"
+                    <Button
+                      variant="ghost"
                       type="button"
                       onClick={() => {
                         if (!newExtraName.trim() || newExtraPrice === "") {
@@ -903,7 +925,8 @@ export function NewGroupTourWizard({
                           }}
                           placeholder="Ex: Café da manhã"
                         />
-                        <Button variant="ghost"
+                        <Button
+                          variant="ghost"
                           type="button"
                           onClick={() => {
                             if (newInclude.trim()) {
@@ -970,7 +993,8 @@ export function NewGroupTourWizard({
                           }}
                           placeholder="Ex: Taxa de turismo"
                         />
-                        <Button variant="ghost"
+                        <Button
+                          variant="ghost"
                           type="button"
                           onClick={() => {
                             if (newExclude.trim()) {
@@ -1070,7 +1094,8 @@ export function NewGroupTourWizard({
                 <div className="border-t border-border pt-5">
                   <div className="flex items-center justify-between mb-3">
                     <h4 className="font-semibold text-sm">Itinerário Dia-a-Dia</h4>
-                    <Button variant="ghost"
+                    <Button
+                      variant="ghost"
                       type="button"
                       onClick={() =>
                         setValue(
@@ -1237,7 +1262,9 @@ export function NewGroupTourWizard({
                           className="bg-surface-alt/40 p-2.5 rounded-2xl flex justify-between items-center"
                         >
                           <span>{t.name}</span>
-                          <strong className="font-mono text-brand">{formatCurrency(t.price)}</strong>
+                          <strong className="font-mono text-brand">
+                            {formatCurrency(t.price)}
+                          </strong>
                         </div>
                       ))}
                     </div>
@@ -1257,7 +1284,9 @@ export function NewGroupTourWizard({
                           className="bg-surface-alt/40 p-2.5 rounded-2xl flex justify-between items-center"
                         >
                           <span>{e.name}</span>
-                          <strong className="font-mono text-success">+{formatCurrency(e.price)}</strong>
+                          <strong className="font-mono text-success">
+                            +{formatCurrency(e.price)}
+                          </strong>
                         </div>
                       ))}
                     </div>
@@ -1265,9 +1294,7 @@ export function NewGroupTourWizard({
                 )}
 
                 <div className="space-y-4 rounded-[var(--radius-card)] border border-border bg-surface p-5">
-                  <h4 className="ds-label-caps text-muted-foreground">
-                    Opções de Publicação
-                  </h4>
+                  <h4 className="ds-label-caps text-muted-foreground">Opções de Publicação</h4>
 
                   <div className="flex items-center gap-3">
                     <Input type="checkbox" id="isPublic" {...register("isPublic")} />
@@ -1300,7 +1327,8 @@ export function NewGroupTourWizard({
 
         {/* Footer Actions */}
         <div className="flex items-center justify-between border-t border-border bg-surface-alt/30 px-6 py-4 shrink-0">
-          <Button variant="ghost"
+          <Button
+            variant="ghost"
             type="button"
             onClick={handleBack}
             disabled={step === 0}
@@ -1318,7 +1346,8 @@ export function NewGroupTourWizard({
                 Próximo <ChevronRight className="h-4 w-4" />
               </Button>
             ) : (
-              <Button variant="default"
+              <Button
+                variant="default"
                 type="submit"
                 disabled={submitting}
                 className="w-40 font-bold tracking-wider"

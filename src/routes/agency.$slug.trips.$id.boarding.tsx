@@ -31,7 +31,9 @@ import { FormInput as Input } from "@/components/ui/input";
 import { NativeSelect as Select } from "@/components/ui/select";
 
 export const Route = createFileRoute("/agency/$slug/trips/$id/boarding")({
-  head: ({ context }: any) => ({ meta: [{ title: `Check-in & Embarque · ${context?.brand?.platform_name || 'Turis'}` }] }),
+  head: ({ context }: any) => ({
+    meta: [{ title: `Check-in & Embarque · ${context?.brand?.platform_name || "Turis"}` }],
+  }),
   component: TripBoardingPage,
 });
 
@@ -264,7 +266,7 @@ function TripBoardingPage() {
         </div>
 
         {/* Tab Selector */}
-        <div className="flex glass bg-white/5 border-white/10 p-0.5 rounded-[var(--radius-card)] border-none/60 ds-meta font-semibold">
+        <div className="flex glass p-0.5 rounded-[var(--radius-card)] border-none/60 ds-meta font-semibold">
           <Button
             onClick={() => setActiveTab("cards")}
             className={cn(
@@ -325,7 +327,7 @@ function TripBoardingPage() {
                     className="rounded-[var(--radius-card)] border-none glass-card border-none overflow-hidden shadow-none"
                   >
                     {/* Header do Card */}
-                    <div className="p-4 border-b border-border/60 glass bg-white/5 border-white/10/20 flex flex-wrap items-center justify-between gap-4">
+                    <div className="p-4 border-b border-border/60 glass/20 flex flex-wrap items-center justify-between gap-4">
                       <div className="flex items-center gap-3">
                         <span className="font-mono text-xs font-bold bg-brand/10 text-brand px-2 py-0.5 rounded">
                           {card.airline || "Sem Cia"}
@@ -365,9 +367,7 @@ function TripBoardingPage() {
                     <div className="p-4 grid grid-cols-1 md:grid-cols-3 gap-6">
                       {/* Detalhes do Voo */}
                       <div className="space-y-3">
-                        <p className="ds-label-caps text-muted-foreground">
-                          Trecho & Data
-                        </p>
+                        <p className="ds-label-caps text-muted-foreground">Trecho & Data</p>
                         <div className="space-y-2">
                           {(card.departure_airport || card.arrival_airport) && (
                             <div className="flex items-center gap-2 text-sm font-semibold text-foreground">
@@ -429,9 +429,7 @@ function TripBoardingPage() {
                       {/* Checklist Operacional */}
                       <div className="md:col-span-2 space-y-3">
                         <div className="flex items-center justify-between">
-                          <p className="ds-label-caps text-muted-foreground">
-                            Checklist do Trecho
-                          </p>
+                          <p className="ds-label-caps text-muted-foreground">Checklist do Trecho</p>
                           <span className="text-xs font-semibold text-brand">
                             {doneCount}/{totalCount} ({pct}%)
                           </span>
@@ -463,7 +461,7 @@ function TripBoardingPage() {
                                     "flex items-center gap-2.5 p-2 rounded-[var(--radius-card)] border text-left transition-colors text-xs cursor-pointer",
                                     item.done
                                       ? "bg-emerald-500/5 border-emerald-500/20 text-emerald-950 dark:text-emerald-300"
-                                      : "glass-card border-none border-border hover:glass bg-white/5 border-white/10 text-foreground",
+                                      : "glass-card border-none border-border hover:glass text-foreground",
                                   )}
                                 >
                                   {item.done ? (
@@ -608,7 +606,7 @@ function TripBoardingPage() {
 
                   let text = "";
                   let icon = <Clock className="h-3 w-3 text-muted-foreground" />;
-                  let iconBg = "glass bg-white/5 border-white/10 border-border";
+                  let iconBg = "glass border-border";
 
                   if (evt.event_type === "checkin_link_clicked") {
                     text = `Check-in iniciado por ${travelerName}${segmentDesc ? ` para o voo ${segmentDesc}` : ""}.`;

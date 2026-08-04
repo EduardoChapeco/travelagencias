@@ -18,15 +18,17 @@ serve(async (req) => {
 
     const clientId = Deno.env.get("GOOGLE_OAUTH_CLIENT_ID") ?? "";
     const clientSecret = Deno.env.get("GOOGLE_OAUTH_CLIENT_SECRET") ?? "";
-    const redirectUri = Deno.env.get("GOOGLE_OAUTH_REDIRECT_URI") ?? "http://localhost:5173/inbox/oauth-callback";
-    const pubsubTopic = Deno.env.get("GMAIL_PUBSUB_TOPIC") ?? "projects/meu-projeto/topics/gmail-webhooks";
+    const redirectUri =
+      Deno.env.get("GOOGLE_OAUTH_REDIRECT_URI") ?? "http://localhost:5173/inbox/oauth-callback";
+    const pubsubTopic =
+      Deno.env.get("GMAIL_PUBSUB_TOPIC") ?? "projects/meu-projeto/topics/gmail-webhooks";
 
     if (action === "get_url") {
       // 1. Gera a URL de Autenticacao
       const stateObj = {
         org_id: url.searchParams.get("org_id"),
         user_id: url.searchParams.get("user_id"),
-        account_type: url.searchParams.get("account_type") || "personal"
+        account_type: url.searchParams.get("account_type") || "personal",
       };
       const stateStr = btoa(JSON.stringify(stateObj));
 
@@ -34,7 +36,7 @@ serve(async (req) => {
         "https://www.googleapis.com/auth/gmail.modify",
         "https://www.googleapis.com/auth/gmail.settings.basic",
         "https://www.googleapis.com/auth/userinfo.email",
-        "https://www.googleapis.com/auth/userinfo.profile"
+        "https://www.googleapis.com/auth/userinfo.profile",
       ].join(" ");
 
       const authUrl = `https://accounts.google.com/o/oauth2/v2/auth?client_id=${clientId}&redirect_uri=${redirectUri}&response_type=code&scope=${encodeURIComponent(scopes)}&access_type=offline&prompt=consent&state=${stateStr}`;
@@ -69,12 +71,12 @@ serve(async (req) => {
         }),
       });
 
-      if (!tokenRes.ok) throw new Error("Failed to exchange token: " + await tokenRes.text());
+      if (!tokenRes.ok) throw new Error("Failed to exchange token: " + (await tokenRes.text()));
       const tokens = await tokenRes.json();
 
       // Get user profile
       const profileRes = await fetch("https://www.googleapis.com/oauth2/v2/userinfo", {
-        headers: { Authorization: `Bearer ${tokens.access_token}` }
+        headers: { Authorization: `Bearer ${tokens.access_token}` },
       });
       const profile = await profileRes.json();
 
@@ -83,12 +85,12 @@ serve(async (req) => {
         method: "POST",
         headers: {
           Authorization: `Bearer ${tokens.access_token}`,
-          "Content-Type": "application/json"
+          "Content-Type": "application/json",
         },
         body: JSON.stringify({
           labelIds: ["INBOX", "SENT"],
-          topicName: pubsubTopic
-        })
+          topicName: pubsubTopic,
+        }),
       });
 
       let watchExpiry = null;
@@ -104,29 +106,34 @@ serve(async (req) => {
 
       const supabase = createClient(
         Deno.env.get("SUPABASE_URL") ?? "",
-        Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? ""
+        Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? "",
       );
 
       // Save to database
-      const { data, error } = await supabase.from("email_accounts").upsert({
-        org_id: stateObj.org_id,
-        user_id: stateObj.user_id,
-        account_type: stateObj.account_type,
-        email_address: profile.email,
-        display_name: profile.name,
-        profile_picture: profile.picture,
-        access_token_enc: tokens.access_token, // Ideally encrypted via pgcrypto here
-        refresh_token_enc: tokens.refresh_token || "", // If no refresh token, prompt=consent was missed
-        token_expires_at: new Date(Date.now() + tokens.expires_in * 1000).toISOString(),
-        scopes: tokens.scope?.split(" ") || [],
-        gmail_history_id: historyId,
-        pubsub_topic: pubsubTopic,
-        watch_expiry: watchExpiry,
-        status: "active",
-        connected_by: stateObj.user_id
-      }, { onConflict: "org_id, email_address" })
-      .select("*")
-      .single();
+      const { data, error } = await supabase
+        .from("email_accounts")
+        .upsert(
+          {
+            org_id: stateObj.org_id,
+            user_id: stateObj.user_id,
+            account_type: stateObj.account_type,
+            email_address: profile.email,
+            display_name: profile.name,
+            profile_picture: profile.picture,
+            access_token_enc: tokens.access_token, // Ideally encrypted via pgcrypto here
+            refresh_token_enc: tokens.refresh_token || "", // If no refresh token, prompt=consent was missed
+            token_expires_at: new Date(Date.now() + tokens.expires_in * 1000).toISOString(),
+            scopes: tokens.scope?.split(" ") || [],
+            gmail_history_id: historyId,
+            pubsub_topic: pubsubTopic,
+            watch_expiry: watchExpiry,
+            status: "active",
+            connected_by: stateObj.user_id,
+          },
+          { onConflict: "org_id, email_address" },
+        )
+        .select("*")
+        .single();
 
       if (error) throw new Error("DB Error: " + error.message);
 

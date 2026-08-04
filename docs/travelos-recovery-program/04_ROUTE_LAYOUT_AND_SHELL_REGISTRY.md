@@ -4,11 +4,11 @@ Atualizado em 2026-07-10 a partir do código existente.
 
 ## Shells estruturais
 
-| Superfície | Fonte | Responsabilidade | Consumidor raiz |
-|---|---|---|---|
-| Agência | `src/components/shell/AppShell.tsx` | Wallpaper, status bar, workspace, navegação e região de header | `src/routes/agency.$slug.tsx` |
-| Admin global | `src/components/shell/AdminShell.tsx` | Navegação e outlet administrativo | `src/routes/admin.tsx` |
-| Cliente | `src/components/shell/ClientShell.tsx` | Autenticação client-side, navegação e outlet do cliente | `src/routes/client.tsx` |
+| Superfície   | Fonte                                  | Responsabilidade                                               | Consumidor raiz               |
+| ------------ | -------------------------------------- | -------------------------------------------------------------- | ----------------------------- |
+| Agência      | `src/components/shell/AppShell.tsx`    | Wallpaper, status bar, workspace, navegação e região de header | `src/routes/agency.$slug.tsx` |
+| Admin global | `src/components/shell/AdminShell.tsx`  | Navegação e outlet administrativo                              | `src/routes/admin.tsx`        |
+| Cliente      | `src/components/shell/ClientShell.tsx` | Autenticação client-side, navegação e outlet do cliente        | `src/routes/client.tsx`       |
 
 ## Navegação canônica
 

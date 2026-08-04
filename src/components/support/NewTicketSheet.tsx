@@ -219,7 +219,8 @@ export function NewTicketSheet({ isOpen, onClose, initialClientId }: NewTicketSh
           <Button variant="ghost" type="button" onClick={onClose} disabled={isPending}>
             Cancelar
           </Button>
-          <Button variant="default"
+          <Button
+            variant="default"
             type="button"
             onClick={() => createMutation.mutate()}
             disabled={isPending || !title.trim()}

@@ -33,7 +33,9 @@ import { NativeSelect as Select } from "@/components/ui/select";
 import { FormTextarea as Textarea } from "@/components/ui/textarea";
 
 export const Route = createFileRoute("/agency/$slug/trips/$id/passengers")({
-  head: ({ context }: any) => ({ meta: [{ title: `Passageiros · ${context?.brand?.platform_name || 'Turis'}` }] }),
+  head: ({ context }: any) => ({
+    meta: [{ title: `Passageiros · ${context?.brand?.platform_name || "Turis"}` }],
+  }),
   component: PassengersPage,
 });
 
@@ -279,8 +281,10 @@ function PassengersPage() {
           </div>
           <h3 className="text-sm font-bold text-red-800">Falha ao Carregar Passageiros</h3>
           <p className="text-xs text-red-600 mt-1">
-            {(list.isError ? list.error : tripQ.isError ? tripQ.error : docsQ.error) instanceof Error
-              ? ((list.isError ? list.error : tripQ.isError ? tripQ.error : docsQ.error) as Error).message
+            {(list.isError ? list.error : tripQ.isError ? tripQ.error : docsQ.error) instanceof
+            Error
+              ? ((list.isError ? list.error : tripQ.isError ? tripQ.error : docsQ.error) as Error)
+                  .message
               : "Erro desconhecido."}
           </p>
         </div>
@@ -342,14 +346,14 @@ function PassengersPage() {
           {[1, 2, 3].map((i) => (
             <div
               key={i}
-              className="h-96 rounded-[var(--radius-card)] glass bg-white/5 border-white/10 animate-pulse border-none"
+              className="h-96 rounded-[var(--radius-card)] glass animate-pulse border-none"
             />
           ))}
         </div>
       )}
 
       {list.data && list.data.length === 0 && (
-        <div className="flex flex-col items-center justify-center rounded-[var(--radius-card)] border border-dashed border-border/80 glass bg-white/5 border-white/10/20 py-24 text-center">
+        <div className="flex flex-col items-center justify-center rounded-[var(--radius-card)] border border-dashed border-border/80 glass/20 py-24 text-center">
           <Contact2 className="mb-4 h-12 w-12 text-muted-foreground/40" />
           <h3 className="text-lg font-bold text-foreground">Nenhum passageiro</h3>
           <p className="mt-1 text-sm text-muted-foreground max-w-sm">
@@ -370,7 +374,7 @@ function PassengersPage() {
               <div className="flex items-start justify-between p-5 border-b border-border/50">
                 <div className="flex items-center gap-3">
                   <div
-                    className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-full ${p.is_lead_passenger ? "bg-brand/10 text-brand" : "glass bg-white/5 border-white/10 text-muted-foreground"}`}
+                    className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-full ${p.is_lead_passenger ? "bg-brand/10 text-brand" : "glass text-muted-foreground"}`}
                   >
                     <User className="h-5 w-5" />
                   </div>
@@ -407,7 +411,7 @@ function PassengersPage() {
                 <div className="space-y-4">
                   {/* Documentação */}
                   <div className="flex items-center gap-2.5">
-                    <div className="flex h-6 w-6 items-center justify-center rounded-full glass bg-white/5 border-white/10 text-muted-foreground">
+                    <div className="flex h-6 w-6 items-center justify-center rounded-full glass text-muted-foreground">
                       <FileText className="h-3.5 w-3.5" />
                     </div>
                     <div className="flex-1 min-w-0">
@@ -425,7 +429,7 @@ function PassengersPage() {
                   {/* Nascimento e Nacionalidade */}
                   <div className="grid grid-cols-2 gap-4">
                     <div className="flex items-center gap-2.5">
-                      <div className="flex h-6 w-6 items-center justify-center rounded-full glass bg-white/5 border-white/10 text-muted-foreground">
+                      <div className="flex h-6 w-6 items-center justify-center rounded-full glass text-muted-foreground">
                         <Calendar className="h-3.5 w-3.5" />
                       </div>
                       <div className="min-w-0">
@@ -439,7 +443,7 @@ function PassengersPage() {
                     </div>
 
                     <div className="flex items-center gap-2.5">
-                      <div className="flex h-6 w-6 items-center justify-center rounded-full glass bg-white/5 border-white/10 text-muted-foreground">
+                      <div className="flex h-6 w-6 items-center justify-center rounded-full glass text-muted-foreground">
                         <ShieldCheck className="h-3.5 w-3.5" />
                       </div>
                       <div className="min-w-0">
@@ -501,7 +505,7 @@ function PassengersPage() {
                         return (
                           <div
                             key={doc.id}
-                            className="flex flex-col gap-1 rounded-[var(--radius-card)] border-none/60 glass bg-white/5 border-white/10/10 p-2.5 text-xs"
+                            className="flex flex-col gap-1 rounded-[var(--radius-card)] border-none/60 glass/10 p-2.5 text-xs"
                           >
                             <div className="flex items-center justify-between">
                               <span className="font-semibold text-foreground flex items-center gap-1">
@@ -574,7 +578,7 @@ function PassengersPage() {
                   </div>
 
                   {/* Document upload form inside the card */}
-                  <div className="rounded-[var(--radius-card)] border border-dashed border-border/80 p-3 glass bg-white/5 border-white/10/5 flex flex-col gap-2">
+                  <div className="rounded-[var(--radius-card)] border border-dashed border-border/80 p-3 glass/5 flex flex-col gap-2">
                     <div className="grid grid-cols-2 gap-2">
                       <Select
                         value={selectedDocType[p.id] || "passport"}
@@ -596,7 +600,7 @@ function PassengersPage() {
                         className="rounded-full border-none glass-card border-none px-2 ds-meta"
                       />
                     </div>
-                    <label className="flex h-8 items-center justify-center gap-1.5 rounded-full border-none glass-card border-none cursor-pointer ds-meta font-bold hover:glass bg-white/5 border-white/10 transition-colors">
+                    <label className="flex h-8 items-center justify-center gap-1.5 rounded-full border-none glass-card border-none cursor-pointer ds-meta font-bold hover:glass transition-colors">
                       <Upload className="h-3.5 w-3.5 text-muted-foreground" />
                       Anexar & Identificar Dados
                       <Input
@@ -822,7 +826,7 @@ function DataConferencePanel({
     <Dialog open={true} onOpenChange={(open) => !open && onClose()}>
       <DialogContent className="max-w-[90vw] md:max-w-6xl p-0 overflow-hidden border-none/10 max-h-[90vh] glass dark:glass-dark text-white flex flex-col md:flex-row gap-0">
         {/* LADO ESQUERDO: Visualizador de Documentos */}
-        <div className="flex-1 flex flex-col p-6 border-r border-border/80 glass bg-white/5 border-white/10/10">
+        <div className="flex-1 flex flex-col p-6 border-r border-border/80 glass/10">
           <div className="flex items-center justify-between mb-4">
             <h3 className="text-lg font-bold text-foreground flex items-center gap-2">
               <FileText className="h-5 w-5 text-brand" /> Documento do Passageiro
@@ -842,7 +846,10 @@ function DataConferencePanel({
               </div>
             ) : signedUrl ? (
               doc?.file_path?.toLowerCase().endsWith(".pdf") ? (
-                <iframe src={signedUrl} className="w-full h-full rounded-[var(--radius-card)] border-none" />
+                <iframe
+                  src={signedUrl}
+                  className="w-full h-full rounded-[var(--radius-card)] border-none"
+                />
               ) : (
                 <img
                   src={signedUrl}
@@ -884,7 +891,10 @@ function DataConferencePanel({
               </h4>
               <div className="grid grid-cols-2 gap-3 ds-meta">
                 {Object.entries(doc.extracted_metadata).map(([key, val]) => (
-                  <div key={key} className="glass bg-white/5 border-white/10/50 p-2 rounded border-none/40">
+                  <div
+                    key={key}
+                    className="glass/50 p-2 rounded border-none/40"
+                  >
                     <span className="font-semibold text-muted-foreground block uppercase text-[8px] tracking-wider">
                       {key.replace("_", " ")}
                     </span>
@@ -907,7 +917,7 @@ function DataConferencePanel({
             </div>
             <Button
               onClick={onClose}
-              className="text-xs text-muted-foreground hover:text-foreground font-semibold glass bg-white/5 border-white/10 px-3 py-1.5 rounded-[var(--radius-card)]"
+              className="text-xs text-muted-foreground hover:text-foreground font-semibold glass px-3 py-1.5 rounded-[var(--radius-card)]"
             >
               Fechar
             </Button>
@@ -1038,7 +1048,7 @@ function DataConferencePanel({
           <div className="border-t border-border pt-4 mt-6 flex gap-3">
             <Button
               onClick={onClose}
-              className="flex-1 h-10 rounded-[var(--radius-card)] border-none glass-card border-none text-xs font-bold text-muted-foreground hover:glass bg-white/5 border-white/10 transition-colors cursor-pointer"
+              className="flex-1 h-10 rounded-[var(--radius-card)] border-none glass-card border-none text-xs font-bold text-muted-foreground hover:glass transition-colors cursor-pointer"
             >
               Cancelar
             </Button>

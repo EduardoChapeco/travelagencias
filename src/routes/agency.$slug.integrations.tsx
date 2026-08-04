@@ -25,7 +25,18 @@ import {
   X,
 } from "lucide-react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { fetchApiKeys, saveApiKey, toggleApiKey, deleteApiKey, fetchOperators, saveOperator, deleteOperator, testOperatorConnection, fetchIntegrationCredentials, saveIntegrationCredential } from "@/services/settings";
+import {
+  fetchApiKeys,
+  saveApiKey,
+  toggleApiKey,
+  deleteApiKey,
+  fetchOperators,
+  saveOperator,
+  deleteOperator,
+  testOperatorConnection,
+  fetchIntegrationCredentials,
+  saveIntegrationCredential,
+} from "@/services/settings";
 import { supabase } from "@/integrations/supabase/client";
 import { useAgency } from "@/lib/agency-context";
 import { Field } from "@/components/ui/field";
@@ -37,7 +48,9 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { FormTextarea as Textarea } from "@/components/ui/textarea";
 
 export const Route = createFileRoute("/agency/$slug/integrations")({
-  head: ({ context }: any) => ({ meta: [{ title: `Integrações · ${context?.brand?.platform_name || 'Turis'}` }] }),
+  head: ({ context }: any) => ({
+    meta: [{ title: `Integrações · ${context?.brand?.platform_name || "Turis"}` }],
+  }),
   component: IntegrationsPage,
 });
 
@@ -190,7 +203,7 @@ function ProviderKeysSection({
 
   return (
     <div className="mt-5 space-y-4">
-      <div className="rounded-[var(--radius-card)] border-none/60 glass bg-white/5 border-white/10/30 px-4 py-3 text-xs text-muted-foreground">
+      <div className="rounded-[var(--radius-card)] border-none/60 glass/30 px-4 py-3 text-xs text-muted-foreground">
         <ShieldCheck className="inline h-3.5 w-3.5 mr-1.5 text-brand" />
         {description}
       </div>
@@ -229,7 +242,7 @@ function IntegrationRow({
   return (
     <div className="flex items-end gap-3 rounded-[var(--radius-card)] border-none glass-card border-none px-4 py-3">
       {provider.icon && (
-        <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full glass bg-white/5 border-white/10 border-none font-bold text-sm text-muted-foreground">
+        <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full glass border-none font-bold text-sm text-muted-foreground">
           {provider.icon}
         </div>
       )}
@@ -246,7 +259,8 @@ function IntegrationRow({
       </div>
       <div className="flex items-center gap-2 pb-0.5">
         {existing && <StatusBadge tone="success">ativa</StatusBadge>}
-        <Button variant="default"
+        <Button
+          variant="default"
           type="button"
           disabled={busy || !v.trim()}
           onClick={async () => {
@@ -301,8 +315,8 @@ function WhatsAppTab({ agencyId }: { agencyId: string }) {
 
   useEffect(() => {
     if ((agencyData as any)?.integrations_config) {
-      setConfig((c) => ({ 
-        ...c, 
+      setConfig((c) => ({
+        ...c,
         ...(agencyData as any).integrations_config,
         meta_app_id: (agencyData as any).integrations_config.meta_app_id || "",
         meta_config_id: (agencyData as any).integrations_config.meta_config_id || "",
@@ -330,12 +344,14 @@ function WhatsAppTab({ agencyId }: { agencyId: string }) {
 
     if (!(window as any).FB) {
       (function (d, s, id) {
-        var js: any, fjs: any = d.getElementsByTagName(s)[0];
+        let js: any,
+          fjs: any = d.getElementsByTagName(s)[0];
         if (d.getElementById(id)) return;
-        js = d.createElement(s); js.id = id;
+        js = d.createElement(s);
+        js.id = id;
         js.src = "https://connect.facebook.net/pt_BR/sdk.js";
         fjs.parentNode.insertBefore(js, fjs);
-      }(document, "script", "facebook-jssdk"));
+      })(document, "script", "facebook-jssdk");
     }
 
     const triggerLogin = () => {
@@ -343,37 +359,42 @@ function WhatsAppTab({ agencyId }: { agencyId: string }) {
         appId: config.meta_app_id,
         cookie: true,
         xfbml: true,
-        version: "v21.0"
+        version: "v21.0",
       });
 
-      (window as any).FB.login((response: any) => {
-        if (response.authResponse) {
-          const code = response.authResponse.code;
-          if (code) {
-            toast.promise(
-              supabase.functions.invoke("meta-oauth-exchange", {
-                body: { code, agency_id: agencyId, config_id: config.meta_config_id }
-              }).then(({ data, error }) => {
-                if (error) throw error;
-                toast.success("WhatsApp conectado com sucesso via Embedded Signup!");
-              }),
-              {
-                loading: "Trocando código de autorização e descobrindo ativos...",
-                success: "Conexão criada com sucesso!",
-                error: (err) => "Erro ao conectar: " + err.message
-              }
-            );
+      (window as any).FB.login(
+        (response: any) => {
+          if (response.authResponse) {
+            const code = response.authResponse.code;
+            if (code) {
+              toast.promise(
+                supabase.functions
+                  .invoke("meta-oauth-exchange", {
+                    body: { code, agency_id: agencyId, config_id: config.meta_config_id },
+                  })
+                  .then(({ data, error }) => {
+                    if (error) throw error;
+                    toast.success("WhatsApp conectado com sucesso via Embedded Signup!");
+                  }),
+                {
+                  loading: "Trocando código de autorização e descobrindo ativos...",
+                  success: "Conexão criada com sucesso!",
+                  error: (err) => "Erro ao conectar: " + err.message,
+                },
+              );
+            }
+          } else {
+            toast.error("O login ou permissão foi cancelado pelo usuário.");
           }
-        } else {
-          toast.error("O login ou permissão foi cancelado pelo usuário.");
-        }
-      }, {
-        scope: "whatsapp_business_management,whatsapp_business_messaging",
-        extras: {
-          feature: "whatsapp_embedded_signup",
-          config_id: config.meta_config_id
-        }
-      });
+        },
+        {
+          scope: "whatsapp_business_management,whatsapp_business_messaging",
+          extras: {
+            feature: "whatsapp_embedded_signup",
+            config_id: config.meta_config_id,
+          },
+        },
+      );
     };
 
     if ((window as any).FB) {
@@ -457,7 +478,6 @@ function WhatsAppTab({ agencyId }: { agencyId: string }) {
     }
   }
 
-
   const webhookUrl = `${window.location.origin.replace("5173", "54321")}/functions/v1/whatsapp-webhook`;
 
   if (isLoading)
@@ -521,7 +541,7 @@ function WhatsAppTab({ agencyId }: { agencyId: string }) {
           Configure este endereço no painel Meta ou Evolution API.
         </p>
         <div className="flex items-center gap-2">
-          <code className="flex-1 text-xs glass bg-white/5 border-white/10 border-none rounded px-3 py-2 font-mono truncate">
+          <code className="flex-1 text-xs glass border-none rounded px-3 py-2 font-mono truncate">
             {`[SUPABASE_URL]/functions/v1/whatsapp-webhook`}
           </code>
           <Button
@@ -530,7 +550,7 @@ function WhatsAppTab({ agencyId }: { agencyId: string }) {
               navigator.clipboard.writeText(webhookUrl);
               toast.success("URL copiada!");
             }}
-            className="shrink-0 px-3 py-2 text-xs border-none rounded-[var(--radius-card)] hover:glass bg-white/5 border-white/10 transition-colors"
+            className="shrink-0 px-3 py-2 text-xs border-none rounded-[var(--radius-card)] hover:glass transition-colors"
           >
             Copiar
           </Button>
@@ -560,7 +580,10 @@ function WhatsAppTab({ agencyId }: { agencyId: string }) {
                 onChange={(e) => setConfig({ ...config, meta_app_id: e.target.value })}
               />
             </Field>
-            <Field label="Configuration ID (Embedded Signup)" hint="Opcional. Config ID do fluxo customizado">
+            <Field
+              label="Configuration ID (Embedded Signup)"
+              hint="Opcional. Config ID do fluxo customizado"
+            >
               <Input
                 placeholder="Ex: waba-config-id..."
                 value={config.meta_config_id}
@@ -714,7 +737,7 @@ function ApiKeysTab({ agencyId }: { agencyId: string }) {
   return (
     <div className="mt-5 space-y-4">
       <ConfirmDialog />
-      <div className="rounded-[var(--radius-card)] border-none/60 glass bg-white/5 border-white/10/30 px-4 py-3 text-xs text-muted-foreground">
+      <div className="rounded-[var(--radius-card)] border-none/60 glass/30 px-4 py-3 text-xs text-muted-foreground">
         <KeyRound className="inline h-3.5 w-3.5 mr-1.5" />
         Gerencie livremente qualquer parâmetro de conexão para integrações customizadas. Estas
         credenciais ficam associadas exclusivamente a esta agência.
@@ -765,7 +788,7 @@ function ApiKeysTab({ agencyId }: { agencyId: string }) {
           </div>
         ) : (
           <table className="w-full text-sm">
-            <thead className="glass bg-white/5 border-white/10/40 border-b border-border ds-meta uppercase tracking-wide text-muted-foreground">
+            <thead className="glass/40 border-b border-border ds-meta uppercase tracking-wide text-muted-foreground">
               <tr>
                 <th className="px-3 py-2 text-left">Serviço</th>
                 <th className="px-3 py-2 text-left">Identificação</th>
@@ -777,7 +800,10 @@ function ApiKeysTab({ agencyId }: { agencyId: string }) {
             </thead>
             <tbody>
               {q.data!.map((k: any) => (
-                <tr key={k.id} className="border-t border-border hover:glass bg-white/5 border-white/10/20">
+                <tr
+                  key={k.id}
+                  className="border-t border-border hover:glass/20"
+                >
                   <td className="px-3 py-2.5 font-mono text-xs">{k.provider}</td>
                   <td className="px-3 py-2.5 text-xs">{k.label ?? "—"}</td>
                   <td className="px-3 py-2.5 font-mono text-xs text-muted-foreground">
@@ -796,7 +822,8 @@ function ApiKeysTab({ agencyId }: { agencyId: string }) {
                     />
                   </td>
                   <td className="px-3 py-2.5 text-right">
-                    <Button variant="ghost"
+                    <Button
+                      variant="ghost"
                       type="button"
                       onClick={() => remove(k.id)}
                       className="p-1 text-destructive hover:bg-destructive/10"
@@ -886,7 +913,7 @@ function AiAgentSettingsSection({ agencyId }: { agencyId: string }) {
         autonomamente às mensagens dos seus clientes no WhatsApp.
       </p>
 
-      <div className="flex items-center justify-between rounded-[var(--radius-card)] border-none glass bg-white/5 border-white/10/10 p-3.5">
+      <div className="flex items-center justify-between rounded-[var(--radius-card)] border-none glass/10 p-3.5">
         <div>
           <label className="text-xs font-bold text-foreground">Respostas Automáticas Ativas</label>
           <p className="ds-meta text-muted-foreground font-sans">
@@ -920,14 +947,20 @@ function AiAgentSettingsSection({ agencyId }: { agencyId: string }) {
           value={context}
           onChange={(e) => setContext(e.target.value)}
           placeholder="Ex: Somos uma agência focada em ecoturismo de luxo. Sempre chame o cliente pelo primeiro nome. Destaque que nossos pacotes incluem guias bilíngues..."
-          className="w-full glass bg-white/5 border-white/10 border-none/60 rounded-[var(--radius-card)] py-2.5 resize-none focus:ring-0 focus:border-brand/50 font-sans leading-relaxed"
+          className="w-full glass border-none/60 rounded-[var(--radius-card)] py-2.5 resize-none focus:ring-0 focus:border-brand/50 font-sans leading-relaxed"
         />
         <p className="ds-meta text-muted-foreground mt-0.5 font-sans">
           Adicione diretrizes operacionais, regras de negócio ou ofertas exclusivas da sua agência.
         </p>
       </Field>
 
-      <Button variant="default" type="button" disabled={busy} onClick={saveSettings} className="w-full">
+      <Button
+        variant="default"
+        type="button"
+        disabled={busy}
+        onClick={saveSettings}
+        className="w-full"
+      >
         {busy ? "Salvando..." : "Salvar Configurações do Assistente"}
       </Button>
     </div>
@@ -1025,7 +1058,8 @@ function InfotravelTab({ agencyId }: { agencyId: string }) {
   });
 
   const operators = operatorsQuery.data ?? [];
-  const activeOperator = operators.find((o) => o.operator_id === selectedOperatorId) ?? operators[0];
+  const activeOperator =
+    operators.find((o) => o.operator_id === selectedOperatorId) ?? operators[0];
 
   // Seleciona automaticamente o primeiro operador disponível
   useEffect(() => {
@@ -1232,7 +1266,7 @@ function InfotravelTab({ agencyId }: { agencyId: string }) {
             </Button>
           </div>
 
-          <div className="rounded-[var(--radius-card)] border-none/60 glass bg-white/5 border-white/10/30 px-4 py-3 text-xs text-muted-foreground">
+          <div className="rounded-[var(--radius-card)] border-none/60 glass/30 px-4 py-3 text-xs text-muted-foreground">
             <ShieldCheck className="inline h-3.5 w-3.5 mr-1.5 text-brand" />
             Preencha com as credenciais fornecidas pela sua operadora de turismo vinculada ao
             sistema Infotravel/Infoterra. O link da API, usuário, senha e identificadores são
@@ -1310,7 +1344,11 @@ function InfotravelTab({ agencyId }: { agencyId: string }) {
 
           <div className="flex gap-2 pt-2">
             <Button variant="default" disabled={formBusy} className="flex-1">
-              {formBusy ? "Salvando..." : editingOperatorId ? "Salvar Alterações" : "Adicionar Operadora"}
+              {formBusy
+                ? "Salvando..."
+                : editingOperatorId
+                  ? "Salvar Alterações"
+                  : "Adicionar Operadora"}
             </Button>
           </div>
         </form>
@@ -1370,7 +1408,10 @@ function InfotravelTab({ agencyId }: { agencyId: string }) {
                         </span>
                       )}
                       {op.last_sync_error ? (
-                        <span className="text-rose-600 bg-rose-50 dark:bg-rose-950/20 px-1.5 py-0.5 rounded border border-rose-200 dark:border-rose-900/40 font-semibold flex items-center gap-0.5 select-none" title={op.last_sync_error}>
+                        <span
+                          className="text-rose-600 bg-rose-50 dark:bg-rose-950/20 px-1.5 py-0.5 rounded border border-rose-200 dark:border-rose-900/40 font-semibold flex items-center gap-0.5 select-none"
+                          title={op.last_sync_error}
+                        >
                           <AlertCircle className="h-3 w-3 shrink-0" />
                           Falha na Conexão
                         </span>
@@ -1502,16 +1543,16 @@ function InfotravelTab({ agencyId }: { agencyId: string }) {
                 Verifica viagens com embarque nos próximos 30 dias. Atualiza status, vouchers e
                 bilhetes emitidos.
               </p>
-              <div className="rounded-[var(--radius-card)] glass bg-white/5 border-white/10/40 p-3 border-none/40 ds-meta text-muted-foreground leading-normal font-sans">
-                <Clock className="inline h-3.5 w-3.5 mr-1 text-brand shrink-0 align-text-bottom" />
-                O sistema realiza esta atualização automaticamente a cada 4 horas.
+              <div className="rounded-[var(--radius-card)] glass/40 p-3 border-none/40 ds-meta text-muted-foreground leading-normal font-sans">
+                <Clock className="inline h-3.5 w-3.5 mr-1 text-brand shrink-0 align-text-bottom" />O
+                sistema realiza esta atualização automaticamente a cada 4 horas.
               </div>
             </div>
             <Button
               type="button"
               disabled={syncBusy || !isConfigured}
               onClick={handleRunPolling}
-              className="mt-4 flex h-9 items-center justify-center gap-2 rounded-[var(--radius-card)] glass bg-white/5 border-white/10 hover:glass bg-white/5 border-white/10/80 text-xs font-bold text-foreground border-none transition-all disabled:opacity-50 cursor-pointer"
+              className="mt-4 flex h-9 items-center justify-center gap-2 rounded-[var(--radius-card)] glass hover:glass/80 text-xs font-bold text-foreground border-none transition-all disabled:opacity-50 cursor-pointer"
             >
               <RefreshCw className={`h-3.5 w-3.5 ${syncBusy ? "animate-spin" : ""}`} /> Atualizar
               Viagens Ativas
@@ -1523,8 +1564,8 @@ function InfotravelTab({ agencyId }: { agencyId: string }) {
         <div className="space-y-3">
           <div className="flex items-center justify-between border-b border-border/50 pb-2">
             <h4 className="text-xs font-bold text-foreground flex items-center gap-1.5">
-              <History className="h-3.5 w-3.5 text-muted-foreground" /> Histórico de
-              Processamento (Últimos 10)
+              <History className="h-3.5 w-3.5 text-muted-foreground" /> Histórico de Processamento
+              (Últimos 10)
             </h4>
             {jobsQuery.isFetching && (
               <span className="flex items-center gap-1 ds-meta text-brand font-bold animate-pulse">
@@ -1544,7 +1585,7 @@ function InfotravelTab({ agencyId }: { agencyId: string }) {
               </div>
             ) : (
               <table className="w-full text-sm">
-                <thead className="glass bg-white/5 border-white/10/40 border-b border-border ds-label-caps text-muted-foreground font-bold">
+                <thead className="glass/40 border-b border-border ds-label-caps text-muted-foreground font-bold">
                   <tr>
                     <th className="px-4 py-2.5 text-left">Data de Execução</th>
                     <th className="px-4 py-2.5 text-left">Tipo de Ação</th>
@@ -1561,7 +1602,7 @@ function InfotravelTab({ agencyId }: { agencyId: string }) {
                     return (
                       <tr
                         key={job.id}
-                        className="border-t border-border/50 hover:glass bg-white/5 border-white/10/20 text-xs"
+                        className="border-t border-border/50 hover:glass/20 text-xs"
                       >
                         <td className="px-4 py-3 text-muted-foreground font-medium">
                           {new Date(job.started_at).toLocaleString("pt-BR")}
@@ -1569,8 +1610,8 @@ function InfotravelTab({ agencyId }: { agencyId: string }) {
                         <td className="px-4 py-3 font-semibold text-foreground">
                           {job.job_type === "backfill" ? (
                             <span className="flex items-center gap-1">
-                              <Calendar className="h-3.5 w-3.5 text-brand shrink-0" /> Importação
-                              em Lote
+                              <Calendar className="h-3.5 w-3.5 text-brand shrink-0" /> Importação em
+                              Lote
                             </span>
                           ) : (
                             <span className="flex items-center gap-1">
@@ -1625,7 +1666,10 @@ function InfotravelTab({ agencyId }: { agencyId: string }) {
       </div>
 
       {/* Modal de Detalhes de Erros */}
-      <Dialog open={!!errorDetailsJobId && !!selectedJobForError} onOpenChange={(open) => !open && setErrorDetailsJobId(null)}>
+      <Dialog
+        open={!!errorDetailsJobId && !!selectedJobForError}
+        onOpenChange={(open) => !open && setErrorDetailsJobId(null)}
+      >
         <DialogContent className="max-w-2xl p-0 overflow-hidden border-none/10 max-h-[80vh] bg-background">
           <DialogHeader className="px-6 py-4 border-b border-border/80">
             <DialogTitle className="text-md font-bold text-foreground flex items-center gap-1.5 text-danger">
@@ -1639,7 +1683,8 @@ function InfotravelTab({ agencyId }: { agencyId: string }) {
                 Ocorrências registradas durante o processamento das reservas com a operadora
                 parceira:
               </p>
-              {selectedJobForError && Array.isArray(selectedJobForError.errors_log) &&
+              {selectedJobForError &&
+                Array.isArray(selectedJobForError.errors_log) &&
                 selectedJobForError.errors_log.map((log: any, idx: number) => (
                   <div
                     key={idx}
@@ -1675,4 +1720,3 @@ function InfotravelTab({ agencyId }: { agencyId: string }) {
     </div>
   );
 }
-

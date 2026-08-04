@@ -219,7 +219,8 @@ export function ModuleAdminPanel({
                       {displayName}.
                     </p>
                   </div>
-                  <Button variant="default"
+                  <Button
+                    variant="default"
                     onClick={() => setIsCreatingPlaybook(true)}
                     className="h-8 ds-meta font-bold gap-1 rounded-2xl"
                   >
@@ -347,13 +348,13 @@ export function ModuleAdminPanel({
                   value={customName}
                   onChange={(e) => setCustomName(e.target.value)}
                   placeholder={`Padrão: ${DEFAULT_MODULE_NAMES[moduleKey] || moduleKey}`}
-                  
                 />
               </Field>
 
               <div className="flex justify-end gap-2">
                 {customName !== currentCustomName && (
-                  <Button variant="ghost"
+                  <Button
+                    variant="ghost"
                     type="button"
                     onClick={() => setCustomName(currentCustomName)}
                     className="h-8 text-xs font-bold"
@@ -361,7 +362,8 @@ export function ModuleAdminPanel({
                     Descartar
                   </Button>
                 )}
-                <Button variant="default"
+                <Button
+                  variant="default"
                   type="submit"
                   disabled={savingName || customName === currentCustomName}
                   className="h-8 text-xs font-bold"
@@ -511,7 +513,6 @@ function PlaybookForm({
             value={title}
             onChange={(e) => setTitle(e.target.value)}
             placeholder="Ex: Como lidar com cancelamentos ou Dúvidas Frequentes"
-            
           />
         </Field>
 
@@ -530,7 +531,8 @@ function PlaybookForm({
             <label className="text-xs font-extrabold text-foreground uppercase tracking-wider">
               Etapas e Diretrizes do Processo
             </label>
-            <Button variant="ghost"
+            <Button
+              variant="ghost"
               type="button"
               onClick={addStep}
               className="h-7 ds-meta font-bold cursor-pointer"
@@ -539,7 +541,7 @@ function PlaybookForm({
             </Button>
           </div>
 
-          <div className="space-y-3 max-h-[300px] overflow-y-auto pr-1 no-scrollbar">
+          <div className="space-y-3 max-h-72 overflow-y-auto pr-1 no-scrollbar">
             {steps.map((st, idx) => (
               <div
                 key={idx}
@@ -584,7 +586,12 @@ function PlaybookForm({
           <Button variant="ghost" type="button" onClick={onClose} className="h-8 text-xs font-bold">
             Cancelar
           </Button>
-          <Button variant="default" type="submit" disabled={submitting} className="h-8 text-xs font-bold">
+          <Button
+            variant="default"
+            type="submit"
+            disabled={submitting}
+            className="h-8 text-xs font-bold"
+          >
             {submitting ? "Salvando..." : "Salvar Playbook"}
           </Button>
         </div>

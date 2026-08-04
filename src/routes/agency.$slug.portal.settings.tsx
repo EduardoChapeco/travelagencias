@@ -25,7 +25,9 @@ import { NativeSelect as Select } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
 
 export const Route = createFileRoute("/agency/$slug/portal/settings")({
-  head: ({ context }: any) => ({ meta: [{ title: `Configurações do Portal · ${context?.brand?.platform_name || 'Turis'}` }] }),
+  head: ({ context }: any) => ({
+    meta: [{ title: `Configurações do Portal · ${context?.brand?.platform_name || "Turis"}` }],
+  }),
   component: PortalSettingsPage,
 });
 
@@ -154,35 +156,35 @@ function PortalSettingsPage() {
 
   return (
     <div className="flex h-full flex-col overflow-hidden">
-              <PageHeader
-          title="Configurações do Portal"
-          filters={TABS.map((t) => ({ label: t.label, value: t.id }))}
-          activeFilter={tab}
-          onFilterChange={(v) => setTab(v as any)}
-          actions={
-            <div className="flex items-center gap-1.5">
-              <a
-                href={portalUrl}
-                target="_blank"
-                rel="noreferrer"
-                className="h-7 px-3 flex items-center gap-1 rounded-full text-white/60 hover:text-white hover:bg-white/10 transition-colors"
-              >
-                <Eye className="h-3.5 w-3.5" />
-                <span className="hidden sm:inline">Ver portal</span>
-              </a>
-              <Button
-                type="submit"
-                form="portal-settings-form"
-                disabled={busy}
-                className="h-7 px-3 flex items-center gap-1 rounded-full bg-brand text-brand-foreground hover:bg-brand/90 transition-colors cursor-pointer disabled:opacity-50 font-bold"
-              >
-                <Save className="h-3.5 w-3.5" />
-                <span>{busy ? "Salvando..." : "Salvar"}</span>
-              </Button>
-            </div>
-          }
-        />
-      
+      <PageHeader
+        title="Configurações do Portal"
+        filters={TABS.map((t) => ({ label: t.label, value: t.id }))}
+        activeFilter={tab}
+        onFilterChange={(v) => setTab(v as any)}
+        actions={
+          <div className="flex items-center gap-1.5">
+            <a
+              href={portalUrl}
+              target="_blank"
+              rel="noreferrer"
+              className="h-7 px-3 flex items-center gap-1 rounded-full text-white/60 hover:text-white hover:glass-dark transition-colors"
+            >
+              <Eye className="h-3.5 w-3.5" />
+              <span className="hidden sm:inline">Ver portal</span>
+            </a>
+            <Button
+              type="submit"
+              form="portal-settings-form"
+              disabled={busy}
+              className="h-7 px-3 flex items-center gap-1 rounded-full bg-brand text-brand-foreground hover:bg-brand/90 transition-colors cursor-pointer disabled:opacity-50 font-bold"
+            >
+              <Save className="h-3.5 w-3.5" />
+              <span>{busy ? "Salvando..." : "Salvar"}</span>
+            </Button>
+          </div>
+        }
+      />
+
       <div className="flex-1 overflow-y-auto px-4  md:pr-6 py-4 min-h-0 pb-24">
         {q.isError && (
           <div className="flex flex-col items-center justify-center py-10 px-6 text-center rounded-[var(--radius-card)] border border-red-200 bg-red-50/60 mb-6 max-w-2xl mx-auto shrink-0">
@@ -282,7 +284,7 @@ function PortalSettingsPage() {
               </Field>
 
               {/* Preview card */}
-              <div className="rounded-full border-none glass bg-white/5 border-white/10 p-4">
+              <div className="rounded-full border-none glass p-4">
                 <div className="ds-meta font-semibold uppercase tracking-wide text-muted-foreground mb-3">
                   Preview no Google
                 </div>
@@ -385,7 +387,6 @@ function PortalSettingsPage() {
                         value={link.label}
                         onChange={(e) => updateNavLink("nav_links", i, "label", e.target.value)}
                         placeholder="Início"
-                        
                       />
                       <Input
                         value={link.url}
@@ -439,7 +440,6 @@ function PortalSettingsPage() {
                         value={link.label}
                         onChange={(e) => updateNavLink("footer_links", i, "label", e.target.value)}
                         placeholder="Política de Privacidade"
-                        
                       />
                       <Input
                         value={link.url}
@@ -460,7 +460,7 @@ function PortalSettingsPage() {
               </div>
 
               {/* Footer preview */}
-              <div className="rounded-full border-none glass bg-white/5 border-white/10 p-4">
+              <div className="rounded-full border-none glass p-4">
                 <div className="ds-meta font-semibold uppercase tracking-wide text-muted-foreground mb-2">
                   Preview do rodapé
                 </div>
@@ -516,9 +516,7 @@ function PortalSettingsPage() {
                   className="font-mono"
                 />
                 {form.meta_pixel_id && (
-                  <p className="mt-1 ds-meta text-success">
-                    ✓ Meta Pixel será ativado no portal
-                  </p>
+                  <p className="mt-1 ds-meta text-success">✓ Meta Pixel será ativado no portal</p>
                 )}
               </Field>
 
@@ -542,7 +540,7 @@ function PortalSettingsPage() {
                   onChange={(e) => set("custom_head_script", e.target.value)}
                   rows={6}
                   placeholder={'<!-- Ex: Tidio chat, Hotjar, etc. -->\n<script src="..."></script>'}
-                  className="w-full rounded-full border-none glass bg-white/5 border-white/10 px-3 py-2 font-mono text-xs text-foreground outline-none focus:border-brand resize-y"
+                  className="w-full rounded-full border-none glass px-3 py-2 font-mono text-xs text-foreground outline-none focus:border-brand resize-y"
                 />
               </Field>
 

@@ -2,13 +2,7 @@ import { type Voucher } from "@/services/vouchers";
 import { type BrandKit, type CompanyProfile } from "@/lib/agency-context";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import {
-  Languages,
-  DollarSign,
-  Plug,
-  Clock,
-  Compass,
-} from "lucide-react";
+import { Languages, DollarSign, Plug, Clock, Compass } from "lucide-react";
 
 interface Props {
   voucher: Voucher;
@@ -172,9 +166,7 @@ export default function TemplateVoucherEmbarqueA4({
                 >
                   {p.name}
                 </span>
-                {p.document && (
-                  <span className="ds-meta text-slate-400">Doc: {p.document}</span>
-                )}
+                {p.document && <span className="ds-meta text-slate-400">Doc: {p.document}</span>}
                 {p.seat && <span className="ds-meta text-slate-400">Assento: {p.seat}</span>}
               </div>
             ))}
@@ -286,34 +278,48 @@ export default function TemplateVoucherEmbarqueA4({
                 Informações Úteis para Viagem — {dest.destination}
               </span>
             </div>
-            
+
             <div className="grid grid-cols-2 md:grid-cols-4 gap-x-4 gap-y-2.5">
               <div className="flex items-start gap-1.5 ds-meta">
                 <Languages className="h-3.5 w-3.5 text-slate-400 shrink-0 mt-0.5" />
                 <div>
-                  <span className="block font-bold text-slate-500 uppercase tracking-wide text-[9px]">Idioma</span>
+                  <span className="block font-bold text-slate-500 uppercase tracking-wide text-[9px]">
+                    Idioma
+                  </span>
                   <span className="text-slate-800 font-medium">{dest.language || "Português"}</span>
                 </div>
               </div>
               <div className="flex items-start gap-1.5 ds-meta">
                 <DollarSign className="h-3.5 w-3.5 text-slate-400 shrink-0 mt-0.5" />
                 <div>
-                  <span className="block font-bold text-slate-500 uppercase tracking-wide text-[9px]">Moeda</span>
-                  <span className="text-slate-800 font-medium">{dest.currency || "Real (BRL)"}</span>
+                  <span className="block font-bold text-slate-500 uppercase tracking-wide text-[9px]">
+                    Moeda
+                  </span>
+                  <span className="text-slate-800 font-medium">
+                    {dest.currency || "Real (BRL)"}
+                  </span>
                 </div>
               </div>
               <div className="flex items-start gap-1.5 ds-meta">
                 <Plug className="h-3.5 w-3.5 text-slate-400 shrink-0 mt-0.5" />
                 <div>
-                  <span className="block font-bold text-slate-500 uppercase tracking-wide text-[9px]">Tomada</span>
-                  <span className="text-slate-800 font-medium">{dest.plug_type || "Tipo N / C"}</span>
+                  <span className="block font-bold text-slate-500 uppercase tracking-wide text-[9px]">
+                    Tomada
+                  </span>
+                  <span className="text-slate-800 font-medium">
+                    {dest.plug_type || "Tipo N / C"}
+                  </span>
                 </div>
               </div>
               <div className="flex items-start gap-1.5 ds-meta">
                 <Clock className="h-3.5 w-3.5 text-slate-400 shrink-0 mt-0.5" />
                 <div>
-                  <span className="block font-bold text-slate-500 uppercase tracking-wide text-[9px]">Fuso Horário</span>
-                  <span className="text-slate-800 font-medium">{dest.time_zone || "Brasília (UTC -3)"}</span>
+                  <span className="block font-bold text-slate-500 uppercase tracking-wide text-[9px]">
+                    Fuso Horário
+                  </span>
+                  <span className="text-slate-800 font-medium">
+                    {dest.time_zone || "Brasília (UTC -3)"}
+                  </span>
                 </div>
               </div>
             </div>
@@ -321,7 +327,9 @@ export default function TemplateVoucherEmbarqueA4({
             <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-2 border-t border-slate-100 pt-2 ds-meta">
               {dest.visa_required != null && (
                 <div>
-                  <span className="block font-bold text-slate-500 uppercase tracking-wide text-[9px]">Visto Necessário?</span>
+                  <span className="block font-bold text-slate-500 uppercase tracking-wide text-[9px]">
+                    Visto Necessário?
+                  </span>
                   <span className="text-slate-800 font-medium">
                     {dest.visa_required ? "⚠️ Sim" : "✓ Não"}
                     {dest.visa_info && ` — ${dest.visa_info}`}
@@ -330,19 +338,25 @@ export default function TemplateVoucherEmbarqueA4({
               )}
               {dest.entry_requirements && (
                 <div>
-                  <span className="block font-bold text-slate-500 uppercase tracking-wide text-[9px]">Requisitos de Entrada</span>
+                  <span className="block font-bold text-slate-500 uppercase tracking-wide text-[9px]">
+                    Requisitos de Entrada
+                  </span>
                   <span className="text-slate-800">{dest.entry_requirements}</span>
                 </div>
               )}
               {dest.vaccinations_required && dest.vaccinations_required.length > 0 && (
                 <div>
-                  <span className="block font-bold text-slate-500 uppercase tracking-wide text-[9px]">Vacinas Obrigatórias</span>
+                  <span className="block font-bold text-slate-500 uppercase tracking-wide text-[9px]">
+                    Vacinas Obrigatórias
+                  </span>
                   <span className="text-slate-800">{dest.vaccinations_required.join(", ")}</span>
                 </div>
               )}
               {dest.safety_level && (
                 <div>
-                  <span className="block font-bold text-slate-500 uppercase tracking-wide text-[9px]">Segurança</span>
+                  <span className="block font-bold text-slate-500 uppercase tracking-wide text-[9px]">
+                    Segurança
+                  </span>
                   <span className="text-slate-800">
                     Nível: <strong className="text-slate-700">{dest.safety_level}</strong>
                     {dest.safety_notes && ` — ${dest.safety_notes}`}
@@ -351,7 +365,9 @@ export default function TemplateVoucherEmbarqueA4({
               )}
               {dest.cultural_tips && (
                 <div className="col-span-1 md:col-span-2">
-                  <span className="block font-bold text-slate-500 uppercase tracking-wide text-[9px]">Dicas Culturais</span>
+                  <span className="block font-bold text-slate-500 uppercase tracking-wide text-[9px]">
+                    Dicas Culturais
+                  </span>
                   <span className="text-slate-800">{dest.cultural_tips}</span>
                 </div>
               )}

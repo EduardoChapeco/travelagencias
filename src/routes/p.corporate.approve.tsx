@@ -9,7 +9,9 @@ import { formatDate } from "@/lib/formatters";
 import { toast } from "sonner";
 
 export const Route = createFileRoute("/p/corporate/approve")({
-  head: ({ context }: any) => ({ meta: [{ title: `Aprovação Corporativa · ${context?.brand?.platform_name || 'Turis'}` }] }),
+  head: ({ context }: any) => ({
+    meta: [{ title: `Aprovação Corporativa · ${context?.brand?.platform_name || "Turis"}` }],
+  }),
   validateSearch: (search: Record<string, unknown>) => {
     return { token: search.token as string | undefined };
   },
@@ -117,7 +119,8 @@ function CorporateApprovePage() {
                       rows={3}
                     />
                     <div className="flex gap-3">
-                      <Button variant="ghost"
+                      <Button
+                        variant="ghost"
                         className="text-danger hover:bg-danger/10"
                         onClick={() =>
                           updateStatus.mutate({ status: "rejected", reason: rejectReason })
@@ -136,7 +139,8 @@ function CorporateApprovePage() {
                   </div>
                 ) : (
                   <div className="flex flex-col sm:flex-row gap-3">
-                    <Button variant="default"
+                    <Button
+                      variant="default"
                       className="flex-1 py-6 text-lg gap-2"
                       onClick={() => updateStatus.mutate({ status: "approved" })}
                       disabled={updateStatus.isPending}
@@ -145,7 +149,7 @@ function CorporateApprovePage() {
                     </Button>
                     <Button
                       onClick={() => setIsRejecting(true)}
-                      className="flex-1 flex items-center justify-center gap-2 py-6 text-lg font-semibold border-none text-foreground rounded-[var(--radius-card)] hover:glass bg-white/5 border-white/10 transition-colors"
+                      className="flex-1 flex items-center justify-center gap-2 py-6 text-lg font-semibold border-none text-foreground rounded-[var(--radius-card)] hover:glass transition-colors"
                     >
                       <XCircle className="h-5 w-5" /> Recusar
                     </Button>

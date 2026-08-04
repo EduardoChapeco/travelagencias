@@ -2,7 +2,17 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
-import { Shield, FileText, Scale, Save, Eye, EyeOff, Clock, History, AlertCircle } from "lucide-react";
+import {
+  Shield,
+  FileText,
+  Scale,
+  Save,
+  Eye,
+  EyeOff,
+  Clock,
+  History,
+  AlertCircle,
+} from "lucide-react";
 import { PageHeader } from "@/components/shell/PageHeader";
 import { Field } from "@/components/ui/field";
 import { FormInput as Input } from "@/components/ui/input";
@@ -155,7 +165,7 @@ function Page() {
                   "flex w-full items-center gap-2.5 rounded-[var(--radius-card)] border px-3 py-2.5 text-left text-sm transition-colors " +
                   (activeKind === doc.kind
                     ? "border-brand/30 bg-brand/5 text-brand font-semibold"
-                    : "border-transparent hover:glass bg-white/5 border-white/10 text-foreground")
+                    : "border-transparent hover:glass text-foreground")
                 }
               >
                 <Icon className="h-4 w-4 shrink-0" />
@@ -209,7 +219,7 @@ function Page() {
                 <Button
                   type="button"
                   onClick={() => setPreviewMode((v) => !v)}
-                  className="flex h-8 items-center gap-1.5 rounded-full border-none px-2.5 text-xs hover:glass bg-white/5 border-white/10"
+                  className="flex h-8 items-center gap-1.5 rounded-full border-none px-2.5 text-xs hover:glass"
                 >
                   {previewMode ? (
                     <EyeOff className="h-3.5 w-3.5" />
@@ -223,11 +233,17 @@ function Page() {
                     Despublicar
                   </Button>
                 ) : (
-                  <Button variant="ghost" type="button" onClick={publish} className="text-xs gap-1.5">
+                  <Button
+                    variant="ghost"
+                    type="button"
+                    onClick={publish}
+                    className="text-xs gap-1.5"
+                  >
                     <Eye className="h-3.5 w-3.5" /> Publicar
                   </Button>
                 )}
-                <Button variant="ghost"
+                <Button
+                  variant="ghost"
                   type="button"
                   onClick={saveAsNewVersion}
                   disabled={busy}
@@ -235,7 +251,8 @@ function Page() {
                 >
                   <History className="h-3.5 w-3.5" /> Nova Versao
                 </Button>
-                <Button variant="default"
+                <Button
+                  variant="default"
                   type="button"
                   onClick={save}
                   disabled={busy}
@@ -257,7 +274,7 @@ function Page() {
               </div>
             ) : (
               <div className="rounded-[var(--radius-card)] border-none glass-card border-none overflow-hidden">
-                <div className="border-b border-border px-4 py-2 flex items-center justify-between glass bg-white/5 border-white/10/40">
+                <div className="border-b border-border px-4 py-2 flex items-center justify-between glass/40">
                   <span className="text-xs font-semibold">{activeDoc.title}</span>
                 </div>
                 <RichTextEditor
@@ -267,7 +284,7 @@ function Page() {
               </div>
             )}
 
-            <div className="rounded-[var(--radius-card)] border-none glass bg-white/5 border-white/10/40 p-3 text-xs">
+            <div className="rounded-[var(--radius-card)] border-none glass/40 p-3 text-xs">
               <span className="font-semibold">URL publica quando publicado: </span>
               <code className="rounded glass-card border-none px-1.5 py-0.5 font-mono text-muted-foreground">
                 {window.location.origin}/{activeDoc.slug}

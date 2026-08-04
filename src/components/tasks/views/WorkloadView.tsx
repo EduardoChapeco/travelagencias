@@ -12,9 +12,9 @@ export function WorkloadView({ filters }: { filters: TaskFiltersState }) {
   // Puxar todas as tarefas ativas e concluídas para calcular a carga
   const allTasksFilters: TaskFiltersState = {
     ...filters,
-    show_done: true // Precisamos das concluídas para calcular o progresso
+    show_done: true, // Precisamos das concluídas para calcular o progresso
   };
-  
+
   const { data: tasks, isLoading, error } = useTasksQuery(allTasksFilters);
 
   if (isLoading) {
@@ -40,16 +40,19 @@ export function WorkloadView({ filters }: { filters: TaskFiltersState }) {
   }
 
   // Agrupar tarefas por responsável
-  const workloadMap: Record<string, { 
-    name: string; 
-    tasks: TaskWithRelations[]; 
-    doneCount: number; 
-    pendingCount: number; 
-    criticalCount: number;
-    highCount: number;
-  }> = {};
+  const workloadMap: Record<
+    string,
+    {
+      name: string;
+      tasks: TaskWithRelations[];
+      doneCount: number;
+      pendingCount: number;
+      criticalCount: number;
+      highCount: number;
+    }
+  > = {};
 
-  tasks?.forEach(task => {
+  tasks?.forEach((task) => {
     const userId = task.assigned_to || "unassigned";
     // Corrected: UserProfile has 'name', not 'email'
     const userName = task.assignee?.name || "Não Atribuído";
@@ -61,7 +64,7 @@ export function WorkloadView({ filters }: { filters: TaskFiltersState }) {
         doneCount: 0,
         pendingCount: 0,
         criticalCount: 0,
-        highCount: 0
+        highCount: 0,
       };
     }
 
@@ -92,26 +95,31 @@ export function WorkloadView({ filters }: { filters: TaskFiltersState }) {
       />
       <div className="flex items-center gap-2 mb-6 shrink-0">
         <Users className="h-5 w-5 text-[var(--brand)]" />
-        <h2 className="text-lg font-bold text-[var(--foreground)]">
-          Carga de Trabalho da Equipe
-        </h2>
+        <h2 className="text-lg font-bold text-[var(--foreground)]">Carga de Trabalho da Equipe</h2>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {workloads.map((w, idx) => {
           const total = w.tasks.length;
           const progress = total > 0 ? (w.doneCount / total) * 100 : 0;
-          
+
           return (
-            <div key={idx} className="p-5 rounded-2xl border border-border bg-[var(--surface-alt)]/20 hover:border-border-hover transition-all flex flex-col justify-between">
+            <div
+              key={idx}
+              className="p-5 rounded-2xl border border-border bg-[var(--surface-alt)]/20 hover:border-border-hover transition-all flex flex-col justify-between"
+            >
               <div>
                 <div className="flex items-center gap-3 mb-4">
                   <div className="h-10 w-10 rounded-full bg-[var(--brand)]/15 text-[var(--brand)] flex items-center justify-center font-bold text-sm uppercase">
                     {w.name.charAt(0)}
                   </div>
                   <div>
-                    <h3 className="font-bold text-sm text-[var(--foreground)] capitalize">{w.name}</h3>
-                    <p className="ds-meta text-[var(--muted-foreground)]">{w.tasks.length} tarefa{w.tasks.length !== 1 ? "s" : ""}</p>
+                    <h3 className="font-bold text-sm text-[var(--foreground)] capitalize">
+                      {w.name}
+                    </h3>
+                    <p className="ds-meta text-[var(--muted-foreground)]">
+                      {w.tasks.length} tarefa{w.tasks.length !== 1 ? "s" : ""}
+                    </p>
                   </div>
                 </div>
 
@@ -120,7 +128,9 @@ export function WorkloadView({ filters }: { filters: TaskFiltersState }) {
                   <div>
                     <div className="flex justify-between text-xs font-semibold mb-1 text-[var(--muted-foreground)]">
                       <span>Taxa de Conclusão</span>
-                      <span>{w.doneCount} de {total} concluidas ({Math.round(progress)}%)</span>
+                      <span>
+                        {w.doneCount} de {total} concluidas ({Math.round(progress)}%)
+                      </span>
                     </div>
                     <Progress value={progress} className="h-2 bg-border" />
                   </div>

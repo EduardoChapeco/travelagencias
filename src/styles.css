@@ -20,17 +20,16 @@
   --radius-input: var(--radius-full);
   --radius-badge: var(--radius-xs);
 
-
   /* OS Ambient variables */
   --os-glass-bg: rgba(255, 255, 255, 0.09);
   --os-glass-bg-strong: rgba(255, 255, 255, 0.14);
   --os-glass-border: rgba(255, 255, 255, 0.15);
   --os-glass-border-strong: rgba(255, 255, 255, 0.25);
-  --os-sidebar-bg: rgba(0, 0, 0, 0.30);
+  --os-sidebar-bg: rgba(0, 0, 0, 0.3);
   --os-sidebar-border: rgba(255, 255, 255, 0.09);
   --os-text: rgba(255, 255, 255, 0.95);
   --os-text-muted: rgba(255, 255, 255, 0.55);
-  --os-text-faint: rgba(255, 255, 255, 0.30);
+  --os-text-faint: rgba(255, 255, 255, 0.3);
 
   /* Component Layout */
   --ds-sidebar-collapsed: 52px;
@@ -41,7 +40,6 @@
   /* Danger/Error default mapping */
   --danger: var(--color-danger);
   --danger-bg: var(--color-danger-bg);
-
 
   /* Semantic Layout Tokens (Canonical Architecture) */
   --shell-edge-gap: 12px;
@@ -63,10 +61,10 @@
 .dark {
   /* In dark mode, map background/foreground inversely if needed, but DESIGN.md is SSOT */
   --os-glass-bg: rgba(15, 15, 18, 0.45);
-  --os-glass-bg-strong: rgba(15, 15, 18, 0.60);
+  --os-glass-bg-strong: rgba(15, 15, 18, 0.6);
   --os-glass-border: rgba(255, 255, 255, 0.08);
   --os-glass-border-strong: rgba(255, 255, 255, 0.14);
-  --os-sidebar-bg: rgba(0, 0, 0, 0.50);
+  --os-sidebar-bg: rgba(0, 0, 0, 0.5);
   --os-sidebar-border: rgba(255, 255, 255, 0.07);
 
   /* Dark mode danger mapping */
@@ -80,15 +78,21 @@
   }
 
   /* ELEVATION RULE: No shadows — depth via blur + borders */
-  .shadow-xs, .shadow-sm, .shadow, .shadow-md,
-  .shadow-lg, .shadow-xl, .shadow-2xl {
+  .shadow-xs,
+  .shadow-sm,
+  .shadow,
+  .shadow-md,
+  .shadow-lg,
+  .shadow-xl,
+  .shadow-2xl {
     box-shadow: none !important;
   }
   [data-radix-popper-content-wrapper] > * {
     box-shadow: none !important;
   }
 
-  html, body {
+  html,
+  body {
     font-family: var(--font-sans);
     -webkit-font-smoothing: antialiased;
   }
@@ -100,22 +104,29 @@
     line-height: 1.5;
   }
 
-  .no-scrollbar::-webkit-scrollbar { display: none; }
-  .no-scrollbar { scrollbar-width: none; }
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+  .no-scrollbar {
+    scrollbar-width: none;
+  }
 
-  #lovable-badge, #lovable-badge-cta { display: none !important; }
+  #lovable-badge,
+  #lovable-badge-cta {
+    display: none !important;
+  }
 }
 
 @layer utilities {
   /* ── Core glass primitives — Sem blur aninhado ────────── */
   .glass {
-    background: rgba(255, 255, 255, 0.07);
-    border: 1px solid rgba(255, 255, 255, 0.14);
+    background: color-mix(in srgb, var(--color-foreground) 7%, transparent);
+    border: 1px solid color-mix(in srgb, var(--color-foreground) 10%, transparent);
   }
 
   .glass-dark {
-    background: rgba(0, 0, 0, 0.20);
-    border: 1px solid rgba(255, 255, 255, 0.09);
+    background: color-mix(in srgb, var(--color-foreground) 20%, transparent);
+    border: 1px solid color-mix(in srgb, var(--color-foreground) 10%, transparent);
   }
 
   /*
@@ -123,38 +134,38 @@
    * Opacidade controlada por --os-glass-opacity (padrão 0.20 = 20%).
    */
   .glass-sidebar {
-    background: rgba(255, 255, 255, 0.10) !important;
-    border: 1px solid rgba(255, 255, 255, 0.15) !important;
+    background: color-mix(in srgb, var(--color-foreground) 10%, transparent) !important;
+    border: 1px solid color-mix(in srgb, var(--color-foreground) 15%, transparent) !important;
   }
 
   /* Dock horizontal inferior (macOS-style) na Home */
   .glass-dock {
-    background: rgba(0, 0, 0, calc(var(--os-glass-opacity, 0.22) + 0.03));
-    border: 1px solid rgba(255, 255, 255, 0.12);
+    background: color-mix(in srgb, var(--color-foreground) 25%, transparent);
+    border: 1px solid color-mix(in srgb, var(--color-foreground) 12%, transparent);
   }
 
   /* Card de dados (kanban cards, tabelas, listas) */
   .glass-card {
-    background: rgba(15, 15, 22, 0.50);
-    border: 1px solid rgba(255, 255, 255, 0.12);
+    background: var(--color-card, color-mix(in srgb, var(--color-surface) 90%, transparent));
+    border: 1px solid var(--color-border, color-mix(in srgb, var(--color-foreground) 12%, transparent));
   }
 
   /* Seção de ação (barras de filtro, search, toolbars) */
   .glass-section {
-    background: rgba(15, 15, 22, 0.35);
-    border: 1px solid rgba(255, 255, 255, 0.10);
+    background: var(--color-surface-alt, color-mix(in srgb, var(--color-surface) 35%, transparent));
+    border: 1px solid var(--color-border, color-mix(in srgb, var(--color-foreground) 10%, transparent));
   }
 
   /* Status pills, tooltips, badges */
   .glass-pill {
-    background: rgba(0, 0, 0, 0.18);
-    border: 1px solid rgba(255, 255, 255, 0.09);
+    background: color-mix(in srgb, var(--color-foreground) 18%, transparent);
+    border: 1px solid color-mix(in srgb, var(--color-foreground) 10%, transparent);
     border-radius: 9999px !important;
   }
 
   /* Barra de cabeçalho de módulo — Module Header Bar */
   .glass-toolbar {
-    background: rgba(0, 0, 0, calc(var(--os-glass-opacity, 0.20) - 0.02));
+    background: color-mix(in srgb, var(--color-foreground) 18%, transparent);
   }
 
   /* ── OS Workspace Context ──────────────────────────────────────────── */
@@ -171,36 +182,36 @@
    */
   .os-workspace {
     background: transparent !important;
-    --background: transparent !important;
-    --foreground: rgba(255, 255, 255, 0.98) !important;
-    --surface: rgba(10, 10, 15, 0.70);
-    --surface-alt: rgba(10, 10, 15, 0.80);
+    --color-background: transparent !important;
+    --color-foreground: rgba(255, 255, 255, 0.98) !important;
+    --surface: rgba(10, 10, 15, 0.7);
+    --surface-alt: rgba(10, 10, 15, 0.8);
     --color-surface: var(--surface);
     --color-surface-alt: var(--surface-alt);
-    --card: rgba(10, 10, 15, 0.65);
-    --card-foreground: rgba(255, 255, 255, 0.98);
-    --popover: rgba(10, 10, 15, 0.85);
-    --muted: rgba(255, 255, 255, 0.10);
-    --muted-foreground: rgba(255, 255, 255, 0.70) !important;
-    --muted-2: rgba(255, 255, 255, 0.40);
-    --border: rgba(255, 255, 255, 0.18);
-    --border-strong: rgba(255, 255, 255, 0.28);
-    --input: rgba(255, 255, 255, 0.12);
-    --ring: rgba(255, 255, 255, 0.32);
-    --accent: rgba(255, 255, 255, 0.12);
-    --accent-foreground: rgba(255, 255, 255, 0.98);
-    --accent-soft: rgba(255, 255, 255, 0.05);
+    --color-card: rgba(10, 10, 15, 0.65);
+    --color-card-foreground: rgba(255, 255, 255, 0.98);
+    --color-popover: rgba(10, 10, 15, 0.85);
+    --color-muted: rgba(255, 255, 255, 0.1);
+    --color-muted-foreground: rgba(255, 255, 255, 0.7) !important;
+    --color-muted-2: rgba(255, 255, 255, 0.4);
+    --color-border: rgba(255, 255, 255, 0.18);
+    --color-border-strong: rgba(255, 255, 255, 0.28);
+    --color-input: rgba(255, 255, 255, 0.12);
+    --color-ring: rgba(255, 255, 255, 0.32);
+    --color-accent: rgba(255, 255, 255, 0.12);
+    --color-accent-foreground: rgba(255, 255, 255, 0.98);
+    --color-accent-soft: rgba(255, 255, 255, 0.05);
     color: rgba(255, 255, 255, 0.98) !important;
 
     /* Custom high-contrast status variables for ambient dark workspace */
-    --success-bg: rgba(74, 222, 128, 0.15) !important;
-    --success: #4ade80 !important;
-    --warning-bg: rgba(250, 204, 21, 0.15) !important;
-    --warning: #facc15 !important;
-    --danger-bg: rgba(248, 113, 113, 0.15) !important;
-    --danger: #f87171 !important;
-    --info-bg: rgba(96, 165, 250, 0.15) !important;
-    --info: #60a5fa !important;
+    --color-success-bg: rgba(74, 222, 128, 0.15) !important;
+    --color-success: #4ade80 !important;
+    --color-warning-bg: rgba(250, 204, 21, 0.15) !important;
+    --color-warning: #facc15 !important;
+    --color-danger-bg: rgba(248, 113, 113, 0.15) !important;
+    --color-danger: #f87171 !important;
+    --color-info-bg: rgba(96, 165, 250, 0.15) !important;
+    --color-info: #60a5fa !important;
   }
 
   /*
@@ -211,7 +222,7 @@
    * Regra: use a classe semântica correta, nunca confie em seletor coringa.
    */
   .mac-glass-panel {
-    background: rgba(20, 20, 25, 0.70) !important;
+    background: rgba(20, 20, 25, 0.7) !important;
     backdrop-filter: blur(64px) saturate(220%) !important;
     -webkit-backdrop-filter: blur(64px) saturate(220%) !important;
     border: 1px solid rgba(255, 255, 255, 0.15) !important;
@@ -256,7 +267,9 @@
   }
   .os-workspace [role="tab"] {
     border-radius: 999px !important;
-    transition: background 0.2s ease, color 0.2s ease !important;
+    transition:
+      background 0.2s ease,
+      color 0.2s ease !important;
   }
   .os-workspace [role="tab"][data-state="active"],
   .os-workspace [role="tab"][aria-selected="true"] {
@@ -309,7 +322,7 @@
   .os-workspace [data-kanban-col],
   .os-workspace .kanban-column {
     background: rgba(255, 255, 255, 0.04) !important;
-    border-color: rgba(255, 255, 255, 0.10) !important;
+    border-color: rgba(255, 255, 255, 0.1) !important;
   }
 
   /* Badges de cor não devem perder seus fundos */
@@ -318,17 +331,15 @@
     backdrop-filter: none;
   }
 
-
-
   /* ── Gradients ─────────────────────────────────────────────────────── */
   .gradient-sky {
-    background: linear-gradient(135deg, #BFE3FF 0%, #2F5CE0 100%);
+    background: linear-gradient(135deg, #bfe3ff 0%, #2f5ce0 100%);
   }
   .gradient-bloom {
-    background: linear-gradient(135deg, #E9D9FF 0%, #6B3FD1 100%);
+    background: linear-gradient(135deg, #e9d9ff 0%, #6b3fd1 100%);
   }
   .gradient-meadow {
-    background: linear-gradient(135deg, #EAF7C9 0%, #3E9B4F 100%);
+    background: linear-gradient(135deg, #eaf7c9 0%, #3e9b4f 100%);
   }
 
   /* Bento Grid System */
@@ -348,8 +359,12 @@
     @apply transition-all duration-300 ease-out hover:border-primary/50 hover:bg-primary/5;
   }
 
-  .text-balance { text-wrap: balance; }
-  .text-pretty { text-wrap: pretty; }
+  .text-balance {
+    text-wrap: balance;
+  }
+  .text-pretty {
+    text-wrap: pretty;
+  }
 
   /* ── OS Ambient Text Utilities ────────────────────────────────────────────
    * Uso exclusivo em elementos sobre wallpaper (fora do .os-workspace).
@@ -357,11 +372,21 @@
    * Fonte canônica: --os-text, --os-text-muted, --os-text-faint em :root.
    * NÃO use text-white hardcoded nesses contextos — use essas classes.
    */
-  .text-os       { color: var(--os-text); }
-  .text-os-muted { color: var(--os-text-muted); }
-  .text-os-faint { color: var(--os-text-faint); }
-  .hover\:text-os:hover       { color: var(--os-text); }
-  .hover\:text-os-muted:hover { color: var(--os-text-muted); }
+  .text-os {
+    color: var(--os-text);
+  }
+  .text-os-muted {
+    color: var(--os-text-muted);
+  }
+  .text-os-faint {
+    color: var(--os-text-faint);
+  }
+  .hover\:text-os:hover {
+    color: var(--os-text);
+  }
+  .hover\:text-os-muted:hover {
+    color: var(--os-text-muted);
+  }
 
   /* Error / Danger card utilities */
   .glass-error {
@@ -449,7 +474,9 @@
     size: A4 landscape;
     margin: 0;
   }
-  .print-landscape { page: landscape-page; }
+  .print-landscape {
+    page: landscape-page;
+  }
   .a4-page,
   .a4-landscape-page {
     page-break-inside: avoid !important;
@@ -461,42 +488,131 @@
 
 /* ── Animations ───────────────────────────────────────────────────────── */
 @keyframes fadeInUp {
-  from { opacity: 0; transform: translateY(30px); }
-  to { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 @keyframes fadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
 }
 @keyframes scaleIn {
-  from { opacity: 0; transform: scale(0.95); }
-  to { opacity: 1; transform: scale(1); }
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
 }
 @keyframes pulseSlow {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.55; }
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.55;
+  }
 }
 @keyframes islandSlideIn {
-  from { opacity: 0; transform: translateX(-8px); }
-  to { opacity: 1; transform: translateX(0); }
+  from {
+    opacity: 0;
+    transform: translateX(-8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
 }
 
-.animate-fadeInUp  { animation: fadeInUp 0.4s ease-out both; }
-.animate-fadeIn    { animation: fadeIn 0.3s ease-out both; }
-.animate-scaleIn   { animation: scaleIn 0.3s cubic-bezier(0.16, 1, 0.3, 1) both; }
-.animate-pulse-slow { animation: pulseSlow 2.5s ease-in-out infinite; }
-.animate-island-in { animation: islandSlideIn 0.35s cubic-bezier(0.16, 1, 0.3, 1) both; }
+.animate-fadeInUp {
+  animation: fadeInUp 0.4s ease-out both;
+}
+.animate-fadeIn {
+  animation: fadeIn 0.3s ease-out both;
+}
+.animate-scaleIn {
+  animation: scaleIn 0.3s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+.animate-pulse-slow {
+  animation: pulseSlow 2.5s ease-in-out infinite;
+}
+.animate-island-in {
+  animation: islandSlideIn 0.35s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
 
 /* ── Typography Scale ─────────────────────────────────────────────────── */
-.ds-display   { font-family: var(--font-sans); font-size: 2.5rem; font-weight: 600; line-height: 1.1; letter-spacing: -0.02em; }
-.ds-h1        { font-family: var(--font-sans); font-size: 2rem;   font-weight: 600; line-height: 1.2; letter-spacing: -0.02em; }
-.ds-h2        { font-family: var(--font-sans); font-size: 1.5rem; font-weight: 600; letter-spacing: -0.01em; }
-.ds-h3        { font-family: var(--font-sans); font-size: 1.125rem; font-weight: 600; }
-.ds-body-md   { font-family: var(--font-sans); font-size: 1rem;   font-weight: 400; line-height: 1.5; }
-.ds-body      { font-family: var(--font-sans); font-size: 1rem;   font-weight: 400; line-height: 1.5; }
-.ds-body-large { font-family: var(--font-sans); font-size: 1.125rem; font-weight: 400; line-height: 1.6; }
-.ds-meta      { font-family: var(--font-sans); font-size: 0.75rem; font-weight: 400; color: var(--muted-foreground); }
-.ds-label-caps { font-family: var(--font-mono); font-size: 0.75rem; font-weight: 500; line-height: 1; letter-spacing: 0.08em; text-transform: uppercase; }
+.ds-display {
+  font-family: var(--font-sans);
+  font-size: 2.5rem;
+  font-weight: 600;
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+}
+.ds-h1 {
+  font-family: var(--font-sans);
+  font-size: 2rem;
+  font-weight: 600;
+  line-height: 1.2;
+  letter-spacing: -0.02em;
+}
+.ds-h2 {
+  font-family: var(--font-sans);
+  font-size: 1.5rem;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+.ds-h3 {
+  font-family: var(--font-sans);
+  font-size: 1.125rem;
+  font-weight: 600;
+}
+.ds-body-md {
+  font-family: var(--font-sans);
+  font-size: 1rem;
+  font-weight: 400;
+  line-height: 1.5;
+}
+.ds-body {
+  font-family: var(--font-sans);
+  font-size: 1rem;
+  font-weight: 400;
+  line-height: 1.5;
+}
+.ds-body-large {
+  font-family: var(--font-sans);
+  font-size: 1.125rem;
+  font-weight: 400;
+  line-height: 1.6;
+}
+.ds-meta {
+  font-family: var(--font-sans);
+  font-size: 0.75rem;
+  font-weight: 400;
+  color: var(--muted-foreground);
+}
+.ds-label-caps {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  font-weight: 500;
+  line-height: 1;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
 
-* { scrollbar-width: none; }
-*::-webkit-scrollbar { display: none; }
+* {
+  scrollbar-width: none;
+}
+*::-webkit-scrollbar {
+  display: none;
+}

@@ -89,7 +89,8 @@ function Page() {
             </div>
 
             {hasActiveFilters && (
-              <Button variant="ghost"
+              <Button
+                variant="ghost"
                 onClick={resetFilters}
                 className="h-9 px-2 text-danger hover:bg-danger/10"
               >
@@ -128,7 +129,7 @@ function Page() {
       {q.data && totalCount > 0 && (
         <div className="overflow-hidden rounded-[var(--radius-card)] border-none glass-card border-none">
           <table className="w-full text-sm">
-            <thead className="glass bg-white/5 border-white/10 text-xs text-muted-foreground">
+            <thead className="glass text-xs text-muted-foreground">
               <tr>
                 <th className="px-3 py-2 text-left">Quando</th>
                 <th className="px-3 py-2 text-left">Ação</th>
@@ -146,9 +147,7 @@ function Page() {
                   <td className="px-3 py-2.5 font-mono ds-meta font-semibold text-foreground/80">
                     {e.action}
                     {e.entity_type && (
-                      <div className="ds-meta text-muted-foreground mt-0.5">
-                        {e.entity_type}
-                      </div>
+                      <div className="ds-meta text-muted-foreground mt-0.5">{e.entity_type}</div>
                     )}
                   </td>
                   <td className="px-3 py-2.5 text-xs">
@@ -174,7 +173,7 @@ function Page() {
           </table>
 
           {/* Pagination Controls */}
-          <div className="flex items-center justify-between border-t border-border px-4 py-3 glass bg-white/5 border-white/10/30">
+          <div className="flex items-center justify-between border-t border-border px-4 py-3 glass/30">
             <div className="text-xs text-muted-foreground">
               Mostrando{" "}
               <span className="font-medium text-foreground">{(page - 1) * PAGE_SIZE + 1}</span> a{" "}
@@ -184,7 +183,8 @@ function Page() {
               de <span className="font-medium text-foreground">{totalCount}</span> logs
             </div>
             <div className="flex items-center gap-2">
-              <Button variant="ghost"
+              <Button
+                variant="ghost"
                 disabled={page === 1}
                 onClick={() => setPage((p) => Math.max(1, p - 1))}
                 className="h-8 w-8 p-0"
@@ -194,7 +194,8 @@ function Page() {
               <div className="text-xs font-medium">
                 {page} / {totalPages}
               </div>
-              <Button variant="ghost"
+              <Button
+                variant="ghost"
                 disabled={page >= totalPages}
                 onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
                 className="h-8 w-8 p-0"

@@ -73,15 +73,12 @@ export function DataTable<TData, TValue>({
       <div className="flex-1 rounded-[var(--radius-card)] border-none glass-card text-white overflow-hidden flex flex-col">
         <div className="flex-1 overflow-y-auto no-scrollbar">
           <Table>
-            <TableHeader className="bg-white/5 border-b border-white/10">
+            <TableHeader className="glass border-b border-border">
               {table.getHeaderGroups().map((headerGroup) => (
                 <TableRow key={headerGroup.id} className="border-none">
                   {headerGroup.headers.map((header) => {
                     return (
-                      <TableHead
-                        key={header.id}
-                        className="ds-label-caps text-muted-foreground"
-                      >
+                      <TableHead key={header.id} className="ds-label-caps text-muted-foreground">
                         {header.isPlaceholder
                           ? null
                           : flexRender(header.column.columnDef.header, header.getContext())}
@@ -130,7 +127,7 @@ export function DataTable<TData, TValue>({
         </div>
       </div>
 
-      <div className="flex items-center justify-between px-4 py-2 rounded-[var(--radius-card)] bg-white/5 border border-white/5 shadow-xs select-none">
+      <div className="flex items-center justify-between px-4 py-2 rounded-[var(--radius-card)] glass border border-white/5 select-none">
         <div className="text-xs text-muted-foreground/80 font-medium">
           {table.getFilteredRowModel().rows.length} linha(s) total
         </div>
@@ -139,7 +136,8 @@ export function DataTable<TData, TValue>({
             Página {table.getState().pagination.pageIndex + 1} de {table.getPageCount() || 1}
           </div>
           <div className="flex items-center space-x-1">
-            <Button variant="ghost"
+            <Button
+              variant="ghost"
               className="hidden h-7 w-7 p-0 lg:flex rounded-full"
               onClick={() => table.setPageIndex(0)}
               disabled={!table.getCanPreviousPage()}
@@ -147,7 +145,8 @@ export function DataTable<TData, TValue>({
               <span className="sr-only">Ir para a primeira página</span>
               <ChevronsLeft className="h-3.5 w-3.5" />
             </Button>
-            <Button variant="ghost"
+            <Button
+              variant="ghost"
               className="h-7 w-7 p-0 rounded-full"
               onClick={() => table.previousPage()}
               disabled={!table.getCanPreviousPage()}
@@ -155,7 +154,8 @@ export function DataTable<TData, TValue>({
               <span className="sr-only">Voltar uma página</span>
               <ChevronLeft className="h-3.5 w-3.5" />
             </Button>
-            <Button variant="ghost"
+            <Button
+              variant="ghost"
               className="h-7 w-7 p-0 rounded-full"
               onClick={() => table.nextPage()}
               disabled={!table.getCanNextPage()}
@@ -163,7 +163,8 @@ export function DataTable<TData, TValue>({
               <span className="sr-only">Ir para a próxima página</span>
               <ChevronRight className="h-3.5 w-3.5" />
             </Button>
-            <Button variant="ghost"
+            <Button
+              variant="ghost"
               className="hidden h-7 w-7 p-0 lg:flex rounded-full"
               onClick={() => table.setPageIndex(table.getPageCount() - 1)}
               disabled={!table.getCanNextPage()}
@@ -192,9 +193,10 @@ export function DataTableColumnHeader<TData, TValue>({
 
   return (
     <div className={`flex items-center space-x-2 ${className}`}>
-      <Button variant="ghost"
+      <Button
+        variant="ghost"
         onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        className="flex items-center gap-1 hover:text-foreground hover:bg-surface-alt px-1.5 py-1 -ml-1.5 rounded-full transition-colors shadow-none"
+        className="flex items-center gap-1 hover:text-foreground hover:bg-surface-alt px-1.5 py-1 -ml-1.5 rounded-full transition-colors"
       >
         <span>{title}</span>
         {column.getIsSorted() === "desc" ? (

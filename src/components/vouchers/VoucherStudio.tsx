@@ -89,9 +89,7 @@ const SMALL =
 function Lbl({ label, children }: { label: string; children: React.ReactNode }) {
   return (
     <div className="flex flex-col gap-0.5">
-      <span className="ds-label-caps font-semibold text-muted-foreground">
-        {label}
-      </span>
+      <span className="ds-label-caps font-semibold text-muted-foreground">{label}</span>
       {children}
     </div>
   );
@@ -180,14 +178,16 @@ export function VoucherStudio({
       <div className="rounded-2xl border border-border bg-surface p-3 grid grid-cols-1 gap-2">
         <Lbl label="Destino">
           <Input
-            className={SMALL} value={draft.destination ?? ""}
+            className={SMALL}
+            value={draft.destination ?? ""}
             onChange={(e) => upd("destination", e.target.value)}
             placeholder="Lisboa, Portugal"
           />
         </Lbl>
         <Lbl label="Localizador">
           <Input
-            className={SMALL} value={draft.general_locator ?? ""}
+            className={SMALL}
+            value={draft.general_locator ?? ""}
             onChange={(e) => upd("general_locator", e.target.value)}
             placeholder="PNR / Código"
           />
@@ -210,7 +210,8 @@ export function VoucherStudio({
           >
             <Lbl label="Nome">
               <Input
-                className={SMALL} value={p.name}
+                className={SMALL}
+                value={p.name}
                 onChange={(e) => {
                   const arr = [...passengers];
                   arr[i] = { ...p, name: e.target.value };
@@ -220,7 +221,8 @@ export function VoucherStudio({
             </Lbl>
             <Lbl label="Documento">
               <Input
-                className={SMALL} value={p.document ?? ""}
+                className={SMALL}
+                value={p.document ?? ""}
                 onChange={(e) => {
                   const arr = [...passengers];
                   arr[i] = { ...p, document: e.target.value };
@@ -230,7 +232,8 @@ export function VoucherStudio({
             </Lbl>
             <Lbl label="Assento">
               <Input
-                className={SMALL} value={p.seat ?? ""}
+                className={SMALL}
+                value={p.seat ?? ""}
                 onChange={(e) => {
                   const arr = [...passengers];
                   arr[i] = { ...p, seat: e.target.value };
@@ -296,7 +299,8 @@ export function VoucherStudio({
               </div>
               <Lbl label="Cia Aérea">
                 <Input
-                  className={SMALL} value={f.airline}
+                  className={SMALL}
+                  value={f.airline}
                   onChange={(e) => {
                     const arr = [...flights];
                     arr[i] = { ...f, airline: e.target.value };
@@ -306,7 +310,8 @@ export function VoucherStudio({
               </Lbl>
               <Lbl label="Voo Nº">
                 <Input
-                  className={SMALL} value={f.flight_number}
+                  className={SMALL}
+                  value={f.flight_number}
                   onChange={(e) => {
                     const arr = [...flights];
                     arr[i] = { ...f, flight_number: e.target.value };
@@ -316,7 +321,8 @@ export function VoucherStudio({
               </Lbl>
               <Lbl label="Origem">
                 <Input
-                  className={SMALL} value={f.origin}
+                  className={SMALL}
+                  value={f.origin}
                   onChange={(e) => {
                     const arr = [...flights];
                     arr[i] = { ...f, origin: e.target.value };
@@ -326,7 +332,8 @@ export function VoucherStudio({
               </Lbl>
               <Lbl label="Destino">
                 <Input
-                  className={SMALL} value={f.destination}
+                  className={SMALL}
+                  value={f.destination}
                   onChange={(e) => {
                     const arr = [...flights];
                     arr[i] = { ...f, destination: e.target.value };
@@ -336,7 +343,9 @@ export function VoucherStudio({
               </Lbl>
               <Lbl label="Data">
                 <Input
-                  className={SMALL} type="date" value={f.date}
+                  className={SMALL}
+                  type="date"
+                  value={f.date}
                   onChange={(e) => {
                     const arr = [...flights];
                     arr[i] = { ...f, date: e.target.value };
@@ -346,7 +355,8 @@ export function VoucherStudio({
               </Lbl>
               <Lbl label="Saída">
                 <Input
-                  className={SMALL} value={f.departure_time}
+                  className={SMALL}
+                  value={f.departure_time}
                   onChange={(e) => {
                     const arr = [...flights];
                     arr[i] = { ...f, departure_time: e.target.value };
@@ -357,7 +367,8 @@ export function VoucherStudio({
               </Lbl>
               <Lbl label="Chegada">
                 <Input
-                  className={SMALL} value={f.arrival_time}
+                  className={SMALL}
+                  value={f.arrival_time}
                   onChange={(e) => {
                     const arr = [...flights];
                     arr[i] = { ...f, arrival_time: e.target.value };
@@ -368,7 +379,8 @@ export function VoucherStudio({
               </Lbl>
               <Lbl label="Classe">
                 <Input
-                  className={SMALL} value={f.class}
+                  className={SMALL}
+                  value={f.class}
                   onChange={(e) => {
                     const arr = [...flights];
                     arr[i] = { ...f, class: e.target.value };
@@ -452,7 +464,8 @@ export function VoucherStudio({
               </div>
               <Lbl label="Hotel">
                 <Input
-                  className={SMALL} value={a.name}
+                  className={SMALL}
+                  value={a.name}
                   onChange={(e) => {
                     const arr = [...accommodation];
                     arr[i] = { ...a, name: e.target.value };
@@ -462,7 +475,8 @@ export function VoucherStudio({
               </Lbl>
               <Lbl label="Cidade">
                 <Input
-                  className={SMALL} value={a.city}
+                  className={SMALL}
+                  value={a.city}
                   onChange={(e) => {
                     const arr = [...accommodation];
                     arr[i] = { ...a, city: e.target.value };
@@ -472,7 +486,9 @@ export function VoucherStudio({
               </Lbl>
               <Lbl label="Check-in">
                 <Input
-                  className={SMALL} type="date" value={a.checkin}
+                  className={SMALL}
+                  type="date"
+                  value={a.checkin}
                   onChange={(e) => {
                     const arr = [...accommodation];
                     arr[i] = { ...a, checkin: e.target.value };
@@ -482,7 +498,9 @@ export function VoucherStudio({
               </Lbl>
               <Lbl label="Check-out">
                 <Input
-                  className={SMALL} type="date" value={a.checkout}
+                  className={SMALL}
+                  type="date"
+                  value={a.checkout}
                   onChange={(e) => {
                     const arr = [...accommodation];
                     arr[i] = { ...a, checkout: e.target.value };
@@ -492,7 +510,8 @@ export function VoucherStudio({
               </Lbl>
               <Lbl label="Quarto">
                 <Input
-                  className={SMALL} value={a.room_type}
+                  className={SMALL}
+                  value={a.room_type}
                   onChange={(e) => {
                     const arr = [...accommodation];
                     arr[i] = { ...a, room_type: e.target.value };
@@ -503,7 +522,8 @@ export function VoucherStudio({
               </Lbl>
               <Lbl label="Localizador">
                 <Input
-                  className={SMALL} value={a.confirmation}
+                  className={SMALL}
+                  value={a.confirmation}
                   onChange={(e) => {
                     const arr = [...accommodation];
                     arr[i] = { ...a, confirmation: e.target.value };
@@ -583,7 +603,8 @@ export function VoucherStudio({
               </div>
               <Lbl label="Tipo">
                 <Input
-                  className={SMALL} value={t.type}
+                  className={SMALL}
+                  value={t.type}
                   onChange={(e) => {
                     const arr = [...transfers];
                     arr[i] = { ...t, type: e.target.value };
@@ -594,7 +615,9 @@ export function VoucherStudio({
               </Lbl>
               <Lbl label="Data">
                 <Input
-                  className={SMALL} type="date" value={t.date}
+                  className={SMALL}
+                  type="date"
+                  value={t.date}
                   onChange={(e) => {
                     const arr = [...transfers];
                     arr[i] = { ...t, date: e.target.value };
@@ -604,7 +627,8 @@ export function VoucherStudio({
               </Lbl>
               <Lbl label="De">
                 <Input
-                  className={SMALL} value={t.origin}
+                  className={SMALL}
+                  value={t.origin}
                   onChange={(e) => {
                     const arr = [...transfers];
                     arr[i] = { ...t, origin: e.target.value };
@@ -614,7 +638,8 @@ export function VoucherStudio({
               </Lbl>
               <Lbl label="Para">
                 <Input
-                  className={SMALL} value={t.destination}
+                  className={SMALL}
+                  value={t.destination}
                   onChange={(e) => {
                     const arr = [...transfers];
                     arr[i] = { ...t, destination: e.target.value };
@@ -675,7 +700,8 @@ export function VoucherStudio({
           >
             <Lbl label="Nome">
               <Input
-                className={SMALL} value={c.name}
+                className={SMALL}
+                value={c.name}
                 onChange={(e) => {
                   const arr = [...emergency];
                   arr[i] = { ...c, name: e.target.value };
@@ -685,7 +711,8 @@ export function VoucherStudio({
             </Lbl>
             <Lbl label="Telefone">
               <Input
-                className={SMALL} value={c.phone}
+                className={SMALL}
+                value={c.phone}
                 onChange={(e) => {
                   const arr = [...emergency];
                   arr[i] = { ...c, phone: e.target.value };
@@ -695,7 +722,8 @@ export function VoucherStudio({
             </Lbl>
             <Lbl label="Função">
               <Input
-                className={SMALL} value={c.role}
+                className={SMALL}
+                value={c.role}
                 onChange={(e) => {
                   const arr = [...emergency];
                   arr[i] = { ...c, role: e.target.value };
@@ -1055,17 +1083,17 @@ export function VoucherStudio({
       {/* ── Body ─────────────────────────────────────────────────────────────── */}
       <div className="flex flex-1 overflow-hidden">
         {/* Left: Sidebar */}
-        <div className="hidden xl:block w-[280px] shrink-0 border-r border-border bg-surface overflow-y-auto p-3 space-y-2">
+        <div className="hidden xl:block w-72 shrink-0 border-r border-border bg-surface overflow-y-auto p-3 space-y-2">
           {renderSidebarContent()}
         </div>
 
         {/* Right: Canvas preview / WhatsApp Chat */}
         <div className="flex-1 min-w-0 overflow-auto bg-surface-alt/30 flex items-start justify-center py-8">
           {mode === "whatsapp" ? (
-            <div className="w-full max-w-sm bg-[#efeae2] rounded-[var(--radius-card)] border border-border/80 overflow-hidden flex flex-col h-[569px] font-sans">
+            <div className="w-full max-w-sm bg-[#efeae2] rounded-[var(--radius-card)] border border-border/80 overflow-hidden flex flex-col h-[36rem] font-sans">
               {/* WhatsApp Header */}
               <div className="bg-[#00a884] text-white px-4 py-2.5 flex items-center gap-3 shrink-0">
-                <div className="w-9 h-9 rounded-full bg-white/20 overflow-hidden flex items-center justify-center shrink-0">
+                <div className="w-9 h-9 rounded-full glass-dark overflow-hidden flex items-center justify-center shrink-0">
                   {agency.logo_url ? (
                     <img src={agency.logo_url} alt="Logo" className="w-full h-full object-cover" />
                   ) : (
@@ -1180,12 +1208,10 @@ export function VoucherStudio({
         <Sheet open={sidebarOpen} onOpenChange={setSidebarOpen}>
           <SheetContent
             side="left"
-            className="w-full max-w-[320px] p-0 overflow-y-auto bg-surface animate-none"
+            className="w-full max-w-xs p-0 overflow-y-auto bg-surface animate-none"
           >
             <SheetHeader className="px-4 py-3 border-b border-border bg-surface-alt/10">
-              <SheetTitle className="ds-label-caps tracking-wider">
-                Campos do Voucher
-              </SheetTitle>
+              <SheetTitle className="ds-label-caps tracking-wider">Campos do Voucher</SheetTitle>
             </SheetHeader>
             <div className="p-3 space-y-2">{renderSidebarContent()}</div>
           </SheetContent>

@@ -37,7 +37,9 @@ import { FormInput as Input } from "@/components/ui/input";
 import { NativeSelect as Select } from "@/components/ui/select";
 
 export const Route = createFileRoute("/agency/$slug/trips/$id/confirmation")({
-  head: ({ context }: any) => ({ meta: [{ title: `Confirmação de Reserva · ${context?.brand?.platform_name || 'Turis'}` }] }),
+  head: ({ context }: any) => ({
+    meta: [{ title: `Confirmação de Reserva · ${context?.brand?.platform_name || "Turis"}` }],
+  }),
   component: TripConfirmationPage,
 });
 
@@ -291,21 +293,15 @@ function TripConfirmationPage() {
         <div className="grid grid-cols-3 gap-3">
           <div className="rounded-[var(--radius-card)] border-none glass-card border-none p-3 text-center">
             <p className="text-xl font-bold text-foreground">{items.length}</p>
-            <p className="ds-label-caps text-muted-foreground mt-0.5">
-              Total
-            </p>
+            <p className="ds-label-caps text-muted-foreground mt-0.5">Total</p>
           </div>
           <div className="rounded-[var(--radius-card)] border border-emerald-100 bg-emerald-50/50 p-3 text-center">
             <p className="text-xl font-bold text-emerald-700">{confirmedCount}</p>
-            <p className="ds-label-caps text-emerald-600/70 mt-0.5">
-              Confirmados
-            </p>
+            <p className="ds-label-caps text-emerald-600/70 mt-0.5">Confirmados</p>
           </div>
           <div className="rounded-[var(--radius-card)] border border-amber-100 bg-amber-50/50 p-3 text-center">
             <p className="text-xl font-bold text-amber-700">{pendingCount}</p>
-            <p className="ds-label-caps text-amber-600/70 mt-0.5">
-              Pendentes
-            </p>
+            <p className="ds-label-caps text-amber-600/70 mt-0.5">Pendentes</p>
           </div>
         </div>
       )}
@@ -331,7 +327,7 @@ function TripConfirmationPage() {
             </h3>
             <Button
               onClick={closeForm}
-              className="h-7 w-7 inline-flex items-center justify-center rounded hover:glass bg-white/5 border-white/10 text-muted-foreground cursor-pointer"
+              className="h-7 w-7 inline-flex items-center justify-center rounded hover:glass text-muted-foreground cursor-pointer"
             >
               <X className="h-3.5 w-3.5" />
             </Button>
@@ -434,7 +430,7 @@ function TripConfirmationPage() {
           <div className="flex justify-end gap-2 pt-2 border-t border-border">
             <Button
               onClick={closeForm}
-              className="px-3 py-1.5 border-none text-xs rounded-full hover:glass bg-white/5 border-white/10 cursor-pointer transition-colors"
+              className="px-3 py-1.5 border-none text-xs rounded-full hover:glass cursor-pointer transition-colors"
             >
               Cancelar
             </Button>
@@ -490,11 +486,11 @@ function TripConfirmationPage() {
           {items.map((item) => (
             <div
               key={item.id}
-              className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 px-4 py-3.5 rounded-[var(--radius-card)] border-none glass-card border-none hover:glass bg-white/5 border-white/10/30 transition-colors group"
+              className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 px-4 py-3.5 rounded-[var(--radius-card)] border-none glass-card border-none hover:glass/30 transition-colors group"
             >
               {/* ── Left: tipo + info ── */}
               <div className="flex items-center gap-3 min-w-0">
-                <div className="shrink-0 h-8 w-8 rounded-[var(--radius-card)] glass bg-white/5 border-white/10 flex items-center justify-center">
+                <div className="shrink-0 h-8 w-8 rounded-[var(--radius-card)] glass flex items-center justify-center">
                   <ItemIcon type={item.item_type} />
                 </div>
 
@@ -533,7 +529,7 @@ function TripConfirmationPage() {
                   <span className="text-[9px] font-bold uppercase tracking-widest text-muted-foreground block">
                     Localizador
                   </span>
-                  <span className="font-mono text-sm font-bold text-foreground glass bg-white/5 border-white/10 px-2 py-0.5 rounded tracking-widest">
+                  <span className="font-mono text-sm font-bold text-foreground glass px-2 py-0.5 rounded tracking-widest">
                     {item.locator_code}
                   </span>
                 </div>
@@ -550,7 +546,10 @@ function TripConfirmationPage() {
                   title="Clique para alternar status"
                   className="cursor-pointer disabled:opacity-50"
                 >
-                  <StatusBadge tone={CONFIRMATION_STATUS_MAP[item.status]?.tone ?? "neutral"} className="cursor-pointer">
+                  <StatusBadge
+                    tone={CONFIRMATION_STATUS_MAP[item.status]?.tone ?? "neutral"}
+                    className="cursor-pointer"
+                  >
                     {CONFIRMATION_STATUS_MAP[item.status]?.label ?? item.status}
                   </StatusBadge>
                 </Button>
@@ -558,7 +557,7 @@ function TripConfirmationPage() {
                 {/* Editar */}
                 <Button
                   onClick={() => openEdit(item)}
-                  className="h-7 w-7 inline-flex items-center justify-center border-none rounded hover:glass bg-white/5 border-white/10 text-muted-foreground cursor-pointer transition-colors sm:opacity-0 sm:group-hover:opacity-100"
+                  className="h-7 w-7 inline-flex items-center justify-center border-none rounded hover:glass text-muted-foreground cursor-pointer transition-colors sm:opacity-0 sm:group-hover:opacity-100"
                   title="Editar"
                 >
                   <Pencil className="h-3 w-3" />

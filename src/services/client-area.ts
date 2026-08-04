@@ -23,7 +23,7 @@ export async function fetchClientAgencies() {
       .select("agency_id")
       .eq("user_id", user.id)
       .limit(1);
-    
+
     if (memberOf && memberOf.length > 0) {
       const { data: firstClient } = await supabase
         .from("clients")
@@ -338,18 +338,22 @@ export async function createClientTicket(payload: {
   client_id: string;
   trip_id?: string;
 }) {
-  const { data, error } = await (supabase as any).from("support_tickets").insert({
-    title: payload.title,
-    description: payload.description,
-    type: payload.type,
-    priority: payload.priority,
-    agency_id: payload.agency_id,
-    client_id: payload.client_id,
-    trip_id: payload.trip_id || null,
-    status: "open",
-    attachments: [],
-    refund_requested: false,
-  }).select("id").single();
+  const { data, error } = await (supabase as any)
+    .from("support_tickets")
+    .insert({
+      title: payload.title,
+      description: payload.description,
+      type: payload.type,
+      priority: payload.priority,
+      agency_id: payload.agency_id,
+      client_id: payload.client_id,
+      trip_id: payload.trip_id || null,
+      status: "open",
+      attachments: [],
+      refund_requested: false,
+    })
+    .select("id")
+    .single();
   if (error) throw error;
   return data as { id: string };
 }
@@ -362,7 +366,7 @@ export async function createClientTicket(payload: {
  */
 export async function resolveClientWebchatConversation(
   agencyId: string,
-  _clientUserId: string
+  _clientUserId: string,
 ): Promise<string> {
   // Find the client row for this agency to get the contact_id
   const user = await getClientUser();
@@ -409,10 +413,7 @@ export async function createClientWebchatConversation(_data: unknown) {
 /**
  * Fetch real messages for a given conversation, combined into a timeline.
  */
-export async function fetchClientTimelineEvents(
-  _agencyId: string,
-  conversationId: string
-) {
+export async function fetchClientTimelineEvents(_agencyId: string, conversationId: string) {
   if (!conversationId) return [];
 
   const { data: msgs, error } = await (supabase as any)
@@ -437,7 +438,7 @@ export async function fetchClientTimelineEvents(
 export async function sendClientChatMessage(
   agencyId: string,
   conversationId: string,
-  text: string
+  text: string,
 ) {
   if (!conversationId) throw new Error("Sem conversa ativa");
 
@@ -456,7 +457,13 @@ export async function sendClientChatMessage(
     .single();
 
   if (error) throw error;
-  return data as { id: string; created_at: string; body: string; direction: string; sender_user_id: string };
+  return data as {
+    id: string;
+    created_at: string;
+    body: string;
+    direction: string;
+    sender_user_id: string;
+  };
 }
 
 export async function fetchClientConversations() {

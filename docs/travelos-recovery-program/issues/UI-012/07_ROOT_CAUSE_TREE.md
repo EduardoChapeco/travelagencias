@@ -1,4 +1,5 @@
 # UI-012 - 07_ROOT_CAUSE_TREE.md
+
 # ÁRVORE DE CAUSA RAIZ - UI-012
 
 Este documento traça a origem do desalinhamento e quebras de contraste no CRM Kanban.

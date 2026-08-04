@@ -2,7 +2,21 @@ import { createFileRoute, Link, useParams, useNavigate } from "@tanstack/react-r
 import { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import {
-  Search, Filter, Plus, Link2, Edit2, Eye, MoreHorizontal, Copy, Trash2, PencilLine, History, Settings2, ChevronDown, AlertCircle, } from "lucide-react";
+  Search,
+  Filter,
+  Plus,
+  Link2,
+  Edit2,
+  Eye,
+  MoreHorizontal,
+  Copy,
+  Trash2,
+  PencilLine,
+  History,
+  Settings2,
+  ChevronDown,
+  AlertCircle,
+} from "lucide-react";
 import { useAgency } from "@/lib/agency-context";
 import { Button } from "@/components/ui/button";
 import { ModuleAdminPanel } from "@/components/shell/ModuleAdminPanel";
@@ -11,7 +25,13 @@ import { FormInput as Input } from "@/components/ui/input";
 import { PROPOSAL_STATUS_MAP } from "@/lib/constants/status";
 import { StatusBadge } from "@/components/ui/badge";
 import { formatCurrency, formatDate } from "@/lib/formatters";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import {
   fetchProposalsList,
   duplicateProposal,
@@ -39,11 +59,11 @@ const proposalsSearchSchema = z.object({
 
 export const Route = createFileRoute("/agency/$slug/proposals/")({
   validateSearch: proposalsSearchSchema,
-  head: ({ context }: any) => ({ meta: [{ title: `Cotações · ${context?.brand?.platform_name || 'Turis'}` }] }),
+  head: ({ context }: any) => ({
+    meta: [{ title: `Cotações · ${context?.brand?.platform_name || "Turis"}` }],
+  }),
   component: ProposalsList,
 });
-
-
 
 function ProposalsList() {
   const { agency, isAgencyAdmin } = useAgency();
@@ -119,59 +139,59 @@ function ProposalsList() {
 
   return (
     <div className="flex h-full flex-col overflow-hidden">
-              <PageHeader
-          title="Cotações"
-          search={{
-            value: searchQuery,
-            onChange: (v) => {
-              setSearchQuery(v);
-              setPage(1);
-            },
-            placeholder: "Buscar cotação...",
-          }}
-          actions={
-            <div className="flex items-center gap-1.5">
-              <Select
-                value={statusFilter}
-                onValueChange={(v) => {
-                  setStatusFilter(v);
-                  setPage(1);
-                }}
+      <PageHeader
+        title="Cotações"
+        search={{
+          value: searchQuery,
+          onChange: (v) => {
+            setSearchQuery(v);
+            setPage(1);
+          },
+          placeholder: "Buscar cotação...",
+        }}
+        actions={
+          <div className="flex items-center gap-1.5">
+            <Select
+              value={statusFilter}
+              onValueChange={(v) => {
+                setStatusFilter(v);
+                setPage(1);
+              }}
+            >
+              <SelectTrigger className="h-7 ds-meta font-semibold hover:glass-dark rounded-full text-os-muted hover:text-os border-border px-2 cursor-pointer focus:ring-0">
+                <SelectValue placeholder="Todos Status" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">Todos Status</SelectItem>
+                <SelectItem value="draft">Rascunho</SelectItem>
+                <SelectItem value="sent">Enviada</SelectItem>
+                <SelectItem value="viewed">Visualizada</SelectItem>
+                <SelectItem value="accepted">Aceita</SelectItem>
+                <SelectItem value="converted">Convertida</SelectItem>
+                <SelectItem value="rejected">Recusada</SelectItem>
+                <SelectItem value="expired">Expirada</SelectItem>
+              </SelectContent>
+            </Select>
+            {isAgencyAdmin && (
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={() => setAdminPanelOpen(true)}
+                title="Administrar Cotações"
               >
-                <SelectTrigger className="h-7 ds-meta font-semibold hover:bg-white/10 rounded-full text-os-muted hover:text-os border-white/10 px-2 cursor-pointer focus:ring-0">
-                  <SelectValue placeholder="Todos Status" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">Todos Status</SelectItem>
-                  <SelectItem value="draft">Rascunho</SelectItem>
-                  <SelectItem value="sent">Enviada</SelectItem>
-                  <SelectItem value="viewed">Visualizada</SelectItem>
-                  <SelectItem value="accepted">Aceita</SelectItem>
-                  <SelectItem value="converted">Convertida</SelectItem>
-                  <SelectItem value="rejected">Recusada</SelectItem>
-                  <SelectItem value="expired">Expirada</SelectItem>
-                </SelectContent>
-              </Select>
-              {isAgencyAdmin && (
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  onClick={() => setAdminPanelOpen(true)}
-                  title="Administrar Cotações"
-                >
-                  <Settings2 className="h-3.5 w-3.5" />
-                </Button>
-              )}
-            </div>
-          }
-          primaryAction={
-            <ModuleActionButton
-        label="Nova Cotação"
-        icon={<Plus className="h-3.5 w-3.5" />}
-              onClick={() => setNewOpen(true)}
-            />
-          }
-        />
+                <Settings2 className="h-3.5 w-3.5" />
+              </Button>
+            )}
+          </div>
+        }
+        primaryAction={
+          <ModuleActionButton
+            label="Nova Cotação"
+            icon={<Plus className="h-3.5 w-3.5" />}
+            onClick={() => setNewOpen(true)}
+          />
+        }
+      />
 
       <div className="flex-1 overflow-hidden px-4  md:pr-6 py-4 flex flex-col min-h-0 pb-24">
         {list.isLoading && <div className="text-sm text-muted-foreground">Carregando…</div>}
@@ -182,7 +202,11 @@ function ProposalsList() {
           </div>
         )}
 
-        {list.data && list.data.data.length === 0 && !debouncedSearch && statusFilter === "all" && !list.isError ? (
+        {list.data &&
+        list.data.data.length === 0 &&
+        !debouncedSearch &&
+        statusFilter === "all" &&
+        !list.isError ? (
           <EmptyState
             title="Nenhuma cotação ainda"
             description="Crie sua primeira proposta comercial."
@@ -192,7 +216,7 @@ function ProposalsList() {
             <div className="flex-1 rounded-[var(--radius-card)] glass text-white bg-black/40 backdrop-blur-2xl-panel overflow-hidden flex flex-col">
               <div className="flex-1 overflow-y-auto no-scrollbar">
                 <table className="w-full text-sm">
-                  <thead className="glass bg-white/5 border-white/10/40 text-left ds-meta uppercase tracking-wide text-muted-foreground sticky top-0 glass-card border-none backdrop-blur-md z-10">
+                  <thead className="glass/40 text-left ds-meta uppercase tracking-wide text-muted-foreground sticky top-0 glass-card border-none backdrop-blur-md z-10">
                     <tr>
                       <th className="px-3 py-2 font-medium">#</th>
                       <th className="px-3 py-2 font-medium">Título</th>
@@ -206,7 +230,10 @@ function ProposalsList() {
                   </thead>
                   <tbody>
                     {list.data?.data.map((p) => (
-                      <tr key={p.id} className="border-t border-border hover:glass bg-white/5 border-white/10/30">
+                      <tr
+                        key={p.id}
+                        className="border-t border-border hover:glass/30"
+                      >
                         <td className="px-3 py-2.5 font-mono text-xs text-muted-foreground">
                           #{p.number}
                         </td>
@@ -241,7 +268,7 @@ function ProposalsList() {
                               🏢 Agência
                             </span>
                           ) : (
-                            <span className="inline-flex items-center gap-1 rounded-full glass bg-white/5 border-white/10 text-muted-foreground border-none px-2 py-0.5 ds-meta font-semibold">
+                            <span className="inline-flex items-center gap-1 rounded-full glass text-muted-foreground border-none px-2 py-0.5 ds-meta font-semibold">
                               🔒 Privada
                             </span>
                           )}
@@ -252,7 +279,10 @@ function ProposalsList() {
                         <td className="px-3 py-2.5 text-right">
                           <DropdownMenu>
                             <DropdownMenuTrigger asChild>
-                              <Button variant="ghost" className="h-7 w-7 p-0 hover:glass bg-white/5 border-white/10">
+                              <Button
+                                variant="ghost"
+                                className="h-7 w-7 p-0 hover:glass"
+                              >
                                 <MoreHorizontal className="h-4 w-4 text-muted-foreground" />
                               </Button>
                             </DropdownMenuTrigger>
@@ -333,20 +363,22 @@ function ProposalsList() {
               </div>
             </div>
 
-            <div className="flex items-center justify-between px-4 py-2 rounded-[var(--radius-card)] bg-white/5 border border-white/5 shadow-xs select-none">
+            <div className="flex items-center justify-between px-4 py-2 rounded-[var(--radius-card)] glass border border-white/5 shadow-xs select-none">
               <div className="text-xs text-muted-foreground/80 font-medium">
                 Página <span className="font-semibold text-foreground">{page}</span> de{" "}
                 {Math.ceil((list.data?.count ?? 0) / pageSize) || 1}
               </div>
               <div className="flex items-center gap-2">
-                <Button variant="ghost"
+                <Button
+                  variant="ghost"
                   disabled={page === 1}
                   onClick={() => setPage((p) => Math.max(1, p - 1))}
                   className="h-7 px-3 text-xs rounded-full"
                 >
                   Anterior
                 </Button>
-                <Button variant="ghost"
+                <Button
+                  variant="ghost"
                   disabled={page * pageSize >= (list.data?.count ?? 0)}
                   onClick={() => setPage((p) => p + 1)}
                   className="h-7 px-3 text-xs rounded-full"

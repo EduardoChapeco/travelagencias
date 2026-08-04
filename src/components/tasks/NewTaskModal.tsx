@@ -6,12 +6,7 @@ import { useQuery } from "@tanstack/react-query";
 import { TASK_STATUSES, TASK_PRIORITIES } from "@/lib/tasks/task.constants";
 import { TaskStatus, TaskPriority } from "@/lib/tasks/task.types";
 import { toast } from "sonner";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -26,7 +21,6 @@ import { Calendar, Flag, User, Loader2, X } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { DSTagPicker } from "@/components/ds/DSTagPicker";
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
 const db = supabase as any;
 
 interface NewTaskModalProps {
@@ -36,7 +30,12 @@ interface NewTaskModalProps {
   onCreated?: (taskId: string) => void;
 }
 
-export function NewTaskModal({ open, onClose, defaultStatus = "todo", onCreated }: NewTaskModalProps) {
+export function NewTaskModal({
+  open,
+  onClose,
+  defaultStatus = "todo",
+  onCreated,
+}: NewTaskModalProps) {
   const { agency } = useAgency();
   const { createTask } = useTaskMutations();
 
@@ -103,7 +102,7 @@ export function NewTaskModal({ open, onClose, defaultStatus = "todo", onCreated 
           onCreated?.(data?.id);
           onClose();
         },
-      }
+      },
     );
   };
 
@@ -114,9 +113,7 @@ export function NewTaskModal({ open, onClose, defaultStatus = "todo", onCreated 
     <Dialog open={open} onOpenChange={(v) => !v && onClose()}>
       <DialogContent className="max-w-lg w-full p-0 overflow-hidden rounded-2xl border border-border bg-[var(--surface)]">
         <DialogHeader className="px-6 pt-6 pb-4 border-b border-border/60">
-          <DialogTitle className="text-base font-bold text-foreground">
-            Nova Tarefa
-          </DialogTitle>
+          <DialogTitle className="text-base font-bold text-foreground">Nova Tarefa</DialogTitle>
         </DialogHeader>
 
         <form onSubmit={handleSubmit} className="p-6 space-y-5">
@@ -161,7 +158,7 @@ export function NewTaskModal({ open, onClose, defaultStatus = "todo", onCreated 
                 </SelectTrigger>
                 <SelectContent>
                   {Object.entries(TASK_STATUSES).map(([key, cfg]) => (
-                    <SelectItem key={key} value={key} >
+                    <SelectItem key={key} value={key}>
                       <div className="flex items-center gap-2">
                         <span
                           className="w-2 h-2 rounded-full shrink-0"
@@ -186,7 +183,7 @@ export function NewTaskModal({ open, onClose, defaultStatus = "todo", onCreated 
                 </SelectTrigger>
                 <SelectContent>
                   {Object.entries(TASK_PRIORITIES).map(([key, cfg]) => (
-                    <SelectItem key={key} value={key} >
+                    <SelectItem key={key} value={key}>
                       <div className="flex items-center gap-2">
                         <span
                           className="w-2 h-2 rounded-full shrink-0"
@@ -208,16 +205,17 @@ export function NewTaskModal({ open, onClose, defaultStatus = "todo", onCreated 
                 <User className="w-3 h-3" />
                 Responsável
               </label>
-              <Select value={assignedTo || "__none"} onValueChange={(v) => setAssignedTo(v === "__none" ? "" : v)}>
+              <Select
+                value={assignedTo || "__none"}
+                onValueChange={(v) => setAssignedTo(v === "__none" ? "" : v)}
+              >
                 <SelectTrigger className="bg-[var(--surface-alt)] border-border/60">
                   <SelectValue placeholder="Sem responsável" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="__none" >
-                    Sem responsável
-                  </SelectItem>
+                  <SelectItem value="__none">Sem responsável</SelectItem>
                   {teamMembers.map((m) => (
-                    <SelectItem key={m.id} value={m.id} >
+                    <SelectItem key={m.id} value={m.id}>
                       {m.full_name || "Sem nome"}
                     </SelectItem>
                   ))}
@@ -250,15 +248,15 @@ export function NewTaskModal({ open, onClose, defaultStatus = "todo", onCreated 
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="manual" >Manual / Geral</SelectItem>
-                  <SelectItem value="suporte" >Suporte ao Cliente</SelectItem>
-                  <SelectItem value="embarque" >Operações de Embarque</SelectItem>
-                  <SelectItem value="crm" >Negociação Comercial</SelectItem>
-                  <SelectItem value="trip" >Gestão de Viagem</SelectItem>
-                  <SelectItem value="ticket" >Emissão de Passagem</SelectItem>
-                  <SelectItem value="lead" >Pré-venda / Prospecção</SelectItem>
-                  <SelectItem value="agenda" >Evento da Agenda</SelectItem>
-                  <SelectItem value="system" >Rotina de Sistema</SelectItem>
+                  <SelectItem value="manual">Manual / Geral</SelectItem>
+                  <SelectItem value="suporte">Suporte ao Cliente</SelectItem>
+                  <SelectItem value="embarque">Operações de Embarque</SelectItem>
+                  <SelectItem value="crm">Negociação Comercial</SelectItem>
+                  <SelectItem value="trip">Gestão de Viagem</SelectItem>
+                  <SelectItem value="ticket">Emissão de Passagem</SelectItem>
+                  <SelectItem value="lead">Pré-venda / Prospecção</SelectItem>
+                  <SelectItem value="agenda">Evento da Agenda</SelectItem>
+                  <SelectItem value="system">Rotina de Sistema</SelectItem>
                 </SelectContent>
               </Select>
             </div>
@@ -283,7 +281,10 @@ export function NewTaskModal({ open, onClose, defaultStatus = "todo", onCreated 
               className="inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 ds-label-caps tracking-wider"
               style={{ color: statusDef?.color, backgroundColor: `${statusDef?.color}18` }}
             >
-              <span className="w-1.5 h-1.5 rounded-full" style={{ backgroundColor: statusDef?.color }} />
+              <span
+                className="w-1.5 h-1.5 rounded-full"
+                style={{ backgroundColor: statusDef?.color }}
+              />
               {statusDef?.label}
             </span>
             <span
@@ -312,9 +313,7 @@ export function NewTaskModal({ open, onClose, defaultStatus = "todo", onCreated 
               disabled={createTask.isPending || !title.trim()}
               className="h-8 text-xs gap-1.5"
             >
-              {createTask.isPending ? (
-                <Loader2 className="w-3 h-3 animate-spin" />
-              ) : null}
+              {createTask.isPending ? <Loader2 className="w-3 h-3 animate-spin" /> : null}
               Criar Tarefa
             </Button>
           </div>

@@ -49,10 +49,8 @@ function Page() {
   return (
     <div className="mx-auto min-h-screen max-w-xl px-4 py-12 md:py-20">
       <div className="overflow-hidden rounded-[var(--radius-card)] glass-card border-none  ring-1 ring-border/50">
-        <div className="border-b border-border/50 glass bg-white/5 border-white/10/30 px-6 py-4 text-center">
-          <h2 className="ds-label-caps text-muted-foreground">
-            Sistema de Autenticidade Turis
-          </h2>
+        <div className="border-b border-border/50 glass/30 px-6 py-4 text-center">
+          <h2 className="ds-label-caps text-muted-foreground">Sistema de Autenticidade Turis</h2>
         </div>
         <div className="p-8">
           {err && (
@@ -93,7 +91,7 @@ function Page() {
                   Emitido por {row.issuer}
                 </p>
               </div>
-              <div className="mt-8 overflow-hidden rounded-[var(--radius-card)] border-none/50 glass bg-white/5 border-white/10/20">
+              <div className="mt-8 overflow-hidden rounded-[var(--radius-card)] border-none/50 glass/20">
                 <dl className="divide-y divide-border/50 text-xs">
                   <Row k="Partes Envolvidas" v={mask(row.parties_masked)} />
                   <Row

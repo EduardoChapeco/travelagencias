@@ -19,7 +19,9 @@ import { PageHeader } from "@/components/shell/PageHeader";
 import { useConfirm } from "@/hooks/use-confirm";
 
 export const Route = createFileRoute("/agency/$slug/financial/operators")({
-  head: ({ context }: any) => ({ meta: [{ title: `Faturamento Operadoras · ${context?.brand?.platform_name || 'Turis'}` }] }),
+  head: ({ context }: any) => ({
+    meta: [{ title: `Faturamento Operadoras · ${context?.brand?.platform_name || "Turis"}` }],
+  }),
   component: OperatorsFinancial,
 });
 
@@ -56,8 +58,6 @@ type ThirdPartyInstallment = {
   } | null;
 };
 
-
-
 // ─── Component ────────────────────────────────────────────────────────────────
 
 function OperatorsFinancial() {
@@ -70,16 +70,18 @@ function OperatorsFinancial() {
     enabled: !!agency,
     queryKey: ["third-party-financial-records", agency?.id],
     queryFn: async () => {
-      const { data, error } = await supabase
+      const { data, error } = (await supabase
         .from("financial_records")
-        .select(`
+        .select(
+          `
           id, trip_id, description, amount, amount_brl, currency, status, type, created_at, reference_date, notes,
           trip:trips(title, destination)
-        `)
+        `,
+        )
         .eq("agency_id", agency!.id)
         .eq("is_third_party", true)
         .neq("status", "cancelled")
-        .order("created_at", { ascending: false }) as any;
+        .order("created_at", { ascending: false })) as any;
       if (error) throw error;
       return (data ?? []) as OperatorRecord[];
     },
@@ -90,15 +92,17 @@ function OperatorsFinancial() {
     enabled: !!agency,
     queryKey: ["third-party-installments", agency?.id],
     queryFn: async () => {
-      const { data, error } = await supabase
+      const { data, error } = (await supabase
         .from("payment_installments")
-        .select(`
+        .select(
+          `
           id, number, due_date, amount, status, payment_method, paid_at, payment_plan_id,
           plan:payment_plans(trip_id, total_amount, trip:trips(title, destination))
-        `)
+        `,
+        )
         .eq("agency_id", agency!.id)
         .eq("is_third_party", true)
-        .order("due_date", { ascending: false }) as any;
+        .order("due_date", { ascending: false })) as any;
       if (error) throw error;
       return (data ?? []) as ThirdPartyInstallment[];
     },
@@ -117,17 +121,19 @@ function OperatorsFinancial() {
     .reduce((s, i) => s + i.amount, 0);
 
   // Filter
-  const filteredRecords = records.filter((r) =>
-    !search.trim() ||
-    r.description?.toLowerCase().includes(search.toLowerCase()) ||
-    r.trip?.title?.toLowerCase().includes(search.toLowerCase()) ||
-    r.trip?.destination?.toLowerCase().includes(search.toLowerCase())
+  const filteredRecords = records.filter(
+    (r) =>
+      !search.trim() ||
+      r.description?.toLowerCase().includes(search.toLowerCase()) ||
+      r.trip?.title?.toLowerCase().includes(search.toLowerCase()) ||
+      r.trip?.destination?.toLowerCase().includes(search.toLowerCase()),
   );
 
-  const filteredInstallments = installments.filter((i) =>
-    !search.trim() ||
-    i.plan?.trip?.title?.toLowerCase().includes(search.toLowerCase()) ||
-    i.plan?.trip?.destination?.toLowerCase().includes(search.toLowerCase())
+  const filteredInstallments = installments.filter(
+    (i) =>
+      !search.trim() ||
+      i.plan?.trip?.title?.toLowerCase().includes(search.toLowerCase()) ||
+      i.plan?.trip?.destination?.toLowerCase().includes(search.toLowerCase()),
   );
 
   const isError = recordsQ.isError || installmentsQ.isError;
@@ -135,21 +141,21 @@ function OperatorsFinancial() {
 
   return (
     <div className="flex h-full flex-col overflow-hidden">
-              <PageHeader
-          title="Faturamento Operadoras"
-          search={{
-            value: search,
-            onChange: setSearch,
-            placeholder: "Buscar por viagem ou destino...",
-          }}
-          filters={[
-            { label: `Lançamentos (${records.length})`, value: "records" },
-            { label: `Parcelas (${installments.length})`, value: "installments" },
-          ]}
-          activeFilter={activeTab}
-          onFilterChange={(v) => setActiveTab(v as any)}
-        />
-      
+      <PageHeader
+        title="Faturamento Operadoras"
+        search={{
+          value: search,
+          onChange: setSearch,
+          placeholder: "Buscar por viagem ou destino...",
+        }}
+        filters={[
+          { label: `Lançamentos (${records.length})`, value: "records" },
+          { label: `Parcelas (${installments.length})`, value: "installments" },
+        ]}
+        activeFilter={activeTab}
+        onFilterChange={(v) => setActiveTab(v as any)}
+      />
+
       <div className="flex-1 overflow-y-auto px-4  md:pr-6 py-4 min-h-0 space-y-6 pb-24">
         {/* ── Header descritivo ── */}
         <div className="rounded-[var(--radius-card)] border-none glass-card border-none p-5 space-y-2">
@@ -184,7 +190,9 @@ function OperatorsFinancial() {
             <div className="h-10 w-10 rounded-full bg-red-100 flex items-center justify-center mb-3">
               <AlertCircle className="h-5 w-5 text-red-600" />
             </div>
-            <h3 className="text-sm font-bold text-red-800">Falha ao Carregar Dados das Operadoras</h3>
+            <h3 className="text-sm font-bold text-red-800">
+              Falha ao Carregar Dados das Operadoras
+            </h3>
             <p className="text-xs text-red-600 mt-1 max-w-sm">
               {errQ.error instanceof Error ? errQ.error.message : "Erro desconhecido."}
             </p>
@@ -202,7 +210,9 @@ function OperatorsFinancial() {
                     Volume Total de Operações
                   </span>
                 </div>
-                <p className="text-2xl font-extrabold text-foreground">{formatCurrency(totalVolume, "BRL")}</p>
+                <p className="text-2xl font-extrabold text-foreground">
+                  {formatCurrency(totalVolume, "BRL")}
+                </p>
                 <p className="ds-meta text-muted-foreground mt-0.5">
                   Soma de todos os lançamentos via operadoras
                 </p>
@@ -215,7 +225,9 @@ function OperatorsFinancial() {
                     Recebido via Operadoras
                   </span>
                 </div>
-                <p className="text-2xl font-extrabold text-emerald-600">{formatCurrency(totalPaid, "BRL")}</p>
+                <p className="text-2xl font-extrabold text-emerald-600">
+                  {formatCurrency(totalPaid, "BRL")}
+                </p>
                 <p className="ds-meta text-muted-foreground mt-0.5">
                   Parcelas confirmadas como pagas
                 </p>
@@ -228,164 +240,172 @@ function OperatorsFinancial() {
                     A Receber (Operadoras)
                   </span>
                 </div>
-                <p className="text-2xl font-extrabold text-amber-600">{formatCurrency(totalPending, "BRL")}</p>
+                <p className="text-2xl font-extrabold text-amber-600">
+                  {formatCurrency(totalPending, "BRL")}
+                </p>
                 <p className="ds-meta text-muted-foreground mt-0.5">
                   Parcelas pendentes via operadoras
                 </p>
               </div>
             </div>
 
-          {/* ── Records Table ─────────────────────────────────────────── */}
-          {activeTab === "records" && (
-            <div className="rounded-[var(--radius-card)] border-none glass-card border-none overflow-hidden mb-6">
-              {recordsQ.isLoading ? (
-                <div className="py-12 text-center text-sm text-muted-foreground animate-pulse">
-                  Carregando lançamentos…
-                </div>
-              ) : filteredRecords.length === 0 ? (
-                <div className="py-14 flex flex-col items-center text-center text-sm text-muted-foreground">
-                  <Building2 className="h-8 w-8 text-muted-foreground/30 mb-3" />
-                  {search ? "Nenhum lançamento encontrado para esta busca." : "Nenhum lançamento via operadora registrado."}
-                  <p className="text-xs mt-2 max-w-xs">
-                    Para registrar, vá na aba Financeiro de uma Viagem e adicione um lançamento de
-                    receita marcando a opção "Faturamento via Operadora/Terceiros".
-                  </p>
-                </div>
-              ) : (
-                <table className="w-full border-collapse text-left text-xs">
-                  <thead>
-                    <tr className="border-b border-border glass bg-white/5 border-white/10 font-semibold text-muted-foreground uppercase tracking-widest ds-meta">
-                      <th className="p-4">Viagem / Destino</th>
-                      <th className="p-4">Descrição</th>
-                      <th className="p-4">Tipo</th>
-                      <th className="p-4 text-right">Valor (BRL)</th>
-                      <th className="p-4">Status</th>
-                    </tr>
-                  </thead>
-                  <tbody className="divide-y divide-border">
-                    {filteredRecords.map((r) => (
-                      <tr key={r.id} className="hover:glass bg-white/5 border-white/10/50 transition-colors">
-                        <td className="p-4">
-                          <div className="font-semibold text-foreground">
-                            {r.trip?.title ?? "Viagem não vinculada"}
-                          </div>
-                          {r.trip?.destination && (
-                            <div className="ds-meta text-muted-foreground uppercase tracking-wide mt-0.5">
-                              {r.trip.destination}
-                            </div>
-                          )}
-                        </td>
-                        <td className="p-4 text-muted-foreground max-w-xs">
-                          {r.description ?? r.notes ?? "—"}
-                        </td>
-                        <td className="p-4">
-                          <span className="rounded-full border px-2 py-0.5 ds-meta font-semibold border-border text-muted-foreground">
-                            {r.type === "income" ? "Receita" : "Custo"}
-                          </span>
-                        </td>
-                        <td className="p-4 text-right font-mono font-semibold text-foreground">
-                          {formatCurrency(r.amount_brl ?? r.amount, r.currency ?? "BRL")}
-                        </td>
-                        <td className="p-4">
-                          <StatusBadge tone={PAYABLE_STATUS_MAP[r.status]?.tone ?? "neutral"}>
-                            {PAYABLE_STATUS_MAP[r.status]?.label ?? r.status}
-                          </StatusBadge>
-                        </td>
+            {/* ── Records Table ─────────────────────────────────────────── */}
+            {activeTab === "records" && (
+              <div className="rounded-[var(--radius-card)] border-none glass-card border-none overflow-hidden mb-6">
+                {recordsQ.isLoading ? (
+                  <div className="py-12 text-center text-sm text-muted-foreground animate-pulse">
+                    Carregando lançamentos…
+                  </div>
+                ) : filteredRecords.length === 0 ? (
+                  <div className="py-14 flex flex-col items-center text-center text-sm text-muted-foreground">
+                    <Building2 className="h-8 w-8 text-muted-foreground/30 mb-3" />
+                    {search
+                      ? "Nenhum lançamento encontrado para esta busca."
+                      : "Nenhum lançamento via operadora registrado."}
+                    <p className="text-xs mt-2 max-w-xs">
+                      Para registrar, vá na aba Financeiro de uma Viagem e adicione um lançamento de
+                      receita marcando a opção "Faturamento via Operadora/Terceiros".
+                    </p>
+                  </div>
+                ) : (
+                  <table className="w-full border-collapse text-left text-xs">
+                    <thead>
+                      <tr className="border-b border-border glass font-semibold text-muted-foreground uppercase tracking-widest ds-meta">
+                        <th className="p-4">Viagem / Destino</th>
+                        <th className="p-4">Descrição</th>
+                        <th className="p-4">Tipo</th>
+                        <th className="p-4 text-right">Valor (BRL)</th>
+                        <th className="p-4">Status</th>
                       </tr>
-                    ))}
-                  </tbody>
-                </table>
-              )}
-            </div>
-          )}
-
-          {/* ── Installments Table ─────────────────────────────────────── */}
-          {activeTab === "installments" && (
-            <div className="rounded-[var(--radius-card)] border-none glass-card border-none overflow-hidden mb-6">
-              {installmentsQ.isLoading ? (
-                <div className="py-12 text-center text-sm text-muted-foreground animate-pulse">
-                  Carregando parcelas…
-                </div>
-              ) : filteredInstallments.length === 0 ? (
-                <div className="py-14 flex flex-col items-center text-center text-sm text-muted-foreground">
-                  <Building2 className="h-8 w-8 text-muted-foreground/30 mb-3" />
-                  {search
-                    ? "Nenhuma parcela encontrada para esta busca."
-                    : "Nenhuma parcela via operadora registrada."}
-                  <p className="text-xs mt-2 max-w-xs">
-                    Para registrar parcelas externas, crie um Plano de Parcelamento em uma Viagem e
-                    marque a opção "Faturamento via Operadora".
-                  </p>
-                </div>
-              ) : (
-                <table className="w-full border-collapse text-left text-xs">
-                  <thead>
-                    <tr className="border-b border-border glass bg-white/5 border-white/10 font-semibold text-muted-foreground uppercase tracking-widest ds-meta">
-                      <th className="p-4">Viagem</th>
-                      <th className="p-4">Parcela</th>
-                      <th className="p-4">Vencimento</th>
-                      <th className="p-4">Forma</th>
-                      <th className="p-4 text-right">Valor</th>
-                      <th className="p-4">Status</th>
-                      <th className="p-4">Pago em</th>
-                    </tr>
-                  </thead>
-                  <tbody className="divide-y divide-border">
-                    {filteredInstallments.map((i) => (
-                      <tr key={i.id} className="hover:glass bg-white/5 border-white/10/50 transition-colors">
-                        <td className="p-4">
-                          <div className="font-semibold text-foreground">
-                            {i.plan?.trip?.title ?? "—"}
-                          </div>
-                          {i.plan?.trip?.destination && (
-                            <div className="ds-meta text-muted-foreground uppercase tracking-wide mt-0.5">
-                              {i.plan.trip.destination}
+                    </thead>
+                    <tbody className="divide-y divide-border">
+                      {filteredRecords.map((r) => (
+                        <tr
+                          key={r.id}
+                          className="hover:glass/50 transition-colors"
+                        >
+                          <td className="p-4">
+                            <div className="font-semibold text-foreground">
+                              {r.trip?.title ?? "Viagem não vinculada"}
                             </div>
-                          )}
-                        </td>
-                        <td className="p-4 font-mono text-foreground font-semibold">
-                          #{i.number}
-                        </td>
-                        <td className="p-4 text-muted-foreground whitespace-nowrap">
-                          {i.due_date
-                            ? new Date(i.due_date + "T00:00:00").toLocaleDateString("pt-BR")
-                            : "—"}
-                        </td>
-                        <td className="p-4 text-muted-foreground capitalize">
-                          {i.payment_method?.replace("_", " ") ?? "—"}
-                        </td>
-                        <td className="p-4 text-right font-mono font-semibold text-foreground">
-                          {formatCurrency(i.amount, "BRL")}
-                        </td>
-                        <td className="p-4">
-                          <StatusBadge tone={PAYABLE_STATUS_MAP[i.status]?.tone ?? "neutral"}>
-                            {PAYABLE_STATUS_MAP[i.status]?.label ?? i.status}
-                          </StatusBadge>
-                        </td>
-                        <td className="p-4 text-muted-foreground whitespace-nowrap">
-                          {i.paid_at
-                            ? new Date(i.paid_at).toLocaleDateString("pt-BR")
-                            : "—"}
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              )}
-            </div>
-          )}
+                            {r.trip?.destination && (
+                              <div className="ds-meta text-muted-foreground uppercase tracking-wide mt-0.5">
+                                {r.trip.destination}
+                              </div>
+                            )}
+                          </td>
+                          <td className="p-4 text-muted-foreground max-w-xs">
+                            {r.description ?? r.notes ?? "—"}
+                          </td>
+                          <td className="p-4">
+                            <span className="rounded-full border px-2 py-0.5 ds-meta font-semibold border-border text-muted-foreground">
+                              {r.type === "income" ? "Receita" : "Custo"}
+                            </span>
+                          </td>
+                          <td className="p-4 text-right font-mono font-semibold text-foreground">
+                            {formatCurrency(r.amount_brl ?? r.amount, r.currency ?? "BRL")}
+                          </td>
+                          <td className="p-4">
+                            <StatusBadge tone={PAYABLE_STATUS_MAP[r.status]?.tone ?? "neutral"}>
+                              {PAYABLE_STATUS_MAP[r.status]?.label ?? r.status}
+                            </StatusBadge>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                )}
+              </div>
+            )}
 
-          {/* ── Disclaimer ────────────────────────────────────────────── */}
-          <div className="flex items-start gap-2 rounded-[var(--radius-card)] border-none glass-card border-none p-4 ds-meta text-muted-foreground">
-            <ExternalLink className="h-3.5 w-3.5 shrink-0 mt-0.5 text-muted-foreground" />
-            <span>
-              Os valores acima <strong>não entram no fluxo de caixa contábil da agência</strong>.
-              Caso a operadora faça o desconto da comissão no repasse, o valor líquido recebido deve
-              ser lançado na aba <strong>Fluxo de Caixa</strong> como receita de comissão.
-            </span>
-          </div>
-        </>
-      )}
+            {/* ── Installments Table ─────────────────────────────────────── */}
+            {activeTab === "installments" && (
+              <div className="rounded-[var(--radius-card)] border-none glass-card border-none overflow-hidden mb-6">
+                {installmentsQ.isLoading ? (
+                  <div className="py-12 text-center text-sm text-muted-foreground animate-pulse">
+                    Carregando parcelas…
+                  </div>
+                ) : filteredInstallments.length === 0 ? (
+                  <div className="py-14 flex flex-col items-center text-center text-sm text-muted-foreground">
+                    <Building2 className="h-8 w-8 text-muted-foreground/30 mb-3" />
+                    {search
+                      ? "Nenhuma parcela encontrada para esta busca."
+                      : "Nenhuma parcela via operadora registrada."}
+                    <p className="text-xs mt-2 max-w-xs">
+                      Para registrar parcelas externas, crie um Plano de Parcelamento em uma Viagem
+                      e marque a opção "Faturamento via Operadora".
+                    </p>
+                  </div>
+                ) : (
+                  <table className="w-full border-collapse text-left text-xs">
+                    <thead>
+                      <tr className="border-b border-border glass font-semibold text-muted-foreground uppercase tracking-widest ds-meta">
+                        <th className="p-4">Viagem</th>
+                        <th className="p-4">Parcela</th>
+                        <th className="p-4">Vencimento</th>
+                        <th className="p-4">Forma</th>
+                        <th className="p-4 text-right">Valor</th>
+                        <th className="p-4">Status</th>
+                        <th className="p-4">Pago em</th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-border">
+                      {filteredInstallments.map((i) => (
+                        <tr
+                          key={i.id}
+                          className="hover:glass/50 transition-colors"
+                        >
+                          <td className="p-4">
+                            <div className="font-semibold text-foreground">
+                              {i.plan?.trip?.title ?? "—"}
+                            </div>
+                            {i.plan?.trip?.destination && (
+                              <div className="ds-meta text-muted-foreground uppercase tracking-wide mt-0.5">
+                                {i.plan.trip.destination}
+                              </div>
+                            )}
+                          </td>
+                          <td className="p-4 font-mono text-foreground font-semibold">
+                            #{i.number}
+                          </td>
+                          <td className="p-4 text-muted-foreground whitespace-nowrap">
+                            {i.due_date
+                              ? new Date(i.due_date + "T00:00:00").toLocaleDateString("pt-BR")
+                              : "—"}
+                          </td>
+                          <td className="p-4 text-muted-foreground capitalize">
+                            {i.payment_method?.replace("_", " ") ?? "—"}
+                          </td>
+                          <td className="p-4 text-right font-mono font-semibold text-foreground">
+                            {formatCurrency(i.amount, "BRL")}
+                          </td>
+                          <td className="p-4">
+                            <StatusBadge tone={PAYABLE_STATUS_MAP[i.status]?.tone ?? "neutral"}>
+                              {PAYABLE_STATUS_MAP[i.status]?.label ?? i.status}
+                            </StatusBadge>
+                          </td>
+                          <td className="p-4 text-muted-foreground whitespace-nowrap">
+                            {i.paid_at ? new Date(i.paid_at).toLocaleDateString("pt-BR") : "—"}
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                )}
+              </div>
+            )}
+
+            {/* ── Disclaimer ────────────────────────────────────────────── */}
+            <div className="flex items-start gap-2 rounded-[var(--radius-card)] border-none glass-card border-none p-4 ds-meta text-muted-foreground">
+              <ExternalLink className="h-3.5 w-3.5 shrink-0 mt-0.5 text-muted-foreground" />
+              <span>
+                Os valores acima <strong>não entram no fluxo de caixa contábil da agência</strong>.
+                Caso a operadora faça o desconto da comissão no repasse, o valor líquido recebido
+                deve ser lançado na aba <strong>Fluxo de Caixa</strong> como receita de comissão.
+              </span>
+            </div>
+          </>
+        )}
       </div>
     </div>
   );

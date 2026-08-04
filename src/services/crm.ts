@@ -125,10 +125,12 @@ export async function initDefaultStages(agencyId: string) {
 }
 
 export async function archiveLead(leadId: string) {
-  const { error } = await supabase
-    .from("leads")
-    .update({ deleted_at: new Date().toISOString() } as any)
-    .eq("id", leadId);
+  const { error } = await supabase.rpc(
+    "archive_lead_rpc" as never,
+    {
+      p_lead_id: leadId,
+    } as never,
+  );
   if (error) throw error;
 }
 
@@ -142,7 +144,13 @@ export async function transferLead(leadId: string, newOwnerId: string | null) {
     .eq("id", leadId)
     .single();
 
-  const { error } = await supabase.from("leads").update({ owner_id: newOwnerId }).eq("id", leadId);
+  const { error } = await supabase.rpc(
+    "update_lead_rpc" as never,
+    {
+      p_lead_id: leadId,
+      p_patch: { owner_id: newOwnerId },
+    } as never,
+  );
   if (error) throw error;
 
   if (lead) {
@@ -253,10 +261,13 @@ export async function getLeadsCountInStage(stageId: string): Promise<number> {
 }
 
 export async function moveLeadsToStage(fromStageId: string, toStageId: string) {
-  const { error } = await supabase
-    .from("leads")
-    .update({ stage_id: toStageId })
-    .eq("stage_id", fromStageId);
+  const { error } = await supabase.rpc(
+    "move_leads_stage_rpc" as never,
+    {
+      p_from_stage_id: fromStageId,
+      p_to_stage_id: toStageId,
+    } as never,
+  );
   if (error) throw error;
 }
 
@@ -302,10 +313,13 @@ export async function promoteLeadToClient(leadId: string, clientPayload?: any) {
 }
 
 export async function updateLead(leadId: string, payload: Partial<Lead>) {
-  const { error } = await supabase
-    .from("leads")
-    .update(payload as any)
-    .eq("id", leadId);
+  const { error } = await supabase.rpc(
+    "update_lead_rpc" as never,
+    {
+      p_lead_id: leadId,
+      p_patch: payload,
+    } as never,
+  );
   if (error) throw error;
 }
 
@@ -354,10 +368,12 @@ export async function fetchArchivedLeads(agencyId: string): Promise<Lead[]> {
 }
 
 export async function restoreLead(leadId: string) {
-  const { error } = await supabase
-    .from("leads")
-    .update({ deleted_at: null } as any)
-    .eq("id", leadId);
+  const { error } = await supabase.rpc(
+    "restore_lead_rpc" as never,
+    {
+      p_lead_id: leadId,
+    } as never,
+  );
   if (error) throw error;
 }
 
@@ -451,10 +467,7 @@ export async function createLeadMeeting(payload: any): Promise<LeadMeeting> {
 }
 
 export async function deleteLeadMeeting(meetingId: string): Promise<void> {
-  const { error } = await supabase
-    .from("lead_meetings")
-    .delete()
-    .eq("id", meetingId);
+  const { error } = await supabase.from("lead_meetings").delete().eq("id", meetingId);
   if (error) throw error;
 }
 export async function syncMeetingToGoogleCalendar(meetingId: string): Promise<void> {
@@ -464,7 +477,8 @@ export async function syncMeetingToGoogleCalendar(meetingId: string): Promise<vo
     .eq("id", meetingId)
     .single();
 
-  if (!meeting || !meeting.agency_id) throw new Error("Compromisso não encontrado ou sem agência associada");
+  if (!meeting || !meeting.agency_id)
+    throw new Error("Compromisso não encontrado ou sem agência associada");
 
   const { data: apiKeys } = await supabase
     .from("api_keys")
@@ -504,11 +518,9 @@ export type LeadProposalSummary = {
 
 export async function fetchLeadProposals(
   leadId: string,
-  clientId?: string | null
+  clientId?: string | null,
 ): Promise<LeadProposalSummary[]> {
-  let query = supabase
-    .from("proposals")
-    .select("id, number, title, status, total, created_at");
+  let query = supabase.from("proposals").select("id, number, title, status, total, created_at");
 
   if (clientId) {
     query = query.or(`lead_id.eq.${leadId},client_id.eq.${clientId}`);
@@ -526,16 +538,11 @@ export async function fetchLeadProposals(
 // Extrai o upload de mídia que estava em use-lead-detail.ts.
 // Bucket: agency-media | Path: crm/avatars/{leadId}/{timestamp}.{ext}
 // ---------------------------------------------------------------------------
-export async function uploadLeadAvatar(
-  leadId: string,
-  file: File
-): Promise<string> {
+export async function uploadLeadAvatar(leadId: string, file: File): Promise<string> {
   const fileExt = file.name.split(".").pop();
   const filePath = `crm/avatars/${leadId}/${Date.now()}.${fileExt}`;
 
-  const { error: uploadError } = await supabase.storage
-    .from("agency-media")
-    .upload(filePath, file);
+  const { error: uploadError } = await supabase.storage.from("agency-media").upload(filePath, file);
   if (uploadError) throw uploadError;
 
   const {

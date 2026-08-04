@@ -72,7 +72,9 @@ import {
 } from "@/components/ui/alert-dialog";
 
 export const Route = createFileRoute("/agency/$slug/crm")({
-  head: ({ context }: any) => ({ meta: [{ title: `CRM · ${context?.brand?.platform_name || 'Turis'}` }] }),
+  head: ({ context }: any) => ({
+    meta: [{ title: `CRM · ${context?.brand?.platform_name || "Turis"}` }],
+  }),
   component: CRMPage,
 });
 
@@ -103,7 +105,8 @@ function CRMPage() {
   const leadsQ = useQuery({
     enabled: !!agency && (activeTab === "kanban" || activeTab === "archived"),
     queryKey: ["leads", agency?.id, activeTab === "archived"],
-    queryFn: () => (activeTab === "archived" ? fetchArchivedLeads(agency!.id) : fetchLeads(agency!.id)),
+    queryFn: () =>
+      activeTab === "archived" ? fetchArchivedLeads(agency!.id) : fetchLeads(agency!.id),
   });
 
   const usersQ = useQuery({
@@ -192,236 +195,251 @@ function CRMPage() {
 
   return (
     <div className="w-full flex h-full flex-col overflow-hidden bg-transparent">
-              <PageHeader
-          title="CRM"
-          search={activeTab !== "admin" ? {
-            value: searchQuery,
-            onChange: setSearchQuery,
-            placeholder: "Buscar lead...",
-          } : undefined}
-          filters={[
-            { label: "Funil (Kanban)", value: "kanban" },
-            { label: "Arquivados", value: "archived" },
-            ...(isAgencyAdmin ? [{ label: "Configurações", value: "admin" }] : []),
-          ]}
-          activeFilter={activeTab}
-          onFilterChange={(v) => setActiveTab(v as any)}
-          actions={
-            activeTab !== "admin" ? (
-              <div className="flex items-center gap-1">
-                <RadixSelect value={ownerFilter} onValueChange={setOwnerFilter}>
-                  <SelectTrigger className="h-7 ds-meta font-semibold hover:bg-white/10 rounded-full text-os-muted hover:text-os border-white/10 px-2.5 cursor-pointer focus:ring-0">
-                    <SelectValue placeholder="Responsáveis" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="all">Responsáveis</SelectItem>
-                    {usersQ.data?.map(
-                      (u: any) =>
-                        u.user_id && (
-                          <SelectItem key={u.user_id} value={u.user_id}>
-                            {u.user_name || "Sem nome"}
-                          </SelectItem>
-                        ),
-                    )}
-                  </SelectContent>
-                </RadixSelect>
+      <PageHeader
+        title="CRM"
+        search={
+          activeTab !== "admin"
+            ? {
+                value: searchQuery,
+                onChange: setSearchQuery,
+                placeholder: "Buscar lead...",
+              }
+            : undefined
+        }
+        filters={[
+          { label: "Funil (Kanban)", value: "kanban" },
+          { label: "Arquivados", value: "archived" },
+          ...(isAgencyAdmin ? [{ label: "Configurações", value: "admin" }] : []),
+        ]}
+        activeFilter={activeTab}
+        onFilterChange={(v) => setActiveTab(v as any)}
+        actions={
+          activeTab !== "admin" ? (
+            <div className="flex items-center gap-1">
+              <RadixSelect value={ownerFilter} onValueChange={setOwnerFilter}>
+                <SelectTrigger className="h-7 ds-meta font-semibold hover:glass-dark rounded-full text-os-muted hover:text-os border-border px-2.5 cursor-pointer focus:ring-0">
+                  <SelectValue placeholder="Responsáveis" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">Responsáveis</SelectItem>
+                  {usersQ.data?.map(
+                    (u: any) =>
+                      u.user_id && (
+                        <SelectItem key={u.user_id} value={u.user_id}>
+                          {u.user_name || "Sem nome"}
+                        </SelectItem>
+                      ),
+                  )}
+                </SelectContent>
+              </RadixSelect>
 
-                <RadixSelect value={sourceFilter} onValueChange={setSourceFilter}>
-                  <SelectTrigger className="h-7 ds-meta font-semibold hover:bg-white/10 rounded-full text-os-muted hover:text-os border-white/10 px-2.5 cursor-pointer focus:ring-0">
-                    <SelectValue placeholder="Origens" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="all">Origens</SelectItem>
-                    <SelectItem value="whatsapp">WhatsApp</SelectItem>
-                    <SelectItem value="instagram">Instagram</SelectItem>
-                    <SelectItem value="website">Site</SelectItem>
-                    <SelectItem value="referral">Indicação</SelectItem>
-                    <SelectItem value="walkin">Presencial</SelectItem>
-                  </SelectContent>
-                </RadixSelect>
-              </div>
-            ) : undefined
-          }
-          primaryAction={
-            activeTab !== "admin" ? (
-              <ModuleActionButton
-                label="Novo Lead"
-                icon={<Plus className="h-3.5 w-3.5" />}
-                onClick={() => setNewOpen(true)}
-              />
-            ) : undefined
-          }
-        />
+              <RadixSelect value={sourceFilter} onValueChange={setSourceFilter}>
+                <SelectTrigger className="h-7 ds-meta font-semibold hover:glass-dark rounded-full text-os-muted hover:text-os border-border px-2.5 cursor-pointer focus:ring-0">
+                  <SelectValue placeholder="Origens" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">Origens</SelectItem>
+                  <SelectItem value="whatsapp">WhatsApp</SelectItem>
+                  <SelectItem value="instagram">Instagram</SelectItem>
+                  <SelectItem value="website">Site</SelectItem>
+                  <SelectItem value="referral">Indicação</SelectItem>
+                  <SelectItem value="walkin">Presencial</SelectItem>
+                </SelectContent>
+              </RadixSelect>
+            </div>
+          ) : undefined
+        }
+        primaryAction={
+          activeTab !== "admin" ? (
+            <ModuleActionButton
+              label="Novo Lead"
+              icon={<Plus className="h-3.5 w-3.5" />}
+              onClick={() => setNewOpen(true)}
+            />
+          ) : undefined
+        }
+      />
 
       <Tabs value={activeTab} onValueChange={setActiveTab} className="flex flex-col flex-1 min-h-0">
-
-      {(stagesQ.isLoading || leadsQ.isLoading) && (
-        <div className="flex flex-1 items-center justify-center">
-          <div className="flex flex-col items-center gap-4">
-            <div className="h-6 w-6 animate-spin rounded-full border-2 border-brand border-t-transparent" />
-            <p className="text-sm text-muted-foreground">Carregando CRM...</p>
-          </div>
-        </div>
-      )}
-
-      {(stagesQ.isError || leadsQ.isError || usersQ.isError) && (
-        <div className="flex flex-1 items-center justify-center p-6">
-          <div className="flex flex-col items-center max-w-md text-center space-y-3 bg-danger/10 p-6 rounded-full border border-danger/20">
-            <div className="h-12 w-12 rounded-full bg-danger/20 flex items-center justify-center text-danger mb-2">
-              <X className="h-6 w-6" />
+        {(stagesQ.isLoading || leadsQ.isLoading) && (
+          <div className="flex flex-1 items-center justify-center">
+            <div className="flex flex-col items-center gap-4">
+              <div className="h-6 w-6 animate-spin rounded-full border-2 border-brand border-t-transparent" />
+              <p className="text-sm text-muted-foreground">Carregando CRM...</p>
             </div>
-            <h3 className="text-lg font-bold text-foreground">Erro ao carregar o Kanban</h3>
-            <p className="text-sm text-muted-foreground">
-              Não foi possível carregar as informações do CRM.
-            </p>
           </div>
-        </div>
-      )}
+        )}
 
-      {activeTab === "archived" && leadsQ.data && (
-        <div className="page-content page-section dock-offset bg-transparent">
-          <div className="rounded-[var(--radius-card)] border-none glass-card border-none p-6">
-            <h2 className="text-lg font-bold text-foreground mb-4">Leads Arquivados</h2>
-            {leadsQ.data.length === 0 ? (
-              <div className="text-center py-12 text-sm text-muted-foreground">
-                Nenhum lead arquivado encontrado.
+        {(stagesQ.isError || leadsQ.isError || usersQ.isError) && (
+          <div className="flex flex-1 items-center justify-center p-6">
+            <div className="flex flex-col items-center max-w-md text-center space-y-3 bg-danger/10 p-6 rounded-full border border-danger/20">
+              <div className="h-12 w-12 rounded-full bg-danger/20 flex items-center justify-center text-danger mb-2">
+                <X className="h-6 w-6" />
               </div>
-            ) : (
-              <div className="overflow-x-auto">
-                <table className="w-full text-left text-sm border-collapse">
-                  <thead>
-                    <tr className="border-b border-border/60 text-muted-foreground ds-label-caps font-bold">
-                      <th className="py-3 px-4">Nome</th>
-                      <th className="py-3 px-4">Destino</th>
-                      <th className="py-3 px-4">Valor Estimado</th>
-                      <th className="py-3 px-4">Arquivado em</th>
-                      <th className="py-3 px-4 text-right">Ações</th>
-                    </tr>
-                  </thead>
-                  <tbody className="divide-y divide-border/40">
-                    {leadsQ.data.map((l) => (
-                      <tr key={l.id} className="hover:glass bg-white/5 border-white/10/40 transition-colors">
-                        <td className="py-4 px-4 font-bold text-foreground">
-                          <Link
-                            to="/agency/$slug/crm/$lead_id"
-                            params={{ slug, lead_id: l.id }}
-                            className="hover:text-brand transition-colors"
-                          >
-                            {l.name}
-                          </Link>
-                        </td>
-                        <td className="py-4 px-4 text-muted-foreground">{l.destination || "—"}</td>
-                        <td className="py-4 px-4 font-mono text-brand font-bold">
-                          {l.estimated_value && l.estimated_value > 0
-                            ? `R$ ${l.estimated_value.toLocaleString("pt-BR", {
-                                minimumFractionDigits: 2,
-                              })}`
-                            : "—"}
-                        </td>
-                        <td className="py-4 px-4 text-muted-foreground">
-                          {l.deleted_at ? new Date(l.deleted_at).toLocaleDateString("pt-BR") : "—"}
-                        </td>
-                        <td className="py-4 px-4 text-right space-x-2">
-                          <Button variant="ghost"
-                            onClick={async () => {
-                              try {
-                                await restoreLead(l.id);
-                                toast.success("Lead restaurado com sucesso!");
-                                qc.invalidateQueries({ queryKey: ["leads", agency?.id] });
-                              } catch (e) {
-                                toast.error("Falha ao restaurar lead");
-                              }
-                            }}
-                            className="h-8 px-3 text-xs border-success/30 hover:bg-success/10 text-success font-semibold"
-                          >
-                            Restaurar
-                          </Button>
-                          <Button variant="ghost"
-                            onClick={() => {
-                              confirm({
-                                title: "Excluir Permanentemente",
-                                description:
-                                  "Deseja EXCLUIR este lead permanentemente? Essa ação não pode ser desfeita.",
-                                variant: "destructive",
-                                onConfirm: async () => {
-                                  try {
-                                    await deleteLeadPermanently(l.id);
-                                    toast.success("Lead excluído permanentemente!");
-                                    qc.invalidateQueries({ queryKey: ["leads", agency?.id] });
-                                  } catch (e) {
-                                    toast.error("Falha ao excluir permanentemente");
-                                  }
-                                },
-                              });
-                            }}
-                            className="h-8 px-3 text-xs border-danger/30 hover:bg-danger/10 text-danger font-semibold"
-                          >
-                            Excluir
-                          </Button>
-                        </td>
+              <h3 className="text-lg font-bold text-foreground">Erro ao carregar o Kanban</h3>
+              <p className="text-sm text-muted-foreground">
+                Não foi possível carregar as informações do CRM.
+              </p>
+            </div>
+          </div>
+        )}
+
+        {activeTab === "archived" && leadsQ.data && (
+          <div className="page-content page-section dock-offset bg-transparent">
+            <div className="rounded-[var(--radius-card)] border-none glass-card border-none p-6">
+              <h2 className="text-lg font-bold text-foreground mb-4">Leads Arquivados</h2>
+              {leadsQ.data.length === 0 ? (
+                <div className="text-center py-12 text-sm text-muted-foreground">
+                  Nenhum lead arquivado encontrado.
+                </div>
+              ) : (
+                <div className="overflow-x-auto">
+                  <table className="w-full text-left text-sm border-collapse">
+                    <thead>
+                      <tr className="border-b border-border/60 text-muted-foreground ds-label-caps font-bold">
+                        <th className="py-3 px-4">Nome</th>
+                        <th className="py-3 px-4">Destino</th>
+                        <th className="py-3 px-4">Valor Estimado</th>
+                        <th className="py-3 px-4">Arquivado em</th>
+                        <th className="py-3 px-4 text-right">Ações</th>
                       </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            )}
+                    </thead>
+                    <tbody className="divide-y divide-border/40">
+                      {leadsQ.data.map((l) => (
+                        <tr
+                          key={l.id}
+                          className="hover:glass/40 transition-colors"
+                        >
+                          <td className="py-4 px-4 font-bold text-foreground">
+                            <Link
+                              to="/agency/$slug/crm/$lead_id"
+                              params={{ slug, lead_id: l.id }}
+                              className="hover:text-brand transition-colors"
+                            >
+                              {l.name}
+                            </Link>
+                          </td>
+                          <td className="py-4 px-4 text-muted-foreground">
+                            {l.destination || "—"}
+                          </td>
+                          <td className="py-4 px-4 font-mono text-brand font-bold">
+                            {l.estimated_value && l.estimated_value > 0
+                              ? `R$ ${l.estimated_value.toLocaleString("pt-BR", {
+                                  minimumFractionDigits: 2,
+                                })}`
+                              : "—"}
+                          </td>
+                          <td className="py-4 px-4 text-muted-foreground">
+                            {l.deleted_at
+                              ? new Date(l.deleted_at).toLocaleDateString("pt-BR")
+                              : "—"}
+                          </td>
+                          <td className="py-4 px-4 text-right space-x-2">
+                            <Button
+                              variant="ghost"
+                              onClick={async () => {
+                                try {
+                                  await restoreLead(l.id);
+                                  toast.success("Lead restaurado com sucesso!");
+                                  qc.invalidateQueries({ queryKey: ["leads", agency?.id] });
+                                } catch (e) {
+                                  toast.error("Falha ao restaurar lead");
+                                }
+                              }}
+                              className="h-8 px-3 text-xs border-success/30 hover:bg-success/10 text-success font-semibold"
+                            >
+                              Restaurar
+                            </Button>
+                            <Button
+                              variant="ghost"
+                              onClick={() => {
+                                confirm({
+                                  title: "Excluir Permanentemente",
+                                  description:
+                                    "Deseja EXCLUIR este lead permanentemente? Essa ação não pode ser desfeita.",
+                                  variant: "destructive",
+                                  onConfirm: async () => {
+                                    try {
+                                      await deleteLeadPermanently(l.id);
+                                      toast.success("Lead excluído permanentemente!");
+                                      qc.invalidateQueries({ queryKey: ["leads", agency?.id] });
+                                    } catch (e) {
+                                      toast.error("Falha ao excluir permanentemente");
+                                    }
+                                  },
+                                });
+                              }}
+                              className="h-8 px-3 text-xs border-danger/30 hover:bg-danger/10 text-danger font-semibold"
+                            >
+                              Excluir
+                            </Button>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              )}
+            </div>
           </div>
-        </div>
-      )}
+        )}
 
-      {activeTab === "kanban" && stagesQ.data && stagesQ.data.length === 0 && (
-        <div className="flex-1 p-6">
-          <EmptyState
-            icon={KanbanSquare}
-            title="CRM Não Configurado"
-            description="Seu funil de vendas não possui nenhuma coluna configurada. Inicialize-o agora para começar a gerenciar seus leads."
-            action={
-              <Button variant="default" onClick={() => initStages.mutate()} disabled={initStages.isPending}>
-                {initStages.isPending ? "Inicializando..." : "Criar Funil Padrão"}
-              </Button>
-            }
+        {activeTab === "kanban" && stagesQ.data && stagesQ.data.length === 0 && (
+          <div className="flex-1 p-6">
+            <EmptyState
+              icon={KanbanSquare}
+              title="CRM Não Configurado"
+              description="Seu funil de vendas não possui nenhuma coluna configurada. Inicialize-o agora para começar a gerenciar seus leads."
+              action={
+                <Button
+                  variant="default"
+                  onClick={() => initStages.mutate()}
+                  disabled={initStages.isPending}
+                >
+                  {initStages.isPending ? "Inicializando..." : "Criar Funil Padrão"}
+                </Button>
+              }
+            />
+          </div>
+        )}
+
+        {activeTab === "kanban" && stagesQ.data && stagesQ.data.length > 0 && localLeads && (
+          <CrmKanbanBoard
+            stages={stagesQ.data}
+            stagesById={stagesById}
+            slug={slug}
+            users={usersQ.data ?? []}
+            sensors={sensors}
+            activeLead={activeLead}
+            onDragStart={onDragStart}
+            onDragEnd={onDragEnd}
+            onArchive={archiveLead}
+            onTransfer={transferLead}
+            onCreateProposal={(id) => setProposalLeadId(id)}
           />
-        </div>
-      )}
+        )}
 
-      {activeTab === "kanban" && stagesQ.data && stagesQ.data.length > 0 && localLeads && (
-        <CrmKanbanBoard
-          stages={stagesQ.data}
-          stagesById={stagesById}
-          slug={slug}
-          users={usersQ.data ?? []}
-          sensors={sensors}
-          activeLead={activeLead}
-          onDragStart={onDragStart}
-          onDragEnd={onDragEnd}
-          onArchive={archiveLead}
-          onTransfer={transferLead}
-          onCreateProposal={(id) => setProposalLeadId(id)}
-        />
-      )}
-
-      {activeTab === "admin" && agency && (
-        <div className="page-content page-section dock-offset">
-          <ModuleAdminPanel
-            moduleKey="crm"
-            moduleName="CRM"
-            agencyId={agency.id}
-            isInline={true}
-            customSettingsComponent={
-              <StageSettingsPanel
-                agencyId={agency.id}
-                stages={stagesQ.data ?? []}
-                onUpdated={() => {
-                  qc.invalidateQueries({ queryKey: ["stages", agency.id] });
-                  qc.invalidateQueries({ queryKey: ["leads", agency.id] });
-                }}
-                onClose={() => setActiveTab("kanban")}
-              />
-            }
-          />
-        </div>
-      )}
-
+        {activeTab === "admin" && agency && (
+          <div className="page-content page-section dock-offset">
+            <ModuleAdminPanel
+              moduleKey="crm"
+              moduleName="CRM"
+              agencyId={agency.id}
+              isInline={true}
+              customSettingsComponent={
+                <StageSettingsPanel
+                  agencyId={agency.id}
+                  stages={stagesQ.data ?? []}
+                  onUpdated={() => {
+                    qc.invalidateQueries({ queryKey: ["stages", agency.id] });
+                    qc.invalidateQueries({ queryKey: ["leads", agency.id] });
+                  }}
+                  onClose={() => setActiveTab("kanban")}
+                />
+              }
+            />
+          </div>
+        )}
       </Tabs>
 
       {proposalLeadId && agency && (
@@ -851,9 +869,7 @@ function StageSettingsPanel({
           <p className="text-xs text-muted-foreground -mt-3">
             Renomeie, mude cores ou crie novas colunas.
           </p>
-          <div className="ds-label-caps text-muted-foreground pt-2">
-            Colunas do Pipeline
-          </div>
+          <div className="ds-label-caps text-muted-foreground pt-2">Colunas do Pipeline</div>
 
           {localStages.map((s, idx) => (
             <div
@@ -932,7 +948,8 @@ function StageSettingsPanel({
             </div>
           ))}
 
-          <Button variant="ghost"
+          <Button
+            variant="ghost"
             type="button"
             onClick={handleAdd}
             className="w-full mt-4 border-2 border-dashed border-border text-xs uppercase tracking-widest font-bold animate-pulse"
@@ -949,7 +966,13 @@ function StageSettingsPanel({
             <Button variant="ghost" type="button" onClick={onClose} disabled={busy}>
               Cancelar
             </Button>
-            <Button variant="default" type="button" onClick={handleSave} disabled={busy} className="w-32">
+            <Button
+              variant="default"
+              type="button"
+              onClick={handleSave}
+              disabled={busy}
+              className="w-32"
+            >
               {busy ? "Salvando..." : "Salvar Funil"}
             </Button>
           </div>

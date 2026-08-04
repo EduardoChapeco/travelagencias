@@ -13,7 +13,9 @@ import { ModuleAdminPanel } from "@/components/shell/ModuleAdminPanel";
 import { Tabs, TabsList } from "@/components/ui/tabs";
 
 export const Route = createFileRoute("/agency/$slug/financial")({
-  head: ({ context }: any) => ({ meta: [{ title: `Financeiro · ${context?.brand?.platform_name || 'Turis'}` }] }),
+  head: ({ context }: any) => ({
+    meta: [{ title: `Financeiro · ${context?.brand?.platform_name || "Turis"}` }],
+  }),
   beforeLoad: ({ location, params }) => {
     const p = location.pathname.replace(/\/$/, "");
     if (p.endsWith("/financial")) {
@@ -22,7 +24,6 @@ export const Route = createFileRoute("/agency/$slug/financial")({
   },
   component: FinancialLayout,
 });
-
 
 import { DollarSign, FileText, Settings, Target, Users, BookOpen } from "lucide-react";
 import { useEffect } from "react";
@@ -33,7 +34,6 @@ function FinancialLayout() {
   const { agency, isAgencyAdmin } = useAgency();
   const [activeSubTab, setActiveSubTab] = useState<"route" | "settings">("route");
 
-
   const tabs = [
     { to: "/agency/$slug/financial/cash" as any, label: "Fluxo de caixa" },
     { to: "/agency/$slug/financial/reconciliation" as any, label: "Conciliação" },
@@ -43,8 +43,6 @@ function FinancialLayout() {
     { to: "/agency/$slug/financial/ledger" as any, label: "Livro-Razão" },
     { to: "/agency/$slug/financial/operators" as any, label: "Faturamento" },
   ] as const;
-
-
 
   return (
     <div className="flex h-full flex-col overflow-hidden">

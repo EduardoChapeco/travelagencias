@@ -57,7 +57,8 @@ export function SectionTravelers({ draft, save }: Props) {
               {i + 1}
             </span>
             <Input
-              className={SMALL_INPUT + " flex-1"} value={name}
+              className={SMALL_INPUT + " flex-1"}
+              value={name}
               placeholder="Nome completo"
               onChange={(e) => {
                 const arr = [...((draft as any).pax_names ?? [])];

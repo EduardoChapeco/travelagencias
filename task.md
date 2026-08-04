@@ -12,12 +12,14 @@
 ---
 
 ## Fase 5: Unificação de Primitives
+
 - [x] Migrar Side Panels soltos (`fixed inset-0`, etc) para Radix Sheet (`SheetPage`)
 - [x] Migrar Modais soltos para Radix Dialog
 - [x] Remover botões de fechar redundantes dentro desses modais, deixando a UI padrão lidar com isso.
 - [x] Validar Z-Index context
 
 ## Fase 6: Padronização de Navegação e Menus
+
 - [x] Identificar Dropdowns, Sidebars e Menus de Navegação duplicados
 - [/] Refatorar componentes de Header e Sidebar para consumo global
 - [ ] **LOTE 6** — Dados, Supabase, Tipagem e Código morto
@@ -37,6 +39,7 @@
 - [x] Preservação: isolamento de tenant, verificações geométricas (não alterados)
 
 ## Fase 5 — Portal: Dead Code + Desacoplamento Quotes (Lote 5)
+
 - [x] Confirmar zero consumidores de `NewSectionsRenderer.tsx` (grep global)
 - [x] Deletar `src/components/portal/NewSectionsRenderer.tsx` (103KB de dead code)
 - [x] Remover import morto de `NewSectionsRenderer` em `BlockRenderer.tsx` (L2)
@@ -49,6 +52,7 @@
 - [x] Build de produção — 100% sucesso (BlockRenderer: 364KB → 237KB, -35%)
 
 ## Fase 6 — Inbox Central: Desacoplamento de Lógica e Hook Customizado (Lote 6)
+
 - [x] Criar hook `src/hooks/use-inbox.ts` encapsulando toda a camada de dados (12 queries, mutations e realtime subscription)
 - [x] Refatorar a rota `src/routes/agency.$slug.inbox.tsx` para consumir o hook `useInbox`
 - [x] Manter estados de UI/formulário locais isolados na página da rota
@@ -59,6 +63,7 @@
 ---
 
 ### LOTE 2B — Formulários canônicos (Alta Dívida)
+
 - [x] `src/components/portal/BlockRenderer.tsx` (40 inputs, 4 selects, 4 textareas)
 - [x] `src/components/vouchers/VoucherStudio.tsx` (27 inputs, 1 textarea)
 - [x] `src/components/boarding/CardDetailPanel.tsx` (20 inputs, 3 selects, 2 textareas)
@@ -72,24 +77,26 @@
 ## LOTE 2B — Formulários Canônicos
 
 ### Componentes canônicos confirmados
+
 - `src/components/ui/input.tsx` → `Input`, `FormInput`
 - `src/components/ui/select.tsx` → `Select` (Radix), `NativeSelect` (nativo estilizado)
 - `src/components/ui/textarea.tsx` → `Textarea`, `FormTextarea`
 
 ### Métricas baseline (Lote 0)
-| Métrica | Antes |
-|---------|-------|
-| `<input>` nativos | 155 |
-| `<select>` nativos | 65 |
-| `<textarea>` nativos | 10 |
-| `<button>` nativos | 68 |
-| `style={{}}` inline | 290 |
-| Hex colors | 421 |
-| RGBA/RGB | 96 |
-| `!important` | 60 |
-| `as any` | 872 |
-| Branding "Turis" | 274 |
-| Supabase linhas | 494 |
+
+| Métrica              | Antes |
+| -------------------- | ----- |
+| `<input>` nativos    | 155   |
+| `<select>` nativos   | 65    |
+| `<textarea>` nativos | 10    |
+| `<button>` nativos   | 68    |
+| `style={{}}` inline  | 290   |
+| Hex colors           | 421   |
+| RGBA/RGB             | 96    |
+| `!important`         | 60    |
+| `as any`             | 872   |
+| Branding "Turis"     | 274   |
+| Supabase linhas      | 494   |
 
 ### Ordem de execução por domínio
 

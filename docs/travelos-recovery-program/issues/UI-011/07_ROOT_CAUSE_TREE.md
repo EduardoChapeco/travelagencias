@@ -1,4 +1,5 @@
 # UI-011 - 07_ROOT_CAUSE_TREE.md
+
 # ÁRVORE DE CAUSA RAIZ - UI-011
 
 Este documento descreve a causa do comportamento visual do módulo de Cotações.

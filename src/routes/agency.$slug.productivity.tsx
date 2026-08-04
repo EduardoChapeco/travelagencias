@@ -14,7 +14,9 @@ import {
 } from "recharts";
 
 export const Route = createFileRoute("/agency/$slug/productivity")({
-  head: ({ context }: any) => ({ meta: [{ title: `Painel de Produtividade · ${context?.brand?.platform_name || 'Turis'}` }] }),
+  head: ({ context }: any) => ({
+    meta: [{ title: `Painel de Produtividade · ${context?.brand?.platform_name || "Turis"}` }],
+  }),
   component: ProductivityRoute,
 });
 
@@ -48,7 +50,8 @@ function ProductivityRoute() {
 
       tasks.forEach((t) => {
         if (!t.assigned_to) return;
-        if (!scoreByAgent[t.assigned_to]) scoreByAgent[t.assigned_to] = { totalScore: 0, taskCount: 0 };
+        if (!scoreByAgent[t.assigned_to])
+          scoreByAgent[t.assigned_to] = { totalScore: 0, taskCount: 0 };
         scoreByAgent[t.assigned_to].totalScore += t.difficulty_score || 0;
         scoreByAgent[t.assigned_to].taskCount += 1;
 
@@ -166,7 +169,7 @@ function ProductivityRoute() {
             </div>
 
             <div className="glass-card border-none border-none rounded-[var(--radius-card)] overflow-hidden">
-              <div className="p-4 border-b border-border glass bg-white/5 border-white/10/50">
+              <div className="p-4 border-b border-border glass/50">
                 <h2 className="text-sm font-bold">Ranking de Produtividade Real</h2>
                 <p className="text-xs text-muted-foreground">
                   Ordenado por pontos de dificuldade acumulados (Não por volume de chamados
@@ -179,7 +182,7 @@ function ProductivityRoute() {
                   .map(([agentId, data], index) => (
                     <div
                       key={agentId}
-                      className="p-4 flex items-center justify-between hover:glass bg-white/5 border-white/10/30 transition-colors"
+                      className="p-4 flex items-center justify-between hover:glass/30 transition-colors"
                     >
                       <div className="flex items-center gap-4">
                         <div className="w-8 h-8 rounded-full bg-brand/10 text-brand flex items-center justify-center font-bold text-xs">

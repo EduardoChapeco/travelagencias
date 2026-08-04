@@ -9,8 +9,10 @@ const badgeVariants = cva(
     variants: {
       variant: {
         default: "border-transparent bg-primary text-primary-foreground hover:bg-primary/80",
-        secondary: "border-transparent bg-secondary text-secondary-foreground hover:bg-secondary/80",
-        destructive: "border-transparent bg-destructive text-destructive-foreground hover:bg-destructive/80",
+        secondary:
+          "border-transparent bg-secondary text-secondary-foreground hover:bg-secondary/80",
+        destructive:
+          "border-transparent bg-destructive text-destructive-foreground hover:bg-destructive/80",
         outline: "text-foreground",
         glass: "glass-pill text-white",
       },
@@ -32,12 +34,7 @@ export interface StatusBadgeProps extends React.HTMLAttributes<HTMLSpanElement> 
   tone?: "neutral" | "success" | "warning" | "danger" | "info" | "primary";
 }
 
-function StatusBadge({
-  children,
-  tone = "neutral",
-  className,
-  ...props
-}: StatusBadgeProps) {
+function StatusBadge({ children, tone = "neutral", className, ...props }: StatusBadgeProps) {
   const tones: Record<NonNullable<StatusBadgeProps["tone"]>, string> = {
     neutral: "bg-neutral-650 text-white",
     success: "bg-emerald-650 text-white",

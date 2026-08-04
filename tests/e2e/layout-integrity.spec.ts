@@ -225,7 +225,7 @@ test.describe("Auditoria de Integridade Geométrica e Layout (AppShell)", () => 
         };
         window.localStorage.setItem(`sb-${args.ref}-auth-token`, JSON.stringify(session));
       },
-      { ref: SUPABASE_REF, jwt: MOCK_JWT }
+      { ref: SUPABASE_REF, jwt: MOCK_JWT },
     );
 
     // ── 4. Navegar via SPA routing (client-side, sem SSR) ────────────────

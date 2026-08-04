@@ -620,7 +620,10 @@ export function BlockFormEditor({ block: blockItem, updateBlock, agencyId }: Pro
                 Depoimentos
               </label>
               {(block.items || []).map((item: any, idx: number) => (
-                <div key={idx} className="border border-border rounded-2xl p-3 space-y-2 bg-surface">
+                <div
+                  key={idx}
+                  className="border border-border rounded-2xl p-3 space-y-2 bg-surface"
+                >
                   <div className="grid grid-cols-2 gap-2">
                     <Input
                       placeholder="Nome do cliente"
@@ -2226,9 +2229,7 @@ export function BlockFormEditor({ block: blockItem, updateBlock, agencyId }: Pro
         {activeTab === "bindings" && (
           <div className="space-y-4">
             <div>
-              <h4 className="ds-label-caps font-bold text-foreground">
-                Vincular Dados Dinâmicos
-              </h4>
+              <h4 className="ds-label-caps font-bold text-foreground">Vincular Dados Dinâmicos</h4>
               <p className="ds-meta text-muted-foreground leading-normal mt-0.5">
                 Substitua textos ou imagens estáticas por campos vindos de um Pacote / Roteiro da
                 agência.
@@ -2444,7 +2445,7 @@ export function BlockFormEditor({ block: blockItem, updateBlock, agencyId }: Pro
                         className="flex items-center gap-1.5 p-1 rounded-2xl border border-border text-[9px] font-bold text-left hover:border-brand/40 bg-surface transition-all active:scale-[0.97]"
                       >
                         <span
-                          className="w-3.5 h-3.5 rounded-full shrink-0 border border-black/10"
+                          className="w-3.5 h-3.5 rounded-full shrink-0 border border-border"
                           style={{ background: p.value }}
                         />
                         <span className="truncate">{p.name}</span>

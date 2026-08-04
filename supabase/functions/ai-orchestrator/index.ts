@@ -75,7 +75,7 @@ async function logAiRequest(
     outputTokens?: number;
     success: boolean;
     errorMessage?: string;
-  }
+  },
 ) {
   try {
     await supabaseAdmin.from("ai_request_logs").insert({
@@ -109,7 +109,7 @@ async function updateCredentialStatus(
     last_error_code?: string;
     last_success_at?: string;
     last_used_at?: string;
-  }
+  },
 ) {
   try {
     await supabaseAdmin
@@ -127,15 +127,16 @@ async function updateCredentialStatus(
 async function fetchHealthyCredentials(
   supabaseAdmin: any,
   providerCode: string,
-  agencyId: string | null
+  agencyId: string | null,
 ): Promise<any[]> {
   // Buscar credenciais ativas do provedor específico
   const now = new Date().toISOString();
-  
+
   // Primeiro tentamos chaves da agência
   let query = supabaseAdmin
     .from("ai_api_credentials")
-    .select(`
+    .select(
+      `
       id,
       secret_reference,
       fingerprint,
@@ -144,7 +145,8 @@ async function fetchHealthyCredentials(
       cooldown_until,
       provider_id,
       ai_providers!inner(code, status)
-    `)
+    `,
+    )
     .eq("ai_providers.code", providerCode)
     .eq("ai_providers.status", "active")
     .eq("status", "healthy")
@@ -169,7 +171,8 @@ async function fetchHealthyCredentials(
   if (agencyId && (!agencyKeys || agencyKeys.length === 0)) {
     const { data: globalKeys } = await supabaseAdmin
       .from("ai_api_credentials")
-      .select(`
+      .select(
+        `
         id,
         secret_reference,
         fingerprint,
@@ -178,7 +181,8 @@ async function fetchHealthyCredentials(
         cooldown_until,
         provider_id,
         ai_providers!inner(code, status)
-      `)
+      `,
+      )
       .eq("ai_providers.code", providerCode)
       .eq("ai_providers.status", "active")
       .eq("status", "healthy")
@@ -202,7 +206,7 @@ async function callProviderApi(
     file_base64?: string;
     mime?: string;
     jsonMode?: boolean;
-  }
+  },
 ): Promise<{ text: string; inputTokens?: number; outputTokens?: number; modelUsed: string }> {
   const isImage = payload.mime && payload.mime.startsWith("image/");
   const isPdf = payload.mime && payload.mime.includes("pdf");
@@ -210,7 +214,7 @@ async function callProviderApi(
   if (provider === "gemini") {
     const model = "gemini-2.5-flash";
     const parts: any[] = [{ text: `${payload.systemPrompt || ""}\n\n${payload.prompt || ""}` }];
-    
+
     if (payload.file_base64) {
       parts.push({
         inlineData: {
@@ -243,7 +247,7 @@ async function callProviderApi(
       const data = await res.json();
       const text = data.candidates?.[0]?.content?.parts?.[0]?.text;
       if (!text) throw new Error("Empty response from Gemini API.");
-      
+
       return {
         text,
         inputTokens: data.usageMetadata?.promptTokenCount,
@@ -270,7 +274,10 @@ async function callProviderApi(
         role: "user",
         content: [
           { type: "text", text: payload.prompt || "" },
-          { type: "image_url", image_url: { url: `data:${payload.mime};base64,${payload.file_base64}` } },
+          {
+            type: "image_url",
+            image_url: { url: `data:${payload.mime};base64,${payload.file_base64}` },
+          },
         ],
       });
     } else {
@@ -373,12 +380,12 @@ async function callProviderApi(
 async function executeCompletionWithOrchestration(
   supabaseAdmin: any,
   agencyId: string | null,
-  body: any
+  body: any,
 ): Promise<{ result: string; provider: string }> {
   const requestId = crypto.randomUUID();
   const module = body.module || "unknown_module";
   const capability = body.capability || "completion";
-  
+
   try {
     // Se file_path foi enviado, faz o download do arquivo do storage interno
     if (body.file_path) {
@@ -386,12 +393,10 @@ async function executeCompletionWithOrchestration(
         const parts = body.file_path.split("/");
         const bucketName = parts[0];
         const storagePath = parts.slice(1).join("/");
-        
+
         console.log(`[Orchestrator] Downloading file from storage path: ${body.file_path}`);
-        const { data, error } = await supabaseAdmin.storage
-          .from(bucketName)
-          .download(storagePath);
-          
+        const { data, error } = await supabaseAdmin.storage.from(bucketName).download(storagePath);
+
         if (error) {
           console.error(`[Orchestrator] Failed to download temporary file from storage:`, error);
         } else if (data) {
@@ -416,7 +421,7 @@ async function executeCompletionWithOrchestration(
         attempt++;
         const startTime = Date.now();
         let keyDecrypted = "";
-        
+
         try {
           keyDecrypted = await decryptKeyIfNeeded(cred.secret_reference);
         } catch (decErr: any) {
@@ -430,7 +435,9 @@ async function executeCompletionWithOrchestration(
         }
 
         try {
-          console.log(`[Orchestrator] Request ${requestId} attempting provider ${provider} (Attempt ${attempt})`);
+          console.log(
+            `[Orchestrator] Request ${requestId} attempting provider ${provider} (Attempt ${attempt})`,
+          );
           const { text, inputTokens, outputTokens, modelUsed } = await callProviderApi(
             provider,
             keyDecrypted,
@@ -440,11 +447,11 @@ async function executeCompletionWithOrchestration(
               file_base64: body.file_base64,
               mime: body.mime,
               jsonMode: body.jsonMode,
-            }
+            },
           );
 
           const latencyMs = Date.now() - startTime;
-          
+
           // Log com sucesso
           await logAiRequest(supabaseAdmin, {
             requestId,
@@ -473,7 +480,7 @@ async function executeCompletionWithOrchestration(
           const latencyMs = Date.now() - startTime;
           const status = err.status || 500;
           const errMsg = err.message || String(err);
-          
+
           console.error(`[Orchestrator] Attempt ${attempt} failed with status ${status}:`, errMsg);
           fallbackUsed = true;
 
@@ -538,7 +545,10 @@ async function executeCompletionWithOrchestration(
           console.log(`[Orchestrator] Cleaned up temporary file ${body.file_path}`);
         })
         .catch((cleanupErr: any) => {
-          console.warn(`[Orchestrator] Failed to remove temporary file ${body.file_path}:`, cleanupErr);
+          console.warn(
+            `[Orchestrator] Failed to remove temporary file ${body.file_path}:`,
+            cleanupErr,
+          );
         });
     }
   }
@@ -587,7 +597,7 @@ async function processJobInBackground(supabaseAdmin: any, jobId: string) {
         jsonMode,
         module: "background_job",
         capability: job.feature || "ocr",
-      }
+      },
     );
 
     let parsedResult: any = result;
@@ -627,7 +637,7 @@ async function processJobInBackground(supabaseAdmin: any, jobId: string) {
 async function checkMembership(
   supabaseAdmin: any,
   userId: string,
-  agencyId?: string | null
+  agencyId?: string | null,
 ): Promise<boolean> {
   const { data: roles, error } = await supabaseAdmin
     .from("user_roles")
@@ -701,7 +711,7 @@ serve(async (req) => {
           {
             status: 403,
             headers: { ...corsHeaders, "Content-Type": "application/json" },
-          }
+          },
         );
       }
     }
@@ -802,15 +812,11 @@ Retorne somente o JSON estrito. Datas devem seguir obrigatoriamente a ISO.`;
         }
       }
 
-      let { result, provider } = await executeCompletionWithOrchestration(
-        supabaseAdmin,
-        agencyId,
-        {
-          ...body,
-          systemPrompt: systemPrompt || body.systemPrompt,
-          jsonMode,
-        }
-      );
+      let { result, provider } = await executeCompletionWithOrchestration(supabaseAdmin, agencyId, {
+        ...body,
+        systemPrompt: systemPrompt || body.systemPrompt,
+        jsonMode,
+      });
 
       if (jsonMode && typeof result === "string") {
         try {
@@ -820,7 +826,10 @@ Retorne somente o JSON estrito. Datas devem seguir obrigatoriamente a ISO.`;
             .trim();
           result = JSON.parse(cleaned);
         } catch (e) {
-          console.warn("[Orchestrator] Could not parse AI result as JSON, returning raw string:", e);
+          console.warn(
+            "[Orchestrator] Could not parse AI result as JSON, returning raw string:",
+            e,
+          );
         }
       }
 
@@ -845,14 +854,17 @@ Retorne somente o JSON estrito. Datas devem seguir obrigatoriamente a ISO.`;
       const startTime = Date.now();
 
       try {
-        const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${model}:embedContent?key=${keyDecrypted}`, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            model: `models/${model}`,
-            content: { parts: [{ text: text.substring(0, 4000) }] }
-          })
-        });
+        const res = await fetch(
+          `https://generativelanguage.googleapis.com/v1beta/models/${model}:embedContent?key=${keyDecrypted}`,
+          {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              model: `models/${model}`,
+              content: { parts: [{ text: text.substring(0, 4000) }] },
+            }),
+          },
+        );
 
         if (!res.ok) {
           throw { status: res.status, message: await res.text() };
@@ -880,7 +892,6 @@ Retorne somente o JSON estrito. Datas devem seguir obrigatoriamente a ISO.`;
         return new Response(JSON.stringify({ embedding: vector }), {
           headers: { ...corsHeaders, "Content-Type": "application/json" },
         });
-
       } catch (err: any) {
         const latencyMs = Date.now() - startTime;
         const status = err.status || 500;
@@ -923,10 +934,13 @@ Retorne somente o JSON estrito. Datas devem seguir obrigatoriamente a ISO.`;
     // --- Action: SCRAPE (Firecrawl) ---
     if (action === "scrape") {
       const { url } = body;
-      const { keyValue: firecrawlKey, keyId: firecrawlKeyId } = await supabaseAdmin.rpc("pick_active_api_key", {
-        _provider: "firecrawl",
-        _agency_id: agencyId || null,
-      });
+      const { keyValue: firecrawlKey, keyId: firecrawlKeyId } = await supabaseAdmin.rpc(
+        "pick_active_api_key",
+        {
+          _provider: "firecrawl",
+          _agency_id: agencyId || null,
+        },
+      );
 
       if (firecrawlKey) {
         const keyDecrypted = await decryptKeyIfNeeded(firecrawlKey);
@@ -951,7 +965,7 @@ Retorne somente o JSON estrito. Datas devem seguir obrigatoriamente a ISO.`;
           }),
           {
             headers: { ...corsHeaders, "Content-Type": "application/json" },
-          }
+          },
         );
       }
 
@@ -969,11 +983,13 @@ Retorne somente o JSON estrito. Datas devem seguir obrigatoriamente a ISO.`;
       const now = new Date().toISOString();
       const { data: openRouterKeys } = await supabaseAdmin
         .from("ai_api_credentials")
-        .select(`
+        .select(
+          `
           id,
           secret_reference,
           fingerprint
-        `)
+        `,
+        )
         .eq("status", "healthy")
         .or(`cooldown_until.is.null,cooldown_until.lt.${now}`)
         .or(`agency_id.eq.${agencyId},agency_id.is.null`)
@@ -981,7 +997,9 @@ Retorne somente o JSON estrito. Datas devem seguir obrigatoriamente a ISO.`;
 
       const openrouterKeyObj = openRouterKeys?.[0];
       if (!openrouterKeyObj) {
-        throw new Error("Image generation failed: No authorized image generation providers are configured.");
+        throw new Error(
+          "Image generation failed: No authorized image generation providers are configured.",
+        );
       }
 
       const keyDecrypted = await decryptKeyIfNeeded(openrouterKeyObj.secret_reference);
@@ -1101,12 +1119,14 @@ Retorne somente o JSON estrito. Datas devem seguir obrigatoriamente a ISO.`;
       if (provider === "resend_api_key") {
         const testRes = await fetch("https://api.resend.com/domains", {
           headers: {
-            "Authorization": `Bearer ${key_value}`,
+            Authorization: `Bearer ${key_value}`,
             "Content-Type": "application/json",
           },
         });
         if (!testRes.ok) {
-          throw new Error("Chave de API do Resend inválida ou não autorizada. Verifique suas credenciais.");
+          throw new Error(
+            "Chave de API do Resend inválida ou não autorizada. Verifique suas credenciais.",
+          );
         }
       }
 

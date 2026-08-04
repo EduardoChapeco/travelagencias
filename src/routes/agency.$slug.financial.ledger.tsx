@@ -20,7 +20,9 @@ import { PageHeader } from "@/components/shell/PageHeader";
 import { FormInput as Input } from "@/components/ui/input";
 
 export const Route = createFileRoute("/agency/$slug/financial/ledger")({
-  head: ({ context }: any) => ({ meta: [{ title: `Livro-Razão Contábil · ${context?.brand?.platform_name || 'Turis'}` }] }),
+  head: ({ context }: any) => ({
+    meta: [{ title: `Livro-Razão Contábil · ${context?.brand?.platform_name || "Turis"}` }],
+  }),
   component: LedgerDashboard,
 });
 
@@ -119,204 +121,215 @@ export function LedgerDashboard() {
 
   return (
     <div className="flex h-full flex-col overflow-hidden">
-              <PageHeader title="Livro-Razão" />
-      
+      <PageHeader title="Livro-Razão" />
+
       <div className="flex-1 overflow-y-auto px-4  md:pr-6 py-4 min-h-0 space-y-6">
-      {/* KPI Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <div className="glass-card border-none border-none rounded-[var(--radius-card)] p-4">
-          <span className="ds-meta font-bold text-muted-foreground uppercase tracking-widest flex items-center gap-1">
-            <ArrowDownCircle className="w-3.5 h-3.5 text-success" /> Total de Débitos (D)
-          </span>
-          <strong className="text-2xl font-mono block mt-1.5 text-success">
-            {formatCurrency(totals.totalDebits)}
-          </strong>
-          <span className="ds-meta text-muted-foreground mt-1 block">
-            Aplicações de recursos registradas
-          </span>
-        </div>
-
-        <div className="glass-card border-none border-none rounded-[var(--radius-card)] p-4">
-          <span className="ds-meta font-bold text-muted-foreground uppercase tracking-widest flex items-center gap-1">
-            <ArrowUpCircle className="w-3.5 h-3.5 text-danger" /> Total de Créditos (C)
-          </span>
-          <strong className="text-2xl font-mono block mt-1.5 text-danger">
-            {formatCurrency(totals.totalCredits)}
-          </strong>
-          <span className="ds-meta text-muted-foreground mt-1 block">
-            Origens de recursos registradas
-          </span>
-        </div>
-
-        <div className="glass-card border-none border-none rounded-[var(--radius-card)] p-4">
-          <span className="ds-meta font-bold text-muted-foreground uppercase tracking-widest flex items-center gap-1">
-            <Scale className="w-3.5 h-3.5 text-brand" /> Saldo Líquido do Razão
-          </span>
-          <strong
-            className={cn(
-              "text-2xl font-mono block mt-1.5",
-              totals.balance === 0 ? "text-success" : "text-brand",
-            )}
-          >
-            {formatCurrency(totals.balance)}
-          </strong>
-          <span className="ds-meta text-muted-foreground mt-1 block">
-            Diferença consolidada entre D e C
-          </span>
-        </div>
-      </div>
-
-      {/* Filter and Table Panel */}
-      <div className="glass-card border-none border-none rounded-[var(--radius-card)] overflow-hidden shadow-xs">
-        {/* Filters bar */}
-        <div className="px-5 py-4 border-b border-border flex flex-col md:flex-row md:items-center justify-between gap-4">
-          <div>
-            <h3 className="text-sm font-bold text-foreground">Razão Contábil</h3>
-            <p className="text-xs text-muted-foreground mt-0.5">
-              Audite lançamentos gerados dinamicamente.
-            </p>
+        {/* KPI Cards */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div className="glass-card border-none border-none rounded-[var(--radius-card)] p-4">
+            <span className="ds-meta font-bold text-muted-foreground uppercase tracking-widest flex items-center gap-1">
+              <ArrowDownCircle className="w-3.5 h-3.5 text-success" /> Total de Débitos (D)
+            </span>
+            <strong className="text-2xl font-mono block mt-1.5 text-success">
+              {formatCurrency(totals.totalDebits)}
+            </strong>
+            <span className="ds-meta text-muted-foreground mt-1 block">
+              Aplicações de recursos registradas
+            </span>
           </div>
-          <div className="flex flex-wrap items-center gap-2">
-            {/* Search by account code */}
-            <div className="relative">
-              <Input
-                type="text"
-                placeholder="Conta (ex: 1.1.01)..."
-                value={accountCode}
-                onChange={(e) => {
-                  setAccountCode(e.target.value);
-                  setPage(1);
-                }}
-                className="rounded-full border-none glass-card border-none pl-8 pr-3 focus:outline-hidden focus:ring-ring w-[160px]"
-              />
-              <Search className="w-3.5 h-3.5 text-muted-foreground absolute left-2.5 top-1/2 -translate-y-1/2" />
-            </div>
 
-            {/* Search by description */}
-            <div className="relative">
-              <Input
-                type="text"
-                placeholder="Descrição do lançamento..."
-                value={search}
-                onChange={(e) => {
-                  setSearch(e.target.value);
-                  setPage(1);
-                }}
-                className="rounded-full border-none glass-card border-none pl-8 pr-3 focus:outline-hidden focus:ring-ring w-[200px]"
-              />
-              <Search className="w-3.5 h-3.5 text-muted-foreground absolute left-2.5 top-1/2 -translate-y-1/2" />
-            </div>
+          <div className="glass-card border-none border-none rounded-[var(--radius-card)] p-4">
+            <span className="ds-meta font-bold text-muted-foreground uppercase tracking-widest flex items-center gap-1">
+              <ArrowUpCircle className="w-3.5 h-3.5 text-danger" /> Total de Créditos (C)
+            </span>
+            <strong className="text-2xl font-mono block mt-1.5 text-danger">
+              {formatCurrency(totals.totalCredits)}
+            </strong>
+            <span className="ds-meta text-muted-foreground mt-1 block">
+              Origens de recursos registradas
+            </span>
+          </div>
 
-            {/* Reset button */}
-            {(search || accountCode) && (
-              <Button variant="ghost"
-                onClick={resetFilters}
-                className="h-8 !px-2.5 hover:glass bg-white/5 border-white/10 transition cursor-pointer"
-                title="Limpar filtros"
-              >
-                <RefreshCw className="w-3.5 h-3.5" />
-              </Button>
-            )}
+          <div className="glass-card border-none border-none rounded-[var(--radius-card)] p-4">
+            <span className="ds-meta font-bold text-muted-foreground uppercase tracking-widest flex items-center gap-1">
+              <Scale className="w-3.5 h-3.5 text-brand" /> Saldo Líquido do Razão
+            </span>
+            <strong
+              className={cn(
+                "text-2xl font-mono block mt-1.5",
+                totals.balance === 0 ? "text-success" : "text-brand",
+              )}
+            >
+              {formatCurrency(totals.balance)}
+            </strong>
+            <span className="ds-meta text-muted-foreground mt-1 block">
+              Diferença consolidada entre D e C
+            </span>
           </div>
         </div>
 
-        {/* Entries Table */}
-        <div className="overflow-x-auto relative min-h-[150px]">
-          {ledgerQ.isLoading ? (
-            <div className="absolute inset-0 flex items-center justify-center glass-card border-none/50">
-              <Loader2 className="w-6 h-6 animate-spin text-brand" />
+        {/* Filter and Table Panel */}
+        <div className="glass-card border-none border-none rounded-[var(--radius-card)] overflow-hidden shadow-xs">
+          {/* Filters bar */}
+          <div className="px-5 py-4 border-b border-border flex flex-col md:flex-row md:items-center justify-between gap-4">
+            <div>
+              <h3 className="text-sm font-bold text-foreground">Razão Contábil</h3>
+              <p className="text-xs text-muted-foreground mt-0.5">
+                Audite lançamentos gerados dinamicamente.
+              </p>
             </div>
-          ) : null}
+            <div className="flex flex-wrap items-center gap-2">
+              {/* Search by account code */}
+              <div className="relative">
+                <Input
+                  type="text"
+                  placeholder="Conta (ex: 1.1.01)..."
+                  value={accountCode}
+                  onChange={(e) => {
+                    setAccountCode(e.target.value);
+                    setPage(1);
+                  }}
+                  className="rounded-full border-none glass-card border-none pl-8 pr-3 focus:outline-hidden focus:ring-ring w-40"
+                />
+                <Search className="w-3.5 h-3.5 text-muted-foreground absolute left-2.5 top-1/2 -translate-y-1/2" />
+              </div>
 
-          <table className="w-full text-sm">
-            <thead className="glass bg-white/5 border-white/10/40 text-left ds-label-caps tracking-wider text-muted-foreground border-b border-border">
-              <tr>
-                <th className="px-5 py-3">Data/Hora</th>
-                <th className="px-5 py-3">Código da Conta</th>
-                <th className="px-5 py-3">Descrição do Lançamento</th>
-                <th className="px-5 py-3">Origem</th>
-                <th className="px-5 py-3 text-right">Débito (D)</th>
-                <th className="px-5 py-3 text-right">Crédito (C)</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-border">
-              {ledgerQ.isError ? (
+              {/* Search by description */}
+              <div className="relative">
+                <Input
+                  type="text"
+                  placeholder="Descrição do lançamento..."
+                  value={search}
+                  onChange={(e) => {
+                    setSearch(e.target.value);
+                    setPage(1);
+                  }}
+                  className="rounded-full border-none glass-card border-none pl-8 pr-3 focus:outline-hidden focus:ring-ring w-48"
+                />
+                <Search className="w-3.5 h-3.5 text-muted-foreground absolute left-2.5 top-1/2 -translate-y-1/2" />
+              </div>
+
+              {/* Reset button */}
+              {(search || accountCode) && (
+                <Button
+                  variant="ghost"
+                  onClick={resetFilters}
+                  className="h-8 !px-2.5 hover:glass transition cursor-pointer"
+                  title="Limpar filtros"
+                >
+                  <RefreshCw className="w-3.5 h-3.5" />
+                </Button>
+              )}
+            </div>
+          </div>
+
+          {/* Entries Table */}
+          <div className="overflow-x-auto relative min-h-40">
+            {ledgerQ.isLoading ? (
+              <div className="absolute inset-0 flex items-center justify-center glass-card border-none/50">
+                <Loader2 className="w-6 h-6 animate-spin text-brand" />
+              </div>
+            ) : null}
+
+            <table className="w-full text-sm">
+              <thead className="glass/40 text-left ds-label-caps tracking-wider text-muted-foreground border-b border-border">
                 <tr>
-                  <td colSpan={6} className="px-5 py-8 text-center text-xs text-red-800 bg-red-50/20">
-                    <div className="flex items-center justify-center gap-2">
-                      <AlertCircle className="w-4 h-4 text-red-600" />
-                      <span>Erro ao carregar o razão contábil. Verifique suas permissões de acesso.</span>
-                    </div>
-                  </td>
+                  <th className="px-5 py-3">Data/Hora</th>
+                  <th className="px-5 py-3">Código da Conta</th>
+                  <th className="px-5 py-3">Descrição do Lançamento</th>
+                  <th className="px-5 py-3">Origem</th>
+                  <th className="px-5 py-3 text-right">Débito (D)</th>
+                  <th className="px-5 py-3 text-right">Crédito (C)</th>
                 </tr>
-              ) : entries.length === 0 ? (
-                <tr>
-                  <td colSpan={6} className="px-5 py-8 text-center text-xs text-muted-foreground">
-                    Nenhum lançamento contábil encontrado para os filtros informados.
-                  </td>
-                </tr>
-              ) : (
-                entries.map((entry) => (
-                  <tr key={entry.id} className="hover:glass bg-white/5 border-white/10/40 transition-colors">
-                    <td className="px-5 py-3.5 text-xs text-muted-foreground font-mono whitespace-nowrap">
-                      {new Date(entry.entry_date).toLocaleString("pt-BR")}
-                    </td>
-                    <td className="px-5 py-3.5 text-xs font-bold font-mono text-foreground whitespace-nowrap">
-                      {entry.account_code}
-                    </td>
-                    <td className="px-5 py-3.5 text-xs font-medium text-foreground">
-                      {entry.description}
-                    </td>
-                    <td className="px-5 py-3.5 whitespace-nowrap">
-                      <span className="inline-block rounded-full glass bg-white/5 border-white/10 border-none px-1.5 py-0.5 text-[9px] font-semibold text-muted-foreground capitalize">
-                        {entry.source_event.replace(/_/g, " ")}
-                      </span>
-                    </td>
-                    <td className="px-5 py-3.5 text-right font-mono text-xs font-semibold text-success">
-                      {Number(entry.debit_amount) > 0
-                        ? `+ ${formatCurrency(Number(entry.debit_amount))}`
-                        : "—"}
-                    </td>
-                    <td className="px-5 py-3.5 text-right font-mono text-xs font-semibold text-danger">
-                      {Number(entry.credit_amount) > 0
-                        ? `+ ${formatCurrency(Number(entry.credit_amount))}`
-                        : "—"}
+              </thead>
+              <tbody className="divide-y divide-border">
+                {ledgerQ.isError ? (
+                  <tr>
+                    <td
+                      colSpan={6}
+                      className="px-5 py-8 text-center text-xs text-red-800 bg-red-50/20"
+                    >
+                      <div className="flex items-center justify-center gap-2">
+                        <AlertCircle className="w-4 h-4 text-red-600" />
+                        <span>
+                          Erro ao carregar o razão contábil. Verifique suas permissões de acesso.
+                        </span>
+                      </div>
                     </td>
                   </tr>
-                ))
-              )}
-            </tbody>
-          </table>
-        </div>
-
-        {/* Pagination Footer */}
-        {totalPages > 1 && (
-          <div className="flex items-center justify-between border-t border-border glass bg-white/5 border-white/10 px-5 py-3">
-            <span className="text-xs text-muted-foreground font-medium">
-              Mostrando {entries.length} de {totalCount} resultados
-            </span>
-            <div className="flex items-center gap-2">
-              <Button variant="ghost"
-                onClick={() => setPage((p) => Math.max(1, p - 1))}
-                disabled={page === 1}
-                className="h-8 !px-3 font-semibold text-foreground disabled:opacity-50 transition cursor-pointer"
-              >
-                Anterior
-              </Button>
-              <span className="text-xs text-muted-foreground font-semibold">
-                Página {page} de {totalPages}
-              </span>
-              <Button variant="ghost"
-                onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
-                disabled={page === totalPages}
-                className="h-8 !px-3 font-semibold text-foreground disabled:opacity-50 transition cursor-pointer"
-              >
-                Próxima
-              </Button>
-            </div>
+                ) : entries.length === 0 ? (
+                  <tr>
+                    <td colSpan={6} className="px-5 py-8 text-center text-xs text-muted-foreground">
+                      Nenhum lançamento contábil encontrado para os filtros informados.
+                    </td>
+                  </tr>
+                ) : (
+                  entries.map((entry) => (
+                    <tr
+                      key={entry.id}
+                      className="hover:glass/40 transition-colors"
+                    >
+                      <td className="px-5 py-3.5 text-xs text-muted-foreground font-mono whitespace-nowrap">
+                        {new Date(entry.entry_date).toLocaleString("pt-BR")}
+                      </td>
+                      <td className="px-5 py-3.5 text-xs font-bold font-mono text-foreground whitespace-nowrap">
+                        {entry.account_code}
+                      </td>
+                      <td className="px-5 py-3.5 text-xs font-medium text-foreground">
+                        {entry.description}
+                      </td>
+                      <td className="px-5 py-3.5 whitespace-nowrap">
+                        <span className="inline-block rounded-full glass border-none px-1.5 py-0.5 text-[9px] font-semibold text-muted-foreground capitalize">
+                          {entry.source_event.replace(/_/g, " ")}
+                        </span>
+                      </td>
+                      <td className="px-5 py-3.5 text-right font-mono text-xs font-semibold text-success">
+                        {Number(entry.debit_amount) > 0
+                          ? `+ ${formatCurrency(Number(entry.debit_amount))}`
+                          : "—"}
+                      </td>
+                      <td className="px-5 py-3.5 text-right font-mono text-xs font-semibold text-danger">
+                        {Number(entry.credit_amount) > 0
+                          ? `+ ${formatCurrency(Number(entry.credit_amount))}`
+                          : "—"}
+                      </td>
+                    </tr>
+                  ))
+                )}
+              </tbody>
+            </table>
           </div>
-        )}
-      </div>
+
+          {/* Pagination Footer */}
+          {totalPages > 1 && (
+            <div className="flex items-center justify-between border-t border-border glass px-5 py-3">
+              <span className="text-xs text-muted-foreground font-medium">
+                Mostrando {entries.length} de {totalCount} resultados
+              </span>
+              <div className="flex items-center gap-2">
+                <Button
+                  variant="ghost"
+                  onClick={() => setPage((p) => Math.max(1, p - 1))}
+                  disabled={page === 1}
+                  className="h-8 !px-3 font-semibold text-foreground disabled:opacity-50 transition cursor-pointer"
+                >
+                  Anterior
+                </Button>
+                <span className="text-xs text-muted-foreground font-semibold">
+                  Página {page} de {totalPages}
+                </span>
+                <Button
+                  variant="ghost"
+                  onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
+                  disabled={page === totalPages}
+                  className="h-8 !px-3 font-semibold text-foreground disabled:opacity-50 transition cursor-pointer"
+                >
+                  Próxima
+                </Button>
+              </div>
+            </div>
+          )}
+        </div>
       </div>
     </div>
   );

@@ -95,16 +95,24 @@ export const CONFIRMATION_STATUS_MAP: Record<string, StatusDef> = {
   cancelled: { label: "Cancelado", tone: "danger" },
 };
 
-/** 
+/**
  * Helper for extracting just the label, useful for text exports
  */
-export function getStatusLabel(map: Record<string, StatusDef>, status: string, fallback?: string): string {
+export function getStatusLabel(
+  map: Record<string, StatusDef>,
+  status: string,
+  fallback?: string,
+): string {
   return map[status]?.label || fallback || status;
 }
 
-/** 
+/**
  * Helper for extracting just the tone, useful for badges
  */
-export function getStatusTone(map: Record<string, StatusDef>, status: string, fallback: Tone = "neutral"): Tone {
+export function getStatusTone(
+  map: Record<string, StatusDef>,
+  status: string,
+  fallback: Tone = "neutral",
+): Tone {
   return map[status]?.tone || fallback;
 }

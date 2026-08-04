@@ -34,7 +34,9 @@ import { SheetPage } from "@/components/ui/sheet";
 import { PageHeader, ModuleActionButton } from "@/components/shell/PageHeader";
 
 export const Route = createFileRoute("/agency/$slug/portal/pages/")({
-  head: ({ context }: any) => ({ meta: [{ title: `Painel de Páginas do Portal · ${context?.brand?.platform_name || 'Turis'}` }] }),
+  head: ({ context }: any) => ({
+    meta: [{ title: `Painel de Páginas do Portal · ${context?.brand?.platform_name || "Turis"}` }],
+  }),
   component: PagesPage,
 });
 
@@ -104,7 +106,7 @@ function PageMiniPreview({ template }: { template: string | null }) {
             isDark
               ? "bg-slate-800 border-slate-700 text-slate-200"
               : isVibrant
-                ? "bg-white/20 border-white/30 text-white"
+                ? "glass-dark border-border-strong text-white"
                 : "bg-indigo-100 border-indigo-200 text-indigo-600"
           }`}
         >
@@ -120,7 +122,7 @@ function PageMiniPreview({ template }: { template: string | null }) {
             isDark
               ? "bg-slate-800 border-slate-700"
               : isVibrant
-                ? "bg-white/10 border-white/20"
+                ? "glass-dark border-border"
                 : "bg-white border-slate-200"
           }`}
         ></div>
@@ -129,7 +131,7 @@ function PageMiniPreview({ template }: { template: string | null }) {
             isDark
               ? "bg-slate-800 border-slate-700"
               : isVibrant
-                ? "bg-white/10 border-white/20"
+                ? "glass-dark border-border"
                 : "bg-white border-slate-200"
           }`}
         ></div>
@@ -379,35 +381,39 @@ function PagesPage() {
 
   return (
     <div className="flex-1 flex flex-col overflow-hidden min-h-0">
-              <PageHeader
-          title="Páginas do Portal"
-          search={activeTab !== "templates" ? {
-            value: searchQuery,
-            onChange: setSearchQuery,
-            placeholder: "Buscar por título ou link..."
-          } : undefined}
-          filters={[
-            { label: "Todas as Páginas", value: "all" },
-            { label: "Websites", value: "sites" },
-            { label: "Links na Bio", value: "biolinks" },
-            { label: "Landing Mobile", value: "mobile_landings" },
-            { label: "Templates", value: "templates" },
-          ]}
-          activeFilter={activeTab}
-          onFilterChange={(v) => setActiveTab(v as any)}
-          primaryAction={
-            <ModuleActionButton
-              label="Nova Página"
-              icon={<Plus className="h-3.5 w-3.5" />}
-              onClick={() => {
-                setSelectedTemplateId("empty");
-                setNewPageTitle("");
-                setNewPageSlug("");
-                setCreateModalOpen(true);
-              }}
-            />
-          }
-        />
+      <PageHeader
+        title="Páginas do Portal"
+        search={
+          activeTab !== "templates"
+            ? {
+                value: searchQuery,
+                onChange: setSearchQuery,
+                placeholder: "Buscar por título ou link...",
+              }
+            : undefined
+        }
+        filters={[
+          { label: "Todas as Páginas", value: "all" },
+          { label: "Websites", value: "sites" },
+          { label: "Links na Bio", value: "biolinks" },
+          { label: "Landing Mobile", value: "mobile_landings" },
+          { label: "Templates", value: "templates" },
+        ]}
+        activeFilter={activeTab}
+        onFilterChange={(v) => setActiveTab(v as any)}
+        primaryAction={
+          <ModuleActionButton
+            label="Nova Página"
+            icon={<Plus className="h-3.5 w-3.5" />}
+            onClick={() => {
+              setSelectedTemplateId("empty");
+              setNewPageTitle("");
+              setNewPageSlug("");
+              setCreateModalOpen(true);
+            }}
+          />
+        }
+      />
 
       <div className="flex-1 overflow-y-auto px-4  md:pr-6 py-4 min-h-0 space-y-6 pb-24">
         {(q.isError || analyticsQ.isError) && (
@@ -417,7 +423,11 @@ function PagesPage() {
             </div>
             <h3 className="text-sm font-bold text-red-800">Falha ao Carregar Dados do Portal</h3>
             <p className="text-xs text-red-600 mt-1">
-              {q.isError && q.error instanceof Error ? q.error.message : analyticsQ.isError && analyticsQ.error instanceof Error ? analyticsQ.error.message : "Erro desconhecido."}
+              {q.isError && q.error instanceof Error
+                ? q.error.message
+                : analyticsQ.isError && analyticsQ.error instanceof Error
+                  ? analyticsQ.error.message
+                  : "Erro desconhecido."}
             </p>
           </div>
         )}
@@ -540,7 +550,7 @@ function PagesPage() {
         {activeTab !== "templates" && (
           <>
             {filteredPages.length === 0 && !q.isLoading && (
-              <div className="rounded-full border border-dashed border-border/80 glass bg-white/5 border-white/10/10 p-12 text-center flex flex-col items-center justify-center max-w-lg mx-auto mt-6 animate-in fade-in duration-300">
+              <div className="rounded-full border border-dashed border-border/80 glass/10 p-12 text-center flex flex-col items-center justify-center max-w-lg mx-auto mt-6 animate-in fade-in duration-300">
                 <LayoutTemplate className="h-12 w-12 text-muted-foreground/30 mb-4" />
                 <h4 className="font-bold text-sm text-foreground">Nenhuma página encontrada</h4>
                 <p className="text-xs text-muted-foreground max-w-xs mt-1">
@@ -643,7 +653,7 @@ function PagesPage() {
                         </div>
 
                         {/* Micro analytics counts */}
-                        <div className="flex items-center gap-3 py-2 px-3 rounded-xs glass bg-white/5 border-white/10/30 border-none/40 ds-meta font-semibold text-muted-foreground w-max select-none">
+                        <div className="flex items-center gap-3 py-2 px-3 rounded-xs glass/30 border-none/40 ds-meta font-semibold text-muted-foreground w-max select-none">
                           <span className="flex items-center gap-1">
                             <Eye className="w-3.5 h-3.5" /> {pageStats.views} views
                           </span>
@@ -725,7 +735,7 @@ function PagesPage() {
                 Endereço da Página (URL Slug)
               </label>
               <div className="flex h-10 w-full items-center rounded-full border-none glass-card border-none overflow-hidden">
-                <span className="glass bg-white/5 border-white/10/70 border-r border-border px-3 ds-meta font-bold text-muted-foreground/80 h-full flex items-center select-none">
+                <span className="glass/70 border-r border-border px-3 ds-meta font-bold text-muted-foreground/80 h-full flex items-center select-none">
                   /{agency?.slug}/
                 </span>
                 <Input
@@ -803,7 +813,8 @@ function PagesPage() {
               <Button variant="ghost" type="button" onClick={() => setDeleteConfirmPage(null)}>
                 Cancelar
               </Button>
-              <Button variant="default"
+              <Button
+                variant="default"
                 type="button"
                 onClick={handleDeleteConfirm}
                 className="bg-danger hover:bg-danger/90 text-white"

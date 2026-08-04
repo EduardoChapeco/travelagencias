@@ -23,7 +23,9 @@ import { DeviceSelector } from "@/components/ui/DevicePreview";
 import { FormInput as Input } from "@/components/ui/input";
 
 export const Route = createFileRoute("/agency/$slug/client-app-builder")({
-  head: ({ context }: any) => ({ meta: [{ title: `App do Cliente (Builder) · ${context?.brand?.platform_name || 'Turis'}` }] }),
+  head: ({ context }: any) => ({
+    meta: [{ title: `App do Cliente (Builder) · ${context?.brand?.platform_name || "Turis"}` }],
+  }),
   component: ClientAppBuilderPage,
 });
 
@@ -46,8 +48,16 @@ const DEFAULT_BLOCKS: BlockConfig[] = [
 
 const BLOCK_META: Record<BlockType, { label: string; icon: any; desc: string }> = {
   hero: { label: "Banner Principal", icon: ImageIcon, desc: "Apresentação e saudações." },
-  my_trips: { label: "Minhas Viagens", icon: Luggage, desc: "Cardápio de viagens ativas do cliente." },
-  store: { label: "Loja de Viagens", icon: Store, desc: "Vitrine de grupos com inscrições abertas." },
+  my_trips: {
+    label: "Minhas Viagens",
+    icon: Luggage,
+    desc: "Cardápio de viagens ativas do cliente.",
+  },
+  store: {
+    label: "Loja de Viagens",
+    icon: Store,
+    desc: "Vitrine de grupos com inscrições abertas.",
+  },
   support: { label: "Suporte Rápido", icon: LifeBuoy, desc: "Atalhos para abrir tickets e chat." },
 };
 
@@ -56,7 +66,7 @@ function ClientAppBuilderPage() {
   const qc = useQueryClient();
   const [busy, setBusy] = useState(false);
   const [viewport, setViewport] = useState<"mobile" | "tablet" | "desktop">("mobile");
-  
+
   const [settings, setSettings] = useState<ClientPortalSettings>({
     theme_colors: { primary: "#0f172a", background: "#ffffff" },
     home_blocks: DEFAULT_BLOCKS,
@@ -128,23 +138,27 @@ function ClientAppBuilderPage() {
 
   return (
     <div className="flex flex-1 overflow-hidden h-full  pb-24">
-              <PageHeader
-          title="App Builder"
-          actions={
-            <Button variant="default"
-              onClick={saveSettings}
-              disabled={busy}
-              className="flex h-7 items-center gap-1.5 px-3 text-xs font-semibold cursor-pointer"
-            >
-              {busy ? <div className="h-3.5 w-3.5 border-2 border-white border-t-transparent animate-spin rounded-full" /> : <Save className="h-3.5 w-3.5" />}
-              Salvar
-            </Button>
-          }
-        />
-      
+      <PageHeader
+        title="App Builder"
+        actions={
+          <Button
+            variant="default"
+            onClick={saveSettings}
+            disabled={busy}
+            className="flex h-7 items-center gap-1.5 px-3 text-xs font-semibold cursor-pointer"
+          >
+            {busy ? (
+              <div className="h-3.5 w-3.5 border-2 border-white border-t-transparent animate-spin rounded-full" />
+            ) : (
+              <Save className="h-3.5 w-3.5" />
+            )}
+            Salvar
+          </Button>
+        }
+      />
+
       {/* Esquerda: Painel de Controle */}
       <div className="w-1/2 max-w-md border-r border-border glass-card border-none/50 p-6 flex flex-col overflow-y-auto">
-
         <div className="space-y-8">
           {/* Editor de Cores */}
           <section>
@@ -153,7 +167,9 @@ function ClientAppBuilderPage() {
             </h3>
             <div className="space-y-4">
               <div>
-                <label className="text-xs font-semibold text-muted-foreground uppercase">Cor Primária</label>
+                <label className="text-xs font-semibold text-muted-foreground uppercase">
+                  Cor Primária
+                </label>
                 <div className="flex items-center gap-3 mt-1">
                   <Input
                     type="color"
@@ -187,8 +203,10 @@ function ClientAppBuilderPage() {
             <h3 className="text-sm font-semibold flex items-center gap-2 mb-4">
               <Luggage className="h-4 w-4" /> Layout da Tela Inicial
             </h3>
-            <p className="text-xs text-muted-foreground mb-4">Arraste para reordenar os blocos que aparecerão para o cliente.</p>
-            
+            <p className="text-xs text-muted-foreground mb-4">
+              Arraste para reordenar os blocos que aparecerão para o cliente.
+            </p>
+
             <div className="space-y-2">
               <DraggableList
                 items={settings.home_blocks}
@@ -197,11 +215,13 @@ function ClientAppBuilderPage() {
                 {(block) => {
                   const meta = BLOCK_META[block.type];
                   return (
-                    <DraggableItem 
-                      key={block.id} 
-                      id={block.id} 
+                    <DraggableItem
+                      key={block.id}
+                      id={block.id}
                       className={`mb-2 rounded-[var(--radius-card)] border transition-colors ${
-                        block.hidden ? "bg-accent/50 border-transparent opacity-60" : "glass-card border-none border-border shadow-none"
+                        block.hidden
+                          ? "bg-accent/50 border-transparent opacity-60"
+                          : "glass-card border-none border-border shadow-none"
                       }`}
                     >
                       <div className="flex items-center gap-3 p-3">
@@ -236,8 +256,12 @@ function ClientAppBuilderPage() {
           </div>
           <DeviceSelector viewport={viewport} onChange={setViewport} />
         </div>
-        
-        <UniversalDevicePreview viewport={viewport} themePrimary={settings.theme_colors.primary} themeBackground={settings.theme_colors.background}>
+
+        <UniversalDevicePreview
+          viewport={viewport}
+          themePrimary={settings.theme_colors.primary}
+          themeBackground={settings.theme_colors.background}
+        >
           {/* Fake App Content Render */}
           <div className="p-4 pt-12 space-y-6">
             {settings.home_blocks
@@ -245,7 +269,11 @@ function ClientAppBuilderPage() {
               .map((block) => {
                 if (block.type === "hero") {
                   return (
-                    <div key={block.id} className="w-full h-32 rounded-[var(--radius-card)] flex items-end p-4 text-white" style={{ backgroundColor: settings.theme_colors.primary }}>
+                    <div
+                      key={block.id}
+                      className="w-full h-32 rounded-[var(--radius-card)] flex items-end p-4 text-white"
+                      style={{ backgroundColor: settings.theme_colors.primary }}
+                    >
                       <h2 className="text-xl font-bold">Olá, João!</h2>
                     </div>
                   );
@@ -269,11 +297,18 @@ function ClientAppBuilderPage() {
                     <div key={block.id} className="space-y-3">
                       <div className="flex justify-between items-end">
                         <h3 className="font-bold text-lg">Ofertas Exclusivas</h3>
-                        <span className="text-xs font-semibold" style={{ color: settings.theme_colors.primary }}>Ver tudo</span>
+                        <span
+                          className="text-xs font-semibold"
+                          style={{ color: settings.theme_colors.primary }}
+                        >
+                          Ver tudo
+                        </span>
                       </div>
                       <div className="w-full h-40 glass-card border-none border-none rounded-[var(--radius-card)] shadow-none overflow-hidden flex flex-col">
                         <div className="flex-1 bg-accent relative">
-                          <span className="absolute top-2 right-2 bg-black/60 text-white ds-meta px-2 py-1 rounded">R$ 2.500</span>
+                          <span className="absolute top-2 right-2 bg-black/60 text-white ds-meta px-2 py-1 rounded">
+                            R$ 2.500
+                          </span>
                         </div>
                         <div className="p-3">
                           <p className="font-semibold text-sm">Réveillon em Cancún</p>
@@ -288,11 +323,17 @@ function ClientAppBuilderPage() {
                       <h3 className="font-bold text-lg">Precisa de Ajuda?</h3>
                       <div className="grid grid-cols-2 gap-3">
                         <div className="h-20 border-none rounded-[var(--radius-card)] flex flex-col items-center justify-center gap-1 glass-card border-none">
-                          <LifeBuoy className="h-5 w-5" style={{ color: settings.theme_colors.primary }} />
+                          <LifeBuoy
+                            className="h-5 w-5"
+                            style={{ color: settings.theme_colors.primary }}
+                          />
                           <span className="text-xs font-medium">Chamados</span>
                         </div>
                         <div className="h-20 border-none rounded-[var(--radius-card)] flex flex-col items-center justify-center gap-1 glass-card border-none">
-                          <Smartphone className="h-5 w-5" style={{ color: settings.theme_colors.primary }} />
+                          <Smartphone
+                            className="h-5 w-5"
+                            style={{ color: settings.theme_colors.primary }}
+                          />
                           <span className="text-xs font-medium">Chat</span>
                         </div>
                       </div>
@@ -301,8 +342,8 @@ function ClientAppBuilderPage() {
                 }
                 return null;
               })}
-            
-            {settings.home_blocks.filter(b => !b.hidden).length === 0 && (
+
+            {settings.home_blocks.filter((b) => !b.hidden).length === 0 && (
               <div className="py-20 text-center text-muted-foreground text-sm">
                 O painel inicial está vazio.
               </div>

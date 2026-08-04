@@ -236,12 +236,7 @@ function ActivityItem({ activity, onChanged }: { activity: Activity; onChanged: 
 
         {edit ? (
           <div className="mt-2 space-y-2.5">
-            <Textarea
-              rows={2}
-              value={content}
-              onChange={(e) => setContent(e.target.value)}
-              
-            />
+            <Textarea rows={2} value={content} onChange={(e) => setContent(e.target.value)} />
             <div className="flex justify-end gap-1.5">
               <Button
                 onClick={() => {

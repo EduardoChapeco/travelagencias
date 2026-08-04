@@ -79,9 +79,7 @@ serve(async (req) => {
       keysQuery = keysQuery.eq("operator_id", operatorId);
     } else {
       // Compatibilidade retroativa: busca por category OU operator_id nulo (formato legado)
-      keysQuery = keysQuery.or(
-        "category.eq.infotravel_operator,operator_id.is.null",
-      );
+      keysQuery = keysQuery.or("category.eq.infotravel_operator,operator_id.is.null");
     }
 
     const { data: allKeys } = await keysQuery;
@@ -120,7 +118,8 @@ serve(async (req) => {
         JSON.stringify({
           success: false,
           error_code: "CREDENTIALS_NOT_CONFIGURED",
-          error: "As credenciais de acesso ao GDS Infotravel ainda não foram configuradas para esta agência. Acesse Configurações → Conexões → Infotravel para inserir suas credenciais de produção.",
+          error:
+            "As credenciais de acesso ao GDS Infotravel ainda não foram configuradas para esta agência. Acesse Configurações → Conexões → Infotravel para inserir suas credenciais de produção.",
         }),
         {
           headers: { ...corsHeaders, "Content-Type": "application/json" },
@@ -165,7 +164,12 @@ serve(async (req) => {
       if (params.quoteRequestId && params.scenarioId) {
         const transferAvails = rawData?.transferAvail || rawData?.transfers || [];
         const offers = transferAvails.map((avail: any) =>
-          mapApiTransferToNormalizedOffer(avail, agencyId, params.quoteRequestId, params.scenarioId),
+          mapApiTransferToNormalizedOffer(
+            avail,
+            agencyId,
+            params.quoteRequestId,
+            params.scenarioId,
+          ),
         );
         await saveNormalizedOffers(supabaseAdmin, params.quoteRequestId, params.scenarioId, offers);
         result = { success: true, offers, total: offers.length };
@@ -178,7 +182,12 @@ serve(async (req) => {
       if (params.quoteRequestId && params.scenarioId) {
         const activityAvails = rawData?.tourAvail || rawData?.activities || [];
         const offers = activityAvails.map((avail: any) =>
-          mapApiActivityToNormalizedOffer(avail, agencyId, params.quoteRequestId, params.scenarioId),
+          mapApiActivityToNormalizedOffer(
+            avail,
+            agencyId,
+            params.quoteRequestId,
+            params.scenarioId,
+          ),
         );
         await saveNormalizedOffers(supabaseAdmin, params.quoteRequestId, params.scenarioId, offers);
         result = { success: true, offers, total: offers.length };
@@ -202,7 +211,13 @@ serve(async (req) => {
     }
 
     // Se o sync rodou com sucesso, limpa os logs de erros da operadora correspondente
-    if (reqAgencyId && reqOperatorId && (reqAction === "run_periodic_sync" || reqAction === "run_backfill" || reqAction === "test_connection")) {
+    if (
+      reqAgencyId &&
+      reqOperatorId &&
+      (reqAction === "run_periodic_sync" ||
+        reqAction === "run_backfill" ||
+        reqAction === "test_connection")
+    ) {
       try {
         await supabaseAdmin
           .from("api_keys")
@@ -226,20 +241,49 @@ serve(async (req) => {
     // Traduzir erros técnicos em mensagens comerciais inteligíveis
     let userMessage = error.message || "Ocorreu um erro inesperado ao processar sua solicitação.";
 
-    if (userMessage.includes("401") || userMessage.includes("Unauthorized") || userMessage.includes("autenticação")) {
-      userMessage = "As credenciais do Infotravel são inválidas ou expiraram. Verifique seu usuário e senha nas configurações de integração.";
+    if (
+      userMessage.includes("401") ||
+      userMessage.includes("Unauthorized") ||
+      userMessage.includes("autenticação")
+    ) {
+      userMessage =
+        "As credenciais do Infotravel são inválidas ou expiraram. Verifique seu usuário e senha nas configurações de integração.";
     } else if (userMessage.includes("403") || userMessage.includes("Forbidden")) {
-      userMessage = "Acesso negado pelo GDS. Verifique se sua conta possui as permissões de API ativadas.";
-    } else if (userMessage.includes("429") || userMessage.includes("rate limit") || userMessage.includes("Too Many")) {
-      userMessage = "Limite de requisições atingido no GDS. Aguarde alguns minutos e tente novamente.";
-    } else if (userMessage.includes("500") || userMessage.includes("502") || userMessage.includes("503") || userMessage.includes("504")) {
-      userMessage = "O servidor do GDS Infotravel está temporariamente indisponível. Tente novamente em instantes.";
-    } else if (userMessage.includes("fetch") || userMessage.includes("network") || userMessage.includes("ECONNREFUSED")) {
-      userMessage = "Não foi possível conectar ao servidor do GDS Infotravel. Verifique a URL de acesso nas configurações de integração.";
+      userMessage =
+        "Acesso negado pelo GDS. Verifique se sua conta possui as permissões de API ativadas.";
+    } else if (
+      userMessage.includes("429") ||
+      userMessage.includes("rate limit") ||
+      userMessage.includes("Too Many")
+    ) {
+      userMessage =
+        "Limite de requisições atingido no GDS. Aguarde alguns minutos e tente novamente.";
+    } else if (
+      userMessage.includes("500") ||
+      userMessage.includes("502") ||
+      userMessage.includes("503") ||
+      userMessage.includes("504")
+    ) {
+      userMessage =
+        "O servidor do GDS Infotravel está temporariamente indisponível. Tente novamente em instantes.";
+    } else if (
+      userMessage.includes("fetch") ||
+      userMessage.includes("network") ||
+      userMessage.includes("ECONNREFUSED")
+    ) {
+      userMessage =
+        "Não foi possível conectar ao servidor do GDS Infotravel. Verifique a URL de acesso nas configurações de integração.";
     }
 
     // REGISTRAR ERRO NO BANCO
-    if (supabaseAdmin && reqAgencyId && reqOperatorId && (reqAction === "run_periodic_sync" || reqAction === "run_backfill" || reqAction === "test_connection")) {
+    if (
+      supabaseAdmin &&
+      reqAgencyId &&
+      reqOperatorId &&
+      (reqAction === "run_periodic_sync" ||
+        reqAction === "run_backfill" ||
+        reqAction === "test_connection")
+    ) {
       try {
         await supabaseAdmin
           .from("api_keys")
@@ -340,7 +384,9 @@ async function fetchRealHotels(url: string, token: string, params: any) {
   });
   if (!res.ok) {
     const body = await res.text().catch(() => "");
-    throw new Error(`Falha na consulta de disponibilidade de hotéis (HTTP ${res.status}). ${body ? `Detalhe: ${body.substring(0, 200)}` : ""}`);
+    throw new Error(
+      `Falha na consulta de disponibilidade de hotéis (HTTP ${res.status}). ${body ? `Detalhe: ${body.substring(0, 200)}` : ""}`,
+    );
   }
   return await res.json();
 }
@@ -365,7 +411,9 @@ async function fetchRealFlights(url: string, token: string, params: any) {
   });
   if (!res.ok) {
     const body = await res.text().catch(() => "");
-    throw new Error(`Falha na consulta de disponibilidade de voos (HTTP ${res.status}). ${body ? `Detalhe: ${body.substring(0, 200)}` : ""}`);
+    throw new Error(
+      `Falha na consulta de disponibilidade de voos (HTTP ${res.status}). ${body ? `Detalhe: ${body.substring(0, 200)}` : ""}`,
+    );
   }
   return await res.json();
 }
@@ -396,7 +444,9 @@ async function fetchRealTransfers(url: string, token: string, params: any) {
 
   if (!res.ok) {
     const body = await res.text().catch(() => "");
-    throw new Error(`Falha na consulta de traslados (HTTP ${res.status}). ${body ? `Detalhe: ${body.substring(0, 200)}` : ""}`);
+    throw new Error(
+      `Falha na consulta de traslados (HTTP ${res.status}). ${body ? `Detalhe: ${body.substring(0, 200)}` : ""}`,
+    );
   }
   return await res.json();
 }
@@ -427,7 +477,9 @@ async function fetchRealActivities(url: string, token: string, params: any) {
 
   if (!res.ok) {
     const body = await res.text().catch(() => "");
-    throw new Error(`Falha na consulta de passeios e atividades (HTTP ${res.status}). ${body ? `Detalhe: ${body.substring(0, 200)}` : ""}`);
+    throw new Error(
+      `Falha na consulta de passeios e atividades (HTTP ${res.status}). ${body ? `Detalhe: ${body.substring(0, 200)}` : ""}`,
+    );
   }
   return await res.json();
 }
@@ -1363,7 +1415,8 @@ function mapApiTransferToNormalizedOffer(
   quoteRequestId: string,
   scenarioId: string,
 ) {
-  const transferId = avail.id?.toString() || avail.key || `tr-${crypto.randomUUID().substring(0, 8)}`;
+  const transferId =
+    avail.id?.toString() || avail.key || `tr-${crypto.randomUUID().substring(0, 8)}`;
   const name = avail.name || avail.description || "Transfer não identificado";
   const cityName = avail.city?.name || avail.destination?.name || "";
   const price = avail.lowestFare?.price?.amount || avail.price?.amount || avail.amount || 0;
@@ -1420,7 +1473,8 @@ function mapApiActivityToNormalizedOffer(
   quoteRequestId: string,
   scenarioId: string,
 ) {
-  const activityId = avail.id?.toString() || avail.key || `act-${crypto.randomUUID().substring(0, 8)}`;
+  const activityId =
+    avail.id?.toString() || avail.key || `act-${crypto.randomUUID().substring(0, 8)}`;
   const name = avail.name || avail.tourName || "Passeio não identificado";
   const cityName = avail.city?.name || avail.destination?.name || "";
   const price = avail.lowestFare?.price?.amount || avail.price?.amount || avail.amount || 0;

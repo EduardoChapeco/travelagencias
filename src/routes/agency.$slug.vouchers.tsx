@@ -2,7 +2,25 @@ import { createFileRoute, Link, useParams } from "@tanstack/react-router";
 import { useState, useEffect } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import {
-  Ticket, Search, Plane, Download, Eye, MapPin, Calendar, Users, Settings2, Check, Edit2, Save, X, ExternalLink, Copy, AlertCircle, CheckCircle2, RefreshCw, } from "lucide-react";
+  Ticket,
+  Search,
+  Plane,
+  Download,
+  Eye,
+  MapPin,
+  Calendar,
+  Users,
+  Settings2,
+  Check,
+  Edit2,
+  Save,
+  X,
+  ExternalLink,
+  Copy,
+  AlertCircle,
+  CheckCircle2,
+  RefreshCw,
+} from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAgency } from "@/lib/agency-context";
 import { EmptyState } from "@/components/shell/PageHeader";
@@ -17,7 +35,9 @@ import { FormInput as Input } from "@/components/ui/input";
 import { NativeSelect as Select } from "@/components/ui/select";
 
 export const Route = createFileRoute("/agency/$slug/vouchers")({
-  head: ({ context }: any) => ({ meta: [{ title: `Vouchers & Conferência · ${context?.brand?.platform_name || 'Turis'}` }] }),
+  head: ({ context }: any) => ({
+    meta: [{ title: `Vouchers & Conferência · ${context?.brand?.platform_name || "Turis"}` }],
+  }),
   component: VouchersPage,
 });
 
@@ -209,31 +229,33 @@ function VouchersPage() {
 
   return (
     <div className="w-full flex h-full flex-col overflow-hidden">
-              <PageHeader
-          title="Vouchers"
-          search={{
-            value: activeTab === "vouchers" ? qSearch : flightSearch,
-            onChange: activeTab === "vouchers" ? setQSearch : setFlightSearch,
-            placeholder: activeTab === "vouchers"
+      <PageHeader
+        title="Vouchers"
+        search={{
+          value: activeTab === "vouchers" ? qSearch : flightSearch,
+          onChange: activeTab === "vouchers" ? setQSearch : setFlightSearch,
+          placeholder:
+            activeTab === "vouchers"
               ? "Buscar por destino ou localizador..."
               : "Buscar passageiro, rota ou localizador...",
-          }}
-          filters={[
-            { label: "Vouchers", value: "vouchers" },
-            { label: "Conferência de Voos", value: "flight_audit" },
-          ]}
-          activeFilter={activeTab}
-          onFilterChange={(v) => {
-            setActiveTab(v as any);
-            if (typeof window !== "undefined") {
-              const url = new URL(window.location.href);
-              url.searchParams.set("tab", v);
-              window.history.replaceState({}, "", url.toString());
-            }
-          }}
-          actions={
-            <div className="flex items-center gap-1">
-              {activeTab === "flight_audit" && [
+        }}
+        filters={[
+          { label: "Vouchers", value: "vouchers" },
+          { label: "Conferência de Voos", value: "flight_audit" },
+        ]}
+        activeFilter={activeTab}
+        onFilterChange={(v) => {
+          setActiveTab(v as any);
+          if (typeof window !== "undefined") {
+            const url = new URL(window.location.href);
+            url.searchParams.set("tab", v);
+            window.history.replaceState({}, "", url.toString());
+          }
+        }}
+        actions={
+          <div className="flex items-center gap-1">
+            {activeTab === "flight_audit" &&
+              [
                 { id: "all", label: "Todos" },
                 { id: "pending", label: "Pendentes" },
                 { id: "confirmed", label: "Conferidos" },
@@ -243,26 +265,26 @@ function VouchersPage() {
                   onClick={() => setStatusFilter(btn.id as any)}
                   className={`px-2.5 py-1 rounded-full ds-meta font-semibold cursor-pointer transition-all ${
                     statusFilter === btn.id
-                      ? "bg-white/15 text-white border border-white/20"
+                      ? "bg-white/15 text-white border border-border"
                       : "text-white/50 hover:text-white"
                   }`}
                 >
                   {btn.label}
                 </Button>
               ))}
-              {isAgencyAdmin && activeTab === "vouchers" && (
-                <Button
-                  onClick={() => setAdminPanelOpen(true)}
-                  className="h-7 w-7 flex items-center justify-center rounded-full border border-white/15 text-white/60 hover:text-white hover:bg-white/10 transition-colors cursor-pointer"
-                  title="Administrar Vouchers"
-                >
-                  <Settings2 className="h-3.5 w-3.5" />
-                </Button>
-              )}
-            </div>
-          }
-        />
-      
+            {isAgencyAdmin && activeTab === "vouchers" && (
+              <Button
+                onClick={() => setAdminPanelOpen(true)}
+                className="h-7 w-7 flex items-center justify-center rounded-full border border-white/15 text-white/60 hover:text-white hover:glass-dark transition-colors cursor-pointer"
+                title="Administrar Vouchers"
+              >
+                <Settings2 className="h-3.5 w-3.5" />
+              </Button>
+            )}
+          </div>
+        }
+      />
+
       {activeTab === "vouchers" ? (
         // ========================================
         // Vouchers Tab View
@@ -276,7 +298,9 @@ function VouchersPage() {
                 </div>
                 <h3 className="text-sm font-bold text-red-800">Falha ao Carregar Vouchers</h3>
                 <p className="text-xs text-red-600 mt-1">
-                  {vouchersQ.error instanceof Error ? vouchersQ.error.message : "Erro desconhecido."}
+                  {vouchersQ.error instanceof Error
+                    ? vouchersQ.error.message
+                    : "Erro desconhecido."}
                 </p>
               </div>
             )}
@@ -373,7 +397,7 @@ function VouchersPage() {
                           <Link
                             to="/agency/$slug/trips/$id/vouchers"
                             params={{ slug, id: v.trip_id }}
-                            className="flex-1 flex items-center justify-center gap-2 rounded-[var(--radius-card)] glass bg-white/5 border-white/10 hover:glass bg-white/5 border-white/10/80 px-4 py-2.5 text-xs font-bold transition-colors"
+                            className="flex-1 flex items-center justify-center gap-2 rounded-[var(--radius-card)] glass hover:glass/80 px-4 py-2.5 text-xs font-bold transition-colors"
                           >
                             <Eye className="h-4 w-4" /> Visualizar Roteiro
                           </Link>
@@ -400,14 +424,16 @@ function VouchersPage() {
                     {Math.ceil(vouchersQ.data.count / pageSize) || 1}
                   </div>
                   <div className="flex items-center gap-2">
-                    <Button variant="ghost"
+                    <Button
+                      variant="ghost"
                       disabled={page === 1}
                       onClick={() => setPage((p) => Math.max(1, p - 1))}
                       className="h-9 px-4 text-xs font-semibold rounded-full border-none"
                     >
                       Anterior
                     </Button>
-                    <Button variant="ghost"
+                    <Button
+                      variant="ghost"
                       disabled={page * pageSize >= vouchersQ.data.count}
                       onClick={() => setPage((p) => p + 1)}
                       className="h-9 px-4 text-xs font-semibold rounded-full border-none"
@@ -429,7 +455,7 @@ function VouchersPage() {
           <div className="page-content page-section dock-offset">
             {/* KPI cards dentro do conteúdo */}
             <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-6">
-              <div className="rounded-[var(--radius-card)] border-none glass bg-white/5 border-white/10/20 p-3 text-center">
+              <div className="rounded-[var(--radius-card)] border-none glass/20 p-3 text-center">
                 <span className="ds-meta font-bold text-muted-foreground uppercase tracking-wide block mb-1">
                   Total de Voos
                 </span>
@@ -504,7 +530,7 @@ function VouchersPage() {
             {flightsQ.data && filteredFlights.length > 0 && (
               <div className="border-none rounded-[var(--radius-card)] glass-card border-none overflow-x-auto">
                 <table className="w-full min-w-max text-xs text-left border-collapse">
-                  <thead className="glass bg-white/5 border-white/10/40 border-b border-border ds-meta uppercase font-bold text-muted-foreground">
+                  <thead className="glass/40 border-b border-border ds-meta uppercase font-bold text-muted-foreground">
                     <tr>
                       <th className="px-4 py-3 whitespace-nowrap">Passageiro & Viagem</th>
                       <th className="px-4 py-3 whitespace-nowrap">Rota / Voo</th>
@@ -526,7 +552,7 @@ function VouchersPage() {
                         <tr
                           key={f.id}
                           className={cn(
-                            "hover:glass bg-white/5 border-white/10/25 transition-colors",
+                            "hover:glass/25 transition-colors",
                             f.status === "confirmed" ? "bg-success/5" : "bg-transparent",
                           )}
                         >
@@ -592,7 +618,7 @@ function VouchersPage() {
                               />
                             ) : f.ticket_code ? (
                               <div className="flex items-center gap-1.5">
-                                <span className="font-mono font-bold glass bg-white/5 border-white/10 border-none rounded px-1.5 py-0.5 text-foreground">
+                                <span className="font-mono font-bold glass border-none rounded px-1.5 py-0.5 text-foreground">
                                   {f.ticket_code}
                                 </span>
                                 <Button
@@ -698,7 +724,7 @@ function VouchersPage() {
                                   </Button>
                                   <Button
                                     onClick={() => setEditingId(null)}
-                                    className="p-1.5 rounded glass bg-white/5 border-white/10 border-none hover:glass bg-white/5 border-white/10/75 cursor-pointer text-foreground"
+                                    className="p-1.5 rounded glass border-none hover:glass/75 cursor-pointer text-foreground"
                                     title="Cancelar"
                                   >
                                     <X className="h-3.5 w-3.5" />

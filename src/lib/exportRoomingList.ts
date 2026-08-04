@@ -25,8 +25,6 @@ export interface BoardingExportCard {
   notes?: string | null;
 }
 
-
-
 export async function exportBoardingListXlsx(
   cards: BoardingExportCard[],
   options: { filename?: string; agencyName?: string } = {},

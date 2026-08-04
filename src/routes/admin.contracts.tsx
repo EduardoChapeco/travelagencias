@@ -64,7 +64,7 @@ function Page() {
       {q.data && totalCount > 0 && (
         <div className="overflow-hidden rounded-[var(--radius-card)] border-none glass-card border-none">
           <table className="w-full text-sm">
-            <thead className="glass bg-white/5 border-white/10 text-xs text-muted-foreground">
+            <thead className="glass text-xs text-muted-foreground">
               <tr>
                 <th className="px-3 py-2 text-left">Cliente</th>
                 <th className="px-3 py-2 text-left">Agência</th>
@@ -83,7 +83,9 @@ function Page() {
                   <td className="px-3 py-2.5">
                     <StatusBadge>{c.status}</StatusBadge>
                   </td>
-                  <td className="px-3 py-2.5 text-right text-xs">{formatCurrency(Number(c.total_value))}</td>
+                  <td className="px-3 py-2.5 text-right text-xs">
+                    {formatCurrency(Number(c.total_value))}
+                  </td>
                   <td className="px-3 py-2.5 text-xs text-muted-foreground">
                     {c.signed_at ? formatDate(c.signed_at) : "—"}
                   </td>
@@ -91,7 +93,7 @@ function Page() {
               ))}
             </tbody>
           </table>
-          <div className="flex items-center justify-between border-t border-border px-4 py-3 glass bg-white/5 border-white/10/30">
+          <div className="flex items-center justify-between border-t border-border px-4 py-3 glass/30">
             <div className="text-xs text-muted-foreground">
               Mostrando{" "}
               <span className="font-medium text-foreground">{(page - 1) * PAGE_SIZE + 1}</span> a{" "}
@@ -101,7 +103,8 @@ function Page() {
               de <span className="font-medium text-foreground">{totalCount}</span> contratos
             </div>
             <div className="flex items-center gap-2">
-              <Button variant="ghost"
+              <Button
+                variant="ghost"
                 disabled={page === 1}
                 onClick={() => setPage((p) => Math.max(1, p - 1))}
                 className="h-8 w-8 p-0"
@@ -111,7 +114,8 @@ function Page() {
               <div className="text-xs font-medium">
                 {page} / {totalPages}
               </div>
-              <Button variant="ghost"
+              <Button
+                variant="ghost"
                 disabled={page >= totalPages}
                 onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
                 className="h-8 w-8 p-0"

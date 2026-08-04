@@ -1,7 +1,20 @@
 import { createFileRoute, Link, useParams } from "@tanstack/react-router";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import {
-  ArrowLeft, Check, CheckCircle2, Clock, Send, Users, Building2, MapPin, DollarSign, Edit, AlertCircle, CheckSquare, Plus, } from "lucide-react";
+  ArrowLeft,
+  Check,
+  CheckCircle2,
+  Clock,
+  Send,
+  Users,
+  Building2,
+  MapPin,
+  DollarSign,
+  Edit,
+  AlertCircle,
+  CheckSquare,
+  Plus,
+} from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAgency, getModuleName } from "@/lib/agency-context";
 import { toast } from "sonner";
@@ -16,7 +29,9 @@ import { formatDate } from "@/lib/formatters";
 import { useConfirm } from "@/hooks/use-confirm";
 
 export const Route = createFileRoute("/agency/$slug/corporate/$rfp_id")({
-  head: ({ context }: any) => ({ meta: [{ title: `RFP Detail · ${context?.brand?.platform_name || 'Turis'}` }] }),
+  head: ({ context }: any) => ({
+    meta: [{ title: `RFP Detail · ${context?.brand?.platform_name || "Turis"}` }],
+  }),
   component: RfpDetailPage,
 });
 
@@ -97,22 +112,22 @@ function RfpDetailPage() {
   return (
     <div className="flex h-full flex-col overflow-hidden">
       <ConfirmDialog />
-              <div className="flex items-center gap-2">
-          {rfp.status === "negotiating" && (
-            <Button
-              onClick={() => {
-                navigator.clipboard.writeText(
-                  `${window.location.origin}/p/corporate/approve?token=${rfp.approval_token}`,
-                );
-                toast.success("Link de aprovação copiado!");
-              }}
-              className="flex h-8 items-center gap-1.5 rounded-full border-none glass-card border-none px-3 text-xs font-semibold text-foreground hover:glass bg-white/5 border-white/10 transition-colors cursor-pointer"
-            >
-              <Send className="w-3.5 h-3.5" /> Link do Cliente
-            </Button>
-          )}
-        </div>
-            <div className="flex-1 overflow-y-auto p-4 md:p-8 min-h-0">
+      <div className="flex items-center gap-2">
+        {rfp.status === "negotiating" && (
+          <Button
+            onClick={() => {
+              navigator.clipboard.writeText(
+                `${window.location.origin}/p/corporate/approve?token=${rfp.approval_token}`,
+              );
+              toast.success("Link de aprovação copiado!");
+            }}
+            className="flex h-8 items-center gap-1.5 rounded-full border-none glass-card border-none px-3 text-xs font-semibold text-foreground hover:glass transition-colors cursor-pointer"
+          >
+            <Send className="w-3.5 h-3.5" /> Link do Cliente
+          </Button>
+        )}
+      </div>
+      <div className="flex-1 overflow-y-auto p-4 md:p-8 min-h-0">
         <Link
           to="/agency/$slug/corporate"
           params={{ slug }}
@@ -160,7 +175,8 @@ function RfpDetailPage() {
               <option value="lost">Perdido / Recusado</option>
             </Select>
             {rfp.status === "negotiating" && (
-              <Button variant="default"
+              <Button
+                variant="default"
                 className="h-9 text-xs gap-1.5 bg-success hover:bg-success/90 text-success-foreground border-none"
                 onClick={() => {
                   navigator.clipboard.writeText(
@@ -178,7 +194,7 @@ function RfpDetailPage() {
         {/* Progress Bar */}
         <div className="mt-8 mb-8 px-2">
           <div className="flex items-center justify-between relative">
-            <div className="absolute left-0 top-1/2 -translate-y-1/2 w-full h-1 glass bg-white/5 border-white/10 rounded-full overflow-hidden">
+            <div className="absolute left-0 top-1/2 -translate-y-1/2 w-full h-1 glass rounded-full overflow-hidden">
               <div
                 className="h-full bg-primary transition-all duration-500 ease-in-out"
                 style={{
@@ -198,7 +214,7 @@ function RfpDetailPage() {
                   className={`relative flex flex-col items-center gap-2 z-10 ${isCompleted ? "text-primary" : "text-muted-foreground"}`}
                 >
                   <div
-                    className={`w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold ring-4 ring-background ${isCompleted ? "bg-primary text-primary-foreground" : "glass bg-white/5 border-white/10"}`}
+                    className={`w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold ring-4 ring-background ${isCompleted ? "bg-primary text-primary-foreground" : "glass"}`}
                   >
                     {isCompleted && !isCurrent ? <Check className="w-3.5 h-3.5" /> : idx + 1}
                   </div>
@@ -219,19 +235,19 @@ function RfpDetailPage() {
               </h3>
 
               <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
-                <div className="glass bg-white/5 border-white/10/50 p-3 rounded-[var(--radius-card)]">
+                <div className="glass/50 p-3 rounded-[var(--radius-card)]">
                   <div className="ds-meta font-semibold text-muted-foreground uppercase tracking-widest mb-1 flex items-center gap-1.5">
                     <MapPin className="w-3 h-3" /> Destino
                   </div>
                   <div className="font-medium text-sm">{rfp.destination || "—"}</div>
                 </div>
-                <div className="glass bg-white/5 border-white/10/50 p-3 rounded-[var(--radius-card)]">
+                <div className="glass/50 p-3 rounded-[var(--radius-card)]">
                   <div className="ds-meta font-semibold text-muted-foreground uppercase tracking-widest mb-1 flex items-center gap-1.5">
                     <Users className="w-3 h-3" /> Pax
                   </div>
                   <div className="font-medium text-sm">{rfp.pax_count} pessoas</div>
                 </div>
-                <div className="glass bg-white/5 border-white/10/50 p-3 rounded-[var(--radius-card)]">
+                <div className="glass/50 p-3 rounded-[var(--radius-card)]">
                   <div className="ds-meta font-semibold text-muted-foreground uppercase tracking-widest mb-1 flex items-center gap-1.5">
                     <DollarSign className="w-3 h-3" /> Budget Estimado
                   </div>
@@ -239,7 +255,7 @@ function RfpDetailPage() {
                     {rfp.budget_estimated ? `R$ ${rfp.budget_estimated}` : "Aberto"}
                   </div>
                 </div>
-                <div className="glass bg-white/5 border-white/10/50 p-3 rounded-[var(--radius-card)]">
+                <div className="glass/50 p-3 rounded-[var(--radius-card)]">
                   <div className="ds-meta font-semibold text-muted-foreground uppercase tracking-widest mb-1 flex items-center gap-1.5">
                     <Clock className="w-3 h-3" /> Viagem
                   </div>
@@ -249,7 +265,7 @@ function RfpDetailPage() {
                 </div>
               </div>
 
-              <div className="text-sm text-foreground whitespace-pre-wrap leading-relaxed p-4 glass bg-white/5 border-white/10/30 rounded-[var(--radius-card)] border-none/50">
+              <div className="text-sm text-foreground whitespace-pre-wrap leading-relaxed p-4 glass/30 rounded-[var(--radius-card)] border-none/50">
                 {typeof rfp.requirements === "string"
                   ? rfp.requirements
                   : JSON.stringify(rfp.requirements, null, 2)}
@@ -262,7 +278,8 @@ function RfpDetailPage() {
                   <DollarSign className="w-4 h-4 text-brand" /> Opções Propostas
                 </h3>
                 {!addingOption && rfp.status !== "approved" && (
-                  <Button variant="ghost"
+                  <Button
+                    variant="ghost"
                     className="h-8 text-xs gap-1.5"
                     onClick={() => setAddingOption(true)}
                   >
@@ -272,7 +289,7 @@ function RfpDetailPage() {
               </div>
 
               {addingOption && (
-                <div className="glass bg-white/5 border-white/10/50 border border-brand/30 p-4 rounded-[var(--radius-card)] mb-4 space-y-3">
+                <div className="glass/50 border border-brand/30 p-4 rounded-[var(--radius-card)] mb-4 space-y-3">
                   <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                     <div className="sm:col-span-2">
                       <label className="ds-meta uppercase tracking-widest font-semibold text-muted-foreground mb-1 block">
@@ -307,7 +324,11 @@ function RfpDetailPage() {
                     />
                   </div>
                   <div className="flex justify-end gap-2 pt-2">
-                    <Button variant="ghost" className="h-8 text-xs" onClick={() => setAddingOption(false)}>
+                    <Button
+                      variant="ghost"
+                      className="h-8 text-xs"
+                      onClick={() => setAddingOption(false)}
+                    >
                       Cancelar
                     </Button>
                     <Button variant="default" className="h-8 text-xs" onClick={addOption}>
@@ -372,7 +393,7 @@ function RfpDetailPage() {
               </h3>
               <Textarea
                 placeholder="Anotações visíveis apenas para a agência..."
-                className="w-full h-40 resize-none glass bg-white/5 border-white/10 focus:ring-brand"
+                className="w-full h-40 resize-none glass focus:ring-brand"
               />
             </div>
           </div>

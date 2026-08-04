@@ -4,7 +4,13 @@ import { Store, ShoppingCart, ChevronRight } from "lucide-react";
 import { Link } from "@tanstack/react-router";
 import { Button } from "@/components/ui/button";
 
-export function ClientStoreWidget({ agencyId, themeColor }: { agencyId: string; themeColor: string }) {
+export function ClientStoreWidget({
+  agencyId,
+  themeColor,
+}: {
+  agencyId: string;
+  themeColor: string;
+}) {
   const { data: tours, isLoading } = useQuery({
     queryKey: ["client-store-tours", agencyId],
     queryFn: async () => {
@@ -42,17 +48,27 @@ export function ClientStoreWidget({ agencyId, themeColor }: { agencyId: string; 
           <Store className="h-5 w-5" style={{ color: themeColor }} /> Ofertas Exclusivas
         </h3>
         {/* Placeholder para uma página de "Ver tudo" futura */}
-        <span className="text-xs font-semibold cursor-pointer hover:underline" style={{ color: themeColor }}>
+        <span
+          className="text-xs font-semibold cursor-pointer hover:underline"
+          style={{ color: themeColor }}
+        >
           Ver tudo
         </span>
       </div>
 
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
         {tours.map((tour) => (
-          <div key={tour.id} className="w-full bg-surface border border-border rounded-[var(--radius-card)] shadow-sm overflow-hidden flex flex-col hover:border-primary/50 transition-colors">
+          <div
+            key={tour.id}
+            className="w-full bg-surface border border-border rounded-[var(--radius-card)] shadow-sm overflow-hidden flex flex-col hover:border-primary/50 transition-colors"
+          >
             <div className="flex-1 min-h-[140px] bg-accent relative">
               {tour.cover_image_url ? (
-                <img src={tour.cover_image_url} alt={tour.title} className="w-full h-full object-cover" />
+                <img
+                  src={tour.cover_image_url}
+                  alt={tour.title}
+                  className="w-full h-full object-cover"
+                />
               ) : (
                 <div className="w-full h-full flex items-center justify-center text-muted-foreground">
                   Sem imagem
@@ -62,14 +78,17 @@ export function ClientStoreWidget({ agencyId, themeColor }: { agencyId: string; 
                 R$ {tour.base_price ? tour.base_price.toFixed(2) : "0,00"}
               </span>
             </div>
-            
+
             <div className="p-3">
               <p className="font-semibold text-sm line-clamp-1">{tour.title}</p>
               <p className="text-xs text-muted-foreground mt-1">
-                Saída: {tour.departure_date ? new Date(tour.departure_date).toLocaleDateString() : "A definir"}
+                Saída:{" "}
+                {tour.departure_date
+                  ? new Date(tour.departure_date).toLocaleDateString()
+                  : "A definir"}
               </p>
-              
-              <Button 
+
+              <Button
                 className="w-full mt-3 h-8 rounded-full text-xs font-semibold flex items-center justify-center gap-2 transition-colors text-white hover:opacity-90"
                 style={{ backgroundColor: themeColor }}
               >

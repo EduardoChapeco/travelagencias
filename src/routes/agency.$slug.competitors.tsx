@@ -18,7 +18,9 @@ import { Button } from "@/components/ui/button";
 import { PageHeader } from "@/components/shell/PageHeader";
 
 export const Route = createFileRoute("/agency/$slug/competitors")({
-  head: ({ context }: any) => ({ meta: [{ title: `Espião de Mercado · ${context?.brand?.platform_name || 'Turis'}` }] }),
+  head: ({ context }: any) => ({
+    meta: [{ title: `Espião de Mercado · ${context?.brand?.platform_name || "Turis"}` }],
+  }),
   component: CompetitorSpy,
 });
 
@@ -111,144 +113,152 @@ Retorne EXATAMENTE UM JSON com as seguintes chaves precisas (sem markdown em vol
 
   return (
     <div className="flex h-full flex-col overflow-hidden">
-              <PageHeader title="Espião de Mercado" />
-      
+      <PageHeader title="Espião de Mercado" />
+
       <div className="flex-1 overflow-y-auto px-4  md:pr-6 py-4 min-h-0 space-y-6 pb-24">
+        <form
+          onSubmit={handleAnalyze}
+          className="relative flex items-center rounded-[var(--radius-card)] glass-card border-none border-none p-2"
+        >
+          <Search className="absolute left-5 w-5 h-5 text-muted-foreground" />
+          <Input
+            value={url}
+            onChange={(e) => setUrl(e.target.value)}
+            placeholder="https://www.agenciaconcorrente.com.br"
+            className="flex-1 px-12 py-3 placeholder:text-muted-foreground/60"
+            type="url"
+            required
+          />
+          <Button
+            variant="default"
+            type="submit"
+            disabled={loading}
+            className="gap-2 shrink-0 rounded-[var(--radius-card)] px-6"
+          >
+            {loading ? (
+              <RefreshCw className="w-4 h-4 animate-spin" />
+            ) : (
+              <Radar className="w-4 h-4" />
+            )}
+            {loading ? "Espiando..." : "Analisar Concorrente"}
+          </Button>
+        </form>
 
-      <form
-        onSubmit={handleAnalyze}
-        className="relative flex items-center rounded-[var(--radius-card)] glass-card border-none border-none p-2"
-      >
-        <Search className="absolute left-5 w-5 h-5 text-muted-foreground" />
-        <Input
-          value={url}
-          onChange={(e) => setUrl(e.target.value)}
-          placeholder="https://www.agenciaconcorrente.com.br"
-          className="flex-1 px-12 py-3 placeholder:text-muted-foreground/60"
-          type="url"
-          required
-        />
-        <Button variant="default" type="submit" disabled={loading} className="gap-2 shrink-0 rounded-[var(--radius-card)] px-6">
-          {loading ? <RefreshCw className="w-4 h-4 animate-spin" /> : <Radar className="w-4 h-4" />}
-          {loading ? "Espiando..." : "Analisar Concorrente"}
-        </Button>
-      </form>
-
-      {analysis && (
-        <div className="grid grid-cols-1 md:grid-cols-12 gap-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
-          {/* Header Card */}
-          <div className="md:col-span-12 rounded-[var(--radius-card)] border-none glass-card border-none overflow-hidden">
-            <div className="bg-brand/5 p-6 border-b border-border/50 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-              <div>
-                <h2 className="text-2xl font-bold text-foreground">{analysis.name}</h2>
-                <div className="flex items-center gap-4 mt-2 text-sm text-muted-foreground">
-                  <span className="flex items-center gap-1">
-                    <Crosshair className="w-4 h-4" /> {analysis.city}
-                  </span>
-                  <span className="flex items-center gap-1">
-                    <TrendingUp className="w-4 h-4" /> {analysis.niche}
-                  </span>
-                </div>
-              </div>
-              <a
-                href={url}
-                target="_blank"
-                rel="noreferrer"
-                className="flex items-center gap-1 text-sm font-medium text-brand hover:underline"
-              >
-                Visitar Site <ExternalLink className="w-4 h-4" />
-              </a>
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-3 divide-y md:divide-y-0 md:divide-x divide-border">
-              <div className="p-6 space-y-2">
-                <div className="flex items-center gap-2 text-sm font-bold text-muted-foreground uppercase tracking-wider mb-3">
-                  <Users className="w-4 h-4" /> Público Alvo
-                </div>
-                <p className="text-sm text-foreground leading-relaxed">
-                  {analysis.target_audience}
-                </p>
-              </div>
-              <div className="p-6 space-y-2">
-                <div className="flex items-center gap-2 text-sm font-bold text-muted-foreground uppercase tracking-wider mb-3">
-                  <MessageSquare className="w-4 h-4" /> Comunicação
-                </div>
-                <p className="text-sm text-foreground leading-relaxed">
-                  {analysis.communication_tone}
-                </p>
-                <div className="mt-4 flex flex-wrap gap-2">
-                  {analysis.mental_triggers.map((t) => (
-                    <span
-                      key={t}
-                      className="px-2 py-1 ds-meta font-semibold glass bg-white/5 border-white/10 border-none rounded-full"
-                    >
-                      {t}
+        {analysis && (
+          <div className="grid grid-cols-1 md:grid-cols-12 gap-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
+            {/* Header Card */}
+            <div className="md:col-span-12 rounded-[var(--radius-card)] border-none glass-card border-none overflow-hidden">
+              <div className="bg-brand/5 p-6 border-b border-border/50 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                <div>
+                  <h2 className="text-2xl font-bold text-foreground">{analysis.name}</h2>
+                  <div className="flex items-center gap-4 mt-2 text-sm text-muted-foreground">
+                    <span className="flex items-center gap-1">
+                      <Crosshair className="w-4 h-4" /> {analysis.city}
                     </span>
+                    <span className="flex items-center gap-1">
+                      <TrendingUp className="w-4 h-4" /> {analysis.niche}
+                    </span>
+                  </div>
+                </div>
+                <a
+                  href={url}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="flex items-center gap-1 text-sm font-medium text-brand hover:underline"
+                >
+                  Visitar Site <ExternalLink className="w-4 h-4" />
+                </a>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-3 divide-y md:divide-y-0 md:divide-x divide-border">
+                <div className="p-6 space-y-2">
+                  <div className="flex items-center gap-2 text-sm font-bold text-muted-foreground uppercase tracking-wider mb-3">
+                    <Users className="w-4 h-4" /> Público Alvo
+                  </div>
+                  <p className="text-sm text-foreground leading-relaxed">
+                    {analysis.target_audience}
+                  </p>
+                </div>
+                <div className="p-6 space-y-2">
+                  <div className="flex items-center gap-2 text-sm font-bold text-muted-foreground uppercase tracking-wider mb-3">
+                    <MessageSquare className="w-4 h-4" /> Comunicação
+                  </div>
+                  <p className="text-sm text-foreground leading-relaxed">
+                    {analysis.communication_tone}
+                  </p>
+                  <div className="mt-4 flex flex-wrap gap-2">
+                    {analysis.mental_triggers.map((t) => (
+                      <span
+                        key={t}
+                        className="px-2 py-1 ds-meta font-semibold glass border-none rounded-full"
+                      >
+                        {t}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+                <div className="p-6 space-y-2">
+                  <div className="flex items-center gap-2 text-sm font-bold text-muted-foreground uppercase tracking-wider mb-3">
+                    <TrendingUp className="w-4 h-4" /> Posicionamento
+                  </div>
+                  <p className="text-sm text-foreground leading-relaxed">
+                    {analysis.estimated_pricing}
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            {/* SWOT-ish Analysis */}
+            <div className="md:col-span-6 space-y-6">
+              <div className="rounded-[var(--radius-card)] border-none glass-card border-none p-6">
+                <h3 className="text-sm font-bold uppercase tracking-wider text-muted-foreground mb-4 flex items-center gap-2">
+                  <div className="w-2 h-2 rounded-full bg-success"></div>O que eles fazem bem
+                </h3>
+                <ul className="space-y-3">
+                  {analysis.strengths.map((s, i) => (
+                    <li key={i} className="flex gap-2 text-sm text-foreground leading-relaxed">
+                      <span className="text-success font-bold">✓</span> {s}
+                    </li>
                   ))}
-                </div>
+                </ul>
               </div>
-              <div className="p-6 space-y-2">
-                <div className="flex items-center gap-2 text-sm font-bold text-muted-foreground uppercase tracking-wider mb-3">
-                  <TrendingUp className="w-4 h-4" /> Posicionamento
-                </div>
-                <p className="text-sm text-foreground leading-relaxed">
-                  {analysis.estimated_pricing}
-                </p>
+
+              <div className="rounded-[var(--radius-card)] border-none glass-card border-none p-6">
+                <h3 className="text-sm font-bold uppercase tracking-wider text-muted-foreground mb-4 flex items-center gap-2">
+                  <div className="w-2 h-2 rounded-full bg-danger"></div>
+                  Onde eles deixam a desejar
+                </h3>
+                <ul className="space-y-3">
+                  {analysis.weaknesses.map((w, i) => (
+                    <li key={i} className="flex gap-2 text-sm text-foreground leading-relaxed">
+                      <span className="text-danger font-bold">✗</span> {w}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            </div>
+
+            {/* Opportunities */}
+            <div className="md:col-span-6">
+              <div className="rounded-[var(--radius-card)] border border-brand/30 bg-brand/5 p-6 h-full">
+                <h3 className="text-sm font-bold uppercase tracking-wider text-brand mb-4 flex items-center gap-2">
+                  <Sparkles className="w-4 h-4" />
+                  Como Superá-los (Oportunidades)
+                </h3>
+                <ul className="space-y-4">
+                  {analysis.opportunities_for_us.map((o, i) => (
+                    <li key={i} className="flex gap-3 items-start">
+                      <div className="w-6 h-6 shrink-0 rounded-full bg-brand text-brand-foreground flex items-center justify-center text-xs font-bold mt-0.5">
+                        {i + 1}
+                      </div>
+                      <p className="text-sm font-medium text-foreground leading-relaxed">{o}</p>
+                    </li>
+                  ))}
+                </ul>
               </div>
             </div>
           </div>
-
-          {/* SWOT-ish Analysis */}
-          <div className="md:col-span-6 space-y-6">
-            <div className="rounded-[var(--radius-card)] border-none glass-card border-none p-6">
-              <h3 className="text-sm font-bold uppercase tracking-wider text-muted-foreground mb-4 flex items-center gap-2">
-                <div className="w-2 h-2 rounded-full bg-success"></div>O que eles fazem bem
-              </h3>
-              <ul className="space-y-3">
-                {analysis.strengths.map((s, i) => (
-                  <li key={i} className="flex gap-2 text-sm text-foreground leading-relaxed">
-                    <span className="text-success font-bold">✓</span> {s}
-                  </li>
-                ))}
-              </ul>
-            </div>
-
-            <div className="rounded-[var(--radius-card)] border-none glass-card border-none p-6">
-              <h3 className="text-sm font-bold uppercase tracking-wider text-muted-foreground mb-4 flex items-center gap-2">
-                <div className="w-2 h-2 rounded-full bg-danger"></div>
-                Onde eles deixam a desejar
-              </h3>
-              <ul className="space-y-3">
-                {analysis.weaknesses.map((w, i) => (
-                  <li key={i} className="flex gap-2 text-sm text-foreground leading-relaxed">
-                    <span className="text-danger font-bold">✗</span> {w}
-                  </li>
-                ))}
-              </ul>
-            </div>
-          </div>
-
-          {/* Opportunities */}
-          <div className="md:col-span-6">
-            <div className="rounded-[var(--radius-card)] border border-brand/30 bg-brand/5 p-6 h-full">
-              <h3 className="text-sm font-bold uppercase tracking-wider text-brand mb-4 flex items-center gap-2">
-                <Sparkles className="w-4 h-4" />
-                Como Superá-los (Oportunidades)
-              </h3>
-              <ul className="space-y-4">
-                {analysis.opportunities_for_us.map((o, i) => (
-                  <li key={i} className="flex gap-3 items-start">
-                    <div className="w-6 h-6 shrink-0 rounded-full bg-brand text-brand-foreground flex items-center justify-center text-xs font-bold mt-0.5">
-                      {i + 1}
-                    </div>
-                    <p className="text-sm font-medium text-foreground leading-relaxed">{o}</p>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          </div>
-        </div>
-      )}
+        )}
       </div>
     </div>
   );

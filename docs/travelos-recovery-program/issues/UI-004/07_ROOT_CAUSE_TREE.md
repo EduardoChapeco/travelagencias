@@ -1,4 +1,5 @@
 # UI-004 - 07_ROOT_CAUSE_TREE.md
+
 # ÁRVORE DE CAUSA RAIZ - UI-004
 
 Este documento traça a causa raiz dos problemas de alinhamento e cortes no cabeçalho.

@@ -25,7 +25,9 @@ import { FormInput as Input } from "@/components/ui/input";
 import { NativeSelect as Select } from "@/components/ui/select";
 
 export const Route = createFileRoute("/agency/$slug/trips/$id/lodging")({
-  head: ({ context }: any) => ({ meta: [{ title: `Hospedagem · ${context?.brand?.platform_name || 'Turis'}` }] }),
+  head: ({ context }: any) => ({
+    meta: [{ title: `Hospedagem · ${context?.brand?.platform_name || "Turis"}` }],
+  }),
   component: TripLodgingPage,
 });
 
@@ -321,7 +323,7 @@ function TripLodgingPage() {
                 setEditingCardId(null);
                 resetForm();
               }}
-              className="px-3 py-1.5 border-none text-xs rounded hover:glass bg-white/5 border-white/10 cursor-pointer"
+              className="px-3 py-1.5 border-none text-xs rounded hover:glass cursor-pointer"
             >
               Cancelar
             </Button>
@@ -361,7 +363,7 @@ function TripLodgingPage() {
               key={card.id}
               className="rounded-[var(--radius-card)] border-none glass-card border-none overflow-hidden hover:shadow-none transition-all"
             >
-              <div className="p-4 border-b border-border/60 glass bg-white/5 border-white/10/20 flex items-center justify-between">
+              <div className="p-4 border-b border-border/60 glass/20 flex items-center justify-between">
                 <div className="flex items-center gap-2">
                   <span className="font-mono text-xs font-bold bg-brand/10 text-brand px-2 py-0.5 rounded">
                     Hotel
@@ -378,7 +380,7 @@ function TripLodgingPage() {
                 <div className="flex items-center gap-3">
                   <Button
                     onClick={() => startEdit(card)}
-                    className="h-7 w-7 inline-flex items-center justify-center border-none hover:glass bg-white/5 border-white/10 rounded transition-colors text-muted-foreground cursor-pointer"
+                    className="h-7 w-7 inline-flex items-center justify-center border-none hover:glass rounded transition-colors text-muted-foreground cursor-pointer"
                     title="Editar"
                   >
                     <Pencil className="h-3.5 w-3.5" />

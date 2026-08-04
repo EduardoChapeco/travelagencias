@@ -39,7 +39,9 @@ import { FormInput as Input } from "@/components/ui/input";
 import { NativeSelect as Select } from "@/components/ui/select";
 
 export const Route = createFileRoute("/agency/$slug/trips/$id/financial")({
-  head: ({ context }: any) => ({ meta: [{ title: `Financeiro da Viagem · ${context?.brand?.platform_name || 'Turis'}` }] }),
+  head: ({ context }: any) => ({
+    meta: [{ title: `Financeiro da Viagem · ${context?.brand?.platform_name || "Turis"}` }],
+  }),
   component: TripFinancial,
 });
 
@@ -184,7 +186,38 @@ function TripFinancial() {
     queryFn: () => fetchPaymentPlan(tripId),
   });
 
-  // ── Derived numbers ───────────────────────────────────────────────────────────
+  // F-005: Financial KPIs resolved server-side via RPC (not client-side reduce).
+  // This ensures authoritative, consistent aggregation even under concurrent updates.
+  // See migration: 20260900000030_trip_financial_summary_and_idor_protection.sql
+  const kpiQ = useQuery({
+    enabled: !!agency && !!tripId,
+    queryKey: ["trip_financial_kpi", tripId],
+    queryFn: async () => {
+      const { data, error } = await supabase.rpc(
+        "get_trip_financial_summary" as never,
+        {
+          p_trip_id: tripId,
+        } as never,
+      );
+      if (error) throw new Error(error.message);
+      return data as {
+        total_income: number;
+        total_expense: number;
+        total_3rdparty: number;
+        margin: number;
+        margin_pct: number;
+        outstanding: number;
+        total_sale: number;
+        total_paid: number;
+      };
+    },
+  });
+
+  // ── Derived numbers ─────────────────────────────────────────────────────────
+  // IMPORTANT: Use server-authoritative values from kpiQ when available.
+  // The client-side fallback is only for initial render before the RPC resolves.
+  // Visual filters (income/expenses arrays) are still computed locally for the
+  // record table display — they are NOT used for authoritative financial decisions.
 
   const trip = tripQ.data;
   const records = recordsQ.data ?? [];
@@ -197,12 +230,23 @@ function TripFinancial() {
   const thirdPartyIncome = records.filter(
     (r) => r.type === "income" && r.status !== "cancelled" && r.is_third_party,
   );
-  const totalIncome = income.reduce((s, r) => s + (r.amount_brl ?? r.amount), 0);
-  const totalExpense = expenses.reduce((s, r) => s + (r.amount_brl ?? r.amount), 0);
-  const totalThirdParty = thirdPartyIncome.reduce((s, r) => s + (r.amount_brl ?? r.amount), 0);
-  const margin = totalIncome - totalExpense;
-  const marginPct = totalIncome > 0 ? ((margin / totalIncome) * 100).toFixed(1) : "0.0";
-  const outstanding = (trip?.total_sale ?? 0) - (trip?.total_paid ?? 0);
+
+  // Use server values for KPIs — fall back to local aggregation only during loading
+  const totalIncome =
+    kpiQ.data?.total_income ?? income.reduce((s, r) => s + (r.amount_brl ?? r.amount), 0);
+  const totalExpense =
+    kpiQ.data?.total_expense ?? expenses.reduce((s, r) => s + (r.amount_brl ?? r.amount), 0);
+  const totalThirdParty =
+    kpiQ.data?.total_3rdparty ??
+    thirdPartyIncome.reduce((s, r) => s + (r.amount_brl ?? r.amount), 0);
+  const margin = kpiQ.data?.margin ?? totalIncome - totalExpense;
+  const marginPct =
+    kpiQ.data?.margin_pct != null
+      ? String(kpiQ.data.margin_pct.toFixed(1))
+      : totalIncome > 0
+        ? ((margin / totalIncome) * 100).toFixed(1)
+        : "0.0";
+  const outstanding = kpiQ.data?.outstanding ?? (trip?.total_sale ?? 0) - (trip?.total_paid ?? 0);
 
   const deleteRecord = useMutation({
     mutationFn: (id: string) => cancelFinancialRecord(id),
@@ -258,7 +302,7 @@ function TripFinancial() {
         <div className="flex items-center gap-2">
           <Button
             onClick={() => setShowOcrModal(true)}
-            className="flex h-9 items-center gap-1.5 rounded-full border-none glass-card border-none px-4 text-xs font-semibold text-foreground hover:glass bg-white/5 border-white/10 transition-all cursor-pointer"
+            className="flex h-9 items-center gap-1.5 rounded-full border-none glass-card border-none px-4 text-xs font-semibold text-foreground hover:glass transition-all cursor-pointer"
           >
             <Upload className="h-3.5 w-3.5" />
             Importar Boleto (OCR)
@@ -353,7 +397,7 @@ function TripFinancial() {
         {Array.isArray(planQ.data) && planQ.data.length > 0 && !showPlanForm && (
           <Button
             onClick={() => setShowPlanForm(true)}
-            className="flex h-8 items-center gap-1.5 rounded-full border-none glass-card border-none px-3 text-xs font-semibold text-foreground hover:glass bg-white/5 border-white/10 transition-all cursor-pointer"
+            className="flex h-8 items-center gap-1.5 rounded-full border-none glass-card border-none px-3 text-xs font-semibold text-foreground hover:glass transition-all cursor-pointer"
           >
             <Plus className="h-3.5 w-3.5" />
             Novo Plano
@@ -432,7 +476,7 @@ function TripFinancial() {
       {/* ── OCR Boleto Modal ──────────────────────────────────────────────────── */}
       <Dialog open={showOcrModal} onOpenChange={setShowOcrModal}>
         <DialogContent className="max-w-md p-0 overflow-hidden border-none/10 max-h-[90vh] glass dark:glass-dark text-white">
-          <DialogHeader className="px-5 py-4 border-b border-white/10 bg-white/5">
+          <DialogHeader className="px-5 py-4 border-b glass">
             <DialogTitle className="flex items-center gap-2">
               <FileText className="h-5 w-5 text-brand" />
               <span className="font-bold text-white text-sm uppercase tracking-wider">
@@ -442,133 +486,132 @@ function TripFinancial() {
           </DialogHeader>
 
           <div className="p-5 space-y-4">
-              {/* File Upload */}
-              {!ocrResult && (
-                <label
-                  className={`flex flex-col items-center justify-center gap-3 rounded-[var(--radius-card)] border-2 border-dashed p-8 cursor-pointer transition-colors${ocrLoading ? "border-brand/40 bg-brand/5" : "border-border hover:border-brand/50 hover:glass bg-white/5 border-white/10/20"}`}
-                >
-                  {ocrLoading ? (
-                    <>
-                      <Loader2 className="h-8 w-8 text-brand animate-spin" />
-                      <div className="text-center">
-                        <p className="text-sm font-bold text-foreground">Analisando com IA...</p>
-                        <p className="text-xs text-muted-foreground mt-0.5">
-                          Extraindo linha digit\u00e1vel e dados do boleto
-                        </p>
-                      </div>
-                    </>
-                  ) : (
-                    <>
-                      <Upload className="h-8 w-8 text-muted-foreground" />
-                      <div className="text-center">
-                        <p className="text-sm font-bold text-foreground">
-                          Arraste o boleto ou clique para selecionar
-                        </p>
-                        <p className="text-xs text-muted-foreground mt-0.5">
-                          PDF, PNG ou JPG do boleto banc\u00e1rio
-                        </p>
-                      </div>
-                    </>
-                  )}
-                  <Input
-                    ref={fileInputRef}
-                    type="file"
-                    accept="application/pdf,image/*"
-                    className="hidden"
-                    disabled={ocrLoading}
-                    onChange={(e) => {
-                      if (e.target.files?.[0]) handleOcrUpload(e.target.files[0]);
-                    }}
-                  />
-                </label>
-              )}
+            {/* File Upload */}
+            {!ocrResult && (
+              <label
+                className={`flex flex-col items-center justify-center gap-3 rounded-[var(--radius-card)] border-2 border-dashed p-8 cursor-pointer transition-colors${ocrLoading ? "border-brand/40 bg-brand/5" : "border-border hover:border-brand/50 hover:glass/20"}`}
+              >
+                {ocrLoading ? (
+                  <>
+                    <Loader2 className="h-8 w-8 text-brand animate-spin" />
+                    <div className="text-center">
+                      <p className="text-sm font-bold text-foreground">Analisando com IA...</p>
+                      <p className="text-xs text-muted-foreground mt-0.5">
+                        Extraindo linha digit\u00e1vel e dados do boleto
+                      </p>
+                    </div>
+                  </>
+                ) : (
+                  <>
+                    <Upload className="h-8 w-8 text-muted-foreground" />
+                    <div className="text-center">
+                      <p className="text-sm font-bold text-foreground">
+                        Arraste o boleto ou clique para selecionar
+                      </p>
+                      <p className="text-xs text-muted-foreground mt-0.5">
+                        PDF, PNG ou JPG do boleto banc\u00e1rio
+                      </p>
+                    </div>
+                  </>
+                )}
+                <Input
+                  ref={fileInputRef}
+                  type="file"
+                  accept="application/pdf,image/*"
+                  className="hidden"
+                  disabled={ocrLoading}
+                  onChange={(e) => {
+                    if (e.target.files?.[0]) handleOcrUpload(e.target.files[0]);
+                  }}
+                />
+              </label>
+            )}
 
-              {/* OCR Result */}
-              {ocrResult && (
-                <div className="space-y-3">
-                  <div className="flex items-center gap-2 text-success">
-                    <CheckCircle className="h-5 w-5" />
-                    <span className="text-sm font-bold">Boleto lido com sucesso!</span>
-                  </div>
-                  <div className="rounded-[var(--radius-card)] border-none glass bg-white/5 border-white/10/10 p-4 space-y-2 text-xs font-mono">
-                    {ocrResult.amount && (
-                      <div>
-                        <span className="text-muted-foreground">Valor:</span>{" "}
-                        <span className="font-bold text-foreground">
-                          {new Intl.NumberFormat("pt-BR", {
-                            style: "currency",
-                            currency: "BRL",
-                          }).format(ocrResult.amount)}
-                        </span>
-                      </div>
-                    )}
-                    {ocrResult.due_date && (
-                      <div>
-                        <span className="text-muted-foreground">Vencimento:</span>{" "}
-                        <span className="font-bold">
-                          {new Date(ocrResult.due_date + "T12:00:00").toLocaleDateString("pt-BR")}
-                        </span>
-                      </div>
-                    )}
-                    {(ocrResult.barcode || ocrResult.linha_digitavel) && (
-                      <div className="pt-1 border-t border-border/50">
-                        <div className="text-muted-foreground mb-1">Linha Digit\u00e1vel:</div>
-                        <div className="break-all ds-meta text-foreground">
-                          {ocrResult.barcode ?? ocrResult.linha_digitavel}
-                        </div>
-                      </div>
-                    )}
-                    {ocrResult.beneficiary && (
-                      <div>
-                        <span className="text-muted-foreground">Benef.</span>{" "}
-                        {ocrResult.beneficiary}
-                      </div>
-                    )}
-                  </div>
-
-                  {/* Link to installment */}
-                  <div>
-                    <label className="text-xs font-bold text-muted-foreground uppercase tracking-wide block mb-1.5">
-                      Vincular \u00e0 parcela (opcional)
-                    </label>
-                    <Select
-                      value={ocrTargetInstId ?? ""}
-                      onChange={(e) => setOcrTargetInstId(e.target.value || null)}
-                      className="w-full rounded-[var(--radius-card)] border-none"
-                    >
-                      <option value="">Salvar sem vincular a parcela</option>
-                      {planQ.data
-                        ?.flatMap((plan: any) => plan.payment_installments ?? [])
-                        .map((inst: any) => (
-                          <option key={inst.id} value={inst.id}>
-                            Parcela #{inst.number} —{" "}
-                            {new Date(inst.due_date + "T12:00:00").toLocaleDateString("pt-BR")} —{" "}
-                            {formatCurrency(inst.amount)}
-                          </option>
-                        ))}
-                    </Select>
-                  </div>
-
-                  <div className="flex gap-2 pt-1">
-                    <Button
-                      onClick={() => {
-                        setOcrResult(null);
-                        setOcrFile(null);
-                      }}
-                      className="flex-1 h-9 rounded-[var(--radius-card)] border-none text-xs font-bold text-muted-foreground hover:glass bg-white/5 border-white/10"
-                    >
-                      Refazer Scan
-                    </Button>
-                    <Button
-                      onClick={applyOcrToInstallment}
-                      className="flex-1 h-9 rounded-[var(--radius-card)] bg-brand text-xs font-bold text-brand-foreground hover:bg-brand/90"
-                    >
-                      Salvar Dados
-                    </Button>
-                  </div>
+            {/* OCR Result */}
+            {ocrResult && (
+              <div className="space-y-3">
+                <div className="flex items-center gap-2 text-success">
+                  <CheckCircle className="h-5 w-5" />
+                  <span className="text-sm font-bold">Boleto lido com sucesso!</span>
                 </div>
-              )}
-            </div>
+                <div className="rounded-[var(--radius-card)] border-none glass/10 p-4 space-y-2 text-xs font-mono">
+                  {ocrResult.amount && (
+                    <div>
+                      <span className="text-muted-foreground">Valor:</span>{" "}
+                      <span className="font-bold text-foreground">
+                        {new Intl.NumberFormat("pt-BR", {
+                          style: "currency",
+                          currency: "BRL",
+                        }).format(ocrResult.amount)}
+                      </span>
+                    </div>
+                  )}
+                  {ocrResult.due_date && (
+                    <div>
+                      <span className="text-muted-foreground">Vencimento:</span>{" "}
+                      <span className="font-bold">
+                        {new Date(ocrResult.due_date + "T12:00:00").toLocaleDateString("pt-BR")}
+                      </span>
+                    </div>
+                  )}
+                  {(ocrResult.barcode || ocrResult.linha_digitavel) && (
+                    <div className="pt-1 border-t border-border/50">
+                      <div className="text-muted-foreground mb-1">Linha Digit\u00e1vel:</div>
+                      <div className="break-all ds-meta text-foreground">
+                        {ocrResult.barcode ?? ocrResult.linha_digitavel}
+                      </div>
+                    </div>
+                  )}
+                  {ocrResult.beneficiary && (
+                    <div>
+                      <span className="text-muted-foreground">Benef.</span> {ocrResult.beneficiary}
+                    </div>
+                  )}
+                </div>
+
+                {/* Link to installment */}
+                <div>
+                  <label className="text-xs font-bold text-muted-foreground uppercase tracking-wide block mb-1.5">
+                    Vincular \u00e0 parcela (opcional)
+                  </label>
+                  <Select
+                    value={ocrTargetInstId ?? ""}
+                    onChange={(e) => setOcrTargetInstId(e.target.value || null)}
+                    className="w-full rounded-[var(--radius-card)] border-none"
+                  >
+                    <option value="">Salvar sem vincular a parcela</option>
+                    {planQ.data
+                      ?.flatMap((plan: any) => plan.payment_installments ?? [])
+                      .map((inst: any) => (
+                        <option key={inst.id} value={inst.id}>
+                          Parcela #{inst.number} —{" "}
+                          {new Date(inst.due_date + "T12:00:00").toLocaleDateString("pt-BR")} —{" "}
+                          {formatCurrency(inst.amount)}
+                        </option>
+                      ))}
+                  </Select>
+                </div>
+
+                <div className="flex gap-2 pt-1">
+                  <Button
+                    onClick={() => {
+                      setOcrResult(null);
+                      setOcrFile(null);
+                    }}
+                    className="flex-1 h-9 rounded-[var(--radius-card)] border-none text-xs font-bold text-muted-foreground hover:glass"
+                  >
+                    Refazer Scan
+                  </Button>
+                  <Button
+                    onClick={applyOcrToInstallment}
+                    className="flex-1 h-9 rounded-[var(--radius-card)] bg-brand text-xs font-bold text-brand-foreground hover:bg-brand/90"
+                  >
+                    Salvar Dados
+                  </Button>
+                </div>
+              </div>
+            )}
+          </div>
         </DialogContent>
       </Dialog>
     </div>
@@ -594,7 +637,7 @@ function Section({
 }) {
   return (
     <div className="mb-6 rounded-[var(--radius-card)] border-none/60 glass-card border-none overflow-hidden">
-      <div className="flex items-center justify-between px-5 py-4 hover:glass bg-white/5 border-white/10/50 transition-colors">
+      <div className="flex items-center justify-between px-5 py-4 hover:glass/50 transition-colors">
         <Button
           onClick={onToggle}
           className="flex flex-1 items-center gap-3 text-sm font-semibold text-left text-foreground cursor-pointer"
@@ -617,7 +660,11 @@ function Section({
           </Button>
         )}
       </div>
-      {open && <div className="border-t border-border px-4 pb-4 pt-3 glass-card border-none">{children}</div>}
+      {open && (
+        <div className="border-t border-border px-4 pb-4 pt-3 glass-card border-none">
+          {children}
+        </div>
+      )}
     </div>
   );
 }

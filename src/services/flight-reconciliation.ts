@@ -17,7 +17,6 @@ export const ITINERARY_TYPE_LABELS: Record<string, string> = {
   confirmed: "Itinerário Confirmado",
 };
 
-
 /** Busca todos os itinerários de voo de uma viagem, incluindo seus segmentos */
 export async function fetchFlightItineraries(tripId: string): Promise<FlightItinerary[]> {
   const { data: itineraries, error } = await supabase

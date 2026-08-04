@@ -13,7 +13,9 @@ import { PageHeader, ModuleActionButton } from "@/components/shell/PageHeader";
 import { Button } from "@/components/ui/button";
 
 export const Route = createFileRoute("/agency/$slug/group-tours/")({
-  head: ({ context }: any) => ({ meta: [{ title: `Excursões em grupo · ${context?.brand?.platform_name || 'Turis'}` }] }),
+  head: ({ context }: any) => ({
+    meta: [{ title: `Excursões em grupo · ${context?.brand?.platform_name || "Turis"}` }],
+  }),
   component: GroupToursPage,
 });
 
@@ -45,45 +47,49 @@ function GroupToursPage() {
 
   return (
     <div className="flex h-full flex-col overflow-hidden bg-transparent">
-              <PageHeader
-          title="Excursões"
-          search={{
-            value: qSearch,
-            onChange: setQSearch,
-            placeholder: "Buscar excursão...",
-          }}
-          filters={[
-            { label: "Todos", value: "all" },
-            { label: "Rascunho", value: "draft" },
-            { label: "Aberta", value: "open" },
-            { label: "Confirmada", value: "confirmed" },
-            { label: "Concluída", value: "completed" },
-            { label: "Cancelada", value: "cancelled" },
-          ]}
-          activeFilter={statusFilter}
-          onFilterChange={(v) => setStatusFilter(v)}
-          actions={
-            isAgencyAdmin && (
-              <Button
-                onClick={() => setAdminPanelOpen(true)}
-                className="h-7 w-7 flex items-center justify-center rounded-full border border-white/15 text-white/60 hover:text-white hover:bg-white/10 transition-colors cursor-pointer"
-                title="Administrar Excursões"
-              >
-                <Settings2 className="h-3.5 w-3.5" />
-              </Button>
-            )
-          }
-          primaryAction={
-            <ModuleActionButton
-        label="Nova Excursão"
-        icon={<Plus className="h-3.5 w-3.5" />}
-              onClick={() => setOpen(true)}
-            />
-          }
-        />
+      <PageHeader
+        title="Excursões"
+        search={{
+          value: qSearch,
+          onChange: setQSearch,
+          placeholder: "Buscar excursão...",
+        }}
+        filters={[
+          { label: "Todos", value: "all" },
+          { label: "Rascunho", value: "draft" },
+          { label: "Aberta", value: "open" },
+          { label: "Confirmada", value: "confirmed" },
+          { label: "Concluída", value: "completed" },
+          { label: "Cancelada", value: "cancelled" },
+        ]}
+        activeFilter={statusFilter}
+        onFilterChange={(v) => setStatusFilter(v)}
+        actions={
+          isAgencyAdmin && (
+            <Button
+              onClick={() => setAdminPanelOpen(true)}
+              className="h-7 w-7 flex items-center justify-center rounded-full border border-white/15 text-white/60 hover:text-white hover:glass-dark transition-colors cursor-pointer"
+              title="Administrar Excursões"
+            >
+              <Settings2 className="h-3.5 w-3.5" />
+            </Button>
+          )
+        }
+        primaryAction={
+          <ModuleActionButton
+            label="Nova Excursão"
+            icon={<Plus className="h-3.5 w-3.5" />}
+            onClick={() => setOpen(true)}
+          />
+        }
+      />
 
       <div className="page-content page-section dock-offset">
-        {q.isLoading && <div className="text-sm text-muted-foreground animate-pulse p-4">Carregando excursões…</div>}
+        {q.isLoading && (
+          <div className="text-sm text-muted-foreground animate-pulse p-4">
+            Carregando excursões…
+          </div>
+        )}
         {q.isError && (
           <div className="p-4 rounded-[var(--radius-card)] glass-error text-xs flex items-center gap-2 m-2">
             <AlertCircle className="h-4 w-4 shrink-0" />
@@ -183,7 +189,7 @@ function GroupToursPage() {
                       </div>
                     </div>
                   </div>
-                  <div className="mt-2 h-1.5 overflow-hidden rounded glass bg-white/5 border-white/10">
+                  <div className="mt-2 h-1.5 overflow-hidden rounded glass">
                     <div className="h-full bg-primary" style={{ width: `${occupancy}%` }} />
                   </div>
                 </Link>

@@ -21,10 +21,7 @@ export function UniversalDevicePreview({
   iframeClassName,
 }: UniversalDevicePreviewProps) {
   // Define simulated width to enforce media queries inside the iframe based on the selected device
-  const simulatedWidth = 
-    viewport === "mobile" ? 375 : 
-    viewport === "tablet" ? 768 : 
-    1200;
+  const simulatedWidth = viewport === "mobile" ? 375 : viewport === "tablet" ? 768 : 1200;
 
   return (
     <DevicePreview

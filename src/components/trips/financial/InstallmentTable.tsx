@@ -38,7 +38,9 @@ export function InstallmentTable({
         {sorted.map((inst) => (
           <tr key={inst.id} className="border-b border-border/50 hover:bg-surface-alt/40">
             <td className="py-2 font-mono pr-3 text-foreground">#{inst.number}</td>
-            <td className="py-2 pr-3 text-muted-foreground font-mono">{formatDate(inst.due_date)}</td>
+            <td className="py-2 pr-3 text-muted-foreground font-mono">
+              {formatDate(inst.due_date)}
+            </td>
             <td className="py-2 pr-3 flex flex-col gap-0.5">
               <StatusBadge tone={PAYABLE_STATUS_MAP[inst.status]?.tone ?? "neutral"}>
                 {PAYABLE_STATUS_MAP[inst.status]?.label ?? inst.status}

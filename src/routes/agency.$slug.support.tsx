@@ -3,7 +3,17 @@ import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
 import { useAgency } from "@/lib/agency-context";
 import { supabase } from "@/integrations/supabase/client";
-import { Search, AlertTriangle, Clock, CheckCircle2, Ticket, User, Star, Plus, AlertCircle } from "lucide-react";
+import {
+  Search,
+  AlertTriangle,
+  Clock,
+  CheckCircle2,
+  Ticket,
+  User,
+  Star,
+  Plus,
+  AlertCircle,
+} from "lucide-react";
 import { FormInput as Input } from "@/components/ui/input";
 import { NativeSelect as Select } from "@/components/ui/select";
 import { StatusBadge } from "@/components/ui/badge";
@@ -15,7 +25,9 @@ import { EmptyState } from "@/components/shell/PageHeader";
 import { NewTicketSheet } from "@/components/support/NewTicketSheet";
 
 export const Route = createFileRoute("/agency/$slug/support")({
-  head: ({ context }: any) => ({ meta: [{ title: `Central de Suporte · ${context?.brand?.platform_name || 'Turis'}` }] }),
+  head: ({ context }: any) => ({
+    meta: [{ title: `Central de Suporte · ${context?.brand?.platform_name || "Turis"}` }],
+  }),
   component: SupportRoute,
 });
 
@@ -36,7 +48,12 @@ function SupportRoute() {
   const [priorityFilter, setPriorityFilter] = useState("all");
   const [ticketSheetOpen, setTicketSheetOpen] = useState(false);
 
-  const { data: tickets, isLoading, isError, error } = useQuery({
+  const {
+    data: tickets,
+    isLoading,
+    isError,
+    error,
+  } = useQuery({
     queryKey: ["support_tickets_advanced", agency?.id],
     enabled: !!agency,
     queryFn: async () => {
@@ -84,32 +101,32 @@ function SupportRoute() {
 
   return (
     <div className="flex flex-col h-full overflow-hidden">
-              <PageHeader
-          title="Suporte"
-          search={{
-            value: searchTerm,
-            onChange: setSearchTerm,
-            placeholder: "Buscar por código, assunto ou cliente...",
-          }}
-          filters={[
-            { label: "Todos", value: "all" },
-            { label: "Novo", value: "new" },
-            { label: "Aberto", value: "open" },
-            { label: "Ag. Fornecedor", value: "pending_supplier" },
-            { label: "Ag. Cliente", value: "pending_client" },
-            { label: "Resolvido", value: "resolved" },
-            { label: "Fechado", value: "closed" },
-          ]}
-          activeFilter={stageFilter}
-          onFilterChange={setStageFilter}
-          primaryAction={
-            <ModuleActionButton
-        label="Novo Ticket"
-        icon={<Plus className="h-3.5 w-3.5" />}
-              onClick={() => setTicketSheetOpen(true)}
-            />
-          }
-        />
+      <PageHeader
+        title="Suporte"
+        search={{
+          value: searchTerm,
+          onChange: setSearchTerm,
+          placeholder: "Buscar por código, assunto ou cliente...",
+        }}
+        filters={[
+          { label: "Todos", value: "all" },
+          { label: "Novo", value: "new" },
+          { label: "Aberto", value: "open" },
+          { label: "Ag. Fornecedor", value: "pending_supplier" },
+          { label: "Ag. Cliente", value: "pending_client" },
+          { label: "Resolvido", value: "resolved" },
+          { label: "Fechado", value: "closed" },
+        ]}
+        activeFilter={stageFilter}
+        onFilterChange={setStageFilter}
+        primaryAction={
+          <ModuleActionButton
+            label="Novo Ticket"
+            icon={<Plus className="h-3.5 w-3.5" />}
+            onClick={() => setTicketSheetOpen(true)}
+          />
+        }
+      />
 
       <div className="flex-1 overflow-hidden px-4  md:pr-6 py-4 flex flex-col min-h-0 space-y-4 pb-24">
         {isError && (
@@ -125,7 +142,7 @@ function SupportRoute() {
         )}
         {/* KPI Dashboards */}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4 shrink-0">
-          <div className="glass bg-white/5 border-white/10/50 border-none rounded-[var(--radius-card)] p-4 flex items-center gap-4">
+          <div className="glass/50 border-none rounded-[var(--radius-card)] p-4 flex items-center gap-4">
             <div className="w-10 h-10 rounded-full bg-destructive/10 text-destructive flex items-center justify-center">
               <AlertTriangle className="w-5 h-5" />
             </div>
@@ -136,7 +153,7 @@ function SupportRoute() {
               </p>
             </div>
           </div>
-          <div className="glass bg-white/5 border-white/10/50 border-none rounded-[var(--radius-card)] p-4 flex items-center gap-4">
+          <div className="glass/50 border-none rounded-[var(--radius-card)] p-4 flex items-center gap-4">
             <div className="w-10 h-10 rounded-full bg-warning/10 text-warning flex items-center justify-center">
               <Clock className="w-5 h-5" />
             </div>
@@ -147,7 +164,7 @@ function SupportRoute() {
               </p>
             </div>
           </div>
-          <div className="glass bg-white/5 border-white/10/50 border-none rounded-[var(--radius-card)] p-4 flex items-center gap-4">
+          <div className="glass/50 border-none rounded-[var(--radius-card)] p-4 flex items-center gap-4">
             <div className="w-10 h-10 rounded-full bg-success/10 text-success flex items-center justify-center">
               <CheckCircle2 className="w-5 h-5" />
             </div>
@@ -158,7 +175,7 @@ function SupportRoute() {
               </p>
             </div>
           </div>
-          <div className="glass bg-white/5 border-white/10/50 border-none rounded-[var(--radius-card)] p-4 flex items-center gap-4">
+          <div className="glass/50 border-none rounded-[var(--radius-card)] p-4 flex items-center gap-4">
             <div className="w-10 h-10 rounded-full bg-brand/10 text-brand flex items-center justify-center">
               <Star className="w-5 h-5" />
             </div>
@@ -177,7 +194,7 @@ function SupportRoute() {
         <div className="glass-card border-none border-none rounded-[var(--radius-card)] flex-1 overflow-hidden flex flex-col">
           <div className="overflow-x-auto flex-1">
             <table className="w-full text-sm text-left">
-              <thead className="text-xs text-muted-foreground uppercase glass bg-white/5 border-white/10/50 sticky top-0 z-10 border-b border-border">
+              <thead className="text-xs text-muted-foreground uppercase glass/50 sticky top-0 z-10 border-b border-border">
                 <tr>
                   <th className="px-4 py-3 font-semibold">Código</th>
                   <th className="px-4 py-3 font-semibold">Assunto / Cliente</th>
@@ -208,7 +225,7 @@ function SupportRoute() {
                 {filteredTickets.map((t: any) => (
                   <tr
                     key={t.id}
-                    className="hover:glass bg-white/5 border-white/10/30 cursor-pointer transition-colors"
+                    className="hover:glass/30 cursor-pointer transition-colors"
                     onClick={() =>
                       navigate({
                         to: "/agency/$slug/support/$ticket_id",

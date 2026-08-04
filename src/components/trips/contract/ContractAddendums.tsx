@@ -20,8 +20,6 @@ type Addendum = {
   signed_at?: string | null;
 };
 
-
-
 export function ContractAddendums({
   contractId,
   contractStatus,
@@ -95,7 +93,6 @@ export function ContractAddendums({
               placeholder="Ex: Alteração de Data de Embarque ou Upgrade de Hotel"
               value={addendumTitle}
               onChange={(e) => setAddendumTitle(e.target.value)}
-              
             />
           </Field>
           <Field label="Conteúdo do Acordo (Cláusulas Adicionais)">
@@ -108,7 +105,8 @@ export function ContractAddendums({
             />
           </Field>
           <div className="flex gap-2">
-            <Button variant="default"
+            <Button
+              variant="default"
               disabled={createAddendum.isPending || !addendumTitle || !addendumContent}
               onClick={() =>
                 createAddendum.mutate({ title: addendumTitle, content: addendumContent })
@@ -116,7 +114,8 @@ export function ContractAddendums({
             >
               {createAddendum.isPending ? "Criando..." : "Enviar Aditivo"}
             </Button>
-            <Button variant="ghost"
+            <Button
+              variant="ghost"
               onClick={() => {
                 setShowAddForm(false);
                 setAddendumTitle("");

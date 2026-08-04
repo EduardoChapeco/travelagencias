@@ -1,4 +1,5 @@
 # UI-005 - 07_ROOT_CAUSE_TREE.md
+
 # ÁRVORE DE CAUSA RAIZ - UI-005
 
 Este documento esboça a hipótese de causa raiz para a quebra de layout na Home pública.

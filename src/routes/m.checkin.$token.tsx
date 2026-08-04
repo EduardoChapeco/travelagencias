@@ -21,7 +21,9 @@ import { NativeSelect as Select } from "@/components/ui/select";
 import { FormTextarea as Textarea } from "@/components/ui/textarea";
 
 export const Route = createFileRoute("/m/checkin/$token")({
-  head: ({ context }: any) => ({ meta: [{ title: `Meu Embarque · ${context?.brand?.platform_name || 'Turis'}` }] }),
+  head: ({ context }: any) => ({
+    meta: [{ title: `Meu Embarque · ${context?.brand?.platform_name || "Turis"}` }],
+  }),
   component: MobileCheckinPage,
 });
 
@@ -222,7 +224,7 @@ function MobileCheckinPage() {
     <div className="mx-auto min-h-screen max-w-md glass-card border-none text-foreground font-sans pb-12">
       {/* Header */}
       <div className="bg-brand text-brand-foreground px-6 py-8 rounded-b-[2.5rem] relative overflow-hidden">
-        <div className="absolute top-[-50px] right-[-50px] w-40 h-40 bg-white/10 rounded-full blur-2xl" />
+        <div className="absolute top-[-50px] right-[-50px] w-40 h-40 glass-dark rounded-full blur-2xl" />
         <div className="relative z-10">
           <h1 className="mb-1 text-2xl font-black tracking-tight ">Meu Embarque</h1>
           <p className="text-brand-foreground/80 font-medium text-sm">
@@ -309,9 +311,7 @@ function MobileCheckinPage() {
 
         {/* Flight Segments List (E-Checkin) */}
         <div className="space-y-3">
-          <h2 className="ds-label-caps text-muted-foreground">
-            Voos & e-Check-in
-          </h2>
+          <h2 className="ds-label-caps text-muted-foreground">Voos & e-Check-in</h2>
 
           {details.segments.length === 0 ? (
             <div className="bg-background border-none/60 rounded-[var(--radius-card)] p-5 text-center text-xs text-muted-foreground">
@@ -426,9 +426,7 @@ function MobileCheckinPage() {
         {/* Interactive Checklist */}
         <div>
           <div className="flex justify-between items-end mb-3">
-            <h2 className="ds-label-caps text-muted-foreground">
-              Etapas Necessárias
-            </h2>
+            <h2 className="ds-label-caps text-muted-foreground">Etapas Necessárias</h2>
             <span className="text-xs font-bold text-brand">
               {doneCount}/{checklist.length}
             </span>
@@ -446,7 +444,7 @@ function MobileCheckinPage() {
                     key={i}
                     onClick={() => toggle(i)}
                     disabled={saving}
-                    className={`w-full flex items-center gap-3 p-4 text-left transition-colors hover:glass bg-white/5 border-white/10/50 active:glass bg-white/5 border-white/10 ${it.done ? "glass bg-white/5 border-white/10/20" : ""}`}
+                    className={`w-full flex items-center gap-3 p-4 text-left transition-colors hover:glass/50 active:glass ${it.done ? "glass/20" : ""}`}
                   >
                     {it.done ? (
                       <CheckSquare className="w-5 h-5 text-success shrink-0" />
@@ -505,7 +503,7 @@ function MobileCheckinPage() {
                 setEmergencyType("delayed");
                 setEmergencyComment("");
               }}
-              className={`py-2 rounded-[var(--radius-card)] text-xs font-bold border transition-colors ${emergencyType === "delayed" ? "bg-amber-500 text-white border-amber-600" : "glass-card border-none border-border text-foreground hover:glass bg-white/5 border-white/10"}`}
+              className={`py-2 rounded-[var(--radius-card)] text-xs font-bold border transition-colors ${emergencyType === "delayed" ? "bg-amber-500 text-white border-amber-600" : "glass-card border-none border-border text-foreground hover:glass"}`}
             >
               Voo Atrasou
             </Button>
@@ -514,7 +512,7 @@ function MobileCheckinPage() {
                 setEmergencyType("cancelled");
                 setEmergencyComment("");
               }}
-              className={`py-2 rounded-[var(--radius-card)] text-xs font-bold border transition-colors ${emergencyType === "cancelled" ? "bg-rose-600 text-white border-rose-700" : "glass-card border-none border-border text-foreground hover:glass bg-white/5 border-white/10"}`}
+              className={`py-2 rounded-[var(--radius-card)] text-xs font-bold border transition-colors ${emergencyType === "cancelled" ? "bg-rose-600 text-white border-rose-700" : "glass-card border-none border-border text-foreground hover:glass"}`}
             >
               Voo Cancelado
             </Button>
@@ -535,7 +533,7 @@ function MobileCheckinPage() {
               <div className="flex gap-2">
                 <Button
                   onClick={() => setEmergencyType(null)}
-                  className="flex-1 glass-card border-none border-none hover:glass bg-white/5 border-white/10 py-2 rounded-[var(--radius-card)] text-xs font-bold transition-colors"
+                  className="flex-1 glass-card border-none border-none hover:glass py-2 rounded-[var(--radius-card)] text-xs font-bold transition-colors"
                 >
                   Cancelar
                 </Button>

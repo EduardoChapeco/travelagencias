@@ -35,7 +35,7 @@ export function OmnichannelChat({
     const cleanPhone = leadPhone ? leadPhone.replace(/\D/g, "") : "";
     if (!cleanPhone) return;
 
-    let activeChannel: any = null;
+    const activeChannel: any = null;
 
     async function loadData() {
       try {

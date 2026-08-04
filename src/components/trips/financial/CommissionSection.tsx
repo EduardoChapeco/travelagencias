@@ -420,9 +420,7 @@ export function CommissionSection({
               </div>
             </div>
             <div className="rounded-2xl border border-success/20 bg-success/5 p-3">
-              <div className="ds-label-caps tracking-wider text-success mb-1">
-                Comissão Agência
-              </div>
+              <div className="ds-label-caps tracking-wider text-success mb-1">Comissão Agência</div>
               <div className="text-lg font-bold text-success font-mono">
                 {formatCurrency(agencyCommission, currency)}
               </div>

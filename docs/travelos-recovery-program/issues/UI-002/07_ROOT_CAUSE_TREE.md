@@ -1,4 +1,5 @@
 # UI-002 - 07_ROOT_CAUSE_TREE.md
+
 # ÁRVORE DE CAUSA RAIZ - UI-002
 
 Este documento traça a origem do dock lateral rígido que empurra o grid e consome espaço físico de tela.

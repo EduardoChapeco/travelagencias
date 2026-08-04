@@ -1,6 +1,7 @@
 # 04 AUTOQUESTIONAMENTO ESPECÍFICO
 
 ## Ação: Inserir Passageiro na Viagem
+
 - O usuário tem permissão na `agency_id` correta?
 - A viagem não está `closed`?
 - O RLS de `passengers` impede mass assignment?

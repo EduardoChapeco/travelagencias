@@ -44,7 +44,9 @@ import { FormInput as Input } from "@/components/ui/input";
 import { NativeSelect as Select } from "@/components/ui/select";
 
 export const Route = createFileRoute("/agency/$slug/trips/$id/flights")({
-  head: ({ context }: any) => ({ meta: [{ title: `Aéreos & Reconciliação · ${context?.brand?.platform_name || 'Turis'}` }] }),
+  head: ({ context }: any) => ({
+    meta: [{ title: `Aéreos & Reconciliação · ${context?.brand?.platform_name || "Turis"}` }],
+  }),
   component: TripFlightsPage,
 });
 
@@ -315,7 +317,7 @@ function TripFlightsPage() {
         </div>
 
         {/* Tab switchers */}
-        <div className="flex glass bg-white/5 border-white/10 p-0.5 rounded-[var(--radius-card)] border-none shrink-0 self-start sm:self-center">
+        <div className="flex glass p-0.5 rounded-[var(--radius-card)] border-none shrink-0 self-start sm:self-center">
           <Button
             onClick={() => setActiveTab("itineraries")}
             className={`px-3 py-1 ds-meta font-semibold rounded-full transition-colors cursor-pointer ${
@@ -361,7 +363,7 @@ function TripFlightsPage() {
                     setCompareBId(otherIt.id);
                     setShowDiffModal(true);
                   }}
-                  className="inline-flex h-8 items-center gap-1.5 rounded-full border-none glass-card border-none px-3 text-xs font-medium hover:glass bg-white/5 border-white/10 transition-colors cursor-pointer"
+                  className="inline-flex h-8 items-center gap-1.5 rounded-full border-none glass-card border-none px-3 text-xs font-medium hover:glass transition-colors cursor-pointer"
                 >
                   <GitCompare className="h-3.5 w-3.5" />
                   <span>Comparar Versões</span>
@@ -437,7 +439,7 @@ function TripFlightsPage() {
                 {segments.map((seg, idx) => (
                   <div
                     key={idx}
-                    className="p-4 rounded-[var(--radius-card)] border-none glass bg-white/5 border-white/10/40 space-y-3 relative"
+                    className="p-4 rounded-[var(--radius-card)] border-none glass/40 space-y-3 relative"
                   >
                     {segments.length > 1 && (
                       <Button
@@ -592,7 +594,7 @@ function TripFlightsPage() {
                 <Button
                   type="button"
                   onClick={addSegmentField}
-                  className="inline-flex h-8 items-center gap-1.5 border border-dashed border-border rounded-full px-3 text-xs font-semibold hover:glass bg-white/5 border-white/10 transition-colors cursor-pointer"
+                  className="inline-flex h-8 items-center gap-1.5 border border-dashed border-border rounded-full px-3 text-xs font-semibold hover:glass transition-colors cursor-pointer"
                 >
                   <Plus className="h-3.5 w-3.5" />
                   <span>Adicionar Trecho/Escala</span>
@@ -602,7 +604,7 @@ function TripFlightsPage() {
               <div className="flex justify-end gap-2 pt-3 border-t border-border">
                 <Button
                   onClick={() => setShowAddForm(false)}
-                  className="px-3 py-1.5 border-none text-xs rounded-full hover:glass bg-white/5 border-white/10 cursor-pointer transition-colors"
+                  className="px-3 py-1.5 border-none text-xs rounded-full hover:glass cursor-pointer transition-colors"
                 >
                   Cancelar
                 </Button>
@@ -647,9 +649,9 @@ function TripFlightsPage() {
                   }`}
                 >
                   {/* Itinerary Header */}
-                  <div className="p-4 border-b border-border/60 glass bg-white/5 border-white/10/10 flex items-center justify-between flex-wrap gap-3">
+                  <div className="p-4 border-b border-border/60 glass/10 flex items-center justify-between flex-wrap gap-3">
                     <div className="flex items-center gap-2">
-                      <span className="font-mono text-xs font-bold glass bg-white/5 border-white/10 border-none px-2 py-0.5 rounded text-foreground">
+                      <span className="font-mono text-xs font-bold glass border-none px-2 py-0.5 rounded text-foreground">
                         V{it.version}
                       </span>
                       <StatusBadge tone={FLIGHT_ITINERARY_STATUS_MAP[it.status]?.tone ?? "neutral"}>
@@ -715,7 +717,7 @@ function TripFlightsPage() {
                             className="flex items-start justify-between flex-wrap gap-4 text-xs"
                           >
                             <div className="flex items-start gap-3 min-w-0">
-                              <div className="shrink-0 h-7 w-7 rounded glass bg-white/5 border-white/10 border-none flex items-center justify-center font-bold font-mono ds-meta text-muted-foreground mt-0.5">
+                              <div className="shrink-0 h-7 w-7 rounded glass border-none flex items-center justify-center font-bold font-mono ds-meta text-muted-foreground mt-0.5">
                                 {idx + 1}
                               </div>
                               <div className="min-w-0">
@@ -724,7 +726,7 @@ function TripFlightsPage() {
                                     {seg.airline_code} {seg.flight_number}
                                   </span>
                                   {seg.record_locator && (
-                                    <span className="font-mono text-muted-foreground ds-meta glass bg-white/5 border-white/10 px-1.5 py-0.5 rounded border-none">
+                                    <span className="font-mono text-muted-foreground ds-meta glass px-1.5 py-0.5 rounded border-none">
                                       LOC: {seg.record_locator}
                                     </span>
                                   )}
@@ -764,7 +766,7 @@ function TripFlightsPage() {
                                 Chegada: {new Date(seg.arrival_at).toLocaleString("pt-BR")}
                               </div>
                               {seg.airport_terminal && (
-                                <div className="ds-meta text-muted-foreground mt-0.5 glass bg-white/5 border-white/10 px-1 rounded inline-block">
+                                <div className="ds-meta text-muted-foreground mt-0.5 glass px-1 rounded inline-block">
                                   {seg.airport_terminal}
                                 </div>
                               )}
@@ -877,10 +879,7 @@ function TripFlightsPage() {
                       {card.alerts && card.alerts.length > 0 && (
                         <div className="space-y-1">
                           {card.alerts.map((a: any, i: any) => (
-                            <div
-                              key={i}
-                              className="flex items-center gap-1.5 ds-meta text-warning"
-                            >
+                            <div key={i} className="flex items-center gap-1.5 ds-meta text-warning">
                               <AlertCircle className="h-3 w-3 shrink-0" />
                               {a}
                             </div>
@@ -918,7 +917,9 @@ function TripFlightsPage() {
                                     </span>
                                   )}
                                 </div>
-                                <StatusBadge tone={FLIGHT_SEGMENT_STATUS_MAP[t.status]?.tone ?? "neutral"}>
+                                <StatusBadge
+                                  tone={FLIGHT_SEGMENT_STATUS_MAP[t.status]?.tone ?? "neutral"}
+                                >
                                   {FLIGHT_SEGMENT_STATUS_MAP[t.status]?.label ?? t.status}
                                 </StatusBadge>
                                 <StatusBadge tone={ts.tone}>{ts.label}</StatusBadge>
@@ -951,7 +952,7 @@ function TripFlightsPage() {
             </div>
 
             {/* Selects selector */}
-            <div className="p-4 glass bg-white/5 border-white/10/20 border-b border-border/60 grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div className="p-4 glass/20 border-b border-border/60 grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div className="space-y-1">
                 <label className="ds-meta font-bold text-muted-foreground uppercase">
                   Itinerário A (Referência)
@@ -1001,7 +1002,7 @@ function TripFlightsPage() {
               ) : (
                 <div className="space-y-6">
                   {/* Summary of changes */}
-                  <div className="p-4 rounded-[var(--radius-card)] border-none glass bg-white/5 border-white/10/40 flex items-center justify-between gap-4">
+                  <div className="p-4 rounded-[var(--radius-card)] border-none glass/40 flex items-center justify-between gap-4">
                     <div className="text-xs">
                       <p className="font-semibold text-foreground">
                         Diferenças calculadas deterministicamente
@@ -1036,8 +1037,8 @@ function TripFlightsPage() {
                           key={index}
                           className="rounded-[var(--radius-card)] border-none glass-card border-none overflow-hidden"
                         >
-                          <div className="p-3 border-b border-border glass bg-white/5 border-white/10/20 flex items-center gap-2">
-                            <span className="h-5 w-5 rounded glass bg-white/5 border-white/10 border-none flex items-center justify-center font-bold ds-meta font-mono text-muted-foreground">
+                          <div className="p-3 border-b border-border glass/20 flex items-center gap-2">
+                            <span className="h-5 w-5 rounded glass border-none flex items-center justify-center font-bold ds-meta font-mono text-muted-foreground">
                               {diff.segment_order}
                             </span>
                             <span className="text-xs font-bold text-foreground">
@@ -1055,7 +1056,7 @@ function TripFlightsPage() {
                               {origSeg ? (
                                 <div className="space-y-2 text-xs">
                                   <div className="flex items-center gap-2">
-                                    <span className="font-mono font-bold glass bg-white/5 border-white/10 border-none px-1.5 py-0.5 rounded ds-meta">
+                                    <span className="font-mono font-bold glass border-none px-1.5 py-0.5 rounded ds-meta">
                                       {origSeg.airline_code} {origSeg.flight_number}
                                     </span>
                                   </div>
@@ -1086,7 +1087,7 @@ function TripFlightsPage() {
                             </div>
 
                             {/* Comparison Segment B */}
-                            <div className="p-4 space-y-3 glass bg-white/5 border-white/10/10">
+                            <div className="p-4 space-y-3 glass/10">
                               <span className="text-[9px] font-bold text-muted-foreground uppercase block">
                                 Versão {itineraryB.version} (
                                 {ITINERARY_TYPE_LABELS[itineraryB.type]})
@@ -1099,7 +1100,7 @@ function TripFlightsPage() {
                                       className={`font-mono font-bold px-1.5 py-0.5 rounded ds-meta ${
                                         diff.airline_changed || diff.flight_number_changed
                                           ? "bg-amber-100 text-amber-800 border border-amber-300"
-                                          : "glass bg-white/5 border-white/10 border-none"
+                                          : "glass border-none"
                                       }`}
                                     >
                                       {compSeg.airline_code} {compSeg.flight_number}

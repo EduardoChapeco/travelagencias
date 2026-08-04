@@ -1,4 +1,5 @@
 # UI-003 - 07_ROOT_CAUSE_TREE.md
+
 # ÁRVORE DE CAUSA RAIZ - UI-003
 
 Este documento traça o diagnóstico de integridade do Dock horizontal da Home.

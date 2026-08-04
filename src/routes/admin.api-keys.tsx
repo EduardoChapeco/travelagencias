@@ -146,7 +146,8 @@ function Page() {
             />
           </Field>
           <div>
-            <Button variant="default"
+            <Button
+              variant="default"
               disabled={busy}
               className="w-full h-9 flex items-center justify-center gap-1.5"
             >
@@ -171,7 +172,7 @@ function Page() {
         {!q.isLoading && keysList.length > 0 && (
           <div className="overflow-hidden rounded-[var(--radius-card)] border-none glass-card border-none">
             <table className="w-full text-sm">
-              <thead className="glass bg-white/5 border-white/10 text-xs text-muted-foreground border-b border-border">
+              <thead className="glass text-xs text-muted-foreground border-b border-border">
                 <tr>
                   <th className="px-4 py-2.5 text-left font-medium">Provedor</th>
                   <th className="px-4 py-2.5 text-left font-medium">Label</th>
@@ -183,7 +184,10 @@ function Page() {
               </thead>
               <tbody className="divide-y divide-border">
                 {keysList.map((k: ApiKey) => (
-                  <tr key={k.id} className="hover:glass bg-white/5 border-white/10/30 transition-colors">
+                  <tr
+                    key={k.id}
+                    className="hover:glass/30 transition-colors"
+                  >
                     <td className="px-4 py-3 font-mono text-xs font-semibold text-foreground/80">
                       {k.provider}
                     </td>
@@ -204,7 +208,8 @@ function Page() {
                       />
                     </td>
                     <td className="px-4 py-3 text-right">
-                      <Button variant="ghost"
+                      <Button
+                        variant="ghost"
                         type="button"
                         onClick={() => remove(k.id)}
                         className="h-8 w-8 p-0 text-danger hover:bg-danger/10 flex items-center justify-center rounded-full"

@@ -115,7 +115,7 @@ function RegisterPage() {
   return (
     <div className="grid min-h-screen grid-cols-1 md:grid-cols-2 bg-background text-foreground">
       {/* ── Left Column: Identical Neuromarketing Imagery / Copy ─── */}
-      <div className="relative hidden flex-col justify-between glass bg-white/5 border-white/10 p-12 text-foreground md:flex overflow-hidden border-r border-border">
+      <div className="relative hidden flex-col justify-between glass p-12 text-foreground md:flex overflow-hidden border-r border-border">
         {/* Editorial Dot Matrix Accent */}
         <div className="absolute inset-0 z-0 pointer-events-none opacity-[0.015] bg-[radial-gradient(#000_1px,transparent_1px)] [background-size:16px_16px]" />
 
@@ -145,9 +145,7 @@ function RegisterPage() {
 
           {/* Floating Benefit Card */}
           <div className="glass-card border-none border-none rounded-[var(--radius-card)] p-6 space-y-4 shadow-none">
-            <h4 className="ds-label-caps text-accent">
-              Módulos Inclusos na sua Conta
-            </h4>
+            <h4 className="ds-label-caps text-accent">Módulos Inclusos na sua Conta</h4>
             <div className="space-y-3">
               <div className="flex items-center gap-3 text-xs font-semibold text-foreground">
                 <CheckCircle className="h-4 w-4 text-accent shrink-0" />
@@ -259,13 +257,12 @@ function RegisterPage() {
                 </label>
               </div>
               {errors.acceptedTerms && (
-                <p className="mt-1 ds-meta text-danger font-bold">
-                  {errors.acceptedTerms.message}
-                </p>
+                <p className="mt-1 ds-meta text-danger font-bold">{errors.acceptedTerms.message}</p>
               )}
             </div>
 
-            <Button variant="default"
+            <Button
+              variant="default"
               type="submit"
               disabled={isSubmitting}
               className="w-full h-11 ds-label-caps tracking-wider rounded-full bg-primary hover:bg-primary/95 text-primary-foreground active:scale-[0.98] transition-all duration-200 mt-6 cursor-pointer"

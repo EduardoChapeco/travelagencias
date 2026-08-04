@@ -9,7 +9,9 @@ description: >
 # Skill: Blast Radius Analysis
 
 ## Quando disparar
+
 Sempre que a tarefa envolver modificar (não criar do zero) qualquer:
+
 - Componente de UI existente
 - Rota/página existente
 - Hook compartilhado
@@ -20,6 +22,7 @@ Sempre que a tarefa envolver modificar (não criar do zero) qualquer:
 ## Protocolo de Execução (6 passos)
 
 ### Passo 1 — Mapa de Usos (onde é renderizado/importado)
+
 ```bash
 # Buscar todos os arquivos que importam o elemento
 grep -r "NomeDoElemento" src/ --include="*.tsx" --include="*.ts" -l
@@ -29,20 +32,24 @@ grep -r "NomeDoElemento" src/ --include="*.tsx" --include="*.ts" -c | grep -v ":
 ```
 
 ### Passo 2 — Mapa de Handlers (o que dispara)
+
 - Listar todos os `onClick`, `onChange`, `onSubmit` do elemento
 - Rastrear para qual hook/função cada handler aponta
 - Verificar se algum desses handlers faz escrita no banco
 
 ### Passo 3 — Mapa de API (quais endpoints são chamados)
+
 - Listar todas as chamadas `supabase.from()`, `supabase.functions.invoke()`, `fetch()`
 - Para cada uma: qual tabela/Edge Function e o que ela faz a jusante
 
 ### Passo 4 — Mapa de Schema (banco)
+
 - Quais colunas são lidas/escritas
 - Quais foreign keys estão envolvidas
 - Quais RLS policies cobrem esses acessos
 
 ### Passo 5 — Mapa de Contratos (TypeScript)
+
 - Quais tipos TypeScript o elemento consome
 - A mudança planejada quebra algum consumidor desse tipo?
 - ```bash
@@ -50,11 +57,13 @@ grep -r "NomeDoElemento" src/ --include="*.tsx" --include="*.ts" -c | grep -v ":
   ```
 
 ### Passo 6 — Mapa de Fluxos de Negócio
+
 - O elemento é reutilizado em mais de um fluxo?
 - Ex.: mesmo botão em checkout E em cadastro de passageiro
 - Identificar todos os contextos de uso para não quebrar nenhum
 
 ## Output esperado
+
 ```
 BLAST RADIUS — [nome do elemento]
 Usos diretos: X arquivos

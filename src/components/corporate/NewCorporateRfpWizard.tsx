@@ -335,7 +335,8 @@ export function NewCorporateRfpWizard({
               Próximo <ChevronRight className="h-4 w-4" />
             </Button>
           ) : (
-            <Button variant="default"
+            <Button
+              variant="default"
               onClick={submit}
               disabled={submitting}
               className="w-56 font-bold tracking-wider"

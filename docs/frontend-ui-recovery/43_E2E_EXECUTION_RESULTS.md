@@ -3,10 +3,11 @@
 Este documento registra a execução periódica e os resultados da suíte de testes de ponta a ponta (E2E) configurada via Playwright no projeto.
 
 ## Estrutura da Suíte
-* **Localização dos Testes:** `tests/e2e/`
-* **Arquivos Existentes:**
-  * `financial-ledger.spec.ts` (Imutabilidade e RLS do Livro-Razão)
-  * `tenant-isolation.spec.ts` (Isolamento Multi-Tenant e Segurança)
+
+- **Localização dos Testes:** `tests/e2e/`
+- **Arquivos Existentes:**
+  - `financial-ledger.spec.ts` (Imutabilidade e RLS do Livro-Razão)
+  - `tenant-isolation.spec.ts` (Isolamento Multi-Tenant e Segurança)
 
 ---
 
@@ -36,7 +37,9 @@ List of passed tests:
 ---
 
 ## Próximos Passos de Testes Automatizados
+
 Durante a execução do Lote M (Regressão), adicionaremos novos testes de layout para garantir automaticamente:
+
 1. Ausência de sobreposição da sidebar flutuante com o workspace.
 2. Integridade da cadeia de altura (`h-full`).
 3. Validação semântica de tokens no AlertDialog e na Sheet.

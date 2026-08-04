@@ -236,4 +236,3 @@ export async function deleteKnowledgeDoc(id: string): Promise<void> {
   const { error } = await supabase.from("knowledge_documents").delete().eq("id", id);
   if (error) throw error;
 }
-

@@ -85,7 +85,7 @@ export function useDashboardIntel() {
 
       // Agregar dados de tarefas nos últimos 7 dias por dia
       const statsMap: Record<string, { created: number; completed: number }> = {};
-      
+
       for (let i = 6; i >= 0; i--) {
         const d = subDays(today, i);
         const key = format(d, "dd/MM");

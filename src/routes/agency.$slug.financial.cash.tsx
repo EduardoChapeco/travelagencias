@@ -3,7 +3,17 @@ import { useState } from "react";
 import { useQuery, useQueryClient, useMutation } from "@tanstack/react-query";
 import { handleViewReceipt } from "@/utils/storage-helper";
 import {
-  ArrowDownCircle, ArrowUpCircle, Lock, Unlock, FileText, AlertCircle, Coins, Users, Landmark, Plus, } from "lucide-react";
+  ArrowDownCircle,
+  ArrowUpCircle,
+  Lock,
+  Unlock,
+  FileText,
+  AlertCircle,
+  Coins,
+  Users,
+  Landmark,
+  Plus,
+} from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { useAgency } from "@/lib/agency-context";
@@ -22,7 +32,9 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { SearchableSelect } from "@/components/ui/searchable-select";
 
 export const Route = createFileRoute("/agency/$slug/financial/cash")({
-  head: ({ context }: any) => ({ meta: [{ title: `Caixa Diário · ${context?.brand?.platform_name || 'Turis'}` }] }),
+  head: ({ context }: any) => ({
+    meta: [{ title: `Caixa Diário · ${context?.brand?.platform_name || "Turis"}` }],
+  }),
   component: CashPage,
 });
 
@@ -334,11 +346,14 @@ function CashPage() {
 
   if (registersQ.isError) {
     return (
-      <div className="flex-1 flex flex-col items-center justify-center p-8 glass bg-white/5 border-white/10">
+      <div className="flex-1 flex flex-col items-center justify-center p-8 glass">
         <div className="text-center space-y-3 max-w-md glass-card border-none p-6 rounded-[var(--radius-card)] border border-red-200 text-red-800">
           <AlertCircle className="w-8 h-8 mx-auto text-red-600" />
           <h3 className="text-sm font-bold">Erro ao carregar caixas</h3>
-          <p className="text-xs text-red-700">Não foi possível recuperar a lista de caixas da agência. Verifique sua conexão ou suas credenciais de acesso.</p>
+          <p className="text-xs text-red-700">
+            Não foi possível recuperar a lista de caixas da agência. Verifique sua conexão ou suas
+            credenciais de acesso.
+          </p>
         </div>
       </div>
     );
@@ -347,12 +362,12 @@ function CashPage() {
   if (!registersQ.isLoading && registers.length === 0) {
     return (
       <div className="flex-1 flex flex-col overflow-hidden min-h-0">
-                  <PageHeader
-            title="Caixa Diário"
-            primaryAction={
+        <PageHeader
+          title="Caixa Diário"
+          primaryAction={
             <ModuleActionButton
-          label="Criar Caixa"
-          icon={<Plus className="h-3.5 w-3.5" />}
+              label="Criar Caixa"
+              icon={<Plus className="h-3.5 w-3.5" />}
               onClick={() => setNewRegisterSheet(true)}
             />
           }
@@ -376,75 +391,77 @@ function CashPage() {
 
   return (
     <div className="flex-1 flex flex-col overflow-hidden min-h-0">
-              <PageHeader
-          title="Fluxo de Caixa"
-          actions={
-            <div className="flex items-center gap-1.5">
-              {activeReg?.type === "physical" &&
-                (activeSession ? (
-                  <Button variant="ghost"
-                    onClick={() => setCloseRegisterSheet(true)}
-                    className="flex h-7 items-center gap-1 rounded-full px-2.5 text-xs font-semibold text-danger border-danger/20 hover:bg-danger/5 transition-colors cursor-pointer"
-                  >
-                    <Lock className="h-3 w-3" /> Fechar
-                  </Button>
-                ) : (
-                  <Button variant="default"
-                    onClick={() => setOpenRegisterSheet(true)}
-                    className="flex h-7 items-center gap-1 rounded-full px-2.5 text-xs font-semibold bg-brand hover:bg-brand/90 text-brand-foreground transition-colors cursor-pointer"
-                  >
-                    <Unlock className="h-3 w-3" /> Abrir
-                  </Button>
-                ))}
+      <PageHeader
+        title="Fluxo de Caixa"
+        actions={
+          <div className="flex items-center gap-1.5">
+            {activeReg?.type === "physical" &&
+              (activeSession ? (
+                <Button
+                  variant="ghost"
+                  onClick={() => setCloseRegisterSheet(true)}
+                  className="flex h-7 items-center gap-1 rounded-full px-2.5 text-xs font-semibold text-danger border-danger/20 hover:bg-danger/5 transition-colors cursor-pointer"
+                >
+                  <Lock className="h-3 w-3" /> Fechar
+                </Button>
+              ) : (
+                <Button
+                  variant="default"
+                  onClick={() => setOpenRegisterSheet(true)}
+                  className="flex h-7 items-center gap-1 rounded-full px-2.5 text-xs font-semibold bg-brand hover:bg-brand/90 text-brand-foreground transition-colors cursor-pointer"
+                >
+                  <Unlock className="h-3 w-3" /> Abrir
+                </Button>
+              ))}
 
-              {(activeReg?.type !== "physical" || activeSession) && (
-                <div className="flex gap-1">
-                  <Button
-                    onClick={() => setNewTxType("receipt")}
-                    className="h-7 px-2.5 rounded-full bg-success hover:bg-success/90 ds-meta font-semibold text-white transition-all cursor-pointer"
-                  >
-                    + Entrada
-                  </Button>
-                  <Button
-                    onClick={() => setNewTxType("payment")}
-                    className="h-7 px-2.5 rounded-full bg-danger hover:bg-danger/90 ds-meta font-semibold text-white transition-all cursor-pointer"
-                  >
-                    + Saída
-                  </Button>
-                  <Button
-                    onClick={() => setNewTxType("reconciliation")}
-                    className="h-7 px-2.5 rounded-full bg-info hover:bg-info/90 ds-meta font-semibold text-white transition-all cursor-pointer flex items-center gap-1"
-                  >
-                    <Coins className="h-3 w-3" /> Conciliar
-                  </Button>
-                  <Button
-                    onClick={() => setNewTxType("vale")}
-                    className="h-7 px-2.5 rounded-full bg-warning hover:bg-warning/90 ds-meta font-semibold text-white transition-all cursor-pointer flex items-center gap-1"
-                  >
-                    <Users className="h-3 w-3" /> Vale
-                  </Button>
-                  <label className="h-7 px-2.5 rounded-full border border-white/15 bg-white/5 hover:bg-white/10 ds-meta font-semibold text-white/90 transition-all cursor-pointer flex items-center gap-1">
-                    <FileText className="h-3 w-3" /> OCR
-                    <Input
-                      type="file"
-                      accept="image/*,application/pdf"
-                      className="hidden"
-                      onChange={handleFileOcr}
-                      disabled={ocrLoading}
-                    />
-                  </label>
-                </div>
-              )}
-            </div>
-          }
-          primaryAction={
-            <ModuleActionButton
-        label="Criar Caixa"
-        icon={<Plus className="h-3.5 w-3.5" />}
-              onClick={() => setNewRegisterSheet(true)}
-            />
-          }
-        />
+            {(activeReg?.type !== "physical" || activeSession) && (
+              <div className="flex gap-1">
+                <Button
+                  onClick={() => setNewTxType("receipt")}
+                  className="h-7 px-2.5 rounded-full bg-success hover:bg-success/90 ds-meta font-semibold text-white transition-all cursor-pointer"
+                >
+                  + Entrada
+                </Button>
+                <Button
+                  onClick={() => setNewTxType("payment")}
+                  className="h-7 px-2.5 rounded-full bg-danger hover:bg-danger/90 ds-meta font-semibold text-white transition-all cursor-pointer"
+                >
+                  + Saída
+                </Button>
+                <Button
+                  onClick={() => setNewTxType("reconciliation")}
+                  className="h-7 px-2.5 rounded-full bg-info hover:bg-info/90 ds-meta font-semibold text-white transition-all cursor-pointer flex items-center gap-1"
+                >
+                  <Coins className="h-3 w-3" /> Conciliar
+                </Button>
+                <Button
+                  onClick={() => setNewTxType("vale")}
+                  className="h-7 px-2.5 rounded-full bg-warning hover:bg-warning/90 ds-meta font-semibold text-white transition-all cursor-pointer flex items-center gap-1"
+                >
+                  <Users className="h-3 w-3" /> Vale
+                </Button>
+                <label className="h-7 px-2.5 rounded-full border border-white/15 glass hover:glass-dark ds-meta font-semibold text-white/90 transition-all cursor-pointer flex items-center gap-1">
+                  <FileText className="h-3 w-3" /> OCR
+                  <Input
+                    type="file"
+                    accept="image/*,application/pdf"
+                    className="hidden"
+                    onChange={handleFileOcr}
+                    disabled={ocrLoading}
+                  />
+                </label>
+              </div>
+            )}
+          </div>
+        }
+        primaryAction={
+          <ModuleActionButton
+            label="Criar Caixa"
+            icon={<Plus className="h-3.5 w-3.5" />}
+            onClick={() => setNewRegisterSheet(true)}
+          />
+        }
+      />
 
       <div className="flex-1 overflow-y-auto px-4  md:pr-6 py-4 space-y-5 pb-24">
         {/* Register Selector */}
@@ -463,7 +480,7 @@ function CashPage() {
               <Select
                 value={selectedRegId || registers[0]?.id}
                 onChange={(e) => setSelectedRegId(e.target.value)}
-                className="min-w-[200px]"
+                className="min-w-48"
               >
                 {registers.map((r) => (
                   <option key={r.id} value={r.id}>
@@ -500,19 +517,17 @@ function CashPage() {
             <strong className="text-2xl font-mono block mt-1.5 text-success">
               +{formatCurrency(entries)}
             </strong>
-            <span className="ds-meta text-muted-foreground mt-1 block">
-              Aportes e recebimentos
-            </span>
+            <span className="ds-meta text-muted-foreground mt-1 block">Aportes e recebimentos</span>
           </div>
 
           <div className="glass-card border-none border-none rounded-[var(--radius-card)] p-4">
             <span className="ds-meta font-bold text-muted-foreground uppercase tracking-widest flex items-center gap-1">
               <ArrowUpCircle className="w-3.5 h-3.5 text-danger" /> Total Saídas
             </span>
-            <strong className="text-2xl font-mono block mt-1.5 text-danger">-{formatCurrency(exits)}</strong>
-            <span className="ds-meta text-muted-foreground mt-1 block">
-              Sangrias e despesas
-            </span>
+            <strong className="text-2xl font-mono block mt-1.5 text-danger">
+              -{formatCurrency(exits)}
+            </strong>
+            <span className="ds-meta text-muted-foreground mt-1 block">Sangrias e despesas</span>
           </div>
 
           <div className="glass-card border-none border-none rounded-[var(--radius-card)] p-4">
@@ -534,27 +549,33 @@ function CashPage() {
         {activeReg?.type === "physical" && sessionQ.isError && (
           <div className="rounded-[var(--radius-card)] border border-red-200 bg-red-50/50 p-6 text-center text-red-800 flex items-center justify-center gap-2">
             <AlertCircle className="w-4 h-4 text-red-600 shrink-0" />
-            <span className="text-xs font-semibold">Falha ao verificar status da sessão de caixa. Recarregue a página.</span>
+            <span className="text-xs font-semibold">
+              Falha ao verificar status da sessão de caixa. Recarregue a página.
+            </span>
           </div>
         )}
 
         {/* Closed Physical Register */}
-        {activeReg?.type === "physical" && !activeSession && !sessionQ.isLoading && !sessionQ.isError && (
-          <div className="rounded-[var(--radius-card)] border border-dashed border-border glass-card border-none p-12 text-center">
-            <Lock className="mx-auto h-12 w-12 text-muted-foreground mb-3" />
-            <h3 className="text-sm font-bold text-foreground">O caixa está fechado</h3>
-            <p className="text-xs text-muted-foreground max-w-sm mx-auto mt-1">
-              Abra o caixa informando o saldo inicial para começar a registrar transações
-              financeiras diárias.
-            </p>
-            <Button variant="default"
-              onClick={() => setOpenRegisterSheet(true)}
-              className="mt-4 text-xs px-4 py-2"
-            >
-              Abrir Sessão de Caixa
-            </Button>
-          </div>
-        )}
+        {activeReg?.type === "physical" &&
+          !activeSession &&
+          !sessionQ.isLoading &&
+          !sessionQ.isError && (
+            <div className="rounded-[var(--radius-card)] border border-dashed border-border glass-card border-none p-12 text-center">
+              <Lock className="mx-auto h-12 w-12 text-muted-foreground mb-3" />
+              <h3 className="text-sm font-bold text-foreground">O caixa está fechado</h3>
+              <p className="text-xs text-muted-foreground max-w-sm mx-auto mt-1">
+                Abra o caixa informando o saldo inicial para começar a registrar transações
+                financeiras diárias.
+              </p>
+              <Button
+                variant="default"
+                onClick={() => setOpenRegisterSheet(true)}
+                className="mt-4 text-xs px-4 py-2"
+              >
+                Abrir Sessão de Caixa
+              </Button>
+            </div>
+          )}
 
         {/* Transactions List */}
         {(activeReg?.type !== "physical" || activeSession) && (
@@ -590,7 +611,7 @@ function CashPage() {
             ) : (
               <div className="overflow-x-auto">
                 <table className="w-full text-sm">
-                  <thead className="glass bg-white/5 border-white/10 text-left ds-label-caps tracking-wider text-muted-foreground border-b border-border">
+                  <thead className="glass text-left ds-label-caps tracking-wider text-muted-foreground border-b border-border">
                     <tr>
                       <th className="px-5 py-3">Data/Hora</th>
                       <th className="px-5 py-3">Descrição / Observações</th>
@@ -601,7 +622,10 @@ function CashPage() {
                   </thead>
                   <tbody className="divide-y divide-border">
                     {txList.map((tx) => (
-                      <tr key={tx.id} className="hover:glass bg-white/5 border-white/10/50 transition-colors">
+                      <tr
+                        key={tx.id}
+                        className="hover:glass/50 transition-colors"
+                      >
                         <td className="px-5 py-3.5 whitespace-nowrap text-xs text-muted-foreground font-mono">
                           {new Date(tx.transaction_date).toLocaleString("pt-BR")}
                         </td>
@@ -621,7 +645,7 @@ function CashPage() {
                         </td>
                         <td className="px-5 py-3.5 text-xs">
                           {tx.category ? (
-                            <span className="inline-block glass bg-white/5 border-white/10 border-none rounded px-1.5 py-0.5 text-[9px] font-extrabold uppercase">
+                            <span className="inline-block glass border-none rounded px-1.5 py-0.5 text-[9px] font-extrabold uppercase">
                               {tx.category}
                             </span>
                           ) : (
@@ -818,7 +842,7 @@ function CloseForm({
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-      <div className="glass bg-white/5 border-white/10 border-none rounded-[var(--radius-card)] p-4 text-xs space-y-2">
+      <div className="glass border-none rounded-[var(--radius-card)] p-4 text-xs space-y-2">
         <div className="flex justify-between">
           <span className="text-muted-foreground">Saldo esperado no sistema:</span>
           <strong className="font-mono">{formatCurrency(currentBalance)}</strong>
@@ -848,7 +872,12 @@ function CloseForm({
         <Button variant="ghost" type="button" onClick={onClose}>
           Cancelar
         </Button>
-        <Button variant="default" type="submit" disabled={loading} className="bg-danger hover:bg-danger/90">
+        <Button
+          variant="default"
+          type="submit"
+          disabled={loading}
+          className="bg-danger hover:bg-danger/90"
+        >
           {loading ? "Fechando..." : "Encerrar Expediente"}
         </Button>
       </div>
@@ -1042,7 +1071,7 @@ function ReconciliationForm({
         <Input type="number" {...register("commission_rate")} />
       </Field>
 
-      <div className="glass bg-white/5 border-white/10 border-none rounded-[var(--radius-card)] p-4 text-xs space-y-2.5">
+      <div className="glass border-none rounded-[var(--radius-card)] p-4 text-xs space-y-2.5">
         <div className="flex justify-between">
           <span className="text-muted-foreground">Valor Total da Venda:</span>
           <strong className="font-mono">{formatCurrency(totalSale)}</strong>

@@ -2,7 +2,22 @@ import { createFileRoute, useParams } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import {
-  Plus, Eye, Clock, Tag, BookOpen, ExternalLink, BarChart2, Edit2, X, Search, Sparkles, Wand2, Share2, CheckCircle2, AlertCircle, } from "lucide-react";
+  Plus,
+  Eye,
+  Clock,
+  Tag,
+  BookOpen,
+  ExternalLink,
+  BarChart2,
+  Edit2,
+  X,
+  Search,
+  Sparkles,
+  Wand2,
+  Share2,
+  CheckCircle2,
+  AlertCircle,
+} from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { useAgency } from "@/lib/agency-context";
@@ -21,7 +36,9 @@ import { FileUploader } from "@/components/uploads/FileUploader";
 import { RichTextEditor } from "@/components/ui/RichTextEditor";
 
 export const Route = createFileRoute("/agency/$slug/portal/blog")({
-  head: ({ context }: any) => ({ meta: [{ title: `Blog · ${context?.brand?.platform_name || 'Turis'}` }] }),
+  head: ({ context }: any) => ({
+    meta: [{ title: `Blog · ${context?.brand?.platform_name || "Turis"}` }],
+  }),
   component: BlogPage,
 });
 
@@ -55,8 +72,6 @@ function calcReadingTime(text: string) {
   const words = text.trim().split(/\s+/).length;
   return Math.max(1, Math.ceil(words / 200));
 }
-
-
 
 function BlogPage() {
   const { agency } = useAgency();
@@ -95,27 +110,27 @@ function BlogPage() {
 
   return (
     <div className="flex-1 flex flex-col overflow-hidden min-h-0">
-              <PageHeader
-          title="Blog do Portal"
-          search={{
-            value: filterStatus !== "all" ? filterStatus : "",
-            onChange: () => {},
-            placeholder: "Buscar artigos..."
-          }}
-          filters={["all", "published", "draft", "scheduled"].map((s) => ({
-            label: s === "all" ? "Todos" : (BLOG_STATUS_MAP[s]?.label ?? s),
-            value: s
-          }))}
-          activeFilter={filterStatus}
-          onFilterChange={setFilterStatus}
-          primaryAction={
-            <ModuleActionButton
-        label="Novo Artigo"
-        icon={<Plus className="h-3.5 w-3.5" />}
-              onClick={() => setNewOpen(true)}
-            />
-          }
-        />
+      <PageHeader
+        title="Blog do Portal"
+        search={{
+          value: filterStatus !== "all" ? filterStatus : "",
+          onChange: () => {},
+          placeholder: "Buscar artigos...",
+        }}
+        filters={["all", "published", "draft", "scheduled"].map((s) => ({
+          label: s === "all" ? "Todos" : (BLOG_STATUS_MAP[s]?.label ?? s),
+          value: s,
+        }))}
+        activeFilter={filterStatus}
+        onFilterChange={setFilterStatus}
+        primaryAction={
+          <ModuleActionButton
+            label="Novo Artigo"
+            icon={<Plus className="h-3.5 w-3.5" />}
+            onClick={() => setNewOpen(true)}
+          />
+        }
+      />
 
       <div className="flex-1 overflow-y-auto px-4  md:pr-6 py-4 min-h-0 space-y-6 pb-24">
         {q.isError && (
@@ -141,7 +156,10 @@ function BlogPage() {
               icon: BarChart2,
             },
           ].map((s) => (
-            <div key={s.label} className="rounded-[var(--radius-card)] border-none glass-card border-none p-4">
+            <div
+              key={s.label}
+              className="rounded-[var(--radius-card)] border-none glass-card border-none p-4"
+            >
               <div className="flex items-center gap-1.5 ds-meta text-muted-foreground">
                 <s.icon className="h-3.5 w-3.5" />
                 {s.label}
@@ -174,7 +192,7 @@ function BlogPage() {
                 className="group rounded-[var(--radius-card)] border-none glass-card border-none text-left overflow-hidden hover:border-border-strong transition-all"
               >
                 {/* Cover */}
-                <div className="relative aspect-video overflow-hidden glass bg-white/5 border-white/10">
+                <div className="relative aspect-video overflow-hidden glass">
                   {p.cover_image_url ? (
                     <img
                       src={p.cover_image_url}
@@ -203,12 +221,15 @@ function BlogPage() {
                   <div className="mt-3 flex items-center justify-between ds-meta text-muted-foreground">
                     <div className="flex items-center gap-2">
                       {p.category && (
-                        <span className="rounded glass bg-white/5 border-white/10 px-1.5 py-0.5 font-medium">
+                        <span className="rounded glass px-1.5 py-0.5 font-medium">
                           {p.category}
                         </span>
                       )}
                       {p.tags?.slice(0, 2).map((t) => (
-                        <span key={t} className="rounded glass bg-white/5 border-white/10 px-1.5 py-0.5">
+                        <span
+                          key={t}
+                          className="rounded glass px-1.5 py-0.5"
+                        >
                           {t}
                         </span>
                       ))}
@@ -386,7 +407,7 @@ function BlogSheet({
               href={previewUrl}
               target="_blank"
               rel="noreferrer"
-              className="flex h-8 w-max items-center gap-1.5 rounded-full border-none px-3 text-xs font-medium hover:glass bg-white/5 border-white/10 transition-colors"
+              className="flex h-8 w-max items-center gap-1.5 rounded-full border-none px-3 text-xs font-medium hover:glass transition-colors"
             >
               <ExternalLink className="h-3.5 w-3.5" />
               Ver publicado
@@ -394,155 +415,154 @@ function BlogSheet({
           </div>
         )}
 
+        <form id="blog-form" onSubmit={submit} className="space-y-4">
+          {/* COVER IMAGE */}
+          <FileUploader
+            label="Imagem de capa (aparece no portal e redes sociais)"
+            value={coverUrl || null}
+            onChange={(url) => setCoverUrl(url ?? "")}
+            bucket="agency-logos"
+            folder={`${agencyId}/blog-covers`}
+            variant="image"
+            publicBucket={true}
+          />
 
-          <form id="blog-form" onSubmit={submit} className="space-y-4">
-            {/* COVER IMAGE */}
-            <FileUploader
-              label="Imagem de capa (aparece no portal e redes sociais)"
-              value={coverUrl || null}
-              onChange={(url) => setCoverUrl(url ?? "")}
-              bucket="agency-logos"
-              folder={`${agencyId}/blog-covers`}
-              variant="image"
-              publicBucket={true}
+          <Field label="Título *">
+            <Input
+              required
+              value={title}
+              onChange={(e) => setTitle(e.target.value)}
+              placeholder="Ex: 5 destinos imperdíveis para o verão 2026"
             />
+          </Field>
 
-            <Field label="Título *">
+          <Field label="Resumo" hint="Aparece nas listagens e como meta description padrão">
+            <Textarea
+              rows={2}
+              value={excerpt}
+              onChange={(e) => setExcerpt(e.target.value)}
+              placeholder="Breve descrição do artigo…"
+            />
+          </Field>
+
+          <div className="rounded-[var(--radius-card)] border-none p-4 glass/50 space-y-4">
+            <div className="flex items-center justify-between">
+              <label className="text-sm font-bold text-foreground">Conteúdo do Artigo</label>
+            </div>
+
+            <RichTextEditor value={content} onChange={setContent} />
+          </div>
+
+          <div className="grid gap-3 sm:grid-cols-2">
+            <Field label="Categoria">
               <Input
+                value={category}
+                onChange={(e) => setCategory(e.target.value)}
+                placeholder="Ex: Destinos, Dicas, Promoções"
+              />
+            </Field>
+            <Field label="Tags" hint="Separe por vírgula">
+              <Input
+                value={tagsRaw}
+                onChange={(e) => setTagsRaw(e.target.value)}
+                placeholder="viagem, europa, férias"
+              />
+            </Field>
+          </div>
+
+          <Field label="Status">
+            <Select
+              value={status}
+              onChange={(e) => setStatus(e.target.value)}
+              className="w-full px-2.5 rounded-full glass-card border-none focus:border-border-strong"
+            >
+              <option value="draft">Rascunho</option>
+              <option value="published">Publicado</option>
+              <option value="scheduled">Agendado</option>
+            </Select>
+          </Field>
+
+          {status === "scheduled" && (
+            <Field
+              label="Data e Hora do Agendamento *"
+              hint="O artigo ficará público automaticamente nesta data"
+            >
+              <Input
+                type="datetime-local"
                 required
-                value={title}
-                onChange={(e) => setTitle(e.target.value)}
-                placeholder="Ex: 5 destinos imperdíveis para o verão 2026"
+                value={scheduledDate}
+                onChange={(e) => setScheduledDate(e.target.value)}
               />
             </Field>
+          )}
 
-            <Field label="Resumo" hint="Aparece nas listagens e como meta description padrão">
-              <Textarea
-                rows={2}
-                value={excerpt}
-                onChange={(e) => setExcerpt(e.target.value)}
-                placeholder="Breve descrição do artigo…"
-              />
-            </Field>
-
-            <div className="rounded-[var(--radius-card)] border-none p-4 glass bg-white/5 border-white/10/50 space-y-4">
-              <div className="flex items-center justify-between">
-                <label className="text-sm font-bold text-foreground">Conteúdo do Artigo</label>
+          {/* SEO SECTION */}
+          <div className="rounded-[var(--radius-card)] border-none">
+            <Button
+              type="button"
+              onClick={() => setSeoOpen((v) => !v)}
+              className="flex w-full items-center justify-between px-4 py-3 text-xs font-semibold uppercase tracking-wide text-muted-foreground hover:glass"
+            >
+              <span className="flex items-center gap-2">
+                <Search className="h-3.5 w-3.5" />
+                SEO e redes sociais
+              </span>
+              <span className={`transition-transform ${seoOpen ? "rotate-180" : ""}`}>▾</span>
+            </Button>
+            {seoOpen && (
+              <div className="space-y-3 border-t border-border px-4 py-4">
+                <Field label="Título para SEO" hint="Padrão: título do artigo. Máx 60 caracteres">
+                  <Input
+                    value={metaTitle}
+                    onChange={(e) => setMetaTitle(e.target.value)}
+                    maxLength={60}
+                    placeholder={title}
+                  />
+                  <span className="mt-0.5 block text-right ds-meta text-muted-foreground">
+                    {metaTitle.length}/60
+                  </span>
+                </Field>
+                <Field label="Meta description" hint="Padrão: resumo do artigo. Máx 160 caracteres">
+                  <Textarea
+                    rows={2}
+                    value={metaDesc}
+                    onChange={(e) => setMetaDesc(e.target.value)}
+                    maxLength={160}
+                    placeholder={excerpt}
+                  />
+                  <span className="mt-0.5 block text-right ds-meta text-muted-foreground">
+                    {metaDesc.length}/160
+                  </span>
+                </Field>
+                <p className="ds-meta text-muted-foreground">
+                  A imagem de capa é usada automaticamente como OG image nas redes sociais.
+                </p>
               </div>
-
-              <RichTextEditor value={content} onChange={setContent} />
-            </div>
-
-            <div className="grid gap-3 sm:grid-cols-2">
-              <Field label="Categoria">
-                <Input
-                  value={category}
-                  onChange={(e) => setCategory(e.target.value)}
-                  placeholder="Ex: Destinos, Dicas, Promoções"
-                />
-              </Field>
-              <Field label="Tags" hint="Separe por vírgula">
-                <Input
-                  value={tagsRaw}
-                  onChange={(e) => setTagsRaw(e.target.value)}
-                  placeholder="viagem, europa, férias"
-                />
-              </Field>
-            </div>
-
-            <Field label="Status">
-              <Select
-                value={status}
-                onChange={(e) => setStatus(e.target.value)}
-                className="w-full px-2.5 rounded-full glass-card border-none focus:border-border-strong"
-              >
-                <option value="draft">Rascunho</option>
-                <option value="published">Publicado</option>
-                <option value="scheduled">Agendado</option>
-              </Select>
-            </Field>
-
-            {status === "scheduled" && (
-              <Field
-                label="Data e Hora do Agendamento *"
-                hint="O artigo ficará público automaticamente nesta data"
-              >
-                <Input
-                  type="datetime-local"
-                  required
-                  value={scheduledDate}
-                  onChange={(e) => setScheduledDate(e.target.value)}
-                />
-              </Field>
             )}
+          </div>
 
-            {/* SEO SECTION */}
-            <div className="rounded-[var(--radius-card)] border-none">
-              <Button
-                type="button"
-                onClick={() => setSeoOpen((v) => !v)}
-                className="flex w-full items-center justify-between px-4 py-3 text-xs font-semibold uppercase tracking-wide text-muted-foreground hover:glass bg-white/5 border-white/10"
-              >
-                <span className="flex items-center gap-2">
-                  <Search className="h-3.5 w-3.5" />
-                  SEO e redes sociais
-                </span>
-                <span className={`transition-transform ${seoOpen ? "rotate-180" : ""}`}>▾</span>
-              </Button>
-              {seoOpen && (
-                <div className="space-y-3 border-t border-border px-4 py-4">
-                  <Field label="Título para SEO" hint="Padrão: título do artigo. Máx 60 caracteres">
-                    <Input
-                      value={metaTitle}
-                      onChange={(e) => setMetaTitle(e.target.value)}
-                      maxLength={60}
-                      placeholder={title}
-                    />
-                    <span className="mt-0.5 block text-right ds-meta text-muted-foreground">
-                      {metaTitle.length}/60
+          {/* Reading time info */}
+          <div className="flex items-center gap-1.5 ds-meta text-muted-foreground">
+            <Clock className="h-3.5 w-3.5" />
+            Tempo de leitura estimado: ~{readingTime} min
+            {tagsRaw && (
+              <>
+                <Tag className="ml-3 h-3.5 w-3.5" />
+                {tagsRaw
+                  .split(",")
+                  .filter(Boolean)
+                  .map((t) => (
+                    <span
+                      key={t}
+                      className="rounded glass px-1.5 py-0.5 font-medium"
+                    >
+                      {t.trim()}
                     </span>
-                  </Field>
-                  <Field
-                    label="Meta description"
-                    hint="Padrão: resumo do artigo. Máx 160 caracteres"
-                  >
-                    <Textarea
-                      rows={2}
-                      value={metaDesc}
-                      onChange={(e) => setMetaDesc(e.target.value)}
-                      maxLength={160}
-                      placeholder={excerpt}
-                    />
-                    <span className="mt-0.5 block text-right ds-meta text-muted-foreground">
-                      {metaDesc.length}/160
-                    </span>
-                  </Field>
-                  <p className="ds-meta text-muted-foreground">
-                    A imagem de capa é usada automaticamente como OG image nas redes sociais.
-                  </p>
-                </div>
-              )}
-            </div>
-
-            {/* Reading time info */}
-            <div className="flex items-center gap-1.5 ds-meta text-muted-foreground">
-              <Clock className="h-3.5 w-3.5" />
-              Tempo de leitura estimado: ~{readingTime} min
-              {tagsRaw && (
-                <>
-                  <Tag className="ml-3 h-3.5 w-3.5" />
-                  {tagsRaw
-                    .split(",")
-                    .filter(Boolean)
-                    .map((t) => (
-                      <span key={t} className="rounded glass bg-white/5 border-white/10 px-1.5 py-0.5 font-medium">
-                        {t.trim()}
-                      </span>
-                    ))}
-                </>
-              )}
-            </div>
-          </form>
+                  ))}
+              </>
+            )}
+          </div>
+        </form>
         {/* Footer */}
         <div className="border-t border-border px-6 py-4 flex items-center justify-between gap-2">
           <div className="flex items-center gap-2">
@@ -552,7 +572,7 @@ function BlogSheet({
                 type="button"
                 onClick={postToGoogleBusiness}
                 disabled={gbpPosting}
-                className="flex items-center gap-1.5 rounded-full border-none px-3 py-1.5 text-xs font-medium text-muted-foreground hover:glass bg-white/5 border-white/10 hover:text-foreground disabled:opacity-50 transition-colors"
+                className="flex items-center gap-1.5 rounded-full border-none px-3 py-1.5 text-xs font-medium text-muted-foreground hover:glass hover:text-foreground disabled:opacity-50 transition-colors"
               >
                 <Share2 className="h-3.5 w-3.5" />
                 {gbpPosting ? "Publicando..." : "Publicar no Google"}
@@ -569,7 +589,13 @@ function BlogSheet({
             <Button variant="ghost" type="button" onClick={onClose}>
               Cancelar
             </Button>
-            <Button variant="default" type="submit" form="blog-form" disabled={submitting} className="gap-1.5">
+            <Button
+              variant="default"
+              type="submit"
+              form="blog-form"
+              disabled={submitting}
+              className="gap-1.5"
+            >
               {submitting ? "Salvando…" : post ? "Salvar alterações" : "Criar artigo"}
             </Button>
           </div>

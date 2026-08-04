@@ -4,18 +4,12 @@ import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { PageHeader } from "@/components/shell/PageHeader";
-import { 
-  Plane, 
-  Ticket, 
-  ShieldAlert, 
-  Hotel, 
-  QrCode, 
-  WalletCards,
-  X 
-} from "lucide-react";
+import { Plane, Ticket, ShieldAlert, Hotel, QrCode, WalletCards, X } from "lucide-react";
 
 export const Route = createFileRoute("/client/wallet")({
-  head: ({ context }: any) => ({ meta: [{ title: `Carteira Digital · ${context?.brand?.platform_name || 'Turis'}` }] }),
+  head: ({ context }: any) => ({
+    meta: [{ title: `Carteira Digital · ${context?.brand?.platform_name || "Turis"}` }],
+  }),
   component: ClientWallet,
 });
 
@@ -23,10 +17,14 @@ type PassType = "boarding_pass" | "ticket" | "insurance" | "voucher";
 
 function getPassConfig(type: PassType) {
   switch (type) {
-    case "boarding_pass": return { icon: Plane, label: "Cartão de Embarque" };
-    case "insurance": return { icon: ShieldAlert, label: "Seguro Viagem" };
-    case "ticket": return { icon: Ticket, label: "Ingresso" };
-    default: return { icon: Hotel, label: "Voucher de Reserva" };
+    case "boarding_pass":
+      return { icon: Plane, label: "Cartão de Embarque" };
+    case "insurance":
+      return { icon: ShieldAlert, label: "Seguro Viagem" };
+    case "ticket":
+      return { icon: Ticket, label: "Ingresso" };
+    default:
+      return { icon: Hotel, label: "Voucher de Reserva" };
   }
 }
 
@@ -48,8 +46,10 @@ function ClientWallet() {
         .order("created_at", { ascending: false });
 
       // Tabela ainda não existente no ambiente (migration pendente): falha visível, não silenciosa
-      if (error && error.code === '42P01') {
-        throw new Error("[wallet] Tabela 'client_wallet_passes' não encontrada. Execute: supabase db push");
+      if (error && error.code === "42P01") {
+        throw new Error(
+          "[wallet] Tabela 'client_wallet_passes' não encontrada. Execute: supabase db push",
+        );
       }
       if (error) throw error;
 
@@ -75,7 +75,9 @@ function ClientWallet() {
         <div className="rounded-[var(--radius-card)] border border-dashed border-border p-12 text-center text-muted-foreground glass-card border-none/50 mt-10">
           <WalletCards className="h-10 w-10 mx-auto mb-3 opacity-50" />
           <h3 className="text-lg font-semibold text-foreground mb-1">Carteira Vazia</h3>
-          <p className="text-sm">Os documentos das suas próximas viagens aparecerão aqui magicamente.</p>
+          <p className="text-sm">
+            Os documentos das suas próximas viagens aparecerão aqui magicamente.
+          </p>
         </div>
       )}
 
@@ -99,17 +101,25 @@ function ClientWallet() {
               `}
               style={{
                 backgroundColor: pass.color || "#0f172a",
-                transform: !isSelected ? `translateY(${index * 10}px) scale(${1 - index * 0.02})` : "none",
-                zIndex: isSelected ? 50 : 40 - index
+                transform: !isSelected
+                  ? `translateY(${index * 10}px) scale(${1 - index * 0.02})`
+                  : "none",
+                zIndex: isSelected ? 50 : 40 - index,
               }}
             >
               <div className="flex justify-between items-start">
-                <div className="flex items-center gap-2 bg-white/20 px-3 py-1 rounded-full text-xs font-semibold backdrop-blur-md">
+                <div className="flex items-center gap-2 glass-dark px-3 py-1 rounded-full text-xs font-semibold backdrop-blur-md">
                   <Icon className="h-3 w-3" />
                   {config.label}
                 </div>
                 {isSelected && (
-                  <Button onClick={(e) => { e.stopPropagation(); setSelectedPass(null); }} className="p-2 bg-white/20 rounded-full hover:bg-white/30 transition-colors">
+                  <Button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setSelectedPass(null);
+                    }}
+                    className="p-2 glass-dark rounded-full hover:bg-white/30 transition-colors"
+                  >
                     <X className="h-4 w-4" />
                   </Button>
                 )}
@@ -124,8 +134,12 @@ function ClientWallet() {
                 <div className="absolute bottom-6 left-6 right-6 bg-white text-black rounded-[var(--radius-card)] p-6 flex flex-col items-center shadow-inner animate-in fade-in slide-in-from-bottom-10 duration-500">
                   <QrCode className="h-48 w-48 text-zinc-900" strokeWidth={1} />
                   <div className="mt-4 text-center">
-                    <p className="text-xs text-muted-foreground uppercase tracking-widest font-semibold mb-1">Código do Bilhete</p>
-                    <p className="font-mono text-xl tracking-wider font-bold">{pass.barcode_value}</p>
+                    <p className="text-xs text-muted-foreground uppercase tracking-widest font-semibold mb-1">
+                      Código do Bilhete
+                    </p>
+                    <p className="font-mono text-xl tracking-wider font-bold">
+                      {pass.barcode_value}
+                    </p>
                   </div>
                   <div className="mt-6 w-full flex justify-between text-xs font-medium border-t border-border pt-4">
                     <span className="text-muted-foreground">Status</span>

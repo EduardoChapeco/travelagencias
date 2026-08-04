@@ -13,13 +13,16 @@ serve(async (req) => {
   try {
     const supabase = createClient(
       Deno.env.get("SUPABASE_URL") ?? "",
-      Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? ""
+      Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? "",
     );
 
     const { ticket_id, text, type } = await req.json();
 
     if (!ticket_id || !text) {
-      return new Response(JSON.stringify({ error: "Missing parameters" }), { status: 400, headers: corsHeaders });
+      return new Response(JSON.stringify({ error: "Missing parameters" }), {
+        status: 400,
+        headers: corsHeaders,
+      });
     }
 
     // 1. Obter dados do Ticket e Agência
@@ -52,20 +55,23 @@ serve(async (req) => {
 
     if (accErr || !account) {
       console.warn("No active email account found for agency", ticket.agency_id);
-      return new Response(JSON.stringify({ error: "Agency has no connected Gmail account" }), { status: 400, headers: corsHeaders });
+      return new Response(JSON.stringify({ error: "Agency has no connected Gmail account" }), {
+        status: 400,
+        headers: corsHeaders,
+      });
     }
 
     // 4. Montar a mensagem RFC 2822
     const subject = `Re: Chamado ${ticket.ticket_hash} - ${ticket.title}`;
     const utf8Subject = `=?utf-8?B?${btoa(unescape(encodeURIComponent(subject)))}?=`;
-    
+
     const messageParts = [
       `To: ${toEmail}`,
       `Subject: ${utf8Subject}`,
       `MIME-Version: 1.0`,
       `Content-Type: text/html; charset="UTF-8"`,
       ``,
-      text.replace(/\n/g, "<br>")
+      text.replace(/\n/g, "<br>"),
     ];
 
     const messageString = messageParts.join("\r\n");
@@ -75,14 +81,17 @@ serve(async (req) => {
       .replace(/=+$/, "");
 
     // 5. Enviar via Google API
-    const gmailRes = await fetch("https://gmail.googleapis.com/upload/gmail/v1/users/me/messages/send", {
-      method: "POST",
-      headers: {
-        "Authorization": `Bearer ${account.access_token_enc}`,
-        "Content-Type": "application/json"
+    const gmailRes = await fetch(
+      "https://gmail.googleapis.com/upload/gmail/v1/users/me/messages/send",
+      {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${account.access_token_enc}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ raw: encodedMessage }),
       },
-      body: JSON.stringify({ raw: encodedMessage })
-    });
+    );
 
     if (!gmailRes.ok) {
       const gErr = await gmailRes.text();

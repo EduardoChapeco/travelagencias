@@ -8,7 +8,10 @@ export const Route = (createFileRoute as any)("/privacy")({
   head: () => ({
     meta: [
       { title: "Política de Privacidade · Turis" },
-      { name: "description", content: "Política de Privacidade e Termos de LGPD da plataforma Turis." },
+      {
+        name: "description",
+        content: "Política de Privacidade e Termos de LGPD da plataforma Turis.",
+      },
     ],
   }),
   component: PrivacyPage,
@@ -52,9 +55,13 @@ function PrivacyPage() {
             <span className="ds-meta font-bold text-brand uppercase tracking-wider bg-brand/10 px-2 py-1 rounded">
               LGPD / GDPR Compliance
             </span>
-            <h1 className="text-3xl font-black text-foreground mt-3 tracking-tight">Política de Privacidade</h1>
+            <h1 className="text-3xl font-black text-foreground mt-3 tracking-tight">
+              Política de Privacidade
+            </h1>
             <p className="text-sm text-muted-foreground mt-2 leading-relaxed">
-              Esta política descreve as regras e diretrizes adotadas pelo Turis para a coleta, uso, armazenamento, proteção e eliminação de informações pessoais de usuários, clientes e parceiros integrados.
+              Esta política descreve as regras e diretrizes adotadas pelo Turis para a coleta, uso,
+              armazenamento, proteção e eliminação de informações pessoais de usuários, clientes e
+              parceiros integrados.
             </p>
           </div>
 
@@ -79,24 +86,40 @@ function PrivacyPage() {
             </div>
           ) : (
             <div className="space-y-6 text-sm text-foreground/80 leading-relaxed">
-              <h2 className="text-base font-bold text-foreground">1. Coleta de Informações via Integrações</h2>
+              <h2 className="text-base font-bold text-foreground">
+                1. Coleta de Informações via Integrações
+              </h2>
               <p>
-                O Turis integra-se com a WhatsApp Business Cloud API e Instagram Professional Messaging para viabilizar o gerenciamento centralizado de mensagens. Ao conectar seus canais, coletamos e processamos o conteúdo das conversas, mídia anexada, ID de usuário da rede social e informações de perfil com o único intuito de disponibilizar a Caixa de Entrada da agência.
+                O Turis integra-se com a WhatsApp Business Cloud API e Instagram Professional
+                Messaging para viabilizar o gerenciamento centralizado de mensagens. Ao conectar
+                seus canais, coletamos e processamos o conteúdo das conversas, mídia anexada, ID de
+                usuário da rede social e informações de perfil com o único intuito de disponibilizar
+                a Caixa de Entrada da agência.
               </p>
 
-              <h2 className="text-base font-bold text-foreground">2. Uso e Compartilhamento de Dados</h2>
+              <h2 className="text-base font-bold text-foreground">
+                2. Uso e Compartilhamento de Dados
+              </h2>
               <p>
-                Os dados coletados são tratados exclusivamente dentro do contexto do contrato de prestação de serviços com a agência de viagens licenciada. Não compartilhamos, vendemos ou alugamos informações com terceiros para fins publicitários ou mercadológicos.
+                Os dados coletados são tratados exclusivamente dentro do contexto do contrato de
+                prestação de serviços com a agência de viagens licenciada. Não compartilhamos,
+                vendemos ou alugamos informações com terceiros para fins publicitários ou
+                mercadológicos.
               </p>
 
               <h2 className="text-base font-bold text-foreground">3. Proteção e Segurança</h2>
               <p>
-                Todas as chaves de acesso e segredos de APIs da Meta são armazenados com criptografia de ponta no banco de dados e são acessados apenas pelo backend seguro das Edge Functions do Supabase, não sendo expostos para clientes web ou operadores da agência.
+                Todas as chaves de acesso e segredos de APIs da Meta são armazenados com
+                criptografia de ponta no banco de dados e são acessados apenas pelo backend seguro
+                das Edge Functions do Supabase, não sendo expostos para clientes web ou operadores
+                da agência.
               </p>
 
               <h2 className="text-base font-bold text-foreground">4. Direitos e Exclusão</h2>
               <p>
-                Qualquer titular de dados pode solicitar a exclusão de suas conversas e dados cadastrais da plataforma a qualquer momento através do canal oficial de suporte ou enviando uma solicitação em nossa página pública de exclusão.
+                Qualquer titular de dados pode solicitar a exclusão de suas conversas e dados
+                cadastrais da plataforma a qualquer momento através do canal oficial de suporte ou
+                enviando uma solicitação em nossa página pública de exclusão.
               </p>
             </div>
           )}
@@ -104,15 +127,19 @@ function PrivacyPage() {
       </main>
 
       {/* Footer */}
-      <footer className="border-t border-border glass bg-white/5 border-white/10/20 py-6 px-6 text-center text-xs text-muted-foreground shrink-0">
+      <footer className="border-t border-border glass/20 py-6 px-6 text-center text-xs text-muted-foreground shrink-0">
         <div className="max-w-4xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
           <div className="flex items-center gap-1.5">
             <Building2 className="h-3.5 w-3.5" />
             <span>Turis © 2026</span>
           </div>
           <div className="flex gap-4">
-            <a href="/terms" className="hover:underline">Termos de Uso</a>
-            <a href="/data-deletion" className="hover:underline">Exclusão de Dados</a>
+            <a href="/terms" className="hover:underline">
+              Termos de Uso
+            </a>
+            <a href="/data-deletion" className="hover:underline">
+              Exclusão de Dados
+            </a>
           </div>
         </div>
       </footer>

@@ -117,20 +117,20 @@ function PublicKnowledgeArticle() {
           <div className="mx-auto mt-8">{renderContent()}</div>
 
           {/* Votação */}
-          <div className="mt-16 flex flex-col items-center justify-center p-8 glass bg-white/5 border-white/10/50 rounded-3xl border-none">
+          <div className="mt-16 flex flex-col items-center justify-center p-8 glass/50 rounded-3xl border-none">
             <h3 className="text-base font-bold mb-5 text-foreground">Este artigo foi útil?</h3>
             <div className="flex gap-4">
               <Button
                 onClick={() => voteMutation.mutate({ articleId: article.id, isUpvote: true })}
                 disabled={voted !== null || voteMutation.isPending}
-                className={`flex items-center gap-2 px-8 py-3 rounded-full border text-sm font-bold transition-colors disabled:opacity-50 disabled:cursor-not-allowed ${voted === "up" ? "bg-success/20 text-success border-success/30" : "border-border glass-card border-none hover:glass bg-white/5 border-white/10 hover:border-brand/50"}`}
+                className={`flex items-center gap-2 px-8 py-3 rounded-full border text-sm font-bold transition-colors disabled:opacity-50 disabled:cursor-not-allowed ${voted === "up" ? "bg-success/20 text-success border-success/30" : "border-border glass-card border-none hover:glass hover:border-brand/50"}`}
               >
                 <ThumbsUp className="w-4 h-4" /> Sim, ajudou
               </Button>
               <Button
                 onClick={() => voteMutation.mutate({ articleId: article.id, isUpvote: false })}
                 disabled={voted !== null || voteMutation.isPending}
-                className={`flex items-center gap-2 px-8 py-3 rounded-full border text-sm font-bold transition-colors disabled:opacity-50 disabled:cursor-not-allowed ${voted === "down" ? "bg-destructive/20 text-destructive border-destructive/30" : "border-border glass-card border-none hover:glass bg-white/5 border-white/10 hover:border-brand/50"}`}
+                className={`flex items-center gap-2 px-8 py-3 rounded-full border text-sm font-bold transition-colors disabled:opacity-50 disabled:cursor-not-allowed ${voted === "down" ? "bg-destructive/20 text-destructive border-destructive/30" : "border-border glass-card border-none hover:glass hover:border-brand/50"}`}
               >
                 <ThumbsDown className="w-4 h-4" /> Não ajudou
               </Button>

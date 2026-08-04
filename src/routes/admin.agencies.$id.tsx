@@ -220,7 +220,7 @@ function Page() {
             Membros da Equipe
           </h3>
           <table className="w-full text-sm">
-            <thead className="glass bg-white/5 border-white/10 text-xs text-muted-foreground">
+            <thead className="glass text-xs text-muted-foreground">
               <tr>
                 <th className="px-3 py-2 text-left">Nome</th>
                 <th className="px-3 py-2 text-left">Papel</th>
@@ -403,7 +403,8 @@ function DangerZone({ agency, priv, subscription, plans }: any) {
         {!subscription ? (
           <div className="space-y-3 border-b border-danger/10 pb-4 mb-4">
             <div className="text-xs font-semibold text-foreground">Resolver Assinatura Ausente</div>
-            <Button variant="default"
+            <Button
+              variant="default"
               onClick={handleProvisionTrial}
               disabled={busy}
               className="w-full text-xs"
@@ -437,14 +438,16 @@ function DangerZone({ agency, priv, subscription, plans }: any) {
                 Forçar Status da Assinatura
               </div>
               <div className="grid grid-cols-2 gap-2">
-                <Button variant="ghost"
+                <Button
+                  variant="ghost"
                   onClick={() => handleStatusChange("canceled")}
                   disabled={busy || subscription.status === "canceled"}
                   className="text-xs text-danger hover:text-danger hover:bg-danger/10 justify-start"
                 >
                   <Ban className="h-3.5 w-3.5 mr-1" /> Bloquear (Cancel)
                 </Button>
-                <Button variant="ghost"
+                <Button
+                  variant="ghost"
                   onClick={() => handleStatusChange("active")}
                   disabled={busy || subscription.status === "active"}
                   className="text-xs text-success hover:text-success hover:bg-success/10 justify-start"
@@ -459,7 +462,8 @@ function DangerZone({ agency, priv, subscription, plans }: any) {
                 Status Administrativo da Agência
               </div>
               <div className="grid grid-cols-2 gap-2">
-                <Button variant="ghost"
+                <Button
+                  variant="ghost"
                   onClick={() =>
                     handleAgencyBlockedStatusChange(
                       agency.status === "blocked" ? "active" : "blocked",
@@ -478,7 +482,8 @@ function DangerZone({ agency, priv, subscription, plans }: any) {
 
         <div className="space-y-1.5 pt-4 mt-4 border-t border-danger/10">
           <div className="text-xs font-semibold text-foreground mb-2">Gestão de Acesso</div>
-          <Button variant="ghost"
+          <Button
+            variant="ghost"
             onClick={handleResetPassword}
             disabled={busy}
             className="w-full text-xs text-foreground justify-start"

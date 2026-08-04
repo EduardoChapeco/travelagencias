@@ -12,10 +12,7 @@ const symbolTargets = new Map([
   ["Field", { moduleName: "@/components/ui/field", importText: "Field" }],
   ["Input", { moduleName: "@/components/ui/input", importText: "FormInput as Input" }],
   ["Select", { moduleName: "@/components/ui/select", importText: "NativeSelect as Select" }],
-  [
-    "Textarea",
-    { moduleName: "@/components/ui/textarea", importText: "FormTextarea as Textarea" },
-  ],
+  ["Textarea", { moduleName: "@/components/ui/textarea", importText: "FormTextarea as Textarea" }],
   ["Sheet", { moduleName: "@/components/ui/sheet", importText: "SimpleSheet as Sheet" }],
 ]);
 
@@ -47,8 +44,7 @@ function applyEdits(source, edits) {
   return edits
     .sort((left, right) => right.start - left.start)
     .reduce(
-      (current, edit) =>
-        current.slice(0, edit.start) + edit.replacement + current.slice(edit.end),
+      (current, edit) => current.slice(0, edit.start) + edit.replacement + current.slice(edit.end),
       source,
     );
 }
@@ -82,9 +78,7 @@ function migrateSourceImport(filePath, source) {
 
     const replacement = [
       remaining.length ? formatImport(remaining, SOURCE_MODULE) : null,
-      ...[...movedByModule.entries()].map(([moduleName, moved]) =>
-        formatImport(moved, moduleName),
-      ),
+      ...[...movedByModule.entries()].map(([moduleName, moved]) => formatImport(moved, moduleName)),
     ]
       .filter(Boolean)
       .join("\n");
@@ -99,7 +93,9 @@ function mergeTargetImports(filePath, source) {
   const sourceFile = createSourceFile(filePath, source);
   const edits = [];
 
-  for (const moduleName of new Set([...symbolTargets.values()].map((target) => target.moduleName))) {
+  for (const moduleName of new Set(
+    [...symbolTargets.values()].map((target) => target.moduleName),
+  )) {
     const declarations = sourceFile.statements.filter(
       (node) => ts.isImportDeclaration(node) && node.moduleSpecifier.text === moduleName,
     );

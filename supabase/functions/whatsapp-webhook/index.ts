@@ -3,7 +3,8 @@ import { createClient } from "https://esm.sh/@supabase/supabase-js@2.39.0";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
-  "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type, x-hub-signature-256",
+  "Access-Control-Allow-Headers":
+    "authorization, x-client-info, apikey, content-type, x-hub-signature-256",
 };
 
 async function computeHmacSha256(secret: string, data: string): Promise<string> {
@@ -16,17 +17,13 @@ async function computeHmacSha256(secret: string, data: string): Promise<string> 
     keyData,
     { name: "HMAC", hash: "SHA-256" },
     false,
-    ["sign"]
+    ["sign"],
   );
 
-  const signatureBuffer = await crypto.subtle.sign(
-    "HMAC",
-    key,
-    messageData
-  );
+  const signatureBuffer = await crypto.subtle.sign("HMAC", key, messageData);
 
   const hashArray = Array.from(new Uint8Array(signatureBuffer));
-  return hashArray.map(b => b.toString(16).padStart(2, "0")).join("");
+  return hashArray.map((b) => b.toString(16).padStart(2, "0")).join("");
 }
 
 serve(async (req) => {
@@ -54,7 +51,10 @@ serve(async (req) => {
       .eq("status", "active")
       .limit(1);
 
-    if (mode === "subscribe" && (connection?.length || token === Deno.env.get("META_VERIFY_TOKEN"))) {
+    if (
+      mode === "subscribe" &&
+      (connection?.length || token === Deno.env.get("META_VERIFY_TOKEN"))
+    ) {
       return new Response(challenge, { status: 200 });
     }
     return new Response("Invalid verify token", { status: 403 });
@@ -110,7 +110,13 @@ serve(async (req) => {
                 // Avoid trigger if it's an echo from the app and loop prevention
                 const isEcho = msg.from === change.value.metadata?.display_phone_number;
                 const source = isEcho ? "whatsapp_business_app" : "customer";
-                await processIncomingMessage(supabase, connection, msg, change.value.contacts, source);
+                await processIncomingMessage(
+                  supabase,
+                  connection,
+                  msg,
+                  change.value.contacts,
+                  source,
+                );
               }
             }
             if (change.value.statuses) {
@@ -149,7 +155,9 @@ serve(async (req) => {
         if (appSecret) {
           const expectedSignature = `sha256=${await computeHmacSha256(appSecret, rawBody)}`;
           if (signature !== expectedSignature) {
-            console.warn(`[Webhook] Rejected: Invalid HMAC signature for Instagram ${instaAccountId}.`);
+            console.warn(
+              `[Webhook] Rejected: Invalid HMAC signature for Instagram ${instaAccountId}.`,
+            );
             return new Response("Unauthorized", { status: 401 });
           }
         }
@@ -174,7 +182,13 @@ serve(async (req) => {
   }
 });
 
-async function processIncomingMessage(supabase: any, connection: any, msg: any, waContacts: any[], source: string) {
+async function processIncomingMessage(
+  supabase: any,
+  connection: any,
+  msg: any,
+  waContacts: any[],
+  source: string,
+) {
   const phone = msg.from;
   const text = msg.text?.body || "";
   const wamid = msg.id;
@@ -182,7 +196,8 @@ async function processIncomingMessage(supabase: any, connection: any, msg: any, 
 
   if (!phone) return;
 
-  const contactName = waContacts?.find((c: any) => c.wa_id === phone)?.profile?.name || "Novo Contato";
+  const contactName =
+    waContacts?.find((c: any) => c.wa_id === phone)?.profile?.name || "Novo Contato";
   const cleanPhone = phone.replace(/\D/g, "");
 
   // 1. Find or Create Contact
@@ -207,7 +222,8 @@ async function processIncomingMessage(supabase: any, connection: any, msg: any, 
       .select("id, agency_id")
       .single();
 
-    if (contactErr) throw new Error(`Failed to create contact for ${cleanPhone}: ${contactErr.message}`);
+    if (contactErr)
+      throw new Error(`Failed to create contact for ${cleanPhone}: ${contactErr.message}`);
     contact = newContact;
   }
 
@@ -240,9 +256,15 @@ async function processIncomingMessage(supabase: any, connection: any, msg: any, 
     conversation = newConv;
   } else {
     if (conversation.status !== "open") {
-      await supabase.from("conversations").update({ status: "open", last_message_at: timestamp }).eq("id", conversation.id);
+      await supabase
+        .from("conversations")
+        .update({ status: "open", last_message_at: timestamp })
+        .eq("id", conversation.id);
     } else {
-      await supabase.from("conversations").update({ last_message_at: timestamp }).eq("id", conversation.id);
+      await supabase
+        .from("conversations")
+        .update({ last_message_at: timestamp })
+        .eq("id", conversation.id);
     }
   }
 
@@ -295,7 +317,8 @@ async function processIncomingInstagramMessage(supabase: any, connection: any, m
       .select("id, agency_id")
       .single();
 
-    if (contactErr) throw new Error(`Failed to create contact for Instagram ${senderId}: ${contactErr.message}`);
+    if (contactErr)
+      throw new Error(`Failed to create contact for Instagram ${senderId}: ${contactErr.message}`);
     contact = newContact;
   }
 
@@ -327,7 +350,10 @@ async function processIncomingInstagramMessage(supabase: any, connection: any, m
     if (convErr) throw new Error(`Failed to create conversation: ${convErr.message}`);
     conversation = newConv;
   } else {
-    await supabase.from("conversations").update({ status: "open", last_message_at: timestamp }).eq("id", conversation.id);
+    await supabase
+      .from("conversations")
+      .update({ status: "open", last_message_at: timestamp })
+      .eq("id", conversation.id);
   }
 
   // 3. Prevent duplicate message
@@ -359,8 +385,5 @@ async function processMessageStatus(supabase: any, statusObj: any) {
     updatePayload.body = `[FAILED] ${statusObj.errors?.[0]?.title}`;
   }
 
-  await supabase
-    .from("messages")
-    .update(updatePayload)
-    .eq("external_id", wamid);
+  await supabase.from("messages").update(updatePayload).eq("external_id", wamid);
 }

@@ -23,15 +23,15 @@ export async function fetchAgencyRules(agencyId: string) {
   if (rulesErr) throw rulesErr;
   if (!rules?.length) return [];
 
-  const versionIds = rules
-    .map((r) => r.current_version_id)
-    .filter((id): id is string => !!id);
+  const versionIds = rules.map((r) => r.current_version_id).filter((id): id is string => !!id);
 
   if (!versionIds.length) return rules.map((r) => ({ ...r, current_version: null }));
 
   const { data: versions, error: versionsErr } = await supabase
     .from("decision_rule_versions")
-    .select("id, rule_id, version, expression, effect, source, confidence, valid_from, approved_by, created_at")
+    .select(
+      "id, rule_id, version, expression, effect, source, confidence, valid_from, approved_by, created_at",
+    )
     .in("id", versionIds);
 
   if (versionsErr) throw versionsErr;
@@ -40,9 +40,7 @@ export async function fetchAgencyRules(agencyId: string) {
 
   return rules.map((r) => ({
     ...r,
-    current_version: r.current_version_id
-      ? (versionsMap.get(r.current_version_id) ?? null)
-      : null,
+    current_version: r.current_version_id ? (versionsMap.get(r.current_version_id) ?? null) : null,
   }));
 }
 
@@ -67,7 +65,10 @@ export async function fetchRuleCandidates(agencyId: string) {
  * 3. Atualiza current_version_id em decision_rules
  * 4. Marca o candidato como approved
  */
-export async function approveRuleCandidate(candidateId: string, supervisorId: string): Promise<string> {
+export async function approveRuleCandidate(
+  candidateId: string,
+  supervisorId: string,
+): Promise<string> {
   const { data: candidate, error: fetchErr } = await supabase
     .from("rule_candidates")
     .select("*")
@@ -149,7 +150,10 @@ export async function approveRuleCandidate(candidateId: string, supervisorId: st
 /**
  * Rejeita um candidato a regra sugerido pela IA.
  */
-export async function rejectRuleCandidate(candidateId: string, supervisorId: string): Promise<void> {
+export async function rejectRuleCandidate(
+  candidateId: string,
+  supervisorId: string,
+): Promise<void> {
   const { error } = await supabase
     .from("rule_candidates")
     .update({ status: "rejected", reviewed_by: supervisorId })
@@ -162,10 +166,7 @@ export async function rejectRuleCandidate(candidateId: string, supervisorId: str
  * Alterna status de uma regra existente (active ↔ paused).
  */
 export async function toggleRuleStatus(ruleId: string, status: "active" | "paused"): Promise<void> {
-  const { error } = await supabase
-    .from("decision_rules")
-    .update({ status })
-    .eq("id", ruleId);
+  const { error } = await supabase.from("decision_rules").update({ status }).eq("id", ruleId);
 
   if (error) throw error;
 }
@@ -175,10 +176,7 @@ export async function toggleRuleStatus(ruleId: string, status: "active" | "pause
  */
 export async function deleteRule(ruleId: string): Promise<void> {
   // Versões são deletadas por cascata (FK rule_id → decision_rule_versions)
-  const { error } = await supabase
-    .from("decision_rules")
-    .delete()
-    .eq("id", ruleId);
+  const { error } = await supabase.from("decision_rules").delete().eq("id", ruleId);
 
   if (error) throw error;
 }

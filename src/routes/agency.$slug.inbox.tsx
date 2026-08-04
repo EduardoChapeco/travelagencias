@@ -62,7 +62,9 @@ import { FormTextarea as Textarea } from "@/components/ui/textarea";
 const db = supabase as any;
 
 export const Route = createFileRoute("/agency/$slug/inbox")({
-  head: ({ context }: any) => ({ meta: [{ title: `Caixa de Entrada · ${context?.brand?.platform_name || 'Turis'}` }] }),
+  head: ({ context }: any) => ({
+    meta: [{ title: `Caixa de Entrada · ${context?.brand?.platform_name || "Turis"}` }],
+  }),
   component: InboxModule,
 });
 
@@ -121,29 +123,71 @@ function InboxModule() {
   const queryClient = useQueryClient();
 
   const {
-    selectedId, setSelectedId, searchQuery, setSearchQuery, filterChannel, setFilterChannel,
-    mySessionsOnly, setMySessionsOnly, currentUser,
-    recording, aiSuggestion, setAiSuggestion, generatingAi, analyzing, uploadingDoc,
-    messagesEndRef, fileInputRef,
-    conversations, isLoadingConversations, isErrorConversations, errorConversations,
-    selectedConversation, messages, isLoadingMessages,
-    channels, isLoadingChannels, isErrorChannels, errorChannels,
-    matchedLead, matchedClient, matchedClientId,
-    explicitLeadId, explicitClientId,
-    clientDocs, recentProposals, leadInsights, refetchInsights,
-    crmSearchQuery, setCrmSearchQuery, crmSearchType, setCrmSearchType,
-    isLinkingOpen, setIsLinkingOpen, crmSearchResults,
-    sendReplyMutation, assignToMeMutation,
-    linkContactToCrm, handleAttachmentUpload, startRecording, stopRecording,
-    generateAiProposalForLead, saveContactNotes, generateAiSuggestion,
-    triggerAnalysis, handleDocUpload, createLeadFromSession,
+    selectedId,
+    setSelectedId,
+    searchQuery,
+    setSearchQuery,
+    filterChannel,
+    setFilterChannel,
+    mySessionsOnly,
+    setMySessionsOnly,
+    currentUser,
+    recording,
+    aiSuggestion,
+    setAiSuggestion,
+    generatingAi,
+    analyzing,
+    uploadingDoc,
+    messagesEndRef,
+    fileInputRef,
+    conversations,
+    isLoadingConversations,
+    isErrorConversations,
+    errorConversations,
+    selectedConversation,
+    messages,
+    isLoadingMessages,
+    channels,
+    isLoadingChannels,
+    isErrorChannels,
+    errorChannels,
+    matchedLead,
+    matchedClient,
+    matchedClientId,
+    explicitLeadId,
+    explicitClientId,
+    clientDocs,
+    recentProposals,
+    leadInsights,
+    refetchInsights,
+    crmSearchQuery,
+    setCrmSearchQuery,
+    crmSearchType,
+    setCrmSearchType,
+    isLinkingOpen,
+    setIsLinkingOpen,
+    crmSearchResults,
+    sendReplyMutation,
+    assignToMeMutation,
+    linkContactToCrm,
+    handleAttachmentUpload,
+    startRecording,
+    stopRecording,
+    generateAiProposalForLead,
+    saveContactNotes,
+    generateAiSuggestion,
+    triggerAnalysis,
+    handleDocUpload,
+    createLeadFromSession,
   } = useInbox();
 
   // Estados locais e de UI pura/formulários que permanecem na rota
   const [reply, setReply] = useState("");
   const [sendingReply, setSendingReply] = useState(false);
   const [showDetails, setShowDetails] = useState(true);
-  const [detailsTab, setDetailsTab] = useState<"profile" | "documents" | "notices" | "ai_templates">("profile");
+  const [detailsTab, setDetailsTab] = useState<
+    "profile" | "documents" | "notices" | "ai_templates"
+  >("profile");
   const [docTypeToUpload, setDocTypeToUpload] = useState("rg");
   const [contactNotes, setContactNotes] = useState("");
   const [savingNotes, setSavingNotes] = useState(false);
@@ -210,13 +254,13 @@ function InboxModule() {
       (contact.email || "").toLowerCase().includes(crmSearchQuery.toLowerCase());
 
     const matchesChannel = filterChannel ? channel.type === filterChannel : true;
-    const matchesMySessions = mySessionsOnly && currentUser ? c.assigned_user_id === currentUser.id : true;
+    const matchesMySessions =
+      mySessionsOnly && currentUser ? c.assigned_user_id === currentUser.id : true;
 
     return matchesSearch && matchesChannel && matchesMySessions;
   });
 
   const activeChannelTypes = Array.from(new Set(channels.map((ch: any) => ch.type)));
-
 
   return (
     <div className="w-full flex-1 flex overflow-hidden min-h-0">
@@ -226,18 +270,22 @@ function InboxModule() {
           <div>
             <p className="text-xs font-bold text-red-800">Erro ao Carregar Inbox</p>
             <p className="ds-meta text-red-600">
-              {isErrorChannels && errorChannels instanceof Error ? errorChannels.message
-               : isErrorConversations && errorConversations instanceof Error ? errorConversations.message
-               : "Verifique as permissões e tente novamente."}
+              {isErrorChannels && errorChannels instanceof Error
+                ? errorChannels.message
+                : isErrorConversations && errorConversations instanceof Error
+                  ? errorConversations.message
+                  : "Verifique as permissões e tente novamente."}
             </p>
           </div>
         </div>
       )}
       {/* ── LEFT COLUMN: Conversations List (Width 280px) ────────────────────── */}
-      <aside className={cn(
-        "flex flex-col border-r border-border shrink-0 bg-surface/30 w-full md:w-[280px] h-full",
-        selectedId ? "hidden md:flex" : "flex"
-      )}>
+      <aside
+        className={cn(
+          "flex flex-col border-r border-border shrink-0 bg-surface/30 w-full md:w-72 h-full",
+          selectedId ? "hidden md:flex" : "flex",
+        )}
+      >
         {/* Header & Connection button */}
         <div className="flex min-h-[var(--ds-toolbar-height)] items-center justify-between px-4 shrink-0 glass-toolbar border-b border-border">
           <h2 className="text-xs font-bold text-foreground flex items-center gap-1.5 uppercase tracking-wider">
@@ -247,7 +295,7 @@ function InboxModule() {
 
           <Sheet open={isConnectSheetOpen} onOpenChange={setIsConnectSheetOpen}>
             <SheetTrigger asChild>
-              <Button 
+              <Button
                 className="flex h-8 items-center gap-1 px-2.5 rounded border-none glass-card border-none text-xs font-semibold text-muted-foreground hover:text-foreground hover:border-border-strong transition-colors cursor-pointer"
                 title="Configurar conexões e e-mail"
               >
@@ -255,7 +303,10 @@ function InboxModule() {
                 <span>Canais</span>
               </Button>
             </SheetTrigger>
-            <SheetContent side="left" className="p-0 w-80 glass-card border-none border-r border-border">
+            <SheetContent
+              side="left"
+              className="p-0 w-80 glass-card border-none border-r border-border"
+            >
               <SheetHeader className="flex min-h-[var(--ds-toolbar-height)] items-center justify-between px-4 border-b border-border glass-toolbar">
                 <SheetTitle className="text-sm font-bold uppercase tracking-wider flex items-center gap-1.5">
                   <Settings2 className="w-4 h-4 text-brand" />
@@ -265,17 +316,19 @@ function InboxModule() {
                   Conecte contas corporativas do Gmail, WhatsApp Business e Instagram.
                 </SheetDescription>
               </SheetHeader>
-              
+
               <div className="p-4 space-y-5 overflow-y-auto dock-offset max-h-[calc(100vh-8rem)]">
                 {/* Canais Conectados */}
                 <div className="space-y-3">
-                  <h3 className="ds-meta font-extrabold uppercase tracking-wide text-muted-foreground">Canais Ativos</h3>
+                  <h3 className="ds-meta font-extrabold uppercase tracking-wide text-muted-foreground">
+                    Canais Ativos
+                  </h3>
                   {isLoadingChannels ? (
                     <div className="flex justify-center py-4">
                       <RefreshCw className="w-5 h-5 animate-spin text-muted-foreground" />
                     </div>
                   ) : channels.length === 0 ? (
-                    <p className="text-xs text-muted-foreground p-3 border border-dashed border-border rounded-[var(--radius-card)] text-center glass bg-white/5 border-white/10/20">
+                    <p className="text-xs text-muted-foreground p-3 border border-dashed border-border rounded-[var(--radius-card)] text-center glass/20">
                       Nenhum canal ou conta conectada ainda.
                     </p>
                   ) : (
@@ -283,17 +336,27 @@ function InboxModule() {
                       {channels.map((c: any) => {
                         const Icon = CHANNEL_ICONS[c.type] ?? MessageSquare;
                         return (
-                          <div key={c.id} className="flex items-center justify-between p-2.5 border-none rounded-[var(--radius-card)] glass bg-white/5 border-white/10/40">
+                          <div
+                            key={c.id}
+                            className="flex items-center justify-between p-2.5 border-none rounded-[var(--radius-card)] glass/40"
+                          >
                             <div className="flex items-center gap-2.5 min-w-0">
                               <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full glass-card border-none border-none">
                                 <Icon className={cn("w-3.5 h-3.5", CHANNEL_COLORS[c.type])} />
                               </div>
                               <div className="min-w-0">
-                                <p className="text-xs font-bold text-foreground truncate leading-normal">{c.display_name}</p>
-                                <span className="text-[9px] text-muted-foreground uppercase">{c.type}</span>
+                                <p className="text-xs font-bold text-foreground truncate leading-normal">
+                                  {c.display_name}
+                                </p>
+                                <span className="text-[9px] text-muted-foreground uppercase">
+                                  {c.type}
+                                </span>
                               </div>
                             </div>
-                            <span className="h-2 w-2 rounded-full bg-emerald-500 shadow-none" title="Ativo" />
+                            <span
+                              className="h-2 w-2 rounded-full bg-emerald-500 shadow-none"
+                              title="Ativo"
+                            />
                           </div>
                         );
                       })}
@@ -305,38 +368,46 @@ function InboxModule() {
                 <div className="space-y-4 pt-2">
                   {!connectType ? (
                     <>
-                      <h3 className="ds-meta font-extrabold uppercase tracking-wide text-muted-foreground">Adicionar Conexão</h3>
-                      
-                      <Button 
+                      <h3 className="ds-meta font-extrabold uppercase tracking-wide text-muted-foreground">
+                        Adicionar Conexão
+                      </h3>
+
+                      <Button
                         onClick={() => setConnectType("gmail")}
-                        className="flex items-center gap-3 w-full text-left rounded-[var(--radius-card)] border-none px-3 py-2.5 text-xs font-semibold text-foreground hover:glass bg-white/5 border-white/10 transition-all cursor-pointer glass-card border-none"
+                        className="flex items-center gap-3 w-full text-left rounded-[var(--radius-card)] border-none px-3 py-2.5 text-xs font-semibold text-foreground hover:glass transition-all cursor-pointer glass-card border-none"
                       >
                         <Mail className="w-4 h-4 text-blue-500 shrink-0" />
                         <div>
                           <p className="font-bold">Conectar Gmail</p>
-                          <span className="ds-meta text-muted-foreground font-normal">Sincronize mensagens do e-mail comercial.</span>
+                          <span className="ds-meta text-muted-foreground font-normal">
+                            Sincronize mensagens do e-mail comercial.
+                          </span>
                         </div>
                       </Button>
 
-                      <Button 
+                      <Button
                         onClick={() => setConnectType("whatsapp")}
-                        className="flex items-center gap-3 w-full text-left rounded-[var(--radius-card)] border-none px-3 py-2.5 text-xs font-semibold text-foreground hover:glass bg-white/5 border-white/10 transition-all cursor-pointer glass-card border-none"
+                        className="flex items-center gap-3 w-full text-left rounded-[var(--radius-card)] border-none px-3 py-2.5 text-xs font-semibold text-foreground hover:glass transition-all cursor-pointer glass-card border-none"
                       >
                         <Phone className="w-4 h-4 text-green-500 shrink-0" />
                         <div>
                           <p className="font-bold">Integrar WhatsApp</p>
-                          <span className="ds-meta text-muted-foreground font-normal">Conecte via WhatsApp Cloud API Oficial ou Evolution API.</span>
+                          <span className="ds-meta text-muted-foreground font-normal">
+                            Conecte via WhatsApp Cloud API Oficial ou Evolution API.
+                          </span>
                         </div>
                       </Button>
 
-                      <Button 
+                      <Button
                         onClick={() => setConnectType("instagram")}
-                        className="flex items-center gap-3 w-full text-left rounded-[var(--radius-card)] border-none px-3 py-2.5 text-xs font-semibold text-foreground hover:glass bg-white/5 border-white/10 transition-all cursor-pointer glass-card border-none"
+                        className="flex items-center gap-3 w-full text-left rounded-[var(--radius-card)] border-none px-3 py-2.5 text-xs font-semibold text-foreground hover:glass transition-all cursor-pointer glass-card border-none"
                       >
                         <Instagram className="w-4 h-4 text-pink-500 shrink-0" />
                         <div>
                           <p className="font-bold">Integrar Instagram</p>
-                          <span className="ds-meta text-muted-foreground font-normal">Receba mensagens diretas da rede Meta.</span>
+                          <span className="ds-meta text-muted-foreground font-normal">
+                            Receba mensagens diretas da rede Meta.
+                          </span>
                         </div>
                       </Button>
                     </>
@@ -350,13 +421,17 @@ function InboxModule() {
                           ← Voltar
                         </Button>
                         <span className="text-[9px] font-extrabold uppercase text-muted-foreground tracking-wider">
-                          {connectType === "gmail" ? "Gmail" : connectType === "whatsapp" ? "WhatsApp" : "Instagram"}
+                          {connectType === "gmail"
+                            ? "Gmail"
+                            : connectType === "whatsapp"
+                              ? "WhatsApp"
+                              : "Instagram"}
                         </span>
                       </div>
 
                       {connectType === "gmail" && (
                         <div className="space-y-4">
-                          <div className="flex gap-2 p-1 glass bg-white/5 border-white/10 rounded-[var(--radius-card)] border-none">
+                          <div className="flex gap-2 p-1 glass rounded-[var(--radius-card)] border-none">
                             <Button
                               type="button"
                               onClick={() => setGmailSubTab("oauth")}
@@ -364,7 +439,7 @@ function InboxModule() {
                                 "flex-1 text-center py-1 ds-meta font-bold rounded-full transition-all cursor-pointer",
                                 gmailSubTab === "oauth"
                                   ? "bg-brand text-white shadow-xs"
-                                  : "text-muted-foreground hover:text-foreground"
+                                  : "text-muted-foreground hover:text-foreground",
                               )}
                             >
                               Conta Google (OAuth)
@@ -376,7 +451,7 @@ function InboxModule() {
                                 "flex-1 text-center py-1 ds-meta font-bold rounded-full transition-all cursor-pointer",
                                 gmailSubTab === "smtp"
                                   ? "bg-brand text-white shadow-xs"
-                                  : "text-muted-foreground hover:text-foreground"
+                                  : "text-muted-foreground hover:text-foreground",
                               )}
                             >
                               Resend (SMTP)
@@ -386,7 +461,9 @@ function InboxModule() {
                           {gmailSubTab === "oauth" ? (
                             <div className="space-y-3 pt-1">
                               <p className="ds-meta text-muted-foreground leading-normal font-sans">
-                                Conecte seu e-mail do Gmail de forma segura usando o protocolo OAuth oficial do Google. Você será redirecionado para a página de consentimento do Google.
+                                Conecte seu e-mail do Gmail de forma segura usando o protocolo OAuth
+                                oficial do Google. Você será redirecionado para a página de
+                                consentimento do Google.
                               </p>
                               <Button
                                 type="button"
@@ -394,16 +471,22 @@ function InboxModule() {
                                 onClick={async () => {
                                   setSubmittingConfig(true);
                                   try {
-                                    const { data: { user } } = await supabase.auth.getUser();
-                                    if (!user) throw new Error("Usuário não autenticado no Supabase.");
+                                    const {
+                                      data: { user },
+                                    } = await supabase.auth.getUser();
+                                    if (!user)
+                                      throw new Error("Usuário não autenticado no Supabase.");
 
                                     const { data, error } = await supabase.functions.invoke(
                                       `gmail-oauth?action=get_url&org_id=${agency!.id}&user_id=${user.id}&account_type=personal`,
-                                      { method: "GET" }
+                                      { method: "GET" },
                                     );
 
                                     if (error || !data?.url) {
-                                      throw new Error(error?.message || "Não foi possível gerar a URL de autorização.");
+                                      throw new Error(
+                                        error?.message ||
+                                          "Não foi possível gerar a URL de autorização.",
+                                      );
                                     }
 
                                     // Redireciona para o consentimento do Google
@@ -426,55 +509,63 @@ function InboxModule() {
                               </Button>
                             </div>
                           ) : (
-                            <form onSubmit={async (e) => {
-                              e.preventDefault();
-                              if (!gmailAddress.trim() || !resendApiKey.trim()) {
-                                toast.error("Preencha todos os campos obrigatórios.");
-                                return;
-                              }
-                              const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-                              if (!emailPattern.test(gmailAddress.trim())) {
-                                toast.error("Formato de e-mail inválido.");
-                                return;
-                              }
-                              const resendKeyPattern = /^re_[a-zA-Z0-9]{8}_[a-zA-Z0-9]{4}_[a-zA-Z0-9]{4}_[a-zA-Z0-9]{4}_[a-zA-Z0-9]{12}$/;
-                              if (!resendKeyPattern.test(resendApiKey.trim())) {
-                                toast.error("Chave de API do Resend inválida. A chave deve começar com 're_' e seguir o padrão oficial do Resend.");
-                                return;
-                              }
-                              setSubmittingConfig(true);
-                              try {
-                                await supabase.functions.invoke("ai-orchestrator", {
-                                  body: {
-                                    action: "save-credential",
+                            <form
+                              onSubmit={async (e) => {
+                                e.preventDefault();
+                                if (!gmailAddress.trim() || !resendApiKey.trim()) {
+                                  toast.error("Preencha todos os campos obrigatórios.");
+                                  return;
+                                }
+                                const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                                if (!emailPattern.test(gmailAddress.trim())) {
+                                  toast.error("Formato de e-mail inválido.");
+                                  return;
+                                }
+                                const resendKeyPattern =
+                                  /^re_[a-zA-Z0-9]{8}_[a-zA-Z0-9]{4}_[a-zA-Z0-9]{4}_[a-zA-Z0-9]{4}_[a-zA-Z0-9]{12}$/;
+                                if (!resendKeyPattern.test(resendApiKey.trim())) {
+                                  toast.error(
+                                    "Chave de API do Resend inválida. A chave deve começar com 're_' e seguir o padrão oficial do Resend.",
+                                  );
+                                  return;
+                                }
+                                setSubmittingConfig(true);
+                                try {
+                                  await supabase.functions.invoke("ai-orchestrator", {
+                                    body: {
+                                      action: "save-credential",
+                                      agency_id: agency!.id,
+                                      provider: "resend_api_key",
+                                      key_value: resendApiKey.trim(),
+                                      label: "Resend Email Key",
+                                    },
+                                  });
+
+                                  await db.from("channels").insert({
                                     agency_id: agency!.id,
-                                    provider: "resend_api_key",
-                                    key_value: resendApiKey.trim(),
-                                    label: "Resend Email Key",
-                                  },
-                                });
+                                    type: "email",
+                                    display_name: `Gmail (${gmailAddress.trim()})`,
+                                    external_id: `gmail-${gmailAddress.trim()}`,
+                                    is_active: true,
+                                  });
 
-                                await db.from("channels").insert({
-                                  agency_id: agency!.id,
-                                  type: "email",
-                                  display_name: `Gmail (${gmailAddress.trim()})`,
-                                  external_id: `gmail-${gmailAddress.trim()}`,
-                                  is_active: true,
-                                });
-
-                                toast.success("Canal Resend conectado com sucesso!");
-                                setConnectType(null);
-                                setGmailAddress("");
-                                setResendApiKey("");
-                                queryClient.invalidateQueries({ queryKey: ["inbox-channels"] });
-                              } catch (err: any) {
-                                toast.error("Erro ao configurar: " + err.message);
-                              } finally {
-                                setSubmittingConfig(false);
-                              }
-                            }} className="space-y-3">
+                                  toast.success("Canal Resend conectado com sucesso!");
+                                  setConnectType(null);
+                                  setGmailAddress("");
+                                  setResendApiKey("");
+                                  queryClient.invalidateQueries({ queryKey: ["inbox-channels"] });
+                                } catch (err: any) {
+                                  toast.error("Erro ao configurar: " + err.message);
+                                } finally {
+                                  setSubmittingConfig(false);
+                                }
+                              }}
+                              className="space-y-3"
+                            >
                               <div className="space-y-1">
-                                <label className="ds-meta font-bold text-muted-foreground uppercase">E-mail Comercial *</label>
+                                <label className="ds-meta font-bold text-muted-foreground uppercase">
+                                  E-mail Comercial *
+                                </label>
                                 <Input
                                   type="email"
                                   required
@@ -485,7 +576,9 @@ function InboxModule() {
                                 />
                               </div>
                               <div className="space-y-1">
-                                <label className="ds-meta font-bold text-muted-foreground uppercase">Resend API Key *</label>
+                                <label className="ds-meta font-bold text-muted-foreground uppercase">
+                                  Resend API Key *
+                                </label>
                                 <Input
                                   type="password"
                                   required
@@ -508,108 +601,126 @@ function InboxModule() {
                       )}
 
                       {connectType === "whatsapp" && (
-                        <form onSubmit={async (e) => {
-                          e.preventDefault();
-                          setSubmittingConfig(true);
-                          try {
-                            if (waProvider === "meta_official") {
-                              if (!waPhoneId.trim() || !waToken.trim()) {
-                                toast.error("Preencha o Phone ID e Token.");
-                                return;
-                              }
-                              if (!/^\d+$/.test(waPhoneId.trim())) {
-                                toast.error("O Phone ID deve conter apenas números.");
-                                return;
-                              }
-                              if (waToken.trim().length < 32) {
-                                toast.error("O Token da API do WhatsApp parece inválido (muito curto).");
-                                return;
-                              }
-                              await Promise.all([
-                                supabase.functions.invoke("ai-orchestrator", {
-                                  body: {
-                                    action: "save-credential",
-                                    agency_id: agency!.id,
-                                    provider: "whatsapp_phone_id",
-                                    key_value: waPhoneId.trim(),
-                                    label: "WhatsApp Phone ID",
-                                  },
-                                }),
-                                supabase.functions.invoke("ai-orchestrator", {
-                                  body: {
-                                    action: "save-credential",
-                                    agency_id: agency!.id,
-                                    provider: "whatsapp_token",
-                                    key_value: waToken.trim(),
-                                    label: "WhatsApp Token",
-                                  },
-                                }),
-                              ]);
-
-                              await db.from("channels").insert({
-                                agency_id: agency!.id,
-                                type: "whatsapp",
-                                display_name: `WhatsApp Oficial (${waPhoneId.trim()})`,
-                                external_id: `whatsapp-${waPhoneId.trim()}`,
-                                is_active: true,
-                              });
-                            } else {
-                              if (!evolutionUrl.trim() || !evolutionKey.trim()) {
-                                toast.error("Preencha a URL e a API Key da Evolution.");
-                                return;
-                              }
-                              if (!/^https?:\/\/.+/.test(evolutionUrl.trim())) {
-                                toast.error("A URL da Evolution API deve ser válida e começar com http:// ou https://");
-                                return;
-                              }
-                              if (evolutionKey.trim().length < 8) {
-                                toast.error("A API Key da Evolution deve ter pelo menos 8 caracteres.");
-                                return;
-                              }
-                              await supabase.functions.invoke("ai-orchestrator", {
-                                body: {
-                                  action: "save-credential",
-                                  agency_id: agency!.id,
-                                  provider: "evolution_api_key",
-                                  key_value: evolutionKey.trim(),
-                                  label: "Evolution API Key",
-                                },
-                              });
-
-                              const { data: agData } = await db.from("agencies").select("integrations_config").eq("id", agency!.id).single();
-                              const oldConfig = agData?.integrations_config || {};
-                              await db.from("agencies").update({
-                                integrations_config: {
-                                  ...oldConfig,
-                                  evolution_api_url: evolutionUrl.trim(),
-                                  preferred_provider: "evolution_api",
+                        <form
+                          onSubmit={async (e) => {
+                            e.preventDefault();
+                            setSubmittingConfig(true);
+                            try {
+                              if (waProvider === "meta_official") {
+                                if (!waPhoneId.trim() || !waToken.trim()) {
+                                  toast.error("Preencha o Phone ID e Token.");
+                                  return;
                                 }
-                              }).eq("id", agency!.id);
+                                if (!/^\d+$/.test(waPhoneId.trim())) {
+                                  toast.error("O Phone ID deve conter apenas números.");
+                                  return;
+                                }
+                                if (waToken.trim().length < 32) {
+                                  toast.error(
+                                    "O Token da API do WhatsApp parece inválido (muito curto).",
+                                  );
+                                  return;
+                                }
+                                await Promise.all([
+                                  supabase.functions.invoke("ai-orchestrator", {
+                                    body: {
+                                      action: "save-credential",
+                                      agency_id: agency!.id,
+                                      provider: "whatsapp_phone_id",
+                                      key_value: waPhoneId.trim(),
+                                      label: "WhatsApp Phone ID",
+                                    },
+                                  }),
+                                  supabase.functions.invoke("ai-orchestrator", {
+                                    body: {
+                                      action: "save-credential",
+                                      agency_id: agency!.id,
+                                      provider: "whatsapp_token",
+                                      key_value: waToken.trim(),
+                                      label: "WhatsApp Token",
+                                    },
+                                  }),
+                                ]);
 
-                              await db.from("channels").insert({
-                                agency_id: agency!.id,
-                                type: "whatsapp",
-                                display_name: "WhatsApp Evolution API",
-                                external_id: "whatsapp-evolution",
-                                is_active: true,
-                              });
+                                await db.from("channels").insert({
+                                  agency_id: agency!.id,
+                                  type: "whatsapp",
+                                  display_name: `WhatsApp Oficial (${waPhoneId.trim()})`,
+                                  external_id: `whatsapp-${waPhoneId.trim()}`,
+                                  is_active: true,
+                                });
+                              } else {
+                                if (!evolutionUrl.trim() || !evolutionKey.trim()) {
+                                  toast.error("Preencha a URL e a API Key da Evolution.");
+                                  return;
+                                }
+                                if (!/^https?:\/\/.+/.test(evolutionUrl.trim())) {
+                                  toast.error(
+                                    "A URL da Evolution API deve ser válida e começar com http:// ou https://",
+                                  );
+                                  return;
+                                }
+                                if (evolutionKey.trim().length < 8) {
+                                  toast.error(
+                                    "A API Key da Evolution deve ter pelo menos 8 caracteres.",
+                                  );
+                                  return;
+                                }
+                                await supabase.functions.invoke("ai-orchestrator", {
+                                  body: {
+                                    action: "save-credential",
+                                    agency_id: agency!.id,
+                                    provider: "evolution_api_key",
+                                    key_value: evolutionKey.trim(),
+                                    label: "Evolution API Key",
+                                  },
+                                });
+
+                                const { data: agData } = await db
+                                  .from("agencies")
+                                  .select("integrations_config")
+                                  .eq("id", agency!.id)
+                                  .single();
+                                const oldConfig = agData?.integrations_config || {};
+                                await db
+                                  .from("agencies")
+                                  .update({
+                                    integrations_config: {
+                                      ...oldConfig,
+                                      evolution_api_url: evolutionUrl.trim(),
+                                      preferred_provider: "evolution_api",
+                                    },
+                                  })
+                                  .eq("id", agency!.id);
+
+                                await db.from("channels").insert({
+                                  agency_id: agency!.id,
+                                  type: "whatsapp",
+                                  display_name: "WhatsApp Evolution API",
+                                  external_id: "whatsapp-evolution",
+                                  is_active: true,
+                                });
+                              }
+
+                              toast.success("WhatsApp integrado com sucesso!");
+                              setConnectType(null);
+                              setWaPhoneId("");
+                              setWaToken("");
+                              setEvolutionUrl("");
+                              setEvolutionKey("");
+                              queryClient.invalidateQueries({ queryKey: ["inbox-channels"] });
+                            } catch (err: any) {
+                              toast.error("Erro ao configurar: " + err.message);
+                            } finally {
+                              setSubmittingConfig(false);
                             }
-
-                            toast.success("WhatsApp integrado com sucesso!");
-                            setConnectType(null);
-                            setWaPhoneId("");
-                            setWaToken("");
-                            setEvolutionUrl("");
-                            setEvolutionKey("");
-                            queryClient.invalidateQueries({ queryKey: ["inbox-channels"] });
-                          } catch (err: any) {
-                            toast.error("Erro ao configurar: " + err.message);
-                          } finally {
-                            setSubmittingConfig(false);
-                          }
-                        }} className="space-y-3">
+                          }}
+                          className="space-y-3"
+                        >
                           <div className="space-y-1">
-                            <label className="ds-meta font-bold text-muted-foreground uppercase">Provedor</label>
+                            <label className="ds-meta font-bold text-muted-foreground uppercase">
+                              Provedor
+                            </label>
                             <Select
                               value={waProvider}
                               onChange={(e) => setWaProvider(e.target.value as any)}
@@ -623,7 +734,9 @@ function InboxModule() {
                           {waProvider === "meta_official" ? (
                             <>
                               <div className="space-y-1">
-                                <label className="ds-meta font-bold text-muted-foreground uppercase">Phone Number ID *</label>
+                                <label className="ds-meta font-bold text-muted-foreground uppercase">
+                                  Phone Number ID *
+                                </label>
                                 <Input
                                   type="text"
                                   required
@@ -634,7 +747,9 @@ function InboxModule() {
                                 />
                               </div>
                               <div className="space-y-1">
-                                <label className="ds-meta font-bold text-muted-foreground uppercase">Access Token *</label>
+                                <label className="ds-meta font-bold text-muted-foreground uppercase">
+                                  Access Token *
+                                </label>
                                 <Input
                                   type="password"
                                   required
@@ -648,7 +763,9 @@ function InboxModule() {
                           ) : (
                             <>
                               <div className="space-y-1">
-                                <label className="ds-meta font-bold text-muted-foreground uppercase">URL do Servidor *</label>
+                                <label className="ds-meta font-bold text-muted-foreground uppercase">
+                                  URL do Servidor *
+                                </label>
                                 <Input
                                   type="url"
                                   required
@@ -659,7 +776,9 @@ function InboxModule() {
                                 />
                               </div>
                               <div className="space-y-1">
-                                <label className="ds-meta font-bold text-muted-foreground uppercase">Global API Key *</label>
+                                <label className="ds-meta font-bold text-muted-foreground uppercase">
+                                  Global API Key *
+                                </label>
                                 <Input
                                   type="password"
                                   required
@@ -683,45 +802,50 @@ function InboxModule() {
                       )}
 
                       {connectType === "instagram" && (
-                        <form onSubmit={async (e) => {
-                          e.preventDefault();
-                          if (!instaAccountId.trim() || !instaToken.trim()) {
-                            toast.error("Preencha o Instagram ID e Token.");
-                            return;
-                          }
-                          setSubmittingConfig(true);
-                          try {
-                            await supabase.functions.invoke("ai-orchestrator", {
-                              body: {
-                                action: "save-credential",
+                        <form
+                          onSubmit={async (e) => {
+                            e.preventDefault();
+                            if (!instaAccountId.trim() || !instaToken.trim()) {
+                              toast.error("Preencha o Instagram ID e Token.");
+                              return;
+                            }
+                            setSubmittingConfig(true);
+                            try {
+                              await supabase.functions.invoke("ai-orchestrator", {
+                                body: {
+                                  action: "save-credential",
+                                  agency_id: agency!.id,
+                                  provider: "instagram_access_token",
+                                  key_value: instaToken.trim(),
+                                  label: "Instagram Access Token",
+                                },
+                              });
+
+                              await db.from("channels").insert({
                                 agency_id: agency!.id,
-                                provider: "instagram_access_token",
-                                key_value: instaToken.trim(),
-                                label: "Instagram Access Token",
-                              },
-                            });
+                                type: "instagram",
+                                display_name: `Instagram (${instaAccountId.trim()})`,
+                                external_id: `instagram-${instaAccountId.trim()}`,
+                                is_active: true,
+                              });
 
-                            await db.from("channels").insert({
-                              agency_id: agency!.id,
-                              type: "instagram",
-                              display_name: `Instagram (${instaAccountId.trim()})`,
-                              external_id: `instagram-${instaAccountId.trim()}`,
-                              is_active: true,
-                            });
-
-                            toast.success("Instagram conectado com sucesso!");
-                            setConnectType(null);
-                            setInstaAccountId("");
-                            setInstaToken("");
-                            queryClient.invalidateQueries({ queryKey: ["inbox-channels"] });
-                          } catch (err: any) {
-                            toast.error("Erro ao configurar: " + err.message);
-                          } finally {
-                            setSubmittingConfig(false);
-                          }
-                        }} className="space-y-3">
+                              toast.success("Instagram conectado com sucesso!");
+                              setConnectType(null);
+                              setInstaAccountId("");
+                              setInstaToken("");
+                              queryClient.invalidateQueries({ queryKey: ["inbox-channels"] });
+                            } catch (err: any) {
+                              toast.error("Erro ao configurar: " + err.message);
+                            } finally {
+                              setSubmittingConfig(false);
+                            }
+                          }}
+                          className="space-y-3"
+                        >
                           <div className="space-y-1">
-                            <label className="ds-meta font-bold text-muted-foreground uppercase">Instagram Account ID *</label>
+                            <label className="ds-meta font-bold text-muted-foreground uppercase">
+                              Instagram Account ID *
+                            </label>
                             <Input
                               type="text"
                               required
@@ -732,7 +856,9 @@ function InboxModule() {
                             />
                           </div>
                           <div className="space-y-1">
-                            <label className="ds-meta font-bold text-muted-foreground uppercase">Meta Page Access Token *</label>
+                            <label className="ds-meta font-bold text-muted-foreground uppercase">
+                              Meta Page Access Token *
+                            </label>
                             <Input
                               type="password"
                               required
@@ -764,7 +890,7 @@ function InboxModule() {
           <div className="relative">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground" />
             <Input
-              className="w-full pl-9 pr-3 h-10 rounded-[var(--radius-card)] bg-black/10 border border-white/10 focus:ring-brand transition-colors text-sm"
+              className="w-full pl-9 pr-3 h-10 rounded-[var(--radius-card)] glass-dark border border-border focus:ring-brand transition-colors text-sm"
               placeholder="Buscar por contatos..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
@@ -778,7 +904,7 @@ function InboxModule() {
               className={`flex h-8 items-center gap-1.5 rounded-full px-3 ds-label-caps transition-colors whitespace-nowrap border ${
                 filterChannel === null
                   ? "bg-brand/10 text-brand border-brand/25"
-                  : "bg-black/20 text-muted-foreground border-white/10 hover:text-foreground hover:bg-black/40"
+                  : "bg-black/20 text-muted-foreground border-border hover:text-foreground hover:bg-black/40"
               }`}
             >
               <Inbox className="h-3 w-3" />
@@ -791,7 +917,7 @@ function InboxModule() {
                 className={`flex items-center gap-1.5 rounded-full px-2.5 py-1 ds-label-caps transition-colors whitespace-nowrap border ${
                   filterChannel === "whatsapp"
                     ? "bg-green-500/10 text-green-600 border-green-500/25"
-                    : "bg-black/20 text-muted-foreground border-white/10 hover:text-foreground hover:bg-black/40"
+                    : "bg-black/20 text-muted-foreground border-border hover:text-foreground hover:bg-black/40"
                 }`}
               >
                 <Phone className="h-3 w-3" />
@@ -805,7 +931,7 @@ function InboxModule() {
                 className={`flex items-center gap-1.5 rounded-full px-2.5 py-1 ds-label-caps transition-colors whitespace-nowrap border ${
                   filterChannel === "email"
                     ? "bg-blue-500/10 text-blue-600 border-blue-500/25"
-                    : "bg-black/20 text-muted-foreground border-white/10 hover:text-foreground hover:bg-black/40"
+                    : "bg-black/20 text-muted-foreground border-border hover:text-foreground hover:bg-black/40"
                 }`}
               >
                 <Mail className="h-3 w-3" />
@@ -814,13 +940,14 @@ function InboxModule() {
             )}
 
             {/* Instagram dinâmico se a agência tiver chaves ou conversas dele */}
-            {(activeChannelTypes.includes("instagram" as any) || conversations.some(c => (c.channels as any)?.type === "instagram")) && (
+            {(activeChannelTypes.includes("instagram" as any) ||
+              conversations.some((c) => (c.channels as any)?.type === "instagram")) && (
               <Button
                 onClick={() => setFilterChannel("instagram")}
                 className={`flex items-center gap-1.5 rounded-full px-2.5 py-1 ds-label-caps transition-colors whitespace-nowrap border ${
                   filterChannel === "instagram"
                     ? "bg-pink-500/10 text-pink-600 border-pink-500/25"
-                    : "bg-black/20 text-muted-foreground border-white/10 hover:text-foreground hover:bg-black/40"
+                    : "bg-black/20 text-muted-foreground border-border hover:text-foreground hover:bg-black/40"
                 }`}
               >
                 <Instagram className="h-3 w-3" />
@@ -833,7 +960,7 @@ function InboxModule() {
               className={`ml-auto flex items-center gap-1 rounded-full px-2.5 py-1 ds-label-caps transition-colors border ${
                 mySessionsOnly
                   ? "bg-brand/10 text-brand border-brand/25"
-                  : "bg-black/20 text-muted-foreground border-white/10 hover:text-foreground hover:bg-black/40"
+                  : "bg-black/20 text-muted-foreground border-border hover:text-foreground hover:bg-black/40"
               }`}
             >
               Meus
@@ -846,7 +973,10 @@ function InboxModule() {
           {isLoadingConversations && (
             <div className="space-y-2 p-3">
               {[1, 2, 3].map((i) => (
-                <div key={i} className="h-16 rounded-lg bg-black/5 border border-white/5 animate-pulse" />
+                <div
+                  key={i}
+                  className="h-16 rounded-lg glass border border-white/5 animate-pulse"
+                />
               ))}
             </div>
           )}
@@ -871,19 +1001,30 @@ function InboxModule() {
                 onClick={() => setSelectedId(c.id)}
                 className={cn(
                   "w-full flex items-start gap-3 p-3 border-b border-border/40 text-left transition-colors relative",
-                  isSelected ? "bg-primary/5 border-l-2 border-l-primary" : "hover:glass bg-white/5 border-white/10/50"
+                  isSelected
+                    ? "bg-primary/5 border-l-2 border-l-primary"
+                    : "hover:glass/50",
                 )}
               >
                 <div className="relative shrink-0">
-                  <div className="flex h-9 w-9 items-center justify-center rounded-full glass bg-white/5 border-white/10 border-none">
+                  <div className="flex h-9 w-9 items-center justify-center rounded-full glass border-none">
                     {contact.metadata?.avatar_url ? (
-                      <img src={contact.metadata.avatar_url} alt="" className="h-9 w-9 rounded-full object-cover" />
+                      <img
+                        src={contact.metadata.avatar_url}
+                        alt=""
+                        className="h-9 w-9 rounded-full object-cover"
+                      />
                     ) : (
                       <UserCircle className="h-5 w-5 text-muted-foreground/60" />
                     )}
                   </div>
                   <div className="absolute -bottom-0.5 -right-0.5 rounded-full glass-card border-none p-0.5">
-                    <Icon className={cn("h-3 w-3", CHANNEL_COLORS[channel.type] ?? "text-muted-foreground")} />
+                    <Icon
+                      className={cn(
+                        "h-3 w-3",
+                        CHANNEL_COLORS[channel.type] ?? "text-muted-foreground",
+                      )}
+                    />
                   </div>
                 </div>
 
@@ -901,7 +1042,7 @@ function InboxModule() {
                       {lastMsg.body || "Sem mensagens"}
                     </p>
                   </div>
-                  
+
                   <div className="mt-1.5 flex gap-1 flex-wrap">
                     {c.ai_mode && (
                       <span className="rounded bg-blue-100 dark:bg-blue-900/40 text-blue-800 dark:text-blue-200 px-1.5 py-0.5 text-[8px] font-bold flex items-center gap-0.5">
@@ -922,10 +1063,12 @@ function InboxModule() {
       </aside>
 
       {/* ── CENTRAL COLUMN: Message Thread & Chat ───────────────────────────────── */}
-      <section className={cn(
-        "flex flex-1 flex-col border-r border-border h-full min-w-0 relative",
-        selectedId ? "flex" : "hidden md:flex"
-      )}>
+      <section
+        className={cn(
+          "flex flex-1 flex-col border-r border-border h-full min-w-0 relative",
+          selectedId ? "flex" : "hidden md:flex",
+        )}
+      >
         {selectedId ? (
           <div className="flex flex-1 flex-col h-full overflow-hidden">
             {/* Thread Header */}
@@ -938,7 +1081,7 @@ function InboxModule() {
                 <ChevronLeft className="h-4 w-4" />
               </Button>
 
-              <div className="flex h-9 w-9 items-center justify-center rounded-full glass bg-white/5 border-white/10 border-none">
+              <div className="flex h-9 w-9 items-center justify-center rounded-full glass border-none">
                 {selectedConversation?.contacts?.metadata?.avatar_url ? (
                   <img
                     src={selectedConversation.contacts.metadata.avatar_url}
@@ -958,8 +1101,16 @@ function InboxModule() {
                   {selectedConversation?.channels?.type && (
                     <>
                       {(() => {
-                        const Icon = CHANNEL_ICONS[selectedConversation.channels.type] ?? MessageSquare;
-                        return <Icon className={cn("h-3 w-3", CHANNEL_COLORS[selectedConversation.channels.type])} />;
+                        const Icon =
+                          CHANNEL_ICONS[selectedConversation.channels.type] ?? MessageSquare;
+                        return (
+                          <Icon
+                            className={cn(
+                              "h-3 w-3",
+                              CHANNEL_COLORS[selectedConversation.channels.type],
+                            )}
+                          />
+                        );
                       })()}
                       via {selectedConversation.channels.type}
                     </>
@@ -971,7 +1122,7 @@ function InboxModule() {
                 <Button
                   onClick={generateAiSuggestion}
                   disabled={generatingAi}
-                  className="flex items-center gap-1.5 rounded-full border-none px-2.5 py-1.5 text-xs font-semibold text-brand glass-card border-none hover:glass bg-white/5 border-white/10 transition-colors disabled:opacity-50 cursor-pointer"
+                  className="flex items-center gap-1.5 rounded-full border-none px-2.5 py-1.5 text-xs font-semibold text-brand glass-card border-none hover:glass transition-colors disabled:opacity-50 cursor-pointer"
                 >
                   <Sparkles className={cn("h-3.5 w-3.5", generatingAi && "animate-pulse")} />
                   <span>{generatingAi ? "Sugerindo..." : "IA Resposta"}</span>
@@ -980,8 +1131,10 @@ function InboxModule() {
                 <Button
                   onClick={() => setShowDetails(!showDetails)}
                   className={cn(
-                    "flex h-8 w-8 items-center justify-center rounded-full border-none transition-colors hover:glass bg-white/5 border-white/10 cursor-pointer",
-                    showDetails ? "glass bg-white/5 border-white/10 text-brand" : "text-muted-foreground glass-card border-none"
+                    "flex h-8 w-8 items-center justify-center rounded-full border-none transition-colors hover:glass cursor-pointer",
+                    showDetails
+                      ? "glass text-brand"
+                      : "text-muted-foreground glass-card border-none",
                   )}
                   title="Ocultar/Mostrar painel do contato"
                 >
@@ -1011,7 +1164,10 @@ function InboxModule() {
                     >
                       Usar
                     </Button>
-                    <Button onClick={() => setAiSuggestion(null)} className="text-muted-foreground hover:text-foreground">
+                    <Button
+                      onClick={() => setAiSuggestion(null)}
+                      className="text-muted-foreground hover:text-foreground"
+                    >
                       <X className="h-4 w-4" />
                     </Button>
                   </div>
@@ -1020,46 +1176,67 @@ function InboxModule() {
             )}
 
             {/* Messages Thread list */}
-            <div className="flex-1 overflow-y-auto dock-offset p-4 space-y-3 glass bg-white/5 border-white/10/10">
+            <div className="flex-1 overflow-y-auto dock-offset p-4 space-y-3 glass/10">
               {isLoadingMessages && (
                 <div className="flex justify-center items-center h-24">
                   <RefreshCw className="w-5 h-5 animate-spin text-muted-foreground" />
                 </div>
               )}
-              
-              {!isLoadingMessages && messages.map((m: any) => (
-                <div key={m.id} className={cn("flex w-full", m.direction === "outbound" ? "justify-end" : "justify-start")}>
-                  <div className={cn(
-                    "max-w-[70%] rounded-[var(--radius-card)] px-4 py-2.5 text-sm leading-relaxed relative group",
-                    m.direction === "outbound"
-                      ? "bg-brand text-brand-foreground rounded-br-sm"
-                      : "glass-card border-none text-foreground rounded-bl-sm border-none"
-                  )}>
-                    {m.media_url && (
-                      <div className="mb-2 max-w-full">
-                        {m.media_url.endsWith(".webm") || m.media_url.includes("audio") ? (
-                          <audio src={m.media_url} controls className="max-w-full h-10" />
-                        ) : (
-                          <img src={m.media_url} alt="Media" className="rounded-[var(--radius-card)] max-w-full object-contain max-h-48" />
-                        )}
-                      </div>
+
+              {!isLoadingMessages &&
+                messages.map((m: any) => (
+                  <div
+                    key={m.id}
+                    className={cn(
+                      "flex w-full",
+                      m.direction === "outbound" ? "justify-end" : "justify-start",
                     )}
-                    <p className="whitespace-pre-wrap">{m.body}</p>
-                    <div className={cn(
-                      "mt-1 flex items-center justify-end gap-1 text-[9px] opacity-70",
-                      m.direction === "outbound" ? "text-brand-foreground" : "text-muted-foreground"
-                    )}>
-                      {formatTime(m.created_at)}
-                      {m.direction === "outbound" && (
-                        m.status === "read" ? <CheckCheck className="h-3 w-3 text-blue-300" /> :
-                        m.status === "delivered" ? <CheckCheck className="h-3 w-3" /> :
-                        m.status === "failed" ? <AlertTriangle className="h-3 w-3 text-red-500" /> :
-                        <CheckCheck className="h-3 w-3 opacity-50" />
+                  >
+                    <div
+                      className={cn(
+                        "max-w-[70%] rounded-[var(--radius-card)] px-4 py-2.5 text-sm leading-relaxed relative group",
+                        m.direction === "outbound"
+                          ? "bg-brand text-brand-foreground rounded-br-sm"
+                          : "glass-card border-none text-foreground rounded-bl-sm border-none",
                       )}
+                    >
+                      {m.media_url && (
+                        <div className="mb-2 max-w-full">
+                          {m.media_url.endsWith(".webm") || m.media_url.includes("audio") ? (
+                            <audio src={m.media_url} controls className="max-w-full h-10" />
+                          ) : (
+                            <img
+                              src={m.media_url}
+                              alt="Media"
+                              className="rounded-[var(--radius-card)] max-w-full object-contain max-h-48"
+                            />
+                          )}
+                        </div>
+                      )}
+                      <p className="whitespace-pre-wrap">{m.body}</p>
+                      <div
+                        className={cn(
+                          "mt-1 flex items-center justify-end gap-1 text-[9px] opacity-70",
+                          m.direction === "outbound"
+                            ? "text-brand-foreground"
+                            : "text-muted-foreground",
+                        )}
+                      >
+                        {formatTime(m.created_at)}
+                        {m.direction === "outbound" &&
+                          (m.status === "read" ? (
+                            <CheckCheck className="h-3 w-3 text-blue-300" />
+                          ) : m.status === "delivered" ? (
+                            <CheckCheck className="h-3 w-3" />
+                          ) : m.status === "failed" ? (
+                            <AlertTriangle className="h-3 w-3 text-red-500" />
+                          ) : (
+                            <CheckCheck className="h-3 w-3 opacity-50" />
+                          ))}
+                      </div>
                     </div>
                   </div>
-                </div>
-              ))}
+                ))}
               <div ref={messagesEndRef} />
             </div>
 
@@ -1069,7 +1246,9 @@ function InboxModule() {
                 <div className="mb-3 flex items-start gap-2 rounded-[var(--radius-card)] border border-brand/20 bg-brand/5 p-3 text-xs text-brand relative">
                   <Sparkles className="mt-0.5 h-3.5 w-3.5 shrink-0" />
                   <div className="flex-1 leading-relaxed">
-                    <p className="font-bold mb-1 uppercase tracking-wider text-[9px]">Sugestão da IA</p>
+                    <p className="font-bold mb-1 uppercase tracking-wider text-[9px]">
+                      Sugestão da IA
+                    </p>
                     <p>{aiSuggestion}</p>
                   </div>
                   <Button
@@ -1082,13 +1261,18 @@ function InboxModule() {
               )}
               <div className="flex items-end gap-2">
                 <Button
-                  className="flex h-10 w-10 shrink-0 items-center justify-center rounded-[var(--radius-card)] border border-border glass-card border-none hover:bg-white/10 text-muted-foreground hover:text-foreground transition-colors cursor-pointer"
+                  className="flex h-10 w-10 shrink-0 items-center justify-center rounded-[var(--radius-card)] border border-border glass-card border-none hover:glass-dark text-muted-foreground hover:text-foreground transition-colors cursor-pointer"
                   onClick={() => fileInputRef.current?.click()}
                   title="Anexar arquivo"
                 >
                   <Paperclip className="h-4 w-4" />
                 </Button>
-                <Input type="file" ref={fileInputRef} onChange={handleAttachmentUpload} className="hidden" />
+                <Input
+                  type="file"
+                  ref={fileInputRef}
+                  onChange={handleAttachmentUpload}
+                  className="hidden"
+                />
 
                 <Button
                   onClick={recording ? stopRecording : startRecording}
@@ -1096,7 +1280,7 @@ function InboxModule() {
                     "flex h-10 w-10 shrink-0 items-center justify-center rounded-[var(--radius-card)] border transition-all cursor-pointer",
                     recording
                       ? "bg-red-500 border-red-500 text-white animate-pulse"
-                      : "border-border glass-card border-none hover:bg-white/10 text-muted-foreground hover:text-foreground"
+                      : "border-border glass-card border-none hover:glass-dark text-muted-foreground hover:text-foreground",
                   )}
                   title={recording ? "Parar gravação" : "Gravar mensagem de voz"}
                 >
@@ -1115,9 +1299,9 @@ function InboxModule() {
                   placeholder={recording ? "Gravando áudio..." : "Digite uma mensagem…"}
                   rows={2}
                   disabled={recording}
-                  className="flex-1 resize-none rounded-[var(--radius-card)] border border-white/10 bg-black/10 py-2.5 focus:border-brand text-sm h-10 min-h-0"
+                  className="flex-1 resize-none rounded-[var(--radius-card)] border border-border glass-dark py-2.5 focus:border-brand text-sm h-10 min-h-0"
                 />
-                
+
                 <Button
                   onClick={() => {
                     if (reply.trim()) sendReplyMutation.mutate(reply);
@@ -1132,8 +1316,8 @@ function InboxModule() {
           </div>
         ) : (
           /* Empty Chat State */
-<div className="flex flex-1 flex-col items-center justify-center p-10 text-center glass-card border-none border-r border-border h-full">
-            <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-[var(--radius-card)] glass bg-white/5 border-white/10">
+          <div className="flex flex-1 flex-col items-center justify-center p-10 text-center glass-card border-none border-r border-border h-full">
+            <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-[var(--radius-card)] glass">
               <MessageSquare className="h-8 w-8 text-muted-foreground/40" />
             </div>
             <h3 className="text-base font-bold text-foreground mb-1">Selecione uma conversa</h3>
@@ -1146,24 +1330,29 @@ function InboxModule() {
 
       {/* ── RIGHT COLUMN: Collapsible Contact Info Panel (Width 320px) ───────────────── */}
       {selectedId && showDetails && (
-        <aside className="fixed inset-y-0 right-0 z-40 flex w-full max-w-[320px] flex-col border-l border-border bg-surface/95 backdrop-blur-xl overflow-hidden lg:relative lg:w-[280px] lg:z-0 lg:flex shadow-2xl lg:shadow-none h-full lg:bg-surface/30 lg:backdrop-blur-none">
+        <aside className="fixed inset-y-0 right-0 z-40 flex w-full max-w-xs flex-col border-l border-border bg-surface/95 backdrop-blur-xl overflow-hidden lg:relative lg:w-72 lg:z-0 lg:flex shadow-2xl lg:shadow-none h-full lg:bg-surface/30 lg:backdrop-blur-none">
           {/* Header */}
           <div className="flex items-center justify-between border-b border-border px-4 min-h-[var(--ds-toolbar-height)] glass-toolbar shrink-0">
             <h3 className="ds-meta font-extrabold uppercase tracking-wider text-muted-foreground">
               Painel do Cliente
             </h3>
-            <Button onClick={() => setShowDetails(false)} className="text-muted-foreground hover:text-foreground cursor-pointer">
+            <Button
+              onClick={() => setShowDetails(false)}
+              className="text-muted-foreground hover:text-foreground cursor-pointer"
+            >
               <X className="h-4 w-4" />
             </Button>
           </div>
 
           {/* Sub-Tabs */}
-          <div className="flex border-b border-border text-xs font-bold shrink-0 glass bg-white/5 border-white/10/30">
+          <div className="flex border-b border-border text-xs font-bold shrink-0 glass/30">
             <Button
               onClick={() => setDetailsTab("profile")}
               className={cn(
                 "flex-1 py-2.5 text-center border-b-2 transition-colors cursor-pointer",
-                detailsTab === "profile" ? "border-brand text-brand font-bold" : "border-transparent text-muted-foreground hover:text-foreground"
+                detailsTab === "profile"
+                  ? "border-brand text-brand font-bold"
+                  : "border-transparent text-muted-foreground hover:text-foreground",
               )}
             >
               Perfil
@@ -1172,7 +1361,9 @@ function InboxModule() {
               onClick={() => setDetailsTab("documents")}
               className={cn(
                 "flex-1 py-2.5 text-center border-b-2 transition-colors cursor-pointer",
-                detailsTab === "documents" ? "border-brand text-brand font-bold" : "border-transparent text-muted-foreground hover:text-foreground"
+                detailsTab === "documents"
+                  ? "border-brand text-brand font-bold"
+                  : "border-transparent text-muted-foreground hover:text-foreground",
               )}
             >
               Docs
@@ -1181,7 +1372,9 @@ function InboxModule() {
               onClick={() => setDetailsTab("notices")}
               className={cn(
                 "flex-1 py-2.5 text-center border-b-2 transition-colors cursor-pointer",
-                detailsTab === "notices" ? "border-brand text-brand font-bold" : "border-transparent text-muted-foreground hover:text-foreground"
+                detailsTab === "notices"
+                  ? "border-brand text-brand font-bold"
+                  : "border-transparent text-muted-foreground hover:text-foreground",
               )}
             >
               Avisos
@@ -1190,7 +1383,9 @@ function InboxModule() {
               onClick={() => setDetailsTab("ai_templates")}
               className={cn(
                 "flex-1 py-2.5 text-center border-b-2 transition-colors cursor-pointer",
-                detailsTab === "ai_templates" ? "border-brand text-brand font-bold" : "border-transparent text-muted-foreground hover:text-foreground"
+                detailsTab === "ai_templates"
+                  ? "border-brand text-brand font-bold"
+                  : "border-transparent text-muted-foreground hover:text-foreground",
               )}
             >
               Templates
@@ -1203,9 +1398,13 @@ function InboxModule() {
             {detailsTab === "profile" && (
               <div className="p-4 space-y-4">
                 <div className="flex items-center gap-3">
-                  <div className="flex h-10 w-10 items-center justify-center rounded-full glass bg-white/5 border-white/10 border-none">
+                  <div className="flex h-10 w-10 items-center justify-center rounded-full glass border-none">
                     {selectedConversation?.contacts?.metadata?.avatar_url ? (
-                      <img src={selectedConversation.contacts.metadata.avatar_url} alt="" className="h-10 w-10 rounded-full object-cover" />
+                      <img
+                        src={selectedConversation.contacts.metadata.avatar_url}
+                        alt=""
+                        className="h-10 w-10 rounded-full object-cover"
+                      />
                     ) : (
                       <UserCircle className="h-6 w-6 text-muted-foreground/60" />
                     )}
@@ -1215,13 +1414,15 @@ function InboxModule() {
                       {selectedConversation?.contacts?.name || "Contato desconhecido"}
                     </h4>
                     <span className="text-[9px] text-muted-foreground block truncate">
-                      {selectedConversation?.contacts?.phone || selectedConversation?.contacts?.email || ""}
+                      {selectedConversation?.contacts?.phone ||
+                        selectedConversation?.contacts?.email ||
+                        ""}
                     </span>
                   </div>
                 </div>
 
                 {/* CRM Sync details */}
-                <div className="glass bg-white/5 border-white/10/40 border-none rounded-[var(--radius-card)] p-3 space-y-3">
+                <div className="glass/40 border-none rounded-[var(--radius-card)] p-3 space-y-3">
                   {isLinkingOpen ? (
                     <div className="space-y-2">
                       <div className="flex items-center justify-between border-b border-border/50 pb-1.5">
@@ -1247,7 +1448,7 @@ function InboxModule() {
                             "flex-1 py-1 text-[9px] font-bold rounded",
                             crmSearchType === "lead"
                               ? "bg-brand text-brand-foreground"
-                              : "glass bg-white/5 border-white/10 text-muted-foreground hover:glass bg-white/5 border-white/10/80 border-none/50"
+                              : "glass text-muted-foreground hover:glass/80 border-none/50",
                           )}
                         >
                           Lead
@@ -1259,7 +1460,7 @@ function InboxModule() {
                             "flex-1 py-1 text-[9px] font-bold rounded",
                             crmSearchType === "client"
                               ? "bg-brand text-brand-foreground"
-                              : "glass bg-white/5 border-white/10 text-muted-foreground hover:glass bg-white/5 border-white/10/80 border-none/50"
+                              : "glass text-muted-foreground hover:glass/80 border-none/50",
                           )}
                         >
                           Cliente
@@ -1293,7 +1494,7 @@ function InboxModule() {
                                   linkContactToCrm(null, res.id);
                                 }
                               }}
-                              className="w-full text-left px-2.5 py-1.5 hover:glass bg-white/5 border-white/10/40 ds-meta text-foreground flex flex-col cursor-pointer"
+                              className="w-full text-left px-2.5 py-1.5 hover:glass/40 ds-meta text-foreground flex flex-col cursor-pointer"
                             >
                               <span className="font-semibold">{res.name}</span>
                               <span className="text-[8px] text-muted-foreground">
@@ -1336,8 +1537,14 @@ function InboxModule() {
                           </Link>
                         </div>
                       </div>
-                      <p className="text-xs font-bold text-foreground leading-snug">{(matchedLead as any).name}</p>
-                      {(matchedLead as any).email && <p className="ds-meta text-muted-foreground">{(matchedLead as any).email}</p>}
+                      <p className="text-xs font-bold text-foreground leading-snug">
+                        {(matchedLead as any).name}
+                      </p>
+                      {(matchedLead as any).email && (
+                        <p className="ds-meta text-muted-foreground">
+                          {(matchedLead as any).email}
+                        </p>
+                      )}
                     </div>
                   ) : matchedClient ? (
                     <div className="space-y-1.5">
@@ -1361,7 +1568,9 @@ function InboxModule() {
                           </Link>
                         </div>
                       </div>
-                      <p className="text-xs font-bold text-foreground leading-snug">{(matchedClient as any).full_name}</p>
+                      <p className="text-xs font-bold text-foreground leading-snug">
+                        {(matchedClient as any).full_name}
+                      </p>
                     </div>
                   ) : (
                     <div className="space-y-2 text-center py-1">
@@ -1375,7 +1584,7 @@ function InboxModule() {
                         </Button>
                         <Button
                           onClick={() => setIsLinkingOpen(true)}
-                          className="w-full ds-meta font-bold border-none text-muted-foreground glass-card border-none hover:text-foreground hover:glass bg-white/5 border-white/10/25 py-1.5 rounded-[var(--radius-card)] flex items-center justify-center gap-1 cursor-pointer"
+                          className="w-full ds-meta font-bold border-none text-muted-foreground glass-card border-none hover:text-foreground hover:glass/25 py-1.5 rounded-[var(--radius-card)] flex items-center justify-center gap-1 cursor-pointer"
                         >
                           <Link2 className="w-3.5 h-3.5" /> Vincular Lead/Cliente Existente
                         </Button>
@@ -1402,10 +1611,14 @@ function InboxModule() {
 
                     <Button
                       onClick={() => {
-                        setReply((prev) => (prev ? prev + "\n" : "") + `Olá! Segue o link para assinatura do seu contrato: ${window.location.origin}/m/contract/assinar-aqui`);
+                        setReply(
+                          (prev) =>
+                            (prev ? prev + "\n" : "") +
+                            `Olá! Segue o link para assinatura do seu contrato: ${window.location.origin}/m/contract/assinar-aqui`,
+                        );
                         toast.success("Link do contrato copiado!");
                       }}
-                      className="flex items-center gap-2 w-full text-left rounded-[var(--radius-card)] border-none px-3 py-1.5 text-xs font-bold text-foreground hover:glass bg-white/5 border-white/10/50 transition-colors cursor-pointer glass-card border-none"
+                      className="flex items-center gap-2 w-full text-left rounded-[var(--radius-card)] border-none px-3 py-1.5 text-xs font-bold text-foreground hover:glass/50 transition-colors cursor-pointer glass-card border-none"
                     >
                       <FileCheck className="w-3.5 h-3.5 text-muted-foreground" />
                       <span>Enviar Contrato</span>
@@ -1413,10 +1626,14 @@ function InboxModule() {
 
                     <Button
                       onClick={() => {
-                        setReply((prev) => (prev ? prev + "\n" : "") + `Olá! Você pode acompanhar sua viagem e vouchers direto pelo nosso Portal do Cliente: ${window.location.origin}/client`);
+                        setReply(
+                          (prev) =>
+                            (prev ? prev + "\n" : "") +
+                            `Olá! Você pode acompanhar sua viagem e vouchers direto pelo nosso Portal do Cliente: ${window.location.origin}/client`,
+                        );
                         toast.success("Link do portal de cliente copiado!");
                       }}
-                      className="flex items-center gap-2 w-full text-left rounded-[var(--radius-card)] border-none px-3 py-1.5 text-xs font-bold text-foreground hover:glass bg-white/5 border-white/10/50 transition-colors cursor-pointer glass-card border-none"
+                      className="flex items-center gap-2 w-full text-left rounded-[var(--radius-card)] border-none px-3 py-1.5 text-xs font-bold text-foreground hover:glass/50 transition-colors cursor-pointer glass-card border-none"
                     >
                       <ExternalLink className="w-3.5 h-3.5 text-muted-foreground" />
                       <span>MagicLink Portal</span>
@@ -1434,7 +1651,7 @@ function InboxModule() {
                 </h4>
 
                 {matchedClientId ? (
-                  <div className="p-3 border-none rounded-[var(--radius-card)] glass bg-white/5 border-white/10/40 space-y-3">
+                  <div className="p-3 border-none rounded-[var(--radius-card)] glass/40 space-y-3">
                     <div className="flex items-center justify-between gap-2">
                       <span className="ds-meta font-bold text-foreground">Tipo de Doc:</span>
                       <Select
@@ -1451,7 +1668,13 @@ function InboxModule() {
                       </Select>
                     </div>
                     <div className="relative">
-                      <Input type="file" id="client-doc-inbox-upload" onChange={(e) => handleDocUpload(e, docTypeToUpload)} disabled={uploadingDoc} className="hidden" />
+                      <Input
+                        type="file"
+                        id="client-doc-inbox-upload"
+                        onChange={(e) => handleDocUpload(e, docTypeToUpload)}
+                        disabled={uploadingDoc}
+                        className="hidden"
+                      />
                       <Button
                         onClick={() => document.getElementById("client-doc-inbox-upload")?.click()}
                         disabled={uploadingDoc}
@@ -1463,7 +1686,7 @@ function InboxModule() {
                     </div>
                   </div>
                 ) : (
-                  <p className="ds-meta text-muted-foreground text-center py-3 glass bg-white/5 border-white/10/30 border border-dashed border-border rounded-[var(--radius-card)]">
+                  <p className="ds-meta text-muted-foreground text-center py-3 glass/30 border border-dashed border-border rounded-[var(--radius-card)]">
                     Cadastre o lead como cliente no CRM primeiro para gerenciar seus documentos.
                   </p>
                 )}
@@ -1472,20 +1695,34 @@ function InboxModule() {
                   <div className="space-y-2">
                     {clientDocs.length > 0 ? (
                       clientDocs.map((doc: any) => (
-                        <div key={doc.id} className="p-3 border-none rounded-[var(--radius-card)] glass-card border-none flex flex-col gap-1.5 text-xs">
+                        <div
+                          key={doc.id}
+                          className="p-3 border-none rounded-[var(--radius-card)] glass-card border-none flex flex-col gap-1.5 text-xs"
+                        >
                           <div className="flex items-center justify-between">
-                            <span className="font-bold text-brand uppercase ds-meta">{doc.doc_type}</span>
+                            <span className="font-bold text-brand uppercase ds-meta">
+                              {doc.doc_type}
+                            </span>
                             {doc.file_url && (
-                              <a href={doc.file_url} target="_blank" rel="noopener noreferrer" className="text-brand font-bold hover:underline flex items-center gap-0.5 ds-meta">
+                              <a
+                                href={doc.file_url}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="text-brand font-bold hover:underline flex items-center gap-0.5 ds-meta"
+                              >
                                 Ver arquivo <ExternalLink className="h-3 w-3" />
                               </a>
                             )}
                           </div>
-                          <span className="font-mono text-muted-foreground ds-meta">{doc.doc_number || "Sem número"}</span>
+                          <span className="font-mono text-muted-foreground ds-meta">
+                            {doc.doc_number || "Sem número"}
+                          </span>
                         </div>
                       ))
                     ) : (
-                      <p className="ds-meta text-muted-foreground text-center py-4">Nenhum documento anexado.</p>
+                      <p className="ds-meta text-muted-foreground text-center py-4">
+                        Nenhum documento anexado.
+                      </p>
                     )}
                   </div>
                 )}
@@ -1501,7 +1738,11 @@ function InboxModule() {
                       <h4 className="ds-meta font-extrabold uppercase tracking-wider text-muted-foreground">
                         Observações Internas
                       </h4>
-                      <Button onClick={handleSaveContactNotes} disabled={savingNotes} className="ds-meta text-brand font-bold hover:underline disabled:opacity-50 cursor-pointer">
+                      <Button
+                        onClick={handleSaveContactNotes}
+                        disabled={savingNotes}
+                        className="ds-meta text-brand font-bold hover:underline disabled:opacity-50 cursor-pointer"
+                      >
                         {savingNotes ? "Salvando..." : "Salvar"}
                       </Button>
                     </div>
@@ -1514,7 +1755,9 @@ function InboxModule() {
                     />
                   </div>
                 ) : (
-                  <p className="text-xs text-muted-foreground text-center py-6">Notas disponíveis apenas para contatos cadastrados no CRM.</p>
+                  <p className="text-xs text-muted-foreground text-center py-6">
+                    Notas disponíveis apenas para contatos cadastrados no CRM.
+                  </p>
                 )}
               </div>
             )}
@@ -1528,7 +1771,11 @@ function InboxModule() {
                       <h4 className="ds-meta font-extrabold uppercase tracking-wider text-muted-foreground flex items-center gap-1">
                         <Bot className="w-3.5 h-3.5 text-brand" /> IA RAG Insights
                       </h4>
-                      <Button onClick={triggerAnalysis} disabled={analyzing} className="ds-meta text-brand font-bold hover:underline flex items-center gap-1 disabled:opacity-50 cursor-pointer">
+                      <Button
+                        onClick={triggerAnalysis}
+                        disabled={analyzing}
+                        className="ds-meta text-brand font-bold hover:underline flex items-center gap-1 disabled:opacity-50 cursor-pointer"
+                      >
                         <RefreshCw className={cn("w-3 h-3", analyzing && "animate-spin")} />
                         <span>Atualizar</span>
                       </Button>
@@ -1548,18 +1795,21 @@ function InboxModule() {
                         )}
                         {(leadInsights as any).generalized_objections && (
                           <div className="ds-meta bg-brand/5 border border-brand/10 p-2.5 rounded-[var(--radius-card)] text-foreground leading-relaxed">
-                            <strong>Objeções:</strong> {(leadInsights as any).generalized_objections}
+                            <strong>Objeções:</strong>{" "}
+                            {(leadInsights as any).generalized_objections}
                           </div>
                         )}
                       </div>
                     ) : (
-                      <p className="ds-meta text-muted-foreground text-center py-2 glass bg-white/5 border-white/10/30 border border-dashed border-border rounded-[var(--radius-card)]">
+                      <p className="ds-meta text-muted-foreground text-center py-2 glass/30 border border-dashed border-border rounded-[var(--radius-card)]">
                         Sem insights gerados. Clique em atualizar.
                       </p>
                     )}
                   </div>
                 ) : (
-                  <p className="text-xs text-muted-foreground text-center py-6">RAG insights disponíveis apenas para Leads.</p>
+                  <p className="text-xs text-muted-foreground text-center py-6">
+                    RAG insights disponíveis apenas para Leads.
+                  </p>
                 )}
               </div>
             )}

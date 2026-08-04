@@ -75,8 +75,8 @@ function DockItem({
             "relative flex shrink-0 items-center justify-center transition-all duration-200",
             baseSize,
             active
-              ? "rounded-2xl bg-white/20 text-os"
-              : "rounded-full text-os-muted hover:text-os hover:bg-white/10 hover:rounded-2xl",
+              ? "rounded-2xl glass-dark text-os"
+              : "rounded-full text-os-muted hover:text-os hover:glass-dark hover:rounded-2xl",
             isPending && "opacity-60 animate-pulse",
             hovered && !active && "scale-110",
           )}
@@ -116,7 +116,7 @@ function DockItem({
       <TooltipContent
         side={isVertical ? "right" : "top"}
         sideOffset={12}
-        className="rounded-[var(--radius-card)] px-3 py-1.5 text-xs font-semibold bg-black/80 backdrop-blur-md text-os border border-white/10"
+        className="rounded-[var(--radius-card)] px-3 py-1.5 text-xs font-semibold bg-black/80 backdrop-blur-md text-os border border-border"
       >
         {item.label}
       </TooltipContent>
@@ -158,7 +158,8 @@ export function DockNavigation({
 
   const dockItems = items.filter((i) => i.type !== "header");
   const hasContext = contextItems.length > 0;
-  const displayItems = (hasContext && showContextOnly) ? (contextItems as SlimSidebarItem[]) : dockItems;
+  const displayItems =
+    hasContext && showContextOnly ? (contextItems as SlimSidebarItem[]) : dockItems;
 
   if (isHome) {
     // ── Horizontal dock — bottom center ────────────────────────────────────
@@ -190,11 +191,11 @@ export function DockNavigation({
   // ── Vertical dock (md+) & Horizontal Bottom Bar (mobile) ───────────────────
   // Structural (not fixed). Handled by AppShell's CSS Grid layout.
   return (
-    <div 
-      className="w-full h-[72px] md:h-auto z-30 flex md:flex-col items-center justify-between px-4 md:px-0 py-0 md:py-6 bg-black/80 md:bg-black/20 backdrop-blur-2xl border-t md:border-t-0 md:border border-white/10 md:border-white/15 md:rounded-[var(--dock-radius)] md:shadow-[0_8px_32px_rgba(0,0,0,0.2)] flex-row shrink-0 relative transition-all duration-300"
+    <div
+      className="w-full h-[72px] md:h-auto z-30 flex md:flex-col items-center justify-between px-4 md:px-0 py-0 md:py-6 bg-black/80 md:bg-black/20 backdrop-blur-2xl border-t md:border-t-0 md:border border-border md:border-white/15 md:rounded-[var(--dock-radius)] md:shadow-[0_8px_32px_rgba(0,0,0,0.2)] flex-row shrink-0 relative transition-all duration-300"
       style={{
         width: "100%",
-        maxWidth: "var(--dock-collapsed-width)"
+        maxWidth: "var(--dock-collapsed-width)",
       }}
     >
       <TooltipProvider delayDuration={80}>
@@ -203,7 +204,7 @@ export function DockNavigation({
           {hasContext && showContextOnly && (
             <Button
               onClick={() => setShowContextOnly(false)}
-              className="relative flex h-11 w-11 shrink-0 items-center justify-center rounded-full text-os-faint hover:text-os hover:bg-white/10 hover:rounded-2xl transition-all duration-200 cursor-pointer mb-2 border border-white/5"
+              className="relative flex h-11 w-11 shrink-0 items-center justify-center rounded-full text-os-faint hover:text-os hover:glass-dark hover:rounded-2xl transition-all duration-200 cursor-pointer mb-2 border border-white/5"
               title="Voltar para o menu principal"
             >
               <ChevronLeft className="h-5 w-5" strokeWidth={2.5} />
@@ -227,7 +228,7 @@ export function DockNavigation({
         {/* Bottom / Footer (Logout) alinhados na base */}
         <div className="flex flex-row md:flex-col items-center gap-3 md:mt-auto shrink-0 ml-auto md:ml-0">
           {/* Divider */}
-          <div className="h-8 md:h-[1px] w-[1px] md:w-8 bg-white/10 shrink-0" />
+          <div className="h-8 md:h-[1px] w-[1px] md:w-8 glass-dark shrink-0" />
 
           {/* Logout button */}
           <div className="shrink-0">{footer}</div>

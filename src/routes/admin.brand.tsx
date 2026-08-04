@@ -178,7 +178,9 @@ function Page() {
                   publicBucket={true}
                 />
                 {errors.favicon_url && (
-                  <span className="text-xs text-danger mt-1 block">{errors.favicon_url.message}</span>
+                  <span className="text-xs text-danger mt-1 block">
+                    {errors.favicon_url.message}
+                  </span>
                 )}
               </div>
               <Field label="URL dos Termos de Uso" error={errors.terms_url?.message}>

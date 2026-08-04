@@ -1,7 +1,11 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { LifeBuoy, Plus, ExternalLink } from "lucide-react";
-import { fetchClientTickets, createClientTicket, fetchClientAgencies } from "@/services/client-area";
+import {
+  fetchClientTickets,
+  createClientTicket,
+  fetchClientAgencies,
+} from "@/services/client-area";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { FormInput as Input } from "@/components/ui/input";
@@ -73,15 +77,35 @@ function ClientSupportRoute() {
   const getStatusBadge = (status: string) => {
     switch (status) {
       case "open":
-        return <span className="px-2 py-1 bg-yellow-500/10 text-yellow-500 ds-meta rounded-full uppercase font-bold tracking-wider">Aberto</span>;
+        return (
+          <span className="px-2 py-1 bg-yellow-500/10 text-yellow-500 ds-meta rounded-full uppercase font-bold tracking-wider">
+            Aberto
+          </span>
+        );
       case "in_progress":
-        return <span className="px-2 py-1 bg-blue-500/10 text-blue-500 ds-meta rounded-full uppercase font-bold tracking-wider">Em Andamento</span>;
+        return (
+          <span className="px-2 py-1 bg-blue-500/10 text-blue-500 ds-meta rounded-full uppercase font-bold tracking-wider">
+            Em Andamento
+          </span>
+        );
       case "resolved":
-        return <span className="px-2 py-1 bg-green-500/10 text-green-500 ds-meta rounded-full uppercase font-bold tracking-wider">Resolvido</span>;
+        return (
+          <span className="px-2 py-1 bg-green-500/10 text-green-500 ds-meta rounded-full uppercase font-bold tracking-wider">
+            Resolvido
+          </span>
+        );
       case "closed":
-        return <span className="px-2 py-1 bg-zinc-500/10 text-zinc-500 ds-meta rounded-full uppercase font-bold tracking-wider">Fechado</span>;
+        return (
+          <span className="px-2 py-1 bg-zinc-500/10 text-zinc-500 ds-meta rounded-full uppercase font-bold tracking-wider">
+            Fechado
+          </span>
+        );
       default:
-        return <span className="px-2 py-1 bg-zinc-500/10 text-zinc-500 ds-meta rounded-full uppercase font-bold tracking-wider">{status}</span>;
+        return (
+          <span className="px-2 py-1 bg-zinc-500/10 text-zinc-500 ds-meta rounded-full uppercase font-bold tracking-wider">
+            {status}
+          </span>
+        );
     }
   };
 
@@ -118,7 +142,9 @@ function ClientSupportRoute() {
           <form onSubmit={handleCreate} className="space-y-4">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="space-y-2">
-                <label className="text-xs font-semibold uppercase text-muted-foreground">Assunto</label>
+                <label className="text-xs font-semibold uppercase text-muted-foreground">
+                  Assunto
+                </label>
                 <Input
                   type="text"
                   value={title}
@@ -129,7 +155,9 @@ function ClientSupportRoute() {
                 />
               </div>
               <div className="space-y-2">
-                <label className="text-xs font-semibold uppercase text-muted-foreground">Tipo</label>
+                <label className="text-xs font-semibold uppercase text-muted-foreground">
+                  Tipo
+                </label>
                 <Select
                   value={type}
                   onChange={(e) => setType(e.target.value)}
@@ -144,9 +172,11 @@ function ClientSupportRoute() {
                 </Select>
               </div>
             </div>
-            
+
             <div className="space-y-2">
-              <label className="text-xs font-semibold uppercase text-muted-foreground">Descrição Detalhada</label>
+              <label className="text-xs font-semibold uppercase text-muted-foreground">
+                Descrição Detalhada
+              </label>
               <Textarea
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
@@ -181,18 +211,23 @@ function ClientSupportRoute() {
           <LifeBuoy className="h-12 w-12 text-muted-foreground opacity-50 mb-3" />
           <h3 className="text-lg font-medium">Nenhum chamado aberto</h3>
           <p className="text-sm text-muted-foreground mt-1 max-w-md">
-            Você não possui tickets de suporte no momento. Se precisar de ajuda, abra um novo chamado.
+            Você não possui tickets de suporte no momento. Se precisar de ajuda, abra um novo
+            chamado.
           </p>
         </div>
       ) : (
         <div className="grid gap-3">
           {tickets.map((ticket) => (
-            <div key={ticket.id} className="glass-card border-none border-none p-4 rounded-[var(--radius-card)] flex flex-col md:flex-row gap-4 md:items-center justify-between hover:border-primary/50 transition-colors">
+            <div
+              key={ticket.id}
+              className="glass-card border-none border-none p-4 rounded-[var(--radius-card)] flex flex-col md:flex-row gap-4 md:items-center justify-between hover:border-primary/50 transition-colors"
+            >
               <div className="flex-1 min-w-0">
                 <div className="flex items-center gap-2 mb-1">
                   {getStatusBadge(ticket.status)}
                   <span className="text-xs text-muted-foreground">
-                    #{ticket.id.substring(0, 8)} • {new Date(ticket.created_at).toLocaleDateString()}
+                    #{ticket.id.substring(0, 8)} •{" "}
+                    {new Date(ticket.created_at).toLocaleDateString()}
                   </span>
                 </div>
                 <h3 className="font-semibold text-base truncate">{ticket.title}</h3>

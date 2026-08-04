@@ -1,7 +1,7 @@
-
 # INVENTORY.md (A.I.R.I. Phase 1)
 
 ## A) FRONTEND
+
 - **Dependências Relevantes:** React, TanStack Router/Query, Supabase-js, Zustand (ou React Query state), Tailwind, Radix UI.
 - **Rotas Mapeadas (139):**
   - `admin.agencies.$id.tsx`
@@ -19,7 +19,7 @@
   - `admin.travelers.tsx`
   - `admin.trips.tsx`
   - `admin.tsx`
-  *(... e mais 124 rotas)*
+    _(... e mais 124 rotas)_
 - **Componentes Estruturais (169):**
   - Módulos detectados: `inbox`, `tasks`, `trips`, `portal`, `shell`.
 - **Hooks Customizados (10):**
@@ -36,6 +36,7 @@
 - **Design System:** Usa Tailwind com CSS vars nativas (shadcn-like). Presença forte de tokens utilitários de `surface`, `brand`, `border`.
 
 ## B) BACKEND / SUPABASE
+
 - **Tabelas Encontradas (via Migrations):**
   - `public.agencies`
   - `public.profiles`
@@ -210,30 +211,30 @@
   - `public.audit_logs`
 - **RLS (Policies parciais detectadas):**
   - `create policy "agencies are publicly readable"
-  on public.agencies for select
- ...`
+ on public.agencies for select
+...`
   - `create policy "authenticated users can create an agency"
-  on public.agencies fo...`
+on public.agencies fo...`
   - `create policy "agency members can update their agency"
-  on public.agencies for ...`
+on public.agencies for ...`
   - `create policy "agency admins can delete their agency"
-  on public.agencies for d...`
+on public.agencies for d...`
   - `create policy "users see their own profile"
-  on public.profiles for select
-  to...`
+on public.profiles for select
+to...`
   - `create policy "users insert their own profile"
-  on public.profiles for insert
- ...`
+ on public.profiles for insert
+...`
   - `create policy "users update their own profile"
-  on public.profiles for update
- ...`
+ on public.profiles for update
+...`
   - `create policy "users see their own roles"
-  on public.user_roles for select
-  to...`
+on public.user_roles for select
+to...`
   - `create policy "agency admins see roles in their agency"
-  on public.user_roles f...`
+on public.user_roles f...`
   - `create policy "agency admins manage roles in their agency"
-  on public.user_role...`
+on public.user_role...`
 - **Edge Functions (Deno):**
   - `admin-secure-keys`
   - `ai-message-processor`
@@ -266,15 +267,18 @@
   - `whatsapp-webhook`
 
 ## C) INTEGRAÇÕES
+
 - **Webhooks Recebidos:** Edge Functions para `gmail-oauth`, `whatsapp-webhook` e `rag-document-processor`.
 - **APIs Externas:** Google OAuth (Gmail API), Infotravel, Gemini (Text Embedding 004).
 - **Filas & Cron:** Supabase `pg_net` utilizado em triggers (ex: documentos RAG). `cron-productivity` detectada.
 
 ## D) CONTRATOS
+
 - `task.schema.ts` encontrado (Zod).
 - Respostas da API seguem tipagem estrita gerada pelo Supabase.
 
 ## E) SEGURANÇA ATUAL
+
 - **Roles:** Detectada a tabela de roles e assignments (`user_roles`, `agency_members`).
 - **RLS:** A maioria das tabelas possui RLS ativado (ex: `task_label_assignments`, `task_activity_log` auditadas anteriormente).
 - **Service Role:** Encontrados 6 usos de `service_role_key` no cliente (⚠️ Necessário verificar se estão apenas em scripts ou vazados no frontend).

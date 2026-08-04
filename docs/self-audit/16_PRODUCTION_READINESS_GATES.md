@@ -9,20 +9,24 @@ Este documento define os critérios de qualidade (quality gates), checklist de s
 Nenhuma alteração ou módulo auditado será promovido a ambiente produtivo sem atingir as seguintes metas físicas:
 
 ### Portão 1: Paridade Estática de Contratos
-* **Critério**: O comando `npm run typecheck` (`tsc --noEmit`) deve ser executado localmente com **zero erros** ou alertas técnicos.
-* **Status**: **CONCLUÍDO (Passa com sucesso absoluto)**.
+
+- **Critério**: O comando `npm run typecheck` (`tsc --noEmit`) deve ser executado localmente com **zero erros** ou alertas técnicos.
+- **Status**: **CONCLUÍDO (Passa com sucesso absoluto)**.
 
 ### Portão 2: Integridade de Banco de Dados Remoto
-* **Critério**: Todas as migrações criadas no diretório local `supabase/migrations` devem estar registradas como aplicadas na tabela `schema_migrations` do banco remoto. Nenhum script manual ou correção pontual deve ser aplicado em produção sem versionamento físico no Git.
-* **Status**: **CONCLUÍDO (203 migrações aplicadas no banco remoto)**.
+
+- **Critério**: Todas as migrações criadas no diretório local `supabase/migrations` devem estar registradas como aplicadas na tabela `schema_migrations` do banco remoto. Nenhum script manual ou correção pontual deve ser aplicado em produção sem versionamento físico no Git.
+- **Status**: **CONCLUÍDO (203 migrações aplicadas no banco remoto)**.
 
 ### Portão 3: Segurança e Isolamento Multi-Tenant (RLS)
-* **Critério**: Testes de invasão e varredura de RLS devem certificar que chamadas sem token JWT ou com IDs manipulados (IDOR) sejam sumariamente rejeitadas com erro `401/403` pelo banco de dados e borda.
-* **Status**: **CONCLUÍDO (Correções P0/P1 aplicadas, RLS testadas e homologadas)**.
+
+- **Critério**: Testes de invasão e varredura de RLS devem certificar que chamadas sem token JWT ou com IDs manipulados (IDOR) sejam sumariamente rejeitadas com erro `401/403` pelo banco de dados e borda.
+- **Status**: **CONCLUÍDO (Correções P0/P1 aplicadas, RLS testadas e homologadas)**.
 
 ### Portão 4: Testes de Regressão E2E
-* **Critério**: A suíte de testes de ponta a ponta do Playwright (`npx playwright test`) deve atingir 100% de sucesso, cobrindo o redirecionamento de login, o isolamento de transações financeiras e o bloqueio RLS.
-* **Status**: **OPERACIONAL**.
+
+- **Critério**: A suíte de testes de ponta a ponta do Playwright (`npx playwright test`) deve atingir 100% de sucesso, cobrindo o redirecionamento de login, o isolamento de transações financeiras e o bloqueio RLS.
+- **Status**: **OPERACIONAL**.
 
 ---
 

@@ -182,7 +182,7 @@ function PublicBlogPage() {
                 {post.tags.map((t: string) => (
                   <span
                     key={t}
-                    className="rounded-full glass bg-white/5 border-white/10 px-3 py-1.5 text-xs font-semibold text-foreground"
+                    className="rounded-full glass px-3 py-1.5 text-xs font-semibold text-foreground"
                   >
                     #{t}
                   </span>
@@ -203,7 +203,7 @@ function PublicBlogPage() {
                   href={`/p/${agency_slug}/blog/${r.slug}`}
                   className="group flex flex-col gap-3"
                 >
-                  <div className="aspect-video glass bg-white/5 border-white/10 rounded-[var(--radius-card)] overflow-hidden">
+                  <div className="aspect-video glass rounded-[var(--radius-card)] overflow-hidden">
                     {r.cover_image_url ? (
                       <img
                         src={r.cover_image_url}
@@ -234,10 +234,13 @@ function PublicBlogPage() {
       </main>
 
       {/* Seção de Captura de Leads (Estilo Apple, grande e imersivo) */}
-      <section id="fale-conosco" className="border-t border-border glass bg-white/5 border-white/10/50 pb-20 pt-20">
+      <section
+        id="fale-conosco"
+        className="border-t border-border glass/50 pb-20 pt-20"
+      >
         <div className="max-w-4xl mx-auto px-6">
           <div className="bg-foreground text-background rounded-[2.5rem] p-8 md:p-14 relative overflow-hidden">
-            <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full blur-3xl -mr-20 -mt-20"></div>
+            <div className="absolute top-0 right-0 w-64 h-64 glass-dark rounded-full blur-3xl -mr-20 -mt-20"></div>
             <div className="absolute bottom-0 left-0 w-64 h-64 bg-brand/20 rounded-full blur-3xl -ml-20 -mb-20"></div>
 
             <div className="relative z-10 grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
@@ -252,7 +255,7 @@ function PublicBlogPage() {
                 <LeadCaptureForm agencySlug={agency.slug} origin={`Blog: ${post.title}`} />
               </div>
               <div className="hidden md:flex justify-center">
-                <div className="w-full aspect-square max-w-[280px] bg-white/5 rounded-full border border-white/10 flex items-center justify-center p-8">
+                <div className="w-full aspect-square max-w-[280px] glass rounded-full border border-border flex items-center justify-center p-8">
                   <Send className="w-full h-full text-white/20 -rotate-12" />
                 </div>
               </div>
@@ -316,14 +319,14 @@ function LeadCaptureForm({ agencySlug, origin }: { agencySlug: string; origin: s
         value={name}
         onChange={(e) => setName(e.target.value)}
         placeholder="Seu nome"
-        className="w-full px-5 rounded-[var(--radius-card)] bg-white/10 border-white/20 text-white placeholder:text-white/40 focus:border-white/50"
+        className="w-full px-5 rounded-[var(--radius-card)] glass-dark border-border text-white placeholder:text-white/40 focus:border-white/50"
       />
       <Input
         required
         value={contact}
         onChange={(e) => setContact(e.target.value)}
         placeholder="Seu WhatsApp ou E-mail"
-        className="w-full px-5 rounded-[var(--radius-card)] bg-white/10 border-white/20 text-white placeholder:text-white/40 focus:border-white/50"
+        className="w-full px-5 rounded-[var(--radius-card)] glass-dark border-border text-white placeholder:text-white/40 focus:border-white/50"
       />
 
       <div className="flex items-start gap-3 px-1">
@@ -332,7 +335,7 @@ function LeadCaptureForm({ agencySlug, origin }: { agencySlug: string; origin: s
           id="lgpd"
           checked={lgpdAccepted}
           onChange={(e) => setLgpdAccepted(e.target.checked)}
-          className="mt-1 h-4 w-4 rounded border-white/20 bg-white/10 text-brand focus:ring-brand cursor-pointer"
+          className="mt-1 h-4 w-4 rounded border-border glass-dark text-brand focus:ring-brand cursor-pointer"
         />
         <label
           htmlFor="lgpd"

@@ -7,13 +7,7 @@ import { useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
-import { 
-  CheckCircle2, 
-  Calendar,
-  Check,
-  User,
-  AlertCircle
-} from "lucide-react";
+import { CheckCircle2, Calendar, Check, User, AlertCircle } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import { TASK_STATUSES, TASK_PRIORITIES } from "@/lib/tasks/task.constants";
@@ -30,7 +24,7 @@ export function ListView({ filters }: { filters: TaskFiltersState }) {
 
   const toggleStatus = async (taskId: string, currentStatus: TaskStatus) => {
     const nextStatus: TaskStatus = currentStatus === "done" ? "todo" : "done";
-    
+
     try {
       const { error: patchError } = await (supabase as any)
         .from("tasks")
@@ -38,7 +32,7 @@ export function ListView({ filters }: { filters: TaskFiltersState }) {
         .eq("id", taskId);
 
       if (patchError) throw patchError;
-      
+
       toast.success(`Tarefa marcada como ${nextStatus === "done" ? "concluída" : "pendente"}`);
       qc.invalidateQueries({ queryKey: ["tasks"] });
       qc.invalidateQueries({ queryKey: ["daily_digest"] });
@@ -91,9 +85,13 @@ export function ListView({ filters }: { filters: TaskFiltersState }) {
       />
       {Object.entries(TASK_STATUSES).map(([statusKey, cfg]) => {
         const groupTasks = tasks.filter((t) => t.status === statusKey);
-        
+
         // Se houver filtros de status, oculte os grupos de status não selecionados
-        if (filters.statuses && filters.statuses.length > 0 && !filters.statuses.includes(statusKey as TaskStatus)) {
+        if (
+          filters.statuses &&
+          filters.statuses.length > 0 &&
+          !filters.statuses.includes(statusKey as TaskStatus)
+        ) {
           return null;
         }
 
@@ -168,19 +166,30 @@ function StatusGroupSection({
               </thead>
               <tbody className="divide-y text-xs">
                 {tasks.map((task) => {
-                  const priorityCfg = TASK_PRIORITIES[task.priority] || { label: task.priority, color: "var(--muted)" };
+                  const priorityCfg = TASK_PRIORITIES[task.priority] || {
+                    label: task.priority,
+                    color: "var(--muted)",
+                  };
                   return (
                     <tr
                       key={task.id}
                       onClick={() => onOpen(task)}
-                      className={cn("hover:bg-[var(--surface-alt)]/30 transition-colors cursor-pointer", task.status === "done" && "opacity-60")}
+                      className={cn(
+                        "hover:bg-[var(--surface-alt)]/30 transition-colors cursor-pointer",
+                        task.status === "done" && "opacity-60",
+                      )}
                     >
                       <td className="p-3 text-center">
                         <Button
-                          onClick={(e) => { e.stopPropagation(); toggleStatus(task.id, task.status as TaskStatus); }}
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            toggleStatus(task.id, task.status as TaskStatus);
+                          }}
                           className={cn(
                             "flex h-4.5 w-4.5 mx-auto items-center justify-center rounded border cursor-pointer transition-all",
-                            task.status === "done" ? "bg-[var(--success)] border-[var(--success)] text-white" : "border-border hover:border-brand text-transparent"
+                            task.status === "done"
+                              ? "bg-[var(--success)] border-[var(--success)] text-white"
+                              : "border-border hover:border-brand text-transparent",
                           )}
                         >
                           <Check className="h-3 w-3 stroke-[3]" />
@@ -190,7 +199,15 @@ function StatusGroupSection({
                         <span className="hover:text-brand transition-colors">{task.title}</span>
                       </td>
                       <td className="p-3">
-                        <Badge variant="outline" style={{ color: priorityCfg.color, borderColor: `${priorityCfg.color}20`, backgroundColor: `${priorityCfg.color}05` }} className="text-[9px] font-bold">
+                        <Badge
+                          variant="outline"
+                          style={{
+                            color: priorityCfg.color,
+                            borderColor: `${priorityCfg.color}20`,
+                            backgroundColor: `${priorityCfg.color}05`,
+                          }}
+                          className="text-[9px] font-bold"
+                        >
                           {priorityCfg.label}
                         </Badge>
                       </td>
@@ -198,9 +215,13 @@ function StatusGroupSection({
                         {task.due_date ? (
                           <div className="flex items-center gap-1">
                             <Calendar className="h-3.5 w-3.5 opacity-70" />
-                            <span>{format(new Date(task.due_date), "dd 'de' MMM", { locale: ptBR })}</span>
+                            <span>
+                              {format(new Date(task.due_date), "dd 'de' MMM", { locale: ptBR })}
+                            </span>
                           </div>
-                        ) : "-"}
+                        ) : (
+                          "-"
+                        )}
                       </td>
                       <td className="p-3">
                         {task.assignee ? (
@@ -208,7 +229,9 @@ function StatusGroupSection({
                             <div className="h-5.5 w-5.5 rounded-full bg-brand/10 text-brand flex items-center justify-center ds-meta font-black uppercase">
                               {task.assignee.name?.charAt(0) || "?"}
                             </div>
-                            <span className="ds-meta font-medium text-foreground truncate max-w-[100px]">{task.assignee.name || "—"}</span>
+                            <span className="ds-meta font-medium text-foreground truncate max-w-[100px]">
+                              {task.assignee.name || "—"}
+                            </span>
                           </div>
                         ) : (
                           <span className="ds-meta text-muted-foreground">-</span>
@@ -216,17 +239,21 @@ function StatusGroupSection({
                       </td>
                       <td className="p-3">
                         <div className="flex flex-wrap gap-1">
-                          {task.labels && task.labels.length > 0 ? (
-                            task.labels.map((lbl) => (
-                              <span
-                                key={lbl.id}
-                                className="text-[9px] px-1.5 py-0.5 rounded-full font-bold border"
-                                style={{ color: lbl.color, backgroundColor: `${lbl.color}08`, borderColor: `${lbl.color}15` }}
-                              >
-                                {lbl.name}
-                              </span>
-                            ))
-                          ) : "-"}
+                          {task.labels && task.labels.length > 0
+                            ? task.labels.map((lbl) => (
+                                <span
+                                  key={lbl.id}
+                                  className="text-[9px] px-1.5 py-0.5 rounded-full font-bold border"
+                                  style={{
+                                    color: lbl.color,
+                                    backgroundColor: `${lbl.color}08`,
+                                    borderColor: `${lbl.color}15`,
+                                  }}
+                                >
+                                  {lbl.name}
+                                </span>
+                              ))
+                            : "-"}
                         </div>
                       </td>
                     </tr>
@@ -236,9 +263,12 @@ function StatusGroupSection({
             </table>
           </div>
         )}
-        
+
         {/* Quick Add row inside card */}
-        <form onSubmit={handleSubmit} className="p-2.5 bg-[var(--surface-alt)]/10 flex items-center gap-2">
+        <form
+          onSubmit={handleSubmit}
+          className="p-2.5 bg-[var(--surface-alt)]/10 flex items-center gap-2"
+        >
           <Input
             type="text"
             placeholder={`+ Adicionar tarefa rápida em "${label}"...`}

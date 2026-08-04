@@ -63,7 +63,9 @@ export const clientsQueryOptions = (
   });
 
 export const Route = createFileRoute("/agency/$slug/clients")({
-  head: ({ context }: any) => ({ meta: [{ title: `Clientes · ${context?.brand?.platform_name || 'Turis'}` }] }),
+  head: ({ context }: any) => ({
+    meta: [{ title: `Clientes · ${context?.brand?.platform_name || "Turis"}` }],
+  }),
   loader: async ({ context: { queryClient }, params }) => {
     // Para pré-carregar os dados iniciais do loader (page 1, sem busca), precisamos
     // apenas garantir que a agência exista. Isso será feito via match da store ou contexto do Layout.
@@ -208,38 +210,40 @@ function ClientsPage() {
 
   return (
     <div className="flex h-full flex-col overflow-hidden">
-              <PageHeader
-          title="Clientes"
-          search={{
-            value: q,
-            onChange: setQ,
-            placeholder: "Buscar por nome, email, telefone...",
-          }}
-          filters={[
-            { label: showDeleted ? "← Ativa" : "Ativos", value: showDeleted ? "active" : "active" },
-          ]}
-          activeFilter="active"
-          onFilterChange={() => setShowDeleted(!showDeleted)}
-          actions={
-            isAgencyAdmin ? (
-              <Button
-                variant="ghost"
-                size="icon"
-                onClick={() => setAdminPanelOpen(true)}
-                title="Administrar Clientes"
-              >
-                <Settings2 className="h-3.5 w-3.5" />
-              </Button>
-            ) : undefined
-          }
-          primaryAction={
-            <ModuleActionButton
-              label={showDeleted ? "Sair da Lixeira" : "Novo Cliente"}
-              icon={showDeleted ? <ArrowLeft className="h-3.5 w-3.5" /> : <Plus className="h-3.5 w-3.5" />}
-              onClick={() => showDeleted ? setShowDeleted(false) : setNewOpen(true)}
-            />
-          }
-        />
+      <PageHeader
+        title="Clientes"
+        search={{
+          value: q,
+          onChange: setQ,
+          placeholder: "Buscar por nome, email, telefone...",
+        }}
+        filters={[
+          { label: showDeleted ? "← Ativa" : "Ativos", value: showDeleted ? "active" : "active" },
+        ]}
+        activeFilter="active"
+        onFilterChange={() => setShowDeleted(!showDeleted)}
+        actions={
+          isAgencyAdmin ? (
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={() => setAdminPanelOpen(true)}
+              title="Administrar Clientes"
+            >
+              <Settings2 className="h-3.5 w-3.5" />
+            </Button>
+          ) : undefined
+        }
+        primaryAction={
+          <ModuleActionButton
+            label={showDeleted ? "Sair da Lixeira" : "Novo Cliente"}
+            icon={
+              showDeleted ? <ArrowLeft className="h-3.5 w-3.5" /> : <Plus className="h-3.5 w-3.5" />
+            }
+            onClick={() => (showDeleted ? setShowDeleted(false) : setNewOpen(true))}
+          />
+        }
+      />
 
       <div className="page-content dock-offset flex flex-col">
         {list.isLoading && (

@@ -126,15 +126,15 @@ export function AIChatPanel({
         .eq("agency_id", agency!.id)
         .order("created_at", { ascending: false });
       if (error) throw error;
-      
+
       const unique: Record<string, any> = {};
-      (data || []).forEach(m => {
+      (data || []).forEach((m) => {
         if (!unique[m.conversation_id]) {
           unique[m.conversation_id] = m;
         }
       });
       return Object.values(unique);
-    }
+    },
   });
 
   // Initialize conversation id once we know the agency
@@ -272,13 +272,13 @@ export function AIChatPanel({
 
   if (isGenie) {
     return (
-      <div className="w-full h-full flex rounded-[var(--radius-card)] overflow-hidden bg-zinc-950/80 dark:bg-zinc-950/90 backdrop-blur-3xl border border-white/10">
-        <aside className="w-80 border-r border-white/10 flex flex-col p-5 bg-black/30 shrink-0">
+      <div className="w-full h-full flex rounded-[var(--radius-card)] overflow-hidden bg-zinc-950/80 dark:bg-zinc-950/90 backdrop-blur-3xl border border-border">
+        <aside className="w-80 border-r border-border flex flex-col p-5 bg-black/30 shrink-0">
           <div className="flex justify-between items-center mb-6">
             <h3 className="text-sm font-bold text-white uppercase tracking-wider">Histórico</h3>
             <Button
               onClick={handleNewConversation}
-              className="flex items-center gap-1.5 h-8 px-3 rounded-full bg-white/10 hover:bg-white/20 text-white text-xs font-semibold transition-colors"
+              className="flex items-center gap-1.5 h-8 px-3 rounded-full glass-dark hover:glass-dark text-white text-xs font-semibold transition-colors"
               title="Nova conversa"
             >
               <Plus className="w-3.5 h-3.5" />
@@ -292,19 +292,23 @@ export function AIChatPanel({
               <p className="text-xs text-white/40 text-center py-4">Nenhuma conversa recente</p>
             ) : (
               conversationsQuery.data?.map((c) => (
-                <div 
+                <div
                   key={c.conversation_id}
                   onClick={() => setConversationId(c.conversation_id)}
                   className={cn(
                     "p-4 rounded-[20px] cursor-pointer transition-all border text-left",
                     conversationId === c.conversation_id
                       ? "bg-brand/10 border-brand/20 text-foreground font-semibold"
-                      : "bg-white/5 border-transparent text-muted-foreground hover:bg-white/10 hover:text-foreground"
+                      : "glass border-transparent text-muted-foreground hover:glass-dark hover:text-foreground",
                   )}
                 >
                   <div className="flex justify-between items-start gap-2 mb-1.5">
-                    <span className="ds-label-caps text-white/40">Chat ID: {c.conversation_id.slice(0, 8)}</span>
-                    <span className="text-[9px] text-white/40">{new Date(c.created_at).toLocaleDateString("pt-BR")}</span>
+                    <span className="ds-label-caps text-white/40">
+                      Chat ID: {c.conversation_id.slice(0, 8)}
+                    </span>
+                    <span className="text-foreground text-right truncate max-w-28 sm:max-w-32">
+                      {new Date(c.created_at).toLocaleDateString("pt-BR")}
+                    </span>
                   </div>
                   <p className="text-xs line-clamp-2 leading-relaxed text-white/80">{c.content}</p>
                 </div>
@@ -314,12 +318,14 @@ export function AIChatPanel({
         </aside>
 
         <div className="flex-1 flex flex-col relative bg-zinc-900/40">
-          <header className="flex min-h-[var(--ds-toolbar-height)] items-center justify-between border-b border-white/10 px-5 shrink-0 glass-toolbar">
+          <header className="flex min-h-[var(--ds-toolbar-height)] items-center justify-between border-b border-border px-5 shrink-0 glass-toolbar">
             <div className="flex items-center gap-2">
               <Sparkles
                 className={cn(
                   "h-4 w-4",
-                  aiStatus === "online" ? "text-emerald-400 animate-pulse-slow" : "text-muted-foreground"
+                  aiStatus === "online"
+                    ? "text-emerald-400 animate-pulse-slow"
+                    : "text-muted-foreground",
                 )}
               />
               <span className="text-sm font-semibold text-white">Conversa Ativa</span>
@@ -327,7 +333,7 @@ export function AIChatPanel({
             {onClose && (
               <Button
                 onClick={onClose}
-                className="h-8 w-8 rounded-full bg-white/5 flex items-center justify-center text-white/70 hover:text-white hover:bg-white/10 transition-colors"
+                className="h-8 w-8 rounded-full glass flex items-center justify-center text-white/70 hover:text-white hover:glass-dark transition-colors"
                 aria-label="Fechar"
               >
                 <X className="h-4 w-4" />
@@ -335,14 +341,19 @@ export function AIChatPanel({
             )}
           </header>
 
-          <div ref={scrollRef} className="flex-1 overflow-y-auto px-6 py-6 text-sm font-sans no-scrollbar">
+          <div
+            ref={scrollRef}
+            className="flex-1 overflow-y-auto px-6 py-6 text-sm font-sans no-scrollbar"
+          >
             {loading ? (
               <div className="flex items-center gap-2 text-white/40 text-xs py-4 justify-center">
                 <Loader2 className="w-4 h-4 animate-spin text-brand" />
                 Carregando histórico…
               </div>
             ) : messages.length === 0 ? (
-              <p className="text-white/60 text-center py-10">Escreva alguma coisa para começar a conversa.</p>
+              <p className="text-white/60 text-center py-10">
+                Escreva alguma coisa para começar a conversa.
+              </p>
             ) : (
               <div className="space-y-5">
                 {messages.map((m) => (
@@ -358,8 +369,8 @@ export function AIChatPanel({
                             onClick={() => handleFeedback(m.id, 1)}
                             disabled={feedbacks[m.id] !== undefined}
                             className={cn(
-                              "rounded p-1 hover:bg-white/10 transition-colors cursor-pointer",
-                              feedbacks[m.id] === 1 ? "text-emerald-500" : "text-muted-foreground"
+                              "rounded p-1 hover:glass-dark transition-colors cursor-pointer",
+                              feedbacks[m.id] === 1 ? "text-emerald-500" : "text-muted-foreground",
                             )}
                           >
                             <ThumbsUp className="h-3 w-3" />
@@ -368,8 +379,8 @@ export function AIChatPanel({
                             onClick={() => handleFeedback(m.id, -1)}
                             disabled={feedbacks[m.id] !== undefined}
                             className={cn(
-                              "rounded p-1 hover:bg-white/10 transition-colors cursor-pointer",
-                              feedbacks[m.id] === -1 ? "text-rose-500" : "text-muted-foreground"
+                              "rounded p-1 hover:glass-dark transition-colors cursor-pointer",
+                              feedbacks[m.id] === -1 ? "text-rose-500" : "text-muted-foreground",
                             )}
                           >
                             <ThumbsDown className="h-3 w-3" />
@@ -389,39 +400,47 @@ export function AIChatPanel({
             )}
           </div>
 
-          <form onSubmit={handleSend} className="border-t border-white/10 p-4 shrink-0 bg-transparent flex flex-col gap-3">
+          <form
+            onSubmit={handleSend}
+            className="border-t border-border p-4 shrink-0 bg-transparent flex flex-col gap-3"
+          >
             {attachments.length > 0 && (
               <div className="flex flex-wrap gap-4 px-2 py-1 select-none animate-fadeIn">
                 {attachments.map((file, idx) => {
-                  const rotations = ["-rotate-3 hover:rotate-0", "rotate-2 hover:rotate-0", "-rotate-1 hover:rotate-0", "rotate-3 hover:rotate-0"];
+                  const rotations = [
+                    "-rotate-3 hover:rotate-0",
+                    "rotate-2 hover:rotate-0",
+                    "-rotate-1 hover:rotate-0",
+                    "rotate-3 hover:rotate-0",
+                  ];
                   const rotClass = rotations[idx % rotations.length];
                   const isImage = file.type.startsWith("image/");
-                  
+
                   return (
-                    <div 
-                      key={idx} 
+                    <div
+                      key={idx}
                       className={cn(
-                        "relative flex items-center gap-2 p-2 rounded-[var(--radius-card)] glass border border-white/15 text-white ds-meta font-semibold shadow-md transition-all hover:scale-105 hover:z-10 cursor-pointer max-w-[140px] shrink-0",
-                        rotClass
+                        "relative flex items-center gap-2 p-2 rounded-[var(--radius-card)] glass border border-white/15 text-white ds-meta font-semibold shadow-md transition-all hover:scale-105 hover:z-10 cursor-pointer max-w-36 shrink-0",
+                        rotClass,
                       )}
                     >
                       {isImage ? (
-                        <div className="w-8 h-8 rounded bg-white/10 overflow-hidden flex items-center justify-center">
-                          <img 
-                            src={URL.createObjectURL(file)} 
-                            alt={file.name} 
-                            className="w-full h-full object-cover" 
+                        <div className="w-8 h-8 rounded glass-dark overflow-hidden flex items-center justify-center">
+                          <img
+                            src={URL.createObjectURL(file)}
+                            alt={file.name}
+                            className="w-full h-full object-cover"
                           />
                         </div>
                       ) : (
-                        <div className="w-8 h-8 rounded bg-white/10 flex items-center justify-center text-brand-light">
+                        <div className="w-8 h-8 rounded glass-dark flex items-center justify-center text-brand-light">
                           <FileIcon className="w-4 h-4" />
                         </div>
                       )}
                       <span className="truncate flex-1 font-medium">{file.name}</span>
-                      <Button 
+                      <Button
                         type="button"
-                        onClick={() => setAttachments(prev => prev.filter((_, i) => i !== idx))}
+                        onClick={() => setAttachments((prev) => prev.filter((_, i) => i !== idx))}
                         className="absolute -top-1.5 -right-1.5 w-4 h-4 rounded-full bg-rose-500 hover:bg-rose-600 flex items-center justify-center text-white cursor-pointer shadow-lg"
                       >
                         <X className="w-2.5 h-2.5" />
@@ -431,21 +450,21 @@ export function AIChatPanel({
                 })}
               </div>
             )}
-            <div className="flex items-end gap-2 rounded-2xl border border-white/10 bg-white/5 px-4 py-3 focus-within:border-white/20">
-              <Input 
-                type="file" 
-                multiple 
-                className="hidden" 
-                id="genie-file-input" 
+            <div className="flex items-end gap-2 rounded-2xl border glass px-4 py-3 focus-within:border-border">
+              <Input
+                type="file"
+                multiple
+                className="hidden"
+                id="genie-file-input"
                 onChange={(e) => {
                   if (e.target.files) {
-                    setAttachments(prev => [...prev, ...Array.from(e.target.files!)]);
+                    setAttachments((prev) => [...prev, ...Array.from(e.target.files!)]);
                   }
                 }}
               />
-              <label 
+              <label
                 htmlFor="genie-file-input"
-                className="flex h-8 w-8 items-center justify-center rounded-[var(--radius-card)] hover:bg-white/10 text-white/70 hover:text-white transition-colors shrink-0 cursor-pointer"
+                className="flex h-8 w-8 items-center justify-center rounded-[var(--radius-card)] hover:glass-dark text-white/70 hover:text-white transition-colors shrink-0 cursor-pointer"
                 title="Anexar arquivos"
               >
                 <Paperclip className="h-4 w-4" />
@@ -625,28 +644,36 @@ export function AIChatPanel({
         </>
       )}
 
-      <form onSubmit={handleSend} className="border-t border-border p-2 shrink-0 bg-surface flex flex-col gap-2">
+      <form
+        onSubmit={handleSend}
+        className="border-t border-border p-2 shrink-0 bg-surface flex flex-col gap-2"
+      >
         {attachments.length > 0 && (
           <div className="flex flex-wrap gap-2 px-1 select-none animate-fadeIn">
             {attachments.map((file, idx) => {
-              const rotations = ["-rotate-3 hover:rotate-0", "rotate-2 hover:rotate-0", "-rotate-1 hover:rotate-0", "rotate-3 hover:rotate-0"];
+              const rotations = [
+                "-rotate-3 hover:rotate-0",
+                "rotate-2 hover:rotate-0",
+                "-rotate-1 hover:rotate-0",
+                "rotate-3 hover:rotate-0",
+              ];
               const rotClass = rotations[idx % rotations.length];
               const isImage = file.type.startsWith("image/");
-              
+
               return (
-                <div 
-                  key={idx} 
+                <div
+                  key={idx}
                   className={cn(
-                    "relative flex items-center gap-1.5 p-1.5 rounded-2xl border border-border bg-surface-alt ds-meta shadow-sm transition-all hover:scale-105 hover:z-10 cursor-pointer max-w-[120px] shrink-0",
-                    rotClass
+                    "relative flex items-center gap-1.5 p-1.5 rounded-2xl border border-border bg-surface-alt ds-meta shadow-sm transition-all hover:scale-105 hover:z-10 cursor-pointer max-w-32 shrink-0",
+                    rotClass,
                   )}
                 >
                   {isImage ? (
                     <div className="w-6 h-6 rounded bg-muted overflow-hidden flex items-center justify-center">
-                      <img 
-                        src={URL.createObjectURL(file)} 
-                        alt={file.name} 
-                        className="w-full h-full object-cover" 
+                      <img
+                        src={URL.createObjectURL(file)}
+                        alt={file.name}
+                        className="w-full h-full object-cover"
                       />
                     </div>
                   ) : (
@@ -655,9 +682,9 @@ export function AIChatPanel({
                     </div>
                   )}
                   <span className="truncate flex-1 font-medium">{file.name}</span>
-                  <Button 
+                  <Button
                     type="button"
-                    onClick={() => setAttachments(prev => prev.filter((_, i) => i !== idx))}
+                    onClick={() => setAttachments((prev) => prev.filter((_, i) => i !== idx))}
                     className="absolute -top-1.5 -right-1.5 w-3.5 h-3.5 rounded-full bg-rose-500 hover:bg-rose-600 flex items-center justify-center text-white cursor-pointer shadow"
                   >
                     <X className="w-2 h-2" />
@@ -668,18 +695,18 @@ export function AIChatPanel({
           </div>
         )}
         <div className="flex items-end gap-2 rounded-full border border-border bg-surface px-2 py-1.5 focus-within:border-border-strong">
-          <Input 
-            type="file" 
-            multiple 
-            className="hidden" 
-            id="panel-file-input" 
+          <Input
+            type="file"
+            multiple
+            className="hidden"
+            id="panel-file-input"
             onChange={(e) => {
               if (e.target.files) {
-                setAttachments(prev => [...prev, ...Array.from(e.target.files!)]);
+                setAttachments((prev) => [...prev, ...Array.from(e.target.files!)]);
               }
             }}
           />
-          <label 
+          <label
             htmlFor="panel-file-input"
             className="flex h-7 w-7 items-center justify-center rounded-full hover:bg-surface-alt text-muted-foreground hover:text-foreground transition-colors shrink-0 cursor-pointer"
             title="Anexar arquivos"

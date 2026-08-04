@@ -51,7 +51,9 @@ serve(async (req) => {
     const tokenData = await tokenRes.json();
 
     if (!tokenRes.ok || tokenData.error) {
-      throw new Error(`Erro na troca de código na Meta: ${tokenData.error?.message || "Erro desconhecido"}`);
+      throw new Error(
+        `Erro na troca de código na Meta: ${tokenData.error?.message || "Erro desconhecido"}`,
+      );
     }
 
     const accessToken = tokenData.access_token;
@@ -64,7 +66,7 @@ serve(async (req) => {
     const debugTokenUrl = `https://graph.facebook.com/debug_token?input_token=${accessToken}&access_token=${appId}|${clientSecret}`;
     const debugRes = await fetch(debugTokenUrl);
     const debugData = await debugRes.json();
-    
+
     if (!debugRes.ok || debugData.error) {
       throw new Error("Falha ao validar token com a Meta.");
     }
@@ -141,9 +143,7 @@ serve(async (req) => {
         .update(channelPayload)
         .eq("id", existingChannel.id);
     } else {
-      channelResult = await supabase
-        .from("channels")
-        .insert(channelPayload);
+      channelResult = await supabase.from("channels").insert(channelPayload);
     }
 
     const { error: channelErr } = channelResult;

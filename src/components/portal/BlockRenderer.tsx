@@ -185,7 +185,7 @@ export function BlockStyleWrapper({
   const borderMap = {
     none: "",
     solid: "border border-border/80",
-    glass: "border border-white/10 backdrop-blur-md",
+    glass: "border border-border backdrop-blur-md",
     glow: "border border-indigo-500/30 ring-1 ring-indigo-500/15",
   };
   const borderClass = borderMap[border_effect as keyof typeof borderMap] || "";
@@ -704,7 +704,7 @@ function renderBlock(
       return (
         <section className="mx-auto max-w-5xl w-full my-8">
           <div className="relative overflow-hidden rounded-3xl bg-brand text-brand-foreground px-6 py-16 text-center">
-            <div className="absolute inset-0 opacity-10 bg-white/10" />
+            <div className="absolute inset-0 opacity-10 glass-dark" />
             <h2 className="relative z-10 text-3xl md:text-5xl font-extrabold tracking-tight mb-4">
               {b.title}
             </h2>
@@ -1589,9 +1589,7 @@ function PendingContractsWidgetBlock({
           <div className="text-xs font-bold text-foreground mb-1">Buscar Contratos (Sem Login)</div>
           <div className="space-y-2">
             <div>
-              <label className="ds-meta uppercase font-bold text-muted-foreground">
-                E-mail
-              </label>
+              <label className="ds-meta uppercase font-bold text-muted-foreground">E-mail</label>
               <Input
                 type="email"
                 value={email}
@@ -3364,9 +3362,7 @@ function TravelTipsFaqBlock({ block, agencyId }: { block: any; agencyId?: string
                 {tip.title}
                 <ChevronRight className="w-3.5 h-3.5 text-muted-foreground group-open:rotate-90 transition-transform" />
               </summary>
-              <p className="ds-meta text-muted-foreground mt-2 leading-relaxed">
-                {tip.content}
-              </p>
+              <p className="ds-meta text-muted-foreground mt-2 leading-relaxed">{tip.content}</p>
             </details>
           ))}
         </div>
@@ -3961,9 +3957,7 @@ function VisaCheckerBlock({ block }: { block: any }) {
                     <span className="ds-meta font-bold text-muted-foreground uppercase block mb-1">
                       Observações Importantes
                     </span>
-                    <p className="text-muted-foreground leading-relaxed ds-meta">
-                      {result.notes}
-                    </p>
+                    <p className="text-muted-foreground leading-relaxed ds-meta">{result.notes}</p>
                   </div>
                 )}
                 {result.official_url && (
@@ -4214,9 +4208,7 @@ function InsuranceSimulatorBlock({ block, agencySlug }: { block: any; agencySlug
               />
             </div>
             <div className="space-y-1">
-              <label className="ds-meta uppercase font-bold text-muted-foreground">
-                E-mail
-              </label>
+              <label className="ds-meta uppercase font-bold text-muted-foreground">E-mail</label>
               <Input
                 type="email"
                 required
@@ -4227,9 +4219,7 @@ function InsuranceSimulatorBlock({ block, agencySlug }: { block: any; agencySlug
               />
             </div>
             <div className="space-y-1">
-              <label className="ds-meta uppercase font-bold text-muted-foreground">
-                WhatsApp
-              </label>
+              <label className="ds-meta uppercase font-bold text-muted-foreground">WhatsApp</label>
               <Input
                 type="tel"
                 required
@@ -4638,9 +4628,7 @@ function CustomPackageLeadBuilderBlock({ block, agencySlug }: { block: any; agen
         {step === 3 && (
           <form onSubmit={handleSubmit} className="space-y-3.5">
             <div className="space-y-1">
-              <label className="ds-meta uppercase font-bold text-muted-foreground">
-                Seu Nome
-              </label>
+              <label className="ds-meta uppercase font-bold text-muted-foreground">Seu Nome</label>
               <Input
                 type="text"
                 required
@@ -4651,9 +4639,7 @@ function CustomPackageLeadBuilderBlock({ block, agencySlug }: { block: any; agen
               />
             </div>
             <div className="space-y-1">
-              <label className="ds-meta uppercase font-bold text-muted-foreground">
-                E-mail
-              </label>
+              <label className="ds-meta uppercase font-bold text-muted-foreground">E-mail</label>
               <Input
                 type="email"
                 required
@@ -4664,9 +4650,7 @@ function CustomPackageLeadBuilderBlock({ block, agencySlug }: { block: any; agen
               />
             </div>
             <div className="space-y-1">
-              <label className="ds-meta uppercase font-bold text-muted-foreground">
-                WhatsApp
-              </label>
+              <label className="ds-meta uppercase font-bold text-muted-foreground">WhatsApp</label>
               <Input
                 type="tel"
                 required

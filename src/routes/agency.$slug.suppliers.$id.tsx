@@ -85,7 +85,9 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { cn } from "@/lib/utils";
 
 export const Route = createFileRoute("/agency/$slug/suppliers/$id")({
-  head: ({ context }: any) => ({ meta: [{ title: `Detalhe do Parceiro · ${context?.brand?.platform_name || 'Turis'}` }] }),
+  head: ({ context }: any) => ({
+    meta: [{ title: `Detalhe do Parceiro · ${context?.brand?.platform_name || "Turis"}` }],
+  }),
   component: SupplierDetailsPage,
 });
 
@@ -296,7 +298,8 @@ function TabContacts({ supplierId, agencyId }: { supplierId: string; agencyId: s
             </Field>
           </div>
           <div className="flex gap-2 pt-1">
-            <Button variant="default"
+            <Button
+              variant="default"
               className="h-8 text-xs"
               onClick={() => addMut.mutate()}
               disabled={!form.name || addMut.isPending}
@@ -327,7 +330,7 @@ function TabContacts({ supplierId, agencyId }: { supplierId: string; agencyId: s
             key={c.id}
             className="flex items-start gap-3 rounded-[var(--radius-card)] border-none glass-card border-none p-4"
           >
-            <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full glass bg-white/5 border-white/10 border-none">
+            <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full glass border-none">
               <Users className="h-4 w-4 text-muted-foreground" />
             </div>
             <div className="flex-1 min-w-0">
@@ -546,7 +549,8 @@ function TabProducts({ supplierId, agencyId }: { supplierId: string; agencyId: s
             />
           </Field>
           <div className="flex gap-2 pt-1">
-            <Button variant="default"
+            <Button
+              variant="default"
               className="h-8 text-xs"
               onClick={() => addMut.mutate()}
               disabled={!form.name || addMut.isPending}
@@ -577,7 +581,7 @@ function TabProducts({ supplierId, agencyId }: { supplierId: string; agencyId: s
           return (
             <div
               key={p.id}
-              className="flex items-start gap-3 rounded-[var(--radius-card)] border-none glass bg-white/5 border-white/10 p-4 hover:glass-card transition-colors"
+              className="flex items-start gap-3 rounded-[var(--radius-card)] border-none glass p-4 hover:glass-card transition-colors"
             >
               <div className="flex-1 min-w-0">
                 <div className="flex items-center gap-2 flex-wrap">
@@ -737,7 +741,8 @@ function TabFiles({ supplierId, agencyId }: { supplierId: string; agencyId: stri
     <div className="space-y-4">
       <div className="flex items-center justify-between">
         <h3 className="text-sm font-semibold">Arquivos & Documentos</h3>
-        <Button variant="ghost"
+        <Button
+          variant="ghost"
           className="h-7 text-xs gap-1.5"
           onClick={() => fileRef.current?.click()}
           disabled={uploading}
@@ -768,7 +773,10 @@ function TabFiles({ supplierId, agencyId }: { supplierId: string; agencyId: stri
 
       <div className="space-y-2">
         {q.data?.map((f: any) => (
-          <div key={f.id} className="rounded-[var(--radius-card)] border-none glass bg-white/5 border-white/10 p-4 space-y-3">
+          <div
+            key={f.id}
+            className="rounded-[var(--radius-card)] border-none glass p-4 space-y-3"
+          >
             <div className="flex items-center gap-3">
               <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-[var(--radius-card)] border-none glass-card border-none">
                 <FileText className="h-4 w-4 text-muted-foreground" />
@@ -976,7 +984,8 @@ function TabReviews({ supplierId, agencyId }: { supplierId: string; agencyId: st
             />
           </Field>
           <div className="flex gap-2 pt-1">
-            <Button variant="default"
+            <Button
+              variant="default"
               className="h-8 text-xs"
               onClick={() => addMut.mutate()}
               disabled={addMut.isPending}
@@ -1004,7 +1013,10 @@ function TabReviews({ supplierId, agencyId }: { supplierId: string; agencyId: st
 
       <div className="space-y-3">
         {q.data?.map((r) => (
-          <div key={r.id} className="rounded-[var(--radius-card)] border-none glass bg-white/5 border-white/10 p-4">
+          <div
+            key={r.id}
+            className="rounded-[var(--radius-card)] border-none glass p-4"
+          >
             <div className="flex items-start justify-between">
               <div className="space-y-1">
                 <div className="flex items-center gap-0.5">
@@ -1087,16 +1099,17 @@ function SupplierDetailsPage() {
         .select("rating")
         .eq("supplier_id", id);
 
-      const avgRating = reviews && reviews.length > 0
-        ? reviews.reduce((sum, r) => sum + r.rating, 0) / reviews.length
-        : 0;
+      const avgRating =
+        reviews && reviews.length > 0
+          ? reviews.reduce((sum, r) => sum + r.rating, 0) / reviews.length
+          : 0;
 
       return {
         usageCount: proposalsCount || 0,
         productsCount: productsCount || 0,
         avgRating,
       };
-    }
+    },
   });
 
   if (isLoading || isStatsLoading) {
@@ -1120,16 +1133,16 @@ function SupplierDetailsPage() {
       {/* Main content */}
       <div className="flex-1 overflow-y-auto">
         <div className="px-4 md:px-6 py-4 max-w-4xl pb-20">
-                      <div className="flex items-center gap-2">
-              <StatusBadge tone={supplier.is_active ? "success" : "neutral"}>
-                {supplier.is_active ? "Ativo" : "Inativo"}
-              </StatusBadge>
-            </div>
-          
+          <div className="flex items-center gap-2">
+            <StatusBadge tone={supplier.is_active ? "success" : "neutral"}>
+              {supplier.is_active ? "Ativo" : "Inativo"}
+            </StatusBadge>
+          </div>
+
           <Link
             to="/agency/$slug/suppliers"
             params={{ slug }}
-            className="mb-4 inline-flex h-8 items-center gap-1.5 rounded-full border border-white/10 bg-white/5 px-3 text-xs font-bold text-white/90 hover:bg-white/10 transition-colors cursor-pointer"
+            className="mb-4 inline-flex h-8 items-center gap-1.5 rounded-full border glass px-3 text-xs font-bold text-white/90 hover:glass-dark transition-colors cursor-pointer"
           >
             <ArrowLeft className="h-3.5 w-3.5" /> Voltar para {getModuleName("suppliers", agency)}
           </Link>
@@ -1147,7 +1160,7 @@ function SupplierDetailsPage() {
             <div className="px-5 pb-5 -mt-5 flex items-end gap-4">
               <div
                 className={cn(
-                  "flex h-16 w-16 shrink-0 items-center justify-center rounded-[var(--radius-card)] glass bg-white/5 border border-white/20 shadow-none",
+                  "flex h-16 w-16 shrink-0 items-center justify-center rounded-[var(--radius-card)] glass border border-border shadow-none",
                 )}
               >
                 {supplier.logo_url ? (
@@ -1193,7 +1206,7 @@ function SupplierDetailsPage() {
                 <TabsTrigger
                   key={value}
                   value={value}
-                  className="inline-flex items-center justify-center h-7 px-3 ds-meta font-semibold rounded-full transition-all gap-1.5 whitespace-nowrap cursor-pointer data-[state=active]:bg-white/10 data-[state=active]:text-white data-[state=active]:border data-[state=active]:border-white/5 data-[state=active]:shadow-xs text-white/60 hover:text-white"
+                  className="inline-flex items-center justify-center h-7 px-3 ds-meta font-semibold rounded-full transition-all gap-1.5 whitespace-nowrap cursor-pointer data-[state=active]:glass-dark data-[state=active]:text-white data-[state=active]:border data-[state=active]:border-white/5 data-[state=active]:shadow-xs text-white/60 hover:text-white"
                 >
                   <TIcon className="h-3.5 w-3.5" />
                   {label}
@@ -1203,7 +1216,7 @@ function SupplierDetailsPage() {
 
             {/* TAB: GERAL */}
             <TabsContent value="geral" className="space-y-4">
-              <div className="rounded-[var(--radius-card)] border-none glass bg-white/5 border-white/10 p-5">
+              <div className="rounded-[var(--radius-card)] border-none glass p-5">
                 <h3 className="mb-4 text-sm font-semibold">Informações da Empresa</h3>
                 <div className="grid grid-cols-2 gap-x-6 gap-y-4">
                   {[
@@ -1233,7 +1246,7 @@ function SupplierDetailsPage() {
               </div>
 
               {/* Links */}
-              <div className="rounded-[var(--radius-card)] border-none glass bg-white/5 border-white/10 p-5">
+              <div className="rounded-[var(--radius-card)] border-none glass p-5">
                 <h3 className="mb-4 text-sm font-semibold">Links & Redes</h3>
                 <div className="flex flex-wrap gap-3">
                   {supplier.website && (
@@ -1279,7 +1292,7 @@ function SupplierDetailsPage() {
 
               {/* Notas */}
               {supplier.notes && (
-                <div className="rounded-[var(--radius-card)] border-none glass bg-white/5 border-white/10 p-5">
+                <div className="rounded-[var(--radius-card)] border-none glass p-5">
                   <h3 className="mb-2 text-sm font-semibold">
                     Observações & Política de Comissionamento
                   </h3>
@@ -1291,7 +1304,7 @@ function SupplierDetailsPage() {
 
               {/* Tags */}
               {supplier.tags && supplier.tags.length > 0 && (
-                <div className="rounded-[var(--radius-card)] border-none glass bg-white/5 border-white/10 p-5">
+                <div className="rounded-[var(--radius-card)] border-none glass p-5">
                   <h3 className="mb-3 text-sm font-semibold flex items-center gap-1.5">
                     <Tag className="h-3.5 w-3.5" /> Tags
                   </h3>
@@ -1349,17 +1362,13 @@ function SupplierDetailsPage() {
 
         {/* Rating */}
         <div className="border-b border-border p-5">
-          <div className="ds-label-caps text-muted-foreground mb-2">
-            Avaliação
-          </div>
+          <div className="ds-label-caps text-muted-foreground mb-2">Avaliação</div>
           <StarRatingDisplay rating={supplier.rating} />
         </div>
 
         {/* SLA */}
         <div className="border-b border-border p-5">
-          <div className="ds-label-caps text-muted-foreground mb-2">
-            SLA de Resposta
-          </div>
+          <div className="ds-label-caps text-muted-foreground mb-2">SLA de Resposta</div>
           <div className="flex items-center gap-1.5 text-sm font-semibold">
             <Clock className="h-4 w-4 text-muted-foreground" />
             {supplier.sla_hours ? `${supplier.sla_hours}h` : "Não informado"}
@@ -1369,15 +1378,13 @@ function SupplierDetailsPage() {
         {/* Contato rápido */}
         {(supplier.phone || supplier.email || supplier.whatsapp) && (
           <div className="border-b border-border p-5 space-y-3">
-            <div className="ds-label-caps text-muted-foreground">
-              Contato Rápido
-            </div>
+            <div className="ds-label-caps text-muted-foreground">Contato Rápido</div>
             {supplier.phone && (
               <a
                 href={`tel:${supplier.phone}`}
                 className="flex items-center gap-2.5 text-sm text-foreground hover:text-[--brand-primary,theme(colors.pink.500)] transition-colors"
               >
-                <div className="flex h-7 w-7 items-center justify-center rounded-[var(--radius-card)] border-none glass bg-white/5 border-white/10">
+                <div className="flex h-7 w-7 items-center justify-center rounded-[var(--radius-card)] border-none glass">
                   <PhoneCall className="h-3.5 w-3.5" />
                 </div>
                 {supplier.phone}
@@ -1390,7 +1397,7 @@ function SupplierDetailsPage() {
                 rel="noreferrer"
                 className="flex items-center gap-2.5 text-sm text-green-700 hover:underline"
               >
-                <div className="flex h-7 w-7 items-center justify-center rounded-[var(--radius-card)] border-none glass bg-white/5 border-white/10">
+                <div className="flex h-7 w-7 items-center justify-center rounded-[var(--radius-card)] border-none glass">
                   <MessageCircle className="h-3.5 w-3.5 text-green-600" />
                 </div>
                 WhatsApp
@@ -1401,7 +1408,7 @@ function SupplierDetailsPage() {
                 href={`mailto:${supplier.email}`}
                 className="flex items-center gap-2.5 text-sm text-foreground hover:text-[--brand-primary,theme(colors.pink.500)] transition-colors truncate"
               >
-                <div className="flex h-7 w-7 items-center justify-center rounded-[var(--radius-card)] border-none glass bg-white/5 border-white/10 shrink-0">
+                <div className="flex h-7 w-7 items-center justify-center rounded-[var(--radius-card)] border-none glass shrink-0">
                   <Mail className="h-3.5 w-3.5" />
                 </div>
                 <span className="truncate">{supplier.email}</span>
@@ -1413,22 +1420,24 @@ function SupplierDetailsPage() {
         {/* Estatísticas Reais de Uso */}
         {stats && (
           <div className="p-5 border-t border-border space-y-4">
-            <div className="ds-label-caps text-muted-foreground">
-              Métricas do Parceiro
-            </div>
+            <div className="ds-label-caps text-muted-foreground">Métricas do Parceiro</div>
             <div className="grid grid-cols-2 gap-3">
-              <div className="p-3 rounded-[var(--radius-card)] border-none glass bg-white/5 border-white/10">
+              <div className="p-3 rounded-[var(--radius-card)] border-none glass">
                 <div className="ds-meta text-muted-foreground uppercase font-bold">Vendas</div>
                 <div className="text-lg font-bold text-foreground mt-0.5">{stats.usageCount}</div>
               </div>
-              <div className="p-3 rounded-[var(--radius-card)] border-none glass bg-white/5 border-white/10">
+              <div className="p-3 rounded-[var(--radius-card)] border-none glass">
                 <div className="ds-meta text-muted-foreground uppercase font-bold">Produtos</div>
-                <div className="text-lg font-bold text-foreground mt-0.5">{stats.productsCount}</div>
+                <div className="text-lg font-bold text-foreground mt-0.5">
+                  {stats.productsCount}
+                </div>
               </div>
             </div>
-            
-            <div className="flex items-center justify-between p-3 rounded-[var(--radius-card)] border-none glass bg-white/5 border-white/10">
-              <div className="ds-meta text-muted-foreground uppercase font-bold">Avaliação Média</div>
+
+            <div className="flex items-center justify-between p-3 rounded-[var(--radius-card)] border-none glass">
+              <div className="ds-meta text-muted-foreground uppercase font-bold">
+                Avaliação Média
+              </div>
               <div className="flex items-center gap-1">
                 <Star className="h-3.5 w-3.5 fill-amber-400 text-amber-400" />
                 <span className="text-xs font-bold text-foreground">

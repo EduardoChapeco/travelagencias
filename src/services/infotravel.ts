@@ -19,7 +19,7 @@ export class InfotravelNotConfiguredError extends Error {
   constructor() {
     super(
       "As credenciais de acesso ao GDS Infotravel não foram configuradas para esta agência. " +
-      "Acesse Configurações → Conexões → Infotravel para inserir suas credenciais de produção.",
+        "Acesse Configurações → Conexões → Infotravel para inserir suas credenciais de produção.",
     );
     this.name = "InfotravelNotConfiguredError";
   }
@@ -170,17 +170,11 @@ export async function infotravelImportBooking(
 }
 
 // ── Criação e Sincronização de Reservas (Trips) ───────────────────────────
-export async function infotravelCreateBooking(
-  agencyId: string,
-  tripId: string,
-): Promise<any> {
+export async function infotravelCreateBooking(agencyId: string, tripId: string): Promise<any> {
   return await invokeConnector("create_booking", agencyId, { tripId });
 }
 
-export async function infotravelSyncBooking(
-  agencyId: string,
-  tripId: string,
-): Promise<any> {
+export async function infotravelSyncBooking(agencyId: string, tripId: string): Promise<any> {
   return await invokeConnector("run_periodic_sync", agencyId, { tripId });
 }
 

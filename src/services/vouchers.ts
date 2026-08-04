@@ -132,10 +132,13 @@ export async function saveVoucherData(
   selectedId?: string,
 ): Promise<void> {
   if (selectedId) {
-    const { error } = await supabase
-      .from("vouchers")
-      .update(payload as VoucherUpdate)
-      .eq("id", selectedId);
+    const { error } = await supabase.rpc(
+      "update_voucher_rpc" as never,
+      {
+        p_voucher_id: selectedId,
+        p_patch: payload,
+      } as never,
+    );
     if (error) throw new Error(error.message);
   } else {
     const { error } = await supabase.from("vouchers").insert(payload as VoucherInsert);
@@ -144,10 +147,12 @@ export async function saveVoucherData(
 }
 
 export async function deleteVoucherData(id: string): Promise<void> {
-  const { error } = await supabase
-    .from("vouchers")
-    .update({ deleted_at: new Date().toISOString() })
-    .eq("id", id);
+  const { error } = await supabase.rpc(
+    "archive_voucher_rpc" as never,
+    {
+      p_voucher_id: id,
+    } as never,
+  );
   if (error) throw new Error(error.message);
 }
 
@@ -228,13 +233,16 @@ export async function uploadVoucherPdf(
   const pdfUrl = signed.signedUrl;
 
   // 3. Persistir pdf_url e generated_at no voucher
-  const { error: updErr } = await supabase
-    .from("vouchers")
-    .update({
-      pdf_url: pdfUrl,
-      generated_at: new Date().toISOString(),
-    })
-    .eq("id", voucherId);
+  const { error: updErr } = await supabase.rpc(
+    "update_voucher_rpc" as never,
+    {
+      p_voucher_id: voucherId,
+      p_patch: {
+        pdf_url: pdfUrl,
+        generated_at: new Date().toISOString(),
+      },
+    } as never,
+  );
   if (updErr) throw new Error(`Falha ao salvar URL do PDF: ${updErr.message}`);
 
   return pdfUrl;

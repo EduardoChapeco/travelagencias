@@ -53,14 +53,7 @@ function InvoicesPage() {
 
   return (
     <div className="flex h-full flex-col overflow-hidden">
-              <PageHeader title="Faturas"   primaryAction={
-            <ModuleActionButton
-        label="Nova Fatura"
-        icon={<Plus className="h-3.5 w-3.5" />}
-              onClick={() => toast.info("Nova Fatura (Em breve)")}
-            />
-          }
-        />
+      <PageHeader title="Faturas" />
 
       <div className="flex-1 overflow-y-auto px-4  md:pr-6 py-4 min-h-0">
         {q.isLoading && <div className="text-sm text-muted-foreground">Carregando…</div>}
@@ -76,7 +69,7 @@ function InvoicesPage() {
           <>
             <div className="overflow-hidden rounded-[var(--radius-card)] border-none glass-card border-none">
               <table className="w-full text-sm">
-                <thead className="glass bg-white/5 border-white/10/40 text-left ds-meta uppercase tracking-wide text-muted-foreground">
+                <thead className="glass/40 text-left ds-meta uppercase tracking-wide text-muted-foreground">
                   <tr>
                     <th className="px-3 py-2 font-medium">Fatura</th>
                     <th className="px-3 py-2 font-medium">Descrição</th>
@@ -88,7 +81,10 @@ function InvoicesPage() {
                 </thead>
                 <tbody>
                   {q.data.data.map((i) => (
-                    <tr key={i.id} className="border-t border-border hover:glass bg-white/5 border-white/10/30">
+                    <tr
+                      key={i.id}
+                      className="border-t border-border hover:glass/30"
+                    >
                       <td className="px-3 py-2.5 font-mono text-xs">{i.invoice_number}</td>
                       <td className="px-3 py-2.5 text-xs text-muted-foreground">
                         {i.description ?? "—"}
@@ -127,14 +123,16 @@ function InvoicesPage() {
                 {Math.ceil(q.data.count / pageSize) || 1}
               </div>
               <div className="flex items-center gap-2">
-                <Button variant="ghost"
+                <Button
+                  variant="ghost"
                   disabled={page === 1}
                   onClick={() => setPage((p) => Math.max(1, p - 1))}
                   className="h-8 px-3 text-xs"
                 >
                   Anterior
                 </Button>
-                <Button variant="ghost"
+                <Button
+                  variant="ghost"
                   disabled={page * pageSize >= q.data.count}
                   onClick={() => setPage((p) => p + 1)}
                   className="h-8 px-3 text-xs"

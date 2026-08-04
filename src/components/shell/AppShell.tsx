@@ -18,7 +18,6 @@ import { useBrand } from "@/hooks/use-brand";
 import { useLayoutStore } from "@/hooks/use-layout-store";
 import { useDesktopTheme, useDesktopThemeInitializer } from "@/hooks/use-desktop-theme";
 
-
 export function AppShell({
   title,
   actions,
@@ -73,7 +72,9 @@ export function AppShell({
   }, []);
 
   const timeStr = time.toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" });
-  const dateStr = time.toLocaleDateString("pt-BR", { weekday: 'short', day: 'numeric', month: 'short' }).replace('.', '');
+  const dateStr = time
+    .toLocaleDateString("pt-BR", { weekday: "short", day: "numeric", month: "short" })
+    .replace(".", "");
 
   const pathname = useRouterState({ select: (s) => s.location.pathname });
   const crumbs = pathname.split("/").filter(Boolean);
@@ -105,10 +106,10 @@ export function AppShell({
           <AlertTriangle className="w-16 h-16 text-red-500 mb-6" />
           <h2 className="text-2xl font-bold tracking-tight mb-3">Assinatura Pendente</h2>
           <p className="text-zinc-400 text-sm mb-8 leading-relaxed">
-            Sua agência ({agency?.name}) está com pendências financeiras. 
-            Por favor, regularize a assinatura no portal do cliente para continuar usando o sistema.
+            Sua agência ({agency?.name}) está com pendências financeiras. Por favor, regularize a
+            assinatura no portal do cliente para continuar usando o sistema.
           </p>
-          <a 
+          <a
             href={`/agency/${agency?.slug}/settings/billing`}
             className="w-full bg-white text-black font-semibold h-12 rounded-full flex items-center justify-center hover:bg-zinc-200 transition-colors"
           >
@@ -122,21 +123,23 @@ export function AppShell({
   return (
     <div
       className="h-screen w-full relative overflow-hidden bg-black selection:bg-brand/30 select-none"
-      style={{
-        "--os-glass-opacity": `${glassOpacity / 100}`,
-      } as React.CSSProperties}
+      style={
+        {
+          "--os-glass-opacity": `${glassOpacity / 100}`,
+        } as React.CSSProperties
+      }
     >
       {/* 1. Wallpaper Global — base layer sem opacidades ou dimmers aninhados */}
-      <div 
+      <div
         className="absolute inset-0 bg-cover bg-center transition-transform duration-[20s] ease-linear hover:scale-105 pointer-events-none"
-        style={{ 
+        style={{
           backgroundImage: `url('${activeWallpaper}')`,
-          filter: `blur(${blurIntensity}px)`
+          filter: `blur(${blurIntensity}px)`,
         }}
       />
 
       {/* 1.5. Centralized Glass Panel / Backdrop Blur */}
-      <div 
+      <div
         className="absolute inset-0 pointer-events-none"
         style={{
           background: `rgba(0, 0, 0, ${dimOpacity / 100})`,
@@ -149,25 +152,29 @@ export function AppShell({
       <header className="absolute top-0 left-0 right-0 h-[var(--shell-header-height)] px-4 flex justify-between items-center text-os z-40 bg-transparent border-none pointer-events-none">
         {/* Left: Logo da agência (quadrado verde) */}
         <div className="flex items-center gap-2 pointer-events-auto shrink-0">
-          <Link to={`/agency/${agency?.slug}` as any} className="flex items-center gap-2 font-extrabold text-sm tracking-tight text-os-muted hover:text-os transition-colors">
+          <Link
+            to={`/agency/${agency?.slug}` as any}
+            className="flex items-center gap-2 font-extrabold text-sm tracking-tight text-os-muted hover:text-os transition-colors"
+          >
             {brandInfo?.logo_url ? (
               <img
                 src={brandInfo.logo_url}
                 alt={brandInfo.platform_name || "Turis"}
-                className="h-6 w-auto object-contain max-w-[120px] rounded"
+                className="h-6 w-auto object-contain max-w-32 rounded"
                 onError={(e) => {
                   e.currentTarget.style.display = "none";
                 }}
               />
             ) : null}
-            <span className="hidden sm:inline-block">
-              {brandInfo?.platform_name || "Turis"}
-            </span>
+            <span className="hidden sm:inline-block">{brandInfo?.platform_name || "Turis"}</span>
           </Link>
         </div>
 
         {/* Center: Toolbar Portal Target */}
-        <div id="shell-header-portal" className="flex-1 px-4 z-50 flex items-center justify-center pointer-events-auto min-w-0" />
+        <div
+          id="shell-header-portal"
+          className="flex-1 px-4 z-50 flex items-center justify-center pointer-events-auto min-w-0"
+        />
 
         {/* Right: Pill ultra-fina — hora, data e notificações */}
         <div className="flex items-center gap-3 glass-pill px-3 h-8 rounded-full pointer-events-auto ds-meta font-medium tracking-wide shrink-0">
@@ -178,30 +185,36 @@ export function AppShell({
         </div>
       </header>
 
-
-
       {/* 4. Main Workspace — full screen, below status bar */}
-      <div 
+      <div
         className={cn(
           "w-full h-full pt-[var(--shell-header-height)] z-10 relative overflow-hidden pb-20 md:pb-0",
-          !isBuilder && !isPastDue && !isHome 
-            ? "md:grid" 
-            : "flex flex-col"
+          !isBuilder && !isPastDue && !isHome ? "md:grid" : "flex flex-col",
         )}
-        style={!isBuilder && !isPastDue && !isHome ? {
-          gridTemplateColumns: "var(--shell-edge-gap) max-content var(--shell-content-gutter) minmax(0, 1fr) var(--shell-edge-gap)",
-          gridTemplateRows: "1fr"
-        } : undefined}
+        style={
+          !isBuilder && !isPastDue && !isHome
+            ? {
+                gridTemplateColumns:
+                  "var(--shell-edge-gap) max-content var(--shell-content-gutter) minmax(0, 1fr) var(--shell-edge-gap)",
+                gridTemplateRows: "1fr",
+              }
+            : undefined
+        }
       >
         {/* Spacer for left edge gap */}
         {!isBuilder && !isPastDue && !isHome && <div className="hidden md:block col-start-1" />}
 
         {!isBuilder && !isPastDue && (
-          <div className={cn(!isHome && "hidden md:flex col-start-2 h-full items-center py-[var(--shell-edge-gap)]")}>
+          <div
+            className={cn(
+              !isHome &&
+                "hidden md:flex col-start-2 h-full items-center py-[var(--shell-edge-gap)]",
+            )}
+          >
             <AppSidebar isHome={isHome} />
           </div>
         )}
-        
+
         {/* Spacer for content gutter */}
         {!isBuilder && !isPastDue && !isHome && <div className="hidden md:block col-start-3" />}
 
@@ -213,28 +226,33 @@ export function AppShell({
         ) : (
           // ── MODULE VIEW ───────────────────────────────────────────────────
           // Workspace Content in Grid Column 4
-          <div className={cn(
-            "flex-1 h-full overflow-hidden flex flex-col min-w-0",
-            !isBuilder && !isPastDue && "md:col-start-4 py-[var(--shell-edge-gap)]"
-          )}>
+          <div
+            className={cn(
+              "flex-1 h-full overflow-hidden flex flex-col min-w-0",
+              !isBuilder && !isPastDue && "md:col-start-4 py-[var(--shell-edge-gap)]",
+            )}
+          >
             {/* Mobile Title (Menu button removed since dock is at bottom) */}
             <div className="md:hidden flex items-center gap-3 px-4 pt-3 pb-1 shrink-0">
               {title && <h1 className="text-base font-semibold text-os">{title}</h1>}
             </div>
 
-            <main className="no-scrollbar flex-1 overflow-hidden relative os-workspace flex flex-col rounded-[var(--radius-card)] bg-black/10 glass-card border border-white/5 md:shadow-2xl">
+            <main className="no-scrollbar flex-1 overflow-hidden relative os-workspace flex flex-col rounded-[var(--radius-card)] glass-dark glass-card border border-white/5 md:shadow-2xl">
               {isPastDue && (
                 <div className="glass-section text-white text-xs px-4 py-2.5 flex items-center justify-between font-bold gap-3 shrink-0 rounded-t-[var(--radius-card)] border-b border-rose-500/40">
                   <div className="flex items-center gap-2">
                     <AlertTriangle className="h-4 w-4 shrink-0 text-rose-400" />
                     <span>Assinatura atrasada. Regularize o pagamento.</span>
                   </div>
-                  <a href={`/agency/${agency!.slug}/settings/billing`} className="bg-rose-500 text-white px-3 py-1 rounded-full font-black hover:bg-rose-400 transition-colors uppercase ds-meta">
+                  <a
+                    href={`/agency/${agency!.slug}/settings/billing`}
+                    className="bg-rose-500 text-white px-3 py-1 rounded-full font-black hover:bg-rose-400 transition-colors uppercase ds-meta"
+                  >
                     Regularizar
                   </a>
                 </div>
               )}
-            <LegalBlocker>{children ?? <Outlet />}</LegalBlocker>
+              <LegalBlocker>{children ?? <Outlet />}</LegalBlocker>
             </main>
           </div>
         )}
@@ -248,14 +266,14 @@ export function AppShell({
       {/* 6. Split view (Genie Mode) Overlay */}
       <AnimatePresence>
         {aiChatState === "split" && (
-          <motion.div 
+          <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             className="fixed inset-0 bg-black/60 backdrop-blur-md z-50 flex items-center justify-center p-6"
           >
             <div className="w-full max-w-5xl h-[80vh] pointer-events-auto">
-              <AIChatPanel 
+              <AIChatPanel
                 onClose={() => {
                   setAiChatState("collapsed");
                   setAiInput("");
@@ -269,10 +287,7 @@ export function AppShell({
       </AnimatePresence>
 
       {/* 7. Desktop Customizer Modal */}
-      <DesktopCustomizerModal
-        open={customizerOpen}
-        setOpen={setCustomizerOpen}
-      />
+      <DesktopCustomizerModal open={customizerOpen} setOpen={setCustomizerOpen} />
 
       <CommandMenu />
     </div>

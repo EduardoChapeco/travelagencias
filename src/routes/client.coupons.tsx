@@ -5,7 +5,9 @@ import { PageHeader, EmptyState } from "@/components/shell/PageHeader";
 import { StatusBadge } from "@/components/ui/badge";
 
 export const Route = createFileRoute("/client/coupons")({
-  head: ({ context }: any) => ({ meta: [{ title: `Cupons · ${context?.brand?.platform_name || 'Turis'}` }] }),
+  head: ({ context }: any) => ({
+    meta: [{ title: `Cupons · ${context?.brand?.platform_name || "Turis"}` }],
+  }),
   component: Page,
 });
 

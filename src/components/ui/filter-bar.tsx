@@ -32,8 +32,11 @@ export function FilterBar({
   ...props
 }: FilterBarProps) {
   return (
-    <div 
-      className={cn("flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between min-h-[var(--ds-toolbar-height)] px-4 py-2 glass-section rounded-[var(--radius-card)] mb-6", className)} 
+    <div
+      className={cn(
+        "flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between min-h-[var(--ds-toolbar-height)] px-4 py-2 glass-section rounded-[var(--radius-card)] mb-6",
+        className,
+      )}
       {...props}
     >
       <div className="flex items-center gap-1 overflow-x-auto no-scrollbar max-w-full pb-1 sm:pb-0">
@@ -47,7 +50,7 @@ export function FilterBar({
                 "flex items-center gap-2 px-3 py-1.5 rounded-full text-sm font-medium transition-colors whitespace-nowrap",
                 isActive
                   ? "bg-primary text-primary-foreground"
-                  : "text-muted-foreground hover:bg-surface-muted hover:text-foreground"
+                  : "text-muted-foreground hover:bg-surface-muted hover:text-foreground",
               )}
             >
               {option.label}
@@ -57,7 +60,7 @@ export function FilterBar({
                     "text-xs px-1.5 py-0.5 rounded-full",
                     isActive
                       ? "bg-primary-foreground/20 text-primary-foreground"
-                      : "bg-surface-alt text-muted-foreground"
+                      : "bg-surface-alt text-muted-foreground",
                   )}
                 >
                   {option.count}
@@ -67,7 +70,7 @@ export function FilterBar({
           );
         })}
       </div>
-      
+
       <div className="flex items-center gap-3 w-full sm:w-auto shrink-0">
         {onSearchChange !== undefined && (
           <div className="relative w-full sm:w-64 shrink-0">

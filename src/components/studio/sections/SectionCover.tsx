@@ -309,9 +309,7 @@ export function SectionCover({ draft, save }: SectionCoverProps) {
                   alt="Agent Photo"
                   className="h-10 w-10 rounded-full object-cover border border-border"
                 />
-                <div className="ds-meta text-muted-foreground">
-                  Foto vinculada ao consultor.
-                </div>
+                <div className="ds-meta text-muted-foreground">Foto vinculada ao consultor.</div>
                 <Button
                   type="button"
                   onClick={() => save({ agent_photo_url: null })}

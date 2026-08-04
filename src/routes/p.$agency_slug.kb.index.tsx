@@ -102,7 +102,7 @@ function PublicKnowledgeBase() {
                   className="flex items-center justify-between p-5 rounded-[var(--radius-card)] bg-background border-none hover:border-brand/50 transition-all group"
                 >
                   <div className="flex items-center gap-4">
-                    <div className="w-10 h-10 rounded-full glass bg-white/5 border-white/10 flex items-center justify-center group-hover:bg-brand/10 group-hover:text-brand transition-colors">
+                    <div className="w-10 h-10 rounded-full glass flex items-center justify-center group-hover:bg-brand/10 group-hover:text-brand transition-colors">
                       <BookOpen className="w-5 h-5" />
                     </div>
                     <div>
@@ -136,7 +136,7 @@ function PublicKnowledgeBase() {
               <div key={cat} className="space-y-4">
                 <h3 className="text-lg font-black tracking-tight border-b border-border pb-2 flex items-center justify-between">
                   {cat}
-                  <span className="text-xs font-semibold text-muted-foreground glass bg-white/5 border-white/10 px-2 py-0.5 rounded-full">
+                  <span className="text-xs font-semibold text-muted-foreground glass px-2 py-0.5 rounded-full">
                     {byCategory[cat].length}
                   </span>
                 </h3>

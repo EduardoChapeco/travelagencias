@@ -2,7 +2,6 @@ import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useAgency } from "@/lib/agency-context";
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
 const db = supabase as any;
 
 /**

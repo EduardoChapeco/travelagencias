@@ -41,15 +41,10 @@ async function verifySignedRequest(signedRequest: string, appSecret: string): Pr
     keyData,
     { name: "HMAC", hash: "SHA-256" },
     false,
-    ["verify"]
+    ["verify"],
   );
 
-  const isValid = await crypto.subtle.verify(
-    "HMAC",
-    key,
-    signature,
-    messageData
-  );
+  const isValid = await crypto.subtle.verify("HMAC", key, signature, messageData);
 
   if (!isValid) {
     throw new Error("Invalid signature verification failed");
@@ -99,15 +94,13 @@ serve(async (req) => {
 
     const agencyId = profile?.agency_id || null;
 
-    const { error: insertErr } = await supabase
-      .from("data_subject_requests")
-      .insert({
-        agency_id: agencyId,
-        request_type: "deletion",
-        status: "received",
-        protocol_code: protocolCode,
-        rejection_reason: `Meta signed request deletion for facebook_user_id=${userId}`,
-      });
+    const { error: insertErr } = await supabase.from("data_subject_requests").insert({
+      agency_id: agencyId,
+      request_type: "deletion",
+      status: "received",
+      protocol_code: protocolCode,
+      rejection_reason: `Meta signed request deletion for facebook_user_id=${userId}`,
+    });
 
     if (insertErr) {
       throw new Error(`Failed to save deletion request: ${insertErr.message}`);

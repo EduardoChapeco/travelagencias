@@ -2,7 +2,18 @@ import { createFileRoute, Link, useParams } from "@tanstack/react-router";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useState, useEffect, useMemo } from "react";
 import {
-  ArrowLeft, FileText, Send, CheckCircle, XCircle, Shield, Copy, Download, ExternalLink, Eye, AlertCircle, } from "lucide-react";
+  ArrowLeft,
+  FileText,
+  Send,
+  CheckCircle,
+  XCircle,
+  Shield,
+  Copy,
+  Download,
+  ExternalLink,
+  Eye,
+  AlertCircle,
+} from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { useAgency } from "@/lib/agency-context";
@@ -19,7 +30,9 @@ import { ContractSidebar } from "@/components/trips/contract/ContractSidebar";
 import { ContractSignatureControl } from "@/components/trips/contract/ContractSignatureControl";
 
 export const Route = createFileRoute("/agency/$slug/trips/$id/contract")({
-  head: ({ context }: any) => ({ meta: [{ title: `Contrato · ${context?.brand?.platform_name || 'Turis'}` }] }),
+  head: ({ context }: any) => ({
+    meta: [{ title: `Contrato · ${context?.brand?.platform_name || "Turis"}` }],
+  }),
   component: TripContract,
 });
 
@@ -99,8 +112,6 @@ type Passenger = {
 };
 
 // ─── Status helpers ───────────────────────────────────────────────────────────
-
-
 
 // ─── Main component ───────────────────────────────────────────────────────────
 
@@ -554,8 +565,12 @@ function TripContract() {
 
   if (tripQ.isError || contractQ.isError) {
     const errMsg = tripQ.isError
-      ? tripQ.error instanceof Error ? tripQ.error.message : "Erro desconhecido"
-      : contractQ.error instanceof Error ? contractQ.error.message : "Erro desconhecido";
+      ? tripQ.error instanceof Error
+        ? tripQ.error.message
+        : "Erro desconhecido"
+      : contractQ.error instanceof Error
+        ? contractQ.error.message
+        : "Erro desconhecido";
     return (
       <div className="flex min-h-[400px] flex-col items-center justify-center p-8 text-center m-6 rounded-[var(--radius-card)] border border-red-200 bg-red-50/50">
         <div className="h-10 w-10 rounded-full bg-red-100 flex items-center justify-center mb-4">
@@ -620,7 +635,7 @@ function TripContract() {
                   navigator.clipboard.writeText(publicUrl);
                   toast.success("Link copiado");
                 }}
-                className="flex h-8 items-center gap-1.5 rounded-full border-none px-3 text-xs font-semibold hover:glass bg-white/5 border-white/10 text-foreground glass-card border-none"
+                className="flex h-8 items-center gap-1.5 rounded-full border-none px-3 text-xs font-semibold hover:glass text-foreground glass-card border-none"
               >
                 <Copy className="h-3.5 w-3.5" />
                 Copiar link de assinatura
@@ -629,7 +644,7 @@ function TripContract() {
                 href={publicUrl}
                 target="_blank"
                 rel="noreferrer"
-                className="flex h-8 items-center gap-1.5 rounded-full border-none px-3 text-xs font-semibold hover:glass bg-white/5 border-white/10 text-foreground glass-card border-none animate-pulse"
+                className="flex h-8 items-center gap-1.5 rounded-full border-none px-3 text-xs font-semibold hover:glass text-foreground glass-card border-none animate-pulse"
               >
                 <ExternalLink className="h-3.5 w-3.5" />
                 Visualizar Link
@@ -648,7 +663,8 @@ function TripContract() {
           )}
 
           {!contract && (
-            <Button variant="default"
+            <Button
+              variant="default"
               onClick={() => createContract.mutate()}
               disabled={createContract.isPending}
             >
@@ -658,7 +674,8 @@ function TripContract() {
 
           {contract?.status === "draft" && (
             <>
-              <Button variant="ghost"
+              <Button
+                variant="ghost"
                 onClick={() =>
                   updateContract.mutate({
                     package_summary: packageSummary,
@@ -671,7 +688,8 @@ function TripContract() {
               >
                 Salvar rascunho
               </Button>
-              <Button variant="default"
+              <Button
+                variant="default"
                 onClick={() => sendContract.mutate()}
                 disabled={sendContract.isPending}
               >
@@ -682,7 +700,8 @@ function TripContract() {
           )}
 
           {contract?.status === "pending_signature" && (
-            <Button variant="ghost"
+            <Button
+              variant="ghost"
               onClick={() => cancelContract.mutate()}
               disabled={cancelContract.isPending}
               className="text-danger border-danger hover:bg-danger-bg font-bold"

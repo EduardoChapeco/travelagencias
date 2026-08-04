@@ -10,7 +10,9 @@ import { Button } from "@/components/ui/button";
 import { ShieldCheck, Calendar, Users, MapPin, Sparkles, Heart, X, Plus } from "lucide-react";
 
 export const Route = createFileRoute("/m/lead/$lead_id")({
-  head: ({ context }: any) => ({ meta: [{ title: `Preferências de Viagem · ${context?.brand?.platform_name || 'Turis'}` }] }),
+  head: ({ context }: any) => ({
+    meta: [{ title: `Preferências de Viagem · ${context?.brand?.platform_name || "Turis"}` }],
+  }),
   component: PublicLeadFormPage,
 });
 
@@ -231,7 +233,7 @@ function PublicLeadFormPage() {
         ) : (
           <form onSubmit={handleSubmit} className="space-y-6">
             {/* Greeting */}
-            <div className="glass bg-white/5 border-white/10/10 border-none/50 rounded-[var(--radius-card)] p-5 space-y-2">
+            <div className="glass/10 border-none/50 rounded-[var(--radius-card)] p-5 space-y-2">
               <h2 className="text-base font-bold text-foreground flex items-center gap-1.5">
                 Olá, {lead.name}! 👋
               </h2>
@@ -409,7 +411,7 @@ function PublicLeadFormPage() {
                   {form.pax_list.map((pax, index) => (
                     <div
                       key={index}
-                      className="border-none/60 p-3.5 rounded-[var(--radius-card)] glass bg-white/5 border-white/10/10 relative flex justify-between items-start"
+                      className="border-none/60 p-3.5 rounded-[var(--radius-card)] glass/10 relative flex justify-between items-start"
                     >
                       <div className="min-w-0 flex-1">
                         <span className="text-xs font-bold text-foreground block truncate">
@@ -466,13 +468,12 @@ function PublicLeadFormPage() {
               </Button>
 
               {paxFormOpen && (
-                <div className="border-none/80 p-4 rounded-[var(--radius-card)] glass bg-white/5 border-white/10/10 space-y-3 mt-3">
+                <div className="border-none/80 p-4 rounded-[var(--radius-card)] glass/10 space-y-3 mt-3">
                   <Field label="Nome Completo *">
                     <Input
                       placeholder="Nome do acompanhante"
                       value={paxForm.full_name}
                       onChange={(e) => setPaxForm({ ...paxForm, full_name: e.target.value })}
-                      
                     />
                   </Field>
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
@@ -481,7 +482,6 @@ function PublicLeadFormPage() {
                         placeholder="Apenas números"
                         value={paxForm.document}
                         onChange={(e) => setPaxForm({ ...paxForm, document: e.target.value })}
-                        
                       />
                     </Field>
                     <Field label="Data de Nascimento">
@@ -489,7 +489,6 @@ function PublicLeadFormPage() {
                         type="date"
                         value={paxForm.birth_date}
                         onChange={(e) => setPaxForm({ ...paxForm, birth_date: e.target.value })}
-                        
                       />
                     </Field>
                   </div>
@@ -497,7 +496,6 @@ function PublicLeadFormPage() {
                     <Select
                       value={paxForm.relationship}
                       onChange={(e) => setPaxForm({ ...paxForm, relationship: e.target.value })}
-                      
                     >
                       <option value="spouse">Cônjuge</option>
                       <option value="child">Filho(a)</option>
@@ -508,7 +506,8 @@ function PublicLeadFormPage() {
                       <option value="other">Outro</option>
                     </Select>
                   </Field>
-                  <Button variant="default"
+                  <Button
+                    variant="default"
                     type="button"
                     onClick={() => {
                       if (!paxForm.full_name) {
@@ -622,7 +621,8 @@ function PublicLeadFormPage() {
             </div>
 
             {/* Submit Button */}
-            <Button variant="default"
+            <Button
+              variant="default"
               type="submit"
               disabled={saving}
               className="w-full h-11 rounded-[var(--radius-card)] font-bold uppercase tracking-wider text-xs"

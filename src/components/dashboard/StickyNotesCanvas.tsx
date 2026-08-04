@@ -4,29 +4,44 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAgency } from "@/lib/agency-context";
 import { StickyNote, type NoteData } from "./StickyNote";
 import { cn } from "@/lib/utils";
-import { 
-  Users, PlaneTakeoff, TrendingUp, Bus, Globe, Wallet, Calendar,
-  Sparkles, Settings, Plus, LayoutGrid, Edit3, CheckCircle, 
-  Map, Compass, MessageSquare
+import {
+  Users,
+  PlaneTakeoff,
+  TrendingUp,
+  Bus,
+  Globe,
+  Wallet,
+  Calendar,
+  Sparkles,
+  Settings,
+  Plus,
+  LayoutGrid,
+  Edit3,
+  CheckCircle,
+  Map,
+  Compass,
+  MessageSquare,
 } from "lucide-react";
 import { Link, useParams } from "@tanstack/react-router";
 import { toast } from "sonner";
 import { fetchTeamMembers } from "@/services/settings";
 import { Button } from "@/components/ui/button";
 
-
 interface StickyNotesCanvasProps {
   renderNoteContent?: (content: string) => React.ReactNode;
   onNoteFocusChange?: (focused: boolean) => void;
 }
 
-export function StickyNotesCanvas({ renderNoteContent, onNoteFocusChange }: StickyNotesCanvasProps) {
+export function StickyNotesCanvas({
+  renderNoteContent,
+  onNoteFocusChange,
+}: StickyNotesCanvasProps) {
   const { agency } = useAgency();
   const params = useParams({ strict: false }) as { slug?: string };
   const slug = params.slug ?? agency?.slug;
   const qc = useQueryClient();
   const containerRef = useRef<HTMLDivElement>(null);
-  
+
   const [isEditable, setIsEditable] = useState(false);
   const [localNotes, setLocalNotes] = useState<NoteData[]>([]);
 
@@ -48,7 +63,7 @@ export function StickyNotesCanvas({ renderNoteContent, onNoteFocusChange }: Stic
         user_id: m.user_id,
         full_name: m.profile?.full_name || m.user_id,
       }));
-    }
+    },
   });
 
   // 3. Fetch Notes Query (Join with profiles)
@@ -58,15 +73,17 @@ export function StickyNotesCanvas({ renderNoteContent, onNoteFocusChange }: Stic
     queryFn: async () => {
       const { data, error } = await supabase
         .from("desktop_notes")
-        .select(`
+        .select(
+          `
           id, content, color, x_pos, y_pos, w_pos, h_pos, visibility, assigned_profile_id, profile_id,
           profiles:profiles!profile_id (full_name)
-        `)
+        `,
+        )
         .eq("agency_id", agency!.id);
-      
+
       if (error) throw error;
       return (data as NoteData[]) || [];
-    }
+    },
   });
 
   // Sync server notes to local state when query completes or updates
@@ -99,10 +116,12 @@ export function StickyNotesCanvas({ renderNoteContent, onNoteFocusChange }: Stic
           visibility: "private",
           assigned_profile_id: null,
         })
-        .select(`
+        .select(
+          `
           id, content, color, x_pos, y_pos, w_pos, h_pos, visibility, assigned_profile_id, profile_id,
           profiles:profiles!profile_id (full_name)
-        `)
+        `,
+        )
         .single();
 
       if (error) throw error;
@@ -117,7 +136,7 @@ export function StickyNotesCanvas({ renderNoteContent, onNoteFocusChange }: Stic
     },
     onError: (err: any) => {
       toast.error(err?.message || "Erro ao criar lembrete.");
-    }
+    },
   });
 
   const updateMutation = useMutation({
@@ -133,10 +152,10 @@ export function StickyNotesCanvas({ renderNoteContent, onNoteFocusChange }: Stic
           h_pos: updates.h_pos,
           visibility: updates.visibility,
           assigned_profile_id: updates.assigned_profile_id,
-          updated_at: new Date().toISOString()
+          updated_at: new Date().toISOString(),
         })
         .eq("id", id);
-      
+
       if (error) throw error;
     },
     onSuccess: () => {
@@ -144,15 +163,12 @@ export function StickyNotesCanvas({ renderNoteContent, onNoteFocusChange }: Stic
     },
     onError: (err: any) => {
       toast.error(err?.message || "Erro ao salvar alterações.");
-    }
+    },
   });
 
   const deleteMutation = useMutation({
     mutationFn: async (id: string) => {
-      const { error } = await supabase
-        .from("desktop_notes")
-        .delete()
-        .eq("id", id);
+      const { error } = await supabase.from("desktop_notes").delete().eq("id", id);
       if (error) throw error;
     },
     onSuccess: (_, id) => {
@@ -162,15 +178,13 @@ export function StickyNotesCanvas({ renderNoteContent, onNoteFocusChange }: Stic
     },
     onError: (err: any) => {
       toast.error(err?.message || "Erro ao excluir lembrete.");
-    }
+    },
   });
 
   // Local handlers
   const handleUpdateNoteLocal = (id: string, updates: Partial<NoteData>) => {
     // Optimistic local state update
-    setLocalNotes((prev) =>
-      prev.map((n) => (n.id === id ? { ...n, ...updates } : n))
-    );
+    setLocalNotes((prev) => prev.map((n) => (n.id === id ? { ...n, ...updates } : n)));
     // Persist to DB
     updateMutation.mutate({ id, updates });
   };
@@ -214,7 +228,7 @@ export function StickyNotesCanvas({ renderNoteContent, onNoteFocusChange }: Stic
           <Button
             onClick={() => addMutation.mutate()}
             disabled={addMutation.isPending}
-            className="flex items-center gap-1.5 h-9 px-3.5 rounded-full bg-white/8 hover:bg-white/15 text-white border border-white/10 transition-all cursor-pointer disabled:opacity-50 ds-meta font-black uppercase tracking-wider"
+            className="flex items-center gap-1.5 h-9 px-3.5 rounded-full bg-white/8 hover:bg-white/15 text-white border border-border transition-all cursor-pointer disabled:opacity-50 ds-meta font-black uppercase tracking-wider"
             title="Adicionar Nota"
           >
             <Plus className="w-3.5 h-3.5" />
@@ -229,7 +243,7 @@ export function StickyNotesCanvas({ renderNoteContent, onNoteFocusChange }: Stic
             "flex items-center gap-1.5 h-9 px-4 rounded-full transition-all cursor-pointer ds-meta font-black uppercase tracking-wider",
             isEditable
               ? "bg-emerald-500/20 hover:bg-emerald-500/30 text-emerald-300 border border-emerald-500/25"
-              : "bg-white/8 hover:bg-white/15 text-white/70 hover:text-white"
+              : "bg-white/8 hover:bg-white/15 text-white/70 hover:text-white",
           )}
           title={isEditable ? "Concluir Organização" : "Organizar Lembretes"}
         >

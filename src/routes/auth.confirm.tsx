@@ -4,7 +4,9 @@ import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 
 export const Route = createFileRoute("/auth/confirm")({
-  head: ({ context }: any) => ({ meta: [{ title: `Confirmação de Conta · ${context?.brand?.platform_name || 'Turis'}` }] }),
+  head: ({ context }: any) => ({
+    meta: [{ title: `Confirmação de Conta · ${context?.brand?.platform_name || "Turis"}` }],
+  }),
   component: ConfirmPage,
 });
 
@@ -148,7 +150,7 @@ function ConfirmPage() {
             <div className="mt-8 space-y-3">
               <Link
                 to="/auth/login"
-                className="block w-full rounded-full border-none px-4 py-2 text-sm font-medium hover:glass bg-white/5 border-white/10"
+                className="block w-full rounded-full border-none px-4 py-2 text-sm font-medium hover:glass"
               >
                 Voltar para o Login
               </Link>

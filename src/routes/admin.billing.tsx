@@ -44,7 +44,7 @@ function Page() {
       {q.data && (
         <div className="overflow-hidden rounded-[var(--radius-card)] border-none glass-card border-none mt-4">
           <table className="w-full text-sm">
-            <thead className="glass bg-white/5 border-white/10 text-xs text-muted-foreground">
+            <thead className="glass text-xs text-muted-foreground">
               <tr>
                 <th className="px-3 py-2 text-left">Agência</th>
                 <th className="px-3 py-2 text-right">Receita</th>
@@ -57,8 +57,12 @@ function Page() {
               {q.data.map((r: any) => (
                 <tr key={r.agency_id} className="border-t border-border">
                   <td className="px-3 py-2.5 text-xs">{r.agency_name}</td>
-                  <td className="px-3 py-2.5 text-right text-xs font-mono">{formatCurrency(r.income)}</td>
-                  <td className="px-3 py-2.5 text-right text-xs font-mono">{formatCurrency(r.expense)}</td>
+                  <td className="px-3 py-2.5 text-right text-xs font-mono">
+                    {formatCurrency(r.income)}
+                  </td>
+                  <td className="px-3 py-2.5 text-right text-xs font-mono">
+                    {formatCurrency(r.expense)}
+                  </td>
                   <td className="px-3 py-2.5 text-right text-xs font-mono text-muted-foreground">
                     {formatCurrency(r.pending)}
                   </td>

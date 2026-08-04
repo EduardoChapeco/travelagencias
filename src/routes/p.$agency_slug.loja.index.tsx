@@ -62,8 +62,8 @@ function PublicStoreIndex() {
     return true;
   });
 
-  const groupsCount = items?.filter(i => i.item_type === 'group_tour').length || 0;
-  const proposalsCount = items?.filter(i => i.item_type === 'proposal').length || 0;
+  const groupsCount = items?.filter((i) => i.item_type === "group_tour").length || 0;
+  const proposalsCount = items?.filter((i) => i.item_type === "proposal").length || 0;
 
   return (
     <div className="mx-auto w-full max-w-6xl px-4 py-12 md:py-16">
@@ -103,7 +103,7 @@ function PublicStoreIndex() {
         </div>
       ) : filteredItems.length === 0 ? (
         <div className="flex flex-col items-center justify-center py-24 text-center">
-          <div className="glass bg-white/5 border-white/10 rounded-full p-4 mb-4">
+          <div className="glass rounded-full p-4 mb-4">
             <MapPin className="h-8 w-8 text-muted-foreground" />
           </div>
           <h3 className="text-xl font-bold text-foreground">Nenhuma viagem encontrada</h3>
@@ -133,28 +133,30 @@ function PublicStoreIndex() {
                   />
                 </div>
               ) : (
-                <div className="aspect-[4/3] w-full glass bg-white/5 border-white/10 flex items-center justify-center text-muted-foreground/30 relative">
+                <div className="aspect-[4/3] w-full glass flex items-center justify-center text-muted-foreground/30 relative">
                   <div className="absolute top-3 right-3 z-10 bg-background/90 backdrop-blur-sm px-2.5 py-1 rounded-full text-xs font-bold text-foreground uppercase tracking-widest shadow-none">
                     {item.item_type === "group_tour" ? "Grupo" : "Pacote"}
                   </div>
                   <MapPin className="h-12 w-12" />
                 </div>
               )}
-              
+
               <div className="p-5 flex flex-col flex-1">
                 <h3 className="text-lg font-bold text-foreground leading-tight mb-2 line-clamp-2">
                   {item.title}
                 </h3>
-                
+
                 {item.description && (
                   <p className="text-sm text-muted-foreground line-clamp-2 mb-4 flex-1">
                     {item.description}
                   </p>
                 )}
-                
+
                 <div className="mt-auto pt-4 border-t border-border/40 flex items-center justify-between">
                   <div className="flex flex-col">
-                    <span className="ds-meta uppercase font-bold tracking-widest text-muted-foreground">A partir de</span>
+                    <span className="ds-meta uppercase font-bold tracking-widest text-muted-foreground">
+                      A partir de
+                    </span>
                     <span className="text-lg font-black text-brand">
                       {item.price ? formatCurrency(item.price) : "Sob consulta"}
                     </span>

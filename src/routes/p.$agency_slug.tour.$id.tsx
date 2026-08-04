@@ -160,7 +160,15 @@ function Page() {
     );
   }
 
-  const { agency, tour: t, days, layout, assignedSeats: rawAssignedSeats, settings, confirmedCount } = q.data;
+  const {
+    agency,
+    tour: t,
+    days,
+    layout,
+    assignedSeats: rawAssignedSeats,
+    settings,
+    confirmedCount,
+  } = q.data;
   const assignedSeats = (rawAssignedSeats as string[]) || [];
   const seatMap: SeatCell[] =
     layout && Array.isArray(layout.seat_map) ? (layout.seat_map as unknown as SeatCell[]) : [];
@@ -259,7 +267,9 @@ function Page() {
     if (selectedExtras.length > 0) {
       finalNotes +=
         `\nOpcionais:\n` +
-        selectedExtras.map((ext) => `- ${ext.name}: ${formatCurrency(Number(ext.price))}`).join("\n");
+        selectedExtras
+          .map((ext) => `- ${ext.name}: ${formatCurrency(Number(ext.price))}`)
+          .join("\n");
     }
     if (extraPassengers.length > 0) {
       finalNotes +=
@@ -358,7 +368,7 @@ function Page() {
                   </span>
                   {t.departure_date && (
                     <>
-                      <span className="w-1.5 h-1.5 rounded-full bg-white/50" />
+                      <span className="w-1.5 h-1.5 rounded-full bg-foreground/50" />
                       <span className="flex items-center gap-1">
                         <Calendar className="w-4 h-4 text-[var(--color-brand)]" />{" "}
                         {new Date(t.departure_date).toLocaleDateString("pt-BR")}
@@ -375,11 +385,13 @@ function Page() {
                     const limit = t.total_seats || 0;
                     const confirmed = Math.max(assignedSeats.length, confirmedCount || 0);
                     const remaining = Math.max(0, limit - confirmed);
-                    const isUnlimited = (t.financial && (t.financial as any).capacity_mode === "UNLIMITED") || t.total_seats === 999999;
+                    const isUnlimited =
+                      (t.financial && (t.financial as any).capacity_mode === "UNLIMITED") ||
+                      t.total_seats === 999999;
                     if (isUnlimited) {
                       return (
                         <>
-                          <span className="w-1.5 h-1.5 rounded-full bg-white/50" />
+                          <span className="w-1.5 h-1.5 rounded-full bg-foreground/50" />
                           <span className="text-xs bg-emerald-500/20 text-emerald-300 px-2 py-0.5 rounded-full font-bold">
                             Vagas Ilimitadas
                           </span>
@@ -389,7 +401,7 @@ function Page() {
                     if (remaining === 0) {
                       return (
                         <>
-                          <span className="w-1.5 h-1.5 rounded-full bg-white/50" />
+                          <span className="w-1.5 h-1.5 rounded-full bg-foreground/50" />
                           <span className="text-xs bg-rose-500/20 text-rose-350 px-2 py-0.5 rounded-full font-bold">
                             Esgotado
                           </span>
@@ -399,7 +411,7 @@ function Page() {
                     if (remaining <= 5) {
                       return (
                         <>
-                          <span className="w-1.5 h-1.5 rounded-full bg-white/50" />
+                          <span className="w-1.5 h-1.5 rounded-full bg-foreground/50" />
                           <span className="text-xs bg-amber-500/20 text-amber-300 px-2 py-0.5 rounded-full font-bold animate-pulse">
                             Últimas Vagas ({remaining})
                           </span>
@@ -617,42 +629,45 @@ function Page() {
                   <span className="text-[9px] font-bold text-slate-400 uppercase tracking-widest block">
                     Disponibilidade
                   </span>
-                  {(t.financial && (t.financial as any).capacity_mode === "UNLIMITED") || t.total_seats === 999999 ? (
+                  {(t.financial && (t.financial as any).capacity_mode === "UNLIMITED") ||
+                  t.total_seats === 999999 ? (
                     <span className="text-xs font-bold text-emerald-600 flex items-center justify-center gap-1">
                       ● Vagas Ilimitadas
                     </span>
-                  ) : (() => {
-                    const limit = t.total_seats || 0;
-                    const confirmed = Math.max(assignedSeats.length, confirmedCount || 0);
-                    const remaining = Math.max(0, limit - confirmed);
-                    if (remaining === 0) {
-                      return (t.financial && (t.financial as any).waitlist_enabled) ? (
-                        <span className="text-xs font-bold text-amber-600 flex items-center justify-center gap-1">
-                          ⚠ Vagas Esgotadas (Lista de Espera)
-                        </span>
-                      ) : (
-                        <span className="text-xs font-bold text-red-650 flex items-center justify-center gap-1">
-                          ✕ Vagas Esgotadas
-                        </span>
-                      );
-                    }
-                    return (
-                      <div className="space-y-1">
-                        <strong className="text-xs font-bold text-slate-800 block">
-                          {remaining} {remaining === 1 ? "vaga disponível" : "vagas disponíveis"}
-                        </strong>
-                        <div className="w-full bg-slate-200 rounded-full h-1.5 overflow-hidden">
-                          <div
-                            className="bg-[var(--color-brand)] h-1.5 rounded-full transition-all"
-                            style={{ width: `${Math.min(100, (confirmed / limit) * 100)}%` }}
-                          />
+                  ) : (
+                    (() => {
+                      const limit = t.total_seats || 0;
+                      const confirmed = Math.max(assignedSeats.length, confirmedCount || 0);
+                      const remaining = Math.max(0, limit - confirmed);
+                      if (remaining === 0) {
+                        return t.financial && (t.financial as any).waitlist_enabled ? (
+                          <span className="text-xs font-bold text-amber-600 flex items-center justify-center gap-1">
+                            ⚠ Vagas Esgotadas (Lista de Espera)
+                          </span>
+                        ) : (
+                          <span className="text-xs font-bold text-red-650 flex items-center justify-center gap-1">
+                            ✕ Vagas Esgotadas
+                          </span>
+                        );
+                      }
+                      return (
+                        <div className="space-y-1">
+                          <strong className="text-xs font-bold text-slate-800 block">
+                            {remaining} {remaining === 1 ? "vaga disponível" : "vagas disponíveis"}
+                          </strong>
+                          <div className="w-full bg-slate-200 rounded-full h-1.5 overflow-hidden">
+                            <div
+                              className="bg-[var(--color-brand)] h-1.5 rounded-full transition-all"
+                              style={{ width: `${Math.min(100, (confirmed / limit) * 100)}%` }}
+                            />
+                          </div>
+                          <span className="text-[9px] font-semibold text-slate-500 block font-sans">
+                            {confirmed} de {limit} vagas ocupadas
+                          </span>
                         </div>
-                        <span className="text-[9px] font-semibold text-slate-500 block font-sans">
-                          {confirmed} de {limit} vagas ocupadas
-                        </span>
-                      </div>
-                    );
-                  })()}
+                      );
+                    })()
+                  )}
                 </div>
 
                 {/* Pricing Tiers Selection */}
@@ -695,7 +710,9 @@ function Page() {
                 ) : (
                   <div className="space-y-1 bg-slate-50 border border-slate-100 rounded-[var(--radius-card)] p-3 text-xs text-slate-655 text-center">
                     Tarifa Base Individual:{" "}
-                    <strong className="text-brand font-mono">{formatCurrency(Number(t.base_price))}</strong>
+                    <strong className="text-brand font-mono">
+                      {formatCurrency(Number(t.base_price))}
+                    </strong>
                   </div>
                 )}
 
@@ -992,7 +1009,8 @@ function Page() {
                 </p>
               )}
 
-              <Button variant="default"
+              <Button
+                variant="default"
                 type="submit"
                 disabled={!lgpdConsent}
                 className="w-full h-12 text-sm uppercase tracking-widest font-bold bg-[var(--color-brand)] text-[var(--color-brand-foreground)] rounded-[var(--radius-card)] transition-all cursor-pointer disabled:opacity-40"
@@ -1107,10 +1125,15 @@ function Page() {
             </div>
 
             <div className="flex items-center gap-2.5 pt-2 border-t border-slate-100">
-              <Button variant="ghost" onClick={() => setCheckoutStep("form")} className="w-1/3 h-11 text-xs">
+              <Button
+                variant="ghost"
+                onClick={() => setCheckoutStep("form")}
+                className="w-1/3 h-11 text-xs"
+              >
                 Voltar
               </Button>
-              <Button variant="default"
+              <Button
+                variant="default"
                 onClick={handleFinalEnrollment}
                 disabled={busy || !uploadedFile}
                 className="flex-1 h-11 ds-label-caps tracking-wider bg-emerald-600 hover:bg-emerald-700 text-white rounded-[var(--radius-card)] cursor-pointer disabled:opacity-40"
@@ -1164,7 +1187,9 @@ function Page() {
               </div>
               <div className="flex justify-between gap-3 border-t border-slate-200 pt-2.5 font-bold font-sans">
                 <span className="text-slate-800">Total Pago:</span>
-                <strong className="text-emerald-700 font-mono text-sm">{formatCurrency(totalPrice)}</strong>
+                <strong className="text-emerald-700 font-mono text-sm">
+                  {formatCurrency(totalPrice)}
+                </strong>
               </div>
             </div>
 

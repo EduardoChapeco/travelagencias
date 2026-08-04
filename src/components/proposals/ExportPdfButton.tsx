@@ -93,8 +93,8 @@ export function ExportPdfButton({ proposal }: Props) {
       const orientation = isLandscape ? "landscape" : "portrait";
 
       let pdf = new jsPDF({ orientation, unit: "mm", format: "a4" });
-      let pdfW = isLandscape ? 297 : 210;
-      let pdfH = isLandscape ? 210 : 297;
+      const pdfW = isLandscape ? 297 : 210;
+      const pdfH = isLandscape ? 210 : 297;
 
       if (pages.length > 0) {
         // Paginated flow: render each page individually

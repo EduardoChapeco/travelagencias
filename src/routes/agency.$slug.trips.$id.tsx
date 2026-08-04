@@ -1,9 +1,44 @@
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { createFileRoute, Link, Outlet, useNavigate, useParams, useLocation } from "@tanstack/react-router";
+import {
+  createFileRoute,
+  Link,
+  Outlet,
+  useNavigate,
+  useParams,
+  useLocation,
+} from "@tanstack/react-router";
 import { useState, useEffect } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { Info, AlertCircle, RefreshCw, Wifi, Link2, Plus, Download, Mail, Plane, ArrowLeft, MapPin, CalendarDays, ReceiptText, Users, Ticket, FileSignature, MoreHorizontal, Copy, Trash2, Pencil, Eye, Send, Clock, Hotel, CheckCircle2, Navigation, Loader2 } from "lucide-react";
+import {
+  Info,
+  AlertCircle,
+  RefreshCw,
+  Wifi,
+  Link2,
+  Plus,
+  Download,
+  Mail,
+  Plane,
+  ArrowLeft,
+  MapPin,
+  CalendarDays,
+  ReceiptText,
+  Users,
+  Ticket,
+  FileSignature,
+  MoreHorizontal,
+  Copy,
+  Trash2,
+  Pencil,
+  Eye,
+  Send,
+  Clock,
+  Hotel,
+  CheckCircle2,
+  Navigation,
+  Loader2,
+} from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAgency, getModuleName } from "@/lib/agency-context";
 import {
@@ -28,7 +63,9 @@ import {
 } from "@/components/ui/dropdown-menu";
 
 export const Route = createFileRoute("/agency/$slug/trips/$id")({
-  head: ({ context }: any) => ({ meta: [{ title: `Viagem · ${context?.brand?.platform_name || 'Turis'}` }] }),
+  head: ({ context }: any) => ({
+    meta: [{ title: `Viagem · ${context?.brand?.platform_name || "Turis"}` }],
+  }),
   component: TripLayout,
 });
 
@@ -42,8 +79,6 @@ function getDaysToTrip(travelStart?: string | null): number | null {
   const diff = Math.ceil((start.getTime() - today.getTime()) / (1000 * 60 * 60 * 24));
   return diff;
 }
-
-
 
 function TripLayout() {
   const { slug, id } = Route.useParams();
@@ -59,17 +94,13 @@ function TripLayout() {
   const [showEmitModal, setShowEmitModal] = useState(false);
   const [emitStep, setEmitStep] = useState(1);
 
-
-
-
-
   const getTabClass = (tabPath: string, exact = false) => {
     const active = exact ? pathname === tabPath : pathname.startsWith(tabPath);
     return cn(
       "inline-flex items-center justify-center h-7 px-3 ds-meta font-semibold rounded-full transition-all gap-1.5 whitespace-nowrap cursor-pointer",
       active
-        ? "bg-white/10 text-white border border-white/5 shadow-xs"
-        : "text-white/60 hover:text-white"
+        ? "glass-dark text-white border border-white/5 shadow-xs"
+        : "text-white/60 hover:text-white",
     );
   };
 
@@ -241,7 +272,7 @@ function TripLayout() {
   if (tripQ.isError) {
     return (
       <div className="flex min-h-[400px] flex-col items-center justify-center p-8 text-center m-6 rounded-[var(--radius-card)] glass-error">
-        <div className="h-10 w-10 rounded-full bg-white/10 flex items-center justify-center mb-4">
+        <div className="h-10 w-10 rounded-full glass-dark flex items-center justify-center mb-4">
           <AlertCircle className="h-5 w-5 shrink-0" />
         </div>
         <h3 className="text-base font-bold">Falha ao Carregar Viagem</h3>
@@ -271,19 +302,70 @@ function TripLayout() {
   }
 
   const tabs = [
-    { id: "index", label: "Informações Gerais", to: "/agency/$slug/trips/$id", exact: true, icon: <Navigation className="h-3.5 w-3.5" /> },
-    { id: "destination", label: "Destino & Dicas", to: "/agency/$slug/trips/$id/destination", icon: <MapPin className="h-3.5 w-3.5" /> },
-    { id: "passengers", label: "Passageiros", to: "/agency/$slug/trips/$id/passengers", icon: <Users className="h-3.5 w-3.5" /> },
-    { id: "flights", label: "Voos", to: "/agency/$slug/trips/$id/flights", icon: <Plane className="h-3.5 w-3.5" /> },
-    { id: "lodging", label: "Hospedagem", to: "/agency/$slug/trips/$id/lodging", icon: <Hotel className="h-3.5 w-3.5" /> },
-    { id: "vouchers", label: "Vouchers", to: "/agency/$slug/trips/$id/vouchers", icon: <Ticket className="h-3.5 w-3.5" /> },
-    { id: "boarding", label: "e-Check-in & Timeline", to: "/agency/$slug/trips/$id/boarding", icon: <CheckCircle2 className="h-3.5 w-3.5" /> },
-    { id: "contract", label: "Contratos & Docs", to: "/agency/$slug/trips/$id/contract", icon: <FileSignature className="h-3.5 w-3.5" /> },
-    { id: "financial", label: "Financeiro & Faturas", to: "/agency/$slug/trips/$id/financial", icon: <ReceiptText className="h-3.5 w-3.5" /> },
-    { id: "history", label: "Histórico & Logs", to: "/agency/$slug/trips/$id/history", icon: <Clock className="h-3.5 w-3.5" /> },
+    {
+      id: "index",
+      label: "Informações Gerais",
+      to: "/agency/$slug/trips/$id",
+      exact: true,
+      icon: <Navigation className="h-3.5 w-3.5" />,
+    },
+    {
+      id: "destination",
+      label: "Destino & Dicas",
+      to: "/agency/$slug/trips/$id/destination",
+      icon: <MapPin className="h-3.5 w-3.5" />,
+    },
+    {
+      id: "passengers",
+      label: "Passageiros",
+      to: "/agency/$slug/trips/$id/passengers",
+      icon: <Users className="h-3.5 w-3.5" />,
+    },
+    {
+      id: "flights",
+      label: "Voos",
+      to: "/agency/$slug/trips/$id/flights",
+      icon: <Plane className="h-3.5 w-3.5" />,
+    },
+    {
+      id: "lodging",
+      label: "Hospedagem",
+      to: "/agency/$slug/trips/$id/lodging",
+      icon: <Hotel className="h-3.5 w-3.5" />,
+    },
+    {
+      id: "vouchers",
+      label: "Vouchers",
+      to: "/agency/$slug/trips/$id/vouchers",
+      icon: <Ticket className="h-3.5 w-3.5" />,
+    },
+    {
+      id: "boarding",
+      label: "e-Check-in & Timeline",
+      to: "/agency/$slug/trips/$id/boarding",
+      icon: <CheckCircle2 className="h-3.5 w-3.5" />,
+    },
+    {
+      id: "contract",
+      label: "Contratos & Docs",
+      to: "/agency/$slug/trips/$id/contract",
+      icon: <FileSignature className="h-3.5 w-3.5" />,
+    },
+    {
+      id: "financial",
+      label: "Financeiro & Faturas",
+      to: "/agency/$slug/trips/$id/financial",
+      icon: <ReceiptText className="h-3.5 w-3.5" />,
+    },
+    {
+      id: "history",
+      label: "Histórico & Logs",
+      to: "/agency/$slug/trips/$id/history",
+      icon: <Clock className="h-3.5 w-3.5" />,
+    },
   ];
   const tripHeader = (
-    <PageHeader 
+    <PageHeader
       title={tripQ.data.title}
       actions={
         <>
@@ -322,7 +404,7 @@ function TripLayout() {
                   onClick={() => setShowImportModal(true)}
                   disabled={bookingBusy || syncBusy}
                   title="Vincular viagem a um localizador de reserva existente"
-                  className="flex h-8 items-center justify-center gap-1.5 rounded-full border-none glass-card border-none px-2 sm:px-3 text-xs font-medium text-muted-foreground hover:glass bg-white/5 border-white/10 hover:text-foreground transition-colors disabled:opacity-50 cursor-pointer"
+                  className="flex h-8 items-center justify-center gap-1.5 rounded-full border-none glass-card border-none px-2 sm:px-3 text-xs font-medium text-muted-foreground hover:glass hover:text-foreground transition-colors disabled:opacity-50 cursor-pointer"
                 >
                   <Download className="h-3.5 w-3.5 text-muted-foreground shrink-0" />
                   <span>Vincular Localizador</span>
@@ -335,7 +417,7 @@ function TripLayout() {
           <Button
             onClick={() => window.open(`/client/trips/${id}`, "_blank")}
             title="Ver como cliente"
-            className="flex h-8 items-center justify-center gap-1.5 rounded-full border-none glass-card border-none px-2 sm:px-3 text-xs font-medium text-muted-foreground hover:glass bg-white/5 border-white/10 hover:text-foreground transition-colors cursor-pointer"
+            className="flex h-8 items-center justify-center gap-1.5 rounded-full border-none glass-card border-none px-2 sm:px-3 text-xs font-medium text-muted-foreground hover:glass hover:text-foreground transition-colors cursor-pointer"
           >
             <Eye className="h-3.5 w-3.5" />
             <span className="hidden sm:inline">Ver como Cliente</span>
@@ -354,14 +436,12 @@ function TripLayout() {
           {/* Menu de ações */}
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button className="flex h-8 w-8 items-center justify-center rounded-full border-none glass-card border-none text-muted-foreground hover:glass bg-white/5 border-white/10 hover:text-foreground transition-colors">
+              <Button className="flex h-8 w-8 items-center justify-center rounded-full border-none glass-card border-none text-muted-foreground hover:glass hover:text-foreground transition-colors">
                 <MoreHorizontal className="h-4 w-4" />
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" className="w-60">
-              <div className="px-2 py-1.5 ds-label-caps text-muted-foreground">
-                Alterar Status
-              </div>
+              <div className="px-2 py-1.5 ds-label-caps text-muted-foreground">Alterar Status</div>
               {ALL_STATUSES.map((s) => (
                 <DropdownMenuItem
                   key={s}
@@ -407,13 +487,9 @@ function TripLayout() {
     />
   );
 
-
-
   return (
     <div className="flex flex-col h-full overflow-hidden w-full">
-      <div className="flex-shrink-0 z-10">
-        {tripHeader}
-      </div>
+      <div className="flex-shrink-0 z-10">{tripHeader}</div>
 
       {/* Tabs */}
       <div className="flex-shrink-0 px-4 md:px-6 pb-3 pt-2 mb-2 overflow-x-auto no-scrollbar">
@@ -424,10 +500,11 @@ function TripLayout() {
               to={t.to as any}
               params={{ slug, id } as any}
               activeProps={{
-                className: "bg-white/10 text-white border border-white/5 shadow-xs"
+                className: "glass-dark text-white border border-white/5 shadow-xs",
               }}
               inactiveProps={{
-                className: "text-muted-foreground hover:text-foreground hover:bg-white/5 border border-transparent"
+                className:
+                  "text-muted-foreground hover:text-foreground hover:glass border border-transparent",
               }}
               activeOptions={{ exact: t.exact }}
               className="inline-flex items-center justify-center h-8 px-4 text-xs font-semibold rounded-full transition-all gap-1.5 whitespace-nowrap cursor-pointer"
@@ -455,8 +532,7 @@ function TripLayout() {
           <div className="flex flex-col space-y-4">
             <p className="text-xs text-muted-foreground leading-relaxed">
               Insira o código localizador da reserva da operadora parceira para vincular a esta
-              viagem. As informações de passageiros e vouchers serão importadas de forma
-              automática.
+              viagem. As informações de passageiros e vouchers serão importadas de forma automática.
             </p>
 
             <div className="space-y-1">
@@ -479,7 +555,7 @@ function TripLayout() {
                   setShowImportModal(false);
                   setImportBookingId("");
                 }}
-                className="flex-1 h-10 border-none glass-card border-none text-xs font-bold text-muted-foreground hover:glass bg-white/5 transition-colors"
+                className="flex-1 h-10 border-none glass-card border-none text-xs font-bold text-muted-foreground hover:glass transition-colors"
               >
                 Cancelar
               </Button>
@@ -508,11 +584,13 @@ function TripLayout() {
             <DialogTitle className="flex items-center gap-2">
               {emitStep === 1 ? (
                 <>
-                  <Wifi className="h-5 w-5 text-brand" /> Etapa 1: Validação de Passageiros & Tarifas
+                  <Wifi className="h-5 w-5 text-brand" /> Etapa 1: Validação de Passageiros &
+                  Tarifas
                 </>
               ) : (
                 <>
-                  <CheckCircle2 className="h-5 w-5 text-emerald-500" /> Etapa 2: Confirmar Emissão Oficial
+                  <CheckCircle2 className="h-5 w-5 text-emerald-500" /> Etapa 2: Confirmar Emissão
+                  Oficial
                 </>
               )}
             </DialogTitle>
@@ -525,7 +603,7 @@ function TripLayout() {
                   listados corretamente abaixo e se seus documentos estão preenchidos.
                 </p>
 
-                <div className="max-h-40 overflow-y-auto border-none rounded-[var(--radius-card)] p-3 glass bg-white/5 border-white/10 space-y-2">
+                <div className="max-h-40 overflow-y-auto border-none rounded-[var(--radius-card)] p-3 glass space-y-2">
                   <span className="ds-label-caps tracking-wider text-muted-foreground block">
                     Passageiros Vinculados
                   </span>
@@ -564,7 +642,7 @@ function TripLayout() {
                       setShowEmitModal(false);
                       setEmitStep(1);
                     }}
-                    className="flex-1 h-10 border-none glass-card border-none text-xs font-bold text-muted-foreground hover:glass bg-white/5 transition-colors"
+                    className="flex-1 h-10 border-none glass-card border-none text-xs font-bold text-muted-foreground hover:glass transition-colors"
                   >
                     Cancelar
                   </Button>
@@ -595,7 +673,7 @@ function TripLayout() {
                   <Button
                     type="button"
                     onClick={() => setEmitStep(1)}
-                    className="flex-1 h-10 border-none glass-card border-none text-xs font-bold text-muted-foreground hover:glass bg-white/5 transition-colors"
+                    className="flex-1 h-10 border-none glass-card border-none text-xs font-bold text-muted-foreground hover:glass transition-colors"
                   >
                     Voltar
                   </Button>

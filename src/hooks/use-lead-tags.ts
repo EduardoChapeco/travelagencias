@@ -6,7 +6,7 @@ import { updateLead } from "@/services/crm";
 export function useLeadTags(
   leadId: string | undefined,
   agencyId: string | undefined,
-  qc: QueryClient
+  qc: QueryClient,
 ) {
   const [newTagName, setNewTagName] = useState("");
   const [newTagColor, setNewTagColor] = useState("#3b82f6");

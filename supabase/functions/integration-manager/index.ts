@@ -39,9 +39,10 @@ async function validateUserAgency(
     global: { headers: { Authorization: authHeader } },
   });
 
-  const { data: { user }, error: authError } = await supabaseAuth.auth.getUser(
-    authHeader.replace("Bearer ", ""),
-  );
+  const {
+    data: { user },
+    error: authError,
+  } = await supabaseAuth.auth.getUser(authHeader.replace("Bearer ", ""));
   if (authError || !user) throw new Error("Unauthorized.");
 
   const { data: roleData, error: roleError } = await supabaseAuth
@@ -97,8 +98,7 @@ async function testInfotravelConnection(
     if (!authData?.token && !authData?.access_token) {
       return {
         success: false,
-        message:
-          "Autenticação falhou: a API não retornou um token de acesso válido.",
+        message: "Autenticação falhou: a API não retornou um token de acesso válido.",
       };
     }
 
@@ -245,7 +245,9 @@ serve(async (req) => {
 
       let query = admin
         .from("api_keys")
-        .select("id, provider, label, key_value, category, operator_id, operator_name, metadata, is_active, created_at, updated_at")
+        .select(
+          "id, provider, label, key_value, category, operator_id, operator_name, metadata, is_active, created_at, updated_at",
+        )
         .eq("agency_id", agencyId)
         .order("created_at", { ascending: false });
 
@@ -274,10 +276,9 @@ serve(async (req) => {
             : k.key_value, // Retorna completo — RLS garante acesso apenas a admins da agência
       }));
 
-      return new Response(
-        JSON.stringify({ success: true, credentials: masked }),
-        { headers: { ...corsHeaders, "Content-Type": "application/json" } },
-      );
+      return new Response(JSON.stringify({ success: true, credentials: masked }), {
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
     }
 
     // ── AÇÃO: delete ───────────────────────────────────────────────────────
@@ -327,10 +328,9 @@ serve(async (req) => {
         return true;
       });
 
-      return new Response(
-        JSON.stringify({ success: true, operators }),
-        { headers: { ...corsHeaders, "Content-Type": "application/json" } },
-      );
+      return new Response(JSON.stringify({ success: true, operators }), {
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
     }
 
     // ── AÇÃO: save-operator ────────────────────────────────────────────────
@@ -485,12 +485,9 @@ serve(async (req) => {
     throw new Error(`Ação não reconhecida: "${action}".`);
   } catch (error: any) {
     console.error("[integration-manager] Erro:", error.message);
-    return new Response(
-      JSON.stringify({ success: false, error: error.message }),
-      {
-        status: error.message.includes("Unauthorized") ? 401 : 400,
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
-      },
-    );
+    return new Response(JSON.stringify({ success: false, error: error.message }), {
+      status: error.message.includes("Unauthorized") ? 401 : 400,
+      headers: { ...corsHeaders, "Content-Type": "application/json" },
+    });
   }
 });

@@ -21,7 +21,9 @@ const defaultHours = (): BusinessHours =>
   ) as BusinessHours;
 
 export const Route = createFileRoute("/auth/onboarding")({
-  head: ({ context }: any) => ({ meta: [{ title: `Configure sua agência · ${context?.brand?.platform_name || 'Turis'}` }] }),
+  head: ({ context }: any) => ({
+    meta: [{ title: `Configure sua agência · ${context?.brand?.platform_name || "Turis"}` }],
+  }),
   component: Page,
 });
 
@@ -253,7 +255,7 @@ function Page() {
                   disabled={
                     loadingCnpj || (documentValue || "").replace(/[^\d]/g, "").length !== 14
                   }
-                  className="mb-[2px] h-10 rounded-full border-none px-4 text-sm font-medium hover:glass bg-white/5 border-white/10 disabled:opacity-50 cursor-pointer"
+                  className="mb-[2px] h-10 rounded-full border-none px-4 text-sm font-medium hover:glass disabled:opacity-50 cursor-pointer"
                 >
                   {loadingCnpj ? "Buscando..." : "Buscar CNPJ"}
                 </Button>
@@ -342,13 +344,18 @@ function Page() {
               <Button
                 type="button"
                 onClick={() => setStep(step - 1)}
-                className="rounded-full border-none px-4 py-2 text-sm font-medium hover:glass bg-white/5 border-white/10 cursor-pointer"
+                className="rounded-full border-none px-4 py-2 text-sm font-medium hover:glass cursor-pointer"
                 disabled={isSubmitting}
               >
                 Voltar
               </Button>
             )}
-            <Button variant="default" type="submit" disabled={isSubmitting} className="flex-1 cursor-pointer">
+            <Button
+              variant="default"
+              type="submit"
+              disabled={isSubmitting}
+              className="flex-1 cursor-pointer"
+            >
               {isSubmitting ? "Salvando…" : step === 3 ? "Finalizar e Entrar" : "Próximo"}
             </Button>
           </div>

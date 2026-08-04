@@ -37,7 +37,9 @@ import { cn } from "@/lib/utils";
 import { NewSupplierWizard } from "@/components/suppliers/NewSupplierWizard";
 
 export const Route = createFileRoute("/agency/$slug/suppliers/")({
-  head: ({ context }: any) => ({ meta: [{ title: `Fornecedores & Parceiros · ${context?.brand?.platform_name || 'Turis'}` }] }),
+  head: ({ context }: any) => ({
+    meta: [{ title: `Fornecedores & Parceiros · ${context?.brand?.platform_name || "Turis"}` }],
+  }),
   component: SuppliersPage,
 });
 
@@ -127,7 +129,11 @@ function SupplierCardGrid({ s, slug }: { s: Supplier; slug: string }) {
         <div className="flex items-center gap-3">
           <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-[var(--radius-card)] border-none glass-card border-none">
             {s.logo_url ? (
-              <img src={s.logo_url} alt={s.name} className="h-8 w-8 object-contain rounded-[var(--radius-card)]" />
+              <img
+                src={s.logo_url}
+                alt={s.name}
+                className="h-8 w-8 object-contain rounded-[var(--radius-card)]"
+              />
             ) : (
               <Icon className={cn("h-5 w-5", cfg.color)} />
             )}
@@ -298,53 +304,57 @@ function SuppliersPage() {
 
   return (
     <div className="flex h-full flex-col overflow-hidden">
-              <PageHeader
-          title="Fornecedores"
-          search={{
-            value: search,
-            onChange: setSearch,
-            placeholder: "Buscar fornecedor, cidade...",
-          }}
-          filters={[
-            { label: "Todos", value: "all" },
-            { label: "Operadora", value: "operator" },
-            { label: "Hotel", value: "hotel" },
-            { label: "Aéreo", value: "flight" },
-            { label: "Transfer", value: "transfer" },
-            { label: "Seguro", value: "insurance" },
-            { label: "Visto", value: "visa" },
-            { label: "Outros", value: "other" },
-          ]}
-          activeFilter={kindFilter}
-          onFilterChange={(v) => setKindFilter(v as any)}
-          actions={
-            <div className="flex items-center gap-1.5">
-              <Button
-                onClick={() => setViewMode(viewMode === "grid" ? "list" : "grid")}
-                className="h-7 px-2 flex items-center justify-center rounded-full border border-white/15 text-white/60 hover:text-white hover:bg-white/10 transition-colors cursor-pointer ds-meta font-semibold"
-                title={viewMode === "grid" ? "Ver em Lista" : "Ver em Grid"}
-              >
-                {viewMode === "grid" ? <List className="h-3.5 w-3.5" /> : <LayoutGrid className="h-3.5 w-3.5" />}
-              </Button>
-              {isAgencyAdmin && (
-                <Button
-                  onClick={() => setAdminPanelOpen(true)}
-                  className="h-7 w-7 flex items-center justify-center rounded-full border border-white/15 text-white/60 hover:text-white hover:bg-white/10 transition-colors cursor-pointer"
-                  title="Administrar"
-                >
-                  <Settings2 className="h-3.5 w-3.5" />
-                </Button>
+      <PageHeader
+        title="Fornecedores"
+        search={{
+          value: search,
+          onChange: setSearch,
+          placeholder: "Buscar fornecedor, cidade...",
+        }}
+        filters={[
+          { label: "Todos", value: "all" },
+          { label: "Operadora", value: "operator" },
+          { label: "Hotel", value: "hotel" },
+          { label: "Aéreo", value: "flight" },
+          { label: "Transfer", value: "transfer" },
+          { label: "Seguro", value: "insurance" },
+          { label: "Visto", value: "visa" },
+          { label: "Outros", value: "other" },
+        ]}
+        activeFilter={kindFilter}
+        onFilterChange={(v) => setKindFilter(v as any)}
+        actions={
+          <div className="flex items-center gap-1.5">
+            <Button
+              onClick={() => setViewMode(viewMode === "grid" ? "list" : "grid")}
+              className="h-7 px-2 flex items-center justify-center rounded-full border border-white/15 text-white/60 hover:text-white hover:glass-dark transition-colors cursor-pointer ds-meta font-semibold"
+              title={viewMode === "grid" ? "Ver em Lista" : "Ver em Grid"}
+            >
+              {viewMode === "grid" ? (
+                <List className="h-3.5 w-3.5" />
+              ) : (
+                <LayoutGrid className="h-3.5 w-3.5" />
               )}
-            </div>
-          }
-          primaryAction={
-            <ModuleActionButton
-        label="Novo Fornecedor"
-        icon={<Plus className="h-3.5 w-3.5" />}
-              onClick={() => setOpen(true)}
-            />
-          }
-        />
+            </Button>
+            {isAgencyAdmin && (
+              <Button
+                onClick={() => setAdminPanelOpen(true)}
+                className="h-7 w-7 flex items-center justify-center rounded-full border border-white/15 text-white/60 hover:text-white hover:glass-dark transition-colors cursor-pointer"
+                title="Administrar"
+              >
+                <Settings2 className="h-3.5 w-3.5" />
+              </Button>
+            )}
+          </div>
+        }
+        primaryAction={
+          <ModuleActionButton
+            label="Novo Fornecedor"
+            icon={<Plus className="h-3.5 w-3.5" />}
+            onClick={() => setOpen(true)}
+          />
+        }
+      />
 
       <div className="flex flex-1 overflow-hidden">
         {/* ── Sidebar de filtros ── */}
@@ -370,7 +380,7 @@ function SuppliersPage() {
                   className={cn(
                     "w-full text-left px-3 py-1.5 text-xs font-semibold rounded-full transition-colors cursor-pointer",
                     kindFilter === c.id
-                      ? "bg-white/10 text-white font-bold"
+                      ? "glass-dark text-white font-bold"
                       : "text-white/60 hover:text-white hover:bg-white/[0.02]",
                   )}
                 >
@@ -381,20 +391,20 @@ function SuppliersPage() {
           </div>
 
           {/* Stats Summary */}
-          <div className="mt-auto border-t border-white/10 px-4 py-4 space-y-3">
+          <div className="mt-auto border-t border-border px-4 py-4 space-y-3">
             <div className="ds-meta uppercase tracking-widest font-semibold text-white/50 mb-2">
               Visão Geral
             </div>
             <div className="grid grid-cols-2 gap-2">
-              <div className="rounded-[var(--radius-card)] border border-white/10 bg-white/5 p-2 text-center">
+              <div className="rounded-[var(--radius-card)] border glass p-2 text-center">
                 <div className="text-lg font-bold text-white">{stats.total}</div>
                 <div className="ds-meta text-white/50">Total</div>
               </div>
-              <div className="rounded-[var(--radius-card)] border border-white/10 bg-white/5 p-2 text-center">
+              <div className="rounded-[var(--radius-card)] border glass p-2 text-center">
                 <div className="text-lg font-bold text-green-400">{stats.active}</div>
                 <div className="ds-meta text-white/50">Ativos</div>
               </div>
-              <div className="col-span-2 rounded-[var(--radius-card)] border border-white/10 bg-white/5 p-2 text-center">
+              <div className="col-span-2 rounded-[var(--radius-card)] border glass p-2 text-center">
                 <div className="text-lg font-bold text-pink-400 font-mono">
                   {stats.avgCommission}%
                 </div>
@@ -415,7 +425,9 @@ function SuppliersPage() {
                 </div>
                 <h3 className="text-sm font-bold text-red-800">Falha ao Carregar Fornecedores</h3>
                 <p className="text-xs text-red-600 mt-1 max-w-sm">
-                  {q.error instanceof Error ? q.error.message : "Erro desconhecido ao carregar fornecedores."}
+                  {q.error instanceof Error
+                    ? q.error.message
+                    : "Erro desconhecido ao carregar fornecedores."}
                 </p>
               </div>
             )}

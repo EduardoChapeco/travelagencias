@@ -2,7 +2,20 @@ import { createFileRoute, Link, useNavigate, useParams } from "@tanstack/react-r
 import { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import {
-  Plus, Plane, MoreHorizontal, Edit2, Copy, Trash2, Eye, Search, Filter, Archive, Settings2, ChevronDown, AlertCircle, } from "lucide-react";
+  Plus,
+  Plane,
+  MoreHorizontal,
+  Edit2,
+  Copy,
+  Trash2,
+  Eye,
+  Search,
+  Filter,
+  Archive,
+  Settings2,
+  ChevronDown,
+  AlertCircle,
+} from "lucide-react";
 import { toast } from "sonner";
 
 import { format, parseISO } from "date-fns";
@@ -31,11 +44,11 @@ import {
 } from "@/components/ui/dropdown-menu";
 
 export const Route = createFileRoute("/agency/$slug/trips/")({
-  head: ({ context }: any) => ({ meta: [{ title: `Viagens · ${context?.brand?.platform_name || 'Turis'}` }] }),
+  head: ({ context }: any) => ({
+    meta: [{ title: `Viagens · ${context?.brand?.platform_name || "Turis"}` }],
+  }),
   component: TripsList,
 });
-
-
 
 function TripsList() {
   const { agency, isAgencyAdmin } = useAgency();
@@ -342,9 +355,7 @@ function TripsList() {
             )}
           </div>
           {row.original.destination && (
-            <div className="ds-meta text-muted-foreground mt-0.5">
-              {row.original.destination}
-            </div>
+            <div className="ds-meta text-muted-foreground mt-0.5">{row.original.destination}</div>
           )}
         </div>
       ),
@@ -372,7 +383,9 @@ function TripsList() {
     },
     {
       accessorKey: "total_sale",
-      header: ({ column }) => <DataTableColumnHeader column={column} title="Venda" className="justify-end" />,
+      header: ({ column }) => (
+        <DataTableColumnHeader column={column} title="Venda" className="justify-end" />
+      ),
       cell: ({ row }) => (
         <div className="text-right font-mono text-xs whitespace-nowrap">
           {formatCurrency(Number(row.getValue("total_sale")), row.original.currency)}
@@ -381,14 +394,19 @@ function TripsList() {
     },
     {
       id: "actions",
-      header: ({ column }) => <DataTableColumnHeader column={column} title="Ações" className="justify-end" />,
+      header: ({ column }) => (
+        <DataTableColumnHeader column={column} title="Ações" className="justify-end" />
+      ),
       cell: ({ row }) => {
         const trip = row.original;
         return (
           <div className="flex justify-end">
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button variant="ghost" className="h-7 w-7 p-0 hover:glass bg-white/5 border-white/10">
+                <Button
+                  variant="ghost"
+                  className="h-7 w-7 p-0 hover:glass"
+                >
                   <MoreHorizontal className="h-4 w-4 text-muted-foreground" />
                 </Button>
               </DropdownMenuTrigger>
@@ -450,54 +468,60 @@ function TripsList() {
 
   return (
     <div className="flex h-full flex-col overflow-hidden">
-              <PageHeader
-          title="Viagens"
-          search={{
-            value: search,
-            onChange: (v) => { setSearch(v); setPage(1); },
-            placeholder: "Buscar viagem...",
-          }}
-          filters={[
-            { label: "Todos", value: "all" },
-            { label: "Planejamento", value: "planning" },
-            { label: "Confirmada", value: "confirmed" },
-            { label: "Em andamento", value: "in_progress" },
-            { label: "Concluída", value: "completed" },
-            { label: "Cancelada", value: "cancelled" },
-            { label: "Arquivadas", value: "archived" },
-          ]}
-          activeFilter={statusFilter}
-          onFilterChange={(v) => { setStatusFilter(v); setPage(1); }}
-          actions={
-            <div className="flex items-center gap-1.5">
+      <PageHeader
+        title="Viagens"
+        search={{
+          value: search,
+          onChange: (v) => {
+            setSearch(v);
+            setPage(1);
+          },
+          placeholder: "Buscar viagem...",
+        }}
+        filters={[
+          { label: "Todos", value: "all" },
+          { label: "Planejamento", value: "planning" },
+          { label: "Confirmada", value: "confirmed" },
+          { label: "Em andamento", value: "in_progress" },
+          { label: "Concluída", value: "completed" },
+          { label: "Cancelada", value: "cancelled" },
+          { label: "Arquivadas", value: "archived" },
+        ]}
+        activeFilter={statusFilter}
+        onFilterChange={(v) => {
+          setStatusFilter(v);
+          setPage(1);
+        }}
+        actions={
+          <div className="flex items-center gap-1.5">
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => setImportOpen(true)}
+              title="Importar do Infotravel"
+            >
+              <Search className="h-3 w-3" /> Infotravel
+            </Button>
+            {isAgencyAdmin && (
               <Button
                 variant="ghost"
-                size="sm"
-                onClick={() => setImportOpen(true)}
-                title="Importar do Infotravel"
+                size="icon"
+                onClick={() => setAdminPanelOpen(true)}
+                title="Administrar Viagens"
               >
-                <Search className="h-3 w-3" /> Infotravel
+                <Settings2 className="h-3.5 w-3.5" />
               </Button>
-              {isAgencyAdmin && (
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  onClick={() => setAdminPanelOpen(true)}
-                  title="Administrar Viagens"
-                >
-                  <Settings2 className="h-3.5 w-3.5" />
-                </Button>
-              )}
-            </div>
-          }
-          primaryAction={
-            <ModuleActionButton
-        label="Nova Viagem"
-        icon={<Plus className="h-3.5 w-3.5" />}
-              onClick={() => setNewOpen(true)}
-            />
-          }
-        />
+            )}
+          </div>
+        }
+        primaryAction={
+          <ModuleActionButton
+            label="Nova Viagem"
+            icon={<Plus className="h-3.5 w-3.5" />}
+            onClick={() => setNewOpen(true)}
+          />
+        }
+      />
 
       <div className="page-content page-section dock-offset">
         {list.isError && (
@@ -507,31 +531,33 @@ function TripsList() {
             </div>
             <h3 className="text-sm font-bold text-red-800">Falha ao Carregar Viagens</h3>
             <p className="text-xs text-red-600 mt-1 max-w-sm">
-              {list.error instanceof Error ? list.error.message : "Erro desconhecido ao buscar viagens."}
+              {list.error instanceof Error
+                ? list.error.message
+                : "Erro desconhecido ao buscar viagens."}
             </p>
           </div>
         )}
         {list.isLoading && (
           <div className="space-y-4 pt-2">
             <div className="flex items-center justify-between">
-              <div className="h-8 w-64 animate-pulse rounded-full glass bg-white/5 border-white/10" />
-              <div className="h-8 w-24 animate-pulse rounded-full glass bg-white/5 border-white/10" />
+              <div className="h-8 w-64 animate-pulse rounded-full glass" />
+              <div className="h-8 w-24 animate-pulse rounded-full glass" />
             </div>
             <div className="rounded-[var(--radius-card)] border-none glass-card border-none overflow-hidden">
-              <div className="border-b border-border glass bg-white/5 border-white/10/50 p-3 h-10 flex gap-4">
+              <div className="border-b border-border glass/50 p-3 h-10 flex gap-4">
                 <div className="h-4 w-12 animate-pulse rounded-full bg-muted/40" />
                 <div className="h-4 w-1/3 animate-pulse rounded-full bg-muted/40" />
                 <div className="h-4 w-24 animate-pulse rounded-full bg-muted/40 ml-auto" />
               </div>
               {[1, 2, 3, 4, 5].map((i) => (
                 <div key={i} className="flex items-center gap-4 border-b border-border p-4">
-                  <div className="h-4 w-12 animate-pulse rounded-full glass bg-white/5 border-white/10" />
+                  <div className="h-4 w-12 animate-pulse rounded-full glass" />
                   <div className="space-y-2 flex-1">
-                    <div className="h-4 w-1/4 animate-pulse rounded-full glass bg-white/5 border-white/10" />
-                    <div className="h-3 w-1/6 animate-pulse rounded-full glass bg-white/5 border-white/10/50" />
+                    <div className="h-4 w-1/4 animate-pulse rounded-full glass" />
+                    <div className="h-3 w-1/6 animate-pulse rounded-full glass/50" />
                   </div>
-                  <div className="h-6 w-24 animate-pulse rounded-full glass bg-white/5 border-white/10" />
-                  <div className="h-4 w-20 animate-pulse rounded-full glass bg-white/5 border-white/10" />
+                  <div className="h-6 w-24 animate-pulse rounded-full glass" />
+                  <div className="h-4 w-20 animate-pulse rounded-full glass" />
                 </div>
               ))}
             </div>
@@ -610,8 +636,8 @@ function TripsList() {
                 className="w-full"
               />
               <p className="ds-meta text-muted-foreground mt-1.5 font-sans leading-relaxed">
-                Insira o ID de reserva para importar automaticamente os voos, hotéis, passageiros
-                e criar o voucher correspondente.
+                Insira o ID de reserva para importar automaticamente os voos, hotéis, passageiros e
+                criar o voucher correspondente.
               </p>
             </div>
 

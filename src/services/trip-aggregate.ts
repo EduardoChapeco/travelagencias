@@ -77,7 +77,7 @@ export async function updateTripLifecycleStatus(
 
   const { error } = await supabase
     .from("trips")
-    .update(updatePayload as any)
+    .update(updatePayload as Database["public"]["Tables"]["trips"]["Update"])
     .eq("id", tripId);
 
   if (error) throw new Error(`Error updating trip status: ${error.message}`);

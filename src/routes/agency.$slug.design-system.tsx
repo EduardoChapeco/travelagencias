@@ -31,7 +31,9 @@ import { StatusBadge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
 
 export const Route = createFileRoute("/agency/$slug/design-system")({
-  head: ({ context }: any) => ({ meta: [{ title: `Design System · ${context?.brand?.platform_name || 'Turis'}` }] }),
+  head: ({ context }: any) => ({
+    meta: [{ title: `Design System · ${context?.brand?.platform_name || "Turis"}` }],
+  }),
   component: DesignSystemPage,
 });
 
@@ -157,7 +159,7 @@ const BLOCK_PRESETS = {
   ],
   borders: [
     { name: "Fina Padrão", class: "border-none" },
-    { name: "Vidro (Glassmorphic)", class: "border border-white/20 bg-white/5 backdrop-blur-md" },
+    { name: "Vidro (Glassmorphic)", class: "border border-border glass backdrop-blur-md" },
     {
       name: "Glow Iluminada",
       class: "border border-brand/40 ring-1 ring-brand/20 shadow-none",
@@ -276,13 +278,13 @@ function DesignSystemPage() {
 
   return (
     <div className="flex h-full overflow-hidden bg-background">
-              <div className="flex items-center gap-3">
-          <StatusBadge tone="info">Documento Pétreo</StatusBadge>
-        </div>
-      
+      <div className="flex items-center gap-3">
+        <StatusBadge tone="info">Documento Pétreo</StatusBadge>
+      </div>
+
       {/* Internal Sidebar */}
       <aside className="w-56 flex-shrink-0 border-r border-border glass-card border-none flex flex-col justify-between select-none">
-        <div className="p-4 border-b border-border/80 glass bg-white/5 border-white/10/25">
+        <div className="p-4 border-b border-border/80 glass/25">
           <h2 className="text-xs font-extrabold tracking-wider text-foreground uppercase flex items-center gap-2">
             <Settings className="w-3.5 h-3.5 text-brand" /> Design System Hub
           </h2>
@@ -306,7 +308,7 @@ function DesignSystemPage() {
                 "w-full flex items-center justify-between text-left px-3 py-2 rounded-[var(--radius-card)] text-xs font-medium transition-colors cursor-pointer",
                 activeTab === tab.id
                   ? "bg-brand/10 text-brand font-bold"
-                  : "text-muted-foreground hover:text-foreground hover:glass bg-white/5 border-white/10/55",
+                  : "text-muted-foreground hover:text-foreground hover:glass/55",
               )}
             >
               <span>{tab.label}</span>
@@ -315,7 +317,7 @@ function DesignSystemPage() {
           ))}
         </nav>
 
-        <div className="p-3 border-t border-border glass bg-white/5 border-white/10/10 ds-meta text-muted-foreground leading-relaxed font-mono">
+        <div className="p-3 border-t border-border glass/10 ds-meta text-muted-foreground leading-relaxed font-mono">
           Turis OS
           <br />
           No Shadows Mode
@@ -354,8 +356,7 @@ function DesignSystemPage() {
                 </h4>
                 <p className="text-xs text-muted-foreground leading-relaxed">
                   Para conferir uma estética limpa, lisa e premium, removemos todas as sombras de
-                  cards e tabelas. Usamos bordas finas e realces de cores de fundo
-                  (`glass bg-white/5 border-white/10`) para criar relevo visual.
+                  cards e tabelas. Usamos bordas finas e realces de cores de fundo (`glass`) para criar relevo visual.
                 </p>
               </div>
 
@@ -386,9 +387,9 @@ function DesignSystemPage() {
               <AlertTriangle className="h-5 w-5 shrink-0" />
               <div>
                 <strong>Atenção Desenvolvedor:</strong> Ao criar novas seções ou módulos, NUNCA
-                utilize classes utilitárias de sombras como `shadow-none`, `shadow-none`, `shadow-none` de
-                forma estática. Caso precise de relevo, prefira bordas finas (`border
-                border-border`) ou cores de superfície diferenciadas.
+                utilize classes utilitárias de sombras como `shadow-none`, `shadow-none`,
+                `shadow-none` de forma estática. Caso precise de relevo, prefira bordas finas
+                (`border border-border`) ou cores de superfície diferenciadas.
               </div>
             </div>
           </div>
@@ -406,7 +407,8 @@ function DesignSystemPage() {
                   Variáveis CSS centralizadas que sustentam os temas Light e Dark.
                 </p>
               </div>
-              <Button variant="ghost"
+              <Button
+                variant="ghost"
                 onClick={() =>
                   copyToClipboard(COLOR_TOKENS.map((t) => `${t.name}: var(${t.name});`).join("\n"))
                 }
@@ -466,7 +468,7 @@ function DesignSystemPage() {
             <div className="glass-card border-none border-none rounded-[var(--radius-card)] overflow-hidden">
               <table className="w-full border-collapse text-left">
                 <thead>
-                  <tr className="border-b border-border glass bg-white/5 border-white/10/30 text-xs font-bold text-muted-foreground uppercase tracking-wider">
+                  <tr className="border-b border-border glass/30 text-xs font-bold text-muted-foreground uppercase tracking-wider">
                     <th className="p-4">Classe Tailwind</th>
                     <th className="p-4">Tamanho</th>
                     <th className="p-4">Descrição</th>
@@ -475,7 +477,10 @@ function DesignSystemPage() {
                 </thead>
                 <tbody className="divide-y divide-border text-xs text-foreground/80 font-sans">
                   {TYPO_TOKENS.map((typo) => (
-                    <tr key={typo.class} className="hover:glass bg-white/5 border-white/10/10 transition-colors">
+                    <tr
+                      key={typo.class}
+                      className="hover:glass/10 transition-colors"
+                    >
                       <td className="p-4 font-mono font-bold text-brand">{typo.class}</td>
                       <td className="p-4 font-mono ds-meta">{typo.size}</td>
                       <td className="p-4 text-muted-foreground max-w-xs">{typo.desc}</td>
@@ -497,7 +502,7 @@ function DesignSystemPage() {
                   <span className="font-semibold block text-muted-foreground">
                     Fonte Sans-Serif (Textos e Inputs)
                   </span>
-                  <code className="block glass bg-white/5 border-white/10 p-2 rounded border-none/80 font-mono ds-meta">
+                  <code className="block glass p-2 rounded border-none/80 font-mono ds-meta">
                     font-family: var(--font-sans) ("Inter", -apple-system, sans-serif)
                   </code>
                 </div>
@@ -505,7 +510,7 @@ function DesignSystemPage() {
                   <span className="font-semibold block text-muted-foreground">
                     Fonte Monoespaçada (Códigos e Logs)
                   </span>
-                  <code className="block glass bg-white/5 border-white/10 p-2 rounded border-none/80 font-mono ds-meta">
+                  <code className="block glass p-2 rounded border-none/80 font-mono ds-meta">
                     font-family: var(--font-mono) ("JetBrains Mono", monospace)
                   </code>
                 </div>
@@ -535,7 +540,7 @@ function DesignSystemPage() {
                   Páginas administrativas comuns de formulário ou listagem utilizam paddings de
                   container responsivos para manter a harmonia em todas as telas:
                 </p>
-                <code className="block glass bg-white/5 border-white/10 p-2.5 rounded border-none/80 font-mono ds-meta text-brand">
+                <code className="block glass p-2.5 rounded border-none/80 font-mono ds-meta text-brand">
                   &lt;div className="px-4 md:px-6 py-4 md:py-6"&gt; ... &lt;/div&gt;
                 </code>
               </div>
@@ -548,7 +553,7 @@ function DesignSystemPage() {
                   Para painéis descritivos e cards de recursos, utilizamos o grid de 3 colunas
                   padrão com spans definidos no Tailwind:
                 </p>
-                <pre className="glass bg-white/5 border-white/10 p-3 rounded border-none/80 font-mono text-[10.5px] leading-relaxed text-brand overflow-x-auto">
+                <pre className="glass p-3 rounded border-none/80 font-mono text-[10.5px] leading-relaxed text-brand overflow-x-auto">
                   {`<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
   {/* Card Comum */}
   <div className="glass-card border-none border-none rounded-[var(--radius-card)] p-5">...</div>
@@ -566,7 +571,7 @@ function DesignSystemPage() {
                   Para manter os botões de ação e status no topo da barra de navegação global,
                   utilize o portal nativo:
                 </p>
-                <pre className="glass bg-white/5 border-white/10 p-3 rounded border-none/80 font-mono text-[10.5px] leading-relaxed text-brand overflow-x-auto">
+                <pre className="glass p-3 rounded border-none/80 font-mono text-[10.5px] leading-relaxed text-brand overflow-x-auto">
                   {`  <div className="flex items-center gap-2">
     <Button variant="ghost">Voltar</Button>
     <Button variant="default">Salvar Dados</Button>
@@ -597,7 +602,8 @@ function DesignSystemPage() {
                 <h4 className="text-xs font-bold text-foreground uppercase tracking-wider">
                   Botões Interativos
                 </h4>
-                <Button variant="ghost"
+                <Button
+                  variant="ghost"
                   onClick={() => toggleCode("buttons")}
                   className="h-7 ds-meta gap-1"
                 >
@@ -608,13 +614,17 @@ function DesignSystemPage() {
 
               <div className="flex flex-wrap items-center gap-3">
                 <Button variant="default">Primary Button</Button>
-                <Button variant="default" disabled>Disabled Primary</Button>
+                <Button variant="default" disabled>
+                  Disabled Primary
+                </Button>
                 <Button variant="ghost">Ghost Button</Button>
-                <Button variant="ghost" disabled>Disabled Ghost</Button>
+                <Button variant="ghost" disabled>
+                  Disabled Ghost
+                </Button>
               </div>
 
               {showCode["buttons"] && (
-                <pre className="glass bg-white/5 border-white/10 p-3 rounded border-none font-mono ds-meta text-brand overflow-x-auto">
+                <pre className="glass p-3 rounded border-none font-mono ds-meta text-brand overflow-x-auto">
                   {`import { PrimaryButton, GhostButton } from "@/components/ui/form";
 
 // Uso dos botões padrão:
@@ -633,7 +643,11 @@ function DesignSystemPage() {
                 <h4 className="text-xs font-bold text-foreground uppercase tracking-wider">
                   Campos de Formulário e Validação
                 </h4>
-                <Button variant="ghost" onClick={() => toggleCode("forms")} className="h-7 ds-meta gap-1">
+                <Button
+                  variant="ghost"
+                  onClick={() => toggleCode("forms")}
+                  className="h-7 ds-meta gap-1"
+                >
                   <Code className="h-3 w-3" /> {showCode["forms"] ? "Ocultar Código" : "Ver Código"}
                 </Button>
               </div>
@@ -653,7 +667,7 @@ function DesignSystemPage() {
               </div>
 
               {showCode["forms"] && (
-                <pre className="glass bg-white/5 border-white/10 p-3 rounded border-none font-mono ds-meta text-brand overflow-x-auto">
+                <pre className="glass p-3 rounded border-none font-mono ds-meta text-brand overflow-x-auto">
                   {`import { Field, Input, Select } from "@/components/ui/form";
 
 <Field label="Nome Completo" hint="Insira seu nome igual ao do passaporte.">
@@ -675,7 +689,11 @@ function DesignSystemPage() {
                 <h4 className="text-xs font-bold text-foreground uppercase tracking-wider">
                   Status Badges
                 </h4>
-                <Button variant="ghost" onClick={() => toggleCode("badges")} className="h-7 ds-meta gap-1">
+                <Button
+                  variant="ghost"
+                  onClick={() => toggleCode("badges")}
+                  className="h-7 ds-meta gap-1"
+                >
                   <Code className="h-3 w-3" />{" "}
                   {showCode["badges"] ? "Ocultar Código" : "Ver Código"}
                 </Button>
@@ -690,7 +708,7 @@ function DesignSystemPage() {
               </div>
 
               {showCode["badges"] && (
-                <pre className="glass bg-white/5 border-white/10 p-3 rounded border-none font-mono ds-meta text-brand overflow-x-auto">
+                <pre className="glass p-3 rounded border-none font-mono ds-meta text-brand overflow-x-auto">
                   {`import { StatusBadge } from "@/components/ui/form";
 
 <StatusBadge tone="neutral">Rascunho</StatusBadge>
@@ -708,7 +726,11 @@ function DesignSystemPage() {
                 <h4 className="text-xs font-bold text-foreground uppercase tracking-wider">
                   Alertas Planos (Sem Sombras)
                 </h4>
-                <Button variant="ghost" onClick={() => toggleCode("alerts")} className="h-7 ds-meta gap-1">
+                <Button
+                  variant="ghost"
+                  onClick={() => toggleCode("alerts")}
+                  className="h-7 ds-meta gap-1"
+                >
                   <Code className="h-3 w-3" />{" "}
                   {showCode["alerts"] ? "Ocultar Código" : "Ver Código"}
                 </Button>
@@ -733,7 +755,7 @@ function DesignSystemPage() {
               </div>
 
               {showCode["alerts"] && (
-                <pre className="glass bg-white/5 border-white/10 p-3 rounded border-none font-mono ds-meta text-brand overflow-x-auto">
+                <pre className="glass p-3 rounded border-none font-mono ds-meta text-brand overflow-x-auto">
                   {`// Alerta Azul (Info)
 <div className="bg-info-bg text-info border border-info/30 rounded-[var(--radius-card)] p-4 flex gap-3 text-xs leading-relaxed">
   <Info className="h-4.5 w-4.5 shrink-0" />
@@ -831,8 +853,12 @@ function DesignSystemPage() {
                 <div className="space-y-3">
                   <Field label="Cor de Fundo">
                     <Select value={sandboxBg} onChange={(e) => setSandboxBg(e.target.value)}>
-                      <option value="glass-card border-none">Sólida: Surface (Branco/Cinza Escuro)</option>
-                      <option value="glass bg-white/5 border-white/10/45">Sólida: Surface Alt (Cinza Suave)</option>
+                      <option value="glass-card border-none">
+                        Sólida: Surface (Branco/Cinza Escuro)
+                      </option>
+                      <option value="glass/45">
+                        Sólida: Surface Alt (Cinza Suave)
+                      </option>
                       <option value="bg-brand text-brand-foreground">
                         Sólida: Brand Primary (Cor da Agência)
                       </option>
@@ -859,10 +885,8 @@ function DesignSystemPage() {
                       value={sandboxBorder}
                       onChange={(e) => setSandboxBorder(e.target.value)}
                     >
-                      <option value="border-none">
-                        Fina Padrão (border-none)
-                      </option>
-                      <option value="border border-white/20 bg-white/5 backdrop-blur-md">
+                      <option value="border-none">Fina Padrão (border-none)</option>
+                      <option value="border border-border glass backdrop-blur-md">
                         Vidro (Glassmorphic)
                       </option>
                       <option value="border border-brand/40 ring-1 ring-brand/20 shadow-none">
@@ -946,7 +970,7 @@ function DesignSystemPage() {
                       {sandboxElements.map((el, i) => (
                         <div
                           key={el.id}
-                          className="p-3 glass bg-white/5 border-white/10/40 border-none/50 rounded-[var(--radius-card)] space-y-2 relative group/item"
+                          className="p-3 glass/40 border-none/50 rounded-[var(--radius-card)] space-y-2 relative group/item"
                         >
                           <div className="flex items-center justify-between">
                             <span className="ds-label-caps tracking-wider text-brand">
@@ -965,7 +989,6 @@ function DesignSystemPage() {
                               value={el.title}
                               onChange={(e) => updateSandboxElement(el.id, "title", e.target.value)}
                               placeholder="Título"
-                              
                             />
                           )}
 
@@ -976,7 +999,7 @@ function DesignSystemPage() {
                                 updateSandboxElement(el.id, "content", e.target.value)
                               }
                               placeholder="Conteúdo descritivo"
-                              className="min-h-[50px] p-2"
+                              className="min-h-12 p-2"
                             />
                           )}
 
@@ -987,7 +1010,6 @@ function DesignSystemPage() {
                                 updateSandboxElement(el.id, "buttonText", e.target.value)
                               }
                               placeholder="Texto do botão"
-                              
                             />
                           )}
 
@@ -1033,7 +1055,7 @@ function DesignSystemPage() {
                     <Eye className="w-3.5 h-3.5 text-brand" /> Preview em Tempo Real
                   </span>
 
-                  <div className="rounded-[var(--radius-card)] border border-dashed border-border p-6 glass bg-white/5 border-white/10/30 flex items-center justify-center min-h-[300px]">
+                  <div className="rounded-[var(--radius-card)] border border-dashed border-border p-6 glass/30 flex items-center justify-center min-h-72">
                     <div
                       className={cn(
                         "w-full rounded-[var(--radius-card)] flex flex-col gap-4 transition-all duration-300",

@@ -57,7 +57,8 @@ export default function TemplateVerticalPremium({ proposal: p, agency }: Templat
             )}
 
             <p className="text-[26px] leading-[1.45] text-slate-500 mb-8 max-w-[95%]">
-              {p.notes || "Um roteiro desenhado sob medida para você aproveitar o melhor da sua viagem."}
+              {p.notes ||
+                "Um roteiro desenhado sob medida para você aproveitar o melhor da sua viagem."}
             </p>
 
             {/* Pequena Galeria Inferior do Hero */}
@@ -78,14 +79,17 @@ export default function TemplateVerticalPremium({ proposal: p, agency }: Templat
                   className="w-[180px] h-[110px] object-cover rounded-2xl border-4 border-slate-50 shadow-sm"
                 />
               )}
-              {(!p.cover_image_url && !p.map_image_url && vm.hasItinerary && p.itinerary![0]?.images?.[0]) && (
-                <img
-                  src={p.itinerary![0].images[0]}
-                  alt="Galeria Roteiro"
-                  crossOrigin="anonymous"
-                  className="w-[180px] h-[110px] object-cover rounded-2xl border-4 border-slate-50 shadow-sm"
-                />
-              )}
+              {!p.cover_image_url &&
+                !p.map_image_url &&
+                vm.hasItinerary &&
+                p.itinerary![0]?.images?.[0] && (
+                  <img
+                    src={p.itinerary![0].images[0]}
+                    alt="Galeria Roteiro"
+                    crossOrigin="anonymous"
+                    className="w-[180px] h-[110px] object-cover rounded-2xl border-4 border-slate-50 shadow-sm"
+                  />
+                )}
             </div>
           </div>
 
@@ -100,7 +104,7 @@ export default function TemplateVerticalPremium({ proposal: p, agency }: Templat
               crossOrigin="anonymous"
               className="w-full h-auto min-h-[600px] object-cover rounded-[30px]"
             />
-            
+
             {/* Medalhão da Logo */}
             {vm.agency.logo_url && (
               <div className="absolute -left-[30px] top-[40%] bg-white p-3 rounded-full shadow-[0_10px_40px_rgba(23,71,132,0.15)]">
@@ -142,7 +146,9 @@ export default function TemplateVerticalPremium({ proposal: p, agency }: Templat
           <div className="flex flex-col gap-[36px]">
             {p.itinerary!.map((day, idx) => {
               const dayImages = day.images || [];
-              const layoutVariant = day.imageLayout || (dayImages.length === 0 ? "none" : dayImages.length === 1 ? "single" : "stack");
+              const layoutVariant =
+                day.imageLayout ||
+                (dayImages.length === 0 ? "none" : dayImages.length === 1 ? "single" : "stack");
 
               return (
                 <div
@@ -170,17 +176,22 @@ export default function TemplateVerticalPremium({ proposal: p, agency }: Templat
                     </div>
                   </div>
 
-                  <div className={`grid ${layoutVariant !== 'none' ? 'grid-cols-12 gap-[32px]' : 'grid-cols-1'}`}>
-                    <div className={`${layoutVariant !== 'none' ? 'col-span-7' : 'col-span-1'}`}>
+                  <div
+                    className={`grid ${layoutVariant !== "none" ? "grid-cols-12 gap-[32px]" : "grid-cols-1"}`}
+                  >
+                    <div className={`${layoutVariant !== "none" ? "col-span-7" : "col-span-1"}`}>
                       <p className="text-[22px] leading-[1.5] text-slate-700 whitespace-pre-wrap text-justify">
                         {day.description}
                       </p>
-                      
+
                       {/* Atributos Extras do Dia (Opcional) */}
                       {(day.meals?.length || day.overnight) && (
                         <div className="mt-6 flex flex-wrap gap-4">
                           {day.meals?.map((meal, mIdx) => (
-                            <span key={mIdx} className="bg-orange-50 text-orange-700 px-4 py-2 rounded-full text-[16px] font-semibold flex items-center gap-2">
+                            <span
+                              key={mIdx}
+                              className="bg-orange-50 text-orange-700 px-4 py-2 rounded-full text-[16px] font-semibold flex items-center gap-2"
+                            >
                               • {meal}
                             </span>
                           ))}
@@ -194,9 +205,9 @@ export default function TemplateVerticalPremium({ proposal: p, agency }: Templat
                     </div>
 
                     {/* Imagens do dia */}
-                    {layoutVariant !== 'none' && dayImages.length > 0 && (
+                    {layoutVariant !== "none" && dayImages.length > 0 && (
                       <div className="col-span-5 relative flex flex-col gap-4">
-                        {layoutVariant === 'single' || dayImages.length === 1 ? (
+                        {layoutVariant === "single" || dayImages.length === 1 ? (
                           <img
                             src={dayImages[0]}
                             crossOrigin="anonymous"
@@ -227,10 +238,15 @@ export default function TemplateVerticalPremium({ proposal: p, agency }: Templat
         {(vm.hasIncludes || vm.hasExcludes) && (
           <div className="mt-[76px] grid grid-cols-12 gap-[32px]">
             {vm.hasIncludes && (
-              <div className={`${vm.hasExcludes ? 'col-span-6' : 'col-span-12'} bg-white rounded-[var(--radius-card)] p-[40px] border border-[#B9D9F4] shadow-sm`}>
+              <div
+                className={`${vm.hasExcludes ? "col-span-6" : "col-span-12"} bg-white rounded-[var(--radius-card)] p-[40px] border border-[#B9D9F4] shadow-sm`}
+              >
                 <h2
                   className="text-[36px] mb-8"
-                  style={{ fontFamily: "var(--brand-heading-font, 'Playfair Display', serif)", color: brand }}
+                  style={{
+                    fontFamily: "var(--brand-heading-font, 'Playfair Display', serif)",
+                    color: brand,
+                  }}
                 >
                   O que está incluso
                 </h2>
@@ -248,10 +264,15 @@ export default function TemplateVerticalPremium({ proposal: p, agency }: Templat
             )}
 
             {vm.hasExcludes && (
-              <div className={`${vm.hasIncludes ? 'col-span-6' : 'col-span-12'} bg-slate-50 rounded-[var(--radius-card)] p-[40px] border border-slate-200`}>
+              <div
+                className={`${vm.hasIncludes ? "col-span-6" : "col-span-12"} bg-slate-50 rounded-[var(--radius-card)] p-[40px] border border-slate-200`}
+              >
                 <h2
                   className="text-[36px] mb-8"
-                  style={{ fontFamily: "var(--brand-heading-font, 'Playfair Display', serif)", color: brand }}
+                  style={{
+                    fontFamily: "var(--brand-heading-font, 'Playfair Display', serif)",
+                    color: brand,
+                  }}
                 >
                   Não está incluso
                 </h2>
@@ -277,25 +298,39 @@ export default function TemplateVerticalPremium({ proposal: p, agency }: Templat
               <div className="col-span-12">
                 <h2
                   className="text-[42px] mb-6"
-                  style={{ fontFamily: "var(--brand-heading-font, 'Playfair Display', serif)", color: brand }}
+                  style={{
+                    fontFamily: "var(--brand-heading-font, 'Playfair Display', serif)",
+                    color: brand,
+                  }}
                 >
                   Hospedagens Previstas
                 </h2>
                 <div className="grid grid-cols-2 gap-[24px]">
                   {p.hotels!.map((h, i) => (
-                    <div key={i} className="bg-white rounded-[20px] p-[30px] border border-[#B9D9F4]">
+                    <div
+                      key={i}
+                      className="bg-white rounded-[20px] p-[30px] border border-[#B9D9F4]"
+                    >
                       <h3 className="text-[26px] font-bold text-slate-900 mb-2">{h.name}</h3>
                       <div className="text-[18px] text-slate-600 flex items-center gap-2 mb-4">
                         <MapPin className="w-5 h-5 text-slate-400" /> {h.city}
                       </div>
                       <div className="grid grid-cols-2 gap-4 bg-slate-50 p-4 rounded-[var(--radius-card)] border border-slate-100">
                         <div>
-                          <span className="block text-[14px] uppercase font-bold text-slate-400">Check-in</span>
-                          <span className="text-[18px] font-semibold text-slate-800">{formatDate(h.checkin)}</span>
+                          <span className="block text-[14px] uppercase font-bold text-slate-400">
+                            Check-in
+                          </span>
+                          <span className="text-[18px] font-semibold text-slate-800">
+                            {formatDate(h.checkin)}
+                          </span>
                         </div>
                         <div>
-                          <span className="block text-[14px] uppercase font-bold text-slate-400">Check-out</span>
-                          <span className="text-[18px] font-semibold text-slate-800">{formatDate(h.checkout)}</span>
+                          <span className="block text-[14px] uppercase font-bold text-slate-400">
+                            Check-out
+                          </span>
+                          <span className="text-[18px] font-semibold text-slate-800">
+                            {formatDate(h.checkout)}
+                          </span>
                         </div>
                       </div>
                     </div>
@@ -310,7 +345,10 @@ export default function TemplateVerticalPremium({ proposal: p, agency }: Templat
         <div className="mt-[76px]">
           <h2
             className="text-[52px] mb-8 text-center"
-            style={{ fontFamily: "var(--brand-heading-font, 'Playfair Display', serif)", color: brand }}
+            style={{
+              fontFamily: "var(--brand-heading-font, 'Playfair Display', serif)",
+              color: brand,
+            }}
           >
             Investimento
           </h2>
@@ -330,7 +368,7 @@ export default function TemplateVerticalPremium({ proposal: p, agency }: Templat
                 por pessoa em apartamento duplo
               </div>
             </div>
-            
+
             {/* Lado Direito - Pagamento */}
             <div className="w-[50%] p-[48px] flex flex-col justify-center bg-white">
               <div className="text-[18px] uppercase tracking-[0.1em] font-bold text-slate-400 mb-2">
@@ -343,7 +381,8 @@ export default function TemplateVerticalPremium({ proposal: p, agency }: Templat
                 Parcelas de {formatCurrency(vm.totals.valorParcelaCartao, p.currency)}
               </div>
               <p className="text-[18px] text-slate-500 leading-relaxed">
-                Pagamento facilitado diretamente com a agência. A última parcela deve ser quitada até a data de embarque.
+                Pagamento facilitado diretamente com a agência. A última parcela deve ser quitada
+                até a data de embarque.
               </p>
             </div>
           </div>
@@ -361,17 +400,15 @@ export default function TemplateVerticalPremium({ proposal: p, agency }: Templat
               src={p.agent_photo_url}
               alt={p.agent_name || undefined}
               crossOrigin="anonymous"
-              className="w-[80px] h-[80px] rounded-full object-cover border-4 border-white/20"
+              className="w-[80px] h-[80px] rounded-full object-cover border-4 border-border"
             />
           ) : (
-            <div className="w-[80px] h-[80px] rounded-full bg-white/10 flex items-center justify-center text-[30px] font-bold text-white border-2 border-white/20">
+            <div className="w-[80px] h-[80px] rounded-full glass-dark flex items-center justify-center text-[30px] font-bold text-white border-2 border-border">
               {p.agent_name?.charAt(0) || vm.agency.name?.charAt(0)}
             </div>
           )}
           <div>
-            <div className="font-bold text-[28px] mb-1">
-              {p.agent_name || vm.agency.name}
-            </div>
+            <div className="font-bold text-[28px] mb-1">{p.agent_name || vm.agency.name}</div>
             <div className="text-[16px] font-semibold uppercase tracking-widest opacity-80 mb-1">
               Consultor Especialista
             </div>

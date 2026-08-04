@@ -5,9 +5,10 @@ Neste documento detalhamos as estruturas de dados e contratos de entrada/saída 
 ---
 
 ## 1. Fluxo de Criação de Tarefas
-* **Componente Emissor:** `CreateTaskModal`
-* **Zod Schema:** `CreateTaskFormValues` (em `task.schema.ts`)
-* **Contrato DTO (Entrada):**
+
+- **Componente Emissor:** `CreateTaskModal`
+- **Zod Schema:** `CreateTaskFormValues` (em `task.schema.ts`)
+- **Contrato DTO (Entrada):**
   ```typescript
   interface CreateTaskFormValues {
     title: string;
@@ -21,14 +22,15 @@ Neste documento detalhamos as estruturas de dados e contratos de entrada/saída 
     space_id?: string; // UUID
   }
   ```
-* **Destino do Endpoint:** `supabase.from("tasks").insert(...)` (através de `useTaskMutations`)
-* **Processamento Assíncrono:** Trigger Supabase invoca `ai-task-evaluator` na Edge Function para avaliar criticamente a tarefa para score de produtividade.
+- **Destino do Endpoint:** `supabase.from("tasks").insert(...)` (através de `useTaskMutations`)
+- **Processamento Assíncrono:** Trigger Supabase invoca `ai-task-evaluator` na Edge Function para avaliar criticamente a tarefa para score de produtividade.
 
 ---
 
 ## 2. Fluxo de Envio de Mensagem (Inbox)
-* **Componente Emissor:** `ThreadView`
-* **Contrato DTO (Entrada):**
+
+- **Componente Emissor:** `ThreadView`
+- **Contrato DTO (Entrada):**
   ```typescript
   interface SendMessageDTO {
     conversation_id: string; // UUID
@@ -37,5 +39,5 @@ Neste documento detalhamos as estruturas de dados e contratos de entrada/saída 
     sender_user_id: string; // UUID do agente
   }
   ```
-* **Destino do Endpoint:** `db.from("messages").insert(...)` (através de mutation no `inbox.tsx`)
-* **Processamento Assíncrono:** Trigger `whatsapp-sender` invoca a Edge Function para disparar a mensagem via Meta Graph API caso o canal seja WhatsApp.
+- **Destino do Endpoint:** `db.from("messages").insert(...)` (através de mutation no `inbox.tsx`)
+- **Processamento Assíncrono:** Trigger `whatsapp-sender` invoca a Edge Function para disparar a mensagem via Meta Graph API caso o canal seja WhatsApp.

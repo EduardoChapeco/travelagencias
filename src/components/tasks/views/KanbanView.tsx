@@ -30,15 +30,7 @@ import {
 import { CSS } from "@dnd-kit/utilities";
 import { cn } from "@/lib/utils";
 import { format } from "date-fns";
-import {
-  CalendarIcon,
-  Plus,
-  X,
-  Check,
-  GripVertical,
-  Pencil,
-  MoreHorizontal,
-} from "lucide-react";
+import { CalendarIcon, Plus, X, Check, GripVertical, Pencil, MoreHorizontal } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -54,7 +46,13 @@ import { TASK_PRIORITIES } from "@/lib/tasks/task.constants";
 import { TaskDetailDrawer } from "../TaskDetailDrawer";
 
 // ── KanbanCard ─────────────────────────────────────────────────────────────
-function KanbanCard({ task, onOpen }: { task: TaskWithRelations; onOpen: (t: TaskWithRelations) => void }) {
+function KanbanCard({
+  task,
+  onOpen,
+}: {
+  task: TaskWithRelations;
+  onOpen: (t: TaskWithRelations) => void;
+}) {
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({
     id: task.id,
     data: { type: "Task", task },
@@ -95,10 +93,12 @@ function KanbanCard({ task, onOpen }: { task: TaskWithRelations; onOpen: (t: Tas
       onClick={handleClick}
       className={cn(
         "relative p-3 mb-2 bg-card border border-border/80 hover:border-brand/30 rounded-[var(--radius-card)] text-xs cursor-pointer transition-all group",
-        isDragging && "opacity-40 scale-95"
+        isDragging && "opacity-40 scale-95",
       )}
     >
-      <div className="font-semibold mb-1.5 text-foreground line-clamp-2 leading-snug">{task.title}</div>
+      <div className="font-semibold mb-1.5 text-foreground line-clamp-2 leading-snug">
+        {task.title}
+      </div>
 
       {task.assignee && (
         <div className="ds-meta text-muted-foreground truncate mb-1.5 flex items-center gap-1">
@@ -200,11 +200,21 @@ function QuickAddCard({
         }}
       />
       <div className="flex items-center gap-1.5">
-        <Button size="sm" className="h-6 ds-meta px-2 gap-1" onClick={handleSubmit} disabled={!title.trim()}>
+        <Button
+          size="sm"
+          className="h-6 ds-meta px-2 gap-1"
+          onClick={handleSubmit}
+          disabled={!title.trim()}
+        >
           <Check className="w-3 h-3" />
           Criar
         </Button>
-        <Button size="sm" variant="ghost" className="h-6 ds-meta px-2" onClick={() => setOpen(false)}>
+        <Button
+          size="sm"
+          variant="ghost"
+          className="h-6 ds-meta px-2"
+          onClick={() => setOpen(false)}
+        >
           <X className="w-3 h-3" />
         </Button>
       </div>
@@ -284,7 +294,7 @@ function KanbanColumn({
       style={colStyle}
       className={cn(
         "flex flex-col flex-shrink-0 w-[280px] bg-surface border border-border/80 rounded-[var(--radius-card)] h-full transition-opacity",
-        isColDragging && "opacity-40"
+        isColDragging && "opacity-40",
       )}
     >
       {/* Column Header */}
@@ -301,7 +311,10 @@ function KanbanColumn({
 
         {/* Label da coluna */}
         <div className="flex items-center gap-2 flex-1 min-w-0">
-          <div className="w-2.5 h-2.5 rounded-full shrink-0" style={{ backgroundColor: statusDef?.color }} />
+          <div
+            className="w-2.5 h-2.5 rounded-full shrink-0"
+            style={{ backgroundColor: statusDef?.color }}
+          />
           {editingLabel ? (
             <Input
               ref={labelInputRef}
@@ -315,14 +328,15 @@ function KanbanColumn({
               }}
             />
           ) : (
-            <span className="font-bold text-xs text-foreground truncate">
-              {displayLabel}
-            </span>
+            <span className="font-bold text-xs text-foreground truncate">{displayLabel}</span>
           )}
         </div>
 
         <div className="flex items-center gap-1 shrink-0">
-          <Badge variant="secondary" className="ds-meta font-bold h-5 px-1.5 bg-surface-alt border-none">
+          <Badge
+            variant="secondary"
+            className="ds-meta font-bold h-5 px-1.5 bg-surface-alt border-none"
+          >
             {tasks.length}
           </Badge>
 
@@ -348,13 +362,22 @@ function KanbanColumn({
                 <MoreHorizontal className="w-3.5 h-3.5" />
               </Button>
             </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" className="w-44 rounded-[var(--radius-card)] border border-border text-xs">
-              <DropdownMenuItem onClick={handleRenameStart} className="text-xs gap-2 cursor-pointer">
+            <DropdownMenuContent
+              align="end"
+              className="w-44 rounded-[var(--radius-card)] border border-border text-xs"
+            >
+              <DropdownMenuItem
+                onClick={handleRenameStart}
+                className="text-xs gap-2 cursor-pointer"
+              >
                 <Pencil className="w-3.5 h-3.5" />
                 Renomear coluna
               </DropdownMenuItem>
               <DropdownMenuSeparator />
-              <DropdownMenuItem onClick={onHide} className="text-xs gap-2 cursor-pointer text-destructive focus:text-destructive">
+              <DropdownMenuItem
+                onClick={onHide}
+                className="text-xs gap-2 cursor-pointer text-destructive focus:text-destructive"
+              >
                 <X className="w-3.5 h-3.5" />
                 Ocultar coluna
               </DropdownMenuItem>
@@ -411,26 +434,30 @@ export function KanbanView({
   });
 
   // Labels customizados das colunas — persistidos no localStorage (inicialmente) e banco de dados
-  const [customColumnLabels, setCustomColumnLabels] = useState<Partial<Record<TaskStatus, string>>>(() => {
-    if (typeof window !== "undefined") {
-      const saved = localStorage.getItem("ta_kanban_column_labels_v2");
-      if (saved) {
-        try {
-          return JSON.parse(saved);
-        } catch {
-          /* ignore */
+  const [customColumnLabels, setCustomColumnLabels] = useState<Partial<Record<TaskStatus, string>>>(
+    () => {
+      if (typeof window !== "undefined") {
+        const saved = localStorage.getItem("ta_kanban_column_labels_v2");
+        if (saved) {
+          try {
+            return JSON.parse(saved);
+          } catch {
+            /* ignore */
+          }
         }
       }
-    }
-    return {};
-  });
+      return {};
+    },
+  );
 
   // Carregar configurações de colunas salvas no banco
   useEffect(() => {
     async function loadBackendLabels() {
       if (!agency?.id) return;
       try {
-        const { data: { user } } = await supabase.auth.getUser();
+        const {
+          data: { user },
+        } = await supabase.auth.getUser();
         if (!user) return;
 
         const { data, error } = await (supabase as any)
@@ -443,7 +470,9 @@ export function KanbanView({
 
         if (data && data.length > 0) {
           // Reconstruir colunas visíveis ordenadas
-          const sorted = [...data].sort((a: any, b: any) => (a.column_order ?? 0) - (b.column_order ?? 0));
+          const sorted = [...data].sort(
+            (a: any, b: any) => (a.column_order ?? 0) - (b.column_order ?? 0),
+          );
           const visibleCols = sorted
             .filter((r: any) => r.is_visible !== false)
             .map((r: any) => r.column_key as TaskStatus);
@@ -476,18 +505,21 @@ export function KanbanView({
       const updated = { ...prev, [status]: newLabel };
       try {
         localStorage.setItem("ta_kanban_column_labels_v2", JSON.stringify(updated));
-      } catch { /* noop */ }
+      } catch {
+        /* noop */
+      }
       return updated;
     });
 
     if (agency?.id) {
       try {
-        const { data: { user } } = await supabase.auth.getUser();
+        const {
+          data: { user },
+        } = await supabase.auth.getUser();
         if (!user) return;
 
-        const { error } = await (supabase as any)
-          .from("kanban_settings")
-          .upsert({
+        const { error } = await (supabase as any).from("kanban_settings").upsert(
+          {
             agency_id: agency.id,
             user_id: user.id,
             column_key: status,
@@ -495,7 +527,9 @@ export function KanbanView({
             is_visible: activeColumns.includes(status),
             column_order: activeColumns.indexOf(status) !== -1 ? activeColumns.indexOf(status) : 99,
             updated_at: new Date().toISOString(),
-          }, { onConflict: "agency_id,user_id,column_key" });
+          },
+          { onConflict: "agency_id,user_id,column_key" },
+        );
 
         if (error) throw error;
       } catch (err) {
@@ -533,7 +567,7 @@ export function KanbanView({
         acc[col] = [];
         return acc;
       },
-      {} as Record<TaskStatus, TaskWithRelations[]>
+      {} as Record<TaskStatus, TaskWithRelations[]>,
     );
 
     tasks.forEach((t) => {
@@ -552,7 +586,7 @@ export function KanbanView({
   const sensors = useSensors(
     useSensor(PointerSensor, { activationConstraint: { distance: 8 } }),
     useSensor(TouchSensor, { activationConstraint: { delay: 250, tolerance: 8 } }),
-    useSensor(KeyboardSensor, { coordinateGetter: sortableKeyboardCoordinates })
+    useSensor(KeyboardSensor, { coordinateGetter: sortableKeyboardCoordinates }),
   );
 
   // ── Drag Handlers ────────────────────────────────────────────────────────
@@ -613,14 +647,15 @@ export function KanbanView({
   const persistColumnOrder = async (columns: TaskStatus[]) => {
     if (!agency?.id) return;
     try {
-      const { data: { user } } = await supabase.auth.getUser();
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
       if (!user) return;
 
       for (let i = 0; i < columns.length; i++) {
         const col = columns[i];
-        await (supabase as any)
-          .from("kanban_settings")
-          .upsert({
+        await (supabase as any).from("kanban_settings").upsert(
+          {
             agency_id: agency.id,
             user_id: user.id,
             column_key: col,
@@ -628,7 +663,9 @@ export function KanbanView({
             is_visible: true,
             column_order: i,
             updated_at: new Date().toISOString(),
-          }, { onConflict: "agency_id,user_id,column_key" });
+          },
+          { onConflict: "agency_id,user_id,column_key" },
+        );
       }
     } catch (err) {
       console.error("Erro ao persistir ordem das colunas no banco:", err);
@@ -703,19 +740,22 @@ export function KanbanView({
 
     if (agency?.id) {
       try {
-        const { data: { user } } = await supabase.auth.getUser();
+        const {
+          data: { user },
+        } = await supabase.auth.getUser();
         if (!user) return;
 
-        await (supabase as any)
-          .from("kanban_settings")
-          .upsert({
+        await (supabase as any).from("kanban_settings").upsert(
+          {
             agency_id: agency.id,
             user_id: user.id,
             column_key: status,
             display_label: customColumnLabels[status] || TASK_STATUSES[status]?.label || status,
             is_visible: false,
             updated_at: new Date().toISOString(),
-          }, { onConflict: "agency_id,user_id,column_key" });
+          },
+          { onConflict: "agency_id,user_id,column_key" },
+        );
       } catch (err) {
         console.error("Erro ao ocultar coluna no banco:", err);
       }
@@ -729,12 +769,13 @@ export function KanbanView({
 
       if (agency?.id) {
         try {
-          const { data: { user } } = await supabase.auth.getUser();
+          const {
+            data: { user },
+          } = await supabase.auth.getUser();
           if (!user) return;
 
-          await (supabase as any)
-            .from("kanban_settings")
-            .upsert({
+          await (supabase as any).from("kanban_settings").upsert(
+            {
               agency_id: agency.id,
               user_id: user.id,
               column_key: status,
@@ -742,7 +783,9 @@ export function KanbanView({
               is_visible: true,
               column_order: updated.indexOf(status),
               updated_at: new Date().toISOString(),
-            }, { onConflict: "agency_id,user_id,column_key" });
+            },
+            { onConflict: "agency_id,user_id,column_key" },
+          );
         } catch (err) {
           console.error("Erro ao adicionar coluna no banco:", err);
         }
@@ -751,7 +794,7 @@ export function KanbanView({
   };
 
   const inactiveStatuses = Object.keys(TASK_STATUSES).filter(
-    (s) => !activeColumns.includes(s as TaskStatus)
+    (s) => !activeColumns.includes(s as TaskStatus),
   ) as TaskStatus[];
 
   if (isLoading && !tasksData) {
@@ -766,11 +809,7 @@ export function KanbanView({
   return (
     <>
       {/* Detail Drawer */}
-      <TaskDetailDrawer
-        task={detailTask}
-        open={!!detailTask}
-        onClose={() => setDetailTask(null)}
-      />
+      <TaskDetailDrawer task={detailTask} open={!!detailTask} onClose={() => setDetailTask(null)} />
 
       {/* Modal de nova tarefa com status pré-selecionado */}
       <NewTaskModal
@@ -817,7 +856,10 @@ export function KanbanView({
                         Adicionar Coluna
                       </Button>
                     </DropdownMenuTrigger>
-                    <DropdownMenuContent align="end" className="w-56 rounded-[var(--radius-card)] border border-border">
+                    <DropdownMenuContent
+                      align="end"
+                      className="w-56 rounded-[var(--radius-card)] border border-border"
+                    >
                       {inactiveStatuses.map((s) => (
                         <DropdownMenuItem
                           key={s}
@@ -842,7 +884,9 @@ export function KanbanView({
 
           <DragOverlay
             dropAnimation={{
-              sideEffects: defaultDropAnimationSideEffects({ styles: { active: { opacity: "0.5" } } }),
+              sideEffects: defaultDropAnimationSideEffects({
+                styles: { active: { opacity: "0.5" } },
+              }),
             }}
           >
             {activeTask ? <KanbanCardOverlay task={activeTask} /> : null}

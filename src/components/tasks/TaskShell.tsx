@@ -69,7 +69,7 @@ export function TaskShell() {
       if (subTab === "pending") {
         f.show_done = false;
         f.statuses = Object.keys(TASK_STATUSES).filter(
-          (s) => s !== "done" && s !== "cancelled"
+          (s) => s !== "done" && s !== "cancelled",
         ) as TaskStatus[];
       } else if (subTab === "done") {
         f.show_done = true;
@@ -122,48 +122,48 @@ export function TaskShell() {
   return (
     <div className="flex flex-col h-full overflow-hidden bg-transparent">
       {/* Portal para a barra de topo global */}
-              <PageHeader
-          title={viewTitle}
-          search={{
-            value: filters.search || "",
-            onChange: (v) => setFilters((prev) => ({ ...prev, search: v })),
-            placeholder: "Buscar tarefas...",
-          }}
-          filters={subFilters}
-          activeFilter={subTab}
-          onFilterChange={setSubTab}
-          actions={
-            <div className="flex items-center gap-1">
+      <PageHeader
+        title={viewTitle}
+        search={{
+          value: filters.search || "",
+          onChange: (v) => setFilters((prev) => ({ ...prev, search: v })),
+          placeholder: "Buscar tarefas...",
+        }}
+        filters={subFilters}
+        activeFilter={subTab}
+        onFilterChange={setSubTab}
+        actions={
+          <div className="flex items-center gap-1">
+            <Button
+              variant="outline"
+              size="sm"
+              className="h-7 px-2.5 gap-1.5 ds-meta font-bold bg-transparent hover:glass border-none text-white/70 hover:text-white rounded-full transition-colors cursor-pointer"
+              onClick={() => setFiltersOpen(true)}
+            >
+              <Filter className="h-3 w-3" />
+              Filtros
+            </Button>
+            {isAgencyAdmin && (
               <Button
-                variant="outline"
-                size="sm"
-                className="h-7 px-2.5 gap-1.5 ds-meta font-bold bg-transparent hover:bg-white/5 border-none text-white/70 hover:text-white rounded-full transition-colors cursor-pointer"
-                onClick={() => setFiltersOpen(true)}
+                variant="ghost"
+                size="icon"
+                className="h-7 w-7 shrink-0 animate-fadeIn"
+                title="Administrar Módulo"
+                onClick={() => setAdminPanelOpen(true)}
               >
-                <Filter className="h-3 w-3" />
-                Filtros
+                <Settings2 className="h-3.5 w-3.5" />
               </Button>
-              {isAgencyAdmin && (
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  className="h-7 w-7 shrink-0 animate-fadeIn"
-                  title="Administrar Módulo"
-                  onClick={() => setAdminPanelOpen(true)}
-                >
-                  <Settings2 className="h-3.5 w-3.5" />
-                </Button>
-              )}
-            </div>
-          }
-          primaryAction={
-            <ModuleActionButton
-        label="Nova Tarefa"
-        icon={<Plus className="h-3.5 w-3.5" />}
-              onClick={() => setNewTaskOpen(true)}
-            />
-          }
-        />
+            )}
+          </div>
+        }
+        primaryAction={
+          <ModuleActionButton
+            label="Nova Tarefa"
+            icon={<Plus className="h-3.5 w-3.5" />}
+            onClick={() => setNewTaskOpen(true)}
+          />
+        }
+      />
 
       {/* Modal de nova tarefa */}
       <NewTaskModal open={newTaskOpen} onClose={() => setNewTaskOpen(false)} />
@@ -176,13 +176,9 @@ export function TaskShell() {
         onApplyFilters={setFilters}
       />
 
-      <Tabs
-        value={subTab}
-        onValueChange={setSubTab}
-        className="flex flex-col flex-1 min-h-0"
-      >
+      <Tabs value={subTab} onValueChange={setSubTab} className="flex flex-col flex-1 min-h-0">
         {/* ── Content Area ──────────────────────────────────────────────── */}
-        <div 
+        <div
           className="flex-1 overflow-auto p-[var(--shell-page-padding)] bg-transparent data-[view=kanban]:p-0"
           data-view={activeView}
         >

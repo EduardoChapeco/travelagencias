@@ -1,4 +1,5 @@
 # UI-009 - 07_ROOT_CAUSE_TREE.md
+
 # ÁRVORE DE CAUSA RAIZ - UI-009
 
 Este documento traça a origem do contraste nulo e tabelas brancas opacas em Viagens.

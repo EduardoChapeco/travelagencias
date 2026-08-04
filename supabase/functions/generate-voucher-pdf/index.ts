@@ -19,7 +19,10 @@ serve(async (req) => {
     const { trip_id, passenger_id, data } = await req.json();
 
     if (!trip_id || !passenger_id || !data) {
-      return new Response(JSON.stringify({ error: "Missing required fields" }), { status: 400, headers: corsHeaders });
+      return new Response(JSON.stringify({ error: "Missing required fields" }), {
+        status: 400,
+        headers: corsHeaders,
+      });
     }
 
     // Criação determinística do PDF (Server-side)
@@ -29,7 +32,7 @@ serve(async (req) => {
     const { width, height } = page.getSize();
     const fontSize = 14;
 
-    page.drawText('Voucher Oficial - Turis', {
+    page.drawText("Voucher Oficial - Turis", {
       x: 50,
       y: height - 4 * fontSize,
       size: 24,
@@ -41,7 +44,7 @@ serve(async (req) => {
       `Passageiro: ${data.passengerName}`,
       `Viagem ID: ${trip_id}`,
       `Data de Emissao: ${new Date().toISOString()}`,
-      `Documento: ${data.document || 'N/A'}`
+      `Documento: ${data.document || "N/A"}`,
     ];
 
     let yOffset = height - 100;
@@ -60,31 +63,34 @@ serve(async (req) => {
 
     // Upload seguro e sem mock para o Storage nativo do banco
     const fileName = `vouchers/${trip_id}/${passenger_id}_${Date.now()}.pdf`;
-    
+
     const { data: uploadData, error: uploadError } = await supabase.storage
-      .from('documents')
+      .from("documents")
       .upload(fileName, pdfBytes, {
-        contentType: 'application/pdf',
-        upsert: true
+        contentType: "application/pdf",
+        upsert: true,
       });
 
     if (uploadError) throw uploadError;
 
-    const { data: publicUrlData } = supabase.storage
-      .from('documents')
-      .getPublicUrl(fileName);
+    const { data: publicUrlData } = supabase.storage.from("documents").getPublicUrl(fileName);
 
-    return new Response(JSON.stringify({ 
-      success: true, 
-      url: publicUrlData.publicUrl,
-      path: fileName
-    }), {
-      status: 200,
-      headers: corsHeaders,
-    });
-
+    return new Response(
+      JSON.stringify({
+        success: true,
+        url: publicUrlData.publicUrl,
+        path: fileName,
+      }),
+      {
+        status: 200,
+        headers: corsHeaders,
+      },
+    );
   } catch (err: any) {
     console.error("Voucher PDF Generation Error:", err);
-    return new Response(JSON.stringify({ error: err.message }), { status: 500, headers: corsHeaders });
+    return new Response(JSON.stringify({ error: err.message }), {
+      status: 500,
+      headers: corsHeaders,
+    });
   }
 });

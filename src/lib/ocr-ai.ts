@@ -47,7 +47,10 @@ export async function processVoucherWithAI(
         let parsedResult = data.result;
         if (typeof parsedResult === "string") {
           try {
-            const cleaned = parsedResult.replace(/\`\`\`json/gi, "").replace(/\`\`\`/g, "").trim();
+            const cleaned = parsedResult
+              .replace(/\`\`\`json/gi, "")
+              .replace(/\`\`\`/g, "")
+              .trim();
             parsedResult = JSON.parse(cleaned);
           } catch (e) {
             console.warn("Falha no parse fallback de OCR:", e);
@@ -93,19 +96,23 @@ export async function processPassengerWithAI(
   });
 
   if (error) {
-    throw new Error("A Inteligência Artificial não conseguiu processar o documento. " + error.message);
+    throw new Error(
+      "A Inteligência Artificial não conseguiu processar o documento. " + error.message,
+    );
   }
 
   let parsedResult = data.result;
   if (typeof parsedResult === "string") {
     try {
-      const cleaned = parsedResult.replace(/\`\`\`json/gi, "").replace(/\`\`\`/g, "").trim();
+      const cleaned = parsedResult
+        .replace(/\`\`\`json/gi, "")
+        .replace(/\`\`\`/g, "")
+        .trim();
       parsedResult = JSON.parse(cleaned);
     } catch (e) {
       console.warn("Falha no parse fallback de OCR Passenger:", e);
     }
   }
-
 
   return parsedResult as PassengerAIResult;
 }
@@ -131,4 +138,3 @@ export async function processBoletoWithAI(
 
   return data?.result ?? data;
 }
-

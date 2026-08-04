@@ -2,7 +2,17 @@ import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import {
-  Plus, Briefcase, Building2, Send, CheckCircle, XCircle, Search, Filter, Settings2, ChevronDown, } from "lucide-react";
+  Plus,
+  Briefcase,
+  Building2,
+  Send,
+  CheckCircle,
+  XCircle,
+  Search,
+  Filter,
+  Settings2,
+  ChevronDown,
+} from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAgency } from "@/lib/agency-context";
 import { EmptyState } from "@/components/shell/PageHeader";
@@ -25,7 +35,9 @@ import { NewCorporateRfpWizard } from "@/components/corporate/NewCorporateRfpWiz
 import { useDebounce } from "@/hooks/use-debounce";
 
 export const Route = createFileRoute("/agency/$slug/corporate")({
-  head: ({ context }: any) => ({ meta: [{ title: `Corporate B2B · ${context?.brand?.platform_name || 'Turis'}` }] }),
+  head: ({ context }: any) => ({
+    meta: [{ title: `Corporate B2B · ${context?.brand?.platform_name || "Turis"}` }],
+  }),
   component: CorporatePage,
 });
 
@@ -43,8 +55,6 @@ type RFP = {
   created_at: string;
   client?: { full_name: string };
 };
-
-
 
 function CorporatePage() {
   const { agency, isAgencyAdmin } = useAgency();
@@ -107,54 +117,66 @@ function CorporatePage() {
 
   return (
     <div className="flex h-full flex-col overflow-hidden">
-              <PageHeader
-          title="Corporativo B2B"
-          search={{
-            value: q,
-            onChange: (v) => {
-              setQ(v);
-              setPage(1);
-            },
-            placeholder: "Buscar RFP..."
-          }}
-          actions={
-            <div className="flex items-center gap-1">
-              <Select
-                value={statusFilter}
-                onChange={(e) => {
-                  setStatusFilter(e.target.value);
-                  setPage(1);
-                }}
-                className="h-7 ds-meta font-semibold hover:bg-white/5 rounded-full text-white/70 hover:text-white px-2.5 cursor-pointer"
-              >
-                <option value="all" className="bg-neutral-900 text-white">Todos os Status</option>
-                <option value="pending" className="bg-neutral-900 text-white">Pendente</option>
-                <option value="quoting" className="bg-neutral-900 text-white">Em Cotação</option>
-                <option value="sent_for_approval" className="bg-neutral-900 text-white">Aguardando</option>
-                <option value="approved" className="bg-neutral-900 text-white">Aprovado</option>
-                <option value="rejected" className="bg-neutral-900 text-white">Recusado</option>
-              </Select>
+      <PageHeader
+        title="Corporativo B2B"
+        search={{
+          value: q,
+          onChange: (v) => {
+            setQ(v);
+            setPage(1);
+          },
+          placeholder: "Buscar RFP...",
+        }}
+        actions={
+          <div className="flex items-center gap-1">
+            <Select
+              value={statusFilter}
+              onChange={(e) => {
+                setStatusFilter(e.target.value);
+                setPage(1);
+              }}
+              className="h-7 ds-meta font-semibold hover:glass rounded-full text-white/70 hover:text-white px-2.5 cursor-pointer"
+            >
+              <option value="all" className="bg-neutral-900 text-white">
+                Todos os Status
+              </option>
+              <option value="pending" className="bg-neutral-900 text-white">
+                Pendente
+              </option>
+              <option value="quoting" className="bg-neutral-900 text-white">
+                Em Cotação
+              </option>
+              <option value="sent_for_approval" className="bg-neutral-900 text-white">
+                Aguardando
+              </option>
+              <option value="approved" className="bg-neutral-900 text-white">
+                Aprovado
+              </option>
+              <option value="rejected" className="bg-neutral-900 text-white">
+                Recusado
+              </option>
+            </Select>
 
-              {isAgencyAdmin && (
-                <Button
-                  type="button"
-                  onClick={() => setAdminPanelOpen(true)}
-                  className="h-7 w-7 flex items-center justify-center rounded-full text-white/60 hover:text-white hover:bg-white/10 transition-colors cursor-pointer"
-                  title="Administrar Corporativo"
-                >
-                  <Settings2 className="h-3.5 w-3.5" />
-                </Button>
-              )}
-            </div>
-          }
-          primaryAction={
-            <ModuleActionButton
-        label="Nova RFP"
-        icon={<Plus className="h-3.5 w-3.5" />}
-              onClick={() => setNewOpen(true)}
-            />
-          }
-        />
+            {isAgencyAdmin && (
+              <Button
+                type="button"
+                onClick={() => setAdminPanelOpen(true)}
+                className="h-7 w-7 flex items-center justify-center rounded-full text-white/60 hover:text-white hover:glass-dark transition-colors cursor-pointer"
+                title="Administrar Corporativo"
+              >
+                <Settings2 className="h-3.5 w-3.5" />
+              </Button>
+            )}
+          </div>
+        }
+        primaryAction={
+          <ModuleActionButton
+            label="Nova RFP"
+            icon={<Plus className="h-3.5 w-3.5" />}
+            onClick={() => setNewOpen(true)}
+          />
+        }
+      />
 
       <div className="page-content page-section dock-offset min-h-0">
         {!rfpsQ.isLoading && rfps.length === 0 && (
@@ -220,7 +242,8 @@ function CorporatePage() {
 
               <div className="flex flex-wrap gap-2 mt-auto pt-2 border-t border-border/50">
                 {rfp.status === "pending" && (
-                  <Button variant="ghost"
+                  <Button
+                    variant="ghost"
                     className="text-xs h-8 flex-1"
                     onClick={() => updateStatus.mutate({ id: rfp.id, status: "quoting" })}
                   >
@@ -228,7 +251,8 @@ function CorporatePage() {
                   </Button>
                 )}
                 {rfp.status === "quoting" && (
-                  <Button variant="ghost"
+                  <Button
+                    variant="ghost"
                     className="text-xs h-8 flex-1 text-primary hover:text-primary"
                     onClick={() => sendForApproval(rfp)}
                   >
@@ -257,14 +281,16 @@ function CorporatePage() {
               {Math.ceil((rfpsQ.data?.count ?? 0) / pageSize) || 1}
             </div>
             <div className="flex items-center gap-2">
-              <Button variant="ghost"
+              <Button
+                variant="ghost"
                 disabled={page === 1}
                 onClick={() => setPage((p) => Math.max(1, p - 1))}
                 className="h-9 px-4 text-xs font-semibold rounded-full border-none"
               >
                 Anterior
               </Button>
-              <Button variant="ghost"
+              <Button
+                variant="ghost"
                 disabled={page * pageSize >= (rfpsQ.data?.count ?? 0)}
                 onClick={() => setPage((p) => p + 1)}
                 className="h-9 px-4 text-xs font-semibold rounded-full border-none"

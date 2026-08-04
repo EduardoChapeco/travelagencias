@@ -8,7 +8,9 @@ import { Button } from "@/components/ui/button";
 import { HeaderPortal } from "@/components/shell/HeaderPortal";
 
 export const Route = createFileRoute("/agency/$slug/proposals/$id/preview")({
-  head: ({ context }: any) => ({ meta: [{ title: `Pré-visualização da Proposta · ${context?.brand?.platform_name || 'Turis'}` }] }),
+  head: ({ context }: any) => ({
+    meta: [{ title: `Pré-visualização da Proposta · ${context?.brand?.platform_name || "Turis"}` }],
+  }),
   component: ProposalPreview,
 });
 
@@ -189,7 +191,7 @@ function ProposalPreview() {
                 navigator.clipboard.writeText(publicUrl);
                 toast.success("Link copiado");
               }}
-              className="flex h-7 items-center justify-center gap-1.5 rounded-full border-none px-2 sm:px-3 text-xs hover:glass bg-white/5 border-white/10 cursor-pointer"
+              className="flex h-7 items-center justify-center gap-1.5 rounded-full border-none px-2 sm:px-3 text-xs hover:glass cursor-pointer"
               title="Copiar link público"
             >
               <Copy className="h-3.5 w-3.5" />
@@ -199,7 +201,7 @@ function ProposalPreview() {
               href={publicUrl}
               target="_blank"
               rel="noreferrer"
-              className="flex h-7 items-center justify-center gap-1.5 rounded-full border-none px-2 sm:px-3 text-xs hover:glass bg-white/5 border-white/10"
+              className="flex h-7 items-center justify-center gap-1.5 rounded-full border-none px-2 sm:px-3 text-xs hover:glass"
               title="Abrir como cliente"
             >
               <ExternalLink className="h-3.5 w-3.5" />
@@ -210,7 +212,7 @@ function ProposalPreview() {
       </HeaderPortal>
 
       {/* ── Preview iframe-like area ──────────────────────────────────────────── */}
-      <div className="flex-1 overflow-y-auto glass bg-white/5 border-white/10 py-8 px-4">
+      <div className="flex-1 overflow-y-auto glass py-8 px-4">
         <div className="mx-auto max-w-2xl rounded-[var(--radius-card)] border-none glass-card border-none  overflow-hidden">
           {/* Agency header */}
           <div className="px-8 pt-8 pb-6 border-b border-border/50">
@@ -310,7 +312,10 @@ function ProposalPreview() {
             <Section title="Hospedagem" color={accentColor}>
               <div className="space-y-3">
                 {p.hotels.map((h) => (
-                  <div key={h.id} className="rounded-[var(--radius-card)] border-none/50 overflow-hidden">
+                  <div
+                    key={h.id}
+                    className="rounded-[var(--radius-card)] border-none/50 overflow-hidden"
+                  >
                     {h.images[0] && (
                       <img src={h.images[0]} alt={h.name} className="h-32 w-full object-cover" />
                     )}
@@ -363,9 +368,7 @@ function ProposalPreview() {
               <div className="grid grid-cols-2 gap-4">
                 {p.includes.length > 0 && (
                   <div>
-                    <div className="mb-1.5 ds-label-caps tracking-wide text-success">
-                      Inclui
-                    </div>
+                    <div className="mb-1.5 ds-label-caps tracking-wide text-success">Inclui</div>
                     <ul className="space-y-1 text-xs">
                       {p.includes.map((item, i) => (
                         <li key={i} className="flex items-start gap-1.5 text-muted-foreground">
@@ -378,9 +381,7 @@ function ProposalPreview() {
                 )}
                 {p.excludes.length > 0 && (
                   <div>
-                    <div className="mb-1.5 ds-label-caps tracking-wide text-danger">
-                      Não inclui
-                    </div>
+                    <div className="mb-1.5 ds-label-caps tracking-wide text-danger">Não inclui</div>
                     <ul className="space-y-1 text-xs">
                       {p.excludes.map((item, i) => (
                         <li key={i} className="flex items-start gap-1.5 text-muted-foreground">
@@ -396,7 +397,10 @@ function ProposalPreview() {
           )}
 
           {/* Financial summary */}
-          <div className="mx-8 mb-8 rounded-[var(--radius-card)] p-5" style={{ background: accentColor }}>
+          <div
+            className="mx-8 mb-8 rounded-[var(--radius-card)] p-5"
+            style={{ background: accentColor }}
+          >
             <div className="flex items-baseline justify-between">
               <span className="text-sm font-medium" style={{ color: `${accentFg}cc` }}>
                 Total à vista (Pix)

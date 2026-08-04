@@ -8,7 +8,9 @@ import { formatCurrency, formatDate } from "@/lib/formatters";
 import { fetchClientAgencies } from "@/services/client-area";
 
 export const Route = createFileRoute("/client/quotes/")({
-  head: ({ context }: any) => ({ meta: [{ title: `Minhas Cotações · ${context?.brand?.platform_name || 'Turis'}` }] }),
+  head: ({ context }: any) => ({
+    meta: [{ title: `Minhas Cotações · ${context?.brand?.platform_name || "Turis"}` }],
+  }),
   component: ClientQuotesIndex,
 });
 
@@ -29,12 +31,13 @@ function ClientQuotesIndex() {
       if (contactErr) throw contactErr;
       if (!contacts || contacts.length === 0) return [];
 
-      const contactIds = contacts.map(c => c.id);
+      const contactIds = contacts.map((c) => c.id);
 
       // 2. Buscar as cotações para esses contatos
       const { data, error } = await (supabase as any)
         .from("proposals")
-        .select(`
+        .select(
+          `
           id, 
           title, 
           number, 
@@ -43,7 +46,8 @@ function ClientQuotesIndex() {
           currency,
           valid_until,
           agency:agencies(name)
-        `)
+        `,
+        )
         .in("contact_id", contactIds)
         .order("created_at", { ascending: false });
 
@@ -54,12 +58,18 @@ function ClientQuotesIndex() {
 
   const getStatusInfo = (status: string) => {
     switch (status) {
-      case "draft": return { label: "Em análise", color: "blue", icon: Clock };
-      case "sent": return { label: "Aguardando Resposta", color: "amber", icon: Clock };
-      case "approved": return { label: "Aprovada", color: "green", icon: CheckCircle };
-      case "rejected": return { label: "Recusada", color: "red", icon: XCircle };
-      case "expired": return { label: "Expirada", color: "gray", icon: XCircle };
-      default: return { label: status, color: "gray", icon: FileText };
+      case "draft":
+        return { label: "Em análise", color: "blue", icon: Clock };
+      case "sent":
+        return { label: "Aguardando Resposta", color: "amber", icon: Clock };
+      case "approved":
+        return { label: "Aprovada", color: "green", icon: CheckCircle };
+      case "rejected":
+        return { label: "Recusada", color: "red", icon: XCircle };
+      case "expired":
+        return { label: "Expirada", color: "gray", icon: XCircle };
+      default:
+        return { label: status, color: "gray", icon: FileText };
     }
   };
 
@@ -86,7 +96,7 @@ function ClientQuotesIndex() {
           {q.data?.map((quote: any) => {
             const statusInfo = getStatusInfo(quote.status);
             const StatusIcon = statusInfo.icon;
-            
+
             return (
               <Link
                 key={quote.id}
@@ -95,12 +105,16 @@ function ClientQuotesIndex() {
                 className="flex flex-col md:flex-row md:items-center justify-between p-5 rounded-[var(--radius-card)] border-none glass-card border-none hover:border-primary/50 transition-colors gap-4"
               >
                 <div className="flex gap-4 items-start md:items-center">
-                  <div className={`h-12 w-12 rounded-full flex items-center justify-center shrink-0 bg-${statusInfo.color}-500/10 text-${statusInfo.color}-500`}>
+                  <div
+                    className={`h-12 w-12 rounded-full flex items-center justify-center shrink-0 bg-${statusInfo.color}-500/10 text-${statusInfo.color}-500`}
+                  >
                     <StatusIcon className="h-6 w-6" />
                   </div>
                   <div>
                     <div className="flex items-center gap-2 mb-1">
-                      <span className="text-xs font-mono text-muted-foreground">#{quote.number}</span>
+                      <span className="text-xs font-mono text-muted-foreground">
+                        #{quote.number}
+                      </span>
                       <StatusBadge color={statusInfo.color as any}>{statusInfo.label}</StatusBadge>
                     </div>
                     <h3 className="font-bold text-lg">{quote.title}</h3>
@@ -110,13 +124,15 @@ function ClientQuotesIndex() {
                     </p>
                   </div>
                 </div>
-                
+
                 <div className="font-mono font-semibold bg-accent px-4 py-2 rounded-[var(--radius-card)] text-lg self-start md:self-auto shrink-0 text-center">
                   {formatCurrency(Number(quote.total || 0), quote.currency || "BRL")}
-                  <div className="ds-meta text-muted-foreground font-sans uppercase tracking-widest mt-1">Ver Proposta</div>
+                  <div className="ds-meta text-muted-foreground font-sans uppercase tracking-widest mt-1">
+                    Ver Proposta
+                  </div>
                 </div>
               </Link>
-            )
+            );
           })}
         </div>
       )}

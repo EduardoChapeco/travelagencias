@@ -174,9 +174,7 @@ function ContactPage() {
 
         <div className="space-y-4 rounded-3xl border-none glass-card border-none p-6 md:p-8">
           <div className="space-y-1.5">
-            <label className="ds-label-caps text-muted-foreground ml-2">
-              Nome Completo *
-            </label>
+            <label className="ds-label-caps text-muted-foreground ml-2">Nome Completo *</label>
             <Input
               {...register("name")}
               className="w-full rounded-[var(--radius-card)] border-none focus:border-foreground focus:ring-foreground"
@@ -191,9 +189,7 @@ function ContactPage() {
 
           <div className="grid md:grid-cols-2 gap-4">
             <div className="space-y-1.5">
-              <label className="ds-label-caps text-muted-foreground ml-2">
-                WhatsApp *
-              </label>
+              <label className="ds-label-caps text-muted-foreground ml-2">WhatsApp *</label>
               <Input
                 {...register("phone")}
                 className="w-full rounded-[var(--radius-card)] border-none focus:border-foreground focus:ring-foreground"
@@ -206,9 +202,7 @@ function ContactPage() {
               )}
             </div>
             <div className="space-y-1.5">
-              <label className="ds-label-caps text-muted-foreground ml-2">
-                E-mail
-              </label>
+              <label className="ds-label-caps text-muted-foreground ml-2">E-mail</label>
               <Input
                 type="email"
                 {...register("email")}
@@ -224,9 +218,7 @@ function ContactPage() {
           </div>
 
           <div className="space-y-1.5 pt-4">
-            <label className="ds-label-caps text-muted-foreground ml-2">
-              Destino dos Sonhos
-            </label>
+            <label className="ds-label-caps text-muted-foreground ml-2">Destino dos Sonhos</label>
             <Input
               {...register("destination")}
               className="w-full rounded-[var(--radius-card)] border-none focus:border-foreground focus:ring-foreground"
@@ -241,9 +233,7 @@ function ContactPage() {
 
           <div className="grid md:grid-cols-2 gap-4">
             <div className="space-y-1.5">
-              <label className="ds-label-caps text-muted-foreground ml-2">
-                Ida Prevista
-              </label>
+              <label className="ds-label-caps text-muted-foreground ml-2">Ida Prevista</label>
               <Input
                 type="date"
                 {...register("travel_start")}
@@ -256,9 +246,7 @@ function ContactPage() {
               )}
             </div>
             <div className="space-y-1.5">
-              <label className="ds-label-caps text-muted-foreground ml-2">
-                Retorno
-              </label>
+              <label className="ds-label-caps text-muted-foreground ml-2">Retorno</label>
               <Input
                 type="date"
                 {...register("travel_end")}
@@ -274,9 +262,7 @@ function ContactPage() {
 
           <div className="grid md:grid-cols-2 gap-4">
             <div className="space-y-1.5">
-              <label className="ds-label-caps text-muted-foreground ml-2">
-                Qtd. Pessoas
-              </label>
+              <label className="ds-label-caps text-muted-foreground ml-2">Qtd. Pessoas</label>
               <Input
                 type="number"
                 min="1"
@@ -310,9 +296,7 @@ function ContactPage() {
           </div>
 
           <div className="space-y-1.5 pt-4">
-            <label className="ds-label-caps text-muted-foreground ml-2">
-              Detalhes Adicionais
-            </label>
+            <label className="ds-label-caps text-muted-foreground ml-2">Detalhes Adicionais</label>
             <Textarea
               rows={4}
               {...register("notes")}

@@ -102,7 +102,6 @@ serve(async (req) => {
     return new Response(JSON.stringify({ result: parsedResult }), {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
     });
-
   } catch (error: any) {
     console.error("Erro no OCR do Voucher:", error);
     return new Response(JSON.stringify({ error: error.message }), {

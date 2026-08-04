@@ -35,7 +35,9 @@ export const Route = createFileRoute("/agency/$slug/proposals/new")({
     lead_id: z.string().optional(),
     client_id: z.string().optional(),
   }),
-  head: ({ context }: any) => ({ meta: [{ title: `Nova cotação · ${context?.brand?.platform_name || 'Turis'}` }] }),
+  head: ({ context }: any) => ({
+    meta: [{ title: `Nova cotação · ${context?.brand?.platform_name || "Turis"}` }],
+  }),
   component: NewProposal,
 });
 
@@ -295,195 +297,197 @@ function NewProposal() {
             </p>
           </div>
         </div>
-      {/* OCR Dropzone */}
-      <div
-        className={cn(
-          "mb-6 max-w-2xl rounded-[var(--radius-card)] border border-dashed p-6 text-center transition-all duration-200",
-          isDragging
-            ? "border-brand bg-brand/5 scale-[1.01]"
-            : "border-border glass-card border-none hover:border-brand/40",
-        )}
-        onDragOver={(e) => {
-          e.preventDefault();
-          setIsDragging(true);
-        }}
-        onDragLeave={() => setIsDragging(false)}
-        onDrop={(e) => {
-          e.preventDefault();
-          setIsDragging(false);
-          if (e.dataTransfer.files && e.dataTransfer.files[0]) {
-            handleOcrFile(e.dataTransfer.files[0]);
-          }
-        }}
-      >
-        {ocrLoading ? (
-          <div className="flex flex-col items-center justify-center py-4 space-y-3">
-            <Loader2 className="h-8 w-8 animate-spin text-brand animate-pulse" />
-            <div className="text-sm font-semibold text-foreground">{ocrStep}</div>
-            <div className="text-xs text-muted-foreground">
-              Isso pode levar alguns segundos dependendo do tamanho do arquivo.
+        {/* OCR Dropzone */}
+        <div
+          className={cn(
+            "mb-6 max-w-2xl rounded-[var(--radius-card)] border border-dashed p-6 text-center transition-all duration-200",
+            isDragging
+              ? "border-brand bg-brand/5 scale-[1.01]"
+              : "border-border glass-card border-none hover:border-brand/40",
+          )}
+          onDragOver={(e) => {
+            e.preventDefault();
+            setIsDragging(true);
+          }}
+          onDragLeave={() => setIsDragging(false)}
+          onDrop={(e) => {
+            e.preventDefault();
+            setIsDragging(false);
+            if (e.dataTransfer.files && e.dataTransfer.files[0]) {
+              handleOcrFile(e.dataTransfer.files[0]);
+            }
+          }}
+        >
+          {ocrLoading ? (
+            <div className="flex flex-col items-center justify-center py-4 space-y-3">
+              <Loader2 className="h-8 w-8 animate-spin text-brand animate-pulse" />
+              <div className="text-sm font-semibold text-foreground">{ocrStep}</div>
+              <div className="text-xs text-muted-foreground">
+                Isso pode levar alguns segundos dependendo do tamanho do arquivo.
+              </div>
             </div>
-          </div>
-        ) : (
-          <label className="flex flex-col items-center justify-center cursor-pointer group py-4">
-            <div className="mb-3 rounded-full bg-brand/10 p-3 text-brand group-hover:bg-brand/20 transition-colors">
-              <Upload className="h-6 w-6" />
-            </div>
-            <h3 className="font-bold text-foreground text-sm flex items-center justify-center gap-1.5">
-              <Sparkles className="h-4 w-4 text-brand" /> Importar Orçamento Automaticamente
-            </h3>
-            <p className="text-xs text-muted-foreground mt-1 max-w-md">
-              Arraste um PDF/Imagem aqui ou clique para selecionar. O sistema extrairá voos, hotéis
-              e o itinerário completo automaticamente.
-            </p>
-            <Input
-              type="file"
-              accept="application/pdf,image/*"
-              className="hidden"
-              onChange={(e) => {
-                if (e.target.files && e.target.files[0]) {
-                  handleOcrFile(e.target.files[0]);
-                }
-              }}
-            />
-          </label>
-        )}
-
-        {extractedItems && (
-          <div className="mt-4 rounded-[var(--radius-card)] bg-success/5 border border-success/20 p-3 text-xs text-success flex items-center justify-between">
-            <div className="text-left">
-              <span className="font-bold text-success">✨ Dados extraídos com sucesso!</span>
-              <p className="ds-meta text-muted-foreground mt-0.5">
-                {extractedItems.flights?.length ?? 0} voo(s), {extractedItems.hotels?.length ?? 0}{" "}
-                hotel(eis) e {extractedItems.itinerary?.length ?? 0} dia(s) de roteiro serão salvos
-                ao criar a cotação.
+          ) : (
+            <label className="flex flex-col items-center justify-center cursor-pointer group py-4">
+              <div className="mb-3 rounded-full bg-brand/10 p-3 text-brand group-hover:bg-brand/20 transition-colors">
+                <Upload className="h-6 w-6" />
+              </div>
+              <h3 className="font-bold text-foreground text-sm flex items-center justify-center gap-1.5">
+                <Sparkles className="h-4 w-4 text-brand" /> Importar Orçamento Automaticamente
+              </h3>
+              <p className="text-xs text-muted-foreground mt-1 max-w-md">
+                Arraste um PDF/Imagem aqui ou clique para selecionar. O sistema extrairá voos,
+                hotéis e o itinerário completo automaticamente.
               </p>
+              <Input
+                type="file"
+                accept="application/pdf,image/*"
+                className="hidden"
+                onChange={(e) => {
+                  if (e.target.files && e.target.files[0]) {
+                    handleOcrFile(e.target.files[0]);
+                  }
+                }}
+              />
+            </label>
+          )}
+
+          {extractedItems && (
+            <div className="mt-4 rounded-[var(--radius-card)] bg-success/5 border border-success/20 p-3 text-xs text-success flex items-center justify-between">
+              <div className="text-left">
+                <span className="font-bold text-success">✨ Dados extraídos com sucesso!</span>
+                <p className="ds-meta text-muted-foreground mt-0.5">
+                  {extractedItems.flights?.length ?? 0} voo(s), {extractedItems.hotels?.length ?? 0}{" "}
+                  hotel(eis) e {extractedItems.itinerary?.length ?? 0} dia(s) de roteiro serão
+                  salvos ao criar a cotação.
+                </p>
+              </div>
+              <Button
+                type="button"
+                onClick={() => setExtractedItems(null)}
+                className="text-muted-foreground hover:text-danger ds-meta font-semibold border-none rounded px-2 py-0.5 hover:glass transition-colors"
+              >
+                Descartar
+              </Button>
             </div>
+          )}
+        </div>
+
+        <form
+          onSubmit={handleSubmit(onSubmit)}
+          className="max-w-2xl space-y-3 rounded-[var(--radius-card)] border-none glass-card border-none p-5"
+        >
+          <Field label="Título *" error={errors.title?.message}>
+            <Input {...register("title")} placeholder="Ex: Lua de mel em Maldivas" />
+          </Field>
+          <Field label="Destino" error={errors.destination?.message}>
+            <Input {...register("destination")} />
+          </Field>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <Field label="Cliente" error={errors.client_id?.message}>
+              <Controller
+                control={control}
+                name="client_id"
+                render={({ field }) => (
+                  <Select value={field.value || undefined} onValueChange={field.onChange}>
+                    <SelectTrigger className="w-full glass rounded-full border-none">
+                      <SelectValue placeholder="Selecionar cliente..." />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {(clientsQ.data ?? []).map((c) => (
+                        <SelectItem key={c.id} value={c.id}>
+                          {c.full_name}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                )}
+              />
+            </Field>
+            <Field label="Lead (CRM)" error={errors.lead_id?.message}>
+              <Controller
+                control={control}
+                name="lead_id"
+                render={({ field }) => (
+                  <Select
+                    value={field.value || "none"}
+                    onValueChange={(val) => field.onChange(val === "none" ? "" : val)}
+                  >
+                    <SelectTrigger className="w-full glass rounded-full border-none">
+                      <SelectValue placeholder="Nenhum" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="none">Nenhum</SelectItem>
+                      {(leadsQ.data ?? []).map((l) => (
+                        <SelectItem key={l.id} value={l.id}>
+                          {l.name}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                )}
+              />
+            </Field>
+          </div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <Field label="Início" error={errors.travel_start?.message}>
+              <Input type="date" {...register("travel_start")} />
+            </Field>
+            <Field label="Volta" error={errors.travel_end?.message}>
+              <Input type="date" {...register("travel_end")} />
+            </Field>
+          </div>
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+            <Field label="Adultos" error={errors.pax_adults?.message}>
+              <Input type="number" min={0} {...register("pax_adults", { valueAsNumber: true })} />
+            </Field>
+            <Field label="Crianças" error={errors.pax_children?.message}>
+              <Input type="number" min={0} {...register("pax_children", { valueAsNumber: true })} />
+            </Field>
+            <Field label="Infantes" error={errors.pax_infants?.message}>
+              <Input type="number" min={0} {...register("pax_infants", { valueAsNumber: true })} />
+            </Field>
+          </div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <Field label="Moeda" error={errors.currency?.message}>
+              <Controller
+                control={control}
+                name="currency"
+                render={({ field }) => (
+                  <Select value={field.value || undefined} onValueChange={field.onChange}>
+                    <SelectTrigger className="w-full glass rounded-full border-none">
+                      <SelectValue placeholder="Selecione a moeda..." />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="BRL">BRL — Real</SelectItem>
+                      <SelectItem value="USD">USD — Dólar</SelectItem>
+                      <SelectItem value="EUR">EUR — Euro</SelectItem>
+                    </SelectContent>
+                  </Select>
+                )}
+              />
+            </Field>
+            <Field label="Válida até" error={errors.valid_until?.message}>
+              <Input type="date" {...register("valid_until")} />
+            </Field>
+          </div>
+          <Field label="Observações" error={errors.notes?.message}>
+            <Textarea {...register("notes")} />
+          </Field>
+          <div className="mt-8 pt-6 border-t border-white/5 flex justify-end gap-3">
             <Button
+              variant="ghost"
               type="button"
-              onClick={() => setExtractedItems(null)}
-              className="text-muted-foreground hover:text-danger ds-meta font-semibold border-none rounded px-2 py-0.5 hover:glass bg-white/5 border-white/10 transition-colors"
+              onClick={() => navigate({ to: "/agency/$slug/proposals", params: { slug } })}
             >
-              Descartar
+              Cancelar
+            </Button>
+            <Button variant="default" onClick={handleSubmit(onSubmit)} disabled={isSubmitting}>
+              {isSubmitting ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : null}
+              Avançar para Montagem
             </Button>
           </div>
-        )}
+        </form>
       </div>
-
-      <form
-        onSubmit={handleSubmit(onSubmit)}
-        className="max-w-2xl space-y-3 rounded-[var(--radius-card)] border-none glass-card border-none p-5"
-      >
-        <Field label="Título *" error={errors.title?.message}>
-          <Input {...register("title")} placeholder="Ex: Lua de mel em Maldivas" />
-        </Field>
-        <Field label="Destino" error={errors.destination?.message}>
-          <Input {...register("destination")} />
-        </Field>
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-          <Field label="Cliente" error={errors.client_id?.message}>
-            <Controller
-              control={control}
-              name="client_id"
-              render={({ field }) => (
-                <Select value={field.value || undefined} onValueChange={field.onChange}>
-                  <SelectTrigger className="w-full bg-white/5 rounded-full border-none">
-                    <SelectValue placeholder="Selecionar cliente..." />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {(clientsQ.data ?? []).map((c) => (
-                      <SelectItem key={c.id} value={c.id}>
-                        {c.full_name}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              )}
-            />
-          </Field>
-          <Field label="Lead (CRM)" error={errors.lead_id?.message}>
-            <Controller
-              control={control}
-              name="lead_id"
-              render={({ field }) => (
-                <Select
-                  value={field.value || "none"}
-                  onValueChange={(val) => field.onChange(val === "none" ? "" : val)}
-                >
-                  <SelectTrigger className="w-full bg-white/5 rounded-full border-none">
-                    <SelectValue placeholder="Nenhum" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="none">Nenhum</SelectItem>
-                    {(leadsQ.data ?? []).map((l) => (
-                      <SelectItem key={l.id} value={l.id}>
-                        {l.name}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              )}
-            />
-          </Field>
-        </div>
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-          <Field label="Início" error={errors.travel_start?.message}>
-            <Input type="date" {...register("travel_start")} />
-          </Field>
-          <Field label="Volta" error={errors.travel_end?.message}>
-            <Input type="date" {...register("travel_end")} />
-          </Field>
-        </div>
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-          <Field label="Adultos" error={errors.pax_adults?.message}>
-            <Input type="number" min={0} {...register("pax_adults", { valueAsNumber: true })} />
-          </Field>
-          <Field label="Crianças" error={errors.pax_children?.message}>
-            <Input type="number" min={0} {...register("pax_children", { valueAsNumber: true })} />
-          </Field>
-          <Field label="Infantes" error={errors.pax_infants?.message}>
-            <Input type="number" min={0} {...register("pax_infants", { valueAsNumber: true })} />
-          </Field>
-        </div>
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-          <Field label="Moeda" error={errors.currency?.message}>
-            <Controller
-              control={control}
-              name="currency"
-              render={({ field }) => (
-                <Select value={field.value || undefined} onValueChange={field.onChange}>
-                  <SelectTrigger className="w-full bg-white/5 rounded-full border-none">
-                    <SelectValue placeholder="Selecione a moeda..." />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="BRL">BRL — Real</SelectItem>
-                    <SelectItem value="USD">USD — Dólar</SelectItem>
-                    <SelectItem value="EUR">EUR — Euro</SelectItem>
-                  </SelectContent>
-                </Select>
-              )}
-            />
-          </Field>
-          <Field label="Válida até" error={errors.valid_until?.message}>
-            <Input type="date" {...register("valid_until")} />
-          </Field>
-        </div>
-        <Field label="Observações" error={errors.notes?.message}>
-          <Textarea {...register("notes")} />
-        </Field>
-        <div className="mt-8 pt-6 border-t border-white/5 flex justify-end gap-3">
-          <Button variant="ghost" type="button" onClick={() => navigate({ to: "/agency/$slug/proposals", params: { slug } })}>
-            Cancelar
-          </Button>
-          <Button variant="default" onClick={handleSubmit(onSubmit)} disabled={isSubmitting}>
-            {isSubmitting ? (
-              <Loader2 className="h-4 w-4 animate-spin mr-2" />
-            ) : null}
-            Avançar para Montagem
-          </Button>
-        </div>
-      </form>
-    </div>
-  </SheetPage>
-);
+    </SheetPage>
+  );
 }

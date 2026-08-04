@@ -66,19 +66,19 @@ function TripOverview() {
   const save = useMutation({
     mutationFn: async (patch: any) => {
       const { total_sale, total_cost, ...metadata } = patch;
-      
+
       // 1. Atualiza metadados (destination, dates, status, notes)
       if (Object.keys(metadata).length > 0) {
         const { error: metaError } = await supabase.from("trips").update(metadata).eq("id", id);
         if (metaError) throw metaError;
       }
-      
+
       // 2. Atualiza finanças com autoridade Server-Side (RPC)
       if (total_sale !== undefined && total_cost !== undefined) {
         const { error: rpcError } = await supabase.rpc("update_trip_financials", {
           p_trip_id: id,
           p_total_sale: total_sale,
-          p_total_cost: total_cost
+          p_total_cost: total_cost,
         });
         if (rpcError) throw rpcError;
       }
@@ -128,14 +128,14 @@ function TripOverview() {
               <Input
                 value={t.title}
                 onChange={(e) => setForm({ ...t, title: e.target.value })}
-                className="glass bg-white/5 border-white/10"
+                className="glass"
               />
             </Field>
             <Field label="Código Interno (Opcional)">
               <Input
                 value={t.code ?? ""}
                 onChange={(e) => setForm({ ...t, code: e.target.value })}
-                className="glass bg-white/5 border-white/10"
+                className="glass"
               />
             </Field>
           </div>
@@ -144,14 +144,14 @@ function TripOverview() {
               <Input
                 value={t.destination ?? ""}
                 onChange={(e) => setForm({ ...t, destination: e.target.value })}
-                className="glass bg-white/5 border-white/10"
+                className="glass"
               />
             </Field>
             <Field label="Cliente Responsável">
               <Select
                 value={t.client_id ?? ""}
                 onChange={(e) => setForm({ ...t, client_id: e.target.value || null })}
-                className="glass bg-white/5 border-white/10"
+                className="glass"
               >
                 <option value="">— Sem cliente ainda —</option>
                 {(clientsQ.data ?? []).map((c: any) => (
@@ -168,7 +168,7 @@ function TripOverview() {
                 type="date"
                 value={t.travel_start ?? ""}
                 onChange={(e) => setForm({ ...t, travel_start: e.target.value || null })}
-                className="glass bg-white/5 border-white/10"
+                className="glass"
               />
             </Field>
             <Field label="Data de Volta">
@@ -176,7 +176,7 @@ function TripOverview() {
                 type="date"
                 value={t.travel_end ?? ""}
                 onChange={(e) => setForm({ ...t, travel_end: e.target.value || null })}
-                className="glass bg-white/5 border-white/10"
+                className="glass"
               />
             </Field>
           </div>
@@ -185,7 +185,7 @@ function TripOverview() {
               <Select
                 value={t.status}
                 onChange={(e) => setForm({ ...t, status: e.target.value })}
-                className="glass bg-white/5 border-white/10"
+                className="glass"
               >
                 <option value="planning">Em Planejamento</option>
                 <option value="confirmed">Confirmada</option>
@@ -201,7 +201,7 @@ function TripOverview() {
                 step="0.01"
                 value={t.total_sale}
                 onChange={(e) => setForm({ ...t, total_sale: +e.target.value || 0 })}
-                className="glass bg-white/5 border-white/10"
+                className="glass"
               />
             </Field>
             <Field label="Custo Líquido (R$)">
@@ -211,7 +211,7 @@ function TripOverview() {
                 step="0.01"
                 value={t.total_cost}
                 onChange={(e) => setForm({ ...t, total_cost: +e.target.value || 0 })}
-                className="glass bg-white/5 border-white/10"
+                className="glass"
               />
             </Field>
           </div>
@@ -219,7 +219,7 @@ function TripOverview() {
             <Textarea
               value={t.notes ?? ""}
               onChange={(e) => setForm({ ...t, notes: e.target.value })}
-              className="glass bg-white/5 border-white/10 min-h-[100px]"
+              className="glass min-h-[100px]"
             />
           </Field>
           <div className="pt-2 flex justify-end">
@@ -279,7 +279,7 @@ function TripOverview() {
                       ? "border-brand/20 bg-brand/5 text-foreground"
                       : t.status === "completed"
                         ? "border-success/20 bg-success/5 text-success-foreground"
-                        : "border-border glass bg-white/5 border-white/10/50 text-muted-foreground",
+                        : "border-border glass/50 text-muted-foreground",
                 )}
               >
                 {isToday ? (
@@ -310,17 +310,19 @@ function TripOverview() {
           </div>
 
           <div className="rounded-[var(--radius-card)] border-none glass-card border-none p-5 ">
-            <h3 className="mb-4 ds-label-caps text-muted-foreground">
-              Rentabilidade (P&L)
-            </h3>
+            <h3 className="mb-4 ds-label-caps text-muted-foreground">Rentabilidade (P&L)</h3>
             <div className="space-y-3">
               <div className="flex items-center justify-between text-sm">
                 <span className="text-muted-foreground">Volume Vendido</span>
-                <span className="font-mono">{formatCurrency(Number(t.total_sale), t.currency)}</span>
+                <span className="font-mono">
+                  {formatCurrency(Number(t.total_sale), t.currency)}
+                </span>
               </div>
               <div className="flex items-center justify-between text-sm">
                 <span className="text-muted-foreground">Custo Fornecedores</span>
-                <span className="font-mono">{formatCurrency(Number(t.total_cost), t.currency)}</span>
+                <span className="font-mono">
+                  {formatCurrency(Number(t.total_cost), t.currency)}
+                </span>
               </div>
               <div className="mt-2 flex items-center justify-between border-t border-border pt-3">
                 <span className="text-sm font-semibold">Lucro Líquido Estimado</span>

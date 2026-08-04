@@ -42,7 +42,9 @@ export function TaskCommentsSection({ taskId, agencyId }: TaskCommentsSectionPro
 
     setPostingComment(true);
     try {
-      const { data: { user } } = await supabase.auth.getUser();
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
       if (!user) throw new Error("Usuário não autenticado");
 
       const { data, error } = await db
@@ -134,7 +136,11 @@ export function TaskCommentsSection({ taskId, agencyId }: TaskCommentsSectionPro
           disabled={!newComment.trim() || postingComment}
           className="h-9 px-3 shrink-0"
         >
-          {postingComment ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <MessageSquare className="h-3.5 w-3.5" />}
+          {postingComment ? (
+            <Loader2 className="h-3.5 w-3.5 animate-spin" />
+          ) : (
+            <MessageSquare className="h-3.5 w-3.5" />
+          )}
         </Button>
       </form>
     </div>

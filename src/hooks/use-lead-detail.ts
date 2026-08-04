@@ -94,7 +94,7 @@ export function useLeadDetail(lead_id: string, slug: string) {
       ? new Date(lead.created_at)
       : new Date();
   const diffDays = Math.ceil(
-    Math.abs(new Date().getTime() - lastContactDate.getTime()) / (1000 * 60 * 60 * 24)
+    Math.abs(new Date().getTime() - lastContactDate.getTime()) / (1000 * 60 * 60 * 24),
   );
 
   // ── Sub-hooks especializados ────────────────────────────────────────────
@@ -179,7 +179,14 @@ export function useLeadDetail(lead_id: string, slug: string) {
     const updated = [...list, { ...paxData }];
     try {
       await updateLead(lead.id, { pax_list: updated });
-      setPaxForm({ full_name: "", document: "", birth_date: "", relationship: "other", phone: "", email: "" });
+      setPaxForm({
+        full_name: "",
+        document: "",
+        birth_date: "",
+        relationship: "other",
+        phone: "",
+        email: "",
+      });
       setPaxFormOpen(false);
       qc.invalidateQueries({ queryKey: ["lead", lead.id] });
       toast.success("Acompanhante cadastrado!");
@@ -328,10 +335,8 @@ export function useLeadDetail(lead_id: string, slug: string) {
     setChecklistInput: checklist.setChecklistInput,
     toggleChecklistItem: (itemId: string, done: boolean) =>
       checklist.toggleChecklistItem(lead?.checklist, itemId, done),
-    addChecklistItem: (e: React.FormEvent) =>
-      checklist.addChecklistItem(lead?.checklist, e),
-    deleteChecklistItem: (itemId: string) =>
-      checklist.deleteChecklistItem(lead?.checklist, itemId),
+    addChecklistItem: (e: React.FormEvent) => checklist.addChecklistItem(lead?.checklist, e),
+    deleteChecklistItem: (itemId: string) => checklist.deleteChecklistItem(lead?.checklist, itemId),
     // Sub-hooks: Meetings
     meetingForm: meetings.meetingForm,
     setMeetingForm: meetings.setMeetingForm,

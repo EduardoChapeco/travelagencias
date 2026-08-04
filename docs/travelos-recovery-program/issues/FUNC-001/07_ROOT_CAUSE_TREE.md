@@ -1,4 +1,5 @@
 # FUNC-001 - 07_ROOT_CAUSE_TREE.md
+
 # ÁRVORE DE CAUSA RAIZ - FUNC-001
 
 Este documento descreve a origem da depreciação prematura do botão contextual de ação.

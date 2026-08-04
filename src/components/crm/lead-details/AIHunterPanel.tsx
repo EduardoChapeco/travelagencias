@@ -403,9 +403,7 @@ export function AIHunterPanel({ leadId, agencyId }: { leadId: string; agencyId: 
                 key={title}
                 className="rounded-[var(--radius-card)] border border-border/80 bg-surface p-5 space-y-3"
               >
-                <div
-                  className={`flex items-center gap-2 ${color} ds-label-caps`}
-                >
+                <div className={`flex items-center gap-2 ${color} ds-label-caps`}>
                   {icon} {title}
                 </div>
                 <div className="flex flex-wrap gap-1.5">

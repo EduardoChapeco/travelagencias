@@ -19,7 +19,9 @@ import { NativeSelect as Select } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
 
 export const Route = createFileRoute("/agency/$slug/brand")({
-  head: ({ context }: any) => ({ meta: [{ title: `Identidade visual · ${context?.brand?.platform_name || 'Turis'}` }] }),
+  head: ({ context }: any) => ({
+    meta: [{ title: `Identidade visual · ${context?.brand?.platform_name || "Turis"}` }],
+  }),
   component: BrandPage,
 });
 
@@ -210,14 +212,14 @@ function BrandPage() {
 
   return (
     <div className="space-y-6">
-              <Button
-          onClick={save}
-          disabled={saving}
-          className="flex h-8 items-center gap-1.5 rounded-full bg-brand px-3 text-xs font-semibold text-brand-foreground hover:bg-brand/90 transition-colors cursor-pointer disabled:opacity-50"
-        >
-          {saving ? "Salvando..." : "Salvar alterações"}
-        </Button>
-      
+      <Button
+        onClick={save}
+        disabled={saving}
+        className="flex h-8 items-center gap-1.5 rounded-full bg-brand px-3 text-xs font-semibold text-brand-foreground hover:bg-brand/90 transition-colors cursor-pointer disabled:opacity-50"
+      >
+        {saving ? "Salvando..." : "Salvar alterações"}
+      </Button>
+
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
         {/* Left Side settings form - using div wrapper instead of form */}
         <div className="space-y-6">
@@ -229,7 +231,7 @@ function BrandPage() {
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               {/* Logo Principal Dropzone */}
-              <div className="flex flex-col items-center justify-between p-4 rounded-full border border-dashed border-border glass bg-white/5 border-white/10/10 hover:border-brand/40 transition-colors text-center relative group min-h-[140px]">
+              <div className="flex flex-col items-center justify-between p-4 rounded-full border border-dashed border-border glass/10 hover:border-brand/40 transition-colors text-center relative group min-h-36">
                 <span className="ds-meta font-bold text-muted-foreground uppercase">
                   Logo Principal
                 </span>
@@ -268,7 +270,7 @@ function BrandPage() {
               </div>
 
               {/* Logo Branco Dropzone */}
-              <div className="flex flex-col items-center justify-between p-4 rounded-full border border-dashed border-border bg-slate-950 text-center relative group min-h-[140px]">
+              <div className="flex flex-col items-center justify-between p-4 rounded-full border border-dashed border-border bg-slate-950 text-center relative group min-h-36">
                 <span className="ds-meta font-bold text-slate-400 uppercase">
                   Logo p/ Fundo Escuro
                 </span>
@@ -307,10 +309,8 @@ function BrandPage() {
               </div>
 
               {/* Favicon Dropzone */}
-              <div className="flex flex-col items-center justify-between p-4 rounded-full border border-dashed border-border glass bg-white/5 border-white/10/10 hover:border-brand/40 transition-colors text-center relative group min-h-[140px]">
-                <span className="ds-meta font-bold text-muted-foreground uppercase">
-                  Favicon
-                </span>
+              <div className="flex flex-col items-center justify-between p-4 rounded-full border border-dashed border-border glass/10 hover:border-brand/40 transition-colors text-center relative group min-h-36">
+                <span className="ds-meta font-bold text-muted-foreground uppercase">Favicon</span>
                 {form.favicon_url ? (
                   <div className="my-2 relative w-8 h-8 flex items-center justify-center">
                     <img
@@ -464,7 +464,7 @@ function BrandPage() {
             {/* Live styles provider wrapper */}
             <div
               style={mockStyles}
-              className="flex-1 border-none rounded-full overflow-hidden bg-slate-50 flex flex-col font-sans min-h-[500px]"
+              className="flex-1 border-none rounded-full overflow-hidden bg-slate-50 flex flex-col font-sans min-h-[30rem]"
             >
               {/* Mock Navbar */}
               <div
@@ -537,7 +537,7 @@ function BrandPage() {
                   >
                     Falar no WhatsApp
                   </Button>
-                  <Button className="px-4 py-2 rounded-full border border-white/40 ds-meta font-bold bg-white/10 hover:bg-white/20 transition-all text-white">
+                  <Button className="px-4 py-2 rounded-full border border-white/40 ds-meta font-bold glass-dark hover:glass-dark transition-all text-white">
                     Explorar Viagens
                   </Button>
                 </div>
@@ -604,7 +604,7 @@ interface ColorPickerProps {
 
 function ColorPicker({ label, value, onChange }: ColorPickerProps) {
   return (
-    <div className="flex flex-col items-center p-2.5 rounded-full border-none glass bg-white/5 border-white/10/10 hover:glass bg-white/5 border-white/10/25 transition-all text-center">
+    <div className="flex flex-col items-center p-2.5 rounded-full border-none glass/10 hover:glass/25 transition-all text-center">
       <span className="ds-meta font-bold text-muted-foreground uppercase mb-2 block truncate w-full">
         {label}
       </span>

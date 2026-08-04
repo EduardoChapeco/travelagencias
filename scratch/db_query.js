@@ -1,12 +1,13 @@
-import pg from 'pg';
+import pg from "pg";
 const { Client } = pg;
 
-const connectionString = 'postgresql://postgres:EEaR6399!%40%232026@db.esmppoxxnyiscidzsjvy.supabase.co:6543/postgres';
+const connectionString =
+  "postgresql://postgres:EEaR6399!%40%232026@db.esmppoxxnyiscidzsjvy.supabase.co:6543/postgres";
 
 async function run() {
   const query = process.argv[2];
   if (!query) {
-    console.error('Por favor, forneça uma query SQL como argumento.');
+    console.error("Por favor, forneça uma query SQL como argumento.");
     process.exit(1);
   }
 
@@ -16,7 +17,7 @@ async function run() {
     const res = await client.query(query);
     console.log(JSON.stringify(res.rows, null, 2));
   } catch (err) {
-    console.error('Erro na query:', err.message);
+    console.error("Erro na query:", err.message);
     process.exit(1);
   } finally {
     await client.end();

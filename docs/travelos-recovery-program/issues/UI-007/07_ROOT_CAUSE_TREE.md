@@ -1,4 +1,5 @@
 # UI-007 - 07_ROOT_CAUSE_TREE.md
+
 # ÁRVORE DE CAUSA RAIZ - UI-007
 
 Este documento diagnostica a origem da aplicação do token `rounded-full` no Kanban de embarques.

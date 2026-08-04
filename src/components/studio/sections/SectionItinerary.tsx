@@ -102,7 +102,8 @@ export function SectionItinerary({ draft, save }: Props) {
           </div>
           <L label="Descrição">
             <Textarea
-              className={SMALL_INPUT + " h-20 resize-none leading-relaxed"} value={d.description}
+              className={SMALL_INPUT + " h-20 resize-none leading-relaxed"}
+              value={d.description}
               placeholder="Descreva as atividades deste dia..."
               onChange={(e) => upd(i, { description: e.target.value })}
             />
@@ -112,20 +113,32 @@ export function SectionItinerary({ draft, save }: Props) {
               <Inp value={d.city ?? ""} onChange={(v) => upd(i, { city: v })} ph="Ex: Paris" />
             </L>
             <L label="Pernoite (Hotel)">
-              <Inp value={d.overnight ?? ""} onChange={(v) => upd(i, { overnight: v })} ph="Ex: Hotel Plaza" />
+              <Inp
+                value={d.overnight ?? ""}
+                onChange={(v) => upd(i, { overnight: v })}
+                ph="Ex: Hotel Plaza"
+              />
             </L>
             <L label="Refeições">
-              <Inp 
-                value={(d.meals ?? []).join(", ")} 
-                onChange={(v) => upd(i, { meals: v.split(",").map(m => m.trim()).filter(Boolean) })} 
-                ph="Ex: Café, Almoço" 
+              <Inp
+                value={(d.meals ?? []).join(", ")}
+                onChange={(v) =>
+                  upd(i, {
+                    meals: v
+                      .split(",")
+                      .map((m) => m.trim())
+                      .filter(Boolean),
+                  })
+                }
+                ph="Ex: Café, Almoço"
               />
             </L>
           </div>
           <div className="mt-2">
             <L label="Layout das Imagens">
               <Select
-                className={SMALL_INPUT} value={d.imageLayout || "auto"}
+                className={SMALL_INPUT}
+                value={d.imageLayout || "auto"}
                 onChange={(e) => upd(i, { imageLayout: e.target.value })}
               >
                 <option value="auto">Automático (Baseado na qtde)</option>
@@ -137,7 +150,9 @@ export function SectionItinerary({ draft, save }: Props) {
           </div>
           <div className="mt-2 space-y-2 border-t border-border/50 pt-3">
             <div className="flex items-center justify-between">
-              <span className="block ds-meta uppercase tracking-wide text-muted-foreground">Galeria do Dia</span>
+              <span className="block ds-meta uppercase tracking-wide text-muted-foreground">
+                Galeria do Dia
+              </span>
               <div className="flex gap-2">
                 <Button
                   type="button"
@@ -162,7 +177,7 @@ export function SectionItinerary({ draft, save }: Props) {
                 </label>
               </div>
             </div>
-            
+
             {showUnsplash === i && (
               <div className="rounded-2xl border border-border bg-surface p-3 mb-2">
                 <div className="flex items-center justify-between mb-2">
@@ -193,7 +208,10 @@ export function SectionItinerary({ draft, save }: Props) {
             {d.images && d.images.length > 0 ? (
               <div className="flex flex-wrap gap-2">
                 {d.images.map((url, imgIdx) => (
-                  <div key={imgIdx} className="relative h-12 w-12 overflow-hidden rounded border border-border">
+                  <div
+                    key={imgIdx}
+                    className="relative h-12 w-12 overflow-hidden rounded border border-border"
+                  >
                     <img src={url} alt={`Dia ${i + 1}`} className="h-full w-full object-cover" />
                     <Button
                       type="button"
@@ -210,12 +228,22 @@ export function SectionItinerary({ draft, save }: Props) {
                 ))}
               </div>
             ) : (
-              <div className="ds-meta text-muted-foreground/60 italic">Nenhuma imagem. As URLs também podem ser coladas abaixo.</div>
+              <div className="ds-meta text-muted-foreground/60 italic">
+                Nenhuma imagem. As URLs também podem ser coladas abaixo.
+              </div>
             )}
             <Textarea
-              className={SMALL_INPUT + " resize-none py-1.5 text-xs"} value={(d.images ?? []).join(",\n")}
+              className={SMALL_INPUT + " resize-none py-1.5 text-xs"}
+              value={(d.images ?? []).join(",\n")}
               placeholder="Ou cole URLs de imagens aqui (separadas por vírgula)..."
-              onChange={(e) => upd(i, { images: e.target.value.split(",").map(url => url.trim()).filter(Boolean) })}
+              onChange={(e) =>
+                upd(i, {
+                  images: e.target.value
+                    .split(",")
+                    .map((url) => url.trim())
+                    .filter(Boolean),
+                })
+              }
             />
           </div>
           <div className="mt-3">

@@ -65,9 +65,7 @@ export function CardView({
             {card.airline || "Cia não informada"}
           </div>
           {card.trip_title && (
-            <div className="mt-1 ds-meta text-muted-foreground line-clamp-1">
-              {card.trip_title}
-            </div>
+            <div className="mt-1 ds-meta text-muted-foreground line-clamp-1">{card.trip_title}</div>
           )}
         </div>
       </div>

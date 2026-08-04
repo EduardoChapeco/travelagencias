@@ -15,7 +15,9 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { slugify } from "@/lib/slug";
 
 export const Route = createFileRoute("/agency/$slug/settings")({
-  head: ({ context }: any) => ({ meta: [{ title: `Configurações · ${context?.brand?.platform_name || 'Turis'}` }] }),
+  head: ({ context }: any) => ({
+    meta: [{ title: `Configurações · ${context?.brand?.platform_name || "Turis"}` }],
+  }),
   component: Page,
 });
 
@@ -119,21 +121,21 @@ function Page() {
 
   return (
     <div className="flex h-full flex-col overflow-hidden">
-              <PageHeader
-          title="Configurações da Agência"
-          actions={
-            <Button
-              type="submit"
-              form="settings-form"
-              disabled={isSubmitting}
-              className="h-7 px-3 flex items-center gap-1 rounded-full bg-brand text-brand-foreground hover:bg-brand/90 transition-colors cursor-pointer disabled:opacity-50 font-bold"
-            >
-              <Save className="h-3.5 w-3.5" />
-              <span>{isSubmitting ? "Salvando..." : "Salvar"}</span>
-            </Button>
-          }
-        />
-      
+      <PageHeader
+        title="Configurações da Agência"
+        actions={
+          <Button
+            type="submit"
+            form="settings-form"
+            disabled={isSubmitting}
+            className="h-7 px-3 flex items-center gap-1 rounded-full bg-brand text-brand-foreground hover:bg-brand/90 transition-colors cursor-pointer disabled:opacity-50 font-bold"
+          >
+            <Save className="h-3.5 w-3.5" />
+            <span>{isSubmitting ? "Salvando..." : "Salvar"}</span>
+          </Button>
+        }
+      />
+
       <div className="flex-1 overflow-y-auto px-4  md:pr-6 py-4 min-h-0 pb-24">
         <div className="max-w-2xl space-y-6">
           {/* Header card com identidade */}

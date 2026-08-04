@@ -2,7 +2,30 @@ import { createFileRoute, Link, useParams, useNavigate } from "@tanstack/react-r
 import { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import {
-  Search, Plus, Sparkles, Loader2, Calendar, Users, Compass, ArrowRight, Brain, Trash2, BookOpen, ShieldCheck, UserCheck, Zap, Bell, BellOff, CheckCircle2, XCircle, ToggleLeft, ToggleRight, AlertTriangle, TrendingDown, Eye, } from "lucide-react";
+  Search,
+  Plus,
+  Sparkles,
+  Loader2,
+  Calendar,
+  Users,
+  Compass,
+  ArrowRight,
+  Brain,
+  Trash2,
+  BookOpen,
+  ShieldCheck,
+  UserCheck,
+  Zap,
+  Bell,
+  BellOff,
+  CheckCircle2,
+  XCircle,
+  ToggleLeft,
+  ToggleRight,
+  AlertTriangle,
+  TrendingDown,
+  Eye,
+} from "lucide-react";
 import { useAgency } from "@/lib/agency-context";
 import { Button } from "@/components/ui/button";
 import { PageHeader, EmptyState, ModuleActionButton } from "@/components/shell/PageHeader";
@@ -22,9 +45,20 @@ import { StatusBadge } from "@/components/ui/badge";
 import { formatDate } from "@/lib/formatters";
 import { toast } from "sonner";
 import { useDebounce } from "@/hooks/use-debounce";
-import { fetchQuoteRequestsList, createQuoteRequest, deleteQuoteRequest, getCurrentUserRole, getCurrentUserId, invokeAiOrchestrator } from "@/services/quotes";
+import {
+  fetchQuoteRequestsList,
+  createQuoteRequest,
+  deleteQuoteRequest,
+  getCurrentUserRole,
+  getCurrentUserId,
+  invokeAiOrchestrator,
+} from "@/services/quotes";
 import { fetchClientsPick, fetchLeadsPick } from "@/services/proposals";
-import { ingestKnowledgeDocument, fetchKnowledgeDocs, deleteKnowledgeDoc } from "@/services/quotes-rag";
+import {
+  ingestKnowledgeDocument,
+  fetchKnowledgeDocs,
+  deleteKnowledgeDoc,
+} from "@/services/quotes-rag";
 import {
   fetchAgencyRules,
   fetchRuleCandidates,
@@ -43,11 +77,11 @@ import {
 } from "@/services/quotes-promotions";
 
 export const Route = createFileRoute("/agency/$slug/quotes/")({
-  head: ({ context }: any) => ({ meta: [{ title: `Workspace de Cotações · ${context?.brand?.platform_name || 'Turis'}` }] }),
+  head: ({ context }: any) => ({
+    meta: [{ title: `Workspace de Cotações · ${context?.brand?.platform_name || "Turis"}` }],
+  }),
   component: QuotesIndexPage,
 });
-
-
 
 const CATEGORY_LABEL: Record<string, string> = {
   gateway_rules: "Regras de Conexão (Gateway)",
@@ -62,7 +96,9 @@ function QuotesIndexPage() {
   const navigate = useNavigate();
   const qc = useQueryClient();
 
-  const [activeTab, setActiveTab] = useState<"quotes" | "knowledge" | "rules" | "promotions">("quotes");
+  const [activeTab, setActiveTab] = useState<"quotes" | "knowledge" | "rules" | "promotions">(
+    "quotes",
+  );
   const [searchQuery, setSearchQuery] = useState("");
   const debouncedSearch = useDebounce(searchQuery, 400);
 
@@ -102,7 +138,12 @@ function QuotesIndexPage() {
   const [budget, setBudget] = useState(10000);
 
   // Queries
-  const { data: quotes = [], isLoading, isError: isQuotesError, error: quotesError } = useQuery({
+  const {
+    data: quotes = [],
+    isLoading,
+    isError: isQuotesError,
+    error: quotesError,
+  } = useQuery({
     enabled: !!agency && activeTab === "quotes",
     queryKey: ["quote-requests", agency?.id],
     queryFn: () => fetchQuoteRequestsList(agency!.id),
@@ -129,33 +170,58 @@ function QuotesIndexPage() {
   const isSuperAdmin = userRole === "super_admin";
 
   // Query existing RAG documents
-  const { data: knowledgeDocs = [], isLoading: isDocsLoading, isError: isDocsError, error: docsError } = useQuery({
+  const {
+    data: knowledgeDocs = [],
+    isLoading: isDocsLoading,
+    isError: isDocsError,
+    error: docsError,
+  } = useQuery({
     enabled: !!agency && activeTab === "knowledge",
     queryKey: ["knowledge-documents", agency?.id],
     queryFn: () => fetchKnowledgeDocs(),
   });
 
   // ── Rules & AI tab queries ──────────────────────────────────────────────
-  const { data: agencyRules = [], isLoading: isRulesLoading, isError: isRulesError, error: rulesError } = useQuery({
+  const {
+    data: agencyRules = [],
+    isLoading: isRulesLoading,
+    isError: isRulesError,
+    error: rulesError,
+  } = useQuery({
     enabled: !!agency && activeTab === "rules",
     queryKey: ["agency-rules", agency?.id],
     queryFn: () => fetchAgencyRules(agency!.id),
   });
 
-  const { data: ruleCandidates = [], isLoading: isCandidatesLoading, isError: isCandidatesError, error: candidatesError } = useQuery({
+  const {
+    data: ruleCandidates = [],
+    isLoading: isCandidatesLoading,
+    isError: isCandidatesError,
+    error: candidatesError,
+  } = useQuery({
     enabled: !!agency && activeTab === "rules",
     queryKey: ["rule-candidates", agency?.id],
     queryFn: () => fetchRuleCandidates(agency!.id),
   });
 
   // ── Promotions tab queries ──────────────────────────────────────────────
-  const { data: watchProfiles = [], isLoading: isWatchersLoading, isError: isWatchersError, error: watchersError } = useQuery({
+  const {
+    data: watchProfiles = [],
+    isLoading: isWatchersLoading,
+    isError: isWatchersError,
+    error: watchersError,
+  } = useQuery({
     enabled: !!agency && activeTab === "promotions",
     queryKey: ["watch-profiles", agency?.id],
     queryFn: () => fetchWatchProfiles(agency!.id),
   });
 
-  const { data: promotionCandidates = [], isLoading: isPromotionsLoading, isError: isPromotionsError, error: promotionsError } = useQuery({
+  const {
+    data: promotionCandidates = [],
+    isLoading: isPromotionsLoading,
+    isError: isPromotionsError,
+    error: promotionsError,
+  } = useQuery({
     enabled: !!agency && activeTab === "promotions",
     queryKey: ["promotion-candidates", agency?.id],
     queryFn: () => fetchPromotionCandidates(agency!.id),
@@ -494,66 +560,63 @@ Texto: "${aiText}"`;
 
   return (
     <div className="w-full flex h-full flex-col overflow-hidden">
-              <PageHeader
-          title="Cotações"
-          search={{
-            value: searchQuery,
-            onChange: setSearchQuery,
-            placeholder: "Buscar...",
-          }}
-          filters={[
-            { label: "Ativas", value: "quotes" },
-            { label: "Cérebro & RAG", value: "knowledge" },
-            { label: "Regras IA", value: "rules" },
-            { label: "Promoções", value: "promotions" },
-          ]}
-          activeFilter={activeTab}
-          onFilterChange={(v) => {
-            setActiveTab(v as any);
-            setSearchQuery("");
-          }}
-          actions={
-            activeTab === "knowledge" ? (
-              <div className="flex items-center gap-1.5">
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={handleFeedDefaultGuidelines}
-                  disabled={feedingDefaults}
-                >
-                  {feedingDefaults ? (
-                    <Loader2 className="h-3 w-3 animate-spin" />
-                  ) : (
-                    <Plus className="h-3 w-3" />
-                  )}
-                  Padrões
-                </Button>
-                <Button
-                  size="sm"
-                  onClick={() => setNewKnowledgeOpen(true)}
-                >
-                  <Sparkles className="h-3 w-3" />
-                  Alimentar Diretriz
-                </Button>
-              </div>
-            ) : undefined
-          }
-          primaryAction={
-            activeTab === "quotes" ? (
-              <ModuleActionButton
-                label="Nova Cotação"
-                icon={<Plus className="h-3.5 w-3.5" />}
-                onClick={() => setNewOpen(true)}
-              />
-            ) : activeTab === "promotions" ? (
-              <ModuleActionButton
-                label="Novo Alerta"
-                icon={<Bell className="h-3.5 w-3.5" />}
-                onClick={() => setWatcherOpen(true)}
-              />
-            ) : undefined
-          }
-        />
+      <PageHeader
+        title="Cotações"
+        search={{
+          value: searchQuery,
+          onChange: setSearchQuery,
+          placeholder: "Buscar...",
+        }}
+        filters={[
+          { label: "Ativas", value: "quotes" },
+          { label: "Cérebro & RAG", value: "knowledge" },
+          { label: "Regras IA", value: "rules" },
+          { label: "Promoções", value: "promotions" },
+        ]}
+        activeFilter={activeTab}
+        onFilterChange={(v) => {
+          setActiveTab(v as any);
+          setSearchQuery("");
+        }}
+        actions={
+          activeTab === "knowledge" ? (
+            <div className="flex items-center gap-1.5">
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={handleFeedDefaultGuidelines}
+                disabled={feedingDefaults}
+              >
+                {feedingDefaults ? (
+                  <Loader2 className="h-3 w-3 animate-spin" />
+                ) : (
+                  <Plus className="h-3 w-3" />
+                )}
+                Padrões
+              </Button>
+              <Button size="sm" onClick={() => setNewKnowledgeOpen(true)}>
+                <Sparkles className="h-3 w-3" />
+                Alimentar Diretriz
+              </Button>
+            </div>
+          ) : undefined
+        }
+        primaryAction={
+          activeTab === "quotes" ? (
+            <ModuleActionButton
+              label="Nova Cotação"
+              icon={<Plus className="h-3.5 w-3.5" />}
+              onClick={() => setNewOpen(true)}
+            />
+          ) : activeTab === "promotions" ? (
+            <ModuleActionButton
+              label="Novo Alerta"
+              icon={<Bell className="h-3.5 w-3.5" />}
+              onClick={() => setWatcherOpen(true)}
+            />
+          ) : undefined
+        }
+      />
 
       {/* Main Content */}
       <div className="page-content page-section dock-offset">
@@ -561,7 +624,10 @@ Texto: "${aiText}"`;
           isQuotesError ? (
             <div className="p-4 rounded-[var(--radius-card)] glass-error text-xs flex items-center gap-2 m-6">
               <AlertTriangle className="h-4 w-4 shrink-0" />
-              <span>Erro ao obter workspace de cotações: {quotesError instanceof Error ? quotesError.message : "Erro desconhecido"}</span>
+              <span>
+                Erro ao obter workspace de cotações:{" "}
+                {quotesError instanceof Error ? quotesError.message : "Erro desconhecido"}
+              </span>
             </div>
           ) : isLoading ? (
             <div className="flex h-64 w-full items-center justify-center text-sm text-muted-foreground">
@@ -571,110 +637,120 @@ Texto: "${aiText}"`;
             <EmptyState
               title="Nenhuma cotação cadastrada"
               description="Crie uma cotação rápida baseada em IA ou configure cenários logísticos."
-              action={<Button variant="default" onClick={() => setNewOpen(true)}>Criar Cotação</Button>}
+              action={
+                <Button variant="default" onClick={() => setNewOpen(true)}>
+                  Criar Cotação
+                </Button>
+              }
             />
           ) : (
             <div className="flex-1 rounded-[var(--radius-card)] glass text-white bg-black/40 backdrop-blur-2xl-panel overflow-hidden flex flex-col">
               <div className="flex-1 overflow-y-auto no-scrollbar">
                 <table className="w-full text-left border-collapse text-xs">
-                <thead>
-                  <tr className="border-b border-white/10 text-white/50 font-semibold">
-                    <th className="px-4 py-3">Cliente / Lead</th>
-                    <th className="px-4 py-3">Destino</th>
-                    <th className="px-4 py-3">Datas Planejadas</th>
-                    <th className="px-4 py-3">Viajantes</th>
-                    <th className="px-4 py-3">Orçamento</th>
-                    <th className="px-4 py-3">Status</th>
-                    <th className="px-4 py-3 text-right">Ações</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-border glass-card border-none">
-                  {filteredQuotes.map((q) => {
-                    const intent = q.normalized_intent as any;
-                    const destName = intent?.destinations?.[0]?.name || "Não informado";
-                    const startStr = intent?.dateWindow?.start || "";
-                    const endStr = intent?.dateWindow?.end || "";
-                    const pax = intent?.travelers || { adults: 2, children: 0 };
-                    const budgetVal = intent?.budget?.amount || 0;
+                  <thead>
+                    <tr className="border-b border-border text-white/50 font-semibold">
+                      <th className="px-4 py-3">Cliente / Lead</th>
+                      <th className="px-4 py-3">Destino</th>
+                      <th className="px-4 py-3">Datas Planejadas</th>
+                      <th className="px-4 py-3">Viajantes</th>
+                      <th className="px-4 py-3">Orçamento</th>
+                      <th className="px-4 py-3">Status</th>
+                      <th className="px-4 py-3 text-right">Ações</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-border glass-card border-none">
+                    {filteredQuotes.map((q) => {
+                      const intent = q.normalized_intent as any;
+                      const destName = intent?.destinations?.[0]?.name || "Não informado";
+                      const startStr = intent?.dateWindow?.start || "";
+                      const endStr = intent?.dateWindow?.end || "";
+                      const pax = intent?.travelers || { adults: 2, children: 0 };
+                      const budgetVal = intent?.budget?.amount || 0;
 
-                    return (
-                      <tr key={q.id} className="hover:glass bg-white/5 border-white/10/50 transition-colors">
-                        <td className="px-4 py-3.5">
-                          <div className="font-semibold text-foreground">
-                            {q.client?.full_name || q.lead?.name || "Sem contato vinculado"}
-                          </div>
-                          <div className="ds-meta text-muted-foreground">
-                            {q.client
-                              ? "Cliente cadastrado"
-                              : q.lead
-                                ? "Lead/Oportunidade"
-                                : "Apenas pesquisa"}
-                          </div>
-                        </td>
-                        <td className="px-4 py-3.5">
-                          <span className="inline-flex items-center gap-1 font-medium text-foreground">
-                            <Compass className="h-3.5 w-3.5 text-muted-foreground shrink-0" />
-                            {destName}
-                          </span>
-                        </td>
-                        <td className="px-4 py-3.5">
-                          <div className="flex items-center gap-1.5 text-foreground">
-                            <Calendar className="h-3.5 w-3.5 text-muted-foreground shrink-0" />
-                            <span>{formatDate(startStr)}</span>
-                            <ArrowRight className="h-3 w-3 text-muted-foreground" />
-                            <span>{formatDate(endStr)}</span>
-                          </div>
-                        </td>
-                        <td className="px-4 py-3.5 text-muted-foreground">
-                          {pax.adults} adultos
-                          {pax.children > 0 && ` + ${pax.children} crianças`}
-                        </td>
-                        <td className="px-4 py-3.5 font-medium text-foreground">
-                          {budgetVal > 0 ? `R$ ${budgetVal.toLocaleString()}` : "N/D"}
-                        </td>
-                        <td className="px-4 py-3.5">
-                          <StatusBadge tone={QUOTE_STATUS_MAP[q.status]?.tone || "neutral"}>
-                            {QUOTE_STATUS_MAP[q.status]?.label || q.status}
-                          </StatusBadge>
-                        </td>
-                        <td className="px-4 py-3.5 text-right">
-                          <div className="flex items-center justify-end gap-1.5">
-                            <Link
-                              to="/agency/$slug/quotes/$id"
-                              params={{ slug, id: q.id }}
-                              className="inline-flex h-7 items-center justify-center rounded border-none glass-card border-none px-2.5 ds-meta font-bold text-foreground hover:glass bg-white/5 border-white/10"
-                            >
-                              Central de Decisão
-                            </Link>
-                            <Button
-                              onClick={() => {
-                                if (
-                                  confirm(
-                                    "Deseja realmente excluir esta cotação e todos os cenários associados?",
-                                  )
-                                ) {
-                                  deleteMut.mutate(q.id);
-                                }
-                              }}
-                              className="inline-flex h-7 w-7 items-center justify-center rounded border-none text-danger hover:bg-danger-bg hover:border-danger/30 transition-colors"
-                            >
-                              <Trash2 className="h-3.5 w-3.5" />
-                            </Button>
-                          </div>
-                        </td>
-                      </tr>
-                    );
-                  })}
-                </tbody>
-              </table>
+                      return (
+                        <tr
+                          key={q.id}
+                          className="hover:glass/50 transition-colors"
+                        >
+                          <td className="px-4 py-3.5">
+                            <div className="font-semibold text-foreground">
+                              {q.client?.full_name || q.lead?.name || "Sem contato vinculado"}
+                            </div>
+                            <div className="ds-meta text-muted-foreground">
+                              {q.client
+                                ? "Cliente cadastrado"
+                                : q.lead
+                                  ? "Lead/Oportunidade"
+                                  : "Apenas pesquisa"}
+                            </div>
+                          </td>
+                          <td className="px-4 py-3.5">
+                            <span className="inline-flex items-center gap-1 font-medium text-foreground">
+                              <Compass className="h-3.5 w-3.5 text-muted-foreground shrink-0" />
+                              {destName}
+                            </span>
+                          </td>
+                          <td className="px-4 py-3.5">
+                            <div className="flex items-center gap-1.5 text-foreground">
+                              <Calendar className="h-3.5 w-3.5 text-muted-foreground shrink-0" />
+                              <span>{formatDate(startStr)}</span>
+                              <ArrowRight className="h-3 w-3 text-muted-foreground" />
+                              <span>{formatDate(endStr)}</span>
+                            </div>
+                          </td>
+                          <td className="px-4 py-3.5 text-muted-foreground">
+                            {pax.adults} adultos
+                            {pax.children > 0 && ` + ${pax.children} crianças`}
+                          </td>
+                          <td className="px-4 py-3.5 font-medium text-foreground">
+                            {budgetVal > 0 ? `R$ ${budgetVal.toLocaleString()}` : "N/D"}
+                          </td>
+                          <td className="px-4 py-3.5">
+                            <StatusBadge tone={QUOTE_STATUS_MAP[q.status]?.tone || "neutral"}>
+                              {QUOTE_STATUS_MAP[q.status]?.label || q.status}
+                            </StatusBadge>
+                          </td>
+                          <td className="px-4 py-3.5 text-right">
+                            <div className="flex items-center justify-end gap-1.5">
+                              <Link
+                                to="/agency/$slug/quotes/$id"
+                                params={{ slug, id: q.id }}
+                                className="inline-flex h-7 items-center justify-center rounded border-none glass-card border-none px-2.5 ds-meta font-bold text-foreground hover:glass"
+                              >
+                                Central de Decisão
+                              </Link>
+                              <Button
+                                onClick={() => {
+                                  if (
+                                    confirm(
+                                      "Deseja realmente excluir esta cotação e todos os cenários associados?",
+                                    )
+                                  ) {
+                                    deleteMut.mutate(q.id);
+                                  }
+                                }}
+                                className="inline-flex h-7 w-7 items-center justify-center rounded border-none text-danger hover:bg-danger-bg hover:border-danger/30 transition-colors"
+                              >
+                                <Trash2 className="h-3.5 w-3.5" />
+                              </Button>
+                            </div>
+                          </td>
+                        </tr>
+                      );
+                    })}
+                  </tbody>
+                </table>
+              </div>
             </div>
-          </div>
-        )
-      ) : /* Tab: RAG Knowledge Management */
+          )
+        ) : /* Tab: RAG Knowledge Management */
         isDocsError ? (
           <div className="p-4 rounded-[var(--radius-card)] glass-error text-xs flex items-center gap-2 m-6">
             <AlertTriangle className="h-4 w-4 shrink-0" />
-            <span>Erro ao carregar cérebro semântico: {docsError instanceof Error ? docsError.message : "Erro desconhecido"}</span>
+            <span>
+              Erro ao carregar cérebro semântico:{" "}
+              {docsError instanceof Error ? docsError.message : "Erro desconhecido"}
+            </span>
           </div>
         ) : isDocsLoading ? (
           <div className="flex h-64 w-full items-center justify-center text-sm text-muted-foreground">
@@ -686,7 +762,8 @@ Texto: "${aiText}"`;
             description="Escreva diretrizes logísticas ou revisões de hotéis para alimentar o RAG e o validador."
             action={
               <div className="flex gap-2 justify-center">
-                <Button variant="ghost"
+                <Button
+                  variant="ghost"
                   onClick={handleFeedDefaultGuidelines}
                   disabled={feedingDefaults}
                   className="border-none"
@@ -780,14 +857,21 @@ Texto: "${aiText}"`;
               <div className="flex items-center gap-2 mb-4">
                 <Sparkles className="h-4 w-4 text-warning" />
                 <h3 className="text-sm font-bold text-foreground">Sugestões da IA para Revisão</h3>
-                {isCandidatesLoading && <Loader2 className="h-3.5 w-3.5 animate-spin text-muted-foreground" />}
+                {isCandidatesLoading && (
+                  <Loader2 className="h-3.5 w-3.5 animate-spin text-muted-foreground" />
+                )}
               </div>
 
               {ruleCandidates.filter((c: any) => c.status === "pending").length === 0 ? (
                 <div className="rounded border-none glass-card border-none p-6 text-center">
                   <CheckCircle2 className="h-8 w-8 text-success mx-auto mb-2 opacity-60" />
-                  <p className="text-xs text-muted-foreground">Nenhuma sugestão pendente de revisão.</p>
-                  <p className="ds-meta text-muted-foreground mt-1">O motor de aprendizado irá sugerir novas regras conforme as cotações forem processadas.</p>
+                  <p className="text-xs text-muted-foreground">
+                    Nenhuma sugestão pendente de revisão.
+                  </p>
+                  <p className="ds-meta text-muted-foreground mt-1">
+                    O motor de aprendizado irá sugerir novas regras conforme as cotações forem
+                    processadas.
+                  </p>
                 </div>
               ) : (
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -796,15 +880,21 @@ Texto: "${aiText}"`;
                     .map((cand: any) => {
                       const proposed = cand.proposed_rule as any;
                       return (
-                        <div key={cand.id} className="rounded border border-warning/30 bg-warning/5 p-4 flex flex-col gap-3">
+                        <div
+                          key={cand.id}
+                          className="rounded border border-warning/30 bg-warning/5 p-4 flex flex-col gap-3"
+                        >
                           <div className="flex items-start justify-between gap-2">
                             <div>
                               <div className="flex items-center gap-2 mb-1">
                                 <AlertTriangle className="h-3.5 w-3.5 text-warning shrink-0" />
-                                <span className="text-xs font-bold text-foreground">{cand.pattern}</span>
+                                <span className="text-xs font-bold text-foreground">
+                                  {cand.pattern}
+                                </span>
                               </div>
                               <span className="ds-meta text-muted-foreground">
-                                {cand.sample_size} casos analisados · confiança {Math.round(Number(cand.confidence) * 100)}%
+                                {cand.sample_size} casos analisados · confiança{" "}
+                                {Math.round(Number(cand.confidence) * 100)}%
                               </span>
                             </div>
                             <StatusBadge tone="warning">Pendente</StatusBadge>
@@ -812,7 +902,9 @@ Texto: "${aiText}"`;
 
                           {proposed?.effect && (
                             <div className="glass-card border-none rounded border-none p-2">
-                              <div className="ds-meta font-semibold uppercase tracking-wider text-muted-foreground mb-1">Efeito Proposto</div>
+                              <div className="ds-meta font-semibold uppercase tracking-wider text-muted-foreground mb-1">
+                                Efeito Proposto
+                              </div>
                               <pre className="ds-meta text-foreground whitespace-pre-wrap break-all font-mono">
                                 {JSON.stringify(proposed.effect, null, 2)}
                               </pre>
@@ -855,21 +947,27 @@ Texto: "${aiText}"`;
             <div>
               <div className="flex items-center gap-2 mb-4">
                 <Zap className="h-4 w-4 text-brand" />
-                <h3 className="text-sm font-bold text-foreground">Regras Ativas do Motor de Decisão</h3>
-                {isRulesLoading && <Loader2 className="h-3.5 w-3.5 animate-spin text-muted-foreground" />}
+                <h3 className="text-sm font-bold text-foreground">
+                  Regras Ativas do Motor de Decisão
+                </h3>
+                {isRulesLoading && (
+                  <Loader2 className="h-3.5 w-3.5 animate-spin text-muted-foreground" />
+                )}
               </div>
 
               {agencyRules.length === 0 ? (
                 <div className="rounded border-none glass-card border-none p-6 text-center">
                   <Zap className="h-8 w-8 text-muted-foreground mx-auto mb-2 opacity-40" />
                   <p className="text-xs text-muted-foreground">Nenhuma regra ativa ainda.</p>
-                  <p className="ds-meta text-muted-foreground mt-1">Aprove sugestões da IA acima para ativar regras no motor de decisão.</p>
+                  <p className="ds-meta text-muted-foreground mt-1">
+                    Aprove sugestões da IA acima para ativar regras no motor de decisão.
+                  </p>
                 </div>
               ) : (
                 <div className="rounded border-none overflow-hidden">
                   <table className="w-full text-xs">
                     <thead>
-                      <tr className="glass bg-white/5 border-white/10 border-b border-border text-muted-foreground font-semibold">
+                      <tr className="glass border-b border-border text-muted-foreground font-semibold">
                         <th className="px-4 py-3 text-left">Código</th>
                         <th className="px-4 py-3 text-left">Escopo</th>
                         <th className="px-4 py-3 text-left">Versão</th>
@@ -882,8 +980,13 @@ Texto: "${aiText}"`;
                       {agencyRules.map((rule: any) => {
                         const ver = rule.current_version;
                         return (
-                          <tr key={rule.id} className="hover:glass bg-white/5 border-white/10/50 transition-colors">
-                            <td className="px-4 py-3.5 font-mono ds-meta text-foreground">{rule.code}</td>
+                          <tr
+                            key={rule.id}
+                            className="hover:glass/50 transition-colors"
+                          >
+                            <td className="px-4 py-3.5 font-mono ds-meta text-foreground">
+                              {rule.code}
+                            </td>
                             <td className="px-4 py-3.5">
                               <StatusBadge tone={rule.scope === "global" ? "success" : "info"}>
                                 {rule.scope === "global" ? "Global" : "Agência"}
@@ -909,7 +1012,7 @@ Texto: "${aiText}"`;
                                       status: rule.status === "active" ? "paused" : "active",
                                     })
                                   }
-                                  className="inline-flex h-7 items-center gap-1 px-2 rounded border-none ds-meta font-semibold text-muted-foreground hover:text-foreground hover:glass bg-white/5 border-white/10 transition-colors"
+                                  className="inline-flex h-7 items-center gap-1 px-2 rounded border-none ds-meta font-semibold text-muted-foreground hover:text-foreground hover:glass transition-colors"
                                   title={rule.status === "active" ? "Pausar regra" : "Ativar regra"}
                                 >
                                   {rule.status === "active" ? (
@@ -958,16 +1061,26 @@ Texto: "${aiText}"`;
             <div>
               <div className="flex items-center gap-2 mb-4">
                 <Bell className="h-4 w-4 text-brand" />
-                <h3 className="text-sm font-bold text-foreground">Alertas de Monitoramento Ativos</h3>
-                {isWatchersLoading && <Loader2 className="h-3.5 w-3.5 animate-spin text-muted-foreground" />}
+                <h3 className="text-sm font-bold text-foreground">
+                  Alertas de Monitoramento Ativos
+                </h3>
+                {isWatchersLoading && (
+                  <Loader2 className="h-3.5 w-3.5 animate-spin text-muted-foreground" />
+                )}
               </div>
 
               {watchProfiles.length === 0 ? (
                 <div className="rounded border-none glass-card border-none p-6 text-center">
                   <Bell className="h-8 w-8 text-muted-foreground mx-auto mb-2 opacity-40" />
                   <p className="text-xs text-muted-foreground">Nenhum alerta configurado.</p>
-                  <p className="ds-meta text-muted-foreground mt-1 mb-4">Configure alertas para monitorar tarifas e oportunidades automáticas.</p>
-                  <Button variant="default" onClick={() => setWatcherOpen(true)} className="gap-1.5">
+                  <p className="ds-meta text-muted-foreground mt-1 mb-4">
+                    Configure alertas para monitorar tarifas e oportunidades automáticas.
+                  </p>
+                  <Button
+                    variant="default"
+                    onClick={() => setWatcherOpen(true)}
+                    className="gap-1.5"
+                  >
                     <Bell className="h-3.5 w-3.5" />
                     Criar Primeiro Alerta
                   </Button>
@@ -987,7 +1100,9 @@ Texto: "${aiText}"`;
                       >
                         <div>
                           <div className="flex items-start justify-between gap-2 mb-2">
-                            <h4 className="text-xs font-bold text-foreground line-clamp-1">{w.name}</h4>
+                            <h4 className="text-xs font-bold text-foreground line-clamp-1">
+                              {w.name}
+                            </h4>
                             <StatusBadge tone={w.status === "active" ? "success" : "neutral"}>
                               {w.status === "active" ? "Ativo" : "Pausado"}
                             </StatusBadge>
@@ -996,25 +1111,35 @@ Texto: "${aiText}"`;
                             {crit?.destination && (
                               <div className="ds-meta text-muted-foreground flex items-center gap-1">
                                 <Compass className="h-3 w-3 shrink-0" />
-                                Destino: <span className="text-foreground font-medium">{crit.destination}</span>
+                                Destino:{" "}
+                                <span className="text-foreground font-medium">
+                                  {crit.destination}
+                                </span>
                               </div>
                             )}
                             {crit?.origin && (
                               <div className="ds-meta text-muted-foreground flex items-center gap-1">
                                 <ArrowRight className="h-3 w-3 shrink-0" />
-                                Origem: <span className="text-foreground font-medium">{crit.origin}</span>
+                                Origem:{" "}
+                                <span className="text-foreground font-medium">{crit.origin}</span>
                               </div>
                             )}
                             {crit?.maxPrice > 0 && (
                               <div className="ds-meta text-muted-foreground flex items-center gap-1">
                                 <TrendingDown className="h-3 w-3 shrink-0" />
-                                Teto: <span className="text-foreground font-medium">R$ {Number(crit.maxPrice).toLocaleString("pt-BR")}</span>
+                                Teto:{" "}
+                                <span className="text-foreground font-medium">
+                                  R$ {Number(crit.maxPrice).toLocaleString("pt-BR")}
+                                </span>
                               </div>
                             )}
                             {crit?.productType && (
                               <div className="ds-meta text-muted-foreground flex items-center gap-1">
                                 <Eye className="h-3 w-3 shrink-0" />
-                                Tipo: <span className="text-foreground font-medium capitalize">{crit.productType}</span>
+                                Tipo:{" "}
+                                <span className="text-foreground font-medium capitalize">
+                                  {crit.productType}
+                                </span>
                               </div>
                             )}
                           </div>
@@ -1027,12 +1152,16 @@ Texto: "${aiText}"`;
                                 status: w.status === "active" ? "paused" : "active",
                               })
                             }
-                            className="flex-1 inline-flex items-center justify-center gap-1 h-7 rounded border-none ds-meta font-semibold text-muted-foreground hover:text-foreground hover:glass bg-white/5 border-white/10 transition-colors"
+                            className="flex-1 inline-flex items-center justify-center gap-1 h-7 rounded border-none ds-meta font-semibold text-muted-foreground hover:text-foreground hover:glass transition-colors"
                           >
                             {w.status === "active" ? (
-                              <><BellOff className="h-3 w-3" /> Pausar</>
+                              <>
+                                <BellOff className="h-3 w-3" /> Pausar
+                              </>
                             ) : (
-                              <><Bell className="h-3 w-3" /> Ativar</>
+                              <>
+                                <Bell className="h-3 w-3" /> Ativar
+                              </>
                             )}
                           </Button>
                           <Button
@@ -1058,15 +1187,20 @@ Texto: "${aiText}"`;
               <div className="flex items-center gap-2 mb-4">
                 <TrendingDown className="h-4 w-4 text-success" />
                 <h3 className="text-sm font-bold text-foreground">Oportunidades Identificadas</h3>
-                {isPromotionsLoading && <Loader2 className="h-3.5 w-3.5 animate-spin text-muted-foreground" />}
+                {isPromotionsLoading && (
+                  <Loader2 className="h-3.5 w-3.5 animate-spin text-muted-foreground" />
+                )}
               </div>
 
               {promotionCandidates.length === 0 ? (
                 <div className="rounded border-none glass-card border-none p-6 text-center">
                   <TrendingDown className="h-8 w-8 text-muted-foreground mx-auto mb-2 opacity-40" />
-                  <p className="text-xs text-muted-foreground">Nenhuma oportunidade detectada ainda.</p>
+                  <p className="text-xs text-muted-foreground">
+                    Nenhuma oportunidade detectada ainda.
+                  </p>
                   <p className="ds-meta text-muted-foreground mt-1">
-                    O motor reativo detecta automaticamente tarifas abaixo dos limites configurados nos alertas acima durante as buscas GDS.
+                    O motor reativo detecta automaticamente tarifas abaixo dos limites configurados
+                    nos alertas acima durante as buscas GDS.
                   </p>
                 </div>
               ) : (
@@ -1081,8 +1215,8 @@ Texto: "${aiText}"`;
                           promo.status === "new"
                             ? "border-success/30 bg-success/5"
                             : promo.status === "approved"
-                            ? "border-brand/20 glass-card border-none"
-                            : "border-border glass-card border-none opacity-50"
+                              ? "border-brand/20 glass-card border-none"
+                              : "border-border glass-card border-none opacity-50"
                         }`}
                       >
                         <div>
@@ -1100,11 +1234,15 @@ Texto: "${aiText}"`;
                                 promo.status === "new"
                                   ? "success"
                                   : promo.status === "approved"
-                                  ? "info"
-                                  : "neutral"
+                                    ? "info"
+                                    : "neutral"
                               }
                             >
-                              {promo.status === "new" ? "Nova" : promo.status === "approved" ? "Aprovada" : "Arquivada"}
+                              {promo.status === "new"
+                                ? "Nova"
+                                : promo.status === "approved"
+                                  ? "Aprovada"
+                                  : "Arquivada"}
                             </StatusBadge>
                           </div>
 
@@ -1128,15 +1266,19 @@ Texto: "${aiText}"`;
                         {promo.status === "new" && (
                           <div className="flex gap-2 border-t border-border pt-2">
                             <Button
-                              onClick={() => updatePromotionMut.mutate({ id: promo.id, status: "approved" })}
+                              onClick={() =>
+                                updatePromotionMut.mutate({ id: promo.id, status: "approved" })
+                              }
                               className="flex-1 inline-flex items-center justify-center gap-1 h-7 rounded border border-success/40 bg-success/10 ds-meta font-bold text-success hover:bg-success/20 transition-colors"
                             >
                               <CheckCircle2 className="h-3 w-3" />
                               Aprovar
                             </Button>
                             <Button
-                              onClick={() => updatePromotionMut.mutate({ id: promo.id, status: "dismissed" })}
-                              className="inline-flex items-center justify-center gap-1 h-7 px-2 rounded border-none ds-meta font-semibold text-muted-foreground hover:glass bg-white/5 border-white/10 transition-colors"
+                              onClick={() =>
+                                updatePromotionMut.mutate({ id: promo.id, status: "dismissed" })
+                              }
+                              className="inline-flex items-center justify-center gap-1 h-7 px-2 rounded border-none ds-meta font-semibold text-muted-foreground hover:glass transition-colors"
                             >
                               <XCircle className="h-3 w-3" />
                               Ignorar
@@ -1177,14 +1319,14 @@ Texto: "${aiText}"`;
                 </div>
                 <Button
                   onClick={() => setNewOpen(false)}
-                  className="rounded-full p-1.5 text-muted-foreground hover:glass bg-white/5 border-white/10 hover:text-foreground transition-colors"
+                  className="rounded-full p-1.5 text-muted-foreground hover:glass hover:text-foreground transition-colors"
                 >
                   <Plus className="h-5 w-5 rotate-45" />
                 </Button>
               </div>
 
               {/* AI Conversation Parser Section */}
-              <div className="glass bg-white/5 border-white/10/40 border-none/80 rounded p-4 mb-6">
+              <div className="glass/40 border-none/80 rounded p-4 mb-6">
                 <div className="flex items-center gap-1.5 ds-meta font-bold uppercase tracking-wider text-muted-foreground mb-3">
                   <Sparkles className="h-3.5 w-3.5 text-brand" />
                   Interpretar com IA (Opcional)
@@ -1196,7 +1338,8 @@ Texto: "${aiText}"`;
                   className="min-h-[80px]"
                 />
                 <div className="flex justify-end mt-2">
-                  <Button variant="default"
+                  <Button
+                    variant="default"
                     type="button"
                     onClick={handleAiInterpret}
                     disabled={interpreting || !aiText.trim()}
@@ -1220,8 +1363,11 @@ Texto: "${aiText}"`;
               {/* Manual overrides / details */}
               <div className="grid grid-cols-2 gap-4">
                 <Field label="Cliente Vinculado">
-                  <Select value={clientId || "none"} onValueChange={(val) => setClientId(val === "none" ? "" : val)}>
-                    <SelectTrigger className="w-full bg-white/5 rounded-full border-none">
+                  <Select
+                    value={clientId || "none"}
+                    onValueChange={(val) => setClientId(val === "none" ? "" : val)}
+                  >
+                    <SelectTrigger className="w-full glass rounded-full border-none">
                       <SelectValue placeholder="Sem cliente" />
                     </SelectTrigger>
                     <SelectContent>
@@ -1236,8 +1382,11 @@ Texto: "${aiText}"`;
                 </Field>
 
                 <Field label="Negociação / Lead (Opcional)">
-                  <Select value={leadId || "none"} onValueChange={(val) => setLeadId(val === "none" ? "" : val)}>
-                    <SelectTrigger className="w-full bg-white/5 rounded-full border-none">
+                  <Select
+                    value={leadId || "none"}
+                    onValueChange={(val) => setLeadId(val === "none" ? "" : val)}
+                  >
+                    <SelectTrigger className="w-full glass rounded-full border-none">
                       <SelectValue placeholder="Sem lead associado" />
                     </SelectTrigger>
                     <SelectContent>
@@ -1315,7 +1464,8 @@ Texto: "${aiText}"`;
               <Button variant="ghost" type="button" onClick={() => setNewOpen(false)}>
                 Cancelar
               </Button>
-              <Button variant="default"
+              <Button
+                variant="default"
                 type="button"
                 onClick={() => saveMut.mutate()}
                 disabled={saveMut.isPending || !destination}
@@ -1351,7 +1501,7 @@ Texto: "${aiText}"`;
                 </div>
                 <Button
                   onClick={() => setNewKnowledgeOpen(false)}
-                  className="rounded-full p-1.5 text-muted-foreground hover:glass bg-white/5 border-white/10 hover:text-foreground transition-colors"
+                  className="rounded-full p-1.5 text-muted-foreground hover:glass hover:text-foreground transition-colors"
                 >
                   <Plus className="h-5 w-5 rotate-45" />
                 </Button>
@@ -1367,11 +1517,8 @@ Texto: "${aiText}"`;
                 </Field>
 
                 <Field label="Categoria de Conhecimento">
-                  <Select
-                    value={knowledgeCategory}
-                    onValueChange={setKnowledgeCategory}
-                  >
-                    <SelectTrigger className="w-full bg-white/5 rounded-full border-none">
+                  <Select value={knowledgeCategory} onValueChange={setKnowledgeCategory}>
+                    <SelectTrigger className="w-full glass rounded-full border-none">
                       <SelectValue placeholder="Selecione a categoria..." />
                     </SelectTrigger>
                     <SelectContent>
@@ -1388,13 +1535,15 @@ Texto: "${aiText}"`;
                     value={knowledgeScope}
                     onValueChange={(val) => setKnowledgeScope(val as "global" | "agency")}
                   >
-                    <SelectTrigger className="w-full bg-white/5 rounded-full border-none">
+                    <SelectTrigger className="w-full glass rounded-full border-none">
                       <SelectValue placeholder="Selecione o escopo..." />
                     </SelectTrigger>
                     <SelectContent>
                       <SelectItem value="agency">Minha Agência (Isolado)</SelectItem>
                       {isSuperAdmin ? (
-                        <SelectItem value="global">Cérebro Global VibeTour (Sistema Inteiro)</SelectItem>
+                        <SelectItem value="global">
+                          Cérebro Global VibeTour (Sistema Inteiro)
+                        </SelectItem>
                       ) : (
                         <SelectItem value="global" disabled>
                           Cérebro Global VibeTour (Requer Admin Global)
@@ -1419,7 +1568,8 @@ Texto: "${aiText}"`;
               <Button variant="ghost" type="button" onClick={() => setNewKnowledgeOpen(false)}>
                 Cancelar
               </Button>
-              <Button variant="default"
+              <Button
+                variant="default"
                 type="button"
                 onClick={handleIngestKnowledge}
                 disabled={ingesting || !knowledgeTitle.trim() || !knowledgeContent.trim()}
@@ -1461,7 +1611,7 @@ Texto: "${aiText}"`;
                 </div>
                 <Button
                   onClick={() => setWatcherOpen(false)}
-                  className="rounded-full p-1.5 text-muted-foreground hover:glass bg-white/5 border-white/10 hover:text-foreground transition-colors"
+                  className="rounded-full p-1.5 text-muted-foreground hover:glass hover:text-foreground transition-colors"
                 >
                   <Plus className="h-5 w-5 rotate-45" />
                 </Button>
@@ -1477,8 +1627,11 @@ Texto: "${aiText}"`;
                 </Field>
 
                 <Field label="Tipo de Produto Monitorado">
-                  <Select value={watcherType} onValueChange={(val) => setWatcherType(val as "flight" | "hotel" | "package")}>
-                    <SelectTrigger className="w-full bg-white/5 rounded-full border-none">
+                  <Select
+                    value={watcherType}
+                    onValueChange={(val) => setWatcherType(val as "flight" | "hotel" | "package")}
+                  >
+                    <SelectTrigger className="w-full glass rounded-full border-none">
                       <SelectValue placeholder="Selecione o tipo..." />
                     </SelectTrigger>
                     <SelectContent>
@@ -1527,7 +1680,7 @@ Texto: "${aiText}"`;
                     value={String(watcherMinRating)}
                     onValueChange={(val) => setWatcherMinRating(Number(val))}
                   >
-                    <SelectTrigger className="w-full bg-white/5 rounded-full border-none">
+                    <SelectTrigger className="w-full glass rounded-full border-none">
                       <SelectValue placeholder="Selecione a avaliação..." />
                     </SelectTrigger>
                     <SelectContent>
@@ -1545,7 +1698,8 @@ Texto: "${aiText}"`;
               <Button variant="ghost" type="button" onClick={() => setWatcherOpen(false)}>
                 Cancelar
               </Button>
-              <Button variant="default"
+              <Button
+                variant="default"
                 type="button"
                 onClick={() => createWatcherMut.mutate()}
                 disabled={createWatcherMut.isPending || !watcherName.trim() || !watcherDest.trim()}

@@ -2,7 +2,27 @@ import { createLazyFileRoute, useParams, useNavigate } from "@tanstack/react-rou
 import { useState, useRef } from "react";
 import { useQuery, useQueryClient, useMutation } from "@tanstack/react-query";
 import {
-  Plus, UserPlus, Trash2, Sparkles, Wand2, Coins, TrendingUp, Target, Landmark, DollarSign, Calendar, Hotel, BedDouble, Users2, CheckCircle2, XCircle, AlertTriangle, Download, FileText, Layers, } from "lucide-react";
+  Plus,
+  UserPlus,
+  Trash2,
+  Sparkles,
+  Wand2,
+  Coins,
+  TrendingUp,
+  Target,
+  Landmark,
+  DollarSign,
+  Calendar,
+  Hotel,
+  BedDouble,
+  Users2,
+  CheckCircle2,
+  XCircle,
+  AlertTriangle,
+  Download,
+  FileText,
+  Layers,
+} from "lucide-react";
 import { useConfirm } from "@/hooks/use-confirm";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
@@ -12,7 +32,16 @@ import ReactMarkdown from "react-markdown";
 import { FileUploader } from "@/components/uploads/FileUploader";
 import { MultiFileUploader } from "@/components/uploads/MultiFileUploader";
 import {
-  fetchRoomingListByTour, createRoomRecord, updateRoomRecord, deleteRoomRecord, allocatePassengerToRoom, deallocatePassengerFromRoom, ROOM_TYPE_LABEL, ROOM_CAPACITY, type RoomingPassenger, } from "@/services/rooming";
+  fetchRoomingListByTour,
+  createRoomRecord,
+  updateRoomRecord,
+  deleteRoomRecord,
+  allocatePassengerToRoom,
+  deallocatePassengerFromRoom,
+  ROOM_TYPE_LABEL,
+  ROOM_CAPACITY,
+  type RoomingPassenger,
+} from "@/services/rooming";
 import { PageHeader } from "@/components/shell/PageHeader";
 import { Field } from "@/components/ui/field";
 import { FormInput as Input } from "@/components/ui/input";
@@ -213,7 +242,7 @@ function TourDetailPage() {
     const { error } = await supabase.rpc("update_group_tour_budget", {
       p_tour_id: id,
       p_ads_budget: tourQ.data?.ads_budget || 0,
-      p_target_poupanca_balance: val
+      p_target_poupanca_balance: val,
     });
     if (error) {
       // Fallback update
@@ -228,7 +257,7 @@ function TourDetailPage() {
     const { error } = await supabase.rpc("update_group_tour_budget", {
       p_tour_id: id,
       p_ads_budget: val,
-      p_target_poupanca_balance: tourQ.data?.target_poupanca_balance || 0
+      p_target_poupanca_balance: tourQ.data?.target_poupanca_balance || 0,
     });
     if (error) return toast.error(error.message);
     toast.success("Gasto Ads atualizado!");
@@ -321,8 +350,8 @@ function TourDetailPage() {
 
   if (!tourQ.data) {
     return (
-      <div className="flex min-h-[400px] flex-col items-center justify-center p-8 text-center glass bg-white/5 rounded-[var(--radius-card)] border border-dashed border-white/10 m-6">
-        <div className="h-10 w-10 rounded-full glass bg-white/10 flex items-center justify-center mb-4">
+      <div className="flex min-h-[400px] flex-col items-center justify-center p-8 text-center glass rounded-[var(--radius-card)] border border-dashed border-border m-6">
+        <div className="h-10 w-10 rounded-full glass-dark flex items-center justify-center mb-4">
           <XCircle className="h-5 w-5 text-white/50" />
         </div>
         <h3 className="text-base font-bold text-foreground">Excursão Não Encontrada</h3>
@@ -377,33 +406,34 @@ function TourDetailPage() {
 
   return (
     <div className="page-content dock-offset max-w-7xl mx-auto w-full flex flex-col min-h-0 relative space-y-6">
-              <div className="flex items-center gap-2">
-          <Select
-            value={t.status}
-            onChange={(e) => updateStatus(e.target.value)}
-            className="shrink-0 glass-card border-none border-none rounded-full px-2 focus:border-brand"
-          >
-            <option value="draft">Rascunho</option>
-            <option value="open">Aberta / Inscrições</option>
-            <option value="confirmed">Confirmada</option>
-            <option value="completed">Concluída / Encerrada</option>
-            <option value="cancelled">Cancelada</option>
-          </Select>
-          <Button variant="ghost"
-            onClick={togglePublic}
-            type="button"
-            className="shrink-0 h-8 text-xs border-none glass-card border-none text-foreground hover:glass bg-white/5 border-white/10"
-          >
-            {t.is_public ? "Tornar privada" : "Publicar"}
-          </Button>
-          <Button
-            onClick={() => setOpen(true)}
-            className="flex h-8 items-center gap-1.5 rounded-full bg-brand px-3 text-xs font-semibold text-brand-foreground transition-colors shrink-0 cursor-pointer hover:opacity-90"
-          >
-            <UserPlus className="h-3.5 w-3.5" /> Inscrever passageiro
-          </Button>
-        </div>
-      
+      <div className="flex items-center gap-2">
+        <Select
+          value={t.status}
+          onChange={(e) => updateStatus(e.target.value)}
+          className="shrink-0 glass-card border-none border-none rounded-full px-2 focus:border-brand"
+        >
+          <option value="draft">Rascunho</option>
+          <option value="open">Aberta / Inscrições</option>
+          <option value="confirmed">Confirmada</option>
+          <option value="completed">Concluída / Encerrada</option>
+          <option value="cancelled">Cancelada</option>
+        </Select>
+        <Button
+          variant="ghost"
+          onClick={togglePublic}
+          type="button"
+          className="shrink-0 h-8 text-xs border-none glass-card border-none text-foreground hover:glass"
+        >
+          {t.is_public ? "Tornar privada" : "Publicar"}
+        </Button>
+        <Button
+          onClick={() => setOpen(true)}
+          className="flex h-8 items-center gap-1.5 rounded-full bg-brand px-3 text-xs font-semibold text-brand-foreground transition-colors shrink-0 cursor-pointer hover:opacity-90"
+        >
+          <UserPlus className="h-3.5 w-3.5" /> Inscrever passageiro
+        </Button>
+      </div>
+
       <PageHeader title={t.title} description={t.destination ?? "Excursão em grupo terrestre"} />
 
       <div className="grid grid-cols-1 xs:grid-cols-2 lg:grid-cols-4 gap-3 text-sm mb-6">
@@ -413,9 +443,13 @@ function TourDetailPage() {
         <Stat
           label="Ocupação"
           value={
-            (t.financial && typeof t.financial === "object" && (t.financial as any).capacity_mode === "UNLIMITED")
+            t.financial &&
+            typeof t.financial === "object" &&
+            (t.financial as any).capacity_mode === "UNLIMITED"
               ? `${confirmedCount} / Ilimitado`
-              : (t.financial && typeof t.financial === "object" && (t.financial as any).capacity_mode === "ALLOTMENT")
+              : t.financial &&
+                  typeof t.financial === "object" &&
+                  (t.financial as any).capacity_mode === "ALLOTMENT"
                 ? `${confirmedCount} / ${t.total_seats} (Allotment)`
                 : `${confirmedCount} / ${t.total_seats}`
           }
@@ -494,7 +528,7 @@ function TourDetailPage() {
                   readOnly
                   value={t.important_notes || ""}
                   placeholder="Anotações visíveis ao cliente"
-                  className="glass bg-white/5 border-white/10"
+                  className="glass"
                 />
               </Field>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -503,7 +537,7 @@ function TourDetailPage() {
                     readOnly
                     value={t.cover_image_url || ""}
                     placeholder="https://..."
-                    className="glass bg-white/5 border-white/10"
+                    className="glass"
                   />
                 </Field>
                 <Field label="Link de Compartilhamento">
@@ -514,7 +548,7 @@ function TourDetailPage() {
                         ? `${window.location.origin}/p/${agency?.slug}/tour/${t.id}`
                         : `/p/${agency?.slug}/tour/${t.id}`
                     }
-                    className="glass bg-white/5 border-white/10 font-mono"
+                    className="glass font-mono"
                     onClick={(e) => (e.target as HTMLInputElement).select()}
                   />
                 </Field>
@@ -622,7 +656,7 @@ function TourDetailPage() {
 
               <div className="overflow-x-auto rounded border-none">
                 <table className="w-full text-sm">
-                  <thead className="glass bg-white/5 border-white/10/40 text-left ds-meta uppercase text-muted-foreground">
+                  <thead className="glass/40 text-left ds-meta uppercase text-muted-foreground">
                     <tr>
                       <th className="px-3 py-2">Passageiro</th>
                       <th className="px-3 py-2">CPF</th>
@@ -737,7 +771,9 @@ function TourDetailPage() {
                               <div className="flex items-center gap-1.5">
                                 <Button
                                   onClick={() => approveEnrollment.mutate(e)}
-                                  disabled={approveEnrollment.isPending || cancelEnrollment.isPending}
+                                  disabled={
+                                    approveEnrollment.isPending || cancelEnrollment.isPending
+                                  }
                                   className="inline-flex h-7 px-2.5 items-center justify-center rounded bg-emerald-500/10 text-emerald-600 hover:bg-emerald-500/20 ds-meta font-bold transition-all cursor-pointer disabled:opacity-50"
                                 >
                                   Aprovar
@@ -751,7 +787,9 @@ function TourDetailPage() {
                                       onConfirm: () => cancelEnrollment.mutate(e),
                                     });
                                   }}
-                                  disabled={approveEnrollment.isPending || cancelEnrollment.isPending}
+                                  disabled={
+                                    approveEnrollment.isPending || cancelEnrollment.isPending
+                                  }
                                   className="inline-flex h-7 px-2.5 items-center justify-center rounded bg-rose-500/10 text-rose-600 hover:bg-rose-500/20 ds-meta font-bold transition-all cursor-pointer disabled:opacity-50"
                                 >
                                   Rejeitar
@@ -811,7 +849,8 @@ function TourDetailPage() {
                       Listagem de despesas fixas da excursão e taxas por passageiro.
                     </p>
                   </div>
-                  <Button variant="ghost"
+                  <Button
+                    variant="ghost"
                     onClick={() => setAddCostSheet(true)}
                     className="h-7 ds-meta font-bold"
                   >
@@ -873,7 +912,9 @@ function TourDetailPage() {
                           Custo de captação integrado
                         </div>
                       </div>
-                      <strong className="font-mono text-amber-900">{formatCurrency(adsSpend)}</strong>
+                      <strong className="font-mono text-amber-900">
+                        {formatCurrency(adsSpend)}
+                      </strong>
                     </div>
                   )}
                 </div>
@@ -886,7 +927,8 @@ function TourDetailPage() {
               <div className="bg-white border-none rounded-[var(--radius-card)] p-5 space-y-4">
                 <div className="flex items-center justify-between">
                   <Landmark className="w-5 h-5 text-gray-400" />
-                  <Button variant="ghost"
+                  <Button
+                    variant="ghost"
                     onClick={() => setVaultSheet(true)}
                     className="h-6 ds-meta font-bold"
                   >
@@ -911,7 +953,8 @@ function TourDetailPage() {
               <div className="bg-white border-none rounded-[var(--radius-card)] p-5 space-y-4">
                 <div className="flex items-center justify-between">
                   <Target className="w-5 h-5 text-gray-400" />
-                  <Button variant="ghost"
+                  <Button
+                    variant="ghost"
                     onClick={() => setAdsSheet(true)}
                     className="h-6 ds-meta font-bold"
                   >
@@ -1039,7 +1082,9 @@ function TourDetailPage() {
               <Button variant="ghost" type="button" onClick={() => setAddCostSheet(false)}>
                 Cancelar
               </Button>
-              <Button variant="default" type="submit">Adicionar Custo</Button>
+              <Button variant="default" type="submit">
+                Adicionar Custo
+              </Button>
             </div>
           </form>
         </Sheet>
@@ -1070,7 +1115,9 @@ function TourDetailPage() {
               <Button variant="ghost" type="button" onClick={() => setVaultSheet(false)}>
                 Cancelar
               </Button>
-              <Button variant="default" type="submit">Salvar Saldo</Button>
+              <Button variant="default" type="submit">
+                Salvar Saldo
+              </Button>
             </div>
           </form>
         </Sheet>
@@ -1101,7 +1148,9 @@ function TourDetailPage() {
               <Button variant="ghost" type="button" onClick={() => setAdsSheet(false)}>
                 Cancelar
               </Button>
-              <Button variant="default" type="submit">Salvar Gastos</Button>
+              <Button variant="default" type="submit">
+                Salvar Gastos
+              </Button>
             </div>
           </form>
         </Sheet>
@@ -1219,7 +1268,9 @@ function FlyersTabContent({ tour, agency }: { tour: any; agency: any }) {
         cover_image_url: tour.cover_image_url,
       });
 
-      toast.success("Apresentação criada! Redirecionando para o Studio...", { id: "brochure-create" });
+      toast.success("Apresentação criada! Redirecionando para o Studio...", {
+        id: "brochure-create",
+      });
       navigate({
         to: "/agency/$slug/proposals/$id",
         params: { slug: agency.slug, id: newProp.id },
@@ -1290,7 +1341,7 @@ function FlyersTabContent({ tour, agency }: { tour: any; agency: any }) {
             >
               Vagas Limitadas
             </span>
-            <div className="text-[9px] font-black uppercase tracking-wider text-white bg-slate-950/40 backdrop-blur-xs px-2 py-0.5 rounded border border-white/10">
+            <div className="text-[9px] font-black uppercase tracking-wider text-white bg-slate-950/40 backdrop-blur-xs px-2 py-0.5 rounded border border-border">
               {agency?.name}
             </div>
           </div>
@@ -1308,13 +1359,13 @@ function FlyersTabContent({ tour, agency }: { tour: any; agency: any }) {
               </h2>
 
               <div className="flex flex-wrap items-center gap-1.5 mt-1.5">
-                <span className="bg-white/10 backdrop-blur-xs text-white rounded-full px-1.5 py-0.5 text-[8px] font-bold border border-white/5 flex items-center gap-1">
+                <span className="glass-dark backdrop-blur-xs text-white rounded-full px-1.5 py-0.5 text-[8px] font-bold border border-white/5 flex items-center gap-1">
                   <Calendar className="h-2.5 w-2.5 text-amber-400" />
                   {formatDate(tour.departure_date)} a {formatDate(tour.return_date)}
                 </span>
 
                 {tour.transport_type && (
-                  <span className="bg-white/10 backdrop-blur-xs text-white rounded-full px-1.5 py-0.5 text-[8px] font-bold border border-white/5 uppercase">
+                  <span className="glass-dark backdrop-blur-xs text-white rounded-full px-1.5 py-0.5 text-[8px] font-bold border border-white/5 uppercase">
                     {tour.transport_type === "bus"
                       ? "🚌 Rodoviário"
                       : tour.transport_type === "air"
@@ -1336,7 +1387,7 @@ function FlyersTabContent({ tour, agency }: { tour: any; agency: any }) {
                   {tour.includes.slice(0, 3).map((inc: string, idx: number) => (
                     <span
                       key={idx}
-                      className="bg-slate-950/60 backdrop-blur-xs border border-white/10 text-white rounded px-1.5 py-0.5 text-[7.5px] font-medium max-w-[85px] truncate"
+                      className="bg-slate-950/60 backdrop-blur-xs border border-border text-white rounded px-1.5 py-0.5 text-[7.5px] font-medium max-w-[85px] truncate"
                     >
                       ✓ {inc}
                     </span>
@@ -1357,7 +1408,7 @@ function FlyersTabContent({ tour, agency }: { tour: any; agency: any }) {
             </div>
 
             {/* Premium QR Code scanning card */}
-            <div className="bg-white text-slate-950 rounded-[var(--radius-card)] p-2 flex items-center justify-between gap-2.5 shadow-none border border-white/10">
+            <div className="bg-white text-slate-950 rounded-[var(--radius-card)] p-2 flex items-center justify-between gap-2.5 shadow-none border border-border">
               <div className="flex-1 min-w-0">
                 <span className="text-[8px] font-black uppercase tracking-wider block text-slate-900 leading-none">
                   {ctaTitle}
@@ -1457,9 +1508,9 @@ function FlyersTabContent({ tour, agency }: { tour: any; agency: any }) {
           Apresentação da Viagem
         </h4>
         <p className="text-xs text-muted-foreground leading-relaxed">
-          Crie uma apresentação comercial multipáginas interativa no Proposal Studio para enviar em PDF ou
-          apresentar online. O sistema preencherá automaticamente todos os dados existentes da
-          excursão:
+          Crie uma apresentação comercial multipáginas interativa no Proposal Studio para enviar em
+          PDF ou apresentar online. O sistema preencherá automaticamente todos os dados existentes
+          da excursão:
         </p>
 
         <div className="grid grid-cols-1 gap-2 text-xs">
@@ -1488,7 +1539,8 @@ function FlyersTabContent({ tour, agency }: { tour: any; agency: any }) {
             <Sparkles className="h-4 w-4 text-brand" /> Criar Apresentação no Studio
           </Button>
           <span className="ds-meta text-muted-foreground block mt-2 text-center">
-            Será gerado um material comercial no Studio onde poderá diagramar novos slides e exportar em PDF.
+            Será gerado um material comercial no Studio onde poderá diagramar novos slides e
+            exportar em PDF.
           </span>
         </div>
       </div>
@@ -1586,7 +1638,7 @@ function HotelPricingTabContent({ tour, onUpdate }: { tour: any; onUpdate: () =>
       const { error } = await supabase.rpc("update_group_tour_pricing", {
         p_tour_id: tour.id,
         p_pricing_tiers: nextTiers,
-        p_extra_options: extraOptions
+        p_extra_options: extraOptions,
       });
 
       if (error) throw error;
@@ -1606,7 +1658,7 @@ function HotelPricingTabContent({ tour, onUpdate }: { tour: any; onUpdate: () =>
       const { error } = await supabase.rpc("update_group_tour_pricing", {
         p_tour_id: tour.id,
         p_pricing_tiers: nextTiers,
-        p_extra_options: extraOptions
+        p_extra_options: extraOptions,
       });
 
       if (error) throw error;
@@ -1650,7 +1702,7 @@ function HotelPricingTabContent({ tour, onUpdate }: { tour: any; onUpdate: () =>
       const { error } = await supabase.rpc("update_group_tour_pricing", {
         p_tour_id: tour.id,
         p_pricing_tiers: defaults,
-        p_extra_options: extraOptions
+        p_extra_options: extraOptions,
       });
 
       if (error) throw error;
@@ -1674,7 +1726,7 @@ function HotelPricingTabContent({ tour, onUpdate }: { tour: any; onUpdate: () =>
       const { error } = await supabase.rpc("update_group_tour_pricing", {
         p_tour_id: tour.id,
         p_pricing_tiers: pricingTiers,
-        p_extra_options: nextExtras
+        p_extra_options: nextExtras,
       });
 
       if (error) throw error;
@@ -1694,7 +1746,7 @@ function HotelPricingTabContent({ tour, onUpdate }: { tour: any; onUpdate: () =>
       const { error } = await supabase.rpc("update_group_tour_pricing", {
         p_tour_id: tour.id,
         p_pricing_tiers: pricingTiers,
-        p_extra_options: nextExtras
+        p_extra_options: nextExtras,
       });
 
       if (error) throw error;
@@ -1820,7 +1872,12 @@ function HotelPricingTabContent({ tour, onUpdate }: { tour: any; onUpdate: () =>
             </div>
           </div>
 
-          <Button variant="default" type="submit" disabled={savingHotel} className="w-full h-10 text-xs">
+          <Button
+            variant="default"
+            type="submit"
+            disabled={savingHotel}
+            className="w-full h-10 text-xs"
+          >
             {savingHotel ? "Salvando..." : "Salvar Hospedagem"}
           </Button>
         </form>
@@ -1837,7 +1894,8 @@ function HotelPricingTabContent({ tour, onUpdate }: { tour: any; onUpdate: () =>
                 Acomodações & Tarifas Diferenciadas
               </h3>
             </div>
-            <Button variant="ghost"
+            <Button
+              variant="ghost"
               onClick={handlePopulateDefaultTiers}
               className="h-7 ds-meta border border-brand/20 text-brand"
             >
@@ -1856,7 +1914,6 @@ function HotelPricingTabContent({ tour, onUpdate }: { tour: any; onUpdate: () =>
                   value={tierName}
                   onChange={(e) => setTierName(e.target.value)}
                   placeholder="Ex: Quarto Casal Premium"
-                  
                 />
               </Field>
               <Field label="Preço por pessoa *">
@@ -1875,7 +1932,6 @@ function HotelPricingTabContent({ tour, onUpdate }: { tour: any; onUpdate: () =>
                   value={tierDesc}
                   onChange={(e) => setTierDesc(e.target.value)}
                   placeholder="Ex: Vista para a montanha"
-                  
                 />
               </Field>
               <Button variant="default" onClick={handleAddTier} className="w-full h-8 text-xs">
@@ -1902,7 +1958,9 @@ function HotelPricingTabContent({ tour, onUpdate }: { tour: any; onUpdate: () =>
                       )}
                     </div>
                     <div className="flex items-center gap-2.5 shrink-0 ml-2">
-                      <span className="font-mono font-bold text-brand">{formatCurrency(t.price)}</span>
+                      <span className="font-mono font-bold text-brand">
+                        {formatCurrency(t.price)}
+                      </span>
                       <Button
                         onClick={() => handleDeleteTier(i)}
                         className="text-muted-foreground hover:text-danger p-1"
@@ -1941,7 +1999,6 @@ function HotelPricingTabContent({ tour, onUpdate }: { tour: any; onUpdate: () =>
                   value={extraName}
                   onChange={(e) => setExtraName(e.target.value)}
                   placeholder="Ex: Passeio de Maria Fumaça"
-                  
                 />
               </Field>
               <Field label="Valor do serviço *">
@@ -1960,7 +2017,6 @@ function HotelPricingTabContent({ tour, onUpdate }: { tour: any; onUpdate: () =>
                   value={extraDesc}
                   onChange={(e) => setExtraDesc(e.target.value)}
                   placeholder="Ex: Inclui transfer + ingresso"
-                  
                 />
               </Field>
               <Button variant="default" onClick={handleAddExtra} className="w-full h-8 text-xs">
@@ -1987,7 +2043,9 @@ function HotelPricingTabContent({ tour, onUpdate }: { tour: any; onUpdate: () =>
                       )}
                     </div>
                     <div className="flex items-center gap-2.5 shrink-0 ml-2">
-                      <span className="font-mono font-bold text-success">+{formatCurrency(e.price)}</span>
+                      <span className="font-mono font-bold text-success">
+                        +{formatCurrency(e.price)}
+                      </span>
                       <Button
                         onClick={() => handleDeleteExtra(i)}
                         className="text-muted-foreground hover:text-danger p-1"
@@ -2171,7 +2229,8 @@ function ItineraryEditor({
               onChange={(e) => setAiInput(e.target.value)}
               rows={2}
             />
-            <Button variant="default"
+            <Button
+              variant="default"
               type="button"
               onClick={generateWithAI}
               disabled={aiGenerating}
@@ -2192,7 +2251,7 @@ function ItineraryEditor({
           key={d.day_number || (d as any).day || idx}
           className="rounded border-none glass-card border-none p-4 flex items-start gap-4"
         >
-          <div className="flex h-8 w-8 items-center justify-center rounded-full glass bg-white/5 border-white/10 text-xs font-semibold">
+          <div className="flex h-8 w-8 items-center justify-center rounded-full glass text-xs font-semibold">
             D{d.day_number || (d as any).day}
           </div>
           <div className="flex-1">
@@ -2215,7 +2274,7 @@ function ItineraryEditor({
       {!adding ? (
         <Button
           onClick={() => setAdding(true)}
-          className="flex w-full items-center justify-center gap-1 rounded border border-dashed border-border p-4 text-sm font-medium text-muted-foreground hover:glass bg-white/5 border-white/10"
+          className="flex w-full items-center justify-center gap-1 rounded border border-dashed border-border p-4 text-sm font-medium text-muted-foreground hover:glass"
         >
           <Plus className="h-4 w-4" /> Adicionar Dia
         </Button>
@@ -2248,7 +2307,9 @@ function ItineraryEditor({
             <Button variant="ghost" type="button" onClick={() => setAdding(false)}>
               Cancelar
             </Button>
-            <Button variant="default" type="submit">Salvar Dia</Button>
+            <Button variant="default" type="submit">
+              Salvar Dia
+            </Button>
           </div>
         </form>
       )}
@@ -2391,27 +2452,26 @@ function BusSeatManager({
       <div className="text-sm text-muted-foreground p-8">Erro ao carregar layout do ônibus.</div>
     );
 
-  const mapData = (qMap.data.seat_map as unknown as SeatCell[]).map(c => ({
-    ...c,
-    deck: c.deck || 1
-  })) || [];
-  
-  const isDoubleDecker = mapData.some(c => c.deck === 2);
-  const deckCells = mapData.filter(c => c.deck === activeDeck);
+  const mapData =
+    (qMap.data.seat_map as unknown as SeatCell[]).map((c) => ({
+      ...c,
+      deck: c.deck || 1,
+    })) || [];
+
+  const isDoubleDecker = mapData.some((c) => c.deck === 2);
+  const deckCells = mapData.filter((c) => c.deck === activeDeck);
   const maxCol = mapData.length > 0 ? Math.max(...mapData.map((c) => c.c)) + 1 : 5;
   const cols = qMap.data.cols || maxCol;
 
   const validSeatLabels = new Set(mapData.filter((c) => c.type === "seat").map((c) => c.label));
-  const orphans = passengers.filter(
-    (p) => p.seat_number && !validSeatLabels.has(p.seat_number)
-  );
+  const orphans = passengers.filter((p) => p.seat_number && !validSeatLabels.has(p.seat_number));
 
   return (
     <div className="flex flex-col md:flex-row gap-6">
       <div className="flex-1 glass-card border-none border-none rounded-[var(--radius-card)] p-8 overflow-x-auto">
         {isDoubleDecker && (
           <div className="flex justify-center mb-6">
-            <div className="flex items-center gap-1 bg-black/40 p-1 rounded-full border border-white/10">
+            <div className="flex items-center gap-1 bg-black/40 p-1 rounded-full border border-border">
               <Button
                 variant={activeDeck === 1 ? "default" : "ghost"}
                 onClick={() => setActiveDeck(1)}
@@ -2431,10 +2491,10 @@ function BusSeatManager({
         )}
 
         <div className="min-w-max mx-auto">
-          <div className="h-10 mb-6 border-b border-dashed border-white/20 rounded-t-[3rem] bg-white/5 flex items-center justify-center text-xs font-extrabold uppercase tracking-widest text-muted-foreground select-none">
+          <div className="h-10 mb-6 border-b border-dashed border-border rounded-t-[3rem] glass flex items-center justify-center text-xs font-extrabold uppercase tracking-widest text-muted-foreground select-none">
             {activeDeck === 1 ? "🚍 Cabine Frontal" : "Frente do Veículo"}
           </div>
-          
+
           <div
             style={{
               display: "grid",
@@ -2446,7 +2506,7 @@ function BusSeatManager({
               const assigned = passengers.find((p) => p.seat_number === cell.label);
               const isOccupied = !!assigned;
               const isSeat = cell.type === "seat";
-              
+
               const getSeatColor = (cat: any, occupied: boolean) => {
                 if (!occupied) {
                   switch (cat) {
@@ -2459,7 +2519,7 @@ function BusSeatManager({
                     case "leito_cama":
                       return "border-rose-500 bg-rose-500/10 text-rose-400 hover:bg-rose-500/20";
                     default:
-                      return "border-border/60 glass bg-white/5 border-white/10 text-muted-foreground hover:border-brand hover:text-brand";
+                      return "border-border/60 glass text-muted-foreground hover:border-brand hover:text-brand";
                   }
                 } else {
                   return "border-brand bg-brand/20 text-brand font-bold";
@@ -2475,24 +2535,39 @@ function BusSeatManager({
                     className={cn(
                       "flex h-12 w-12 items-center justify-center rounded-[var(--radius-card)] border-2 text-xs font-extrabold transition-all relative focus:ring-1 focus:ring-brand",
                       isSeat && getSeatColor(cell.category, isOccupied),
-                      cell.type === "aisle" && "border-dashed border-white/5 bg-transparent text-transparent",
-                      cell.type === "wc" && "border-info bg-info/10 text-info opacity-70 cursor-not-allowed",
-                      cell.type === "door" && "border-warning bg-warning/10 text-warning opacity-70 cursor-not-allowed",
-                      cell.type === "driver" && "border-success bg-success/10 text-success opacity-70 cursor-not-allowed",
-                      cell.type === "stairs" && "border-purple-400/20 bg-purple-400/5 text-purple-300 opacity-70 cursor-not-allowed",
-                      cell.type === "kitchen" && "border-orange-400/20 bg-orange-400/5 text-orange-300 opacity-70 cursor-not-allowed",
-                      cell.type === "guide" && "border-cyan-400/20 bg-cyan-400/5 text-cyan-300 opacity-70 cursor-not-allowed",
-                      cell.type === "empty" && "border-transparent bg-transparent text-transparent pointer-events-none"
+                      cell.type === "aisle" &&
+                        "border-dashed border-white/5 bg-transparent text-transparent",
+                      cell.type === "wc" &&
+                        "border-info bg-info/10 text-info opacity-70 cursor-not-allowed",
+                      cell.type === "door" &&
+                        "border-warning bg-warning/10 text-warning opacity-70 cursor-not-allowed",
+                      cell.type === "driver" &&
+                        "border-success bg-success/10 text-success opacity-70 cursor-not-allowed",
+                      cell.type === "stairs" &&
+                        "border-purple-400/20 bg-purple-400/5 text-purple-300 opacity-70 cursor-not-allowed",
+                      cell.type === "kitchen" &&
+                        "border-orange-400/20 bg-orange-400/5 text-orange-300 opacity-70 cursor-not-allowed",
+                      cell.type === "guide" &&
+                        "border-cyan-400/20 bg-cyan-400/5 text-cyan-300 opacity-70 cursor-not-allowed",
+                      cell.type === "empty" &&
+                        "border-transparent bg-transparent text-transparent pointer-events-none",
                     )}
                   >
-                    {isSeat ? cell.label : (
-                      cell.type === "wc" ? "WC" :
-                      cell.type === "door" ? "🚪" :
-                      cell.type === "driver" ? "🧑‍✈️" :
-                      cell.type === "stairs" ? "🪜" :
-                      cell.type === "kitchen" ? "☕" :
-                      cell.type === "guide" ? "🎙️" : ""
-                    )}
+                    {isSeat
+                      ? cell.label
+                      : cell.type === "wc"
+                        ? "WC"
+                        : cell.type === "door"
+                          ? "🚪"
+                          : cell.type === "driver"
+                            ? "🧑‍✈️"
+                            : cell.type === "stairs"
+                              ? "🪜"
+                              : cell.type === "kitchen"
+                                ? "☕"
+                                : cell.type === "guide"
+                                  ? "🎙️"
+                                  : ""}
                   </Button>
                   {isOccupied && isSeat && (
                     <div className="absolute -top-1 -right-1 h-3.5 w-3.5 bg-brand rounded-full border border-surface flex items-center justify-center">
@@ -2509,11 +2584,10 @@ function BusSeatManager({
       <div className="w-full md:w-80 space-y-4">
         {orphans.length > 0 && (
           <div className="bg-amber-500/10 border border-amber-500/25 rounded-[var(--radius-card)] p-4 text-xs text-amber-200 space-y-2">
-            <div className="font-bold flex items-center gap-1">
-              ⚠️ Inconsistência de Assentos
-            </div>
+            <div className="font-bold flex items-center gap-1">⚠️ Inconsistência de Assentos</div>
             <p className="ds-meta text-amber-300/80 leading-snug font-medium">
-              Os seguintes passageiros estão alocados em poltronas que não existem no layout selecionado:
+              Os seguintes passageiros estão alocados em poltronas que não existem no layout
+              selecionado:
             </p>
             <ul className="list-disc pl-4 space-y-1 font-semibold ds-meta text-amber-300">
               {orphans.map((p) => (
@@ -2528,7 +2602,10 @@ function BusSeatManager({
                 const { error } = await supabase
                   .from("group_tour_enrollments")
                   .update({ seat_number: null })
-                  .in("id", orphans.map((p) => p.id));
+                  .in(
+                    "id",
+                    orphans.map((p) => p.id),
+                  );
                 if (error) return toast.error(error.message);
                 toast.success("Assentos inconsistentes liberados!");
                 onChange();
@@ -2543,7 +2620,8 @@ function BusSeatManager({
         {selectedSeat ? (
           <div className="bg-brand/5 border border-brand/20 rounded p-5 space-y-4">
             <div className="ds-label-caps text-brand mb-1">
-              Poltrona {selectedSeat.label} {selectedSeat.category && `(${selectedSeat.category.replace("_", "-")})`}
+              Poltrona {selectedSeat.label}{" "}
+              {selectedSeat.category && `(${selectedSeat.category.replace("_", "-")})`}
             </div>
             <h4 className="text-sm font-semibold mb-4 text-foreground">Gerenciar Assento</h4>
             <Field label="Passageiro">
@@ -2552,17 +2630,26 @@ function BusSeatManager({
                 <option value="remove">Livre (Remover reserva)</option>
                 {passengers.map((p) => (
                   <option key={p.id} value={p.id}>
-                    {p.passenger_name} {p.seat_number ? `(Atualmente no assento ${p.seat_number})` : ""}
+                    {p.passenger_name}{" "}
+                    {p.seat_number ? `(Atualmente no assento ${p.seat_number})` : ""}
                   </option>
                 ))}
               </Select>
             </Field>
 
             <div className="mt-4 flex gap-2">
-              <Button variant="ghost" onClick={() => setSelectedSeat(null)} className="flex-1 text-xs font-bold h-9">
+              <Button
+                variant="ghost"
+                onClick={() => setSelectedSeat(null)}
+                className="flex-1 text-xs font-bold h-9"
+              >
                 Cancelar
               </Button>
-              <Button variant="default" onClick={assignSeat} className="flex-1 text-xs font-bold h-9">
+              <Button
+                variant="default"
+                onClick={assignSeat}
+                className="flex-1 text-xs font-bold h-9"
+              >
                 Confirmar
               </Button>
             </div>
@@ -2581,11 +2668,14 @@ function BusSeatManager({
             <span className="flex items-center gap-2">
               <div className="w-3 h-3 bg-brand/10 border border-brand rounded-full" /> Vendidos
             </span>
-            <span className="font-semibold text-foreground">{passengers.filter((p) => p.seat_number).length}</span>
+            <span className="font-semibold text-foreground">
+              {passengers.filter((p) => p.seat_number).length}
+            </span>
           </div>
           <div className="flex justify-between items-center text-sm">
             <span className="flex items-center gap-2">
-              <div className="w-3 h-3 glass bg-white/5 border border-white/10 rounded-full" /> Livres
+              <div className="w-3 h-3 glass border border-border rounded-full" />{" "}
+              Livres
             </span>
             <span className="font-semibold text-foreground">
               {mapData.filter((c) => c.type === "seat").length -
@@ -2614,8 +2704,7 @@ function EditTour({
   const promoMedia =
     tour.promo_media && typeof tour.promo_media === "object" ? tour.promo_media : {};
 
-  const tourFinancial =
-    tour.financial && typeof tour.financial === "object" ? tour.financial : {};
+  const tourFinancial = tour.financial && typeof tour.financial === "object" ? tour.financial : {};
 
   const [capacityMode, setCapacityMode] = useState(tourFinancial.capacity_mode || "FIXED");
   const [capacitySource, setCapacitySource] = useState(tourFinancial.capacity_source || "Veículo");
@@ -3017,9 +3106,7 @@ function EditTour({
                 </div>
               ))}
               {excludes.length === 0 && (
-                <div className="ds-meta text-muted-foreground italic">
-                  Nenhum item excluído.
-                </div>
+                <div className="ds-meta text-muted-foreground italic">Nenhum item excluído.</div>
               )}
             </div>
           </div>
@@ -3134,7 +3221,7 @@ function DroppableUnallocated({ children }: { children: React.ReactNode }) {
     <div
       ref={setNodeRef}
       className={cn(
-        "rounded-[var(--radius-card)] border border-dashed border-border glass bg-white/5 border-white/10/10 p-4 transition-all duration-200",
+        "rounded-[var(--radius-card)] border border-dashed border-border glass/10 p-4 transition-all duration-200",
         isOver && "ring-2 ring-brand border-brand bg-brand/5",
       )}
     >
@@ -3501,7 +3588,7 @@ function RoomingListManager({
                   onClick={handleExportExcel}
                   disabled={exporting}
                   title="Exportar Rooming List para Excel (.xlsx)"
-                  className="flex items-center gap-1.5 h-8 px-3 rounded-full border-none glass-card border-none text-xs font-semibold text-foreground hover:glass bg-white/5 border-white/10 hover:border-brand transition-colors cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="flex items-center gap-1.5 h-8 px-3 rounded-full border-none glass-card border-none text-xs font-semibold text-foreground hover:glass hover:border-brand transition-colors cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   <Download className="h-3.5 w-3.5" />{" "}
                   {exporting ? "Exportando..." : "Exportar Excel"}
@@ -3511,7 +3598,7 @@ function RoomingListManager({
                   onClick={handleExportPdf}
                   disabled={exporting}
                   title="Exportar Rooming List para PDF (.pdf)"
-                  className="flex items-center gap-1.5 h-8 px-3 rounded-full border-none glass-card border-none text-xs font-semibold text-foreground hover:glass bg-white/5 border-white/10 hover:border-brand transition-colors cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="flex items-center gap-1.5 h-8 px-3 rounded-full border-none glass-card border-none text-xs font-semibold text-foreground hover:glass hover:border-brand transition-colors cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   <FileText className="h-3.5 w-3.5 text-rose-500" />{" "}
                   {exporting ? "Exportando..." : "Exportar PDF"}
@@ -3613,7 +3700,7 @@ function RoomingListManager({
                 <DroppableRoom key={room.id} room={room} isFull={isFull}>
                   {/* Room header */}
                   <div
-                    className={`flex items-center justify-between px-4 py-3 ${room.is_confirmed ? "bg-success/5" : "glass bg-white/5 border-white/10/30"}`}
+                    className={`flex items-center justify-between px-4 py-3 ${room.is_confirmed ? "bg-success/5" : "glass/30"}`}
                   >
                     <div className="flex items-center gap-2">
                       <BedDouble className="h-4 w-4 text-brand shrink-0" />
@@ -3657,7 +3744,7 @@ function RoomingListManager({
                         {roomPax.length}/{cap}
                       </span>
                     </div>
-                    <div className="h-1.5 rounded-full glass bg-white/5 border-white/10 overflow-hidden">
+                    <div className="h-1.5 rounded-full glass overflow-hidden">
                       <div
                         className={`h-full rounded-full transition-all ${isFull ? "bg-success" : pctFull >= 0.5 ? "bg-brand" : "bg-muted-foreground/30"}`}
                         style={{ width: `${Math.min(100, pctFull * 100)}%` }}

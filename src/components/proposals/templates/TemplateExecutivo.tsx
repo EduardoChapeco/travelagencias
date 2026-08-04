@@ -31,9 +31,7 @@ export default function TemplateExecutivo({ proposal: p, agency }: TemplateProps
           <div className="text-2xl font-bold tracking-tight text-slate-900">{vm.agency.name}</div>
         )}
         <div className="text-right">
-          <div className="ds-label-caps text-slate-400">
-            Proposta Comercial
-          </div>
+          <div className="ds-label-caps text-slate-400">Proposta Comercial</div>
           <div className="text-2xl font-bold text-slate-900">#{p.number}</div>
         </div>
       </div>
@@ -58,32 +56,24 @@ export default function TemplateExecutivo({ proposal: p, agency }: TemplateProps
       <div className="border border-slate-200 rounded-[var(--radius-card)] p-8 mb-16 break-inside-avoid">
         <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
           <div>
-            <div className="ds-label-caps text-slate-400 mb-1">
-              Aos cuidados de
-            </div>
+            <div className="ds-label-caps text-slate-400 mb-1">Aos cuidados de</div>
             <div className="font-semibold text-slate-900">
               {(p as any).client_name || "Cliente"}
             </div>
           </div>
           <div>
-            <div className="ds-label-caps text-slate-400 mb-1">
-              Destino
-            </div>
+            <div className="ds-label-caps text-slate-400 mb-1">Destino</div>
             <div className="font-semibold text-slate-900">{p.destination || "—"}</div>
           </div>
           <div>
-            <div className="ds-label-caps text-slate-400 mb-1">
-              Período
-            </div>
+            <div className="ds-label-caps text-slate-400 mb-1">Período</div>
             <div className="font-semibold text-slate-900">
               {p.travel_start ? formatDate(p.travel_start) : "—"} a{" "}
               {p.travel_end ? formatDate(p.travel_end) : "—"}
             </div>
           </div>
           <div>
-            <div className="ds-label-caps text-slate-400 mb-1">
-              Passageiros
-            </div>
+            <div className="ds-label-caps text-slate-400 mb-1">Passageiros</div>
             <div className="font-semibold text-slate-900">
               {vm.totalPax ? `${vm.totalPax} pax` : "—"}
             </div>
@@ -100,11 +90,12 @@ export default function TemplateExecutivo({ proposal: p, agency }: TemplateProps
             </h2>
             <div className="space-y-4">
               {p.flights!.map((f, i) => (
-                <div key={i} className="border border-slate-200 rounded-[var(--radius-card)] p-5 break-inside-avoid">
+                <div
+                  key={i}
+                  className="border border-slate-200 rounded-[var(--radius-card)] p-5 break-inside-avoid"
+                >
                   <div className="flex justify-between items-center mb-4">
-                    <span className="ds-label-caps text-slate-500">
-                      {f.airline || "Cia Aérea"}
-                    </span>
+                    <span className="ds-label-caps text-slate-500">{f.airline || "Cia Aérea"}</span>
                     <span className="text-xs font-mono text-slate-500 bg-slate-100 px-2 py-1 rounded">
                       {f.flight_number}
                     </span>
@@ -167,17 +158,13 @@ export default function TemplateExecutivo({ proposal: p, agency }: TemplateProps
                     </div>
                     <div className="grid grid-cols-2 gap-4 mt-6">
                       <div>
-                        <div className="ds-label-caps text-slate-400">
-                          Check-in
-                        </div>
+                        <div className="ds-label-caps text-slate-400">Check-in</div>
                         <div className="text-sm font-semibold text-slate-700">
                           {formatDate(h.checkin)}
                         </div>
                       </div>
                       <div>
-                        <div className="ds-label-caps text-slate-400">
-                          Check-out
-                        </div>
+                        <div className="ds-label-caps text-slate-400">Check-out</div>
                         <div className="text-sm font-semibold text-slate-700">
                           {formatDate(h.checkout)}
                         </div>
@@ -229,7 +216,9 @@ export default function TemplateExecutivo({ proposal: p, agency }: TemplateProps
                   </div>
                   <div>
                     <div className="font-semibold text-slate-900">{t.description}</div>
-                    {t.date && <div className="text-xs text-slate-500 mt-1">{formatDate(t.date)}</div>}
+                    {t.date && (
+                      <div className="text-xs text-slate-500 mt-1">{formatDate(t.date)}</div>
+                    )}
                   </div>
                 </div>
               ))}
@@ -267,12 +256,13 @@ export default function TemplateExecutivo({ proposal: p, agency }: TemplateProps
               </div>
 
               <div className="w-full md:w-[45%] space-y-4">
-                <div className="bg-white/10 border border-white/20 rounded-[var(--radius-card)] p-5">
+                <div className="glass-dark border border-border rounded-[var(--radius-card)] p-5">
                   <div className="ds-meta uppercase font-bold tracking-widest text-slate-400 mb-2">
                     Cartão de Crédito
                   </div>
                   <div className="text-lg font-semibold text-white">
-                    {vm.totals.parcelasCartao}x de {formatCurrency(vm.totals.valorParcelaCartao, p.currency)}
+                    {vm.totals.parcelasCartao}x de{" "}
+                    {formatCurrency(vm.totals.valorParcelaCartao, p.currency)}
                   </div>
                 </div>
 
@@ -288,7 +278,9 @@ export default function TemplateExecutivo({ proposal: p, agency }: TemplateProps
                       -{vm.totals.descontoPixPercentual}%
                     </div>
                   </div>
-                  <div className="text-2xl font-bold">{formatCurrency(vm.totals.totalPix, p.currency)}</div>
+                  <div className="text-2xl font-bold">
+                    {formatCurrency(vm.totals.totalPix, p.currency)}
+                  </div>
                 </div>
               </div>
             </div>

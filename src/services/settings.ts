@@ -25,29 +25,17 @@ export async function saveCompanyProfile(
   agencyPayload: any,
   privatePayload: any,
 ) {
-  const existing = await fetchCompanyProfile(agencyId);
-  const u = (await supabase.auth.getUser()).data.user;
+  const { error } = await supabase.rpc(
+    "save_company_profile_rpc" as never,
+    {
+      p_agency_id: agencyId,
+      p_company_payload: payload || null,
+      p_agency_payload: agencyPayload || null,
+      p_private_payload: privatePayload || null,
+    } as never,
+  );
 
-  if (existing) {
-    await supabase.from("company_profiles").update(payload).eq("agency_id", agencyId);
-  } else {
-    await supabase.from("company_profiles").insert({ ...payload, agency_id: agencyId });
-  }
-
-  if (agencyPayload) {
-    await supabase.from("agencies").update(agencyPayload).eq("id", agencyId);
-  }
-
-  if (privatePayload) {
-    await supabase.from("agency_private").upsert({ agency_id: agencyId, ...privatePayload });
-  }
-
-  await supabase.from("audit_log").insert({
-    agency_id: agencyId,
-    actor_id: u?.id,
-    action: "update_company_profile",
-    metadata: payload,
-  });
+  if (error) throw new Error(error.message);
 }
 
 export async function saveSettings(
@@ -119,10 +107,13 @@ export async function createApiKey(payload: any) {
 
 export async function toggleApiKey(id: string, is_active: boolean) {
   const status = is_active ? "healthy" : "disabled";
-  const { error } = await supabase
-    .from("ai_api_credentials")
-    .update({ status })
-    .eq("id", id);
+  const { error } = await supabase.rpc(
+    "toggle_api_key_rpc" as never,
+    {
+      p_key_id: id,
+      p_status: status,
+    } as never,
+  );
   if (error) throw error;
 }
 
@@ -279,7 +270,6 @@ export async function testOperatorConnection(
   return data;
 }
 
-
 // ─── Team ─────────────────────────────────────────────────────────────────────
 
 export async function fetchTeamMembers(agencyId: string) {
@@ -333,10 +323,13 @@ export async function removeTeamMember(agencyId: string, userId: string) {
 }
 
 export async function changeTeamMemberRole(agencyId: string, userId: string, role: string) {
-  const { error } = await supabase
-    .from("user_roles")
-    .update({ role: role as any })
-    .eq("agency_id", agencyId)
-    .eq("user_id", userId);
+  const { error } = await supabase.rpc(
+    "change_team_member_role_with_agency_rpc" as never,
+    {
+      p_agency_id: agencyId,
+      p_target_user_id: userId,
+      p_new_role: role,
+    } as never,
+  );
   if (error) throw error;
 }

@@ -11,36 +11,42 @@ export interface AgentRawMetrics {
   reopened_tasks: number;
 }
 
-export type ProductivityScoreBreakdown = Omit<ProductivityScore, "user_id" | "period_date" | "period_type">;
+export type ProductivityScoreBreakdown = Omit<
+  ProductivityScore,
+  "user_id" | "period_date" | "period_type"
+>;
 
-const LEVEL_BENCHMARKS: Record<AgentLevel, {
-  tasks_per_day: number;
-  complex_ratio: number;        // % de tasks de alta prioridade esperada
-  response_minutes: number;     // tempo médio esperado para iniciar task atribuída
-  completion_rate: number;      // taxa esperada de conclusão no prazo
-  efficiency_target: number;    // actual_h / estimated_h esperado (1.0 = perfeito)
-}> = {
+const LEVEL_BENCHMARKS: Record<
+  AgentLevel,
+  {
+    tasks_per_day: number;
+    complex_ratio: number; // % de tasks de alta prioridade esperada
+    response_minutes: number; // tempo médio esperado para iniciar task atribuída
+    completion_rate: number; // taxa esperada de conclusão no prazo
+    efficiency_target: number; // actual_h / estimated_h esperado (1.0 = perfeito)
+  }
+> = {
   junior: {
     tasks_per_day: 5,
-    complex_ratio: 0.20,
+    complex_ratio: 0.2,
     response_minutes: 90,
-    completion_rate: 0.70,
-    efficiency_target: 1.30    // 30% acima do estimado é aceitável para junior
+    completion_rate: 0.7,
+    efficiency_target: 1.3, // 30% acima do estimado é aceitável para junior
   },
   pleno: {
     tasks_per_day: 8,
     complex_ratio: 0.35,
     response_minutes: 45,
     completion_rate: 0.82,
-    efficiency_target: 1.15
+    efficiency_target: 1.15,
   },
   senior: {
     tasks_per_day: 12,
-    complex_ratio: 0.50,
+    complex_ratio: 0.5,
     response_minutes: 20,
-    completion_rate: 0.90,
-    efficiency_target: 1.05
-  }
+    completion_rate: 0.9,
+    efficiency_target: 1.05,
+  },
 };
 
 /**
@@ -49,7 +55,7 @@ const LEVEL_BENCHMARKS: Record<AgentLevel, {
  */
 export function calculateProductivityScore(
   metrics: AgentRawMetrics,
-  level: AgentLevel
+  level: AgentLevel,
 ): ProductivityScoreBreakdown {
   const bench = LEVEL_BENCHMARKS[level];
 
@@ -59,32 +65,37 @@ export function calculateProductivityScore(
   // 2. QUALIDADE (30%):
   const totalCompleted = metrics.on_time_tasks + metrics.overdue_tasks;
   const actualCompletionRate = totalCompleted > 0 ? metrics.on_time_tasks / totalCompleted : 0;
-  
+
   // Penaliza recuos
-  const reopenPenalty = Math.max(0, 1 - (metrics.reopened_tasks * 0.1));
-  const qualityScore = Math.min(actualCompletionRate / bench.completion_rate, 1.0) * 30 * reopenPenalty;
+  const reopenPenalty = Math.max(0, 1 - metrics.reopened_tasks * 0.1);
+  const qualityScore =
+    Math.min(actualCompletionRate / bench.completion_rate, 1.0) * 30 * reopenPenalty;
 
   // 3. COMPLEXIDADE (20%): taxa de tasks complexas vs esperado
-  const actualComplexRatio = totalCompleted > 0 ? metrics.high_priority_completed / totalCompleted : 0;
+  const actualComplexRatio =
+    totalCompleted > 0 ? metrics.high_priority_completed / totalCompleted : 0;
   const complexityScore = Math.min(actualComplexRatio / bench.complex_ratio, 1.0) * 20;
 
   // 4. TEMPO DE RESPOSTA (15%):
   // Se for mais rápido que o benchmark, ganha os 15 pontos inteiros.
   let responseScore = 15;
   if (metrics.avg_response_minutes > bench.response_minutes) {
-    const penalty = (metrics.avg_response_minutes - bench.response_minutes) / bench.response_minutes;
-    responseScore = Math.max(15 - (penalty * 15), 0);
+    const penalty =
+      (metrics.avg_response_minutes - bench.response_minutes) / bench.response_minutes;
+    responseScore = Math.max(15 - penalty * 15, 0);
   }
 
   // 5. CONSISTÊNCIA / EFICIÊNCIA (15%):
-  const actualEfficiency = metrics.estimated_h > 0 ? (metrics.actual_h / metrics.estimated_h) : 1;
+  const actualEfficiency = metrics.estimated_h > 0 ? metrics.actual_h / metrics.estimated_h : 1;
   let consistencyScore = 15;
   if (actualEfficiency > bench.efficiency_target) {
-    const effPenalty = (actualEfficiency - bench.efficiency_target);
-    consistencyScore = Math.max(15 - (effPenalty * 15), 0);
+    const effPenalty = actualEfficiency - bench.efficiency_target;
+    consistencyScore = Math.max(15 - effPenalty * 15, 0);
   }
 
-  const scoreTotal = Math.round(volumeScore + qualityScore + complexityScore + responseScore + consistencyScore);
+  const scoreTotal = Math.round(
+    volumeScore + qualityScore + complexityScore + responseScore + consistencyScore,
+  );
 
   // Análise Baseada no Score (Mocks simples para IA que seria servida via API)
   const burnoutRisk = calculateBurnoutRisk(metrics, level, actualEfficiency);
@@ -106,16 +117,20 @@ export function calculateProductivityScore(
     ai_improvement: generateImprovements(responseScore, consistencyScore),
     ai_trend: scoreTotal >= 80 ? "improving" : scoreTotal >= 60 ? "stable" : "declining",
     ai_burnout_risk: burnoutRisk,
-    ai_recommendations: []
+    ai_recommendations: [],
   };
 }
 
-function calculateBurnoutRisk(metrics: AgentRawMetrics, level: AgentLevel, efficiency: number): number {
+function calculateBurnoutRisk(
+  metrics: AgentRawMetrics,
+  level: AgentLevel,
+  efficiency: number,
+): number {
   let risk = 0;
   // Muitas horas trabalhadas
   if (metrics.actual_h > 9) risk += 0.4;
   else if (metrics.actual_h > 8) risk += 0.2;
-  
+
   // Muitas tarefas acima do cargo
   const bench = LEVEL_BENCHMARKS[level];
   if (metrics.completed_tasks > bench.tasks_per_day * 1.5) risk += 0.3;

@@ -6,7 +6,6 @@ import { Plus, BookOpen, Edit2, Eye, Search, Workflow, ClipboardList, Trash2 } f
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { useAgency } from "@/lib/agency-context";
-;
 import { PageHeader, EmptyState, ModuleActionButton } from "@/components/shell/PageHeader";
 import { Field } from "@/components/ui/field";
 import { FormInput as Input } from "@/components/ui/input";
@@ -17,7 +16,9 @@ import { StatusBadge } from "@/components/ui/badge";
 import { RichTextEditor } from "@/components/ui/RichTextEditor";
 
 export const Route = createFileRoute("/agency/$slug/knowledge")({
-  head: ({ context }: any) => ({ meta: [{ title: `Base de conhecimento · ${context?.brand?.platform_name || 'Turis'}` }] }),
+  head: ({ context }: any) => ({
+    meta: [{ title: `Base de conhecimento · ${context?.brand?.platform_name || "Turis"}` }],
+  }),
   component: KnowledgePage,
 });
 
@@ -93,27 +94,27 @@ function KnowledgePage() {
 
   return (
     <div className="flex h-full flex-col overflow-hidden">
-              <PageHeader
-          title="Base de Conhecimento"
-          search={{
-            value: search,
-            onChange: setSearch,
-            placeholder: "Buscar..."
-          }}
-          filters={[
-            { label: "Guias", value: "articles" },
-            { label: "Playbooks", value: "playbooks" },
-          ]}
-          activeFilter={tab}
-          onFilterChange={(v) => setTab(v as any)}
-          primaryAction={
-            <ModuleActionButton
-        label={tab === "articles" ? "Novo Artigo" : "Novo Playbook"}
-        icon={<Plus className="h-3.5 w-3.5" />}
-              onClick={() => tab === "articles" ? setOpen(true) : setPlaybookOpen(true)}
-            />
-          }
-        />
+      <PageHeader
+        title="Base de Conhecimento"
+        search={{
+          value: search,
+          onChange: setSearch,
+          placeholder: "Buscar...",
+        }}
+        filters={[
+          { label: "Guias", value: "articles" },
+          { label: "Playbooks", value: "playbooks" },
+        ]}
+        activeFilter={tab}
+        onFilterChange={(v) => setTab(v as any)}
+        primaryAction={
+          <ModuleActionButton
+            label={tab === "articles" ? "Novo Artigo" : "Novo Playbook"}
+            icon={<Plus className="h-3.5 w-3.5" />}
+            onClick={() => (tab === "articles" ? setOpen(true) : setPlaybookOpen(true))}
+          />
+        }
+      />
 
       {/* ARTICLES TAB */}
       {tab === "articles" && (
@@ -163,7 +164,10 @@ function KnowledgePage() {
                 {a.tags?.length > 0 && (
                   <div className="mt-2 flex flex-wrap gap-1">
                     {a.tags.map((t: string) => (
-                      <span key={t} className="rounded glass bg-white/5 border-white/10 px-1.5 py-0.5 ds-meta">
+                      <span
+                        key={t}
+                        className="rounded glass px-1.5 py-0.5 ds-meta"
+                      >
                         {t}
                       </span>
                     ))}
@@ -208,7 +212,7 @@ function KnowledgePage() {
                           e.stopPropagation();
                           setEditingPlaybook(pb);
                         }}
-                        className="p-1 hover:glass bg-white/5 border-white/10 rounded text-muted-foreground cursor-pointer"
+                        className="p-1 hover:glass rounded text-muted-foreground cursor-pointer"
                       >
                         <Edit2 className="w-3.5 h-3.5" />
                       </Button>
@@ -231,7 +235,12 @@ function KnowledgePage() {
       )}
 
       {viewing && (
-        <SheetPage isOpen={true} onClose={() => setViewing(null)} title={viewing.title} width="clamp(480px, 45vw, 720px)">
+        <SheetPage
+          isOpen={true}
+          onClose={() => setViewing(null)}
+          title={viewing.title}
+          width="clamp(480px, 45vw, 720px)"
+        >
           <div className="whitespace-pre-wrap text-sm px-6 py-5">
             {viewing.content ?? <span className="text-muted-foreground">Sem conteúdo.</span>}
           </div>
@@ -256,7 +265,12 @@ function KnowledgePage() {
       )}
 
       {viewingPlaybook && (
-        <SheetPage isOpen={true} onClose={() => setViewingPlaybook(null)} title={viewingPlaybook.title} width="clamp(480px, 45vw, 720px)">
+        <SheetPage
+          isOpen={true}
+          onClose={() => setViewingPlaybook(null)}
+          title={viewingPlaybook.title}
+          width="clamp(480px, 45vw, 720px)"
+        >
           <div className="space-y-4 py-2 px-6">
             <p className="text-sm text-muted-foreground leading-relaxed">
               {viewingPlaybook.description}
@@ -418,103 +432,104 @@ function PlaybookSheet({
     >
       <div className="flex h-full flex-col">
         <form id="playbook-form" onSubmit={submit} className="space-y-4">
-            <Field label="Título do Playbook *">
+          <Field label="Título do Playbook *">
+            <Input
+              required
+              value={title}
+              onChange={(e) => setTitle(e.target.value)}
+              placeholder="Ex: Cancelamento ViagensPromo ou Roteiro Premium"
+            />
+          </Field>
+
+          <div className="grid grid-cols-2 gap-3">
+            <Field label="Categoria">
               <Input
-                required
-                value={title}
-                onChange={(e) => setTitle(e.target.value)}
-                placeholder="Ex: Cancelamento ViagensPromo ou Roteiro Premium"
+                value={category}
+                onChange={(e) => setCategory(e.target.value)}
+                placeholder="Ex: Cancelamentos, Operações"
               />
             </Field>
+            <div className="flex items-end pb-1">
+              <span className="ds-meta text-muted-foreground glass border-none rounded px-2 py-1 leading-normal">
+                Dica: Playbooks ajudam a IA a responder o cliente com base nos playbooks do dia a
+                dia da agência.
+              </span>
+            </div>
+          </div>
 
-            <div className="grid grid-cols-2 gap-3">
-              <Field label="Categoria">
-                <Input
-                  value={category}
-                  onChange={(e) => setCategory(e.target.value)}
-                  placeholder="Ex: Cancelamentos, Operações"
-                />
-              </Field>
-              <div className="flex items-end pb-1">
-                <span className="ds-meta text-muted-foreground glass bg-white/5 border-white/10 border-none rounded px-2 py-1 leading-normal">
-                  Dica: Playbooks ajudam a IA a responder o cliente com base nos playbooks do dia a
-                  dia da agência.
-                </span>
-              </div>
+          <Field label="Descrição Geral">
+            <Textarea
+              rows={3}
+              value={description}
+              onChange={(e) => setDescription(e.target.value)}
+              placeholder="Uma breve introdução sobre o que é tratado nesse fluxo..."
+            />
+          </Field>
+
+          <div className="pt-4 border-t border-border mt-4">
+            <div className="flex items-center justify-between mb-4">
+              <label className="text-sm font-bold text-foreground">Etapas do Processo</label>
+              <Button
+                variant="ghost"
+                type="button"
+                onClick={addStep}
+                className="h-8 text-xs font-bold cursor-pointer"
+              >
+                + Adicionar Etapa
+              </Button>
             </div>
 
-            <Field label="Descrição Geral">
-              <Textarea
-                rows={3}
-                value={description}
-                onChange={(e) => setDescription(e.target.value)}
-                placeholder="Uma breve introdução sobre o que é tratado nesse fluxo..."
-              />
-            </Field>
-
-            <div className="pt-4 border-t border-border mt-4">
-              <div className="flex items-center justify-between mb-4">
-                <label className="text-sm font-bold text-foreground">Etapas do Processo</label>
-                <Button variant="ghost"
-                  type="button"
-                  onClick={addStep}
-                  className="h-8 text-xs font-bold cursor-pointer"
+            <div className="space-y-4">
+              {steps.map((st, idx) => (
+                <div
+                  key={idx}
+                  className="glass/40 border-none rounded-[var(--radius-card)] p-4 relative space-y-3"
                 >
-                  + Adicionar Etapa
-                </Button>
-              </div>
-
-              <div className="space-y-4">
-                {steps.map((st, idx) => (
-                  <div
-                    key={idx}
-                    className="glass bg-white/5 border-white/10/40 border-none rounded-[var(--radius-card)] p-4 relative space-y-3"
+                  <Button
+                    type="button"
+                    onClick={() => removeStep(idx)}
+                    disabled={steps.length === 1}
+                    className="absolute right-3 top-3 text-muted-foreground hover:text-destructive transition-colors disabled:opacity-30 cursor-pointer"
                   >
-                    <Button
-                      type="button"
-                      onClick={() => removeStep(idx)}
-                      disabled={steps.length === 1}
-                      className="absolute right-3 top-3 text-muted-foreground hover:text-destructive transition-colors disabled:opacity-30 cursor-pointer"
-                    >
-                      <Trash2 className="w-4 h-4" />
-                    </Button>
+                    <Trash2 className="w-4 h-4" />
+                  </Button>
 
-                    <div className="flex items-center gap-3">
-                      <div className="flex h-6 w-6 items-center justify-center rounded-full bg-brand text-brand-foreground text-xs font-bold">
-                        {st.step_number}
-                      </div>
-                      <Input
-                        type="text"
-                        required
-                        value={st.title}
-                        onChange={(e) => updateStep(idx, "title", e.target.value)}
-                        placeholder={`Título da Etapa ${st.step_number} (ex: Solicitar Multa)`}
-                        className="flex-1 rounded-full border-none glass-card border-none px-2.5 focus:border-border-strong"
-                      />
+                  <div className="flex items-center gap-3">
+                    <div className="flex h-6 w-6 items-center justify-center rounded-full bg-brand text-brand-foreground text-xs font-bold">
+                      {st.step_number}
                     </div>
-
-                    <Textarea
-                      rows={2}
-                      value={st.description}
-                      onChange={(e) => updateStep(idx, "description", e.target.value)}
-                      placeholder="Instruções e playbooks específicos para esta etapa..."
-                      className="w-full rounded-full border-none glass-card border-none px-2.5 py-1.5 focus:border-border-strong resize-none"
+                    <Input
+                      type="text"
+                      required
+                      value={st.title}
+                      onChange={(e) => updateStep(idx, "title", e.target.value)}
+                      placeholder={`Título da Etapa ${st.step_number} (ex: Solicitar Multa)`}
+                      className="flex-1 rounded-full border-none glass-card border-none px-2.5 focus:border-border-strong"
                     />
                   </div>
-                ))}
-              </div>
-            </div>
-          </form>
-        </div>
 
-        <div className="border-t border-border px-6 py-4 flex items-center justify-end gap-2">
-          <Button variant="ghost" type="button" onClick={onClose}>
-            Cancelar
-          </Button>
-          <Button variant="default" type="submit" form="playbook-form" disabled={submitting}>
-            {submitting ? "Salvando…" : initialData ? "Salvar alterações" : "Criar Playbook"}
-          </Button>
-        </div>
+                  <Textarea
+                    rows={2}
+                    value={st.description}
+                    onChange={(e) => updateStep(idx, "description", e.target.value)}
+                    placeholder="Instruções e playbooks específicos para esta etapa..."
+                    className="w-full rounded-full border-none glass-card border-none px-2.5 py-1.5 focus:border-border-strong resize-none"
+                  />
+                </div>
+              ))}
+            </div>
+          </div>
+        </form>
+      </div>
+
+      <div className="border-t border-border px-6 py-4 flex items-center justify-end gap-2">
+        <Button variant="ghost" type="button" onClick={onClose}>
+          Cancelar
+        </Button>
+        <Button variant="default" type="submit" form="playbook-form" disabled={submitting}>
+          {submitting ? "Salvando…" : initialData ? "Salvar alterações" : "Criar Playbook"}
+        </Button>
+      </div>
     </SheetPage>
   );
 }
@@ -604,83 +619,83 @@ function ArticleSheet({
               href={previewUrl}
               target="_blank"
               rel="noreferrer"
-              className="flex h-8 w-max items-center gap-1.5 rounded-full border-none px-3 text-xs font-medium hover:glass bg-white/5 border-white/10 transition-colors"
+              className="flex h-8 w-max items-center gap-1.5 rounded-full border-none px-3 text-xs font-medium hover:glass transition-colors"
             >
               Ver publicado
             </a>
           </div>
         )}
         <form id="article-form" onSubmit={submit} className="space-y-4">
-            <Field label="Título *">
-              <Input required value={title} onChange={(e) => setTitle(e.target.value)} />
+          <Field label="Título *">
+            <Input required value={title} onChange={(e) => setTitle(e.target.value)} />
+          </Field>
+
+          <div className="grid grid-cols-2 gap-3">
+            <Field label="URL (Slug)">
+              <Input
+                value={slug}
+                onChange={(e) => setSlug(e.target.value)}
+                placeholder={slugify(title)}
+              />
             </Field>
-
-            <div className="grid grid-cols-2 gap-3">
-              <Field label="URL (Slug)">
-                <Input
-                  value={slug}
-                  onChange={(e) => setSlug(e.target.value)}
-                  placeholder={slugify(title)}
-                />
-              </Field>
-              <Field label="Categoria">
-                <Input value={category} onChange={(e) => setCategory(e.target.value)} />
-              </Field>
-            </div>
-
-            <Field label="Tags (separadas por vírgula)">
-              <Input value={tags} onChange={(e) => setTags(e.target.value)} />
+            <Field label="Categoria">
+              <Input value={category} onChange={(e) => setCategory(e.target.value)} />
             </Field>
+          </div>
 
-            <div className="rounded-[var(--radius-card)] border-none p-4 glass bg-white/5 border-white/10/50 space-y-4 mt-4">
-              <div className="flex items-center justify-between">
-                <label className="text-sm font-bold text-foreground">Conteúdo</label>
-                <div className="flex glass-card border-none rounded-full p-1 border-none">
-                  <Button
-                    type="button"
-                    onClick={() => setEditorMode("simple")}
-                    className={`px-3 py-1 text-xs font-semibold rounded-full ${editorMode === "simple" ? "bg-foreground text-background" : "text-muted-foreground"}`}
-                  >
-                    Simples
-                  </Button>
-                  <Button
-                    type="button"
-                    onClick={() => setEditorMode("advanced")}
-                    className={`px-3 py-1 text-xs font-semibold rounded-full ${editorMode === "advanced" ? "bg-foreground text-background" : "text-muted-foreground"}`}
-                  >
-                    Avançado
-                  </Button>
-                </div>
+          <Field label="Tags (separadas por vírgula)">
+            <Input value={tags} onChange={(e) => setTags(e.target.value)} />
+          </Field>
+
+          <div className="rounded-[var(--radius-card)] border-none p-4 glass/50 space-y-4 mt-4">
+            <div className="flex items-center justify-between">
+              <label className="text-sm font-bold text-foreground">Conteúdo</label>
+              <div className="flex glass-card border-none rounded-full p-1 border-none">
+                <Button
+                  type="button"
+                  onClick={() => setEditorMode("simple")}
+                  className={`px-3 py-1 text-xs font-semibold rounded-full ${editorMode === "simple" ? "bg-foreground text-background" : "text-muted-foreground"}`}
+                >
+                  Simples
+                </Button>
+                <Button
+                  type="button"
+                  onClick={() => setEditorMode("advanced")}
+                  className={`px-3 py-1 text-xs font-semibold rounded-full ${editorMode === "advanced" ? "bg-foreground text-background" : "text-muted-foreground"}`}
+                >
+                  Avançado
+                </Button>
               </div>
-
-              {editorMode === "simple" ? (
-                <Textarea
-                  rows={8}
-                  value={content}
-                  onChange={(e) => setContent(e.target.value)}
-                  className="font-medium leading-relaxed"
-                />
-              ) : (
-                <RichTextEditor value={content} onChange={setContent} />
-              )}
             </div>
 
-            <div className="pt-4 border-t border-border mt-4">
-              <label className="flex items-center gap-2 text-sm font-semibold cursor-pointer">
-                <Input
-                  type="checkbox"
-                  checked={isInternal}
-                  onChange={(e) => setIsInternal(e.target.checked)}
-                  className="w-4 h-4 rounded"
-                />
-                Artigo apenas para uso interno (Agência)
-              </label>
-              <p className="ds-meta text-muted-foreground mt-1 ml-6">
-                Se desmarcado, o artigo ficará disponível publicamente no portal do cliente (Base de
-                Conhecimento).
-              </p>
-            </div>
-          </form>
+            {editorMode === "simple" ? (
+              <Textarea
+                rows={8}
+                value={content}
+                onChange={(e) => setContent(e.target.value)}
+                className="font-medium leading-relaxed"
+              />
+            ) : (
+              <RichTextEditor value={content} onChange={setContent} />
+            )}
+          </div>
+
+          <div className="pt-4 border-t border-border mt-4">
+            <label className="flex items-center gap-2 text-sm font-semibold cursor-pointer">
+              <Input
+                type="checkbox"
+                checked={isInternal}
+                onChange={(e) => setIsInternal(e.target.checked)}
+                className="w-4 h-4 rounded"
+              />
+              Artigo apenas para uso interno (Agência)
+            </label>
+            <p className="ds-meta text-muted-foreground mt-1 ml-6">
+              Se desmarcado, o artigo ficará disponível publicamente no portal do cliente (Base de
+              Conhecimento).
+            </p>
+          </div>
+        </form>
         <div className="border-t border-border px-6 py-4 flex items-center justify-end gap-2 mt-auto">
           <Button variant="ghost" type="button" onClick={onClose}>
             Cancelar

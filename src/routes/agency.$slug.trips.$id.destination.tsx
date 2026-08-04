@@ -20,7 +20,9 @@ import {
 } from "lucide-react";
 
 export const Route = createFileRoute("/agency/$slug/trips/$id/destination")({
-  head: ({ context }: any) => ({ meta: [{ title: `Destino & Segurança · ${context?.brand?.platform_name || 'Turis'}` }] }),
+  head: ({ context }: any) => ({
+    meta: [{ title: `Destino & Segurança · ${context?.brand?.platform_name || "Turis"}` }],
+  }),
   component: TripDestinationPage,
 });
 
@@ -48,9 +50,7 @@ function InfoRow({
     <div className="flex items-start gap-3 py-2.5 border-b border-border last:border-0">
       <Icon className="h-3.5 w-3.5 text-muted-foreground mt-0.5 shrink-0" />
       <div className="min-w-0">
-        <p className="ds-label-caps text-muted-foreground">
-          {label}
-        </p>
+        <p className="ds-label-caps text-muted-foreground">{label}</p>
         <p className="text-xs text-foreground mt-0.5 leading-relaxed">{value}</p>
       </div>
     </div>
@@ -185,9 +185,7 @@ function TripDestinationPage() {
           </h3>
           <div className="space-y-0">
             <div className="py-2.5 border-b border-border">
-              <p className="ds-label-caps text-muted-foreground">
-                Visto Necessário
-              </p>
+              <p className="ds-label-caps text-muted-foreground">Visto Necessário</p>
               <div className="flex items-center gap-1.5 mt-0.5">
                 {dest.visa_required ? (
                   <XCircle className="h-3.5 w-3.5 text-danger" />
@@ -212,9 +210,7 @@ function TripDestinationPage() {
           <div className="space-y-0">
             {dest.vaccinations_required && dest.vaccinations_required.length > 0 && (
               <div className="py-2.5 border-b border-border">
-                <p className="ds-label-caps text-muted-foreground">
-                  Vacinas Obrigatórias
-                </p>
+                <p className="ds-label-caps text-muted-foreground">Vacinas Obrigatórias</p>
                 <div className="flex flex-wrap gap-1 mt-1">
                   {dest.vaccinations_required.map((v, i) => (
                     <span
@@ -229,9 +225,7 @@ function TripDestinationPage() {
             )}
             {dest.vaccinations_recommended && dest.vaccinations_recommended.length > 0 && (
               <div className="py-2.5 border-b border-border">
-                <p className="ds-label-caps text-muted-foreground">
-                  Vacinas Recomendadas
-                </p>
+                <p className="ds-label-caps text-muted-foreground">Vacinas Recomendadas</p>
                 <div className="flex flex-wrap gap-1 mt-1">
                   {dest.vaccinations_recommended.map((v, i) => (
                     <span

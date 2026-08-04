@@ -1,8 +1,10 @@
-import { createFileRoute } from '@tanstack/react-router';
-import { BotCanvas } from '@/components/bot/BotCanvas';
+import { createFileRoute } from "@tanstack/react-router";
+import { BotCanvas } from "@/components/bot/BotCanvas";
 
-export const Route = createFileRoute('/agency/$slug/settings/bot')({
-  head: ({ context }: any) => ({ meta: [{ title: `Construtor de Chatbot · ${context?.brand?.platform_name || 'Turis'}` }] }),
+export const Route = createFileRoute("/agency/$slug/settings/bot")({
+  head: ({ context }: any) => ({
+    meta: [{ title: `Construtor de Chatbot · ${context?.brand?.platform_name || "Turis"}` }],
+  }),
   component: BotSettingsPage,
 });
 
@@ -13,11 +15,12 @@ function BotSettingsPage() {
         <div>
           <h1 className="text-3xl font-bold tracking-tight">Chatbot Visual Builder</h1>
           <p className="text-muted-foreground mt-2">
-            Arraste e conecte os blocos para desenhar o roteiro de atendimento da sua agência no WhatsApp.
+            Arraste e conecte os blocos para desenhar o roteiro de atendimento da sua agência no
+            WhatsApp.
           </p>
         </div>
       </div>
-      
+
       <div className="flex-1 w-full border rounded-[var(--radius-card)] overflow-hidden shadow-none">
         <BotCanvas />
       </div>

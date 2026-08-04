@@ -2,13 +2,31 @@ import { createFileRoute, useParams } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
 import { useQuery, useQueryClient, useMutation } from "@tanstack/react-query";
 import {
-  Plus, X, Settings2, LayoutGrid, List, Calendar as CalendarIcon, ChevronLeft, ChevronRight, Download, } from "lucide-react";
+  Plus,
+  X,
+  Settings2,
+  LayoutGrid,
+  List,
+  Calendar as CalendarIcon,
+  ChevronLeft,
+  ChevronRight,
+  Download,
+} from "lucide-react";
 import { toast } from "sonner";
 import { PageHeader, ModuleActionButton } from "@/components/shell/PageHeader";
 import { ModuleAdminPanel } from "@/components/shell/ModuleAdminPanel";
 import { exportBoardingListXlsx } from "@/lib/exportRoomingList";
 import {
-  DndContext, DragOverlay, PointerSensor, TouchSensor, useSensor, useSensors, closestCorners, type DragEndEvent, type DragStartEvent, } from "@dnd-kit/core";
+  DndContext,
+  DragOverlay,
+  PointerSensor,
+  TouchSensor,
+  useSensor,
+  useSensors,
+  closestCorners,
+  type DragEndEvent,
+  type DragStartEvent,
+} from "@dnd-kit/core";
 import { arrayMove } from "@dnd-kit/sortable";
 import { useAgency } from "@/lib/agency-context";
 import { Button } from "@/components/ui/button";
@@ -28,7 +46,11 @@ import { CardDetailPanel } from "@/components/boarding/CardDetailPanel";
 import { CardView } from "@/components/boarding/CardView";
 
 export const Route = createFileRoute("/agency/$slug/boarding")({
-  head: ({ context }: any) => ({ meta: [{ title: `Kanban Operacional de Embarque · ${context?.brand?.platform_name || 'Turis'}` }] }),
+  head: ({ context }: any) => ({
+    meta: [
+      { title: `Kanban Operacional de Embarque · ${context?.brand?.platform_name || "Turis"}` },
+    ],
+  }),
   component: BoardingKanbanPage,
 });
 
@@ -81,7 +103,7 @@ function BoardingKanbanPage() {
 
   const sensors = useSensors(
     useSensor(PointerSensor, { activationConstraint: { distance: 8 } }),
-    useSensor(TouchSensor, { activationConstraint: { delay: 250, tolerance: 8 } })
+    useSensor(TouchSensor, { activationConstraint: { delay: 250, tolerance: 8 } }),
   );
 
   const stagesById = useMemo(() => {
@@ -223,47 +245,47 @@ function BoardingKanbanPage() {
 
   return (
     <div className="w-full flex h-full flex-col overflow-hidden">
-              <PageHeader
-          title="Embarques"
-          filters={[
-            { label: "Kanban", value: "kanban" },
-            { label: "Lista", value: "list" },
-            { label: "Calendário", value: "calendar" },
-          ]}
-          activeFilter={viewMode}
-          onFilterChange={(v) => setViewMode(v as "kanban" | "list" | "calendar")}
-          actions={
-            <div className="flex items-center gap-1.5">
-              {(localCards?.length ?? 0) > 0 && (
-                <Button
-                  onClick={handleExportExcel}
-                  disabled={exporting}
-                  className="h-7 px-2.5 flex items-center gap-1 rounded-full border border-white/15 text-white/60 hover:text-white hover:bg-white/10 transition-colors cursor-pointer ds-meta font-semibold disabled:opacity-50"
-                  title="Exportar Lista de Embarque (.xlsx)"
-                >
-                  <Download className="h-3 w-3" />
-                  {exporting ? "..." : "Excel"}
-                </Button>
-              )}
-              {isAgencyAdmin && (
-                <Button
-                  onClick={() => setAdminPanelOpen(true)}
-                  className="h-7 w-7 flex items-center justify-center rounded-full border border-white/15 text-white/60 hover:text-white hover:bg-white/10 transition-colors cursor-pointer"
-                  title="Administrar Embarques"
-                >
-                  <Settings2 className="h-3.5 w-3.5" />
-                </Button>
-              )}
-            </div>
-          }
-          primaryAction={
-            <ModuleActionButton
-        label="Cadastrar Localizador"
-        icon={<Plus className="h-3.5 w-3.5" />}
-              onClick={() => setOpen(true)}
-            />
-          }
-        />
+      <PageHeader
+        title="Embarques"
+        filters={[
+          { label: "Kanban", value: "kanban" },
+          { label: "Lista", value: "list" },
+          { label: "Calendário", value: "calendar" },
+        ]}
+        activeFilter={viewMode}
+        onFilterChange={(v) => setViewMode(v as "kanban" | "list" | "calendar")}
+        actions={
+          <div className="flex items-center gap-1.5">
+            {(localCards?.length ?? 0) > 0 && (
+              <Button
+                onClick={handleExportExcel}
+                disabled={exporting}
+                className="h-7 px-2.5 flex items-center gap-1 rounded-full border border-white/15 text-white/60 hover:text-white hover:glass-dark transition-colors cursor-pointer ds-meta font-semibold disabled:opacity-50"
+                title="Exportar Lista de Embarque (.xlsx)"
+              >
+                <Download className="h-3 w-3" />
+                {exporting ? "..." : "Excel"}
+              </Button>
+            )}
+            {isAgencyAdmin && (
+              <Button
+                onClick={() => setAdminPanelOpen(true)}
+                className="h-7 w-7 flex items-center justify-center rounded-full border border-white/15 text-white/60 hover:text-white hover:glass-dark transition-colors cursor-pointer"
+                title="Administrar Embarques"
+              >
+                <Settings2 className="h-3.5 w-3.5" />
+              </Button>
+            )}
+          </div>
+        }
+        primaryAction={
+          <ModuleActionButton
+            label="Cadastrar Localizador"
+            icon={<Plus className="h-3.5 w-3.5" />}
+            onClick={() => setOpen(true)}
+          />
+        }
+      />
 
       {q.isLoading && (
         <div className="flex flex-1 items-center justify-center">
@@ -332,7 +354,7 @@ function BoardingKanbanPage() {
                 <div className="overflow-x-auto border-none rounded-full glass-card border-none">
                   <table className="w-full border-collapse text-left text-xs">
                     <thead>
-                      <tr className="border-b border-border glass bg-white/5 border-white/10 font-semibold text-muted-foreground uppercase tracking-widest ds-meta">
+                      <tr className="border-b border-border glass font-semibold text-muted-foreground uppercase tracking-widest ds-meta">
                         <th className="p-4">Localizador (PNR)</th>
                         <th className="p-4">Viagem / Destino</th>
                         <th className="p-4">Cia Aérea</th>
@@ -352,7 +374,7 @@ function BoardingKanbanPage() {
                           <tr
                             key={card.id}
                             onClick={() => setDetail(card)}
-                            className="hover:glass bg-white/5 border-white/10/50 transition-colors cursor-pointer group"
+                            className="hover:glass/50 transition-colors cursor-pointer group"
                           >
                             <td className="p-4 font-mono font-bold text-foreground">
                               {card.pnr || "—"}
@@ -410,26 +432,26 @@ function BoardingKanbanPage() {
                 <div className="flex items-center gap-1.5">
                   <Button
                     onClick={handlePrevMonth}
-                    className="flex h-8 w-8 items-center justify-center rounded-full border-none glass-card border-none text-foreground hover:glass bg-white/5 border-white/10 transition-colors cursor-pointer"
+                    className="flex h-8 w-8 items-center justify-center rounded-full border-none glass-card border-none text-foreground hover:glass transition-colors cursor-pointer"
                   >
                     <ChevronLeft className="h-4 w-4" />
                   </Button>
                   <Button
                     onClick={() => setCurrentMonth(new Date())}
-                    className="h-8 px-3 text-xs font-semibold rounded-full border-none glass-card border-none text-foreground hover:glass bg-white/5 border-white/10 transition-colors cursor-pointer"
+                    className="h-8 px-3 text-xs font-semibold rounded-full border-none glass-card border-none text-foreground hover:glass transition-colors cursor-pointer"
                   >
                     Hoje
                   </Button>
                   <Button
                     onClick={handleNextMonth}
-                    className="flex h-8 w-8 items-center justify-center rounded-full border-none glass-card border-none text-foreground hover:glass bg-white/5 border-white/10 transition-colors cursor-pointer"
+                    className="flex h-8 w-8 items-center justify-center rounded-full border-none glass-card border-none text-foreground hover:glass transition-colors cursor-pointer"
                   >
                     <ChevronRight className="h-4 w-4" />
                   </Button>
                 </div>
               </div>
 
-              <div className="grid grid-cols-7 border border-b-0 border-border glass bg-white/5 border-white/10">
+              <div className="grid grid-cols-7 border border-b-0 border-border glass">
                 {["Dom", "Seg", "Ter", "Qua", "Qui", "Sex", "Sáb"].map((d) => (
                   <div
                     key={d}
@@ -450,7 +472,9 @@ function BoardingKanbanPage() {
                     <div
                       key={i}
                       className={`min-h-0 flex flex-col p-1.5 transition-colors overflow-hidden ${
-                        isCurrentMonth ? "glass-card border-none" : "glass bg-white/5 border-white/10/30 text-muted-foreground/60"
+                        isCurrentMonth
+                          ? "glass-card border-none"
+                          : "glass/30 text-muted-foreground/60"
                       } ${isToday ? "bg-primary/5" : ""}`}
                     >
                       <span
@@ -468,7 +492,7 @@ function BoardingKanbanPage() {
                             <Button
                               key={card.id}
                               onClick={() => setDetail(card)}
-                              className="w-full text-left p-1 ds-meta rounded-xs border-none glass-card border-none hover:glass bg-white/5 border-white/10 transition-colors truncate font-semibold block group"
+                              className="w-full text-left p-1 ds-meta rounded-xs border-none glass-card border-none hover:glass transition-colors truncate font-semibold block group"
                             >
                               <span className="flex items-center gap-1">
                                 <span

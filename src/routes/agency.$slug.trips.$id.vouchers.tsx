@@ -2,7 +2,24 @@ import { createFileRoute, Link, useParams } from "@tanstack/react-router";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
 import {
-  ArrowLeft, Plus, Ticket, Download, Plane, Hotel, Bus, Umbrella, Phone, User, MapPin, ChevronDown, ChevronRight, Upload, Trash2, Edit2, Eye, } from "lucide-react";
+  ArrowLeft,
+  Plus,
+  Ticket,
+  Download,
+  Plane,
+  Hotel,
+  Bus,
+  Umbrella,
+  Phone,
+  User,
+  MapPin,
+  ChevronDown,
+  ChevronRight,
+  Upload,
+  Trash2,
+  Edit2,
+  Eye,
+} from "lucide-react";
 import { toast } from "sonner";
 import { useConfirm } from "@/hooks/use-confirm";
 import { useAgency } from "@/lib/agency-context";
@@ -32,7 +49,9 @@ import {
 import { VoucherStudio } from "@/components/vouchers/VoucherStudio";
 
 export const Route = createFileRoute("/agency/$slug/trips/$id/vouchers")({
-  head: ({ context }: any) => ({ meta: [{ title: `Vouchers · ${context?.brand?.platform_name || 'Turis'}` }] }),
+  head: ({ context }: any) => ({
+    meta: [{ title: `Vouchers · ${context?.brand?.platform_name || "Turis"}` }],
+  }),
   component: TripVouchers,
 });
 
@@ -416,7 +435,7 @@ function TripVouchers() {
             <div className="mt-3 flex items-center gap-2 border-t border-border pt-3">
               <Button
                 onClick={() => editVoucher(v)}
-                className="flex h-7 flex-1 items-center justify-center gap-1 rounded-full border-none text-xs hover:glass bg-white/5 border-white/10"
+                className="flex h-7 flex-1 items-center justify-center gap-1 rounded-full border-none text-xs hover:glass"
               >
                 <Edit2 className="h-3.5 w-3.5" />
                 Editar
@@ -426,7 +445,7 @@ function TripVouchers() {
                   href={v.pdf_url}
                   target="_blank"
                   rel="noreferrer"
-                  className="flex h-7 items-center gap-1 rounded-full border-none px-2 text-xs hover:glass bg-white/5 border-white/10"
+                  className="flex h-7 items-center gap-1 rounded-full border-none px-2 text-xs hover:glass"
                 >
                   <Download className="h-3.5 w-3.5" />
                   PDF
@@ -465,95 +484,96 @@ function TripVouchers() {
           width="clamp(480px, 45vw, 640px)"
           contentClassName="p-6 overflow-y-auto flex flex-col items-center gap-4"
         >
-            <p className="text-sm text-muted-foreground text-center">
-              Faça o download desta imagem em alta resolução e envie pro seu cliente postar nas
-              redes sociais.
-            </p>
+          <p className="text-sm text-muted-foreground text-center">
+            Faça o download desta imagem em alta resolução e envie pro seu cliente postar nas redes
+            sociais.
+          </p>
 
-            <div className="relative flex items-center justify-center w-full bg-neutral-100 rounded-[var(--radius-card)] overflow-hidden py-4">
-              {/* This is the invisible scaled canvas we take a snapshot of */}
-              <div
-                id="story-canvas"
-                className="relative overflow-hidden shrink-0 flex flex-col bg-indigo-950"
-                style={{ width: "400px", height: "711px" }}
-              >
-                {/* Decorative Background */}
-                <div className="absolute top-[-100px] right-[-100px] w-64 h-64 bg-brand/20 blur-[80px] rounded-full" />
-                <div className="absolute bottom-[-100px] left-[-100px] w-64 h-64 bg-pink-500/20 blur-[80px] rounded-full" />
+          <div className="relative flex items-center justify-center w-full bg-neutral-100 rounded-[var(--radius-card)] overflow-hidden py-4">
+            {/* This is the invisible scaled canvas we take a snapshot of */}
+            <div
+              id="story-canvas"
+              className="relative overflow-hidden shrink-0 flex flex-col bg-indigo-950"
+              style={{ width: "400px", height: "711px" }}
+            >
+              {/* Decorative Background */}
+              <div className="absolute top-[-100px] right-[-100px] w-64 h-64 bg-brand/20 blur-[80px] rounded-full" />
+              <div className="absolute bottom-[-100px] left-[-100px] w-64 h-64 bg-pink-500/20 blur-[80px] rounded-full" />
 
-                <div className="relative z-10 flex flex-col h-full p-8 text-white">
-                  <div className="flex items-center gap-3 mb-auto">
-                    {agency?.logo_url ? (
-                      <img
-                        src={agency.logo_url}
-                        alt="Logo"
-                        className="h-10 w-auto object-contain bg-white rounded-full p-1"
-                        crossOrigin="anonymous"
-                      />
-                    ) : (
-                      <span className="font-black text-xl tracking-tighter">{agency?.name}</span>
-                    )}
-                  </div>
+              <div className="relative z-10 flex flex-col h-full p-8 text-white">
+                <div className="flex items-center gap-3 mb-auto">
+                  {agency?.logo_url ? (
+                    <img
+                      src={agency.logo_url}
+                      alt="Logo"
+                      className="h-10 w-auto object-contain bg-white rounded-full p-1"
+                      crossOrigin="anonymous"
+                    />
+                  ) : (
+                    <span className="font-black text-xl tracking-tighter">{agency?.name}</span>
+                  )}
+                </div>
 
-                  <div className="mt-8 mb-4">
-                    <h2 className="text-sm font-semibold text-white/70 uppercase tracking-widest mb-1">
-                      Meu próximo destino
-                    </h2>
-                    <h1 className="text-4xl font-black leading-tight ">
-                      {storyVoucher.destination || trip.destination || "Vou Viajar!"}
-                    </h1>
-                  </div>
+                <div className="mt-8 mb-4">
+                  <h2 className="text-sm font-semibold text-white/70 uppercase tracking-widest mb-1">
+                    Meu próximo destino
+                  </h2>
+                  <h1 className="text-4xl font-black leading-tight ">
+                    {storyVoucher.destination || trip.destination || "Vou Viajar!"}
+                  </h1>
+                </div>
 
-                  <div className="flex flex-col gap-3 mt-6">
-                    {storyVoucher.flights.length > 0 && (
-                      <div className="bg-white/10 backdrop-blur-md rounded-[var(--radius-card)] p-4 border border-white/20">
-                        <div className="flex justify-between items-center text-xs text-white/70 font-semibold mb-2">
-                          <span>Voo Confirmado</span>
-                          <Plane className="w-4 h-4" />
-                        </div>
-                        <div className="flex justify-between items-center text-lg font-bold">
-                          <span>{storyVoucher.flights[0].origin || "Origem"}</span>
-                          <ArrowLeft className="w-4 h-4 rotate-180 text-white/50" />
-                          <span>{storyVoucher.flights[0].destination || "Destino"}</span>
-                        </div>
-                        <div className="text-xs mt-1 text-white/60">
-                          {storyVoucher.flights[0].airline} •{" "}
-                          {storyVoucher.flights[0].flight_number}
-                        </div>
+                <div className="flex flex-col gap-3 mt-6">
+                  {storyVoucher.flights.length > 0 && (
+                    <div className="glass-dark backdrop-blur-md rounded-[var(--radius-card)] p-4 border border-border">
+                      <div className="flex justify-between items-center text-xs text-white/70 font-semibold mb-2">
+                        <span>Voo Confirmado</span>
+                        <Plane className="w-4 h-4" />
                       </div>
-                    )}
-
-                    {storyVoucher.accommodation.length > 0 && (
-                      <div className="bg-white/10 backdrop-blur-md rounded-[var(--radius-card)] p-4 border border-white/20">
-                        <div className="flex justify-between items-center text-xs text-white/70 font-semibold mb-1">
-                          <span>Hospedagem</span>
-                          <Hotel className="w-4 h-4" />
-                        </div>
-                        <div className="text-base font-bold truncate">
-                          {storyVoucher.accommodation[0].name}
-                        </div>
-                        <div className="text-xs mt-1 text-white/60 truncate">
-                          {storyVoucher.accommodation[0].city}
-                        </div>
+                      <div className="flex justify-between items-center text-lg font-bold">
+                        <span>{storyVoucher.flights[0].origin || "Origem"}</span>
+                        <ArrowLeft className="w-4 h-4 rotate-180 text-white/50" />
+                        <span>{storyVoucher.flights[0].destination || "Destino"}</span>
                       </div>
-                    )}
-                  </div>
+                      <div className="text-xs mt-1 text-white/60">
+                        {storyVoucher.flights[0].airline} • {storyVoucher.flights[0].flight_number}
+                      </div>
+                    </div>
+                  )}
 
-                  <div className="mt-auto pt-6 text-center">
-                    <p className="ds-meta uppercase tracking-widest text-white/50 mb-1">
-                      Planejado com perfeição por
-                    </p>
-                    <p className="text-xs font-bold text-white/80">@{agency?.slug}</p>
-                  </div>
+                  {storyVoucher.accommodation.length > 0 && (
+                    <div className="glass-dark backdrop-blur-md rounded-[var(--radius-card)] p-4 border border-border">
+                      <div className="flex justify-between items-center text-xs text-white/70 font-semibold mb-1">
+                        <span>Hospedagem</span>
+                        <Hotel className="w-4 h-4" />
+                      </div>
+                      <div className="text-base font-bold truncate">
+                        {storyVoucher.accommodation[0].name}
+                      </div>
+                      <div className="text-xs mt-1 text-white/60 truncate">
+                        {storyVoucher.accommodation[0].city}
+                      </div>
+                    </div>
+                  )}
+                </div>
+
+                <div className="mt-auto pt-6 text-center">
+                  <p className="ds-meta uppercase tracking-widest text-white/50 mb-1">
+                    Planejado com perfeição por
+                  </p>
+                  <p className="text-xs font-bold text-white/80">@{agency?.slug}</p>
                 </div>
               </div>
             </div>
-            <div className="flex w-full justify-between items-center mt-auto pt-4">
-              <Button variant="ghost" onClick={() => setStoryVoucher(null)}>Fechar</Button>
-              <Button variant="default" onClick={downloadStory} disabled={generatingStory}>
-                {generatingStory ? "Gerando..." : "Baixar Imagem 9:16"}
-              </Button>
-            </div>
+          </div>
+          <div className="flex w-full justify-between items-center mt-auto pt-4">
+            <Button variant="ghost" onClick={() => setStoryVoucher(null)}>
+              Fechar
+            </Button>
+            <Button variant="default" onClick={downloadStory} disabled={generatingStory}>
+              {generatingStory ? "Gerando..." : "Baixar Imagem 9:16"}
+            </Button>
+          </div>
         </SheetPage>
       )}
     </div>

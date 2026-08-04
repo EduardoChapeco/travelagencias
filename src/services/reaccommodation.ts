@@ -149,18 +149,20 @@ export async function updateChangeCaseStatus(
   caseId: string,
   status: FlightChangeCase["workflow_status"],
 ): Promise<FlightChangeCase> {
-  const { data, error } = await supabase
-    .from("flight_change_cases")
-    .update({ workflow_status: status })
-    .eq("id", caseId)
-    .select()
-    .single();
+  const { error } = await supabase.rpc(
+    "update_reaccommodation_rpc" as never,
+    {
+      p_request_id: caseId,
+      p_patch: { workflow_status: status },
+    } as never,
+  );
 
   if (error) {
     throw new Error(`Erro ao atualizar status do caso: ${error.message}`);
   }
 
-  return data;
+  const { data } = await supabase.from("flight_change_cases").select().eq("id", caseId).single();
+  return data as FlightChangeCase;
 }
 
 /**
@@ -243,10 +245,13 @@ export async function saveCustomerDecision(
   }
 
   // Atualiza o workflow_status no caso
-  const { error: caseError } = await supabase
-    .from("flight_change_cases")
-    .update({ workflow_status: workflowStatus })
-    .eq("id", decision.change_case_id);
+  const { error: caseError } = await supabase.rpc(
+    "update_reaccommodation_rpc" as never,
+    {
+      p_request_id: decision.change_case_id,
+      p_patch: { workflow_status: workflowStatus },
+    } as never,
+  );
 
   if (caseError) {
     console.error("Erro ao atualizar status do caso após decisão do cliente:", caseError);
@@ -272,10 +277,13 @@ export async function createOperatorRequest(
   }
 
   // Atualiza o caso para operator_notified
-  await supabase
-    .from("flight_change_cases")
-    .update({ workflow_status: "operator_notified" })
-    .eq("id", request.change_case_id);
+  await supabase.rpc(
+    "update_reaccommodation_rpc" as never,
+    {
+      p_request_id: request.change_case_id,
+      p_patch: { workflow_status: "operator_notified" },
+    } as never,
+  );
 
   return data;
 }
@@ -338,13 +346,16 @@ export async function resolveChangeCase(
   }
 
   // 3. Resolver o caso
-  const { error: caseError } = await supabase
-    .from("flight_change_cases")
-    .update({
-      workflow_status: "resolved",
-      resolved_at: new Date().toISOString(),
-    })
-    .eq("id", caseId);
+  const { error: caseError } = await supabase.rpc(
+    "update_reaccommodation_rpc" as never,
+    {
+      p_request_id: caseId,
+      p_patch: {
+        workflow_status: "resolved",
+        resolved_at: new Date().toISOString(),
+      },
+    } as never,
+  );
 
   if (caseError) {
     throw new Error(`Erro ao marcar caso como resolvido: ${caseError.message}`);
@@ -420,8 +431,8 @@ export function analyzeFlightDifferences(
   const totalDurationDeltaMinutes = altTotalDuration - origTotalDuration;
 
   // Analisar conexões longas/pernoites nos trechos alternativos
-  let layoverDeltaMinutes = 0;
-  let warnings: string[] = [];
+  const layoverDeltaMinutes = 0;
+  const warnings: string[] = [];
 
   for (let i = 0; i < altSegments.length - 1; i++) {
     const arr = new Date(altSegments[i].arrival_at).getTime();
@@ -486,7 +497,7 @@ export function analyzeFlightDifferences(
   riskScore = Math.min(riskScore, 100);
 
   // Criar resumo determinístico textual
-  let summaryParts: string[] = [];
+  const summaryParts: string[] = [];
   if (dateChanged) summaryParts.push("Alteração de data");
   if (timeChanged && !dateChanged) summaryParts.push("Alteração de horário");
   if (airportChanged) summaryParts.push("Mudança de aeroporto");

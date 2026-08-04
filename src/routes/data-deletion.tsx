@@ -39,7 +39,7 @@ function DataDeletionPage() {
     setSubmitting(true);
     try {
       const generatedProtocol = "DEL-" + Math.random().toString(36).substring(2, 9).toUpperCase();
-      
+
       const { error } = await (supabase as any).from("data_subject_requests").insert({
         request_type: "deletion",
         status: "received",
@@ -106,14 +106,17 @@ function DataDeletionPage() {
           </div>
 
           <p className="text-xs text-muted-foreground leading-relaxed">
-            De acordo com a Lei Geral de Proteção de Dados (LGPD), você pode solicitar a eliminação dos seus dados integrados a qualquer momento.
+            De acordo com a Lei Geral de Proteção de Dados (LGPD), você pode solicitar a eliminação
+            dos seus dados integrados a qualquer momento.
           </p>
 
           {protocolCode ? (
             <div className="bg-success/5 border border-success/30 rounded-[var(--radius-card)] p-5 text-center space-y-3">
               <CheckCircle2 className="h-8 w-8 text-success mx-auto" />
               <h3 className="text-sm font-bold text-success">Solicitação Registrada!</h3>
-              <p className="text-xs text-muted-foreground">Guarde o código de protocolo abaixo para acompanhar sua solicitação:</p>
+              <p className="text-xs text-muted-foreground">
+                Guarde o código de protocolo abaixo para acompanhar sua solicitação:
+              </p>
               <div className="text-base font-mono font-bold glass-card border-none border-none px-3 py-2 rounded text-foreground inline-block select-all">
                 {protocolCode}
               </div>
@@ -144,12 +147,16 @@ function DataDeletionPage() {
                   rows={3}
                   value={reason}
                   onChange={(e) => setReason(e.target.value)}
-                  className="w-full glass bg-white/5 border-white/10 border-none/60 rounded-[var(--radius-card)] py-2.5 resize-none focus:ring-0 focus:border-brand/50 font-sans"
+                  className="w-full glass border-none/60 rounded-[var(--radius-card)] py-2.5 resize-none focus:ring-0 focus:border-brand/50 font-sans"
                 />
               </Field>
 
               <Button variant="default" disabled={submitting} className="w-full h-9">
-                {submitting ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : "Confirmar Solicitação de Exclusão"}
+                {submitting ? (
+                  <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                ) : (
+                  "Confirmar Solicitação de Exclusão"
+                )}
               </Button>
             </form>
           )}
@@ -163,7 +170,8 @@ function DataDeletionPage() {
           </div>
 
           <p className="text-xs text-muted-foreground leading-relaxed">
-            Consulte o andamento da sua solicitação de exclusão de dados pessoais da nossa plataforma.
+            Consulte o andamento da sua solicitação de exclusão de dados pessoais da nossa
+            plataforma.
           </p>
 
           <form onSubmit={handleQuery} className="flex gap-2">
@@ -175,15 +183,21 @@ function DataDeletionPage() {
               className="flex-1 rounded-[var(--radius-card)] border-none focus:ring-brand glass-card border-none placeholder-muted-foreground font-mono"
             />
             <Button variant="default" disabled={searching} className="h-9 px-4 shrink-0">
-              {searching ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <ArrowRight className="h-4 w-4" />}
+              {searching ? (
+                <Loader2 className="h-3.5 w-3.5 animate-spin" />
+              ) : (
+                <ArrowRight className="h-4 w-4" />
+              )}
             </Button>
           </form>
 
           {searchResult && (
-            <div className="border-none glass bg-white/5 border-white/10/20 rounded-[var(--radius-card)] p-4 space-y-3">
+            <div className="border-none glass/20 rounded-[var(--radius-card)] p-4 space-y-3">
               <div className="flex items-center justify-between text-xs pb-2 border-b border-border/60">
                 <span className="font-semibold text-muted-foreground">Protocolo:</span>
-                <span className="font-mono font-bold text-foreground">{searchResult.protocol_code}</span>
+                <span className="font-mono font-bold text-foreground">
+                  {searchResult.protocol_code}
+                </span>
               </div>
               <div className="flex items-center justify-between text-xs">
                 <span className="font-semibold text-muted-foreground">Status da Solicitação:</span>
@@ -193,7 +207,9 @@ function DataDeletionPage() {
               </div>
               <div className="flex items-center justify-between text-xs">
                 <span className="font-semibold text-muted-foreground">Data de Solicitação:</span>
-                <span className="text-foreground">{new Date(searchResult.created_at).toLocaleDateString()}</span>
+                <span className="text-foreground">
+                  {new Date(searchResult.created_at).toLocaleDateString()}
+                </span>
               </div>
             </div>
           )}
@@ -201,14 +217,18 @@ function DataDeletionPage() {
       </main>
 
       {/* Footer */}
-      <footer className="border-t border-border glass bg-white/5 border-white/10/20 py-6 px-6 text-center text-xs text-muted-foreground shrink-0">
+      <footer className="border-t border-border glass/20 py-6 px-6 text-center text-xs text-muted-foreground shrink-0">
         <div className="max-w-4xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
           <div className="flex items-center gap-1.5">
             <span>Turis © 2026</span>
           </div>
           <div className="flex gap-4">
-            <a href="/privacy" className="hover:underline">Privacidade</a>
-            <a href="/terms" className="hover:underline">Termos de Uso</a>
+            <a href="/privacy" className="hover:underline">
+              Privacidade
+            </a>
+            <a href="/terms" className="hover:underline">
+              Termos de Uso
+            </a>
           </div>
         </div>
       </footer>

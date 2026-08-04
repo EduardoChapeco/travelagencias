@@ -4,7 +4,16 @@ import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
-import { Send, UserPlus, Archive, MoreVertical, Paperclip, Check, CheckCheck, Clock } from "lucide-react";
+import {
+  Send,
+  UserPlus,
+  Archive,
+  MoreVertical,
+  Paperclip,
+  Check,
+  CheckCheck,
+  Clock,
+} from "lucide-react";
 import { useState, useRef, useEffect } from "react";
 import { cn } from "@/lib/utils";
 
@@ -16,7 +25,13 @@ interface ThreadViewProps {
   currentUserId?: string;
 }
 
-export function ThreadView({ conversation, messages, onSendMessage, onAssignToMe, currentUserId }: ThreadViewProps) {
+export function ThreadView({
+  conversation,
+  messages,
+  onSendMessage,
+  onAssignToMe,
+  currentUserId,
+}: ThreadViewProps) {
   const [inputText, setInputText] = useState("");
   const scrollRef = useRef<HTMLDivElement>(null);
 
@@ -38,7 +53,7 @@ export function ThreadView({ conversation, messages, onSendMessage, onAssignToMe
   }
 
   const contact = conversation.contacts || {};
-  const channelType = conversation.channels?.type || 'whatsapp';
+  const channelType = conversation.channels?.type || "whatsapp";
 
   const handleSend = () => {
     if (!inputText.trim()) return;
@@ -48,12 +63,18 @@ export function ThreadView({ conversation, messages, onSendMessage, onAssignToMe
 
   const getStatusIcon = (status: string) => {
     switch (status) {
-      case 'queued': return <Clock className="w-3 h-3 text-muted-foreground" />;
-      case 'sent': return <Check className="w-3 h-3 text-muted-foreground" />;
-      case 'delivered': return <CheckCheck className="w-3 h-3 text-muted-foreground" />;
-      case 'read': return <CheckCheck className="w-3 h-3 text-blue-500" />;
-      case 'failed': return <span className="ds-meta text-red-500">Falha</span>;
-      default: return null;
+      case "queued":
+        return <Clock className="w-3 h-3 text-muted-foreground" />;
+      case "sent":
+        return <Check className="w-3 h-3 text-muted-foreground" />;
+      case "delivered":
+        return <CheckCheck className="w-3 h-3 text-muted-foreground" />;
+      case "read":
+        return <CheckCheck className="w-3 h-3 text-blue-500" />;
+      case "failed":
+        return <span className="ds-meta text-red-500">Falha</span>;
+      default:
+        return null;
     }
   };
 
@@ -72,7 +93,7 @@ export function ThreadView({ conversation, messages, onSendMessage, onAssignToMe
               {contact.name || contact.phone}
             </h2>
             <div className="text-xs text-muted-foreground">
-              {channelType === 'whatsapp' ? contact.phone : contact.email}
+              {channelType === "whatsapp" ? contact.phone : contact.email}
             </div>
           </div>
           {conversation.ai_mode && (
@@ -81,7 +102,7 @@ export function ThreadView({ conversation, messages, onSendMessage, onAssignToMe
             </span>
           )}
         </div>
-        
+
         <div className="flex items-center gap-2">
           {!conversation.assigned_user_id && (
             <Button variant="outline" size="sm" onClick={onAssignToMe}>
@@ -102,28 +123,42 @@ export function ThreadView({ conversation, messages, onSendMessage, onAssignToMe
       <ScrollArea className="flex-1 bg-[#efeae2] dark:bg-black/20 p-4">
         <div className="max-w-3xl mx-auto flex flex-col gap-2 pb-4">
           {messages.map((msg, index) => {
-            const isOutbound = msg.direction === 'outbound';
+            const isOutbound = msg.direction === "outbound";
             return (
-              <div 
-                key={msg.id || index} 
+              <div
+                key={msg.id || index}
                 className={cn("flex w-full", isOutbound ? "justify-end" : "justify-start")}
               >
-                <div 
+                <div
                   className={cn(
                     "max-w-[75%] rounded-2xl p-3 text-sm shadow-sm relative group",
-                    isOutbound 
-                      ? "bg-[#d9fdd3] dark:bg-primary text-slate-900 dark:text-primary-foreground rounded-tr-none" 
-                      : "bg-white dark:bg-card text-foreground rounded-tl-none"
+                    isOutbound
+                      ? "bg-[#d9fdd3] dark:bg-primary text-slate-900 dark:text-primary-foreground rounded-tr-none"
+                      : "bg-white dark:bg-card text-foreground rounded-tl-none",
                   )}
                 >
                   {msg.body && <p className="whitespace-pre-wrap">{msg.body}</p>}
                   {msg.media_url && (
                     <div className="mt-2 rounded overflow-hidden">
                       {/* Placeholder for media rendering */}
-                      <a href={msg.media_url} target="_blank" rel="noreferrer" className="text-xs underline text-blue-600">Ver Anexo</a>
+                      <a
+                        href={msg.media_url}
+                        target="_blank"
+                        rel="noreferrer"
+                        className="text-xs underline text-blue-600"
+                      >
+                        Ver Anexo
+                      </a>
                     </div>
                   )}
-                  <div className={cn("ds-meta mt-1 flex items-center gap-1 justify-end opacity-70", isOutbound ? "text-slate-700 dark:text-primary-foreground" : "text-muted-foreground")}>
+                  <div
+                    className={cn(
+                      "ds-meta mt-1 flex items-center gap-1 justify-end opacity-70",
+                      isOutbound
+                        ? "text-slate-700 dark:text-primary-foreground"
+                        : "text-muted-foreground",
+                    )}
+                  >
                     {format(new Date(msg.created_at), "HH:mm")}
                     {isOutbound && getStatusIcon(msg.status)}
                   </div>
@@ -134,27 +169,31 @@ export function ThreadView({ conversation, messages, onSendMessage, onAssignToMe
           <div ref={scrollRef} />
         </div>
       </ScrollArea>
-      
+
       {/* Input Area */}
       <div className="p-4 border-t border-border bg-surface">
         <div className="max-w-3xl mx-auto flex items-end gap-2">
           <Button variant="ghost" size="icon" className="shrink-0 mb-1">
             <Paperclip className="w-5 h-5 text-muted-foreground" />
           </Button>
-          <Textarea 
+          <Textarea
             value={inputText}
             onChange={(e) => setInputText(e.target.value)}
             onKeyDown={(e) => {
-              if (e.key === 'Enter' && !e.shiftKey) {
+              if (e.key === "Enter" && !e.shiftKey) {
                 e.preventDefault();
                 handleSend();
               }
             }}
-            placeholder="Mensagem..." 
+            placeholder="Mensagem..."
             className="min-h-[44px] max-h-32 resize-none border-none"
             rows={1}
           />
-          <Button onClick={handleSend} size="icon" className="shrink-0 mb-1 rounded-full h-11 w-11 bg-primary hover:bg-primary/90 text-primary-foreground">
+          <Button
+            onClick={handleSend}
+            size="icon"
+            className="shrink-0 mb-1 rounded-full h-11 w-11 bg-primary hover:bg-primary/90 text-primary-foreground"
+          >
             <Send className="w-5 h-5 ml-1" />
           </Button>
         </div>

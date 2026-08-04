@@ -22,7 +22,6 @@ import {
   mergeClients,
 } from "@/services/clients";
 
-
 // Subcomponents
 import { DocumentsPanel } from "@/components/clients/DocumentsPanel";
 import { ClientLeadsPanel } from "@/components/clients/ClientLeadsPanel";
@@ -32,7 +31,9 @@ import { ClientForm } from "@/components/clients/ClientForm";
 import { Button } from "@/components/ui/button";
 
 export const Route = createFileRoute("/agency/$slug/clients/$id")({
-  head: ({ context }: any) => ({ meta: [{ title: `Cliente · ${context?.brand?.platform_name || 'Turis'}` }] }),
+  head: ({ context }: any) => ({
+    meta: [{ title: `Cliente · ${context?.brand?.platform_name || "Turis"}` }],
+  }),
   component: ClientDetail,
 });
 
@@ -148,32 +149,32 @@ function ClientDetail() {
       <ConfirmDialog />
       <PromptDialog />
 
-              <div className="flex items-center gap-2">
-          {!isEditing ? (
-            <>
-              <Button
-                onClick={() => setIsMerging(true)}
-                className="flex h-8 items-gap gap-1.5 rounded-full border-none glass-card border-none px-3 text-xs font-semibold text-foreground hover:glass bg-white/5 border-white/10 transition-colors cursor-pointer"
-              >
-                <Merge className="h-3.5 w-3.5" /> Unificar Cadastro
-              </Button>
-              <Button
-                onClick={() => setIsEditing(true)}
-                className="flex h-8 items-center gap-1.5 rounded-full bg-brand px-3 text-xs font-semibold text-brand-foreground hover:bg-brand/90 transition-colors cursor-pointer"
-              >
-                <Edit3 className="h-3.5 w-3.5" /> Editar Perfil
-              </Button>
-            </>
-          ) : (
+      <div className="flex items-center gap-2">
+        {!isEditing ? (
+          <>
             <Button
-              onClick={() => setIsEditing(false)}
-              className="flex h-8 items-center gap-1.5 rounded-full border-none glass-card border-none px-3 text-xs font-semibold text-foreground hover:glass bg-white/5 border-white/10 transition-colors cursor-pointer"
+              onClick={() => setIsMerging(true)}
+              className="flex h-8 items-gap gap-1.5 rounded-full border-none glass-card border-none px-3 text-xs font-semibold text-foreground hover:glass transition-colors cursor-pointer"
             >
-              <X className="h-3.5 w-3.5" /> Cancelar
+              <Merge className="h-3.5 w-3.5" /> Unificar Cadastro
             </Button>
-          )}
-        </div>
-      
+            <Button
+              onClick={() => setIsEditing(true)}
+              className="flex h-8 items-center gap-1.5 rounded-full bg-brand px-3 text-xs font-semibold text-brand-foreground hover:bg-brand/90 transition-colors cursor-pointer"
+            >
+              <Edit3 className="h-3.5 w-3.5" /> Editar Perfil
+            </Button>
+          </>
+        ) : (
+          <Button
+            onClick={() => setIsEditing(false)}
+            className="flex h-8 items-center gap-1.5 rounded-full border-none glass-card border-none px-3 text-xs font-semibold text-foreground hover:glass transition-colors cursor-pointer"
+          >
+            <X className="h-3.5 w-3.5" /> Cancelar
+          </Button>
+        )}
+      </div>
+
       <header className="pb-6 border-b border-border">
         <Link
           to="/agency/$slug/clients"
@@ -195,7 +196,7 @@ function ClientDetail() {
           {tags.map((t: string) => (
             <span
               key={t}
-              className="px-3 py-1 glass bg-white/5 border-white/10 border-none text-foreground text-xs font-bold rounded-full"
+              className="px-3 py-1 glass border-none text-foreground text-xs font-bold rounded-full"
             >
               {t}
             </span>
@@ -399,9 +400,7 @@ function ClientDetail() {
 function InfoBlock({ label, value }: { label: string; value: React.ReactNode }) {
   return (
     <div className="glass-card border-none p-5 rounded-full border-none">
-      <div className="ds-label-caps text-muted-foreground mb-1.5">
-        {label}
-      </div>
+      <div className="ds-label-caps text-muted-foreground mb-1.5">{label}</div>
       <div className="text-sm font-medium leading-relaxed text-foreground">{value}</div>
     </div>
   );

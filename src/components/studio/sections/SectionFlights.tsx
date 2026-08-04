@@ -181,7 +181,8 @@ export function SectionFlights({ draft, save }: Props) {
           <div className="grid grid-cols-2 gap-2">
             <L label="Bagagem">
               <Select
-                className={SMALL_INPUT} value={f.baggage_rules}
+                className={SMALL_INPUT}
+                value={f.baggage_rules}
                 onChange={(e) => upd(i, { baggage_rules: e.target.value })}
               >
                 <option value="">Sem bagagem</option>
@@ -193,7 +194,8 @@ export function SectionFlights({ draft, save }: Props) {
             </L>
             <L label="Paradas">
               <Select
-                className={SMALL_INPUT} value={f.stops}
+                className={SMALL_INPUT}
+                value={f.stops}
                 onChange={(e) => upd(i, { stops: parseInt(e.target.value) })}
               >
                 <option value={0}>Direto</option>
@@ -248,7 +250,8 @@ export function SectionFlights({ draft, save }: Props) {
               <div className="grid grid-cols-2 gap-2">
                 <L label="Origem (IATA)">
                   <Input
-                    className={SMALL_INPUT} value={searchParams.origin}
+                    className={SMALL_INPUT}
+                    value={searchParams.origin}
                     onChange={(e) =>
                       setSearchParams({ ...searchParams, origin: e.target.value.toUpperCase() })
                     }
@@ -257,7 +260,8 @@ export function SectionFlights({ draft, save }: Props) {
                 </L>
                 <L label="Destino (IATA)">
                   <Input
-                    className={SMALL_INPUT} value={searchParams.destination}
+                    className={SMALL_INPUT}
+                    value={searchParams.destination}
                     onChange={(e) =>
                       setSearchParams({
                         ...searchParams,
@@ -271,14 +275,16 @@ export function SectionFlights({ draft, save }: Props) {
                   <L label="Data do Voo">
                     <Input
                       type="date"
-                      className={SMALL_INPUT} value={searchParams.date}
+                      className={SMALL_INPUT}
+                      value={searchParams.date}
                       onChange={(e) => setSearchParams({ ...searchParams, date: e.target.value })}
                     />
                   </L>
                 </div>
               </div>
 
-              <Button variant="default"
+              <Button
+                variant="default"
                 type="button"
                 className="w-full"
                 disabled={

@@ -89,7 +89,7 @@ Para produtos, extraia todos os itens identificáveis (quartos, tours, pacotes, 
       if (!fileRes.ok) throw new Error("Não foi possível baixar o arquivo: " + file_url);
       const arrayBuf = await fileRes.arrayBuffer();
       const uint8 = new Uint8Array(arrayBuf);
-      
+
       let binary = "";
       for (let i = 0; i < uint8.length; i++) binary += String.fromCharCode(uint8[i]);
       payloadBase64 = btoa(binary);
@@ -107,7 +107,8 @@ Para produtos, extraia todos os itens identificáveis (quartos, tours, pacotes, 
       body: JSON.stringify({
         action: "completion",
         agency_id,
-        prompt: "Por favor, faça a análise e extração estruturada dos dados deste documento de fornecedor de turismo.",
+        prompt:
+          "Por favor, faça a análise e extração estruturada dos dados deste documento de fornecedor de turismo.",
         file_base64: payloadBase64,
         mime: finalMime,
         jsonMode: true,
@@ -141,18 +142,20 @@ Para produtos, extraia todos os itens identificáveis (quartos, tours, pacotes, 
         _supplier_id: supplier_id,
         _file_id: file_id || null,
         _extracted_payload: parsed,
-      }
+      },
     );
 
     if (rpcError) {
       throw new Error("Falha ao salvar dados extraídos no banco: " + rpcError.message);
     }
 
-    return new Response(JSON.stringify({ success: true, supplier: updatedSupplier, data: parsed }), {
-      headers: { ...corsHeaders, "Content-Type": "application/json" },
-      status: 200,
-    });
-
+    return new Response(
+      JSON.stringify({ success: true, supplier: updatedSupplier, data: parsed }),
+      {
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+        status: 200,
+      },
+    );
   } catch (error: any) {
     console.error("Erro no OCR do Fornecedor:", error);
     return new Response(JSON.stringify({ error: error.message }), {

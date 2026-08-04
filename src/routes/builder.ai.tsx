@@ -257,7 +257,7 @@ function AISiteBuilder() {
   }
 
   return (
-    <div className="flex h-screen glass bg-white/5 border-white/10/25 select-none overflow-hidden">
+    <div className="flex h-screen glass/25 select-none overflow-hidden">
       {/* Sidebar options */}
       <div className="w-80 glass-card border-none border-r border-border flex flex-col shrink-0">
         <div className="p-4 border-b border-border flex items-center gap-3">
@@ -265,25 +265,21 @@ function AISiteBuilder() {
             <Link
               to="/agency/$slug"
               params={{ slug: activeAgency.slug || "" }}
-              className="p-1.5 hover:glass bg-white/5 border-white/10 rounded-[var(--radius-card)] border-none text-muted-foreground hover:text-foreground"
+              className="p-1.5 hover:glass rounded-[var(--radius-card)] border-none text-muted-foreground hover:text-foreground"
             >
               <ArrowLeft className="w-4 h-4" />
             </Link>
           ) : (
             <Link
               to="/"
-              className="p-1.5 hover:glass bg-white/5 border-white/10 rounded-[var(--radius-card)] border-none text-muted-foreground hover:text-foreground"
+              className="p-1.5 hover:glass rounded-[var(--radius-card)] border-none text-muted-foreground hover:text-foreground"
             >
               <ArrowLeft className="w-4 h-4" />
             </Link>
           )}
           <div>
-            <h1 className="ds-label-caps tracking-wider text-brand">
-              Criador de Sites
-            </h1>
-            <p className="ds-meta text-muted-foreground">
-              Gerador automático de portal e páginas
-            </p>
+            <h1 className="ds-label-caps tracking-wider text-brand">Criador de Sites</h1>
+            <p className="ds-meta text-muted-foreground">Gerador automático de portal e páginas</p>
           </div>
         </div>
 
@@ -314,7 +310,7 @@ function AISiteBuilder() {
             </div>
           )}
 
-          <div className="border-none rounded-[var(--radius-card)] p-4 glass bg-white/5 border-white/10/20 space-y-2.5">
+          <div className="border-none rounded-[var(--radius-card)] p-4 glass/20 space-y-2.5">
             <h3 className="text-xs font-bold text-foreground flex items-center gap-1.5">
               <Sparkles className="w-3.5 h-3.5 text-brand" /> Sugestões de temas
             </h3>
@@ -342,7 +338,7 @@ function AISiteBuilder() {
                 className={`w-8 h-8 rounded-full flex items-center justify-center shrink-0 border ${
                   m.role === "user"
                     ? "bg-brand/10 border-brand text-brand"
-                    : "glass bg-white/5 border-white/10 border-border text-muted-foreground"
+                    : "glass border-border text-muted-foreground"
                 }`}
               >
                 {m.role === "user" ? <User className="w-4 h-4" /> : <Bot className="w-4 h-4" />}
@@ -352,7 +348,7 @@ function AISiteBuilder() {
                   className={`p-4 rounded-[var(--radius-card)] text-xs leading-relaxed ${
                     m.role === "user"
                       ? "bg-brand text-white"
-                      : "glass bg-white/5 border-white/10/55 text-foreground border-none/60"
+                      : "glass/55 text-foreground border-none/60"
                   }`}
                 >
                   {m.content}
@@ -372,7 +368,7 @@ function AISiteBuilder() {
                         href={m.siteLink}
                         target="_blank"
                         rel="noreferrer"
-                        className="flex-1 h-8 rounded-[var(--radius-card)] glass-card border-none border-none hover:glass bg-white/5 border-white/10 ds-meta font-bold text-center flex items-center justify-center transition-colors"
+                        className="flex-1 h-8 rounded-[var(--radius-card)] glass-card border-none border-none hover:glass ds-meta font-bold text-center flex items-center justify-center transition-colors"
                       >
                         Visualizar Site
                       </a>
@@ -396,10 +392,10 @@ function AISiteBuilder() {
 
           {loading && (
             <div className="flex gap-3 max-w-xl mr-auto">
-              <div className="w-8 h-8 rounded-full glass bg-white/5 border-white/10 border-none flex items-center justify-center shrink-0 text-muted-foreground">
+              <div className="w-8 h-8 rounded-full glass border-none flex items-center justify-center shrink-0 text-muted-foreground">
                 <Bot className="w-4 h-4" />
               </div>
-              <div className="space-y-2 glass bg-white/5 border-white/10/45 border-none/50 p-4 rounded-[var(--radius-card)] text-xs max-w-sm">
+              <div className="space-y-2 glass/45 border-none/50 p-4 rounded-[var(--radius-card)] text-xs max-w-sm">
                 <div className="flex items-center gap-2">
                   <div className="flex space-x-1">
                     <div

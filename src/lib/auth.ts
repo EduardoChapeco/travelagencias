@@ -44,7 +44,7 @@ export function useAuth() {
           return data.session;
         });
       }
-      
+
       globalSessionPromise.then((s) => {
         setSession(s);
         setLoading(false);

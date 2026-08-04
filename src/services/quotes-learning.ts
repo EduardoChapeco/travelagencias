@@ -46,7 +46,10 @@ export async function recordDecisionFeedback(input: DecisionFeedbackInput): Prom
  * Motor de aprendizado (Decision Learning): Analisa históricos de decisões para identificar padrões
  * e propor regras candidatas que automatizem o scoring logístico.
  */
-export async function runDecisionLearningAnalysis(quoteRequestId: string, agencyId: string): Promise<void> {
+export async function runDecisionLearningAnalysis(
+  quoteRequestId: string,
+  agencyId: string,
+): Promise<void> {
   try {
     // 1. Buscar histórico recente de decisões desta agência
     const { data: pastDecisions } = await supabase
@@ -65,7 +68,8 @@ export async function runDecisionLearningAnalysis(quoteRequestId: string, agency
     // Para simplificar a análise por IA, consolidaremos os motivos e o histórico de rejeições
     let historyContext = "";
     for (const dec of pastDecisions) {
-      const dest = (dec.quote_requests as any)?.normalized_intent?.destinations?.[0]?.name || "Destino"; // Json ↔ app boundary
+      const dest =
+        (dec.quote_requests as any)?.normalized_intent?.destinations?.[0]?.name || "Destino"; // Json ↔ app boundary
       historyContext += `
 Destino: ${dest}
 Justificativa da Decisão: ${dec.reason}
@@ -103,15 +107,18 @@ Responda EXCLUSIVAMENTE o objeto JSON correspondente ou NULL, sem formatação m
     const prompt = `Analise o seguinte histórico recente de decisões:
 ${historyContext}`;
 
-    const { data: aiResponse, error: aiError } = await supabase.functions.invoke("ai-orchestrator", {
-      body: {
-        action: "completion",
-        prompt,
-        systemPrompt,
-        jsonMode: true,
-        modelPreference: "smart",
+    const { data: aiResponse, error: aiError } = await supabase.functions.invoke(
+      "ai-orchestrator",
+      {
+        body: {
+          action: "completion",
+          prompt,
+          systemPrompt,
+          jsonMode: true,
+          modelPreference: "smart",
+        },
       },
-    });
+    );
 
     if (aiError) throw aiError;
 

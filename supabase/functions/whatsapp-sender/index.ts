@@ -53,7 +53,7 @@ serve(async (req) => {
       .select("contact_id, channel_id")
       .eq("id", message.conversation_id)
       .single();
-      
+
     if (!conversation) throw new Error("Conversation not found");
 
     const { data: contact } = await supabase
@@ -61,7 +61,7 @@ serve(async (req) => {
       .select("phone, metadata")
       .eq("id", conversation.contact_id)
       .single();
-      
+
     if (!contact) throw new Error("Contact not found");
 
     // Buscar o Canal
@@ -87,7 +87,7 @@ serve(async (req) => {
 
     if (!finalToken) {
       throw new Error(`Nenhum token de acesso encontrado para o canal ${channel.id}.`);
-    } 
+    }
 
     let success = false;
     let externalId = null;
@@ -118,7 +118,6 @@ serve(async (req) => {
 
       externalId = resData.message_id;
       success = true;
-
     } else {
       // ──────────────────────────────────────────────────────────────────
       // CASE B: Envio para WhatsApp Cloud API

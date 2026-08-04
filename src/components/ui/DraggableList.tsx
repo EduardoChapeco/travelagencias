@@ -25,8 +25,15 @@ type DraggableItemProps = {
   dragHandleClassName?: string;
 };
 
-export function DraggableItem({ id, children, className = "", dragHandleClassName = "" }: DraggableItemProps) {
-  const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ id });
+export function DraggableItem({
+  id,
+  children,
+  className = "",
+  dragHandleClassName = "",
+}: DraggableItemProps) {
+  const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({
+    id,
+  });
 
   const style = {
     transform: CSS.Transform.toString(transform),
@@ -38,16 +45,14 @@ export function DraggableItem({ id, children, className = "", dragHandleClassNam
   return (
     <div ref={setNodeRef} style={style} className={`flex items-center w-full ${className}`}>
       {/* O container precisa gerenciar a área de arrasto. Passamos os listeners para um handle específico ou para o container todo */}
-      <div 
-        {...attributes} 
-        {...listeners} 
+      <div
+        {...attributes}
+        {...listeners}
         className={`cursor-grab active:cursor-grabbing p-2 text-muted-foreground hover:text-foreground outline-none shrink-0 ${dragHandleClassName}`}
       >
         <GripVertical className="h-4 w-4" />
       </div>
-      <div className="flex-1 min-w-0">
-        {children}
-      </div>
+      <div className="flex-1 min-w-0">{children}</div>
     </div>
   );
 }
@@ -58,10 +63,14 @@ type DraggableListProps<T extends { id: string }> = {
   children: (item: T) => React.ReactNode;
 };
 
-export function DraggableList<T extends { id: string }>({ items, onReorder, children }: DraggableListProps<T>) {
+export function DraggableList<T extends { id: string }>({
+  items,
+  onReorder,
+  children,
+}: DraggableListProps<T>) {
   const sensors = useSensors(
     useSensor(PointerSensor),
-    useSensor(KeyboardSensor, { coordinateGetter: sortableKeyboardCoordinates })
+    useSensor(KeyboardSensor, { coordinateGetter: sortableKeyboardCoordinates }),
   );
 
   const handleDragEnd = (event: DragEndEvent) => {

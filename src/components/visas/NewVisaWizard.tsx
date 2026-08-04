@@ -365,7 +365,6 @@ export function NewVisaWizard({
                         <Input
                           value={doc.title}
                           onChange={(e) => updateDocTitle(idx, e.target.value)}
-                          
                           placeholder="Nome do documento"
                         />
                         <p className="ds-meta text-muted-foreground mt-1 truncate">
@@ -449,7 +448,8 @@ export function NewVisaWizard({
               Próximo <ChevronRight className="h-4 w-4" />
             </Button>
           ) : (
-            <Button variant="default"
+            <Button
+              variant="default"
               onClick={submit}
               disabled={submitting || uploading}
               className="w-48 font-bold tracking-wider"

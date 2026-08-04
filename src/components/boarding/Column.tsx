@@ -22,11 +22,11 @@ export function Column({
       ref={setNodeRef}
       className={cn(
         "flex h-full w-[310px] shrink-0 flex-col rounded-[var(--radius-card)] transition-all duration-300 kanban-column",
-        isOver ? "border-brand bg-brand/5 scale-[1.01]" : ""
+        isOver ? "border-brand bg-brand/5 scale-[1.01]" : "",
       )}
       style={{ borderTop: `4px solid ${stage.color || "#9ca3af"}` }}
     >
-      <div className="flex flex-col justify-center border-b border-border/40 bg-white/5 px-4 py-3 rounded-t-[var(--radius-card)]">
+      <div className="flex flex-col justify-center border-b border-border/40 glass px-4 py-3 rounded-t-[var(--radius-card)]">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
             <span

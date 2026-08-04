@@ -1,4 +1,5 @@
 # UI-001 - 07_ROOT_CAUSE_TREE.md
+
 # ÁRVORE DE CAUSA RAIZ - UI-001
 
 Este documento traça a origem do desfoque incondicional global sobre o plano de fundo dos módulos.

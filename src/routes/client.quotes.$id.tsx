@@ -10,12 +10,14 @@ import { getProposalTemplate } from "@/components/proposals/templates";
 import { CanvasFormat } from "@/components/studio/StudioFrame";
 import { Button } from "@/components/ui/button";
 type ProposalPublic = any;
-function ClientCanvasFrame({ children, format }: { children: React.ReactNode, format: string }) {
+function ClientCanvasFrame({ children, format }: { children: React.ReactNode; format: string }) {
   return <div className={`canvas-frame ${format}`}>{children}</div>;
 }
 
 export const Route = createFileRoute("/client/quotes/$id")({
-  head: ({ context }: any) => ({ meta: [{ title: `Visualizar Cotação · ${context?.brand?.platform_name || 'Turis'}` }] }),
+  head: ({ context }: any) => ({
+    meta: [{ title: `Visualizar Cotação · ${context?.brand?.platform_name || "Turis"}` }],
+  }),
   component: ClientQuoteView,
 });
 
@@ -31,7 +33,8 @@ function ClientQuoteView() {
       // Confirmação de segurança via RLS do app
       const { data: p, error } = await (supabase as any)
         .from("proposals")
-        .select(`
+        .select(
+          `
           id, number, title, destination, travel_start, travel_end, pax_adults, 
           pax_children, pax_infants, pax_seniors, currency, subtotal, discount, 
           total, status, terms, valid_until, decided_at, agency_id, flights, 
@@ -39,17 +42,17 @@ function ClientQuoteView() {
           pix_discount_percent, installments_card, installments_boleto, 
           template, canvas_format, notes, public_token,
           agency:agencies(name, logo_url, brand_color, brand_color_fg, logo_white_url, secondary_color, accent_color, font_heading, font_body)
-        `)
+        `,
+        )
         .eq("id", id)
         .single();
-        
+
       if (error) throw error;
       if (!p) return null;
 
       // Update status to viewed if not decided
       if (!p.decided_at && p.status !== "draft") {
-        await (supabase as any)
-          .rpc("public_mark_proposal_viewed", { _id: p.id });
+        await (supabase as any).rpc("public_mark_proposal_viewed", { _id: p.id });
       }
 
       return p as unknown as ProposalPublic;
@@ -59,8 +62,10 @@ function ClientQuoteView() {
   const decide = useMutation({
     onMutate: () => toast.loading("Registrando sua decisão..."),
     mutationFn: async (status: "approved" | "rejected") => {
-      const { error } = await (supabase as any)
-        .rpc("public_decide_proposal", { _id: id, _status: status });
+      const { error } = await (supabase as any).rpc("public_decide_proposal", {
+        _id: id,
+        _status: status,
+      });
       if (error) throw error;
     },
     onSuccess: () => {
@@ -75,7 +80,11 @@ function ClientQuoteView() {
     },
   });
 
-  const handleKycSign = async (kycData: { photoBlob: Blob; latitude: number; longitude: number }) => {
+  const handleKycSign = async (kycData: {
+    photoBlob: Blob;
+    latitude: number;
+    longitude: number;
+  }) => {
     try {
       const auth = await supabase.auth.getUser();
       const userId = auth.data.user?.id;
@@ -83,14 +92,15 @@ function ClientQuoteView() {
 
       // 1. Upload photo
       const fileName = `${userId}/${Date.now()}-kyc.jpg`;
-      const { data: uploadData, error: uploadErr } = await supabase
-        .storage
+      const { data: uploadData, error: uploadErr } = await supabase.storage
         .from("identity_proofs")
         .upload(fileName, kycData.photoBlob, { contentType: "image/jpeg" });
-      
+
       if (uploadErr) throw uploadErr;
 
-      const { data: publicUrlData } = supabase.storage.from("identity_proofs").getPublicUrl(fileName);
+      const { data: publicUrlData } = supabase.storage
+        .from("identity_proofs")
+        .getPublicUrl(fileName);
 
       // 2. Insert signature log
       const { error: signErr } = await (supabase as any).from("client_signatures").insert({
@@ -100,7 +110,7 @@ function ClientQuoteView() {
         document_id: q.data.id,
         latitude: kycData.latitude,
         longitude: kycData.longitude,
-        photo_url: publicUrlData.publicUrl
+        photo_url: publicUrlData.publicUrl,
       });
       if (signErr) throw signErr;
 
@@ -112,7 +122,8 @@ function ClientQuoteView() {
     }
   };
 
-  if (q.isLoading) return <div className="p-8 text-center animate-pulse">Carregando cotação...</div>;
+  if (q.isLoading)
+    return <div className="p-8 text-center animate-pulse">Carregando cotação...</div>;
   if (!q.data) return <div className="p-8 text-center text-red-500">Cotação não encontrada.</div>;
 
   const quote = q.data;
@@ -122,7 +133,7 @@ function ClientQuoteView() {
   return (
     <div className="max-w-4xl mx-auto space-y-6 pb-20">
       <div className="flex items-center justify-between mb-4">
-        <Button 
+        <Button
           onClick={() => navigate({ to: "/client/quotes" })}
           className="flex items-center gap-2 text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
         >
@@ -132,7 +143,7 @@ function ClientQuoteView() {
 
       <PageHeader
         title={quote.title}
-        description={`Cotação #${quote.number} enviada por ${quote.agency?.name || 'sua agência'}`}
+        description={`Cotação #${quote.number} enviada por ${quote.agency?.name || "sua agência"}`}
       />
 
       {isPending && (
@@ -141,7 +152,9 @@ function ClientQuoteView() {
             <Clock className="h-5 w-5 shrink-0" />
             <div>
               <p className="font-semibold text-sm">Esta proposta aguarda sua aprovação.</p>
-              <p className="text-xs opacity-80">Você pode aceitar ou recusar a oferta da agência.</p>
+              <p className="text-xs opacity-80">
+                Você pode aceitar ou recusar a oferta da agência.
+              </p>
             </div>
           </div>
           <div className="flex items-center gap-2">
@@ -174,7 +187,10 @@ function ClientQuoteView() {
           <Check className="h-5 w-5 shrink-0" />
           <div>
             <p className="font-semibold text-sm">Você aceitou esta proposta!</p>
-            <p className="text-xs opacity-80">A agência entrará em contato com os próximos passos, ou você será redirecionado para a assinatura.</p>
+            <p className="text-xs opacity-80">
+              A agência entrará em contato com os próximos passos, ou você será redirecionado para a
+              assinatura.
+            </p>
           </div>
         </div>
       )}

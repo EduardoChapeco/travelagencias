@@ -87,14 +87,8 @@ export async function fetchQuoteRequestDetails(id: string) {
       )
       .eq("id", id)
       .maybeSingle(),
-    supabase
-      .from("quote_travelers")
-      .select("*")
-      .eq("quote_request_id", id),
-    supabase
-      .from("quote_preferences")
-      .select("*")
-      .eq("quote_request_id", id),
+    supabase.from("quote_travelers").select("*").eq("quote_request_id", id),
+    supabase.from("quote_preferences").select("*").eq("quote_request_id", id),
     // P2.1: Scenarios são embutidos como join nested — sem segundo round-trip
     supabase
       .from("quote_search_plans")
@@ -130,7 +124,6 @@ export async function fetchQuoteRequestDetails(id: string) {
     scenarios,
   };
 }
-
 
 export async function fetchQuoteRequestsList(agencyId: string) {
   const { data, error } = await supabase
@@ -223,7 +216,13 @@ export async function executeScenarioSearch(
   };
 
   // Atualizar status do cenário para processando
-  await supabase.from("quote_scenarios").update({ status: "processing" }).eq("id", scenarioId);
+  await supabase.rpc(
+    "update_quote_scenario_status_rpc" as never,
+    {
+      p_scenario_id: scenarioId,
+      p_status: "processing",
+    } as never,
+  );
 
   try {
     const { data, error } = await supabase.functions.invoke("infotravel-connector", {
@@ -240,7 +239,13 @@ export async function executeScenarioSearch(
 
     // Credenciais não configuradas — retorno estruturado (HTTP 200 com error_code)
     if (data?.error_code === "CREDENTIALS_NOT_CONFIGURED") {
-      await supabase.from("quote_scenarios").update({ status: "pending" }).eq("id", scenarioId);
+      await supabase.rpc(
+        "update_quote_scenario_status_rpc" as never,
+        {
+          p_scenario_id: scenarioId,
+          p_status: "pending",
+        } as never,
+      );
       throw new Error(data.error);
     }
 
@@ -248,13 +253,25 @@ export async function executeScenarioSearch(
     if (data?.success === false && data?.error) throw new Error(data.error);
 
     // Marcar como concluído
-    await supabase.from("quote_scenarios").update({ status: "completed" }).eq("id", scenarioId);
+    await supabase.rpc(
+      "update_quote_scenario_status_rpc" as never,
+      {
+        p_scenario_id: scenarioId,
+        p_status: "completed",
+      } as never,
+    );
 
     return (data?.offers as NormalizedOffer[]) || [];
   } catch (err: any) {
     // Marcar como falho somente se não for "não configurado" (que já foi tratado acima)
     if (!err.message?.includes("Acesse Configurações")) {
-      await supabase.from("quote_scenarios").update({ status: "failed" }).eq("id", scenarioId);
+      await supabase.rpc(
+        "update_quote_scenario_status_rpc" as never,
+        {
+          p_scenario_id: scenarioId,
+          p_status: "failed",
+        } as never,
+      );
     }
     throw err;
   }
@@ -418,12 +435,19 @@ export async function rejectPackageCandidate(
   });
 
   // 3. Atualizar status do package_candidates para "invalid"
-  await supabase.from("package_candidates").update({ status: "invalid" }).eq("id", candidateId);
+  await supabase.rpc(
+    "reject_package_candidate_rpc" as never,
+    {
+      p_candidate_id: candidateId,
+    } as never,
+  );
 
   // 4. Executar o Decision Learning em segundo plano
-  import("./quotes-learning").then(({ runDecisionLearningAnalysis }) => {
-    runDecisionLearningAnalysis(quoteRequestId, agencyId).then();
-  }).catch((err) => console.error("Erro ao carregar orquestrador de learning:", err));
+  import("./quotes-learning")
+    .then(({ runDecisionLearningAnalysis }) => {
+      runDecisionLearningAnalysis(quoteRequestId, agencyId).then();
+    })
+    .catch((err) => console.error("Erro ao carregar orquestrador de learning:", err));
 }
 
 export async function createQuoteSnapshot(
@@ -432,7 +456,7 @@ export async function createQuoteSnapshot(
   snapshotData: any,
 ): Promise<void> {
   const dataStr = JSON.stringify(snapshotData);
-  
+
   // Gerar hash SHA-256 nativo
   const msgBuffer = new TextEncoder().encode(dataStr);
   const hashBuffer = await crypto.subtle.digest("SHA-256", msgBuffer);
@@ -458,7 +482,12 @@ export async function createQuoteSnapshot(
  * Centralizado no serviço para remover chamada direta ao supabase da rota.
  */
 export async function deleteQuoteRequest(id: string): Promise<void> {
-  const { error } = await supabase.from("quote_requests").delete().eq("id", id);
+  const { error } = await supabase.rpc(
+    "delete_quote_request_rpc" as never,
+    {
+      p_request_id: id,
+    } as never,
+  );
   if (error) throw error;
 }
 
@@ -467,7 +496,9 @@ export async function deleteQuoteRequest(id: string): Promise<void> {
  * Centralizado aqui para evitar chamadas duplicadas ao supabase.auth nas rotas.
  */
 export async function getCurrentUserRole(agencyId: string): Promise<string> {
-  const { data: { user } } = await supabase.auth.getUser();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
   if (!user) return "agent";
   const { data } = await supabase
     .from("user_roles")
@@ -483,7 +514,9 @@ export async function getCurrentUserRole(agencyId: string): Promise<string> {
  * Centralizado para evitar chamadas dispersas ao supabase.auth nas rotas.
  */
 export async function getCurrentUserId(): Promise<string> {
-  const { data: { user } } = await supabase.auth.getUser();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
   if (!user) throw new Error("Sessão expirada");
   return user.id;
 }
@@ -503,5 +536,3 @@ export async function invokeAiOrchestrator(
   if (error) throw error;
   return data?.result || "";
 }
-
-

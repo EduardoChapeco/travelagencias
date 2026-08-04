@@ -104,14 +104,14 @@ export function AIFloatingWidget({ inline = false }: { inline?: boolean }) {
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.95, y: 12 }}
               transition={{ type: "spring", bounce: 0.15, duration: 0.4 }}
-              className="absolute bottom-16 left-0 origin-bottom-left w-[380px] sm:w-[400px] h-[540px] rounded-[var(--radius-card)] overflow-hidden glass text-white bg-black/40 backdrop-blur-2xl shadow-[0_16px_48px_rgba(0,0,0,0.4)] flex flex-col"
+              className="absolute bottom-16 left-0 origin-bottom-left w-[calc(100vw-2rem)] sm:w-96 max-w-sm aspect-[3/4] max-h-[600px] rounded-[var(--radius-card)] overflow-hidden glass text-white bg-black/40 backdrop-blur-2xl shadow-[0_16px_48px_rgba(0,0,0,0.4)] flex flex-col"
             >
               {aiActions && aiActions.length > 0 && (
-                <div className="px-4 pt-3 pb-2 bg-white/5 border-b border-white/10 shrink-0">
+                <div className="px-4 pt-3 pb-2 glass border-b border-border shrink-0">
                   <span className="ds-meta font-black uppercase tracking-wider text-white/50 flex items-center gap-1 mb-2">
                     <Compass className="w-3.5 h-3.5" /> Ações Rápidas desta página
                   </span>
-                  <div className="flex flex-wrap gap-1.5 max-h-[80px] overflow-y-auto no-scrollbar">
+                  <div className="flex flex-wrap gap-1.5 max-h-24 overflow-y-auto no-scrollbar">
                     {aiActions.map((act: any, idx: number) => (
                       <Button
                         key={idx}
@@ -147,8 +147,8 @@ export function AIFloatingWidget({ inline = false }: { inline?: boolean }) {
                   setSelectedPrompt("");
                 }}
                 className={cn(
-                  "h-14 w-14 rounded-full flex items-center justify-center glass-dock border border-white/20 text-white hover:border-white/40 cursor-pointer transition-all duration-200 hover:scale-[1.03] active:scale-[0.98]",
-                  isOpen && "bg-brand/20 border-brand/35"
+                  "h-14 w-14 rounded-full flex items-center justify-center glass-dock border border-border text-white hover:border-white/40 cursor-pointer transition-all duration-200 hover:scale-[1.03] active:scale-[0.98]",
+                  isOpen && "bg-brand/20 border-brand/35",
                 )}
               >
                 {isOpen ? (
@@ -161,7 +161,7 @@ export function AIFloatingWidget({ inline = false }: { inline?: boolean }) {
             <TooltipContent
               side="right"
               sideOffset={12}
-              className="rounded-[var(--radius-card)] px-3 py-1.5 text-xs font-semibold bg-black/80 backdrop-blur-md text-white border border-white/10"
+              className="rounded-[var(--radius-card)] px-3 py-1.5 text-xs font-semibold bg-black/80 backdrop-blur-md text-white border border-border"
             >
               Assistente de IA
             </TooltipContent>
@@ -177,15 +177,21 @@ export function AIFloatingWidget({ inline = false }: { inline?: boolean }) {
       ref={widgetRef}
       className={cn(
         "fixed z-50 flex flex-col gap-3 font-sans select-none pointer-events-auto transition-all duration-300",
-        isHome 
-          ? "bottom-6 left-4 items-start" 
-          : "bottom-20 right-4 items-end md:bottom-[var(--shell-edge-gap)] md:items-center"
+        isHome
+          ? "bottom-6 left-4 items-start"
+          : "bottom-20 right-4 items-end md:bottom-[var(--shell-edge-gap)] md:items-center",
       )}
-      style={isHome ? undefined : { 
-        left: isMobile ? undefined : "calc(var(--shell-edge-gap) + (var(--dock-collapsed-width) / 2))",
-        transform: isMobile ? undefined : "translateX(-50%)",
-        zIndex: 100 
-      }}
+      style={
+        isHome
+          ? undefined
+          : {
+              left: isMobile
+                ? undefined
+                : "calc(var(--shell-edge-gap) + (var(--dock-collapsed-width) / 2))",
+              transform: isMobile ? undefined : "translateX(-50%)",
+              zIndex: 100,
+            }
+      }
     >
       <AnimatePresence>
         {isOpen && (
@@ -195,16 +201,16 @@ export function AIFloatingWidget({ inline = false }: { inline?: boolean }) {
             exit={{ opacity: 0, scale: 0.95, y: 12 }}
             transition={{ type: "spring", bounce: 0.15, duration: 0.4 }}
             className={cn(
-              "w-[380px] sm:w-[400px] h-[540px] rounded-[var(--radius-card)] overflow-hidden glass text-white bg-black/40 backdrop-blur-2xl shadow-[0_16px_48px_rgba(0,0,0,0.4)] flex flex-col",
-              isMobile ? "origin-bottom-right" : "origin-bottom-left"
+              "w-full sm:w-96 max-w-sm aspect-[3/4] max-h-[600px] rounded-[var(--radius-card)] overflow-hidden glass text-white bg-black/40 backdrop-blur-2xl shadow-[0_16px_48px_rgba(0,0,0,0.4)] flex flex-col",
+              isMobile ? "origin-bottom-right" : "origin-bottom-left",
             )}
           >
             {aiActions && aiActions.length > 0 && (
-              <div className="px-4 pt-3 pb-2 bg-white/5 border-b border-white/10 shrink-0">
+              <div className="px-4 pt-3 pb-2 glass border-b border-border shrink-0">
                 <span className="ds-meta font-black uppercase tracking-wider text-white/50 flex items-center gap-1 mb-2">
                   <Compass className="w-3.5 h-3.5" /> Ações Rápidas desta página
                 </span>
-                <div className="flex flex-wrap gap-1.5 max-h-[80px] overflow-y-auto no-scrollbar">
+                <div className="flex flex-wrap gap-1.5 max-h-24 overflow-y-auto no-scrollbar">
                   {aiActions.map((act: any, idx: number) => (
                     <Button
                       key={idx}
@@ -240,8 +246,8 @@ export function AIFloatingWidget({ inline = false }: { inline?: boolean }) {
         onMouseEnter={() => setIsHovered(true)}
         onMouseLeave={() => setIsHovered(false)}
         className={cn(
-          "h-14 flex items-center justify-center rounded-full glass-dock border border-white/20 text-white hover:border-white/40 cursor-pointer transition-all duration-200",
-          isOpen ? "bg-brand/20 border-brand/35 w-14" : "hover:scale-[1.03]"
+          "h-14 flex items-center justify-center rounded-full glass-dock border border-border text-white hover:border-white/40 cursor-pointer transition-all duration-200",
+          isOpen ? "bg-brand/20 border-brand/35 w-14" : "hover:scale-[1.03]",
         )}
         style={{
           width: isOpen ? "56px" : isHovered && !isMobile ? "148px" : "56px",

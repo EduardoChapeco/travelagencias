@@ -102,7 +102,14 @@ export function PageHeader({
                     value={search.value}
                     onChange={(e) => search.onChange(e.target.value)}
                     placeholder={search.placeholder ?? "Buscar..."}
-                    className={cn( "w-full rounded-full bg-surface-alt/50 border-border/50", "pl-9 pr-9 text-[12px] font-semibold placeholder:text-muted-foreground/60", "focus:outline-none focus:ring-primary/50 focus:bg-surface-alt", "transition-all duration-150" )} /> {search.value && (
+                    className={cn(
+                      "w-full rounded-full bg-surface-alt/50 border-border/50",
+                      "pl-9 pr-9 text-[12px] font-semibold placeholder:text-muted-foreground/60",
+                      "focus:outline-none focus:ring-primary/50 focus:bg-surface-alt",
+                      "transition-all duration-150",
+                    )}
+                  />{" "}
+                  {search.value && (
                     <Button
                       type="button"
                       onClick={() => search.onChange("")}
@@ -127,7 +134,7 @@ export function PageHeader({
                           "px-3 h-7 rounded-full ds-meta font-extrabold whitespace-nowrap transition-all duration-200 cursor-pointer flex items-center gap-1.5",
                           isActive
                             ? "bg-primary text-primary-foreground shadow-sm"
-                            : "text-muted-foreground hover:text-foreground hover:bg-surface-alt"
+                            : "text-muted-foreground hover:text-foreground hover:bg-surface-alt",
                         )}
                       >
                         {f.label}
@@ -135,7 +142,9 @@ export function PageHeader({
                           <span
                             className={cn(
                               "px-1.5 py-0.5 rounded-full text-[9px] leading-none font-bold",
-                              isActive ? "bg-black/20 text-primary-foreground" : "bg-border text-muted-foreground"
+                              isActive
+                                ? "bg-black/20 text-primary-foreground"
+                                : "bg-border text-muted-foreground",
                             )}
                           >
                             {f.count}
@@ -150,18 +159,16 @@ export function PageHeader({
           )}
 
           {/* ── Actions (Contextual Button, Height 32px standard) ── */}
-          {actions && (
-            <div className="flex items-center gap-2 h-8">
-              {actions}
-            </div>
-          )}
+          {actions && <div className="flex items-center gap-2 h-8">{actions}</div>}
 
           {/* ── Primary Action (Omit on Desktop if sidebar handles it) ── */}
           {primaryAction && (
-            <div className={cn(
-              "flex items-center ml-2 border-l border-border/50 pl-4 h-8",
-              hasSidebar ? "md:hidden" : ""
-            )}>
+            <div
+              className={cn(
+                "flex items-center ml-2 border-l border-border/50 pl-4 h-8",
+                hasSidebar ? "md:hidden" : "",
+              )}
+            >
               {primaryAction}
             </div>
           )}
@@ -208,7 +215,6 @@ export function ModuleActionButton({
     </Button>
   );
 }
-
 
 export function EmptyState({
   title,

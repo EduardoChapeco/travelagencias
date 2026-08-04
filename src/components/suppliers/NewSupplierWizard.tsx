@@ -397,7 +397,8 @@ export function NewSupplierWizard({
 
         {/* Footer Actions */}
         <div className="flex items-center justify-between border-t border-border bg-surface-alt/30 px-6 py-4 shrink-0">
-          <Button variant="ghost"
+          <Button
+            variant="ghost"
             type="button"
             onClick={handleBack}
             disabled={step === 0}
@@ -415,7 +416,8 @@ export function NewSupplierWizard({
                 Próximo <ChevronRight className="h-4 w-4" />
               </Button>
             ) : (
-              <Button variant="default"
+              <Button
+                variant="default"
                 type="submit"
                 disabled={submitting}
                 className="w-56 font-bold tracking-wider"

@@ -49,9 +49,7 @@ export default function TemplateDarkPremium({ proposal: p, agency }: TemplatePro
             </div>
           )}
           <div className="text-right text-white">
-            <div className="ds-label-caps opacity-80">
-              Proposta Oficial
-            </div>
+            <div className="ds-label-caps opacity-80">Proposta Oficial</div>
             <div className="text-xl font-mono">#{p.number}</div>
           </div>
         </div>
@@ -100,34 +98,26 @@ export default function TemplateDarkPremium({ proposal: p, agency }: TemplatePro
         {/* Resumo Executivo Flutuante */}
         <div className="bg-white rounded-[32px] p-8 border border-slate-200 -mt-24 grid grid-cols-2 md:grid-cols-4 gap-6 text-center divide-x divide-slate-100">
           <div>
-            <div className="ds-label-caps text-slate-400 mb-2">
-              Cliente
-            </div>
+            <div className="ds-label-caps text-slate-400 mb-2">Cliente</div>
             <div className="font-semibold text-slate-900 text-sm">
               {(p as any).client_name || "—"}
             </div>
           </div>
           <div>
-            <div className="ds-label-caps text-slate-400 mb-2">
-              Período
-            </div>
+            <div className="ds-label-caps text-slate-400 mb-2">Período</div>
             <div className="font-semibold text-slate-900 text-sm">
               {p.travel_start ? formatDate(p.travel_start) : "—"} <br />{" "}
               {p.travel_end ? formatDate(p.travel_end) : "—"}
             </div>
           </div>
           <div>
-            <div className="ds-label-caps text-zinc-500 mb-1">
-              Viajantes
-            </div>
+            <div className="ds-label-caps text-zinc-500 mb-1">Viajantes</div>
             <div className="text-sm font-semibold text-zinc-800">
               {vm.totalPax ? `${vm.totalPax} pax` : "—"}
             </div>
           </div>
           <div>
-            <div className="ds-label-caps text-slate-400 mb-2">
-              Válido até
-            </div>
+            <div className="ds-label-caps text-slate-400 mb-2">Válido até</div>
             <div className="font-semibold text-slate-900 text-sm text-red-500">
               {p.valid_until ? formatDate(p.valid_until) : "—"}
             </div>
@@ -153,9 +143,7 @@ export default function TemplateDarkPremium({ proposal: p, agency }: TemplatePro
                   className="border border-slate-200 rounded-3xl overflow-hidden break-inside-avoid"
                 >
                   <div className="bg-blue-50 px-6 py-3 flex justify-between items-center border-b border-blue-100">
-                    <span className="ds-label-caps text-blue-600">
-                      {f.airline || "Companhia"}
-                    </span>
+                    <span className="ds-label-caps text-blue-600">{f.airline || "Companhia"}</span>
                     <span className="text-xs font-mono font-bold text-blue-800 bg-blue-100/50 px-3 py-1 rounded-full">
                       {f.flight_number}
                     </span>
@@ -204,9 +192,7 @@ export default function TemplateDarkPremium({ proposal: p, agency }: TemplatePro
                   className="border border-slate-200 rounded-3xl overflow-hidden break-inside-avoid"
                 >
                   <div className="bg-amber-50 px-6 py-3 flex justify-between items-center border-b border-amber-100">
-                    <span className="ds-label-caps text-amber-700">
-                      Hotel & Resort
-                    </span>
+                    <span className="ds-label-caps text-amber-700">Hotel & Resort</span>
                     <span className="ds-label-caps text-amber-800 bg-amber-100/50 px-3 py-1 rounded-full">
                       {h.meal_plan || "Só Hospedagem"}
                     </span>
@@ -217,21 +203,15 @@ export default function TemplateDarkPremium({ proposal: p, agency }: TemplatePro
 
                     <div className="flex gap-8 mb-6 bg-slate-50 p-4 rounded-[var(--radius-card)] border border-slate-100">
                       <div>
-                        <div className="ds-meta uppercase font-bold text-slate-400">
-                          Check-in
-                        </div>
+                        <div className="ds-meta uppercase font-bold text-slate-400">Check-in</div>
                         <div className="font-semibold text-slate-800">{formatDate(h.checkin)}</div>
                       </div>
                       <div>
-                        <div className="ds-meta uppercase font-bold text-slate-400">
-                          Check-out
-                        </div>
+                        <div className="ds-meta uppercase font-bold text-slate-400">Check-out</div>
                         <div className="font-semibold text-slate-800">{formatDate(h.checkout)}</div>
                       </div>
                       <div>
-                        <div className="ds-meta uppercase font-bold text-slate-400">
-                          Quartos
-                        </div>
+                        <div className="ds-meta uppercase font-bold text-slate-400">Quartos</div>
                         <div className="font-semibold text-slate-800">
                           {h.rooms?.[0] ? h.rooms[0].type : "Standard"}
                         </div>
@@ -297,7 +277,8 @@ export default function TemplateDarkPremium({ proposal: p, agency }: TemplatePro
                   Parcelamento
                 </div>
                 <div className="text-lg font-semibold text-white">
-                  {vm.totals.parcelasCartao}x de {formatCurrency(vm.totals.valorParcelaCartao, p.currency)}
+                  {vm.totals.parcelasCartao}x de{" "}
+                  {formatCurrency(vm.totals.valorParcelaCartao, p.currency)}
                 </div>
               </div>
               <div className="bg-[#D4AF37]/10 rounded-3xl p-6 border border-[#D4AF37]/30 backdrop-blur relative">
@@ -336,9 +317,7 @@ export default function TemplateDarkPremium({ proposal: p, agency }: TemplatePro
             )}
             <div>
               <div className="font-bold text-slate-900 text-lg">{p.agent_name}</div>
-              <div className="ds-label-caps text-slate-400 mb-1">
-                Consultor Premium
-              </div>
+              <div className="ds-label-caps text-slate-400 mb-1">Consultor Premium</div>
               <div className="text-sm font-medium">{p.agent_whatsapp}</div>
             </div>
           </div>

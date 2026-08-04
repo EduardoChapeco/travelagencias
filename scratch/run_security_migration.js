@@ -1,7 +1,8 @@
-import pg from 'pg';
+import pg from "pg";
 const { Client } = pg;
 
-const connectionString = 'postgresql://postgres:EEaR6399!%40%232026@db.esmppoxxnyiscidzsjvy.supabase.co:6543/postgres';
+const connectionString =
+  "postgresql://postgres:EEaR6399!%40%232026@db.esmppoxxnyiscidzsjvy.supabase.co:6543/postgres";
 
 const queries = [
   // PARTE 1: Limpeza de policies redundantes em leads
@@ -57,13 +58,13 @@ async function run() {
   const client = new Client({ connectionString });
   try {
     await client.connect();
-    console.log('✅ Conexão estabelecida.\n');
+    console.log("✅ Conexão estabelecida.\n");
 
     let errors = 0;
     for (const q of queries) {
       try {
         await client.query(q);
-        const label = q.slice(0, 80).replace(/\n/g, ' ');
+        const label = q.slice(0, 80).replace(/\n/g, " ");
         console.log(`  ✅ OK: ${label}...`);
       } catch (err) {
         console.error(`  ❌ ERRO: ${q.slice(0, 80)}\n     → ${err.message}`);
@@ -71,24 +72,25 @@ async function run() {
       }
     }
 
-    console.log(`\n${'='.repeat(60)}`);
+    console.log(`\n${"=".repeat(60)}`);
     console.log(`Execução concluída. Erros: ${errors}\n`);
 
-    console.log('📋 VERIFICAÇÃO PÓS-MIGRATION:\n');
+    console.log("📋 VERIFICAÇÃO PÓS-MIGRATION:\n");
     const policiesResult = await client.query(VERIFY_QUERIES.leads_policies);
-    console.log('Policies restantes em leads:');
+    console.log("Policies restantes em leads:");
     console.table(policiesResult.rows);
 
     const vulnResult = await client.query(VERIFY_QUERIES.vulnerable_functions);
-    console.log(`\nFunções SECURITY DEFINER sem search_path: ${vulnResult.rows[0].vulnerable_count}`);
+    console.log(
+      `\nFunções SECURITY DEFINER sem search_path: ${vulnResult.rows[0].vulnerable_count}`,
+    );
     if (Number(vulnResult.rows[0].vulnerable_count) === 0) {
-      console.log('✅ ZERO funções vulneráveis. Segurança confirmada.');
+      console.log("✅ ZERO funções vulneráveis. Segurança confirmada.");
     } else {
-      console.log('⚠️  Ainda há funções vulneráveis. Investigar manualmente.');
+      console.log("⚠️  Ainda há funções vulneráveis. Investigar manualmente.");
     }
-
   } catch (err) {
-    console.error('Erro fatal de conexão:', err.message);
+    console.error("Erro fatal de conexão:", err.message);
     process.exit(1);
   } finally {
     await client.end();

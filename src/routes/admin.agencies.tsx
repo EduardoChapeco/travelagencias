@@ -207,11 +207,11 @@ function Page() {
                       <Input
                         readOnly
                         value={inviteUrl}
-                        className="flex-1 rounded-full border-none glass bg-white/5 border-white/10 font-mono"
+                        className="flex-1 rounded-full border-none glass font-mono"
                       />
                       <Button
                         onClick={handleCopy}
-                        className="rounded-full border-none bg-background px-3 py-2 text-sm hover:glass bg-white/5 border-white/10"
+                        className="rounded-full border-none bg-background px-3 py-2 text-sm hover:glass"
                       >
                         Copiar
                       </Button>
@@ -223,7 +223,7 @@ function Page() {
                       setOpen(false);
                       setInviteUrl(null);
                     }}
-                    className="mt-4 w-full rounded-full border-none px-4 py-2 text-sm hover:glass bg-white/5 border-white/10"
+                    className="mt-4 w-full rounded-full border-none px-4 py-2 text-sm hover:glass"
                   >
                     Fechar
                   </Button>
@@ -243,7 +243,7 @@ function Page() {
       {q.data && q.data.length > 0 && (
         <div className="mt-6 overflow-hidden rounded-[var(--radius-card)] border-none glass-card border-none">
           <table className="w-full text-sm">
-            <thead className="glass bg-white/5 border-white/10 text-xs text-muted-foreground">
+            <thead className="glass text-xs text-muted-foreground">
               <tr>
                 <th className="px-3 py-2 text-left">Agência</th>
                 <th className="px-3 py-2 text-left">CNPJ</th>

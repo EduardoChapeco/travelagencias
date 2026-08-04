@@ -6,18 +6,11 @@
 
 Antes de responder, implementar, corrigir, refatorar ou auditar qualquer coisa no TravelOS, leia os seguintes documentos na ordem:
 
-1. `.agents/constitution/TRAVELOS_CONSTITUTION.md`
-2. `.agents/constitution/NON_NEGOTIABLE_RULES.md`
-3. `.agents/constitution/DEFINITION_OF_DONE.md`
-4. `.agents/constitution/DEFINITION_OF_PREMIUM.md`
-5. `.agents/constitution/DEFINITION_OF_SECURE.md`
-6. `.agents/constitution/DEFINITION_OF_FUNCTIONAL.md`
-7. `.agents/constitution/UI_RULES_FLAT_PREMIUM.md`
-8. `.agents/constitution/SUPABASE_RULES.md`
-9. `.agents/constitution/CMS_BUILDER_RULES.md`
-10. `.agents/constitution/TRAVEL_BUSINESS_RULES.md`
-11. `.agents/constitution/NO_SELF_APPROVAL_POLICY.md`
-12. `.agents/constitution/GIT_DELIVERY_RULES.md`
+1. `AGENTS.md` ← Protocolo Supremo de Engenharia (§ 1–14)
+2. `DESIGN.md` ← Design System Tokens e Regras Visuais
+3. `docs/MASTER_PLAN.md` ← Escopo, critérios de aceite e regras de negócio
+4. `docs/SECURITY.md` ← RLS, RBAC, LGPD e multi-tenancy
+5. `docs/COMPONENT_CATALOG.md` ← Catálogo canônico de componentes
 
 ## Workflow Obrigatório
 

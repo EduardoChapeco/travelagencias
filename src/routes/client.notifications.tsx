@@ -10,7 +10,9 @@ import { PageHeader, EmptyState } from "@/components/shell/PageHeader";
 import { Button } from "@/components/ui/button";
 
 export const Route = createFileRoute("/client/notifications")({
-  head: ({ context }: any) => ({ meta: [{ title: `Notificações · ${context?.brand?.platform_name || 'Turis'}` }] }),
+  head: ({ context }: any) => ({
+    meta: [{ title: `Notificações · ${context?.brand?.platform_name || "Turis"}` }],
+  }),
   component: Page,
 });
 
@@ -40,7 +42,11 @@ function Page() {
         title="Notificações"
         description={unread ? `${unread} não lida${unread > 1 ? "s" : ""}` : "Tudo em dia"}
         actions={
-          unread > 0 ? <Button variant="ghost" onClick={markAll}>Marcar tudo como lido</Button> : null
+          unread > 0 ? (
+            <Button variant="ghost" onClick={markAll}>
+              Marcar tudo como lido
+            </Button>
+          ) : null
         }
       />
       {q.isLoading ? (
@@ -67,7 +73,7 @@ function Page() {
               {!n.read_at && (
                 <Button
                   onClick={() => markRead(n.id)}
-                  className="rounded p-1 hover:glass bg-white/5 border-white/10"
+                  className="rounded p-1 hover:glass"
                   title="Marcar como lida"
                 >
                   <Check className="h-4 w-4" />

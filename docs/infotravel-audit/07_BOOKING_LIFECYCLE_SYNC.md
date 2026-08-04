@@ -8,14 +8,14 @@ Este documento descreve o fluxo transacional do ciclo de vida da reserva, detalh
 
 A reserva possui status distintos em ambos os sistemas. A sincronização deve garantir a consistência bidirecional de estados:
 
-| Estado Turis | Significado                                  | Estado Infotravel                  | Ação da API                          |
-| :-------------- | :------------------------------------------- | :--------------------------------- | :----------------------------------- |
-| `planning`      | Proposta sendo montada ou aguardando aceite. | N/A                                | N/A (Apenas cotações locais)         |
-| `confirmed`     | Venda fechada. Reserva enviada ao GDS.       | `PENDING` (Aguardando Confirmação) | `POST /api/v1/booking`               |
-| `confirmed`     | Reserva emitida e garantida.                 | `CONFIRMED` / `ACTIVE`             | `POST /api/v1/booking/{id}/confirm`  |
-| `cancelled`     | Viagem cancelada pelo operador ou cliente.   | `CANCELLED`                        | `DELETE /api/v1/booking/{id}/cancel` |
-| `in_progress`   | Viagem ocorrendo. Passageiro em trânsito.    | `ACTIVE`                           | N/A                                  |
-| `completed`     | Viagem concluída com sucesso.                | `COMPLETED`                        | N/A                                  |
+| Estado Turis  | Significado                                  | Estado Infotravel                  | Ação da API                          |
+| :------------ | :------------------------------------------- | :--------------------------------- | :----------------------------------- |
+| `planning`    | Proposta sendo montada ou aguardando aceite. | N/A                                | N/A (Apenas cotações locais)         |
+| `confirmed`   | Venda fechada. Reserva enviada ao GDS.       | `PENDING` (Aguardando Confirmação) | `POST /api/v1/booking`               |
+| `confirmed`   | Reserva emitida e garantida.                 | `CONFIRMED` / `ACTIVE`             | `POST /api/v1/booking/{id}/confirm`  |
+| `cancelled`   | Viagem cancelada pelo operador ou cliente.   | `CANCELLED`                        | `DELETE /api/v1/booking/{id}/cancel` |
+| `in_progress` | Viagem ocorrendo. Passageiro em trânsito.    | `ACTIVE`                           | N/A                                  |
+| `completed`   | Viagem concluída com sucesso.                | `COMPLETED`                        | N/A                                  |
 
 ---
 

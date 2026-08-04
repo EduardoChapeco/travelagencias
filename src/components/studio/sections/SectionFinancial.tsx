@@ -19,9 +19,7 @@ export function SectionFinancial({ draft, save }: Props) {
         <div className="rounded-[var(--radius-card)] border border-border/50 bg-surface p-4">
           <div className="flex items-center gap-2 mb-3">
             <DollarSign className="h-3.5 w-3.5 text-brand" />
-            <span className="ds-label-caps tracking-wider text-muted-foreground">
-              Resumo
-            </span>
+            <span className="ds-label-caps tracking-wider text-muted-foreground">Resumo</span>
           </div>
           <div className="space-y-1.5 text-xs">
             <div className="flex justify-between text-muted-foreground">
@@ -47,7 +45,8 @@ export function SectionFinancial({ draft, save }: Props) {
         <div>
           <L label="Moeda">
             <Select
-              className={SMALL_INPUT} value={draft.currency}
+              className={SMALL_INPUT}
+              value={draft.currency}
               onChange={(e) => save({ currency: e.target.value })}
             >
               <option value="BRL">BRL – Real</option>
@@ -79,7 +78,8 @@ export function SectionFinancial({ draft, save }: Props) {
         <div className="grid grid-cols-2 gap-3">
           <L label="Cartão (máx. parcelas)">
             <Select
-              className={SMALL_INPUT} value={draft.installments_card ?? 1}
+              className={SMALL_INPUT}
+              value={draft.installments_card ?? 1}
               onChange={(e) => save({ installments_card: parseInt(e.target.value) })}
             >
               {Array.from({ length: 12 }, (_, i) => i + 1).map((n) => (
@@ -91,7 +91,8 @@ export function SectionFinancial({ draft, save }: Props) {
           </L>
           <L label="Boleto (máx. parcelas)">
             <Select
-              className={SMALL_INPUT} value={draft.installments_boleto ?? 1}
+              className={SMALL_INPUT}
+              value={draft.installments_boleto ?? 1}
               onChange={(e) => save({ installments_boleto: parseInt(e.target.value) })}
             >
               {Array.from({ length: 6 }, (_, i) => i + 1).map((n) => (
@@ -107,13 +108,15 @@ export function SectionFinancial({ draft, save }: Props) {
         <L label="Validade da proposta">
           <Input
             type="date"
-            className={SMALL_INPUT} value={draft.valid_until ?? ""}
+            className={SMALL_INPUT}
+            value={draft.valid_until ?? ""}
             onChange={(e) => save({ valid_until: e.target.value || null })}
           />
         </L>
         <L label="Observações gerais">
           <Textarea
-            className={SMALL_INPUT + " h-20 resize-none leading-relaxed"} value={draft.terms ?? ""}
+            className={SMALL_INPUT + " h-20 resize-none leading-relaxed"}
+            value={draft.terms ?? ""}
             placeholder="Condições de cancelamento, observações..."
             onChange={(e) => save({ terms: e.target.value })}
           />

@@ -119,11 +119,11 @@ function Column({
       className={cn(
         "flex h-full w-[310px] shrink-0 flex-col rounded-[var(--radius-card)] transition-all duration-300",
         "kanban-column",
-        isOver ? "border-brand bg-brand/5 scale-[1.01]" : ""
+        isOver ? "border-brand bg-brand/5 scale-[1.01]" : "",
       )}
       style={{ borderTop: `4px solid ${stage.color || "#9ca3af"}` }}
     >
-      <div className="flex flex-col justify-center border-b border-border/40 bg-white/5 px-5 py-4 rounded-t-[var(--radius-card)]">
+      <div className="flex flex-col justify-center border-b border-border/40 glass px-5 py-4 rounded-t-[var(--radius-card)]">
         <div className="flex items-center justify-between mb-0.5">
           <div className="flex items-center gap-2">
             <span
@@ -134,7 +134,7 @@ function Column({
               {stage.name}
             </span>
           </div>
-          <span className="flex h-5 min-w-[20px] items-center justify-center rounded-full bg-white/10 px-1.5 ds-meta font-bold text-white/85 border border-white/5">
+          <span className="flex h-5 min-w-[20px] items-center justify-center rounded-full glass-dark px-1.5 ds-meta font-bold text-white/85 border border-white/5">
             {leads.length}
           </span>
         </div>
@@ -196,7 +196,7 @@ function MobileStageAccordion({
             <span className="text-xs font-extrabold uppercase tracking-widest text-foreground">
               {stage.name}
             </span>
-            <span className="flex h-5 min-w-[20px] items-center justify-center rounded-full bg-white/10 px-1.5 ds-meta font-bold text-white/85 border border-white/5">
+            <span className="flex h-5 min-w-[20px] items-center justify-center rounded-full glass-dark px-1.5 ds-meta font-bold text-white/85 border border-white/5">
               {leads.length}
             </span>
           </div>

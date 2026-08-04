@@ -1,4 +1,28 @@
-import { ArrowLeft, Compass, Calendar, Users, DollarSign, AlertTriangle, CheckCircle, Plus, Play, Loader2, Sparkles, ArrowRight, TrendingUp, MapPin, Building, Plane, Truck, Heart, ChevronRight, HelpCircle, RefreshCw, ShieldCheck, Sliders, } from "lucide-react";
+import {
+  ArrowLeft,
+  Compass,
+  Calendar,
+  Users,
+  DollarSign,
+  AlertTriangle,
+  CheckCircle,
+  Plus,
+  Play,
+  Loader2,
+  Sparkles,
+  ArrowRight,
+  TrendingUp,
+  MapPin,
+  Building,
+  Plane,
+  Truck,
+  Heart,
+  ChevronRight,
+  HelpCircle,
+  RefreshCw,
+  ShieldCheck,
+  Sliders,
+} from "lucide-react";
 import { useEffect, useState } from "react";
 import { createFileRoute, useParams, useNavigate, Link } from "@tanstack/react-router";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
@@ -27,7 +51,9 @@ import { createProposal } from "@/services/proposals";
 import { runMarketSimulation, fetchSimulationRunsForQuote } from "@/services/quotes-simulation";
 
 export const Route = createFileRoute("/agency/$slug/quotes/$id")({
-  head: ({ context }: any) => ({ meta: [{ title: `Central de Decisão VibeTour · ${context?.brand?.platform_name || 'Turis'}` }] }),
+  head: ({ context }: any) => ({
+    meta: [{ title: `Central de Decisão VibeTour · ${context?.brand?.platform_name || "Turis"}` }],
+  }),
   component: QuoteDetailWorkspacePage,
 });
 
@@ -69,7 +95,7 @@ function QuoteDetailWorkspacePage() {
         .maybeSingle();
       if (error) throw error;
       return data;
-    }
+    },
   });
 
   // Sincronizar pesos locais com o banco
@@ -86,13 +112,13 @@ function QuoteDetailWorkspacePage() {
   const saveRulesMut = useMutation({
     mutationFn: async () => {
       if (!agency) return;
-      
+
       const updatedWeights = {
         comfort: comfortWeight / 100,
         price: priceWeight / 100,
-        logistics: logisticsWeight / 100
+        logistics: logisticsWeight / 100,
       };
-      
+
       if (activeProfile) {
         const { error } = await supabase
           .from("score_profiles")
@@ -100,20 +126,18 @@ function QuoteDetailWorkspacePage() {
           .eq("id", activeProfile.id);
         if (error) throw error;
       } else {
-        const { error } = await supabase
-          .from("score_profiles")
-          .insert({
-            agency_id: agency.id,
-            name: "Perfil Personalizado",
-            status: "active",
-            scope: "agency",
-            weights: updatedWeights,
-            constraints: {},
-            version: 1
-          });
+        const { error } = await supabase.from("score_profiles").insert({
+          agency_id: agency.id,
+          name: "Perfil Personalizado",
+          status: "active",
+          scope: "agency",
+          weights: updatedWeights,
+          constraints: {},
+          version: 1,
+        });
         if (error) throw error;
       }
-      
+
       // Re-pontuar os candidatos de forma reativa
       if (candidates.length > 0) {
         toast.loading("Re-calculando notas logísticas...", { id: "rescore" });
@@ -129,25 +153,40 @@ function QuoteDetailWorkspacePage() {
       qc.invalidateQueries({ queryKey: ["quote-candidates", id] });
       setRulesOpen(false);
     },
-    onError: (e: any) => toast.error(e.message)
+    onError: (e: any) => toast.error(e.message),
   });
 
   // 1. Fetch Quote Details
-  const { data: quote, isLoading: isQuoteLoading, isError: isQuoteError, error: quoteError } = useQuery({
+  const {
+    data: quote,
+    isLoading: isQuoteLoading,
+    isError: isQuoteError,
+    error: quoteError,
+  } = useQuery({
     enabled: !!agency,
     queryKey: ["quote-details", id],
     queryFn: () => fetchQuoteRequestDetails(id),
   });
 
   // 2. Fetch Package Candidates
-  const { data: candidates = [], isLoading: isCandidatesLoading, isError: isCandidatesError, error: candidatesError } = useQuery({
+  const {
+    data: candidates = [],
+    isLoading: isCandidatesLoading,
+    isError: isCandidatesError,
+    error: candidatesError,
+  } = useQuery({
     enabled: !!agency,
     queryKey: ["quote-candidates", id],
     queryFn: () => fetchPackageCandidates(id),
   });
 
   // 2.2. Fetch Simulation Runs
-  const { data: simulationRuns = [], isLoading: isSimsLoading, isError: isSimsError, error: simsError } = useQuery({
+  const {
+    data: simulationRuns = [],
+    isLoading: isSimsLoading,
+    isError: isSimsError,
+    error: simsError,
+  } = useQuery({
     enabled: !!agency,
     queryKey: ["quote-simulations", id],
     queryFn: () => fetchSimulationRunsForQuote(id),
@@ -297,7 +336,7 @@ function QuoteDetailWorkspacePage() {
       // b. Combinar os primeiros hotéis com voos e criar candidatos
       let createdCount = 0;
       const createdIds: string[] = [];
-      
+
       for (let i = 0; i < Math.min(hotels.length, 3); i++) {
         for (let j = 0; j < Math.min(flights.length, 2); j++) {
           const hotelOffer = hotels[i];
@@ -364,7 +403,10 @@ Resuma de forma profissional e persuasiva (estilo consultor premium de turismo) 
       });
 
       if (error) throw error;
-      setAiExplanations((prev: Record<string, string>) => ({ ...prev, [candidateId]: data?.result || "" }));
+      setAiExplanations((prev: Record<string, string>) => ({
+        ...prev,
+        [candidateId]: data?.result || "",
+      }));
     } catch (e: any) {
       console.error("Erro ao gerar explicação por IA:", e);
       toast.error("Erro ao gerar explicação por IA");
@@ -430,7 +472,9 @@ Resuma de forma profissional e persuasiva (estilo consultor premium de turismo) 
       const intent = quote.normalized_intent as any;
 
       // Obter ID do usuário autenticado para passar como owner_id
-      const { data: { user } } = await supabase.auth.getUser();
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
       if (!user) throw new Error("Usuário não autenticado");
 
       // Gravar o snapshot congelado da cotação no banco
@@ -440,7 +484,7 @@ Resuma de forma profissional e persuasiva (estilo consultor premium de turismo) 
         mapped_flights: mappedFlights,
         mapped_hotels: mappedHotels,
         mapped_transfers: mappedTransfers,
-        intent
+        intent,
       };
 
       if (agency?.id) {
@@ -468,7 +512,7 @@ Resuma de forma profissional e persuasiva (estilo consultor premium de turismo) 
           transfers: mappedTransfers,
           total: Number(cand.total_price),
         },
-        p_owner_id: user.id
+        p_owner_id: user.id,
       });
 
       if (rpcErr) throw new Error(rpcErr.message);
@@ -483,7 +527,7 @@ Resuma de forma profissional e persuasiva (estilo consultor premium de turismo) 
           .from("package_candidates")
           .select("id")
           .eq("quote_request_id", id);
-          
+
         const sentPackages = allCandidates?.map((c) => c.id) || [];
         const rejectedPackages = sentPackages.filter((pid) => pid !== cand.id);
 
@@ -565,9 +609,15 @@ Resuma de forma profissional e persuasiva (estilo consultor premium de turismo) 
         <AlertTriangle className="h-8 w-8 text-danger" />
         <h1 className="text-lg font-semibold">Falha ao carregar cotação</h1>
         <p className="text-xs text-muted-foreground max-w-sm">
-          {quoteError instanceof Error ? quoteError.message : "Erro desconhecido ao carregar cotação."}
+          {quoteError instanceof Error
+            ? quoteError.message
+            : "Erro desconhecido ao carregar cotação."}
         </p>
-        <Link to="/agency/$slug/quotes" params={{ slug }} className="text-xs text-brand underline mt-2">
+        <Link
+          to="/agency/$slug/quotes"
+          params={{ slug }}
+          className="text-xs text-brand underline mt-2"
+        >
           Voltar para Cotações
         </Link>
       </div>
@@ -594,42 +644,49 @@ Resuma de forma profissional e persuasiva (estilo consultor premium de turismo) 
 
   return (
     <div className="flex h-full flex-col overflow-hidden">
-              <div className="flex items-center gap-2">
-          <Link
-            to="/agency/$slug/quotes"
-            params={{ slug }}
-            className="inline-flex h-8 items-center gap-1.5 rounded-full border border-white/10 bg-white/5 px-3 text-xs font-bold text-white/90 hover:bg-white/10 transition-colors cursor-pointer"
-          >
-            <ArrowLeft className="h-3.5 w-3.5" />
-            Cotações
-          </Link>
-          
-          <Button variant="ghost" onClick={() => setRulesOpen(true)} className="gap-1.5 text-xs h-8 border-none">
-            <ShieldCheck className="h-3.5 w-3.5 text-brand animate-pulse" />
-            Revisar Regras
-          </Button>
+      <div className="flex items-center gap-2">
+        <Link
+          to="/agency/$slug/quotes"
+          params={{ slug }}
+          className="inline-flex h-8 items-center gap-1.5 rounded-full border glass px-3 text-xs font-bold text-white/90 hover:glass-dark transition-colors cursor-pointer"
+        >
+          <ArrowLeft className="h-3.5 w-3.5" />
+          Cotações
+        </Link>
 
-          <Button variant="default" onClick={handleAutoPackage} disabled={packaging} className="gap-1.5">
-            {packaging ? (
-              <>
-                <Loader2 className="h-3.5 w-3.5 animate-spin" />
-                Compondo Pacotes...
-              </>
-            ) : (
-              <>
-                <Sparkles className="h-3.5 w-3.5" />
-                Gerar Alternativas Prontas
-              </>
-            )}
-          </Button>
-        </div>
-      
+        <Button
+          variant="ghost"
+          onClick={() => setRulesOpen(true)}
+          className="gap-1.5 text-xs h-8 border-none"
+        >
+          <ShieldCheck className="h-3.5 w-3.5 text-brand animate-pulse" />
+          Revisar Regras
+        </Button>
+
+        <Button
+          variant="default"
+          onClick={handleAutoPackage}
+          disabled={packaging}
+          className="gap-1.5"
+        >
+          {packaging ? (
+            <>
+              <Loader2 className="h-3.5 w-3.5 animate-spin" />
+              Compondo Pacotes...
+            </>
+          ) : (
+            <>
+              <Sparkles className="h-3.5 w-3.5" />
+              Gerar Alternativas Prontas
+            </>
+          )}
+        </Button>
+      </div>
+
       {/* Header Info */}
       <div className="border-b border-border glass-card border-none px-4 md:px-6 py-4 shrink-0 grid grid-cols-1 md:grid-cols-4 gap-4 items-center">
         <div>
-          <span className="ds-label-caps tracking-wider text-muted-foreground">
-            Destino Alvo
-          </span>
+          <span className="ds-label-caps tracking-wider text-muted-foreground">Destino Alvo</span>
           <div className="flex items-center gap-1.5 text-sm font-semibold text-foreground mt-0.5">
             <Compass className="h-4 w-4 text-brand shrink-0" />
             {intent?.destinations?.[0]?.name || "Não informado"}
@@ -675,7 +732,7 @@ Resuma de forma profissional e persuasiva (estilo consultor premium de turismo) 
       {/* Grid Workspace */}
       <div className="flex-1 flex overflow-hidden">
         {/* Left Side: Scenarios Control */}
-        <div className="w-80 border-r border-border glass bg-white/5 border-white/10/25 flex flex-col overflow-y-auto p-4 shrink-0">
+        <div className="w-80 border-r border-border glass/25 flex flex-col overflow-y-auto p-4 shrink-0">
           <div className="flex items-center justify-between mb-4 pb-2 border-b border-border">
             <h3 className="ds-label-caps tracking-wider text-muted-foreground">
               1. Cenários de Busca
@@ -695,7 +752,8 @@ Resuma de forma profissional e persuasiva (estilo consultor premium de turismo) 
               <p className="ds-meta text-muted-foreground">
                 Nenhum cenário configurado para esta cotação.
               </p>
-              <Button variant="default"
+              <Button
+                variant="default"
                 onClick={() => createScenariosMut.mutate()}
                 className="mt-3 h-8 ds-meta w-full"
               >
@@ -738,7 +796,8 @@ Resuma de forma profissional e persuasiva (estilo consultor premium de turismo) 
                     </div>
 
                     <div className="grid grid-cols-2 gap-2 mt-3 pt-3 border-t border-border/60">
-                      <Button variant="ghost"
+                      <Button
+                        variant="ghost"
                         onClick={() =>
                           handleExecuteSearch(sc.id, "flight", {
                             origin: sc.parameters.origin,
@@ -759,7 +818,8 @@ Resuma de forma profissional e persuasiva (estilo consultor premium de turismo) 
                         )}
                       </Button>
 
-                      <Button variant="ghost"
+                      <Button
+                        variant="ghost"
                         onClick={() =>
                           handleExecuteSearch(sc.id, "hotel", {
                             city: sc.parameters.destination,
@@ -780,7 +840,8 @@ Resuma de forma profissional e persuasiva (estilo consultor premium de turismo) 
                         )}
                       </Button>
 
-                      <Button variant="ghost"
+                      <Button
+                        variant="ghost"
                         onClick={() =>
                           handleExecuteSearch(sc.id, "transfer", {
                             destination: sc.parameters.destination,
@@ -802,7 +863,8 @@ Resuma de forma profissional e persuasiva (estilo consultor premium de turismo) 
                         )}
                       </Button>
 
-                      <Button variant="ghost"
+                      <Button
+                        variant="ghost"
                         onClick={() =>
                           handleExecuteSearch(sc.id, "activity", {
                             destination: sc.parameters.destination,
@@ -838,7 +900,8 @@ Resuma de forma profissional e persuasiva (estilo consultor premium de turismo) 
                 <div>
                   <p className="text-xs font-semibold text-warning">GDS não conectado</p>
                   <p className="ds-meta text-muted-foreground mt-0.5 leading-relaxed">
-                    As credenciais do Infotravel não foram configuradas para esta agência. As buscas precisam de conexão com o GDS para retornar disponibilidades e preços reais.
+                    As credenciais do Infotravel não foram configuradas para esta agência. As buscas
+                    precisam de conexão com o GDS para retornar disponibilidades e preços reais.
                   </p>
                   <Link
                     to="/agency/$slug/integrations"
@@ -863,13 +926,13 @@ Resuma de forma profissional e persuasiva (estilo consultor premium de turismo) 
         {/* Right Side: Tabbed Container */}
         <div className="flex-1 flex flex-col overflow-hidden glass-card border-none">
           {/* Tab Switcher */}
-          <div className="border-b border-border glass bg-white/5 border-white/10/20 px-6 py-2 shrink-0 flex items-center gap-4">
+          <div className="border-b border-border glass/20 px-6 py-2 shrink-0 flex items-center gap-4">
             <Button
               onClick={() => setRightTab("matrix")}
               className={`px-3 py-1.5 text-xs font-semibold rounded-full border transition-all ${
                 rightTab === "matrix"
                   ? "bg-brand text-brand-foreground border-brand shadow-none"
-                  : "border-transparent text-muted-foreground hover:text-foreground hover:glass bg-white/5 border-white/10"
+                  : "border-transparent text-muted-foreground hover:text-foreground hover:glass"
               }`}
             >
               Matriz de Comparação
@@ -879,7 +942,7 @@ Resuma de forma profissional e persuasiva (estilo consultor premium de turismo) 
               className={`px-3 py-1.5 text-xs font-semibold rounded-full border transition-all flex items-center gap-1.5 ${
                 rightTab === "simulation"
                   ? "bg-brand text-brand-foreground border-brand shadow-none"
-                  : "border-transparent text-muted-foreground hover:text-foreground hover:glass bg-white/5 border-white/10"
+                  : "border-transparent text-muted-foreground hover:text-foreground hover:glass"
               }`}
             >
               <Sparkles className="h-3.5 w-3.5" />
@@ -892,9 +955,13 @@ Resuma de forma profissional e persuasiva (estilo consultor premium de turismo) 
               {isCandidatesError ? (
                 <div className="flex-1 flex flex-col items-center justify-center text-center p-6 bg-red-50/20 border border-red-200 rounded-[var(--radius-card)]">
                   <AlertTriangle className="h-8 w-8 text-red-655 mb-2" />
-                  <h3 className="text-sm font-semibold text-red-800">Falha ao carregar pacotes qualificados</h3>
+                  <h3 className="text-sm font-semibold text-red-800">
+                    Falha ao carregar pacotes qualificados
+                  </h3>
                   <p className="text-xs text-red-600 mt-1 max-w-sm">
-                    {candidatesError instanceof Error ? candidatesError.message : "Erro desconhecido"}
+                    {candidatesError instanceof Error
+                      ? candidatesError.message
+                      : "Erro desconhecido"}
                   </p>
                 </div>
               ) : candidates.length === 0 ? (
@@ -920,7 +987,7 @@ Resuma de forma profissional e persuasiva (estilo consultor premium de turismo) 
                     >
                       <div>
                         {/* Candidate Header */}
-                        <div className="glass bg-white/5 border-white/10 px-4 py-3 border-b border-border flex items-center justify-between">
+                        <div className="glass px-4 py-3 border-b border-border flex items-center justify-between">
                           <div>
                             <div className="flex items-center gap-1.5">
                               <h3 className="text-xs font-bold text-foreground line-clamp-1">
@@ -953,7 +1020,7 @@ Resuma de forma profissional e persuasiva (estilo consultor premium de turismo) 
                         </div>
 
                         {/* Price and Overview */}
-                        <div className="p-4 border-b border-border flex justify-between items-baseline glass bg-white/5 border-white/10/10">
+                        <div className="p-4 border-b border-border flex justify-between items-baseline glass/10">
                           <span className="text-xs text-muted-foreground">
                             Preço Total Estimado
                           </span>
@@ -988,7 +1055,7 @@ Resuma de forma profissional e persuasiva (estilo consultor premium de turismo) 
                                 Métricas de Conforto
                               </span>
                               <div className="grid grid-cols-3 gap-2 text-center ds-meta">
-                                <div className="glass bg-white/5 border-white/10 rounded p-1">
+                                <div className="glass rounded p-1">
                                   <span className="block text-muted-foreground font-semibold">
                                     Voos
                                   </span>
@@ -996,7 +1063,7 @@ Resuma de forma profissional e persuasiva (estilo consultor premium de turismo) 
                                     {card.dimensions?.flight_score || 0}
                                   </span>
                                 </div>
-                                <div className="glass bg-white/5 border-white/10 rounded p-1">
+                                <div className="glass rounded p-1">
                                   <span className="block text-muted-foreground font-semibold">
                                     Hotel
                                   </span>
@@ -1004,7 +1071,7 @@ Resuma de forma profissional e persuasiva (estilo consultor premium de turismo) 
                                     {card.dimensions?.hotel_score || 0}
                                   </span>
                                 </div>
-                                <div className="glass bg-white/5 border-white/10 rounded p-1">
+                                <div className="glass rounded p-1">
                                   <span className="block text-muted-foreground font-semibold">
                                     Logística
                                   </span>
@@ -1017,7 +1084,7 @@ Resuma de forma profissional e persuasiva (estilo consultor premium de turismo) 
                           )}
 
                           {/* AI explanation panel */}
-                          <div className="glass bg-white/5 border-white/10/40 border-none/60 rounded p-3 ds-meta">
+                          <div className="glass/40 border-none/60 rounded p-3 ds-meta">
                             <span className="font-bold text-foreground flex items-center gap-1">
                               <Sparkles className="h-3.5 w-3.5 text-brand" />
                               Consultoria Digital
@@ -1059,9 +1126,10 @@ Resuma de forma profissional e persuasiva (estilo consultor premium de turismo) 
                       </div>
 
                       {/* Candidate Footer Actions */}
-                      <div className="p-4 border-t border-border glass bg-white/5 border-white/10/25 flex gap-2">
+                      <div className="p-4 border-t border-border glass/25 flex gap-2">
                         {cand.status !== "invalid" && (
-                          <Button variant="ghost"
+                          <Button
+                            variant="ghost"
                             onClick={() => {
                               const reason = prompt(
                                 "Por que você deseja rejeitar esta alternativa?",
@@ -1080,7 +1148,8 @@ Resuma de forma profissional e persuasiva (estilo consultor premium de turismo) 
                             )}
                           </Button>
                         )}
-                        <Button variant="default"
+                        <Button
+                          variant="default"
                           onClick={() => {
                             if (converting !== null || convertMut.isPending) return;
                             convertMut.mutate(cand);
@@ -1110,7 +1179,7 @@ Resuma de forma profissional e persuasiva (estilo consultor premium de turismo) 
               )}
             </div>
           ) : (
-            <div className="flex-1 flex flex-col overflow-y-auto glass bg-white/5 border-white/10/10 p-6 gap-6">
+            <div className="flex-1 flex flex-col overflow-y-auto glass/10 p-6 gap-6">
               {/* Header inside Tab */}
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 glass-card border-none border-none rounded-[var(--radius-card)] p-5 shadow-xs">
                 <div>
@@ -1123,7 +1192,8 @@ Resuma de forma profissional e persuasiva (estilo consultor premium de turismo) 
                     gerados para validar objeções.
                   </p>
                 </div>
-                <Button variant="default"
+                <Button
+                  variant="default"
                   onClick={() => runSimulationMut.mutate()}
                   disabled={
                     simulating || candidates.filter((c: any) => c.status !== "invalid").length === 0
@@ -1204,7 +1274,7 @@ Resuma de forma profissional e persuasiva (estilo consultor premium de turismo) 
                             (persona) => (
                               <tr
                                 key={persona}
-                                className="hover:glass bg-white/5 border-white/10/40 transition-colors"
+                                className="hover:glass/40 transition-colors"
                               >
                                 <td className="py-3 px-4 text-xs font-bold text-foreground uppercase tracking-wider">
                                   {persona}
@@ -1370,23 +1440,24 @@ Resuma de forma profissional e persuasiva (estilo consultor premium de turismo) 
                     Revisar Regras e Pesos de Scoring
                   </h2>
                   <p className="ds-meta text-muted-foreground mt-1 leading-normal">
-                    Ajuste os pesos que o motor contábil e de IA utilizam para pontuar e classificar cada alternativa de viagem.
+                    Ajuste os pesos que o motor contábil e de IA utilizam para pontuar e classificar
+                    cada alternativa de viagem.
                   </p>
                 </div>
                 <Button
                   onClick={() => setRulesOpen(false)}
-                  className="rounded-full p-1.5 text-muted-foreground hover:glass bg-white/5 border-white/10 hover:text-foreground transition-colors"
+                  className="rounded-full p-1.5 text-muted-foreground hover:glass hover:text-foreground transition-colors"
                 >
                   <Plus className="h-4 w-4 rotate-45" />
                 </Button>
               </div>
 
               <div className="space-y-6">
-                <div className="glass bg-white/5 border-white/10/40 border-none/50 rounded-[var(--radius-card)] p-4 space-y-4">
+                <div className="glass/40 border-none/50 rounded-[var(--radius-card)] p-4 space-y-4">
                   <h3 className="ds-label-caps tracking-wider text-foreground">
                     Pesos de Scoring (Soma deve ser 100%)
                   </h3>
-                  
+
                   <div className="space-y-4">
                     <Field label={`Peso de Conforto (Hotelaria): ${comfortWeight}%`}>
                       <Input
@@ -1443,12 +1514,14 @@ Resuma de forma profissional e persuasiva (estilo consultor premium de turismo) 
                   <div className="ds-meta text-muted-foreground flex justify-between pt-2">
                     <span>Soma Total: {comfortWeight + priceWeight + logisticsWeight}%</span>
                     {comfortWeight + priceWeight + logisticsWeight !== 100 && (
-                      <span className="text-warning font-semibold">Ajustando pesos automaticamente...</span>
+                      <span className="text-warning font-semibold">
+                        Ajustando pesos automaticamente...
+                      </span>
                     )}
                   </div>
                 </div>
 
-                <div className="glass bg-white/5 border-white/10/40 border-none/50 rounded-[var(--radius-card)] p-4 space-y-3">
+                <div className="glass/40 border-none/50 rounded-[var(--radius-card)] p-4 space-y-3">
                   <h3 className="ds-label-caps tracking-wider text-foreground">
                     Restrições Logísticas Ativas
                   </h3>
@@ -1461,7 +1534,8 @@ Resuma de forma profissional e persuasiva (estilo consultor premium de turismo) 
                     </Field>
                   </div>
                   <span className="text-[9px] text-muted-foreground block leading-relaxed">
-                    * As restrições de destino são coordenadas inteligentemente pelo cérebro RAG associado ao localizador.
+                    * As restrições de destino são coordenadas inteligentemente pelo cérebro RAG
+                    associado ao localizador.
                   </span>
                 </div>
               </div>
@@ -1471,10 +1545,13 @@ Resuma de forma profissional e persuasiva (estilo consultor premium de turismo) 
               <Button variant="ghost" type="button" onClick={() => setRulesOpen(false)}>
                 Cancelar
               </Button>
-              <Button variant="default"
+              <Button
+                variant="default"
                 type="button"
                 onClick={() => saveRulesMut.mutate()}
-                disabled={saveRulesMut.isPending || comfortWeight + priceWeight + logisticsWeight !== 100}
+                disabled={
+                  saveRulesMut.isPending || comfortWeight + priceWeight + logisticsWeight !== 100
+                }
                 className="text-xs h-9"
               >
                 {saveRulesMut.isPending ? "Re-calculando..." : "Salvar e Re-avaliar"}

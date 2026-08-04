@@ -35,7 +35,9 @@ import { SheetPage } from "@/components/ui/sheet";
 import { PageHeader, ModuleActionButton } from "@/components/shell/PageHeader";
 
 export const Route = createFileRoute("/agency/$slug/destination-intelligence")({
-  head: ({ context }: any) => ({ meta: [{ title: `Informações de Destinos · ${context?.brand?.platform_name || 'Turis'}` }] }),
+  head: ({ context }: any) => ({
+    meta: [{ title: `Informações de Destinos · ${context?.brand?.platform_name || "Turis"}` }],
+  }),
   component: DestinationIntelligencePage,
 });
 
@@ -304,28 +306,40 @@ function DestinationIntelligencePage() {
 
   return (
     <div className="flex h-full flex-col overflow-hidden">
-              <PageHeader
-          title="Inteligência de Destinos"
-          search={{
-            value: searchQuery,
-            onChange: setSearchQuery,
-            placeholder: "Buscar destino…"
-          }}
-          actions={
-            <div className="flex items-center gap-1.5 ds-meta text-white/50">
-              <span><strong className="text-white">{q.data?.length ?? 0}</strong> destinos</span>
-              <span className="hidden sm:inline"><strong className="text-white">{q.data?.filter((d) => d.ai_generated_at).length ?? 0}</strong> com IA</span>
-              <span className="hidden sm:inline"><strong className="text-white">{q.data?.filter((d) => d.visa_required).length ?? 0}</strong> exigem visto</span>
-            </div>
-          }
-          primaryAction={
-            <ModuleActionButton
-        label="Novo Destino"
-        icon={<Plus className="h-3.5 w-3.5" />}
-              onClick={openCreate}
-            />
-          }
-        />
+      <PageHeader
+        title="Inteligência de Destinos"
+        search={{
+          value: searchQuery,
+          onChange: setSearchQuery,
+          placeholder: "Buscar destino…",
+        }}
+        actions={
+          <div className="flex items-center gap-1.5 ds-meta text-white/50">
+            <span>
+              <strong className="text-white">{q.data?.length ?? 0}</strong> destinos
+            </span>
+            <span className="hidden sm:inline">
+              <strong className="text-white">
+                {q.data?.filter((d) => d.ai_generated_at).length ?? 0}
+              </strong>{" "}
+              com IA
+            </span>
+            <span className="hidden sm:inline">
+              <strong className="text-white">
+                {q.data?.filter((d) => d.visa_required).length ?? 0}
+              </strong>{" "}
+              exigem visto
+            </span>
+          </div>
+        }
+        primaryAction={
+          <ModuleActionButton
+            label="Novo Destino"
+            icon={<Plus className="h-3.5 w-3.5" />}
+            onClick={openCreate}
+          />
+        }
+      />
 
       <ConfirmDialog />
 
@@ -575,287 +589,286 @@ function DestinationIntelligencePage() {
       >
         <div className="h-full flex flex-col">
           <div className="p-5 space-y-4 flex-1">
+            <div className="grid grid-cols-2 gap-3">
+              <Field label="Destino *">
+                <Input
+                  value={form.destination ?? ""}
+                  onChange={(e) => setForm({ ...form, destination: e.target.value })}
+                  placeholder="Ex: México"
+                  required
+                />
+              </Field>
+              <Field label="Código do País (ISO)">
+                <Input
+                  value={form.country_code ?? ""}
+                  onChange={(e) => setForm({ ...form, country_code: e.target.value.toUpperCase() })}
+                  placeholder="Ex: MX"
+                  maxLength={2}
+                />
+              </Field>
+            </div>
+
+            {/* Visa */}
+            <div className="border-none rounded-[var(--radius-card)] p-4 space-y-3">
+              <div className="ds-label-caps tracking-wider text-muted-foreground flex items-center gap-1.5">
+                <Globe className="h-3.5 w-3.5" /> Visto & Entrada
+              </div>
+              <div className="flex items-center gap-2">
+                <Input
+                  type="checkbox"
+                  id="visa_required"
+                  checked={form.visa_required ?? false}
+                  onChange={(e) => setForm({ ...form, visa_required: e.target.checked })}
+                  className="h-4 w-4"
+                />
+                <label htmlFor="visa_required" className="text-xs font-semibold">
+                  Visto Obrigatório
+                </label>
+              </div>
+              <Field label="Informações de Visto">
+                <Textarea
+                  value={form.visa_info ?? ""}
+                  onChange={(e) => setForm({ ...form, visa_info: e.target.value })}
+                  rows={2}
+                  placeholder="Ex: e-Visa disponível online…"
+                />
+              </Field>
+              <Field label="Requisitos de Entrada">
+                <Textarea
+                  value={form.entry_requirements ?? ""}
+                  onChange={(e) => setForm({ ...form, entry_requirements: e.target.value })}
+                  rows={2}
+                  placeholder="Passaporte válido por 6 meses, bilhete de retorno…"
+                />
+              </Field>
+            </div>
+
+            {/* Health */}
+            <div className="border-none rounded-[var(--radius-card)] p-4 space-y-3">
+              <div className="ds-label-caps tracking-wider text-muted-foreground flex items-center gap-1.5">
+                <Heart className="h-3.5 w-3.5" /> Saúde
+              </div>
+              <Field label="Vacinas Obrigatórias (uma por linha)">
+                <Textarea
+                  value={vacReqText}
+                  onChange={(e) => setVacReqText(e.target.value)}
+                  rows={3}
+                  placeholder="Febre Amarela (CIVP)&#10;Hepatite A"
+                />
+              </Field>
+              <Field label="Vacinas Recomendadas (uma por linha)">
+                <Textarea
+                  value={vacRecText}
+                  onChange={(e) => setVacRecText(e.target.value)}
+                  rows={2}
+                  placeholder="Tétano&#10;Hepatite B"
+                />
+              </Field>
+              <Field label="Notas de Saúde">
+                <Textarea
+                  value={form.health_notes ?? ""}
+                  onChange={(e) => setForm({ ...form, health_notes: e.target.value })}
+                  rows={2}
+                />
+              </Field>
+            </div>
+
+            {/* Safety */}
+            <div className="border-none rounded-[var(--radius-card)] p-4 space-y-3">
+              <div className="ds-label-caps tracking-wider text-muted-foreground flex items-center gap-1.5">
+                <ShieldAlert className="h-3.5 w-3.5" /> Segurança
+              </div>
+              <Field label="Nível de Segurança">
+                <Select
+                  value={form.safety_level ?? "safe"}
+                  onChange={(e) => setForm({ ...form, safety_level: e.target.value })}
+                >
+                  <option value="safe">Seguro</option>
+                  <option value="moderate">Moderado</option>
+                  <option value="caution">Atenção</option>
+                  <option value="high_risk">Alto Risco</option>
+                </Select>
+              </Field>
+              <Field label="Notas de Segurança">
+                <Textarea
+                  value={form.safety_notes ?? ""}
+                  onChange={(e) => setForm({ ...form, safety_notes: e.target.value })}
+                  rows={2}
+                />
+              </Field>
+            </div>
+
+            {/* Practical */}
+            <div className="border-none rounded-[var(--radius-card)] p-4 space-y-3">
+              <div className="ds-label-caps tracking-wider text-muted-foreground flex items-center gap-1.5">
+                <Zap className="h-3.5 w-3.5" /> Informações Práticas
+              </div>
               <div className="grid grid-cols-2 gap-3">
-                <Field label="Destino *">
+                <Field label="Moeda">
                   <Input
-                    value={form.destination ?? ""}
-                    onChange={(e) => setForm({ ...form, destination: e.target.value })}
-                    placeholder="Ex: México"
-                    required
+                    value={form.currency ?? ""}
+                    onChange={(e) => setForm({ ...form, currency: e.target.value })}
+                    placeholder="Peso Mexicano"
                   />
                 </Field>
-                <Field label="Código do País (ISO)">
+                <Field label="Código Moeda">
                   <Input
-                    value={form.country_code ?? ""}
+                    value={form.currency_code ?? ""}
                     onChange={(e) =>
-                      setForm({ ...form, country_code: e.target.value.toUpperCase() })
+                      setForm({ ...form, currency_code: e.target.value.toUpperCase() })
                     }
-                    placeholder="Ex: MX"
-                    maxLength={2}
+                    placeholder="MXN"
+                    maxLength={3}
                   />
                 </Field>
-              </div>
-
-              {/* Visa */}
-              <div className="border-none rounded-[var(--radius-card)] p-4 space-y-3">
-                <div className="ds-label-caps tracking-wider text-muted-foreground flex items-center gap-1.5">
-                  <Globe className="h-3.5 w-3.5" /> Visto & Entrada
-                </div>
-                <div className="flex items-center gap-2">
+                <Field label="Tomada / Tensão">
                   <Input
-                    type="checkbox"
-                    id="visa_required"
-                    checked={form.visa_required ?? false}
-                    onChange={(e) => setForm({ ...form, visa_required: e.target.checked })}
-                    className="h-4 w-4"
-                  />
-                  <label htmlFor="visa_required" className="text-xs font-semibold">
-                    Visto Obrigatório
-                  </label>
-                </div>
-                <Field label="Informações de Visto">
-                  <Textarea
-                    value={form.visa_info ?? ""}
-                    onChange={(e) => setForm({ ...form, visa_info: e.target.value })}
-                    rows={2}
-                    placeholder="Ex: e-Visa disponível online…"
+                    value={form.plug_type ?? ""}
+                    onChange={(e) => setForm({ ...form, plug_type: e.target.value })}
+                    placeholder="Tipo A/B (127V)"
                   />
                 </Field>
-                <Field label="Requisitos de Entrada">
-                  <Textarea
-                    value={form.entry_requirements ?? ""}
-                    onChange={(e) => setForm({ ...form, entry_requirements: e.target.value })}
-                    rows={2}
-                    placeholder="Passaporte válido por 6 meses, bilhete de retorno…"
+                <Field label="Idioma">
+                  <Input
+                    value={form.language ?? ""}
+                    onChange={(e) => setForm({ ...form, language: e.target.value })}
+                    placeholder="Espanhol"
                   />
                 </Field>
-              </div>
-
-              {/* Health */}
-              <div className="border-none rounded-[var(--radius-card)] p-4 space-y-3">
-                <div className="ds-label-caps tracking-wider text-muted-foreground flex items-center gap-1.5">
-                  <Heart className="h-3.5 w-3.5" /> Saúde
-                </div>
-                <Field label="Vacinas Obrigatórias (uma por linha)">
-                  <Textarea
-                    value={vacReqText}
-                    onChange={(e) => setVacReqText(e.target.value)}
-                    rows={3}
-                    placeholder="Febre Amarela (CIVP)&#10;Hepatite A"
+                <Field label="Fuso Horário">
+                  <Input
+                    value={form.time_zone ?? ""}
+                    onChange={(e) => setForm({ ...form, time_zone: e.target.value })}
+                    placeholder="América/Mexico_City"
                   />
                 </Field>
-                <Field label="Vacinas Recomendadas (uma por linha)">
-                  <Textarea
-                    value={vacRecText}
-                    onChange={(e) => setVacRecText(e.target.value)}
-                    rows={2}
-                    placeholder="Tétano&#10;Hepatite B"
-                  />
-                </Field>
-                <Field label="Notas de Saúde">
-                  <Textarea
-                    value={form.health_notes ?? ""}
-                    onChange={(e) => setForm({ ...form, health_notes: e.target.value })}
-                    rows={2}
+                <Field label="UTC Offset">
+                  <Input
+                    value={form.utc_offset ?? ""}
+                    onChange={(e) => setForm({ ...form, utc_offset: e.target.value })}
+                    placeholder="-06:00"
                   />
                 </Field>
               </div>
+            </div>
 
-              {/* Safety */}
-              <div className="border-none rounded-[var(--radius-card)] p-4 space-y-3">
-                <div className="ds-label-caps tracking-wider text-muted-foreground flex items-center gap-1.5">
-                  <ShieldAlert className="h-3.5 w-3.5" /> Segurança
-                </div>
-                <Field label="Nível de Segurança">
+            {/* Tax */}
+            <div className="border-none rounded-[var(--radius-card)] p-4 space-y-3">
+              <div className="ds-label-caps tracking-wider text-muted-foreground flex items-center gap-1.5">
+                <DollarSign className="h-3.5 w-3.5" /> Taxa Turística
+              </div>
+              <Field label="Descrição da Taxa">
+                <Input
+                  value={form.tourist_tax ?? ""}
+                  onChange={(e) => setForm({ ...form, tourist_tax: e.target.value })}
+                  placeholder="Ex: Visitax — Taxa de Turismo Quintana Roo"
+                />
+              </Field>
+              <div className="grid grid-cols-2 gap-3">
+                <Field label="Valor">
+                  <Input
+                    type="number"
+                    step="0.01"
+                    value={form.tourist_tax_amount ?? ""}
+                    onChange={(e) =>
+                      setForm({ ...form, tourist_tax_amount: parseFloat(e.target.value) || null })
+                    }
+                    placeholder="42.00"
+                  />
+                </Field>
+                <Field label="Moeda">
+                  <Input
+                    value={form.tourist_tax_currency ?? "USD"}
+                    onChange={(e) => setForm({ ...form, tourist_tax_currency: e.target.value })}
+                    placeholder="USD"
+                    maxLength={3}
+                  />
+                </Field>
+              </div>
+            </div>
+
+            {/* Curadoria e Controle */}
+            <div className="border-none rounded-[var(--radius-card)] p-4 space-y-3">
+              <div className="ds-label-caps tracking-wider text-muted-foreground">
+                Curadoria e Qualidade
+              </div>
+              <div className="grid grid-cols-2 gap-3">
+                <Field label="Fonte das Informações">
+                  <Input
+                    value={form.source ?? ""}
+                    onChange={(e) => setForm({ ...form, source: e.target.value })}
+                    placeholder="Ex: AI Engine / Consulado"
+                  />
+                </Field>
+                <Field label="Nível de Confiança">
                   <Select
-                    value={form.safety_level ?? "safe"}
-                    onChange={(e) => setForm({ ...form, safety_level: e.target.value })}
+                    value={form.confidence_level ?? "high"}
+                    onChange={(e) => setForm({ ...form, confidence_level: e.target.value })}
                   >
-                    <option value="safe">Seguro</option>
-                    <option value="moderate">Moderado</option>
-                    <option value="caution">Atenção</option>
-                    <option value="high_risk">Alto Risco</option>
+                    <option value="low">Baixo (Rascunho / Não verificado)</option>
+                    <option value="medium">Médio (Verificação parcial)</option>
+                    <option value="high">Alto (Verificado e revisado)</option>
                   </Select>
                 </Field>
-                <Field label="Notas de Segurança">
-                  <Textarea
-                    value={form.safety_notes ?? ""}
-                    onChange={(e) => setForm({ ...form, safety_notes: e.target.value })}
-                    rows={2}
-                  />
-                </Field>
               </div>
+              <Field label="URL da Fonte">
+                <Input
+                  value={form.source_url ?? ""}
+                  onChange={(e) => setForm({ ...form, source_url: e.target.value })}
+                  placeholder="https://..."
+                />
+              </Field>
+              <Field label="Expira em">
+                <Input
+                  type="date"
+                  value={form.expires_at ? String(form.expires_at).slice(0, 10) : ""}
+                  onChange={(e) => setForm({ ...form, expires_at: e.target.value || null })}
+                />
+              </Field>
+            </div>
 
-              {/* Practical */}
-              <div className="border-none rounded-[var(--radius-card)] p-4 space-y-3">
-                <div className="ds-label-caps tracking-wider text-muted-foreground flex items-center gap-1.5">
-                  <Zap className="h-3.5 w-3.5" /> Informações Práticas
-                </div>
-                <div className="grid grid-cols-2 gap-3">
-                  <Field label="Moeda">
-                    <Input
-                      value={form.currency ?? ""}
-                      onChange={(e) => setForm({ ...form, currency: e.target.value })}
-                      placeholder="Peso Mexicano"
-                    />
-                  </Field>
-                  <Field label="Código Moeda">
-                    <Input
-                      value={form.currency_code ?? ""}
-                      onChange={(e) =>
-                        setForm({ ...form, currency_code: e.target.value.toUpperCase() })
-                      }
-                      placeholder="MXN"
-                      maxLength={3}
-                    />
-                  </Field>
-                  <Field label="Tomada / Tensão">
-                    <Input
-                      value={form.plug_type ?? ""}
-                      onChange={(e) => setForm({ ...form, plug_type: e.target.value })}
-                      placeholder="Tipo A/B (127V)"
-                    />
-                  </Field>
-                  <Field label="Idioma">
-                    <Input
-                      value={form.language ?? ""}
-                      onChange={(e) => setForm({ ...form, language: e.target.value })}
-                      placeholder="Espanhol"
-                    />
-                  </Field>
-                  <Field label="Fuso Horário">
-                    <Input
-                      value={form.time_zone ?? ""}
-                      onChange={(e) => setForm({ ...form, time_zone: e.target.value })}
-                      placeholder="América/Mexico_City"
-                    />
-                  </Field>
-                  <Field label="UTC Offset">
-                    <Input
-                      value={form.utc_offset ?? ""}
-                      onChange={(e) => setForm({ ...form, utc_offset: e.target.value })}
-                      placeholder="-06:00"
-                    />
-                  </Field>
-                </div>
+            {/* Tips */}
+            <div className="border-none rounded-[var(--radius-card)] p-4 space-y-3">
+              <div className="ds-label-caps tracking-wider text-muted-foreground">
+                Dicas e Contexto
               </div>
+              <Field label="Dicas Culturais">
+                <Textarea
+                  value={form.cultural_tips ?? ""}
+                  onChange={(e) => setForm({ ...form, cultural_tips: e.target.value })}
+                  rows={3}
+                />
+              </Field>
+              <Field label="Melhor Época para Visitar">
+                <Input
+                  value={form.best_season ?? ""}
+                  onChange={(e) => setForm({ ...form, best_season: e.target.value })}
+                  placeholder="Ex: Nov–Mar (seca e quente)"
+                />
+              </Field>
+              <Field label="Orçamento Estimado">
+                <Input
+                  value={form.budget_range ?? ""}
+                  onChange={(e) => setForm({ ...form, budget_range: e.target.value })}
+                  placeholder="Ex: R$ 8.000–15.000 por pessoa (7 dias)"
+                />
+              </Field>
+            </div>
 
-              {/* Tax */}
-              <div className="border-none rounded-[var(--radius-card)] p-4 space-y-3">
-                <div className="ds-label-caps tracking-wider text-muted-foreground flex items-center gap-1.5">
-                  <DollarSign className="h-3.5 w-3.5" /> Taxa Turística
-                </div>
-                <Field label="Descrição da Taxa">
-                  <Input
-                    value={form.tourist_tax ?? ""}
-                    onChange={(e) => setForm({ ...form, tourist_tax: e.target.value })}
-                    placeholder="Ex: Visitax — Taxa de Turismo Quintana Roo"
-                  />
-                </Field>
-                <div className="grid grid-cols-2 gap-3">
-                  <Field label="Valor">
-                    <Input
-                      type="number"
-                      step="0.01"
-                      value={form.tourist_tax_amount ?? ""}
-                      onChange={(e) =>
-                        setForm({ ...form, tourist_tax_amount: parseFloat(e.target.value) || null })
-                      }
-                      placeholder="42.00"
-                    />
-                  </Field>
-                  <Field label="Moeda">
-                    <Input
-                      value={form.tourist_tax_currency ?? "USD"}
-                      onChange={(e) => setForm({ ...form, tourist_tax_currency: e.target.value })}
-                      placeholder="USD"
-                      maxLength={3}
-                    />
-                  </Field>
-                </div>
-              </div>
-
-              {/* Curadoria e Controle */}
-              <div className="border-none rounded-[var(--radius-card)] p-4 space-y-3">
-                <div className="ds-label-caps tracking-wider text-muted-foreground">
-                  Curadoria e Qualidade
-                </div>
-                <div className="grid grid-cols-2 gap-3">
-                  <Field label="Fonte das Informações">
-                    <Input
-                      value={form.source ?? ""}
-                      onChange={(e) => setForm({ ...form, source: e.target.value })}
-                      placeholder="Ex: AI Engine / Consulado"
-                    />
-                  </Field>
-                  <Field label="Nível de Confiança">
-                    <Select
-                      value={form.confidence_level ?? "high"}
-                      onChange={(e) => setForm({ ...form, confidence_level: e.target.value })}
-                    >
-                      <option value="low">Baixo (Rascunho / Não verificado)</option>
-                      <option value="medium">Médio (Verificação parcial)</option>
-                      <option value="high">Alto (Verificado e revisado)</option>
-                    </Select>
-                  </Field>
-                </div>
-                <Field label="URL da Fonte">
-                  <Input
-                    value={form.source_url ?? ""}
-                    onChange={(e) => setForm({ ...form, source_url: e.target.value })}
-                    placeholder="https://..."
-                  />
-                </Field>
-                <Field label="Expira em">
-                  <Input
-                    type="date"
-                    value={form.expires_at ? String(form.expires_at).slice(0, 10) : ""}
-                    onChange={(e) => setForm({ ...form, expires_at: e.target.value || null })}
-                  />
-                </Field>
-              </div>
-
-              {/* Tips */}
-              <div className="border-none rounded-[var(--radius-card)] p-4 space-y-3">
-                <div className="ds-label-caps tracking-wider text-muted-foreground">
-                  Dicas e Contexto
-                </div>
-                <Field label="Dicas Culturais">
-                  <Textarea
-                    value={form.cultural_tips ?? ""}
-                    onChange={(e) => setForm({ ...form, cultural_tips: e.target.value })}
-                    rows={3}
-                  />
-                </Field>
-                <Field label="Melhor Época para Visitar">
-                  <Input
-                    value={form.best_season ?? ""}
-                    onChange={(e) => setForm({ ...form, best_season: e.target.value })}
-                    placeholder="Ex: Nov–Mar (seca e quente)"
-                  />
-                </Field>
-                <Field label="Orçamento Estimado">
-                  <Input
-                    value={form.budget_range ?? ""}
-                    onChange={(e) => setForm({ ...form, budget_range: e.target.value })}
-                    placeholder="Ex: R$ 8.000–15.000 por pessoa (7 dias)"
-                  />
-                </Field>
-              </div>
-
-              <div className="flex gap-2 pt-2">
-                <Button variant="ghost" onClick={closeForm} className="flex-1">
-                  Cancelar
-                </Button>
-                <Button variant="default"
-                  onClick={() => saveMut.mutate()}
-                  disabled={saveMut.isPending || !form.destination?.trim()}
-                  className="flex-1 gap-2"
-                >
-                  <Save className="h-4 w-4" />
-                  {saveMut.isPending ? "Salvando…" : "Salvar Destino"}
-                </Button>
-              </div>
+            <div className="flex gap-2 pt-2">
+              <Button variant="ghost" onClick={closeForm} className="flex-1">
+                Cancelar
+              </Button>
+              <Button
+                variant="default"
+                onClick={() => saveMut.mutate()}
+                disabled={saveMut.isPending || !form.destination?.trim()}
+                className="flex-1 gap-2"
+              >
+                <Save className="h-4 w-4" />
+                {saveMut.isPending ? "Salvando…" : "Salvar Destino"}
+              </Button>
+            </div>
           </div>
         </div>
       </SheetPage>

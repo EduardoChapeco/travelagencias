@@ -36,7 +36,9 @@ const proposalSearchSchema = z.object({
 
 export const Route = createFileRoute("/m/proposal/$token")({
   validateSearch: proposalSearchSchema,
-  head: ({ context }: any) => ({ meta: [{ title: `Proposta de Viagem · ${context?.brand?.platform_name || 'Turis'}` }] }),
+  head: ({ context }: any) => ({
+    meta: [{ title: `Proposta de Viagem · ${context?.brand?.platform_name || "Turis"}` }],
+  }),
   component: PublicProposalView,
 });
 
@@ -184,8 +186,7 @@ function PublicProposalView() {
 
       // mark as viewed (fire-and-forget)
       if (!p.decided_at && p.status !== "draft") {
-        await supabase
-          .rpc("public_mark_proposal_viewed", { _id: p.id });
+        await supabase.rpc("public_mark_proposal_viewed", { _id: p.id });
 
         // Log client view in history
         await logProposalActivity(p.id, p.agency_id, "viewed");
@@ -201,8 +202,10 @@ function PublicProposalView() {
     mutationFn: async (status: "accepted" | "rejected") => {
       if (!q.data) return;
       const dbStatus = status === "accepted" ? "approved" : status;
-      const { error } = await supabase
-        .rpc("public_decide_proposal", { _id: q.data.id, _status: dbStatus });
+      const { error } = await supabase.rpc("public_decide_proposal", {
+        _id: q.data.id,
+        _status: dbStatus,
+      });
       if (error) throw error;
 
       // Log client decision in history
@@ -237,7 +240,7 @@ function PublicProposalView() {
 
   if (q.isLoading) {
     return (
-      <div className="flex min-h-screen flex-col items-center justify-center gap-3 glass bg-white/5 border-white/10/30 text-sm text-muted-foreground">
+      <div className="flex min-h-screen flex-col items-center justify-center gap-3 glass/30 text-sm text-muted-foreground">
         <div className="h-6 w-6 animate-spin rounded-full border-2 border-primary border-t-transparent" />
         Carregando proposta premium…
       </div>
@@ -246,12 +249,14 @@ function PublicProposalView() {
 
   if (q.isError) {
     return (
-      <div className="flex min-h-screen items-center justify-center glass bg-white/5 border-white/10/30 px-6 text-center">
+      <div className="flex min-h-screen items-center justify-center glass/30 px-6 text-center">
         <div className="max-w-md rounded-[var(--radius-card)] border border-red-200 bg-red-50/50 p-8 flex flex-col items-center">
           <AlertCircle className="mx-auto h-12 w-12 text-red-650 mb-4" />
           <h1 className="text-xl font-bold tracking-tight text-red-800">Falha na Conexão</h1>
           <p className="mt-2 text-sm text-red-650 leading-relaxed">
-            {q.error instanceof Error ? q.error.message : "Erro ao obter dados da proposta do servidor."}
+            {q.error instanceof Error
+              ? q.error.message
+              : "Erro ao obter dados da proposta do servidor."}
           </p>
         </div>
       </div>
@@ -260,7 +265,7 @@ function PublicProposalView() {
 
   if (!q.data) {
     return (
-      <div className="flex min-h-screen items-center justify-center glass bg-white/5 border-white/10/30 px-6 text-center">
+      <div className="flex min-h-screen items-center justify-center glass/30 px-6 text-center">
         <div className="max-w-md rounded-[var(--radius-card)] border-none glass-card border-none p-8">
           <ShieldAlert className="mx-auto h-12 w-12 text-muted-foreground/60 mb-4" />
           <h1 className="text-xl font-bold tracking-tight">Proposta não encontrada</h1>
@@ -450,9 +455,7 @@ function PublicProposalView() {
 
           {/* Quick Info Box / Action Box */}
           <div className="rounded-[var(--radius-card)] border-none glass-card border-none p-5 space-y-3">
-            <h4 className="ds-label-caps tracking-wider text-muted-foreground">
-              Resumo da Viagem
-            </h4>
+            <h4 className="ds-label-caps tracking-wider text-muted-foreground">Resumo da Viagem</h4>
             <div className="text-xs text-muted-foreground space-y-1">
               <div>
                 <strong>Destino:</strong> {p.destination ?? "—"}
@@ -498,10 +501,16 @@ function DecideActions({
             : "Confirmar recusa desta proposta de viagem?"}
         </p>
         <div className="flex items-center justify-center gap-2">
-          <Button variant="ghost" type="button" onClick={() => setConfirm(null)} className="h-8 ds-meta">
+          <Button
+            variant="ghost"
+            type="button"
+            onClick={() => setConfirm(null)}
+            className="h-8 ds-meta"
+          >
             Voltar
           </Button>
-          <Button variant="default"
+          <Button
+            variant="default"
             type="button"
             onClick={() => onDecide(confirm)}
             disabled={pending}

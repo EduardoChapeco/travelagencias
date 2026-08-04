@@ -8,7 +8,9 @@ import { formatDate } from "@/lib/formatters";
 import { supabase } from "@/integrations/supabase/client";
 
 export const Route = createFileRoute("/client/documents")({
-  head: ({ context }: any) => ({ meta: [{ title: `Documentos · ${context?.brand?.platform_name || 'Turis'}` }] }),
+  head: ({ context }: any) => ({
+    meta: [{ title: `Documentos · ${context?.brand?.platform_name || "Turis"}` }],
+  }),
   component: ClientDocumentsPage,
 });
 
@@ -33,9 +35,7 @@ function ClientDocumentsPage() {
         <div>
           <div className="mb-3 flex items-center gap-2">
             <span className="h-1.5 w-1.5 rounded-full bg-brand" />
-            <h3 className="ds-label-caps tracking-wider text-muted-foreground/80">
-              Contratos
-            </h3>
+            <h3 className="ds-label-caps tracking-wider text-muted-foreground/80">Contratos</h3>
           </div>
 
           {q.data?.contracts.length === 0 && (
@@ -55,9 +55,13 @@ function ClientDocumentsPage() {
                     <FileText className="h-5 w-5" />
                   </div>
                   <div>
-                    <div className="text-sm font-bold text-foreground">Contrato de Prestação de Serviços</div>
+                    <div className="text-sm font-bold text-foreground">
+                      Contrato de Prestação de Serviços
+                    </div>
                     <div className="text-xs text-muted-foreground mt-0.5">
-                      {c.signed_at ? `Assinado em ${formatDate(c.signed_at)}` : "Aguardando assinatura digital"}
+                      {c.signed_at
+                        ? `Assinado em ${formatDate(c.signed_at)}`
+                        : "Aguardando assinatura digital"}
                     </div>
                   </div>
                 </div>
@@ -70,7 +74,8 @@ function ClientDocumentsPage() {
                       href={
                         c.pdf_url.startsWith("http")
                           ? c.pdf_url
-                          : supabase.storage.from("contract-pdfs").getPublicUrl(c.pdf_url).data.publicUrl
+                          : supabase.storage.from("contract-pdfs").getPublicUrl(c.pdf_url).data
+                              .publicUrl
                       }
                       target="_blank"
                       rel="noreferrer"
@@ -95,7 +100,10 @@ function ClientDocumentsPage() {
           </div>
 
           {q.data?.vouchers.length === 0 && (
-            <EmptyState title="Sem vouchers" description="Os vouchers de hospedagem, aéreo ou passeios aparecerão aqui após emissão." />
+            <EmptyState
+              title="Sem vouchers"
+              description="Os vouchers de hospedagem, aéreo ou passeios aparecerão aqui após emissão."
+            />
           )}
 
           <div className="grid grid-cols-1 gap-3">
@@ -109,7 +117,9 @@ function ClientDocumentsPage() {
                     <FileText className="h-5 w-5" />
                   </div>
                   <div>
-                    <div className="text-sm font-bold text-foreground capitalize">{v.source_type ?? "Voucher de Serviço"}</div>
+                    <div className="text-sm font-bold text-foreground capitalize">
+                      {v.source_type ?? "Voucher de Serviço"}
+                    </div>
                     <div className="text-xs text-muted-foreground mt-0.5">
                       {v.generated_at ? `Emitido em ${formatDate(v.generated_at)}` : "—"}
                     </div>
@@ -124,7 +134,8 @@ function ClientDocumentsPage() {
                       href={
                         v.pdf_url.startsWith("http")
                           ? v.pdf_url
-                          : supabase.storage.from("voucher-pdfs").getPublicUrl(v.pdf_url).data.publicUrl
+                          : supabase.storage.from("voucher-pdfs").getPublicUrl(v.pdf_url).data
+                              .publicUrl
                       }
                       target="_blank"
                       rel="noreferrer"

@@ -30,7 +30,9 @@ import { cn } from "@/lib/utils";
 import { NativeSelect as Select } from "@/components/ui/select";
 
 export const Route = createFileRoute("/m/contract/$token")({
-  head: ({ context }: any) => ({ meta: [{ title: `Assinar contrato · ${context?.brand?.platform_name || 'Turis'}` }] }),
+  head: ({ context }: any) => ({
+    meta: [{ title: `Assinar contrato · ${context?.brand?.platform_name || "Turis"}` }],
+  }),
   component: Page,
 });
 
@@ -668,7 +670,9 @@ function Page() {
 
         toast.success("Contrato assinado digitalmente com sucesso!", { id: "signing" });
       } else {
-        toast.success("Sua assinatura foi registrada! Aguardando os demais signatários.", { id: "signing" });
+        toast.success("Sua assinatura foi registrada! Aguardando os demais signatários.", {
+          id: "signing",
+        });
       }
     } catch (e: any) {
       toast.error(e.message || "Erro inesperado ao assinar", { id: "signing" });
@@ -696,7 +700,10 @@ function Page() {
   );
 
   return (
-    <div className="mx-auto min-h-screen max-w-3xl px-4 py-8 md:py-12 print:px-0 print:py-4 print:max-w-none print:text-black" id="contract-document">
+    <div
+      className="mx-auto min-h-screen max-w-3xl px-4 py-8 md:py-12 print:px-0 print:py-4 print:max-w-none print:text-black"
+      id="contract-document"
+    >
       <header className="mb-8 flex items-center gap-4 border-b border-border/10 pb-4 print:border-black">
         {c.agency_logo ? (
           <img
@@ -705,7 +712,7 @@ function Page() {
             className="h-12 w-12 rounded-[var(--radius-card)] object-cover ring-1 ring-border/50 print:h-14 print:w-14 print:ring-0"
           />
         ) : (
-          <div className="flex h-12 w-12 items-center justify-center rounded-[var(--radius-card)] glass bg-white/5 border-white/10 font-bold text-muted-foreground ring-1 ring-border/50 print:h-14 print:w-14 print:ring-0 print:bg-transparent print:border">
+          <div className="flex h-12 w-12 items-center justify-center rounded-[var(--radius-card)] glass font-bold text-muted-foreground ring-1 ring-border/50 print:h-14 print:w-14 print:ring-0 print:bg-transparent print:border">
             {c.agency_name.charAt(0)}
           </div>
         )}
@@ -720,7 +727,7 @@ function Page() {
       </header>
 
       <section className="mb-6 overflow-hidden rounded-[var(--radius-card)] glass-card border-none ring-1 ring-border/50 print:ring-0 print:border-0 print:bg-transparent print:shadow-none print:mb-8">
-        <div className="border-b border-border/50 glass bg-white/5 border-white/10/30 px-5 py-3 print:bg-transparent print:px-0 print:py-1 print:border-black">
+        <div className="border-b border-border/50 glass/30 px-5 py-3 print:bg-transparent print:px-0 print:py-1 print:border-black">
           <h2 className="ds-label-caps text-muted-foreground print:text-black print:ds-meta">
             Contratante(s) / Pagante(s)
           </h2>
@@ -731,14 +738,21 @@ function Page() {
               const cleanDoc = (d: string) => (d || "").replace(/\D/g, "");
               const clDoc = cleanDoc(client.cpf || client.document);
               const alreadySigned = c.signatures?.some(
-                (sig: any) => cleanDoc(sig.signer_document) === clDoc
+                (sig: any) => cleanDoc(sig.signer_document) === clDoc,
               );
               return (
-                <div key={i} className="flex items-center justify-between text-sm py-1 border-b border-border/10 last:border-b-0 last:pb-0 print:border-black/10 print:text-black">
+                <div
+                  key={i}
+                  className="flex items-center justify-between text-sm py-1 border-b border-border/10 last:border-b-0 last:pb-0 print:border-border print:text-black"
+                >
                   <div>
-                    <span className="font-semibold text-foreground print:text-black">{client.name}</span>
+                    <span className="font-semibold text-foreground print:text-black">
+                      {client.name}
+                    </span>
                     {client.cpf && (
-                      <span className="text-muted-foreground ml-2 text-xs print:text-black">CPF/Doc: {client.cpf}</span>
+                      <span className="text-muted-foreground ml-2 text-xs print:text-black">
+                        CPF/Doc: {client.cpf}
+                      </span>
                     )}
                   </div>
                   <div>
@@ -764,7 +778,7 @@ function Page() {
           )}
         </div>
 
-        <div className="border-b border-t border-border/50 glass bg-white/5 border-white/10/30 px-5 py-3 print:bg-transparent print:px-0 print:py-1 print:border-black print:mt-6">
+        <div className="border-b border-t border-border/50 glass/30 px-5 py-3 print:bg-transparent print:px-0 print:py-1 print:border-black print:mt-6">
           <h2 className="ds-label-caps text-muted-foreground print:text-black print:ds-meta">
             Resumo Executivo
           </h2>
@@ -773,7 +787,7 @@ function Page() {
           <p className="whitespace-pre-line text-sm leading-relaxed text-foreground/80 print:text-black print:ds-meta">
             {c.package_summary || "—"}
           </p>
-          <div className="mt-5 grid grid-cols-2 gap-4 rounded-[var(--radius-card)] glass bg-white/5 border-white/10/30 p-4 print:bg-transparent print:border print:border-black print:p-3 print:mt-4">
+          <div className="mt-5 grid grid-cols-2 gap-4 rounded-[var(--radius-card)] glass/30 p-4 print:bg-transparent print:border print:border-black print:p-3 print:mt-4">
             <div>
               <div className="ds-meta font-semibold uppercase tracking-widest text-muted-foreground print:text-black print:text-[9px]">
                 Valor total
@@ -789,14 +803,16 @@ function Page() {
               <div className="ds-meta font-semibold uppercase tracking-widest text-muted-foreground print:text-black print:text-[9px]">
                 Pagamento
               </div>
-              <div className="mt-1 text-sm font-medium print:text-black print:text-xs">{c.payment_terms || "—"}</div>
+              <div className="mt-1 text-sm font-medium print:text-black print:text-xs">
+                {c.payment_terms || "—"}
+              </div>
             </div>
           </div>
         </div>
       </section>
 
       <section className="mb-8 overflow-hidden rounded-[var(--radius-card)] glass-card border-none ring-1 ring-border/50 print:ring-0 print:border-0 print:bg-transparent print:shadow-none print:mb-8 print:break-inside-avoid">
-        <div className="border-b border-border/50 glass bg-white/5 border-white/10/30 px-5 py-3 flex items-center justify-between print:bg-transparent print:px-0 print:py-1 print:border-black">
+        <div className="border-b border-border/50 glass/30 px-5 py-3 flex items-center justify-between print:bg-transparent print:px-0 print:py-1 print:border-black">
           <h2 className="ds-label-caps text-muted-foreground print:text-black print:ds-meta">
             Termos e Cláusulas
           </h2>
@@ -816,7 +832,10 @@ function Page() {
           className="max-h-[500px] overflow-y-auto p-5 space-y-5 no-scrollbar scroll-smooth print:max-h-none print:overflow-visible print:p-0 print:pt-4"
         >
           {all.map((cl) => (
-            <div key={cl.number} className="text-xs leading-relaxed text-foreground/80 print:text-black print:ds-meta print:break-inside-avoid print:mb-4">
+            <div
+              key={cl.number}
+              className="text-xs leading-relaxed text-foreground/80 print:text-black print:ds-meta print:break-inside-avoid print:mb-4"
+            >
               <span className="font-bold text-foreground print:text-black">
                 Cláusula {cl.number} — {cl.section}:{" "}
               </span>
@@ -855,13 +874,17 @@ function Page() {
             {/* Loop through signatures collected */}
             <div className="space-y-6">
               {c.signatures.map((sig: any, index: number) => (
-                <div key={index} className="space-y-4 border-b border-border/10 pb-6 last:border-0 last:pb-0 print:border-black/20 print:pb-4 print:break-inside-avoid">
+                <div
+                  key={index}
+                  className="space-y-4 border-b border-border/10 pb-6 last:border-0 last:pb-0 print:border-black/20 print:pb-4 print:break-inside-avoid"
+                >
                   <div className="text-xs font-bold text-foreground/70 uppercase tracking-widest border-l-2 border-success pl-2 mb-2 print:text-black print:border-black">
-                    Assinatura Coletada {index + 1} de {Array.isArray(c.client_data) ? c.client_data.length : 1}
+                    Assinatura Coletada {index + 1} de{" "}
+                    {Array.isArray(c.client_data) ? c.client_data.length : 1}
                   </div>
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-6 text-xs text-foreground/80 print:gap-4 print:text-black">
                     {/* Signatory Data */}
-                    <div className="space-y-3 glass bg-white/5 border-white/10/30 p-4 rounded-[var(--radius-card)] border-none/40 hover:border-success/20 transition-colors print:bg-transparent print:border-black print:text-black">
+                    <div className="space-y-3 glass/30 p-4 rounded-[var(--radius-card)] border-none/40 hover:border-success/20 transition-colors print:bg-transparent print:border-black print:text-black">
                       <div className="font-bold text-muted-foreground uppercase tracking-widest text-[9px] print:text-black">
                         Signatário Autorizado
                       </div>
@@ -881,7 +904,7 @@ function Page() {
                     </div>
 
                     {/* Biometrics & KYC */}
-                    <div className="space-y-3 glass bg-white/5 border-white/10/30 p-4 rounded-[var(--radius-card)] border-none/40 hover:border-success/20 transition-colors flex flex-col justify-between print:bg-transparent print:border-black print:text-black">
+                    <div className="space-y-3 glass/30 p-4 rounded-[var(--radius-card)] border-none/40 hover:border-success/20 transition-colors flex flex-col justify-between print:bg-transparent print:border-black print:text-black">
                       <div>
                         <div className="font-bold text-muted-foreground uppercase tracking-widest text-[9px] mb-2.5 print:text-black">
                           Validação Biométrica (KYC)
@@ -909,7 +932,9 @@ function Page() {
                             </div>
                           </div>
                         ) : (
-                          <div className="text-muted-foreground ds-meta print:text-black">Sem selfie arquivada</div>
+                          <div className="text-muted-foreground ds-meta print:text-black">
+                            Sem selfie arquivada
+                          </div>
                         )}
                       </div>
                       <div className="text-[9px] font-mono leading-none break-all text-muted-foreground glass-card border-none/80 p-2 rounded border-none/20 mt-2 print:bg-transparent print:border-black print:text-black">
@@ -932,7 +957,9 @@ function Page() {
                           className="max-h-16 object-contain bg-white"
                         />
                       ) : (
-                        <span className="text-muted-foreground ds-meta print:text-black">Sem rubrica eletrônica</span>
+                        <span className="text-muted-foreground ds-meta print:text-black">
+                          Sem rubrica eletrônica
+                        </span>
                       )}
                     </div>
                   </div>
@@ -947,9 +974,8 @@ function Page() {
                         src={
                           sig.video_kyc.startsWith("http")
                             ? sig.video_kyc
-                            : supabase.storage
-                                .from("contract-pdfs")
-                                .getPublicUrl(sig.video_kyc).data.publicUrl
+                            : supabase.storage.from("contract-pdfs").getPublicUrl(sig.video_kyc)
+                                .data.publicUrl
                         }
                         controls
                         className="h-28 rounded-[var(--radius-card)] border-none bg-black max-w-[200px]"
@@ -970,7 +996,7 @@ function Page() {
                   {auditTrail.map((log) => (
                     <div
                       key={log.id}
-                      className="flex items-start justify-between ds-meta py-2 border-b border-border/30 last:border-0 hover:bg-success-bg/5 px-2 rounded-[var(--radius-card)] transition-colors print:border-black/10 print:py-1 print:px-0 print:text-black"
+                      className="flex items-start justify-between ds-meta py-2 border-b border-border/30 last:border-0 hover:bg-success-bg/5 px-2 rounded-[var(--radius-card)] transition-colors print:border-border print:py-1 print:px-0 print:text-black"
                     >
                       <div className="flex items-start gap-2.5">
                         <span className="inline-block mt-0.5 rounded-full bg-success/15 text-success p-0.5 print:hidden">
@@ -1032,7 +1058,7 @@ function Page() {
           </section>
           {addendums.length > 0 && (
             <section className="overflow-hidden rounded-[var(--radius-card)] glass-card border-none ring-1 ring-border/50">
-              <div className="border-b border-border/50 glass bg-white/5 border-white/10/30 px-5 py-3">
+              <div className="border-b border-border/50 glass/30 px-5 py-3">
                 <h2 className="ds-label-caps text-muted-foreground">
                   Aditivos e Retificações de Contrato
                 </h2>
@@ -1043,7 +1069,7 @@ function Page() {
                   return (
                     <div
                       key={ad.id}
-                      className="rounded-[var(--radius-card)] border-none p-4 glass bg-white/5 border-white/10/10 space-y-3"
+                      className="rounded-[var(--radius-card)] border-none p-4 glass/10 space-y-3"
                     >
                       <div className="flex items-center justify-between">
                         <span className="text-xs font-bold text-foreground">{ad.title}</span>
@@ -1095,10 +1121,8 @@ function Page() {
           className="overflow-hidden rounded-[var(--radius-card)] glass-card border-none ring-1 ring-border/50 mt-6"
           id="interactive-signature-form"
         >
-          <div className="border-b border-border/50 glass bg-white/5 border-white/10/30 px-5 py-3">
-            <h2 className="ds-label-caps text-muted-foreground">
-              Verificação e Assinatura Legal
-            </h2>
+          <div className="border-b border-border/50 glass/30 px-5 py-3">
+            <h2 className="ds-label-caps text-muted-foreground">Verificação e Assinatura Legal</h2>
           </div>
           <div className="p-5 space-y-5">
             {pendingSigners.length > 1 && (
@@ -1154,7 +1178,7 @@ function Page() {
             </div>
 
             {/* Linha do Tempo / Passos do KYC */}
-            <div className="space-y-4 rounded-[var(--radius-card)] border-none glass bg-white/5 border-white/10/10 p-4">
+            <div className="space-y-4 rounded-[var(--radius-card)] border-none glass/10 p-4">
               <div className="flex items-center gap-2 border-b border-border/50 pb-2 mb-2">
                 <Shield className="h-4 w-4 text-brand" />
                 <span className="text-xs font-bold text-foreground uppercase tracking-wider">
@@ -1198,7 +1222,7 @@ function Page() {
                         </Button>
                       </div>
                     ) : (
-                      <label className="flex flex-col items-center justify-center h-24 rounded-[var(--radius-card)] border border-dashed border-border glass-card border-none cursor-pointer hover:glass bg-white/5 border-white/10/25 transition-colors">
+                      <label className="flex flex-col items-center justify-center h-24 rounded-[var(--radius-card)] border border-dashed border-border glass-card border-none cursor-pointer hover:glass/25 transition-colors">
                         <Upload className="h-4 w-4 text-muted-foreground mb-1" />
                         <span className="ds-meta font-semibold text-muted-foreground">
                           Selecionar Frente
@@ -1233,7 +1257,7 @@ function Page() {
                         </Button>
                       </div>
                     ) : (
-                      <label className="flex flex-col items-center justify-center h-24 rounded-[var(--radius-card)] border border-dashed border-border glass-card border-none cursor-pointer hover:glass bg-white/5 border-white/10/25 transition-colors">
+                      <label className="flex flex-col items-center justify-center h-24 rounded-[var(--radius-card)] border border-dashed border-border glass-card border-none cursor-pointer hover:glass/25 transition-colors">
                         <Upload className="h-4 w-4 text-muted-foreground mb-1" />
                         <span className="ds-meta font-semibold text-muted-foreground">
                           Selecionar Verso
@@ -1302,7 +1326,8 @@ function Page() {
                       <div className="ds-meta text-muted-foreground">
                         Tire uma foto nítida do seu rosto para autenticidade da assinatura.
                       </div>
-                      <Button variant="ghost"
+                      <Button
+                        variant="ghost"
                         type="button"
                         onClick={takeSelfie}
                         className="rounded-full border-none/50 glass-card border-none text-xs h-9"
@@ -1321,7 +1346,7 @@ function Page() {
                   <span className="text-xs font-bold text-brand font-sans">
                     Análise Biométrica Facial em Andamento...
                   </span>
-                  <div className="w-full glass bg-white/5 border-white/10 rounded-full h-1">
+                  <div className="w-full glass rounded-full h-1">
                     <div
                       className="bg-brand h-1 rounded-full animate-progress"
                       style={{ width: "60%" }}
@@ -1383,7 +1408,7 @@ function Page() {
                     ) : (
                       <div className="flex flex-wrap gap-2">
                         {recording ? (
-                          <div className="flex flex-col items-center justify-center border-none rounded-[var(--radius-card)] p-2 bg-black/5">
+                          <div className="flex flex-col items-center justify-center border-none rounded-[var(--radius-card)] p-2 glass">
                             <video
                               ref={videoRef}
                               autoPlay
@@ -1397,7 +1422,8 @@ function Page() {
                           </div>
                         ) : (
                           <>
-                            <Button variant="ghost"
+                            <Button
+                              variant="ghost"
                               type="button"
                               onClick={startVideoRecording}
                               className="h-9 text-xs font-semibold rounded-full border-none gap-1.5 glass-card border-none"
@@ -1405,7 +1431,7 @@ function Page() {
                               <Video className="h-4 w-4" /> Gravar Vídeo
                             </Button>
 
-                            <label className="flex items-center justify-center px-3 h-9 rounded-full border border-dashed border-border glass-card border-none cursor-pointer hover:glass bg-white/5 border-white/10/25 transition-colors text-xs font-semibold text-muted-foreground gap-1.5">
+                            <label className="flex items-center justify-center px-3 h-9 rounded-full border border-dashed border-border glass-card border-none cursor-pointer hover:glass/25 transition-colors text-xs font-semibold text-muted-foreground gap-1.5">
                               <Upload className="h-4 w-4" /> Enviar Vídeo
                               <Input
                                 type="file"
@@ -1456,7 +1482,7 @@ function Page() {
             </div>
 
             <Field label="Assinatura Digital (Desenhe no quadro abaixo)">
-              <div className="relative overflow-hidden rounded-[var(--radius-card)] border-none/60 glass bg-white/5 border-white/10/10">
+              <div className="relative overflow-hidden rounded-[var(--radius-card)] border-none/60 glass/10">
                 <canvas
                   ref={sigRef}
                   width={600}
@@ -1481,7 +1507,7 @@ function Page() {
                   !documentBack ||
                   !facialMatchSuccess ||
                   !readConfirmed) && (
-                  <div className="absolute inset-0 flex flex-col items-center justify-center glass bg-white/5 border-white/10/85 backdrop-blur-[1px] p-4 text-center">
+                  <div className="absolute inset-0 flex flex-col items-center justify-center glass/85 backdrop-blur-[1px] p-4 text-center">
                     <Lock className="h-6 w-6 text-muted-foreground mb-1.5 animate-pulse" />
                     <span className="text-xs font-bold text-foreground font-sans">
                       Assinatura Bloqueada
@@ -1506,7 +1532,8 @@ function Page() {
             </Field>
 
             <div className="border-t border-border/50 pt-5 mt-5">
-              <Button variant="default"
+              <Button
+                variant="default"
                 disabled={
                   signing ||
                   !selfie ||
@@ -1536,7 +1563,9 @@ function Page() {
 function Center({ children }: { children: React.ReactNode }) {
   return (
     <div className="flex min-h-screen items-center justify-center bg-background p-6">
-      <div className="rounded-[var(--radius-card)] border-none glass-card border-none p-8 text-center">{children}</div>
+      <div className="rounded-[var(--radius-card)] border-none glass-card border-none p-8 text-center">
+        {children}
+      </div>
     </div>
   );
 }
@@ -1641,7 +1670,7 @@ function AdendumSignerPanel({
       <div className="ds-label-caps text-muted-foreground">
         Desenhe sua assinatura no quadro abaixo para assinar este aditivo
       </div>
-      <div className="relative overflow-hidden rounded border-none/80 glass bg-white/5 border-white/10/5">
+      <div className="relative overflow-hidden rounded border-none/80 glass/5">
         <canvas
           ref={canvasRef}
           width={400}
@@ -1660,7 +1689,12 @@ function AdendumSignerPanel({
           Limpar
         </Button>
       </div>
-      <Button variant="default" disabled={signing} onClick={handleSign} className="w-full text-xs py-2">
+      <Button
+        variant="default"
+        disabled={signing}
+        onClick={handleSign}
+        className="w-full text-xs py-2"
+      >
         {signing ? "Assinando..." : "Assinar Aditivo"}
       </Button>
     </div>

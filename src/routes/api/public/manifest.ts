@@ -9,9 +9,9 @@ export const Route = createFileRoute("/api/public/manifest")({
         const url = new URL(request.url);
         const slug = url.searchParams.get("agency");
 
-        const { data: pb } = await (supabase as any).from('platform_branding').select('*').single();
+        const { data: pb } = await (supabase as any).from("platform_branding").select("*").single();
         const brandName = (pb as any)?.platform_name || "Turis";
-        
+
         const defaultManifest = {
           name: brandName,
           short_name: (pb as any)?.platform_short_name || brandName,
@@ -49,7 +49,7 @@ export const Route = createFileRoute("/api/public/manifest")({
           return json(defaultManifest);
         }
 
-               const { data: brand } = await supabase
+        const { data: brand } = await supabase
           .from("brand_kit")
           .select("primary_color")
           .eq("agency_id", agency.id)

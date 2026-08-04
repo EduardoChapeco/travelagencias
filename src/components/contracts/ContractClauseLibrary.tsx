@@ -205,7 +205,13 @@ export function ContractClauseLibrary({
   }, [q.data]);
 
   const content = (
-    <div className={isInline ? "flex flex-col flex-1 min-h-0 h-full overflow-hidden bg-background" : "flex flex-col flex-1 min-h-0 overflow-hidden"}>
+    <div
+      className={
+        isInline
+          ? "flex flex-col flex-1 min-h-0 h-full overflow-hidden bg-background"
+          : "flex flex-col flex-1 min-h-0 overflow-hidden"
+      }
+    >
       {/* Intro section */}
       <div className="px-6 py-4 border-b border-border bg-surface-alt/20 shrink-0 flex items-center justify-between">
         <div>
@@ -214,7 +220,8 @@ export function ContractClauseLibrary({
           </p>
         </div>
         {!formOpen && (
-          <Button variant="default"
+          <Button
+            variant="default"
             onClick={() => setFormOpen(true)}
             className="gap-1.5 h-8 text-xs font-semibold"
           >
@@ -249,17 +256,12 @@ export function ContractClauseLibrary({
                 placeholder="Ex: Condições de Cancelamento por Força Maior"
                 value={title}
                 onChange={(e) => setTitle(e.target.value)}
-                
               />
             </Field>
 
             <div className="grid grid-cols-2 gap-4">
               <Field label="Classificação/Tipo">
-                <Select
-                  value={kind}
-                  onChange={(e) => setKind(e.target.value as Clause["kind"])}
-                  
-                >
+                <Select value={kind} onChange={(e) => setKind(e.target.value as Clause["kind"])}>
                   {Object.entries(CLAUSE_KIND_LABELS).map(([k, label]) => (
                     <option key={k} value={k}>
                       {label}
@@ -272,7 +274,6 @@ export function ContractClauseLibrary({
                 <Select
                   value={isActive ? "active" : "inactive"}
                   onChange={(e) => setIsActive(e.target.value === "active")}
-                  
                 >
                   <option value="active">Ativa (Visível ao Gerar)</option>
                   <option value="inactive">Inativa (Oculta)</option>
@@ -298,10 +299,16 @@ export function ContractClauseLibrary({
                 </div>
               )}
               <div className="flex gap-2 ml-auto">
-                <Button variant="ghost" type="button" onClick={resetForm} className="h-8 text-xs font-semibold">
+                <Button
+                  variant="ghost"
+                  type="button"
+                  onClick={resetForm}
+                  className="h-8 text-xs font-semibold"
+                >
                   Cancelar
                 </Button>
-                <Button variant="default"
+                <Button
+                  variant="default"
                   type="submit"
                   disabled={createMut.isPending || updateMut.isPending}
                   className="h-8 text-xs font-semibold"

@@ -1,7 +1,9 @@
 # DECISÕES DE ARQUITETURA (ADR — Architecture Decision Records)
+
 ## Instrução: Registrar toda decisão de design que afeta múltiplos módulos.
 
 ## ADR-001: Implementação do Self-Confrontation Loop
+
 Data: 2026-06-29
 Status: Aceito
 Contexto: A plataforma precisava de uma auditoria minuciosa e contínua devido à sua base extensiva. A auditoria humana não é capaz de capturar todas as dissonâncias entre intenção (schema) e execução (frontend/RLS).

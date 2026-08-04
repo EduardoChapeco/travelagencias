@@ -63,10 +63,7 @@ export function useInbox() {
     queryKey: ["inbox-channels", agency?.id],
     queryFn: async () => {
       if (!agency?.id) return [];
-      const { data, error } = await db
-        .from("channels")
-        .select("*")
-        .eq("agency_id", agency.id);
+      const { data, error } = await db.from("channels").select("*").eq("agency_id", agency.id);
       if (error) throw error;
       return data || [];
     },
@@ -84,12 +81,14 @@ export function useInbox() {
       if (!agency?.id) return [];
       const { data, error } = await db
         .from("conversations")
-        .select(`
+        .select(
+          `
           *,
           contacts(*),
           channels(*),
           messages(id, body, direction, status, created_at)
-        `)
+        `,
+        )
         .eq("agency_id", agency.id)
         .order("last_message_at", { ascending: false, nullsFirst: false })
         .order("created_at", { referencedTable: "messages", ascending: false })
@@ -209,8 +208,7 @@ export function useInbox() {
   const explicitClientId = selectedConversation?.contacts?.client_id;
 
   const { data: matchedLead } = useQuery({
-    enabled:
-      !!agency && (!!explicitLeadId || !!matchedContactEmail || !!matchedContactPhone),
+    enabled: !!agency && (!!explicitLeadId || !!matchedContactEmail || !!matchedContactPhone),
     queryKey: [
       "inbox-matched-lead",
       selectedId,
@@ -220,11 +218,7 @@ export function useInbox() {
     ],
     queryFn: async () => {
       if (explicitLeadId) {
-        const { data } = await db
-          .from("leads")
-          .select("*")
-          .eq("id", explicitLeadId)
-          .maybeSingle();
+        const { data } = await db.from("leads").select("*").eq("id", explicitLeadId).maybeSingle();
         if (data) return data;
       }
       if (!matchedContactEmail && !matchedContactPhone) return null;
@@ -241,8 +235,7 @@ export function useInbox() {
   });
 
   const { data: matchedClient } = useQuery({
-    enabled:
-      !!agency && (!!explicitClientId || !!matchedContactEmail || !!matchedContactPhone),
+    enabled: !!agency && (!!explicitClientId || !!matchedContactEmail || !!matchedContactPhone),
     queryKey: [
       "inbox-matched-client",
       selectedId,
@@ -300,10 +293,7 @@ export function useInbox() {
     },
   });
 
-  const {
-    data: leadInsights,
-    refetch: refetchInsights,
-  } = useQuery({
+  const { data: leadInsights, refetch: refetchInsights } = useQuery({
     enabled: !!(matchedLead as any)?.id,
     queryKey: ["inbox-lead-insights", (matchedLead as any)?.id],
     queryFn: async () => {
@@ -351,10 +341,7 @@ export function useInbox() {
     },
   });
 
-  const linkContactToCrm = async (
-    leadId: string | null,
-    clientId: string | null,
-  ) => {
+  const linkContactToCrm = async (leadId: string | null, clientId: string | null) => {
     if (!selectedConversation?.contacts?.id) return;
     const { error } = await db
       .from("contacts")
@@ -404,8 +391,7 @@ export function useInbox() {
 
   const assignToMeMutation = useMutation({
     mutationFn: async () => {
-      if (!selectedId || !currentUser?.id)
-        throw new Error("No user or conversation selected");
+      if (!selectedId || !currentUser?.id) throw new Error("No user or conversation selected");
       const { data, error } = await db
         .from("conversations")
         .update({ assigned_user_id: currentUser.id, status: "open" })
@@ -420,9 +406,7 @@ export function useInbox() {
     onError: (e: any) => toast.error(e.message),
   });
 
-  async function handleAttachmentUpload(
-    e: React.ChangeEvent<HTMLInputElement>,
-  ) {
+  async function handleAttachmentUpload(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0];
     if (!file || !selectedId || !agency) return;
     const toastId = toast.loading(`Enviando ${file.name}...`);
@@ -528,16 +512,13 @@ export function useInbox() {
     if (!(matchedLead as any)?.id || !agency) return;
     const toastId = toast.loading("Analisando conversa e gerando proposta...");
     try {
-      const { data, error } = await supabase.functions.invoke(
-        "ai-message-processor",
-        {
-          body: {
-            action: "create_proposal",
-            lead_id: (matchedLead as any).id,
-            agency_id: agency.id,
-          },
+      const { data, error } = await supabase.functions.invoke("ai-message-processor", {
+        body: {
+          action: "create_proposal",
+          lead_id: (matchedLead as any).id,
+          agency_id: agency.id,
         },
-      );
+      });
       if (error) throw error;
       const url = `${window.location.origin}/m/proposal/${data.public_token}`;
       toast.success("Proposta de IA adicionada ao chat!", { id: toastId });
@@ -617,10 +598,7 @@ export function useInbox() {
 
   const [uploadingDoc, setUploadingDoc] = useState(false);
 
-  async function handleDocUpload(
-    e: React.ChangeEvent<HTMLInputElement>,
-    docTypeToUpload: string,
-  ) {
+  async function handleDocUpload(e: React.ChangeEvent<HTMLInputElement>, docTypeToUpload: string) {
     const file = e.target.files?.[0];
     if (!file || !matchedClientId || !agency) return;
     setUploadingDoc(true);

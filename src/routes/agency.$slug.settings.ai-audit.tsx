@@ -23,7 +23,9 @@ import { NativeSelect as Select } from "@/components/ui/select";
 
 // @ts-ignore
 export const Route = createFileRoute("/agency/$slug/settings/ai-audit")({
-  head: ({ context }: any) => ({ meta: [{ title: `Auditoria de IA · ${context?.brand?.platform_name || 'Turis'}` }] }),
+  head: ({ context }: any) => ({
+    meta: [{ title: `Auditoria de IA · ${context?.brand?.platform_name || "Turis"}` }],
+  }),
   component: Page,
 });
 
@@ -100,19 +102,19 @@ function Page() {
 
   return (
     <div className="flex h-full flex-col overflow-hidden">
-              <PageHeader
-          title="Auditoria de IA"
-          actions={
-            <Button
-              onClick={() => auditQuery.refetch()}
-              className="h-7 px-3 flex items-center gap-1 rounded-full text-white/60 hover:text-white hover:bg-white/10 transition-colors cursor-pointer"
-            >
-              <RefreshCw className={cn("h-3.5 w-3.5", auditQuery.isFetching && "animate-spin")} />
-              <span className="hidden sm:inline">Atualizar</span>
-            </Button>
-          }
-        />
-      
+      <PageHeader
+        title="Auditoria de IA"
+        actions={
+          <Button
+            onClick={() => auditQuery.refetch()}
+            className="h-7 px-3 flex items-center gap-1 rounded-full text-white/60 hover:text-white hover:glass-dark transition-colors cursor-pointer"
+          >
+            <RefreshCw className={cn("h-3.5 w-3.5", auditQuery.isFetching && "animate-spin")} />
+            <span className="hidden sm:inline">Atualizar</span>
+          </Button>
+        }
+      />
+
       {/* Main Container */}
       <div className="flex-1 overflow-y-auto px-4  md:pr-6 py-4 min-h-0 font-sans space-y-6 pb-24">
         <div>
@@ -181,7 +183,7 @@ function Page() {
             <Select
               value={selectedUser}
               onChange={(e) => setSelectedUser(e.target.value)}
-              className="rounded-full border-none glass bg-white/5 border-white/10 px-2.5"
+              className="rounded-full border-none glass px-2.5"
             >
               <option value="all">Todos os operadores</option>
               {members.map((m: any) => (
@@ -197,7 +199,7 @@ function Page() {
             <Select
               value={selectedAction}
               onChange={(e) => setSelectedAction(e.target.value)}
-              className="rounded-full border-none glass bg-white/5 border-white/10 px-2.5 cursor-pointer"
+              className="rounded-full border-none glass px-2.5 cursor-pointer"
             >
               <option value="all">Todas as ações</option>
               <option value="ai_chat_message">Mensagem de Chat (IA)</option>
@@ -212,7 +214,7 @@ function Page() {
 
         {/* 3. Log Stream */}
         <div className="rounded-[var(--radius-card)] border-none glass-card border-none overflow-hidden shadow-xs">
-          <div className="border-b border-border glass bg-white/5 border-white/10 px-4 py-3 flex items-center justify-between">
+          <div className="border-b border-border glass px-4 py-3 flex items-center justify-between">
             <span className="text-xs font-bold text-foreground">Fluxo de Eventos</span>
             <span className="ds-meta text-muted-foreground">
               Mostrando os últimos 100 registros
@@ -242,7 +244,7 @@ function Page() {
                   <div
                     key={log.id}
                     className={cn(
-                      "p-4 transition-colors hover:glass bg-white/5 border-white/10/40",
+                      "p-4 transition-colors hover:glass/40",
                       isFailed && "bg-rose-500/[0.01]",
                     )}
                   >

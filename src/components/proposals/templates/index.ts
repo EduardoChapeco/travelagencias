@@ -27,7 +27,8 @@ export const PROPOSAL_TEMPLATES: TemplateDefinition[] = [
   {
     id: "vertical-premium",
     label: "Roteiro Vertical Premium",
-    description: "Ideal para viagens terrestres, grupos, excursões e roteiros detalhados. Formato longo.",
+    description:
+      "Ideal para viagens terrestres, grupos, excursões e roteiros detalhados. Formato longo.",
     formats: ["vertical-scroll"],
     previewBg: "#F4F9FE",
   },

@@ -182,7 +182,8 @@ export function SectionHotels({ draft, save }: Props) {
           </div>
           <L label="Regime">
             <Select
-              className={SMALL_INPUT + " mb-2"} value={h.meal_plan}
+              className={SMALL_INPUT + " mb-2"}
+              value={h.meal_plan}
               onChange={(e) => upd(i, { meal_plan: e.target.value })}
             >
               {MEAL_PLANS.map((mp) => (
@@ -196,9 +197,7 @@ export function SectionHotels({ draft, save }: Props) {
           {/* Rooms */}
           <div className="mb-2">
             <div className="flex items-center justify-between mb-1">
-              <span className="ds-label-caps font-bold text-muted-foreground">
-                Quartos
-              </span>
+              <span className="ds-label-caps font-bold text-muted-foreground">Quartos</span>
               <Button
                 type="button"
                 onClick={() => addRoom(i)}
@@ -210,14 +209,16 @@ export function SectionHotels({ draft, save }: Props) {
             {(h.rooms ?? []).map((r, ri) => (
               <div key={ri} className="flex items-center gap-2 mb-1">
                 <Input
-                  className={SMALL_INPUT + " flex-1"} value={r.type}
+                  className={SMALL_INPUT + " flex-1"}
+                  value={r.type}
                   placeholder="Tipo do quarto"
                   onChange={(e) => updRoom(i, ri, { type: e.target.value })}
                 />
                 <Input
                   type="number"
                   min={1}
-                  className={SMALL_INPUT + " w-14"} value={r.qty}
+                  className={SMALL_INPUT + " w-14"}
+                  value={r.qty}
                   onChange={(e) => updRoom(i, ri, { qty: parseInt(e.target.value) || 1 })}
                 />
                 <Button
@@ -323,7 +324,8 @@ export function SectionHotels({ draft, save }: Props) {
               <div className="grid grid-cols-2 gap-2">
                 <L label="Cidade de Destino">
                   <Input
-                    className={SMALL_INPUT} value={searchParams.city}
+                    className={SMALL_INPUT}
+                    value={searchParams.city}
                     onChange={(e) => setSearchParams({ ...searchParams, city: e.target.value })}
                     placeholder="Ex: Orlando"
                   />
@@ -332,7 +334,8 @@ export function SectionHotels({ draft, save }: Props) {
                   <Input
                     type="number"
                     min={1}
-                    className={SMALL_INPUT} value={searchParams.rooms}
+                    className={SMALL_INPUT}
+                    value={searchParams.rooms}
                     onChange={(e) =>
                       setSearchParams({ ...searchParams, rooms: parseInt(e.target.value) || 1 })
                     }
@@ -341,20 +344,23 @@ export function SectionHotels({ draft, save }: Props) {
                 <L label="Check-in">
                   <Input
                     type="date"
-                    className={SMALL_INPUT} value={searchParams.checkin}
+                    className={SMALL_INPUT}
+                    value={searchParams.checkin}
                     onChange={(e) => setSearchParams({ ...searchParams, checkin: e.target.value })}
                   />
                 </L>
                 <L label="Check-out">
                   <Input
                     type="date"
-                    className={SMALL_INPUT} value={searchParams.checkout}
+                    className={SMALL_INPUT}
+                    value={searchParams.checkout}
                     onChange={(e) => setSearchParams({ ...searchParams, checkout: e.target.value })}
                   />
                 </L>
               </div>
 
-              <Button variant="default"
+              <Button
+                variant="default"
                 type="button"
                 className="w-full"
                 disabled={

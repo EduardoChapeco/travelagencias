@@ -4,6 +4,7 @@
 Recuperar o frontend quebrado do TravelOS, reestabelecendo a integridade funcional, visual e arquitetural da plataforma, comprometida por sucessivas refatorações parciais.
 
 ## Princípios (Proibições Absolutas)
+
 - Não usar `typecheck` como prova visual.
 - Não usar `build` como prova funcional.
 - Não declarar sucesso absoluto sem evidências no DOM/CSS/Runtime.
@@ -11,6 +12,7 @@ Recuperar o frontend quebrado do TravelOS, reestabelecendo a integridade funcion
 - Não ocultar erros substituindo por zero ou listas vazias.
 
 ## Fase 0 Concluída
+
 - **Branch de Recuperação:** `frontend-recovery-program` (Criada a partir da HEAD em `d64329c`).
 - **Baseline Git:**
   - Origin/Main: `f9ee366`

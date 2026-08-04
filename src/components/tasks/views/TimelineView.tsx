@@ -1,13 +1,13 @@
 import { useState } from "react";
 import { TaskFiltersState, TaskWithRelations } from "@/lib/tasks/task.types";
 import { useTasksQuery } from "@/hooks/tasks/useTasksQuery";
-import { 
-  format, 
-  addDays, 
-  isWithinInterval, 
-  startOfDay, 
+import {
+  format,
+  addDays,
+  isWithinInterval,
+  startOfDay,
   isSameDay,
-  differenceInDays
+  differenceInDays,
 } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import { AlertCircle, CalendarDays } from "lucide-react";
@@ -69,7 +69,10 @@ export function TimelineView({ filters }: { filters: TaskFiltersState }) {
           {/* Header do Grid */}
           <div className="grid grid-cols-12 border-b bg-[var(--surface-alt)]/50 shrink-0 text-center font-bold ds-label-caps text-[var(--muted-foreground)]">
             <div className="col-span-4 p-3 border-r text-left">Tarefa</div>
-            <div className="col-span-8 p-3 gap-1" style={{ display: "grid", gridTemplateColumns: "repeat(14, minmax(0, 1fr))" }}>
+            <div
+              className="col-span-8 p-3 gap-1"
+              style={{ display: "grid", gridTemplateColumns: "repeat(14, minmax(0, 1fr))" }}
+            >
               {timelineDays.map((day, idx) => (
                 <div key={idx} className="flex flex-col items-center justify-center">
                   <span>{format(day, "eee", { locale: ptBR })}</span>
@@ -83,15 +86,15 @@ export function TimelineView({ filters }: { filters: TaskFiltersState }) {
           <div className="divide-y bg-[var(--surface)]">
             {tasks.map((task) => {
               const priorityCfg = TASK_PRIORITIES[task.priority] || { color: "var(--muted)" };
-              
+
               // Determinar o período da tarefa. Se não houver due_date, ela expira no dia da criação
               const rawDueDate = task.due_date ? startOfDay(new Date(task.due_date)) : today;
               const rawStartDate = task.created_at ? startOfDay(new Date(task.created_at)) : today;
-              
+
               // date-fns isWithinInterval requires start <= end
               const startDate = rawStartDate <= rawDueDate ? rawStartDate : rawDueDate;
               const dueDate = rawStartDate <= rawDueDate ? rawDueDate : rawStartDate;
-              
+
               return (
                 <div
                   key={task.id}
@@ -104,21 +107,29 @@ export function TimelineView({ filters }: { filters: TaskFiltersState }) {
                   </div>
 
                   {/* Representação Gantt na Barra de Dias */}
-                  <div className="col-span-8 p-3 gap-1 h-12 relative items-center" style={{ display: "grid", gridTemplateColumns: "repeat(14, minmax(0, 1fr))" }}>
+                  <div
+                    className="col-span-8 p-3 gap-1 h-12 relative items-center"
+                    style={{ display: "grid", gridTemplateColumns: "repeat(14, minmax(0, 1fr))" }}
+                  >
                     {timelineDays.map((day, dayIdx) => {
-                      const isTaskDay = isSameDay(day, dueDate) || 
-                        (task.due_date && isWithinInterval(day, { start: startDate, end: dueDate }));
+                      const isTaskDay =
+                        isSameDay(day, dueDate) ||
+                        (task.due_date &&
+                          isWithinInterval(day, { start: startDate, end: dueDate }));
 
                       return (
-                        <div key={dayIdx} className="h-full w-full flex items-center justify-center relative">
+                        <div
+                          key={dayIdx}
+                          className="h-full w-full flex items-center justify-center relative"
+                        >
                           {isTaskDay && (
-                            <div 
+                            <div
                               className="absolute inset-y-2 inset-x-0 rounded-full border transition-all"
-                              style={{ 
-                                backgroundColor: `${priorityCfg.color}15`, 
+                              style={{
+                                backgroundColor: `${priorityCfg.color}15`,
                                 borderColor: `${priorityCfg.color}40`,
                                 borderLeftWidth: "4px",
-                                borderLeftColor: priorityCfg.color
+                                borderLeftColor: priorityCfg.color,
                               }}
                               title={`Prazo final: ${format(dueDate, "dd/MM")}`}
                             />

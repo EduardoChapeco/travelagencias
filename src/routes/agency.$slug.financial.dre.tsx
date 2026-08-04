@@ -43,17 +43,17 @@ function DREPage() {
 
   return (
     <div className="flex h-full flex-col overflow-hidden">
-              <PageHeader
-          title="DRE"
-          filters={[
-            { label: "30 dias", value: "month" },
-            { label: "90 dias", value: "quarter" },
-            { label: "12 meses", value: "year" },
-          ]}
-          activeFilter={period}
-          onFilterChange={(v) => setPeriod(v as "month" | "quarter" | "year")}
-        />
-      
+      <PageHeader
+        title="DRE"
+        filters={[
+          { label: "30 dias", value: "month" },
+          { label: "90 dias", value: "quarter" },
+          { label: "12 meses", value: "year" },
+        ]}
+        activeFilter={period}
+        onFilterChange={(v) => setPeriod(v as "month" | "quarter" | "year")}
+      />
+
       <div className="px-4  md:pr-6 pt-4 shrink-0">
         <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
           <div className="rounded-[var(--radius-card)] border-none glass-card border-none p-4">
@@ -69,9 +69,7 @@ function DREPage() {
             </div>
           </div>
           <div className="rounded-[var(--radius-card)] border-none glass-card border-none p-4">
-            <div className="ds-meta uppercase tracking-wide text-muted-foreground">
-              Resultado
-            </div>
+            <div className="ds-meta uppercase tracking-wide text-muted-foreground">Resultado</div>
             <div
               className={`mt-1 font-mono text-xl font-semibold ${(q.data?.net ?? 0) >= 0 ? "text-success" : "text-danger"}`}
             >
@@ -84,7 +82,7 @@ function DREPage() {
       <div className="flex-1 overflow-y-auto px-4  md:pr-6 py-4 min-h-0 pb-24">
         <div className="overflow-hidden rounded-[var(--radius-card)] border-none glass-card border-none">
           <table className="w-full text-sm">
-            <thead className="glass bg-white/5 border-white/10/40 text-left ds-meta uppercase tracking-wide text-muted-foreground">
+            <thead className="glass/40 text-left ds-meta uppercase tracking-wide text-muted-foreground">
               <tr>
                 <th className="px-3 py-2 font-medium">Categoria</th>
                 <th className="px-3 py-2 text-right font-medium">Receita</th>
@@ -97,7 +95,10 @@ function DREPage() {
                 Object.entries(q.data.byCat)
                   .sort((a, b) => b[1].income - b[1].expense - (a[1].income - a[1].expense))
                   .map(([cat, v]) => (
-                    <tr key={cat} className="border-t border-border hover:glass bg-white/5 border-white/10/30">
+                    <tr
+                      key={cat}
+                      className="border-t border-border hover:glass/30"
+                    >
                       <td className="px-3 py-2.5 font-medium">{cat}</td>
                       <td className="px-3 py-2.5 text-right font-mono text-xs text-success">
                         {formatCurrency(v.income)}

@@ -9,7 +9,9 @@ import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 
 export const Route = createFileRoute("/auth/reset-password")({
-  head: ({ context }: any) => ({ meta: [{ title: `Definir nova senha · ${context?.brand?.platform_name || 'Turis'}` }] }),
+  head: ({ context }: any) => ({
+    meta: [{ title: `Definir nova senha · ${context?.brand?.platform_name || "Turis"}` }],
+  }),
   component: ResetPage,
 });
 

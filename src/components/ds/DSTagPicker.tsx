@@ -4,7 +4,14 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAgency } from "@/lib/agency-context";
 import { X, Plus, Tag as TagIcon, Check } from "lucide-react";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "@/components/ui/command";
+import {
+  Command,
+  CommandEmpty,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
+  CommandList,
+} from "@/components/ui/command";
 import { Button } from "@/components/ui/button";
 
 export interface DSTagPickerProps {
@@ -82,9 +89,11 @@ export function DSTagPicker({
   const handleCreate = (e?: React.MouseEvent) => {
     e?.stopPropagation();
     if (!inputValue.trim() || disabled) return;
-    
+
     // Check if it already exists locally
-    const exists = availableTags.find(t => t.name.toLowerCase() === inputValue.trim().toLowerCase());
+    const exists = availableTags.find(
+      (t) => t.name.toLowerCase() === inputValue.trim().toLowerCase(),
+    );
     if (exists) {
       handleSelect(exists);
       setInputValue("");

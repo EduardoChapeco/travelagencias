@@ -7,7 +7,9 @@ import { StatusBadge } from "@/components/ui/badge";
 import { formatDate, formatCurrency } from "@/lib/formatters";
 
 export const Route = createFileRoute("/client/trips")({
-  head: ({ context }: any) => ({ meta: [{ title: `Minhas viagens · ${context?.brand?.platform_name || 'Turis'}` }] }),
+  head: ({ context }: any) => ({
+    meta: [{ title: `Minhas viagens · ${context?.brand?.platform_name || "Turis"}` }],
+  }),
   component: ClientTripsPage,
 });
 

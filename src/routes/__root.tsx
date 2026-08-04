@@ -85,12 +85,14 @@ function ErrorComponent({ error, reset }: { error: Error; reset: () => void }) {
 
 let cachedBrandPromise: Promise<any> | null = null;
 
-export const Route = createRootRouteWithContext<{ queryClient: QueryClient, brand?: any }>()({
+export const Route = createRootRouteWithContext<{ queryClient: QueryClient; brand?: any }>()({
   head: ({ context }: any) => ({
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: `${context?.brand?.platform_name || 'Turis'} — Plataforma para Agências de Viagens` },
+      {
+        title: `${context?.brand?.platform_name || "Turis"} — Plataforma para Agências de Viagens`,
+      },
       {
         name: "description",
         content:
@@ -138,12 +140,12 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient, bran
   beforeLoad: async () => {
     try {
       if (!cachedBrandPromise) {
-        cachedBrandPromise = import("@/integrations/supabase/client").then(m =>
+        cachedBrandPromise = import("@/integrations/supabase/client").then((m) =>
           (m.supabase as any)
             .from("platform_branding")
             .select("*")
             .single()
-            .then((res: any) => res.data)
+            .then((res: any) => res.data),
         );
       }
       const data = await cachedBrandPromise;
@@ -201,12 +203,12 @@ function RootComponent() {
 function PendingComponent() {
   return (
     <div className="flex h-full flex-col p-6 space-y-4 animate-pulse bg-background">
-      <div className="h-8 w-1/4 rounded-full glass bg-white/5 border-white/10 border-none" />
-      <div className="h-4 w-1/2 rounded-full glass bg-white/5 border-white/10 border-none" />
+      <div className="h-8 w-1/4 rounded-full glass border-none" />
+      <div className="h-4 w-1/2 rounded-full glass border-none" />
       <div className="mt-8 grid grid-cols-1 md:grid-cols-3 gap-6">
-        <div className="h-32 rounded-[var(--radius-card)] glass bg-white/5 border-white/10 border-none" />
-        <div className="h-32 rounded-[var(--radius-card)] glass bg-white/5 border-white/10 border-none" />
-        <div className="h-32 rounded-[var(--radius-card)] glass bg-white/5 border-white/10 border-none" />
+        <div className="h-32 rounded-[var(--radius-card)] glass border-none" />
+        <div className="h-32 rounded-[var(--radius-card)] glass border-none" />
+        <div className="h-32 rounded-[var(--radius-card)] glass border-none" />
       </div>
     </div>
   );

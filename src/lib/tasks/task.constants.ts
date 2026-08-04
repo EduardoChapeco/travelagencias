@@ -10,14 +10,20 @@ export const TASK_STATUSES: Record<TaskStatus, { label: string; color: string; i
   cancelled: { label: "Cancelado", color: "var(--danger)" },
 };
 
-export const TASK_PRIORITIES: Record<TaskPriority, { label: string; color: string; weight: number }> = {
+export const TASK_PRIORITIES: Record<
+  TaskPriority,
+  { label: string; color: string; weight: number }
+> = {
   critical: { label: "Crítica", color: "var(--danger)", weight: 4 },
   high: { label: "Alta", color: "var(--warning)", weight: 3 },
   medium: { label: "Média", color: "var(--info)", weight: 2 },
   low: { label: "Baixa", color: "var(--muted-foreground)", weight: 1 },
 };
 
-export const TASK_SOURCES: Record<TaskSource, { label: string; icon: string; defaultColor: string }> = {
+export const TASK_SOURCES: Record<
+  TaskSource,
+  { label: string; icon: string; defaultColor: string }
+> = {
   manual: { label: "Manual", icon: "plus", defaultColor: "var(--muted)" },
   embarque: { label: "Embarque", icon: "plane", defaultColor: "var(--brand)" },
   trip: { label: "Viagem", icon: "map", defaultColor: "var(--brand)" },
@@ -39,4 +45,10 @@ export const TASK_VIEWS: Record<TaskView, { label: string; icon: string; adminOn
   reports: { label: "Relatórios", icon: "bar-chart", adminOnly: true },
 };
 
-export const DEFAULT_KANBAN_COLUMNS: TaskStatus[] = ["backlog", "todo", "in_progress", "in_review", "done"];
+export const DEFAULT_KANBAN_COLUMNS: TaskStatus[] = [
+  "backlog",
+  "todo",
+  "in_progress",
+  "in_review",
+  "done",
+];

@@ -5,8 +5,20 @@ import { useAgency } from "@/lib/agency-context";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import {
-  ArrowLeft, User, Mail, Clock, AlertCircle, Send, Paperclip,
-  MessageSquare, Zap, FileText, CheckCircle2, Ticket, Loader2, Tag,
+  ArrowLeft,
+  User,
+  Mail,
+  Clock,
+  AlertCircle,
+  Send,
+  Paperclip,
+  MessageSquare,
+  Zap,
+  FileText,
+  CheckCircle2,
+  Ticket,
+  Loader2,
+  Tag,
 } from "lucide-react";
 import { Field } from "@/components/ui/field";
 import { NativeSelect as Select } from "@/components/ui/select";
@@ -19,7 +31,9 @@ import { ptBR } from "date-fns/locale";
 import { cn } from "@/lib/utils";
 
 export const Route = createFileRoute("/agency/$slug/support/$ticket_id")({
-  head: ({ context }: any) => ({ meta: [{ title: `Atendimento Avançado · ${context?.brand?.platform_name || 'Turis'}` }] }),
+  head: ({ context }: any) => ({
+    meta: [{ title: `Atendimento Avançado · ${context?.brand?.platform_name || "Turis"}` }],
+  }),
   component: TicketAdvancedRoute,
 });
 
@@ -68,19 +82,26 @@ function TicketAdvancedRoute() {
   const [metaDirty, setMetaDirty] = useState(false);
 
   // ── Load ticket ─────────────────────────────────────────────────────────
-  const { data: ticket, isLoading, isError, error } = useQuery({
+  const {
+    data: ticket,
+    isLoading,
+    isError,
+    error,
+  } = useQuery({
     queryKey: ["ticket_advanced", ticket_id],
     enabled: !!agency,
     queryFn: async () => {
       // Corrected: assignee_id joins to auth.users, displayed via profiles
       const { data, error } = await supabase
         .from("support_tickets")
-        .select(`
+        .select(
+          `
           *,
           client:clients(id, full_name, email),
           trip:trips(id, name),
           assignee:profiles(id, full_name, avatar_url)
-        `)
+        `,
+        )
         .eq("id", ticket_id)
         .single();
       if (error) throw error;
@@ -107,11 +128,13 @@ function TicketAdvancedRoute() {
     enabled: !!agency && !!ticket_id,
     queryFn: async () => {
       const { data, error } = await (supabase.from as any)("ticket_timeline")
-        .select(`
+        .select(
+          `
           *,
           actor:profiles(id, full_name, avatar_url),
           email:email_id(subject, body_text, from_email, to_emails)
-        `)
+        `,
+        )
         .eq("ticket_id", ticket_id)
         .order("created_at", { ascending: true });
       if (error) throw error;
@@ -130,7 +153,7 @@ function TicketAdvancedRoute() {
       // Log timeline event
       await (supabase.from as any)("ticket_timeline").insert({
         ticket_id,
-        org_id: agency!.id,   // ← correct column name per migration
+        org_id: agency!.id, // ← correct column name per migration
         event_type: "status_changed",
         description: `Status alterado para ${status}`,
         is_internal: false,
@@ -147,8 +170,14 @@ function TicketAdvancedRoute() {
   const saveMetadata = useMutation({
     mutationFn: async () => {
       if (!ticket) return;
-      const locCodes = metaDraft.loc_codes.split(",").map(s => s.trim()).filter(Boolean);
-      const passengerNames = metaDraft.passenger_names.split(",").map(s => s.trim()).filter(Boolean);
+      const locCodes = metaDraft.loc_codes
+        .split(",")
+        .map((s) => s.trim())
+        .filter(Boolean);
+      const passengerNames = metaDraft.passenger_names
+        .split(",")
+        .map((s) => s.trim())
+        .filter(Boolean);
 
       const updates: any = {
         loc_codes: locCodes,
@@ -159,15 +188,14 @@ function TicketAdvancedRoute() {
         financial_data: {
           ...(ticket.financial_data || {}),
           extra_cost: metaDraft.extra_cost ? parseFloat(metaDraft.extra_cost) : null,
-          supplier_penalty: metaDraft.supplier_penalty ? parseFloat(metaDraft.supplier_penalty) : null,
+          supplier_penalty: metaDraft.supplier_penalty
+            ? parseFloat(metaDraft.supplier_penalty)
+            : null,
         },
         updated_at: new Date().toISOString(),
       };
 
-      const { error } = await supabase
-        .from("support_tickets")
-        .update(updates)
-        .eq("id", ticket_id);
+      const { error } = await supabase.from("support_tickets").update(updates).eq("id", ticket_id);
       if (error) throw error;
 
       // Log timeline event
@@ -192,11 +220,13 @@ function TicketAdvancedRoute() {
     mutationFn: async () => {
       if (!replyText.trim()) return;
       const eventType = replyType === "internal" ? "note" : "email_sent";
-      const { data: { user } } = await supabase.auth.getUser();
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
 
       const { error } = await (supabase.from as any)("ticket_timeline").insert({
         ticket_id,
-        org_id: agency!.id,   // ← correct column name (not org_id)
+        org_id: agency!.id, // ← correct column name (not org_id)
         actor_id: user?.id,
         event_type: eventType,
         is_internal: replyType === "internal",
@@ -207,7 +237,7 @@ function TicketAdvancedRoute() {
       // Send email for non-internal replies
       if (replyType !== "internal") {
         supabase.functions.invoke("gmail-send", {
-          body: { ticket_id, text: replyText, type: replyType }
+          body: { ticket_id, text: replyText, type: replyType },
         });
       }
     },
@@ -244,13 +274,13 @@ function TicketAdvancedRoute() {
     );
   }
 
-  const isSlaBreached = ticket.sla_deadline
-    && isPast(new Date(ticket.sla_deadline))
-    && !["closed", "resolved"].includes(ticket.status || ticket.stage);
+  const isSlaBreached =
+    ticket.sla_deadline &&
+    isPast(new Date(ticket.sla_deadline)) &&
+    !["closed", "resolved"].includes(ticket.status || ticket.stage);
 
   const currentStatus = ticket.status || ticket.stage || "open";
-  const assigneeName = (ticket.assignee as any)?.full_name
-    || "Não atribuído";
+  const assigneeName = (ticket.assignee as any)?.full_name || "Não atribuído";
 
   return (
     <div className="flex flex-1 min-h-0 overflow-hidden bg-transparent">
@@ -262,7 +292,7 @@ function TicketAdvancedRoute() {
             <Link
               to="/agency/$slug/support"
               params={{ slug }}
-              className="flex h-8 w-8 items-center justify-center rounded-full border border-white/10 bg-white/5 text-white/70 hover:bg-white/10 transition-colors shrink-0 cursor-pointer"
+              className="flex h-8 w-8 items-center justify-center rounded-full border glass text-white/70 hover:glass-dark transition-colors shrink-0 cursor-pointer"
             >
               <ArrowLeft className="h-4 w-4" />
             </Link>
@@ -298,8 +328,10 @@ function TicketAdvancedRoute() {
               className="w-44 shrink-0"
               disabled={updateStatus.isPending}
             >
-              {STATUS_OPTIONS.map(o => (
-                <option key={o.value} value={o.value}>{o.label}</option>
+              {STATUS_OPTIONS.map((o) => (
+                <option key={o.value} value={o.value}>
+                  {o.label}
+                </option>
               ))}
             </Select>
           </div>
@@ -307,12 +339,14 @@ function TicketAdvancedRoute() {
           {/* SLA + Refund alerts */}
           <div className="flex gap-2 flex-wrap">
             {ticket.sla_deadline && (
-              <div className={cn(
-                "px-3 py-1.5 rounded-full text-xs font-medium flex items-center gap-1.5",
-                isSlaBreached
-                  ? "bg-destructive/10 text-destructive border border-destructive/20"
-                  : "bg-warning/10 text-warning border border-warning/20"
-              )}>
+              <div
+                className={cn(
+                  "px-3 py-1.5 rounded-full text-xs font-medium flex items-center gap-1.5",
+                  isSlaBreached
+                    ? "bg-destructive/10 text-destructive border border-destructive/20"
+                    : "bg-warning/10 text-warning border border-warning/20",
+                )}
+              >
                 <AlertCircle className="w-3.5 h-3.5" />
                 SLA: {format(new Date(ticket.sla_deadline), "dd/MM HH:mm")}
                 {isSlaBreached && " (Estourado)"}
@@ -321,11 +355,16 @@ function TicketAdvancedRoute() {
             {ticket.refund_requested && (
               <div className="px-3 py-1.5 bg-blue-100 text-blue-800 border border-blue-200 rounded-full text-xs font-medium flex items-center gap-1.5">
                 <FileText className="w-3.5 h-3.5" />
-                Reembolso: {REFUND_STATUS_OPTIONS.find(o => o.value === ticket.refund_status)?.label || "Pendente"}
+                Reembolso:{" "}
+                {REFUND_STATUS_OPTIONS.find((o) => o.value === ticket.refund_status)?.label ||
+                  "Pendente"}
               </div>
             )}
-            {(ticket.tags as string[] || []).map((tag: string) => (
-              <div key={tag} className="px-2 py-1 glass bg-white/5 border-white/10 border-none rounded-full text-xs text-muted-foreground flex items-center gap-1">
+            {((ticket.tags as string[]) || []).map((tag: string) => (
+              <div
+                key={tag}
+                className="px-2 py-1 glass border-none rounded-full text-xs text-muted-foreground flex items-center gap-1"
+              >
                 <Tag className="w-3 h-3" /> {tag}
               </div>
             ))}
@@ -335,7 +374,7 @@ function TicketAdvancedRoute() {
         {/* Timeline */}
         <div className="flex-1 overflow-y-auto p-6 glass-card border-none-muted/30">
           <div className="max-w-3xl mx-auto space-y-6">
-            {(!timeline || timeline.length === 0) ? (
+            {!timeline || timeline.length === 0 ? (
               <div className="text-center text-muted-foreground p-8 rounded-[var(--radius-card)] border border-dashed border-border">
                 <MessageSquare className="w-8 h-8 mx-auto mb-3 opacity-30" />
                 <p className="text-sm">Nenhum evento na timeline ainda.</p>
@@ -366,12 +405,12 @@ function TicketAdvancedRoute() {
                       </div>
                     )}
                   </div>
-                  <div className={cn(
-                    "flex-1 rounded-[var(--radius-card)] p-4 border shadow-xs",
-                    ev.is_internal
-                      ? "bg-amber-50/60 border-amber-200"
-                      : "bg-card border-border"
-                  )}>
+                  <div
+                    className={cn(
+                      "flex-1 rounded-[var(--radius-card)] p-4 border shadow-xs",
+                      ev.is_internal ? "bg-amber-50/60 border-amber-200" : "bg-card border-border",
+                    )}
+                  >
                     <div className="flex justify-between items-start mb-2 gap-3">
                       <div>
                         <span className="text-sm font-semibold text-foreground">
@@ -394,11 +433,15 @@ function TicketAdvancedRoute() {
                         <div className="font-medium mb-1 text-muted-foreground text-xs">
                           Assunto: {ev.email.subject}
                         </div>
-                        <div className="text-foreground whitespace-pre-wrap">{ev.email.body_text}</div>
+                        <div className="text-foreground whitespace-pre-wrap">
+                          {ev.email.body_text}
+                        </div>
                       </div>
                     )}
                     {ev.description && !ev.email && (
-                      <div className="text-sm text-foreground whitespace-pre-wrap">{ev.description}</div>
+                      <div className="text-sm text-foreground whitespace-pre-wrap">
+                        {ev.description}
+                      </div>
                     )}
                   </div>
                 </div>
@@ -421,10 +464,14 @@ function TicketAdvancedRoute() {
                       ? type === "internal"
                         ? "bg-amber-500 text-white"
                         : "bg-brand text-white"
-                      : "glass bg-white/5 border-white/10 text-muted-foreground hover:text-foreground"
+                      : "glass text-muted-foreground hover:text-foreground",
                   )}
                 >
-                  {type === "client" ? "Responder Cliente" : type === "supplier" ? "Contatar Fornecedor" : "Nota Interna"}
+                  {type === "client"
+                    ? "Responder Cliente"
+                    : type === "supplier"
+                      ? "Contatar Fornecedor"
+                      : "Nota Interna"}
                 </Button>
               ))}
             </div>
@@ -438,25 +485,34 @@ function TicketAdvancedRoute() {
                     : "Escreva sua resposta... (Ctrl+Enter para enviar)"
                 }
                 className="min-h-[100px] resize-none pb-12"
-                onKeyDown={(e) => { if (e.key === "Enter" && e.ctrlKey) addTimelineEvent.mutate(); }}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter" && e.ctrlKey) addTimelineEvent.mutate();
+                }}
               />
               <div className="absolute bottom-3 left-3 flex gap-1">
                 <Button variant="ghost" size="icon" className="h-8 w-8" title="Anexar arquivo">
                   <Paperclip className="w-4 h-4" />
                 </Button>
-                <Button variant="ghost" size="icon" className="h-8 w-8" title="Resposta inteligente IA">
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="h-8 w-8"
+                  title="Resposta inteligente IA"
+                >
                   <Zap className="w-4 h-4 text-brand" />
                 </Button>
               </div>
-              <Button variant="default"
+              <Button
+                variant="default"
                 onClick={() => addTimelineEvent.mutate()}
                 disabled={!replyText.trim() || addTimelineEvent.isPending}
                 className="absolute bottom-3 right-3 h-8 text-xs gap-1.5"
               >
-                {addTimelineEvent.isPending
-                  ? <Loader2 className="w-3.5 h-3.5 animate-spin" />
-                  : <Send className="w-3.5 h-3.5" />
-                }
+                {addTimelineEvent.isPending ? (
+                  <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                ) : (
+                  <Send className="w-3.5 h-3.5" />
+                )}
                 {replyType === "internal" ? "Salvar Nota" : "Enviar Resposta"}
               </Button>
             </div>
@@ -465,7 +521,7 @@ function TicketAdvancedRoute() {
       </div>
 
       {/* ── Direita: Metadados ───────────────────────────────────────────────── */}
-      <div className="w-80 border-l border-border glass bg-white/5 border-white/10 flex flex-col shrink-0">
+      <div className="w-80 border-l border-border glass flex flex-col shrink-0">
         <div className="p-4 border-b border-border font-semibold flex items-center gap-2 text-sm">
           <Ticket className="w-4 h-4 text-brand" /> Metadados do Ticket
         </div>
@@ -487,75 +543,97 @@ function TicketAdvancedRoute() {
             <Select
               value={ticket.priority || "medium"}
               onChange={(e) =>
-                supabase.from("support_tickets")
+                supabase
+                  .from("support_tickets")
                   .update({ priority: e.target.value })
                   .eq("id", ticket_id)
                   .then(() => qc.invalidateQueries({ queryKey: ["ticket_advanced"] }))
               }
             >
-              {PRIORITY_OPTIONS.map(o => (
-                <option key={o.value} value={o.value}>{o.label}</option>
+              {PRIORITY_OPTIONS.map((o) => (
+                <option key={o.value} value={o.value}>
+                  {o.label}
+                </option>
               ))}
             </Select>
           </Field>
 
           {/* Entidades de Viagem */}
           <div className="space-y-3 pt-2 border-t border-border">
-            <h4 className="ds-label-caps tracking-wider text-muted-foreground">Entidades de Viagem</h4>
+            <h4 className="ds-label-caps tracking-wider text-muted-foreground">
+              Entidades de Viagem
+            </h4>
             <Field label="Localizadores (LOC) — separar por vírgula">
               <Input
                 value={metaDraft.loc_codes}
-                onChange={(e) => { setMetaDraft(d => ({ ...d, loc_codes: e.target.value })); setMetaDirty(true); }}
+                onChange={(e) => {
+                  setMetaDraft((d) => ({ ...d, loc_codes: e.target.value }));
+                  setMetaDirty(true);
+                }}
                 placeholder="Ex: ABCD12, EFGH34"
-                
               />
             </Field>
             <Field label="Passageiros Afetados — separar por vírgula">
               <Input
                 value={metaDraft.passenger_names}
-                onChange={(e) => { setMetaDraft(d => ({ ...d, passenger_names: e.target.value })); setMetaDirty(true); }}
+                onChange={(e) => {
+                  setMetaDraft((d) => ({ ...d, passenger_names: e.target.value }));
+                  setMetaDirty(true);
+                }}
                 placeholder="Ex: João Silva, Maria Santos"
-                
               />
             </Field>
             <Field label="Cia Aérea / Operador">
               <Input
                 value={metaDraft.cia_aerea}
-                onChange={(e) => { setMetaDraft(d => ({ ...d, cia_aerea: e.target.value })); setMetaDirty(true); }}
+                onChange={(e) => {
+                  setMetaDraft((d) => ({ ...d, cia_aerea: e.target.value }));
+                  setMetaDirty(true);
+                }}
                 placeholder="Ex: LATAM"
-                
               />
             </Field>
           </div>
 
           {/* Financeiro */}
           <div className="space-y-3 pt-2 border-t border-border">
-            <h4 className="ds-label-caps tracking-wider text-muted-foreground">Financeiro & Reembolso</h4>
+            <h4 className="ds-label-caps tracking-wider text-muted-foreground">
+              Financeiro & Reembolso
+            </h4>
             <Field label="Custo Extra (BRL)">
               <Input
                 type="number"
                 value={metaDraft.extra_cost}
-                onChange={(e) => { setMetaDraft(d => ({ ...d, extra_cost: e.target.value })); setMetaDirty(true); }}
+                onChange={(e) => {
+                  setMetaDraft((d) => ({ ...d, extra_cost: e.target.value }));
+                  setMetaDirty(true);
+                }}
                 placeholder="0.00"
-                
               />
             </Field>
             <Field label="Multa Fornecedor (BRL)">
               <Input
                 type="number"
                 value={metaDraft.supplier_penalty}
-                onChange={(e) => { setMetaDraft(d => ({ ...d, supplier_penalty: e.target.value })); setMetaDirty(true); }}
+                onChange={(e) => {
+                  setMetaDraft((d) => ({ ...d, supplier_penalty: e.target.value }));
+                  setMetaDirty(true);
+                }}
                 placeholder="0.00"
-                
               />
             </Field>
             <Field label="Status Reembolso">
               <Select
                 value={metaDraft.refund_status}
-                onChange={(e) => { setMetaDraft(d => ({ ...d, refund_status: e.target.value })); setMetaDirty(true); }}
+                onChange={(e) => {
+                  setMetaDraft((d) => ({ ...d, refund_status: e.target.value }));
+                  setMetaDirty(true);
+                }}
               >
-                {REFUND_STATUS_OPTIONS.map(o => (
-                  <option key={o.value} value={o.value}>{o.label}</option>
+                {REFUND_STATUS_OPTIONS.map((o) => (
+                  <option key={o.value} value={o.value}>
+                    {o.label}
+                  </option>
                 ))}
               </Select>
             </Field>
@@ -570,12 +648,15 @@ function TicketAdvancedRoute() {
             disabled={!metaDirty || saveMetadata.isPending}
             variant={metaDirty ? "default" : "outline"}
           >
-            {saveMetadata.isPending
-              ? <><Loader2 className="w-4 h-4 mr-2 animate-spin" /> Salvando...</>
-              : metaDirty
-                ? "Salvar Metadados"
-                : "Metadados salvos ✓"
-            }
+            {saveMetadata.isPending ? (
+              <>
+                <Loader2 className="w-4 h-4 mr-2 animate-spin" /> Salvando...
+              </>
+            ) : metaDirty ? (
+              "Salvar Metadados"
+            ) : (
+              "Metadados salvos ✓"
+            )}
           </Button>
         </div>
       </div>

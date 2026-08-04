@@ -7,7 +7,9 @@ import { FormInput as Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 
 export const Route = createFileRoute("/m/passenger/$token")({
-  head: ({ context }: any) => ({ meta: [{ title: `Dados do passageiro · ${context?.brand?.platform_name || 'Turis'}` }] }),
+  head: ({ context }: any) => ({
+    meta: [{ title: `Dados do passageiro · ${context?.brand?.platform_name || "Turis"}` }],
+  }),
   component: Page,
 });
 
@@ -234,7 +236,8 @@ function Page() {
               <span>⚠</span> Aceite o consentimento LGPD para enviar seus dados.
             </p>
           )}
-          <Button variant="default"
+          <Button
+            variant="default"
             disabled={saving || !lgpdConsent}
             className={`w-full ${!lgpdConsent ? "opacity-40 cursor-not-allowed" : ""}`}
           >
@@ -249,7 +252,9 @@ function Page() {
 function Center({ children }: { children: React.ReactNode }) {
   return (
     <div className="flex min-h-screen items-center justify-center bg-background p-6">
-      <div className="rounded-[var(--radius-card)] border-none glass-card border-none p-8 text-center">{children}</div>
+      <div className="rounded-[var(--radius-card)] border-none glass-card border-none p-8 text-center">
+        {children}
+      </div>
     </div>
   );
 }

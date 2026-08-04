@@ -203,9 +203,7 @@ export function ContractSignatureControl({
           <History className="h-4 w-4 text-muted-foreground" /> Cadeia de Auditoria (Ledger)
         </h3>
 
-        {isLoadingAudit && (
-          <p className="ds-meta text-muted-foreground">Carregando auditoria...</p>
-        )}
+        {isLoadingAudit && <p className="ds-meta text-muted-foreground">Carregando auditoria...</p>}
 
         {auditChain && auditChain.length > 0 ? (
           <div className="relative border-l border-border/60 pl-3.5 space-y-4 ml-1">

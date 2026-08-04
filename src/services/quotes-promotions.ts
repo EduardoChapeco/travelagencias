@@ -33,7 +33,7 @@ export async function createWatchProfile(agencyId: string, input: WatchProfileIn
     .insert({
       agency_id: agencyId,
       name: input.name,
-      schedule: input.schedule || "daily",       // campo obrigatório no schema real
+      schedule: input.schedule || "daily", // campo obrigatório no schema real
       criteria: (input.criteria ?? {}) as any, // Json ↔ app boundary (JSONB column)
       limits: (input.limits ?? {}) as any, // Json ↔ app boundary (JSONB column)
       status: "active",
@@ -75,10 +75,7 @@ export async function toggleWatchProfileStatus(profileId: string, status: "activ
  * Remove um perfil de monitoramento.
  */
 export async function deleteWatchProfile(profileId: string) {
-  const { error } = await supabase
-    .from("promotion_watch_profiles")
-    .delete()
-    .eq("id", profileId);
+  const { error } = await supabase.from("promotion_watch_profiles").delete().eq("id", profileId);
 
   if (error) throw error;
 }
@@ -94,7 +91,8 @@ export async function deleteWatchProfile(profileId: string) {
 export async function fetchPromotionCandidates(agencyId: string) {
   const { data, error } = await supabase
     .from("promotion_candidates")
-    .select(`
+    .select(
+      `
       *,
       watch_profile:promotion_watch_profiles!inner(
         id, name, agency_id, criteria, status
@@ -102,7 +100,8 @@ export async function fetchPromotionCandidates(agencyId: string) {
       package_candidate:package_candidates(
         id, name, total_price, currency, score, status
       )
-    `)
+    `,
+    )
     .eq("promotion_watch_profiles.agency_id", agencyId)
     .order("detected_at", { ascending: false });
 
@@ -139,7 +138,7 @@ export async function updatePromotionStatus(promotionId: string, status: "approv
 export async function checkPackagesForPromotions(
   agencyId: string,
   _quoteRequestId: string,
-  candidateIds: string[]
+  candidateIds: string[],
 ): Promise<void> {
   try {
     if (!candidateIds.length) return;
@@ -152,28 +151,32 @@ export async function checkPackagesForPromotions(
     // 2. Buscar detalhes dos pacotes e componentes
     const { data: candidates } = await supabase
       .from("package_candidates")
-      .select(`
+      .select(
+        `
         id,
         name,
         total_price,
         components:package_candidate_components(
           offer_id
         )
-      `)
+      `,
+      )
       .in("id", candidateIds);
 
     if (!candidates?.length) return;
 
     // 3. Buscar ofertas normalizadas associadas
-    const offerIds = candidates.flatMap((c) => c.components?.map((comp: any) => comp.offer_id) ?? []);
+    const offerIds = candidates.flatMap(
+      (c) => c.components?.map((comp: any) => comp.offer_id) ?? [],
+    );
     const offersMap = new Map<string, any>();
-    
+
     if (offerIds.length > 0) {
       const { data: offers } = await supabase
         .from("normalized_offers")
         .select("id, product_type, price_total, normalized_data")
         .in("id", offerIds);
-      
+
       offers?.forEach((o) => offersMap.set(o.id, o));
     }
 
@@ -196,9 +199,9 @@ export async function checkPackagesForPromotions(
           const watcherDest = crit.destination.toLowerCase().trim();
           const hasMatchingDest = candOffers.some((o: any) => {
             const nd = o.normalized_data as any; // Json ↔ app boundary
-            const flightMatch = nd?.flights?.some((f: any) =>
-              f.destination?.toLowerCase().includes(watcherDest)
-            ) ?? false;
+            const flightMatch =
+              nd?.flights?.some((f: any) => f.destination?.toLowerCase().includes(watcherDest)) ??
+              false;
             const hotelMatch = nd?.cityName?.toLowerCase().includes(watcherDest) ?? false;
             return flightMatch || hotelMatch;
           });
@@ -210,9 +213,10 @@ export async function checkPackagesForPromotions(
           const watcherOrigin = crit.origin.toLowerCase().trim();
           const hasMatchingOrigin = candOffers.some((o: any) => {
             const nd = o.normalized_data as any; // Json ↔ app boundary
-            return nd?.flights?.some((f: any) =>
-              f.origin?.toLowerCase().includes(watcherOrigin)
-            ) ?? false;
+            return (
+              nd?.flights?.some((f: any) => f.origin?.toLowerCase().includes(watcherOrigin)) ??
+              false
+            );
           });
           if (!hasMatchingOrigin) continue;
         }

@@ -10,6 +10,7 @@ O Turis já possui suporte nativo a banco vetorial e geração de embeddings:
 
 - **Tabela do Banco**: `public.omnichannel_message_embeddings` contém uma coluna `embedding` (do tipo `vector` de 1536 dimensões no PostgreSQL).
 - **Gerador de Vetores**: O arquivo `src/lib/api/ai-chat.functions.ts` exporta a função `getEmbedding`:
+
   ```typescript
   async function getEmbedding(
     text: string,

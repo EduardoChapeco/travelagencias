@@ -10,7 +10,9 @@ import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 
 export const Route = createFileRoute("/auth/forgot-password")({
-  head: ({ context }: any) => ({ meta: [{ title: `Recuperar senha · ${context?.brand?.platform_name || 'Turis'}` }] }),
+  head: ({ context }: any) => ({
+    meta: [{ title: `Recuperar senha · ${context?.brand?.platform_name || "Turis"}` }],
+  }),
   component: ForgotPage,
 });
 
@@ -52,7 +54,7 @@ function ForgotPage() {
         <h1 className="text-2xl font-semibold tracking-tight">Recuperar senha</h1>
         <p className="mt-1 text-sm text-muted-foreground">Enviaremos um link para o seu email.</p>
         {sent ? (
-          <div className="mt-8 rounded-full border-none glass bg-white/5 border-white/10 p-4 text-sm">
+          <div className="mt-8 rounded-full border-none glass p-4 text-sm">
             Se o email existir, um link foi enviado.
             <Button
               onClick={() => navigate({ to: "/auth/login" })}

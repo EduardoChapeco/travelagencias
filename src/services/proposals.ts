@@ -55,10 +55,10 @@ export type Tour = {
   image_url: string;
   notes: string;
 };
-export type ItineraryDay = { 
-  id: string; 
-  day: string; 
-  title: string; 
+export type ItineraryDay = {
+  id: string;
+  day: string;
+  title: string;
   description: string;
   images?: string[];
   imageLayout?: string;
@@ -122,10 +122,13 @@ export async function fetchProposal(id: string): Promise<Proposal | null> {
 }
 
 export async function updateProposal(id: string, patch: Partial<Proposal>) {
-  const { error } = await supabase
-    .from("proposals")
-    .update(patch as never)
-    .eq("id", id);
+  const { error } = await supabase.rpc(
+    "update_proposal_rpc" as never,
+    {
+      p_proposal_id: id,
+      p_patch: patch,
+    } as never,
+  );
   if (error) throw error;
 }
 
@@ -165,14 +168,14 @@ export async function processOcrFile(file: File, proposal_id?: string, agency_id
 
         try {
           let filePathRef: string | undefined = undefined;
-          
+
           try {
             const fileExt = file.name.split(".").pop();
             const tempPath = `ocr_temp/${crypto.randomUUID()}.${fileExt}`;
             const { data: uploadData, error: uploadError } = await supabase.storage
               .from("proposals_exports_bucket")
               .upload(tempPath, file);
-              
+
             if (!uploadError && uploadData) {
               filePathRef = `proposals_exports_bucket/${tempPath}`;
             } else {
@@ -183,7 +186,7 @@ export async function processOcrFile(file: File, proposal_id?: string, agency_id
           }
 
           const base64 = filePathRef ? undefined : (reader.result as string).split(",")[1];
-          
+
           const { data, error } = await supabase.functions.invoke("ai-orchestrator", {
             body: {
               action: "completion",
@@ -204,7 +207,10 @@ export async function processOcrFile(file: File, proposal_id?: string, agency_id
           let parsedResult = data?.result ?? {};
           if (typeof parsedResult === "string") {
             try {
-              const cleaned = parsedResult.replace(/\`\`\`json/gi, "").replace(/\`\`\`/g, "").trim();
+              const cleaned = parsedResult
+                .replace(/\`\`\`json/gi, "")
+                .replace(/\`\`\`/g, "")
+                .trim();
               parsedResult = JSON.parse(cleaned);
             } catch (e) {
               console.warn("Falha no parse fallback de OCR:", e);
@@ -443,10 +449,12 @@ export async function duplicateProposal(proposalId: string): Promise<{ id: strin
 }
 
 export async function deleteProposal(proposalId: string): Promise<void> {
-  const { error } = await supabase
-    .from("proposals")
-    .update({ deleted_at: new Date().toISOString() } as any)
-    .eq("id", proposalId);
+  const { error } = await supabase.rpc(
+    "archive_proposal_rpc" as never,
+    {
+      p_proposal_id: proposalId,
+    } as never,
+  );
 
   if (error) throw new Error(error.message);
 }

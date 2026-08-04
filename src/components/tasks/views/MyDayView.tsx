@@ -57,7 +57,7 @@ export function MyDayView({ filters }: MyDayViewProps) {
           </div>
           <span className="text-3xl font-bold">{digest?.summary.tasks_today || 0}</span>
         </div>
-        
+
         <div className="p-5 rounded-[var(--radius-lg)] border bg-[var(--surface)] flex flex-col justify-between">
           <div className="flex items-center justify-between text-[var(--muted-foreground)] mb-4">
             <span className="text-sm font-medium">Reuniões</span>
@@ -71,7 +71,9 @@ export function MyDayView({ filters }: MyDayViewProps) {
             <span className="text-sm font-medium">Atrasadas</span>
             <Clock className="h-4 w-4" />
           </div>
-          <span className="text-3xl font-bold text-[var(--danger)]">{digest?.summary.overdue_count || 0}</span>
+          <span className="text-3xl font-bold text-[var(--danger)]">
+            {digest?.summary.overdue_count || 0}
+          </span>
         </div>
 
         <div className="p-5 rounded-[var(--radius-lg)] border bg-[var(--success-bg)] border-[var(--success)]/20 flex flex-col justify-between">
@@ -79,7 +81,9 @@ export function MyDayView({ filters }: MyDayViewProps) {
             <span className="text-sm font-medium">Concluídas</span>
             <CheckCircle2 className="h-4 w-4" />
           </div>
-          <span className="text-3xl font-bold text-[var(--success)]">{digest?.summary.completed_today || 0}</span>
+          <span className="text-3xl font-bold text-[var(--success)]">
+            {digest?.summary.completed_today || 0}
+          </span>
         </div>
       </div>
 
@@ -88,7 +92,7 @@ export function MyDayView({ filters }: MyDayViewProps) {
         <div className="lg:col-span-2 space-y-6">
           <div className="p-6 rounded-[var(--radius-xl)] border bg-[var(--surface)]">
             <h3 className="text-lg font-semibold mb-4">Minha Fila (Hoje)</h3>
-            
+
             {digest?.tasks_without_time.length === 0 && digest?.tasks_with_time.length === 0 ? (
               <div className="text-center py-12 text-[var(--muted-foreground)]">
                 <CheckCircle2 className="h-12 w-12 mx-auto mb-4 text-[var(--muted-2)] opacity-50" />
@@ -97,7 +101,7 @@ export function MyDayView({ filters }: MyDayViewProps) {
             ) : (
               <div className="space-y-3">
                 {/* Aqui entrará o componente TaskRowComponent mapeando as tasks */}
-                {digest?.tasks_with_time.map(t => (
+                {digest?.tasks_with_time.map((t) => (
                   <div
                     key={t.id}
                     onClick={() => setSelectedTask(t)}
@@ -107,7 +111,7 @@ export function MyDayView({ filters }: MyDayViewProps) {
                     <span className="text-xs text-[var(--muted-foreground)]">{t.due_time}</span>
                   </div>
                 ))}
-                {digest?.tasks_without_time.map(t => (
+                {digest?.tasks_without_time.map((t) => (
                   <div
                     key={t.id}
                     onClick={() => setSelectedTask(t)}
@@ -124,7 +128,7 @@ export function MyDayView({ filters }: MyDayViewProps) {
 
         {/* Sidebar Column */}
         <div className="space-y-6">
-           <div className="p-6 rounded-[var(--radius-xl)] border bg-[var(--surface-alt)]">
+          <div className="p-6 rounded-[var(--radius-xl)] border bg-[var(--surface-alt)]">
             <h3 className="text-lg font-semibold mb-4 text-[var(--danger)] flex items-center gap-2">
               <AlertTriangle className="h-5 w-5" /> Atrasadas
             </h3>
@@ -132,7 +136,7 @@ export function MyDayView({ filters }: MyDayViewProps) {
               <p className="text-sm text-[var(--muted-foreground)]">Tudo em dia!</p>
             ) : (
               <div className="space-y-2">
-                {digest?.overdue_tasks.map(t => (
+                {digest?.overdue_tasks.map((t) => (
                   <div
                     key={t.id}
                     onClick={() => setSelectedTask(t)}

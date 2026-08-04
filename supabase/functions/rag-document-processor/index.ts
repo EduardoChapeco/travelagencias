@@ -11,11 +11,11 @@ const corsHeaders = {
 function splitTextIntoChunks(text: string, chunkSize: number = 1000): string[] {
   const chunks: string[] = [];
   let currentChunk = "";
-  
+
   const sentences = text.split(/(?<=[.!?])\s+/);
-  
+
   for (const sentence of sentences) {
-    if ((currentChunk.length + sentence.length) < chunkSize) {
+    if (currentChunk.length + sentence.length < chunkSize) {
       currentChunk += (currentChunk ? " " : "") + sentence;
     } else {
       if (currentChunk) chunks.push(currentChunk);
@@ -23,7 +23,7 @@ function splitTextIntoChunks(text: string, chunkSize: number = 1000): string[] {
     }
   }
   if (currentChunk) chunks.push(currentChunk);
-  
+
   return chunks;
 }
 
@@ -32,14 +32,14 @@ async function generateEmbedding(
   text: string,
   orchestratorUrl: string,
   serviceRoleKey: string,
-  agencyId: string | null
+  agencyId: string | null,
 ): Promise<number[] | null> {
   try {
     const res = await fetch(orchestratorUrl, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        "Authorization": `Bearer ${serviceRoleKey}`,
+        Authorization: `Bearer ${serviceRoleKey}`,
       },
       body: JSON.stringify({
         action: "embeddings",
@@ -78,54 +78,65 @@ serve(async (req) => {
     // Processamento Assíncrono para evitar timeout
     const processChunks = async () => {
       try {
-        await supabase.from("knowledge_documents").update({ status: 'processing' }).eq("id", record.id);
+        await supabase
+          .from("knowledge_documents")
+          .update({ status: "processing" })
+          .eq("id", record.id);
 
         const chunks = splitTextIntoChunks(record.content_text);
-        
+
         let successCount = 0;
         for (let i = 0; i < chunks.length; i++) {
           const chunkText = chunks[i];
           // Usar a agência associada à org_id se possível ou passar null
           const vector = await generateEmbedding(chunkText, orchestratorUrl, serviceRoleKey, null);
-          
+
           if (vector) {
             await supabase.from("knowledge_chunks").insert({
               document_id: record.id,
               org_id: record.org_id,
               content: chunkText,
               embedding: vector,
-              chunk_index: i
+              chunk_index: i,
             });
             successCount++;
           }
         }
 
-        await supabase.from("knowledge_documents").update({ 
-          status: 'processed', 
-          chunk_count: successCount 
-        }).eq("id", record.id);
+        await supabase
+          .from("knowledge_documents")
+          .update({
+            status: "processed",
+            chunk_count: successCount,
+          })
+          .eq("id", record.id);
       } catch (innerError) {
         console.error("rag background processing error:", innerError);
-        await supabase.from("knowledge_documents").update({ status: 'error' }).eq("id", record.id);
+        await supabase.from("knowledge_documents").update({ status: "error" }).eq("id", record.id);
       }
     };
 
     const promise = processChunks();
     // @ts-ignore
-    if (typeof EdgeRuntime !== 'undefined' && typeof EdgeRuntime.waitUntil === 'function') {
+    if (typeof EdgeRuntime !== "undefined" && typeof EdgeRuntime.waitUntil === "function") {
       // @ts-ignore
       EdgeRuntime.waitUntil(promise);
     } else {
       promise.catch(console.error);
     }
 
-    return new Response(JSON.stringify({ success: true, message: "Processing started in background" }), {
-      status: 202,
-      headers: corsHeaders,
-    });
-
+    return new Response(
+      JSON.stringify({ success: true, message: "Processing started in background" }),
+      {
+        status: 202,
+        headers: corsHeaders,
+      },
+    );
   } catch (err: any) {
     console.error("rag-document-processor error:", err);
-    return new Response(JSON.stringify({ error: err.message }), { status: 500, headers: corsHeaders });
+    return new Response(JSON.stringify({ error: err.message }), {
+      status: 500,
+      headers: corsHeaders,
+    });
   }
 });

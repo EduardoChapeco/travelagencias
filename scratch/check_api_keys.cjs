@@ -1,15 +1,18 @@
-const { Client } = require('pg');
+const { Client } = require("pg");
 
 async function main() {
   const client = new Client({
-    connectionString: "postgresql://postgres:EEaR6399!%40%232026@db.esmppoxxnyiscidzsjvy.supabase.co:5432/postgres"
+    connectionString:
+      "postgresql://postgres:EEaR6399!%40%232026@db.esmppoxxnyiscidzsjvy.supabase.co:5432/postgres",
   });
 
   try {
     await client.connect();
     console.log("Connected to DB!");
-    
-    const res = await client.query("SELECT id, provider, agency_id, is_active, key_value LIKE '=====%' as is_encrypted FROM api_keys;");
+
+    const res = await client.query(
+      "SELECT id, provider, agency_id, is_active, key_value LIKE '=====%' as is_encrypted FROM api_keys;",
+    );
     console.log("API keys:");
     console.log(res.rows);
 

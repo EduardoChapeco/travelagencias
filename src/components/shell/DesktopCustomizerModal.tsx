@@ -14,7 +14,7 @@ export function DesktopCustomizerModal({
   setOpen: (open: boolean) => void;
 }) {
   const theme = useDesktopTheme();
-  
+
   // Local state for the custom URL input
   const [customUrl, setCustomUrl] = useState("");
 
@@ -22,22 +22,26 @@ export function DesktopCustomizerModal({
 
   return (
     <div className="fixed inset-0 bg-black/40 backdrop-blur-sm z-50 flex items-center justify-center p-6 pointer-events-auto">
-      <div className="w-full max-w-md glass dark:glass-dark rounded-[32px] border border-white/20 p-6 text-white flex flex-col gap-5 relative animate-fadeIn">
+      <div className="w-full max-w-md glass dark:glass-dark rounded-[32px] border border-border p-6 text-white flex flex-col gap-5 relative animate-fadeIn">
         <Button
           onClick={() => setOpen(false)}
-          className="absolute top-4 right-4 p-2 rounded-full hover:bg-white/10 text-white/80 hover:text-white transition-colors cursor-pointer"
+          className="absolute top-4 right-4 p-2 rounded-full hover:glass-dark text-white/80 hover:text-white transition-colors cursor-pointer"
         >
           <X className="w-4 h-4" />
         </Button>
 
         <div>
           <h3 className="text-lg font-bold">Personalizar Desktop</h3>
-          <p className="text-xs text-white/60">Configure as preferências da sua área de trabalho.</p>
+          <p className="text-xs text-white/60">
+            Configure as preferências da sua área de trabalho.
+          </p>
         </div>
 
         {/* Wallpaper Custom URL */}
         <div className="space-y-2">
-          <label className="ds-meta font-black uppercase tracking-widest text-white/70">Papel de Parede (URL)</label>
+          <label className="ds-meta font-black uppercase tracking-widest text-white/70">
+            Papel de Parede (URL)
+          </label>
           <div className="flex gap-2">
             <Input
               type="text"
@@ -47,7 +51,7 @@ export function DesktopCustomizerModal({
                 setCustomUrl(e.target.value);
                 theme.setTheme({ wallpaper: e.target.value });
               }}
-              className="flex-1 bg-white/10 border-white/20 rounded-full text-white placeholder:text-white/40 focus:ring-2 focus:ring-white/50"
+              className="flex-1 glass-dark border-border rounded-full text-white placeholder:text-white/40 focus:ring-2 focus:ring-white/50"
             />
           </div>
         </div>
@@ -65,7 +69,7 @@ export function DesktopCustomizerModal({
               max="30"
               value={theme.blurIntensity}
               onChange={(e) => theme.setTheme({ blurIntensity: Number(e.target.value) })}
-              className="w-full h-1.5 bg-white/10 appearance-none cursor-pointer accent-white"
+              className="w-full h-1.5 glass-dark appearance-none cursor-pointer accent-white"
             />
           </div>
 
@@ -80,10 +84,10 @@ export function DesktopCustomizerModal({
               max="80"
               value={theme.dimOpacity}
               onChange={(e) => theme.setTheme({ dimOpacity: Number(e.target.value) })}
-              className="w-full h-1.5 bg-white/10 appearance-none cursor-pointer accent-white"
+              className="w-full h-1.5 glass-dark appearance-none cursor-pointer accent-white"
             />
           </div>
-          
+
           <div className="space-y-1">
             <div className="flex justify-between text-xs font-semibold">
               <span className="text-white/80">Transparência do Glass</span>
@@ -95,10 +99,14 @@ export function DesktopCustomizerModal({
               max="60"
               value={theme.glassOpacity}
               onChange={(e) => theme.setTheme({ glassOpacity: Number(e.target.value) })}
-              className="w-full h-1.5 bg-white/10 appearance-none cursor-pointer accent-white"
+              className="w-full h-1.5 glass-dark appearance-none cursor-pointer accent-white"
             />
             <p className="ds-meta text-white/40">
-              {theme.glassOpacity <= 15 ? "Blur intenso — wallpaper bem visível" : theme.glassOpacity <= 30 ? "Equilíbrio (recomendado)" : "Mais opaco"}
+              {theme.glassOpacity <= 15
+                ? "Blur intenso — wallpaper bem visível"
+                : theme.glassOpacity <= 30
+                  ? "Equilíbrio (recomendado)"
+                  : "Mais opaco"}
             </p>
           </div>
         </div>

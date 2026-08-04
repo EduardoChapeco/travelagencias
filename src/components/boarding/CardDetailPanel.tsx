@@ -3,7 +3,28 @@ import { Link, useParams } from "@tanstack/react-router";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import {
-  X, Clock, Users, AlertTriangle, Link as LinkIcon, CheckSquare, Square, Pencil, Check, Hotel, Bus, UserCheck, Phone, Plane, MapPin, Upload, Ticket, Loader2, Trash2, Globe, FileText, } from "lucide-react";
+  X,
+  Clock,
+  Users,
+  AlertTriangle,
+  Link as LinkIcon,
+  CheckSquare,
+  Square,
+  Pencil,
+  Check,
+  Hotel,
+  Bus,
+  UserCheck,
+  Phone,
+  Plane,
+  MapPin,
+  Upload,
+  Ticket,
+  Loader2,
+  Trash2,
+  Globe,
+  FileText,
+} from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { formatDate } from "@/lib/formatters";
@@ -691,9 +712,7 @@ export function CardDetailPanel({
             {/* Proposta Original Vincular */}
             {card.proposal_details && (
               <div className="rounded-2xl border border-border bg-surface p-4 space-y-3">
-                <div className="ds-label-caps text-muted-foreground">
-                  Proposta Original
-                </div>
+                <div className="ds-label-caps text-muted-foreground">Proposta Original</div>
                 <div className="text-xs font-bold text-foreground">
                   {card.proposal_details.title}
                 </div>
@@ -832,9 +851,7 @@ export function CardDetailPanel({
 
                 {tags.length > 0 && (
                   <div className="pt-2">
-                    <div className="ds-label-caps text-muted-foreground mb-2">
-                      Tags / Alertas
-                    </div>
+                    <div className="ds-label-caps text-muted-foreground mb-2">Tags / Alertas</div>
                     <div className="flex flex-wrap gap-1.5">
                       {tags.map((tag) => (
                         <span
@@ -852,9 +869,7 @@ export function CardDetailPanel({
               <>
                 {/* Edição inline: PNR, Cia, Data */}
                 <div className="space-y-3">
-                  <div className="ds-label-caps text-muted-foreground">
-                    Dados do Voo
-                  </div>
+                  <div className="ds-label-caps text-muted-foreground">Dados do Voo</div>
                   <div className="grid grid-cols-2 gap-3">
                     <div>
                       <label className="ds-meta text-muted-foreground font-medium">
@@ -1055,14 +1070,10 @@ export function CardDetailPanel({
 
                 {/* Operational edit fields */}
                 <div className="space-y-3 pt-3 border-t border-border">
-                  <div className="ds-label-caps text-muted-foreground">
-                    Dados Operacionais
-                  </div>
+                  <div className="ds-label-caps text-muted-foreground">Dados Operacionais</div>
                   <div className="grid grid-cols-2 gap-3">
                     <div className="col-span-2">
-                      <label className="ds-meta text-muted-foreground font-medium">
-                        Destino
-                      </label>
+                      <label className="ds-meta text-muted-foreground font-medium">Destino</label>
                       <Input
                         type="text"
                         value={destination}
@@ -1223,9 +1234,7 @@ export function CardDetailPanel({
 
                 {/* Tags */}
                 <div>
-                  <div className="ds-label-caps text-muted-foreground mb-2">
-                    Tags / Alertas
-                  </div>
+                  <div className="ds-label-caps text-muted-foreground mb-2">Tags / Alertas</div>
                   <div className="flex flex-wrap gap-1.5 mb-2">
                     {tags.map((tag) => (
                       <span
@@ -1285,7 +1294,8 @@ export function CardDetailPanel({
             )}
 
             {/* Web Check-in Link */}
-            <Button variant="default"
+            <Button
+              variant="default"
               className="w-full h-9 text-xs gap-2 font-bold uppercase tracking-widest bg-brand/10 text-brand hover:bg-brand/20 border-none"
               onClick={() => {
                 const url = `${window.location.origin}/m/checkin/${card.id}`;
@@ -1299,9 +1309,7 @@ export function CardDetailPanel({
             {/* CHECKLIST */}
             <div>
               <div className="flex items-center justify-between mb-2">
-                <h3 className="ds-label-caps text-muted-foreground">
-                  Checklist operacional
-                </h3>
+                <h3 className="ds-label-caps text-muted-foreground">Checklist operacional</h3>
                 {checklist.length > 0 && (
                   <span
                     className={`ds-meta font-semibold ${
@@ -1363,9 +1371,7 @@ export function CardDetailPanel({
 
             {/* Notas livres */}
             <div>
-              <div className="ds-label-caps text-muted-foreground mb-1.5">
-                Notas do Operador
-              </div>
+              <div className="ds-label-caps text-muted-foreground mb-1.5">Notas do Operador</div>
               {!isEditing ? (
                 <p className="text-xs text-foreground/80 leading-relaxed bg-surface-alt/30 p-2.5 rounded-2xl border border-border/40 whitespace-pre-line">
                   {notes || "Nenhuma observação cadastrada."}
@@ -1411,9 +1417,7 @@ export function CardDetailPanel({
             {/* Suporte / Chamados */}
             <div className="rounded-2xl border border-border bg-surface p-4 space-y-3">
               <div className="flex items-center justify-between">
-                <div className="ds-label-caps text-muted-foreground">
-                  Chamados de Suporte
-                </div>
+                <div className="ds-label-caps text-muted-foreground">Chamados de Suporte</div>
                 {!showTicketForm && (
                   <Button
                     type="button"
@@ -1534,9 +1538,7 @@ export function CardDetailPanel({
 
             {/* Atividades Timeline */}
             <div className="rounded-2xl border border-border bg-surface p-4 space-y-3">
-              <div className="ds-label-caps text-muted-foreground">
-                Atividades / Histórico
-              </div>
+              <div className="ds-label-caps text-muted-foreground">Atividades / Histórico</div>
 
               {activitiesQ.isLoading && (
                 <p className="ds-meta text-muted-foreground">Carregando histórico...</p>
@@ -1555,9 +1557,7 @@ export function CardDetailPanel({
                   ))}
                 </div>
               ) : (
-                <p className="ds-meta text-muted-foreground">
-                  Nenhuma atividade registrada ainda.
-                </p>
+                <p className="ds-meta text-muted-foreground">Nenhuma atividade registrada ainda.</p>
               )}
             </div>
           </div>

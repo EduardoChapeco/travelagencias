@@ -147,7 +147,7 @@ export function CommandMenu() {
             </Button>
           </div>
 
-          <Command.List className="max-h-[300px] overflow-y-auto p-2">
+          <Command.List className="max-h-72 overflow-y-auto p-2">
             {!loading && search && results.length === 0 && (
               <div className="py-6 text-center text-sm text-muted-foreground">
                 Nenhum resultado para "{search}".

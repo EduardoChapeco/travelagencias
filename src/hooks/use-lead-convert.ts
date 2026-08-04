@@ -9,7 +9,7 @@ export function useLeadConvert(
   agencyId: string | undefined,
   stageColor: string | undefined,
   qc: QueryClient,
-  setEditing: (editing: boolean) => void
+  setEditing: (editing: boolean) => void,
 ) {
   const [confirmConvertOpen, setConfirmConvertOpen] = useState(false);
   const [clientPayload, setClientPayload] = useState({
@@ -52,7 +52,7 @@ export function useLeadConvert(
     if (missing.length > 0) {
       toast.error(
         `Preencha os campos obrigatórios antes de converter:\n• ${missing.join("\n• ")}`,
-        { duration: 6000 }
+        { duration: 6000 },
       );
       setEditing(true);
       return;

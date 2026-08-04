@@ -1,15 +1,15 @@
 import { useState } from "react";
 import { TaskFiltersState, TaskWithRelations } from "@/lib/tasks/task.types";
 import { useTasksQuery } from "@/hooks/tasks/useTasksQuery";
-import { 
-  format, 
-  startOfMonth, 
-  endOfMonth, 
-  eachDayOfInterval, 
-  isSameDay, 
-  addMonths, 
+import {
+  format,
+  startOfMonth,
+  endOfMonth,
+  eachDayOfInterval,
+  isSameDay,
+  addMonths,
   subMonths,
-  getDay
+  getDay,
 } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import { ChevronLeft, ChevronRight, CalendarDays, AlertCircle } from "lucide-react";
@@ -21,11 +21,11 @@ import { TaskDetailDrawer } from "../TaskDetailDrawer";
 export function CalendarView({ filters }: { filters: TaskFiltersState }) {
   const [currentDate, setCurrentDate] = useState(new Date());
   const [selectedTask, setSelectedTask] = useState<TaskWithRelations | null>(null);
-  
+
   // Modificar filtros de data dinamicamente com base no mês exibido
   const monthStart = format(startOfMonth(currentDate), "yyyy-MM-dd");
   const monthEnd = format(endOfMonth(currentDate), "yyyy-MM-dd");
-  
+
   const calendarFilters: TaskFiltersState = {
     ...filters,
     due_date_from: monthStart,
@@ -69,7 +69,7 @@ export function CalendarView({ filters }: { filters: TaskFiltersState }) {
   const startOfActiveMonth = startOfMonth(currentDate);
   const endOfActiveMonth = endOfMonth(currentDate);
   const daysInMonth = eachDayOfInterval({ start: startOfActiveMonth, end: endOfActiveMonth });
-  
+
   // Encontrar o dia da semana do primeiro dia (0 = Domingo, 6 = Sábado)
   const firstDayOfWeek = getDay(startOfActiveMonth);
   const prefixDays = Array.from({ length: firstDayOfWeek });
@@ -114,40 +114,46 @@ export function CalendarView({ filters }: { filters: TaskFiltersState }) {
       <div className="grid grid-cols-7 gap-2 flex-1 min-h-0">
         {/* Espaços em branco para alinhar com o dia da semana de início */}
         {prefixDays.map((_, i) => (
-          <div key={`prefix-${i}`} className="p-2 rounded-[var(--radius-card)] bg-[var(--surface-alt)]/20 opacity-30 border border-transparent" />
+          <div
+            key={`prefix-${i}`}
+            className="p-2 rounded-[var(--radius-card)] bg-[var(--surface-alt)]/20 opacity-30 border border-transparent"
+          />
         ))}
 
         {/* Dias reais do mês */}
         {daysInMonth.map((day) => {
-          const dayTasks = tasks?.filter(t => t.due_date && isSameDay(new Date(t.due_date), day)) || [];
+          const dayTasks =
+            tasks?.filter((t) => t.due_date && isSameDay(new Date(t.due_date), day)) || [];
           const isToday = isSameDay(day, new Date());
-          
+
           return (
-            <div 
-              key={day.toString()} 
+            <div
+              key={day.toString()}
               className={`p-2 rounded-[var(--radius-card)] border flex flex-col min-h-[100px] transition-all bg-[var(--surface)] ${
-                isToday 
-                  ? "border-[var(--brand)] shadow-sm bg-[var(--brand)]/5" 
+                isToday
+                  ? "border-[var(--brand)] shadow-sm bg-[var(--brand)]/5"
                   : "border-border hover:border-border-hover"
               }`}
             >
-              <span className={`text-xs font-bold ${isToday ? "text-[var(--brand)]" : "text-[var(--foreground)]"}`}>
+              <span
+                className={`text-xs font-bold ${isToday ? "text-[var(--brand)]" : "text-[var(--foreground)]"}`}
+              >
                 {format(day, "d")}
               </span>
-              
+
               <div className="flex-1 space-y-1 mt-1.5 overflow-y-auto no-scrollbar">
-                {dayTasks.map(task => {
+                {dayTasks.map((task) => {
                   const priorityCfg = TASK_PRIORITIES[task.priority] || { color: "var(--muted)" };
                   return (
                     <div
                       key={task.id}
                       onClick={() => setSelectedTask(task)}
                       className="ds-meta px-1.5 py-0.5 rounded-full font-semibold truncate border text-[var(--foreground)] cursor-pointer hover:brightness-95 transition-all"
-                      style={{ 
+                      style={{
                         borderColor: `${priorityCfg.color}20`,
                         backgroundColor: `${priorityCfg.color}08`,
                         borderLeftWidth: "3px",
-                        borderLeftColor: priorityCfg.color
+                        borderLeftColor: priorityCfg.color,
                       }}
                       title={task.title}
                     >

@@ -12,10 +12,33 @@
 
 // ─── Core task types (espelha public.tasks) ────────────────────────────────
 
-export type TaskStatus = "backlog" | "todo" | "in_progress" | "in_review" | "waiting" | "done" | "cancelled";
+export type TaskStatus =
+  | "backlog"
+  | "todo"
+  | "in_progress"
+  | "in_review"
+  | "waiting"
+  | "done"
+  | "cancelled";
 export type TaskPriority = "critical" | "high" | "medium" | "low";
-export type TaskSource = "manual" | "embarque" | "suporte" | "agenda" | "crm" | "system" | "trip" | "ticket" | "lead";
-export type TaskView = "my-day" | "kanban" | "list" | "timeline" | "calendar" | "workload" | "reports";
+export type TaskSource =
+  | "manual"
+  | "embarque"
+  | "suporte"
+  | "agenda"
+  | "crm"
+  | "system"
+  | "trip"
+  | "ticket"
+  | "lead";
+export type TaskView =
+  | "my-day"
+  | "kanban"
+  | "list"
+  | "timeline"
+  | "calendar"
+  | "workload"
+  | "reports";
 export type PeriodType = "daily" | "weekly" | "monthly";
 export type AgentLevel = "junior" | "pleno" | "senior";
 
@@ -26,13 +49,13 @@ export interface Task {
   project_id: string | null;
   parent_task_id: string | null;
   title: string;
-  description: unknown | null;        // JSONB (rich text tiptap)
+  description: unknown | null; // JSONB (rich text tiptap)
   status: TaskStatus;
   priority: TaskPriority;
   assigned_to: string | null;
   created_by: string | null;
-  due_date: string | null;            // DATE
-  due_time: string | null;            // TIME
+  due_date: string | null; // DATE
+  due_time: string | null; // TIME
   start_date: string | null;
   estimated_minutes: number;
   actual_minutes: number;
@@ -40,9 +63,9 @@ export interface Task {
   source_type: TaskSource;
   source_id: string | null;
   source_url: string | null;
-  source_metadata: unknown | null;    // JSONB
+  source_metadata: unknown | null; // JSONB
   is_recurring: boolean;
-  recurrence_rule: unknown | null;    // JSONB
+  recurrence_rule: unknown | null; // JSONB
   recurrence_parent_id: string | null;
   position: number;
   difficulty_score: number;
@@ -58,7 +81,8 @@ export interface Task {
   tags?: string[];
 }
 
-export type TaskInsert = Omit<Task, "id" | "created_at" | "updated_at"> & Partial<Pick<Task, "id" | "created_at" | "updated_at">>;
+export type TaskInsert = Omit<Task, "id" | "created_at" | "updated_at"> &
+  Partial<Pick<Task, "id" | "created_at" | "updated_at">>;
 export type TaskUpdate = Partial<TaskInsert> & { id: string };
 
 export interface TaskChecklistItem {
@@ -95,7 +119,7 @@ export interface TaskComment {
   agency_id: string;
   parent_id: string | null;
   user_id: string;
-  content: unknown;                  // JSONB (rich text)
+  content: unknown; // JSONB (rich text)
   is_edited: boolean;
   edited_at: string | null;
   is_deleted: boolean;

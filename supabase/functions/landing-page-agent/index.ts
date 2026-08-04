@@ -155,7 +155,11 @@ Você deve responder EM FORMATO JSON VÁLIDO seguindo estritamente a estrutura a
 
     const parsedResponse = JSON.parse(rawResult);
 
-    if (parsedResponse.should_convert && parsedResponse.lead_data?.name && parsedResponse.lead_data?.phone) {
+    if (
+      parsedResponse.should_convert &&
+      parsedResponse.lead_data?.name &&
+      parsedResponse.lead_data?.phone
+    ) {
       const args = parsedResponse.lead_data;
       // Inserir lead no CRM via RPC
       const { error: leadError } = await supabaseAdmin.rpc("submit_public_lead", {
@@ -191,7 +195,6 @@ Você deve responder EM FORMATO JSON VÁLIDO seguindo estritamente a estrutura a
       }),
       { headers: { ...corsHeaders, "Content-Type": "application/json" } },
     );
-
   } catch (error: any) {
     console.error("AI Error:", error);
     return new Response(JSON.stringify({ error: error.message }), {

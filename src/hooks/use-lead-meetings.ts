@@ -8,11 +8,7 @@ import {
   syncMeetingToGoogleCalendar,
 } from "@/services/crm";
 
-export function useLeadMeetings(
-  leadId: string | undefined,
-  qc: QueryClient,
-  confirm: any
-) {
+export function useLeadMeetings(leadId: string | undefined, qc: QueryClient, confirm: any) {
   const [meetingForm, setMeetingForm] = useState({
     title: "",
     description: "",

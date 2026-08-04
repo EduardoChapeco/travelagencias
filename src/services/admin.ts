@@ -22,11 +22,7 @@ export async function fetchAdminAgencyDetail(agencyId: string): Promise<AdminAge
     supabase.from("user_roles").select("user_id, role, created_at").eq("agency_id", agencyId),
     supabase.from("trips").select("id", { count: "exact", head: true }).eq("agency_id", agencyId),
     supabase.from("financial_records").select("amount, type, status").eq("agency_id", agencyId),
-    supabase
-      .from("agency_subscriptions")
-      .select("*")
-      .eq("agency_id", agencyId)
-      .maybeSingle(),
+    supabase.from("agency_subscriptions").select("*").eq("agency_id", agencyId).maybeSingle(),
     supabase.from("plans").select("*").order("sort_order", { ascending: true }),
   ]);
 
@@ -326,9 +322,7 @@ export async function saveBrandingConfig(data: any): Promise<void> {
       .eq("id", (currentRows as any)[0].id);
     if (updateErr) throw updateErr;
   } else {
-    const { error: insertErr } = await supabase
-      .from("platform_branding" as any)
-      .insert(payload);
+    const { error: insertErr } = await supabase.from("platform_branding" as any).insert(payload);
     if (insertErr) throw insertErr;
   }
 }

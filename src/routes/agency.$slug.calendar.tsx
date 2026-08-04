@@ -48,7 +48,9 @@ import { NativeSelect as Select } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
 
 export const Route = createFileRoute("/agency/$slug/calendar")({
-  head: ({ context }: any) => ({ meta: [{ title: `Agenda · ${context?.brand?.platform_name || 'Turis'}` }] }),
+  head: ({ context }: any) => ({
+    meta: [{ title: `Agenda · ${context?.brand?.platform_name || "Turis"}` }],
+  }),
   component: CalendarPage,
 });
 
@@ -125,7 +127,8 @@ function CalendarPage() {
     queryFn: async () => {
       const { data, error } = await (supabase as any)
         .from("tasks")
-        .select(`
+        .select(
+          `
           id,
           title,
           status,
@@ -135,7 +138,8 @@ function CalendarPage() {
           agency_id,
           created_at,
           assignee:profiles!tasks_assigned_to_fkey(id, full_name, avatar_url)
-        `)
+        `,
+        )
         .eq("agency_id", agency!.id)
         .eq("is_deleted", false)
         .not("due_date", "is", null);
@@ -258,77 +262,77 @@ function CalendarPage() {
         onClose={() => setSelectedTask(null)}
         onUpdated={() => tasksQ.refetch()}
       />
-              <PageHeader
-          title={`${MONTHS[month]} ${year}`}
-          actions={
-            <div className="flex items-center gap-1.5">
-              <Button
-                onClick={handlePrevMonth}
-                className="h-7 w-7 flex items-center justify-center border border-white/10 hover:border-white/20 bg-white/5 rounded-full transition-colors cursor-pointer text-white/90"
-              >
-                <ChevronLeft className="h-3 w-3" />
-              </Button>
-              <Button
-                onClick={handleToday}
-                className="h-7 px-3 border border-white/10 hover:border-white/20 bg-white/5 ds-meta font-bold rounded-full transition-colors cursor-pointer text-white/90"
-              >
-                Hoje
-              </Button>
-              <Button
-                onClick={handleNextMonth}
-                className="h-7 w-7 flex items-center justify-center border border-white/10 hover:border-white/20 bg-white/5 rounded-full transition-colors cursor-pointer text-white/90"
-              >
-                <ChevronRight className="h-3 w-3" />
-              </Button>
+      <PageHeader
+        title={`${MONTHS[month]} ${year}`}
+        actions={
+          <div className="flex items-center gap-1.5">
+            <Button
+              onClick={handlePrevMonth}
+              className="h-7 w-7 flex items-center justify-center border border-border hover:border-border glass rounded-full transition-colors cursor-pointer text-white/90"
+            >
+              <ChevronLeft className="h-3 w-3" />
+            </Button>
+            <Button
+              onClick={handleToday}
+              className="h-7 px-3 border border-border hover:border-border glass ds-meta font-bold rounded-full transition-colors cursor-pointer text-white/90"
+            >
+              Hoje
+            </Button>
+            <Button
+              onClick={handleNextMonth}
+              className="h-7 w-7 flex items-center justify-center border border-border hover:border-border glass rounded-full transition-colors cursor-pointer text-white/90"
+            >
+              <ChevronRight className="h-3 w-3" />
+            </Button>
 
-              <div className="w-[1px] h-5 bg-white/12" />
+            <div className="w-[1px] h-5 bg-white/12" />
 
+            <Select
+              value={filterType}
+              onChange={(e: any) => setFilterType(e.target.value)}
+              className="h-7 ds-meta glass w-24 rounded-full text-white/90 px-2"
+            >
+              <option value="all">Tipos</option>
+              <option value="call">📞 Telefone</option>
+              <option value="video">💻 Vídeo</option>
+              <option value="in_person">👤 Presencial</option>
+              <option value="whatsapp">💬 WhatsApp</option>
+            </Select>
+
+            {usersQ.data && (
               <Select
-                value={filterType}
-                onChange={(e: any) => setFilterType(e.target.value)}
-                className="h-7 ds-meta bg-white/5 border-white/10 w-24 rounded-full text-white/90 px-2"
+                value={filterUser}
+                onChange={(e: any) => setFilterUser(e.target.value)}
+                className="h-7 ds-meta glass w-28 rounded-full text-white/90 px-2"
               >
-                <option value="all">Tipos</option>
-                <option value="call">📞 Telefone</option>
-                <option value="video">💻 Vídeo</option>
-                <option value="in_person">👤 Presencial</option>
-                <option value="whatsapp">💬 WhatsApp</option>
+                <option value="all">Agentes</option>
+                {usersQ.data.map((u: any) => (
+                  <option key={u.user_id} value={u.user_id || ""}>
+                    👤 {u.user_name}
+                  </option>
+                ))}
               </Select>
+            )}
 
-              {usersQ.data && (
-                <Select
-                  value={filterUser}
-                  onChange={(e: any) => setFilterUser(e.target.value)}
-                  className="h-7 ds-meta bg-white/5 border-white/10 w-28 rounded-full text-white/90 px-2"
-                >
-                  <option value="all">Agentes</option>
-                  {usersQ.data.map((u: any) => (
-                    <option key={u.user_id} value={u.user_id || ""}>
-                      👤 {u.user_name}
-                    </option>
-                  ))}
-                </Select>
-              )}
-
-              {isAgencyAdmin && (
-                <Button
-                  onClick={() => setAdminPanelOpen(true)}
-                  className="h-7 w-7 flex items-center justify-center rounded-full border border-white/15 text-white/60 hover:text-white hover:bg-white/10 transition-colors cursor-pointer"
-                  title="Administrar Calendário"
-                >
-                  <Settings2 className="h-3.5 w-3.5" />
-                </Button>
-              )}
-            </div>
-          }
-          primaryAction={
-            <ModuleActionButton
-        label="Novo Evento"
-        icon={<Plus className="h-3.5 w-3.5" />}
-              onClick={() => setNewEventOpen(true)}
-            />
-          }
-        />
+            {isAgencyAdmin && (
+              <Button
+                onClick={() => setAdminPanelOpen(true)}
+                className="h-7 w-7 flex items-center justify-center rounded-full border border-white/15 text-white/60 hover:text-white hover:glass-dark transition-colors cursor-pointer"
+                title="Administrar Calendário"
+              >
+                <Settings2 className="h-3.5 w-3.5" />
+              </Button>
+            )}
+          </div>
+        }
+        primaryAction={
+          <ModuleActionButton
+            label="Novo Evento"
+            icon={<Plus className="h-3.5 w-3.5" />}
+            onClick={() => setNewEventOpen(true)}
+          />
+        }
+      />
 
       <div className="flex-1 overflow-auto px-4  md:pr-6 py-4 flex flex-col">
         {(meetingsQ.isError || usersQ.isError || leadsQ.isError) && (
@@ -338,13 +342,19 @@ function CalendarPage() {
             </div>
             <h3 className="text-sm font-bold text-red-800">Falha ao Carregar Agenda</h3>
             <p className="text-xs text-red-650 mt-1">
-              {meetingsQ.isError && meetingsQ.error instanceof Error ? meetingsQ.error.message : usersQ.isError && usersQ.error instanceof Error ? usersQ.error.message : leadsQ.isError && leadsQ.error instanceof Error ? leadsQ.error.message : "Erro desconhecido."}
+              {meetingsQ.isError && meetingsQ.error instanceof Error
+                ? meetingsQ.error.message
+                : usersQ.isError && usersQ.error instanceof Error
+                  ? usersQ.error.message
+                  : leadsQ.isError && leadsQ.error instanceof Error
+                    ? leadsQ.error.message
+                    : "Erro desconhecido."}
             </p>
           </div>
         )}
 
         <div className="glass-card border-none border-none/70 rounded-[var(--radius-card)] overflow-hidden h-full flex flex-col">
-          <div className="grid grid-cols-7 border-b border-border glass bg-white/5 border-white/10/10">
+          <div className="grid grid-cols-7 border-b border-border glass/10">
             {WEEKDAYS.map((day) => (
               <div
                 key={day}
@@ -365,13 +375,13 @@ function CalendarPage() {
                 <div
                   key={idx}
                   onClick={() => handleCellClick(date)}
-                  className={`min-h-[100px] lg:min-h-[120px] bg-transparent p-2 transition-all duration-200 hover:bg-white/[0.04] relative flex flex-col justify-between cursor-pointer group ${
+                  className={`min-h-24 lg:min-h-32 bg-transparent p-2 transition-all duration-200 hover:bg-white/[0.04] relative flex flex-col justify-between cursor-pointer group ${
                     !isCurrentMonth ? "opacity-30" : ""
                   } ${today ? "bg-white/[0.03]" : ""}`}
                 >
                   <div className="flex items-center justify-between">
                     <span
-                       className={`ds-meta font-bold h-5 w-5 flex items-center justify-center rounded-full ${
+                      className={`ds-meta font-bold h-5 w-5 flex items-center justify-center rounded-full ${
                         today
                           ? "bg-brand text-brand-foreground font-black"
                           : isCurrentMonth
@@ -388,7 +398,7 @@ function CalendarPage() {
                     )}
                   </div>
 
-                  <div className="flex-1 mt-2.5 space-y-1 overflow-y-auto max-h-[80px] no-scrollbar">
+                  <div className="flex-1 mt-2.5 space-y-1 overflow-y-auto max-h-20 no-scrollbar">
                     {/* Render Meetings */}
                     {dateMeetings.slice(0, 2).map((meeting: any) => {
                       const typeColor =
@@ -405,9 +415,7 @@ function CalendarPage() {
                           className={`text-[9px] font-bold p-1 rounded border truncate flex items-center justify-between gap-1 transition-all ${typeColor}`}
                           title={`Compromisso: ${meeting.title}`}
                         >
-                          <span className="truncate flex-1">
-                            {meeting.title}
-                          </span>
+                          <span className="truncate flex-1">{meeting.title}</span>
                           {isGoogle && (
                             <span className="shrink-0 text-[7px] font-bold px-0.5 rounded bg-success/10 text-success border border-success/20">
                               G
@@ -419,7 +427,9 @@ function CalendarPage() {
 
                     {/* Render Tasks */}
                     {dateTasks.slice(0, 2).map((t: any) => {
-                      const priorityCfg = TASK_PRIORITIES[t.priority as keyof typeof TASK_PRIORITIES] || { color: "var(--muted)", label: t.priority };
+                      const priorityCfg = TASK_PRIORITIES[
+                        t.priority as keyof typeof TASK_PRIORITIES
+                      ] || { color: "var(--muted)", label: t.priority };
                       return (
                         <div
                           key={t.id}
@@ -435,9 +445,7 @@ function CalendarPage() {
                           }}
                           title={`Tarefa: ${t.title} [${priorityCfg.label}]`}
                         >
-                          <span className="truncate flex-1">
-                            📝 {t.title}
-                          </span>
+                          <span className="truncate flex-1">📝 {t.title}</span>
                         </div>
                       );
                     })}
@@ -455,10 +463,7 @@ function CalendarPage() {
         </div>
       </div>
 
-      <Dialog 
-        open={!!selectedMeeting} 
-        onOpenChange={(open) => !open && setSelectedMeeting(null)}
-      >
+      <Dialog open={!!selectedMeeting} onOpenChange={(open) => !open && setSelectedMeeting(null)}>
         <DialogContent className="max-w-md p-0 overflow-hidden border-none/10">
           <DialogHeader className="px-6 py-4 border-b border-border/40">
             <DialogTitle className="text-sm font-bold text-foreground">
@@ -466,8 +471,10 @@ function CalendarPage() {
               <span
                 className={`ds-meta font-extrabold uppercase px-1.5 py-0.5 rounded border inline-block ml-2 align-middle ${selectedMeeting ? MEETING_TYPE_COLORS[selectedMeeting.meeting_type] : ""}`}
               >
-                {selectedMeeting ? (MEETING_TYPE_LABELS[selectedMeeting.meeting_type] ||
-                  selectedMeeting.meeting_type) : ""}
+                {selectedMeeting
+                  ? MEETING_TYPE_LABELS[selectedMeeting.meeting_type] ||
+                    selectedMeeting.meeting_type
+                  : ""}
               </span>
             </DialogTitle>
           </DialogHeader>
@@ -478,7 +485,7 @@ function CalendarPage() {
                   <span className="ds-meta uppercase font-bold text-muted-foreground block">
                     Notas / Descrição
                   </span>
-                  <p className="glass bg-white/5 border-white/10/20 p-2.5 rounded-[var(--radius-card)] border-none/50 text-foreground/80 leading-relaxed">
+                  <p className="glass/20 p-2.5 rounded-[var(--radius-card)] border-none/50 text-foreground/80 leading-relaxed">
                     {selectedMeeting.description}
                   </p>
                 </div>
@@ -490,12 +497,13 @@ function CalendarPage() {
                     Data & Hora
                   </span>
                   <span className="font-bold text-foreground">
-                    {selectedMeeting && new Date(selectedMeeting.scheduled_at).toLocaleString("pt-BR", {
-                      day: "2-digit",
-                      month: "long",
-                      hour: "2-digit",
-                      minute: "2-digit",
-                    })}
+                    {selectedMeeting &&
+                      new Date(selectedMeeting.scheduled_at).toLocaleString("pt-BR", {
+                        day: "2-digit",
+                        month: "long",
+                        hour: "2-digit",
+                        minute: "2-digit",
+                      })}
                   </span>
                 </div>
                 <div className="space-y-0.5">
@@ -508,7 +516,7 @@ function CalendarPage() {
                 </div>
               </div>
 
-              <div className="glass bg-white/5 border-white/10/10 border-none p-3.5 rounded-[var(--radius-card)] flex items-center justify-between gap-4">
+              <div className="glass/10 border-none p-3.5 rounded-[var(--radius-card)] flex items-center justify-between gap-4">
                 <div>
                   <span className="ds-meta uppercase font-bold text-muted-foreground block">
                     Lead Associado
@@ -559,7 +567,8 @@ function CalendarPage() {
             </div>
 
             <div className="flex justify-end gap-2 border-t border-border/40 pt-4">
-              <Button variant="ghost"
+              <Button
+                variant="ghost"
                 onClick={() => setSelectedMeeting(null)}
                 className="h-8 text-xs font-bold"
               >
@@ -586,7 +595,9 @@ function CalendarPage() {
       <Dialog open={newEventOpen} onOpenChange={setNewEventOpen}>
         <DialogContent className="max-w-md p-0 overflow-hidden border-none/10 max-h-[90vh] flex flex-col">
           <DialogHeader className="px-6 py-4 border-b border-border/40">
-            <DialogTitle className="text-sm font-bold text-foreground">Novo Compromisso</DialogTitle>
+            <DialogTitle className="text-sm font-bold text-foreground">
+              Novo Compromisso
+            </DialogTitle>
           </DialogHeader>
           <form
             onSubmit={async (e) => {
@@ -622,7 +633,6 @@ function CalendarPage() {
             }}
             className="p-6 space-y-4 overflow-y-auto"
           >
-
             <div className="space-y-3">
               <Field label="Associar ao Lead *">
                 <Select
@@ -646,7 +656,6 @@ function CalendarPage() {
                   placeholder="Ex: Reunião de Briefing"
                   value={meetingForm.title}
                   onChange={(e) => setMeetingForm({ ...meetingForm, title: e.target.value })}
-                  
                 />
               </Field>
 
@@ -655,7 +664,6 @@ function CalendarPage() {
                   placeholder="Ex: Alinhar destinos preferidos e orçamento"
                   value={meetingForm.description}
                   onChange={(e) => setMeetingForm({ ...meetingForm, description: e.target.value })}
-                  
                 />
               </Field>
 
@@ -668,7 +676,6 @@ function CalendarPage() {
                     onChange={(e) =>
                       setMeetingForm({ ...meetingForm, scheduled_at: e.target.value })
                     }
-                    
                   />
                 </Field>
                 <Field label="Duração (minutos)">
@@ -682,7 +689,6 @@ function CalendarPage() {
                         duration_minutes: parseInt(e.target.value) || 30,
                       })
                     }
-                    
                   />
                 </Field>
               </div>
@@ -702,14 +708,16 @@ function CalendarPage() {
             </div>
 
             <div className="flex justify-end gap-2 border-t border-border/40 pt-4">
-              <Button variant="ghost"
+              <Button
+                variant="ghost"
                 type="button"
                 onClick={() => setNewEventOpen(false)}
                 className="h-8 text-xs font-bold"
               >
                 Cancelar
               </Button>
-              <Button variant="default"
+              <Button
+                variant="default"
                 type="submit"
                 disabled={!meetingForm.title || !meetingForm.scheduled_at || !meetingForm.lead_id}
               >

@@ -59,7 +59,7 @@ export const Route = createFileRoute("/agency/$slug")({
           {slug && (
             <a
               href={`/agency/${slug}`}
-              className="inline-flex h-9 items-center justify-center rounded-full border-none glass-card border-none px-4 text-sm font-semibold text-foreground shadow-none transition-colors hover:glass bg-white/5 border-white/10"
+              className="inline-flex h-9 items-center justify-center rounded-full border-none glass-card border-none px-4 text-sm font-semibold text-foreground shadow-none transition-colors hover:glass"
             >
               Voltar ao Início
             </a>

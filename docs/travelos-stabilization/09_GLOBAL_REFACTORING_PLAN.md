@@ -18,6 +18,7 @@ Fases respeitam **dependências arquiteturais** — fondation antes de component
 **Objetivo**: Obter o estado real do código. Não codificar nada.
 
 **Resultados**:
+
 - 84 rotas de agência auditadas
 - 7 famílias de problemas identificadas com evidência de código
 - 14 documentos de estabilização criados em `docs/travelos-stabilization/`
@@ -38,6 +39,7 @@ Fases respeitam **dependências arquiteturais** — fondation antes de component
 **Objetivo**: Garantir que cada responsabilidade visual tenha exatamente UMA fonte canônica e que ela seja consumível via classe CSS semântica.
 
 **Sintomas**:
+
 - `--shell-page-padding: 24px` definido mas nunca usado
 - `rounded-3xl` hardcoded em rotas apesar de `--radius-card` existir
 - `pb-24` para dock mobile em 15+ rotas sem token
@@ -46,6 +48,7 @@ Fases respeitam **dependências arquiteturais** — fondation antes de component
 **Causa Raiz**: Tokens declarados sem classes utilitárias correspondentes → desenvolvedores usam valores numéricos porque não há classe para usar.
 
 **Arquitetura de Destino**:
+
 ```css
 /* styles.css — classes canônicas a criar */
 .page-content {
@@ -54,15 +57,26 @@ Fases respeitam **dependências arquiteturais** — fondation antes de component
   flex: 1;
   min-height: 0;
 }
-.page-content-x { padding-left: var(--shell-page-padding); padding-right: var(--shell-page-padding); }
-.page-content-y { padding-top: var(--shell-page-padding); padding-bottom: var(--shell-page-padding); }
-.dock-offset-mobile { padding-bottom: var(--dock-mobile-offset, 96px); }
-.page-section-gap { gap: var(--shell-page-padding); }
+.page-content-x {
+  padding-left: var(--shell-page-padding);
+  padding-right: var(--shell-page-padding);
+}
+.page-content-y {
+  padding-top: var(--shell-page-padding);
+  padding-bottom: var(--shell-page-padding);
+}
+.dock-offset-mobile {
+  padding-bottom: var(--dock-mobile-offset, 96px);
+}
+.page-section-gap {
+  gap: var(--shell-page-padding);
+}
 ```
 
 **Blast Radius**: Todos os 84 componentes de rota de agência.
 
 **Plano de Migração**:
+
 1. Adicionar classes `.page-content`, `.page-content-x/y`, `.dock-offset-mobile` em `styles.css`
 2. Adicionar token `--dock-mobile-offset: 96px` em `:root`
 3. NÃO migrar rotas ainda — apenas estabelecer as classes
@@ -81,6 +95,7 @@ Fases respeitam **dependências arquiteturais** — fondation antes de component
 **Objetivo**: Definir e documentar O contrato de renderização que qualquer rota de módulo deve seguir para receber scroll e padding corretos sem redefinir nada.
 
 **Sintomas**:
+
 - `overflow-y-auto` reinventado em 60 de 84 rotas
 - Padding duplicado em 62 de 84 rotas
 - Scroll dentro de scroll (especialmente inbox.tsx com 6 contextos)
@@ -88,6 +103,7 @@ Fases respeitam **dependências arquiteturais** — fondation antes de component
 **Causa Raiz**: Não existe um "page-shell" ou composition que encapsule `flex-1 overflow-y-auto .page-content` — cada rota faz isso manualmente.
 
 **Arquitetura de Destino**:
+
 ```
 AppShell → <main.os-workspace> (flex flex-col overflow-hidden h-full)
   → [REGRA] Rotas devem conter exatamente 1 container de scroll:
@@ -100,6 +116,7 @@ AppShell → <main.os-workspace> (flex flex-col overflow-hidden h-full)
 ```
 
 **Plano**:
+
 1. Documentar o contrato em `docs/travelos-stabilization/03_SHELL_LAYOUT_GRID_ARCHITECTURE.md`
 2. Identificar quais rotas violam o contrato
 3. Criar migration guide
@@ -116,12 +133,14 @@ AppShell → <main.os-workspace> (flex flex-col overflow-hidden h-full)
 **Objetivo**: Eliminar headers, tabs bars e wrappers de layout definidos DENTRO de rotas que deveriam usar `PageHeader` e compositions canônicas.
 
 **Rotas com shell local confirmado**:
+
 - `agency.$slug.trips.$id.tsx` — Header de viagem + TabBar interna
 - `agency.$slug.inbox.tsx` — Split layout com 6 contextos de scroll
 - `agency.$slug.boarding.tsx` — Header de embarque local
 - `agency.$slug.crm.$lead_id.tsx` — Layout de detalhe com header local
 
 **Abordagem**:
+
 - Para cada rota: mapear a árvore real, identificar o que é responsabilidade do shell vs conteúdo
 - Extrair o que pertence ao shell para compositions canônicas (`DetailShell`, `SplitShell`)
 - Preservar a lógica de negócio — apenas reorganizar os wrappers
@@ -138,6 +157,7 @@ AppShell → <main.os-workspace> (flex flex-col overflow-hidden h-full)
 **Objetivo**: Garantir que TODAS as ações contextuais de módulo passem pelo portal `PageHeader → HeaderPortal → AppShell header`.
 
 **Problema Encontrado**:
+
 - Rotas com shell local têm ações no header local (ignorando o portal canônico)
 - Rotas com PageHeader têm ações em botões flutuantes sobrepostos ao conteúdo
 - Duplicação de ações: header + floating action button + dentro de tabela
@@ -154,6 +174,7 @@ AppShell → <main.os-workspace> (flex flex-col overflow-hidden h-full)
 **Objetivo**: Unificar o uso de Select, Modal, Table e Badge. Eliminar `div.fixed` inline como modal.
 
 **Ações**:
+
 1. Definir protocolo de Select: quando usar `NativeSelect` vs Radix `Select` vs `SearchableSelect`
 2. Migrar todos os `div.fixed` inline para `Dialog` ou `SheetPage` canônico
 3. Migrar tabelas HTML manuais sem sorting para `data-table.tsx`
@@ -171,6 +192,7 @@ AppShell → <main.os-workspace> (flex flex-col overflow-hidden h-full)
 **Objetivo**: Aplicar tokens tipográficos `ds-*` nas rotas. Eliminar textos comprimidos causados por flex/grid sem `min-width: 0`.
 
 **Problema Documentado**:
+
 - Textos em containers flex sem `min-width: 0` ficam comprimidos quando o container encolhe
 - `text-xs`, `text-[10px]`, `text-[11px]` hardcodados em vez de `ds-meta` e `ds-label-caps`
 - `font-extrabold uppercase tracking-widest` repetido em lugar de `ds-label-caps`
@@ -197,6 +219,7 @@ AppShell → <main.os-workspace> (flex flex-col overflow-hidden h-full)
 **Objetivo**: Remover chamadas Supabase de componentes de layout. Centralizar enums de status.
 
 **Problema Confirmado**:
+
 - `trips.$id.tsx` chama `supabase.functions.invoke()` no componente de layout
 - STATUS_MAP, STATUS_LABEL hardcodados em rotas — deveriam ser serviços
 
@@ -235,6 +258,7 @@ AppShell → <main.os-workspace> (flex flex-col overflow-hidden h-full)
 **Objetivo**: Migrar os 10 arquivos com maior densidade de problemas para os padrões canônicos.
 
 **Prioridade de Migração** (por impacto visual/funcional):
+
 1. `trips.$id.tsx` — shell local, maior superfície de uso
 2. `inbox.tsx` — 6 contextos de scroll, produto crítico
 3. `group-tours.$id.lazy.tsx` — 14x bg-white, maior violação glassmorphic
@@ -267,6 +291,7 @@ AppShell → <main.os-workspace> (flex flex-col overflow-hidden h-full)
 ## PRÓXIMA AÇÃO IMEDIATA
 
 **FASE 1 — INÍCIO**: Adicionar classes canônicas em `styles.css`:
+
 - `.page-content` (scroll + padding)
 - `.dock-offset-mobile` (pb-24 → token)
 - `--dock-mobile-offset: 96px` em `:root`

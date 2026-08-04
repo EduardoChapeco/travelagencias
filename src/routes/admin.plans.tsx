@@ -193,7 +193,7 @@ function Page() {
               )}
             </div>
 
-            <div className="grid grid-cols-3 gap-2 rounded-[var(--radius-card)] glass bg-white/5 border-white/10 p-3">
+            <div className="grid grid-cols-3 gap-2 rounded-[var(--radius-card)] glass p-3">
               <LimitBadge icon={Users} label="Agentes" value={plan.max_agents} />
               <LimitBadge icon={BarChart3} label="Viagens/mês" value={plan.max_trips_per_month} />
               <LimitBadge icon={HardDrive} label="Storage GB" value={plan.max_storage_gb} />
@@ -213,7 +213,8 @@ function Page() {
             </div>
 
             <div className="mt-auto flex gap-2 pt-2 border-t border-border">
-              <Button variant="ghost"
+              <Button
+                variant="ghost"
                 type="button"
                 onClick={() => setEditing(plan)}
                 className="flex-1 gap-1.5 text-xs"
@@ -223,7 +224,7 @@ function Page() {
               <Button
                 type="button"
                 onClick={() => handleToggleActive(plan)}
-                className="flex h-9 items-center gap-1.5 rounded-full border-none px-3 text-xs hover:glass bg-white/5 border-white/10"
+                className="flex h-9 items-center gap-1.5 rounded-full border-none px-3 text-xs hover:glass"
               >
                 {plan.is_active ? "Desativar" : "Ativar"}
               </Button>

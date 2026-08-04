@@ -82,7 +82,8 @@ export function SectionTransfers({ draft, save }: Props) {
             </L>
             <L label="Tipo">
               <Select
-                className={SMALL_INPUT} value={t.type}
+                className={SMALL_INPUT}
+                value={t.type}
                 onChange={(e) => upd(i, { type: e.target.value as "private" | "shared" })}
               >
                 <option value="private">Privativo</option>
@@ -93,7 +94,8 @@ export function SectionTransfers({ draft, save }: Props) {
           <div className="grid grid-cols-2 gap-2">
             <L label="Veículo">
               <Select
-                className={SMALL_INPUT} value={t.vehicle}
+                className={SMALL_INPUT}
+                value={t.vehicle}
                 onChange={(e) => upd(i, { vehicle: e.target.value })}
               >
                 <option value="Van">Van</option>

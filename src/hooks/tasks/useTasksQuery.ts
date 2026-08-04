@@ -3,7 +3,6 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAgency } from "@/lib/agency-context";
 import { TaskFiltersState, TaskWithRelations } from "@/lib/tasks/task.types";
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
 const db = supabase as any;
 
 export function useTasksQuery(filters: TaskFiltersState) {
@@ -19,11 +18,7 @@ export function useTasksQuery(filters: TaskFiltersState) {
       // RAIZ DO LOADING LENTO: JOINs por FK nomeada (!tasks_assigned_to_fkey)
       // causam ambiguidade no PostgREST e forçam full-scan.
       // Solução: select("*") simples + enrich manual.
-      let query = db
-        .from("tasks")
-        .select("*")
-        .eq("agency_id", agency!.id)
-        .eq("is_deleted", false);
+      let query = db.from("tasks").select("*").eq("agency_id", agency!.id).eq("is_deleted", false);
 
       if (!filters.show_done) {
         query = query.neq("status", "done").neq("status", "cancelled");
@@ -53,7 +48,9 @@ export function useTasksQuery(filters: TaskFiltersState) {
         query = query.ilike("title", `%${filters.search}%`);
       }
 
-      query = query.order("position", { ascending: true }).order("created_at", { ascending: false });
+      query = query
+        .order("position", { ascending: true })
+        .order("created_at", { ascending: false });
 
       const { data: tasks, error } = await query;
       if (error) throw error;
@@ -67,7 +64,8 @@ export function useTasksQuery(filters: TaskFiltersState) {
         ]),
       ] as string[];
 
-      let profilesMap: Record<string, { id: string; name: string; avatar_url: string | null }> = {};
+      const profilesMap: Record<string, { id: string; name: string; avatar_url: string | null }> =
+        {};
       if (profileIds.length > 0) {
         try {
           const { data: profiles } = await db
@@ -91,14 +89,14 @@ export function useTasksQuery(filters: TaskFiltersState) {
 
       // ── Fase 3: Enriquecer com etiquetas (labels) ────────────────────────
       const taskIds = tasks.map((t: any) => t.id);
-      let labelsMap: Record<string, Array<{ id: string; name: string; color: string }>> = {};
+      const labelsMap: Record<string, Array<{ id: string; name: string; color: string }>> = {};
       if (taskIds.length > 0) {
         try {
           const { data: assignments } = await db
             .from("task_label_assignments")
             .select("task_id, task_labels (id, name, color)")
             .in("task_id", taskIds);
-          
+
           if (assignments) {
             for (const item of assignments as any[]) {
               const lbl = item.task_labels;
@@ -120,16 +118,18 @@ export function useTasksQuery(filters: TaskFiltersState) {
       }
 
       // Mapear resultado final
-      return (tasks as any[]).map((task: any): TaskWithRelations => ({
-        ...task,
-        assignee: task.assigned_to && profilesMap[task.assigned_to]
-          ? profilesMap[task.assigned_to]
-          : null,
-        creator: task.created_by && profilesMap[task.created_by]
-          ? profilesMap[task.created_by]
-          : null,
-        labels: labelsMap[task.id] || [],
-      }));
+      return (tasks as any[]).map(
+        (task: any): TaskWithRelations => ({
+          ...task,
+          assignee:
+            task.assigned_to && profilesMap[task.assigned_to]
+              ? profilesMap[task.assigned_to]
+              : null,
+          creator:
+            task.created_by && profilesMap[task.created_by] ? profilesMap[task.created_by] : null,
+          labels: labelsMap[task.id] || [],
+        }),
+      );
     },
   });
 }

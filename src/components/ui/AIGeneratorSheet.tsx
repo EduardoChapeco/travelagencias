@@ -92,9 +92,9 @@ Contexto fornecido: ${context}`;
 
   return (
     <div
-      className={`fixed inset-y-0 right-0 z-50 flex h-full w-[450px] flex-col border-l border-white/10 bg-glass-dark backdrop-blur-3xl shadow-2xl transition-transform duration-500 ease-[cubic-bezier(0.32,0.72,0,1)] ${open ? "translate-x-0" : "translate-x-full"}`}
+      className={`fixed inset-y-0 right-0 z-50 flex h-full w-[450px] flex-col border-l border-border bg-glass-dark backdrop-blur-3xl transition-transform duration-500 ease-[cubic-bezier(0.32,0.72,0,1)] ${open ? "translate-x-0" : "translate-x-full"}`}
     >
-      <div className="flex justify-between items-center p-6 border-b border-white/10 shrink-0">
+      <div className="flex justify-between items-center p-6 border-b border-border shrink-0">
         <div className="flex items-center gap-3 text-white">
           <div className="h-10 w-10 rounded-full bg-brand/20 flex items-center justify-center text-brand-light">
             <Wand2 className="w-5 h-5" />
@@ -104,15 +104,15 @@ Contexto fornecido: ${context}`;
             <p className="text-xs text-white/60">Escreva ou faça upload (OCR)</p>
           </div>
         </div>
-        <Button 
+        <Button
           onClick={() => onOpenChange(false)}
-          className="h-10 w-10 rounded-full bg-white/10 flex items-center justify-center text-white hover:bg-white/20 transition-colors"
+          className="h-10 w-10 rounded-full glass-dark flex items-center justify-center text-white hover:glass-dark transition-colors"
         >
           <X className="w-5 h-5" />
         </Button>
       </div>
 
-      <div className="flex border-b border-white/10 shrink-0">
+      <div className="flex border-b border-border shrink-0">
         <Button
           type="button"
           className={`py-3 flex-1 text-sm font-medium border-b-2 flex items-center justify-center gap-2 transition-colors ${tab === "topic" ? "border-brand-light text-white" : "border-transparent text-white/50 hover:text-white"}`}
@@ -132,13 +132,15 @@ Contexto fornecido: ${context}`;
       <form onSubmit={handleGenerate} className="flex-1 overflow-y-auto p-6 space-y-6">
         {tab === "topic" ? (
           <div className="space-y-2">
-            <label className="text-sm font-medium text-white/90">Sobre o que você quer escrever?</label>
+            <label className="text-sm font-medium text-white/90">
+              Sobre o que você quer escrever?
+            </label>
             <Textarea
               placeholder="Ex: Roteiro de 5 dias em Paris para casais..."
               value={topic}
               onChange={(e) => setTopic(e.target.value)}
               rows={5}
-              className="w-full bg-white/5 border-white/10 p-4 text-white placeholder:text-white/30 focus:ring-2 focus:ring-brand-light resize-none"
+              className="w-full glass p-4 text-white placeholder:text-white/30 focus:ring-2 focus:ring-brand-light resize-none"
             />
           </div>
         ) : (
@@ -150,15 +152,17 @@ Contexto fornecido: ${context}`;
                 value={url}
                 onChange={(e) => setUrl(e.target.value)}
                 type="url"
-                className="w-full bg-white/5 border-white/10 rounded-full text-white placeholder:text-white/30 focus:ring-2 focus:ring-brand-light"
+                className="w-full glass rounded-full text-white placeholder:text-white/30 focus:ring-2 focus:ring-brand-light"
               />
             </div>
-            
-            <div className="relative overflow-hidden rounded-3xl border border-white/10 bg-white/5 p-6 text-center hover:bg-white/10 transition-colors cursor-pointer group">
+
+            <div className="relative overflow-hidden rounded-3xl border glass p-6 text-center hover:glass-dark transition-colors cursor-pointer group">
               <div className="flex flex-col items-center justify-center gap-2 opacity-70 group-hover:opacity-100 transition-opacity text-white">
-                 <LinkIcon className="w-8 h-8 mb-2" />
-                 <span className="font-semibold text-sm">Upload de Arquivo (OCR)</span>
-                 <span className="text-xs text-white/60">Arraste um PDF ou Imagem aqui para extrair o texto automaticamente.</span>
+                <LinkIcon className="w-8 h-8 mb-2" />
+                <span className="font-semibold text-sm">Upload de Arquivo (OCR)</span>
+                <span className="text-xs text-white/60">
+                  Arraste um PDF ou Imagem aqui para extrair o texto automaticamente.
+                </span>
               </div>
             </div>
           </div>
@@ -166,31 +170,39 @@ Contexto fornecido: ${context}`;
 
         <div className="space-y-2">
           <label className="text-sm font-medium text-white/90">Tom de Voz</label>
-          <Select 
-            value={tone} 
+          <Select
+            value={tone}
             onChange={(e) => setTone(e.target.value)}
-            className="w-full bg-white/5 border-white/10 rounded-full text-white focus:ring-2 focus:ring-brand-light appearance-none"
+            className="w-full glass rounded-full text-white focus:ring-2 focus:ring-brand-light appearance-none"
           >
-            <option value="profissional e engajador" className="bg-neutral-900 text-white">Profissional e Engajador</option>
-            <option value="descontraído e aventureiro" className="bg-neutral-900 text-white">Descontraído e Aventureiro</option>
-            <option value="luxuoso e exclusivo" className="bg-neutral-900 text-white">Luxuoso e Exclusivo</option>
-            <option value="didático e informativo" className="bg-neutral-900 text-white">Didático e Informativo</option>
+            <option value="profissional e engajador" className="bg-neutral-900 text-white">
+              Profissional e Engajador
+            </option>
+            <option value="descontraído e aventureiro" className="bg-neutral-900 text-white">
+              Descontraído e Aventureiro
+            </option>
+            <option value="luxuoso e exclusivo" className="bg-neutral-900 text-white">
+              Luxuoso e Exclusivo
+            </option>
+            <option value="didático e informativo" className="bg-neutral-900 text-white">
+              Didático e Informativo
+            </option>
           </Select>
         </div>
       </form>
 
-      <div className="p-6 border-t border-white/10 bg-white/5 shrink-0 flex gap-3">
-        <Button 
-          type="button" 
-          onClick={() => onOpenChange(false)} 
+      <div className="p-6 border-t glass shrink-0 flex gap-3">
+        <Button
+          type="button"
+          onClick={() => onOpenChange(false)}
           disabled={loading}
-          className="h-12 flex-1 rounded-full border border-white/10 text-white font-medium hover:bg-white/10 transition-colors"
+          className="h-12 flex-1 rounded-full border border-border text-white font-medium hover:glass-dark transition-colors"
         >
           Cancelar
         </Button>
-        <Button 
-          type="submit" 
-          disabled={loading} 
+        <Button
+          type="submit"
+          disabled={loading}
           onClick={handleGenerate}
           className="h-12 flex-1 rounded-full bg-brand text-white font-semibold hover:scale-[1.02] transition-transform flex items-center justify-center gap-2"
         >

@@ -15,10 +15,11 @@ export function useBrand() {
   return useQuery({
     queryKey: ["platform_branding"],
     queryFn: async () => {
-      const { data, error } = await supabase.from('platform_branding' as any)
+      const { data, error } = await supabase
+        .from("platform_branding" as any)
         .select("*")
         .single();
-      
+
       if (error) {
         console.error("Error fetching brand info", error);
         return {
@@ -28,10 +29,10 @@ export function useBrand() {
           favicon_url: "/favicon.ico",
           primary_color_token: "#3D6FF2",
           support_email: "suporte@turis.com",
-          legal_entity_name: "Turis Tecnologia Ltda"
+          legal_entity_name: "Turis Tecnologia Ltda",
         } as BrandInfo;
       }
-      
+
       return data as unknown as BrandInfo;
     },
     staleTime: 1000 * 60 * 60 * 24, // 24 hours

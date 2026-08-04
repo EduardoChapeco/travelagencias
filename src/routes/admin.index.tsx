@@ -1,7 +1,19 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import {
-  Building2, Users, Luggage, Wallet, TrendingUp, BarChart3, FileText, AlertCircle, Clock, CheckCircle2, ArrowUpRight, Activity, } from "lucide-react";
+  Building2,
+  Users,
+  Luggage,
+  Wallet,
+  TrendingUp,
+  BarChart3,
+  FileText,
+  AlertCircle,
+  Clock,
+  CheckCircle2,
+  ArrowUpRight,
+  Activity,
+} from "lucide-react";
 import { Bar, BarChart, CartesianGrid, XAxis, YAxis } from "recharts";
 import { fetchAdminOverview } from "@/services/admin";
 import { PageHeader } from "@/components/shell/PageHeader";
@@ -10,7 +22,9 @@ import { formatDate, formatCurrency } from "@/lib/formatters";
 import { ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/ui/chart";
 
 export const Route = createFileRoute("/admin/")({
-  head: ({ context }: any) => ({ meta: [{ title: `Admin · ${context?.brand?.platform_name || 'Turis'}` }] }),
+  head: ({ context }: any) => ({
+    meta: [{ title: `Admin · ${context?.brand?.platform_name || "Turis"}` }],
+  }),
   component: Page,
 });
 
@@ -53,7 +67,7 @@ function Page() {
           value={d?.totalUsers ?? "—"}
           sub="Total cadastrado"
           color="text-highlight-b"
-          bg="glass bg-white/5 border-white/10"
+          bg="glass"
         />
         <StatCard
           icon={Luggage}
@@ -152,12 +166,14 @@ function Page() {
               </ChartContainer>
             </div>
           ) : (
-            <div className="h-40 animate-pulse rounded-[var(--radius-card)] glass bg-white/5 border-white/10" />
+            <div className="h-40 animate-pulse rounded-[var(--radius-card)] glass" />
           )}
           {d && (
             <div className="mt-3 text-right text-xs text-muted-foreground">
               Mês atual:{" "}
-              <span className="font-semibold text-foreground">{formatCurrency(d.currentMonthRevenue)}</span>
+              <span className="font-semibold text-foreground">
+                {formatCurrency(d.currentMonthRevenue)}
+              </span>
               {d.revGrowth !== 0 && (
                 <span className={`ml-1.5 ${d.revGrowth > 0 ? "text-success" : "text-danger"}`}>
                   ({d.revGrowth > 0 ? "+" : ""}
@@ -187,9 +203,9 @@ function Page() {
                   key={a.id}
                   to="/admin/agencies/$id"
                   params={{ id: a.id }}
-                  className="flex items-center gap-3 px-4 py-2.5 hover:glass bg-white/5 border-white/10/50 transition-colors"
+                  className="flex items-center gap-3 px-4 py-2.5 hover:glass/50 transition-colors"
                 >
-                  <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full glass bg-white/5 border-white/10 border-none overflow-hidden">
+                  <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full glass border-none overflow-hidden">
                     {a.logo_url ? (
                       <img src={a.logo_url} alt="" className="h-full w-full object-contain" />
                     ) : (
@@ -278,9 +294,11 @@ function StatCard({
 }) {
   const inner = (
     <div className="relative overflow-hidden rounded-[var(--radius-card)] border-none glass-card border-none p-5 transition-all hover:border-border-strong group">
-      <div className="absolute right-0 top-0 h-20 w-20 -translate-y-6 translate-x-6 rounded-full glass bg-white/5 border-white/10 opacity-20 transition-transform group-hover:scale-150" />
+      <div className="absolute right-0 top-0 h-20 w-20 -translate-y-6 translate-x-6 rounded-full glass opacity-20 transition-transform group-hover:scale-150" />
       <div className="flex items-center justify-between mb-3">
-        <div className={`flex h-9 w-9 items-center justify-center rounded-[var(--radius-card)] ${bg} ${color}`}>
+        <div
+          className={`flex h-9 w-9 items-center justify-center rounded-[var(--radius-card)] ${bg} ${color}`}
+        >
           <Icon className="h-4.5 w-4.5" />
         </div>
         {href && (

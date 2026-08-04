@@ -32,10 +32,10 @@ export function SimpleSheet({
       onClick={onClose}
     >
       <div
-        className="h-full w-full max-w-md md:max-w-lg overflow-y-auto border-l border-white/10 glass text-white bg-black/40 backdrop-blur-2xl p-6"
+        className="h-full w-full max-w-md md:max-w-lg overflow-y-auto border-l border-border glass text-white bg-black/40 backdrop-blur-2xl p-6"
         onClick={(event) => event.stopPropagation()}
       >
-        <h2 className="mb-6 ds-h3 border-b border-white/10 pb-3">{title}</h2>
+        <h2 className="mb-6 ds-h3 border-b border-border pb-3">{title}</h2>
         {children}
       </div>
     </div>
@@ -79,7 +79,7 @@ export function SheetPage({
       />
       <div
         className={cn(
-          "relative flex h-full flex-col glass text-white bg-black/40 backdrop-blur-2xl border-l border-white/10 transition-transform duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] max-w-full",
+          "relative flex h-full flex-col glass text-white bg-black/40 backdrop-blur-2xl border-l border-border transition-transform duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] max-w-full",
           isOpen ? "translate-x-0" : "translate-x-full",
         )}
         style={{ width }}

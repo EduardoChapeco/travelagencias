@@ -6,7 +6,9 @@ import { StatusBadge } from "@/components/ui/badge";
 import { formatCurrency } from "@/lib/formatters";
 
 export const Route = createFileRoute("/client/giftcards")({
-  head: ({ context }: any) => ({ meta: [{ title: `Gift cards · ${context?.brand?.platform_name || 'Turis'}` }] }),
+  head: ({ context }: any) => ({
+    meta: [{ title: `Gift cards · ${context?.brand?.platform_name || "Turis"}` }],
+  }),
   component: Page,
 });
 

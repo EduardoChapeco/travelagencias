@@ -635,16 +635,12 @@ export function TripAccommodation({ hotels }: { hotels: any[] }) {
               </p>
               <div className="mt-5 flex items-center justify-between text-xs font-bold text-foreground bg-background rounded-[var(--radius-card)] p-3 border border-border">
                 <div className="text-center">
-                  <div className="ds-label-caps text-muted-foreground mb-1">
-                    Check-in
-                  </div>
+                  <div className="ds-label-caps text-muted-foreground mb-1">Check-in</div>
                   <div>{formatDate(h.checkin)}</div>
                 </div>
                 <ArrowLeft className="h-4 w-4 rotate-180 text-muted-foreground" />
                 <div className="text-center">
-                  <div className="ds-label-caps text-muted-foreground mb-1">
-                    Check-out
-                  </div>
+                  <div className="ds-label-caps text-muted-foreground mb-1">Check-out</div>
                   <div>{formatDate(h.checkout)}</div>
                 </div>
               </div>
@@ -685,16 +681,12 @@ export function TripVoucherAccommodation({ hotels }: { hotels: any[] }) {
               </p>
               <div className="mt-5 flex items-center justify-between text-xs font-bold text-foreground bg-background rounded-[var(--radius-card)] p-3 border border-border">
                 <div className="text-center">
-                  <div className="ds-label-caps text-muted-foreground mb-1">
-                    Check-in
-                  </div>
+                  <div className="ds-label-caps text-muted-foreground mb-1">Check-in</div>
                   <div>{formatDate(h.checkin)}</div>
                 </div>
                 <ArrowLeft className="h-4 w-4 rotate-180 text-muted-foreground" />
                 <div className="text-center">
-                  <div className="ds-label-caps text-muted-foreground mb-1">
-                    Check-out
-                  </div>
+                  <div className="ds-label-caps text-muted-foreground mb-1">Check-out</div>
                   <div>{formatDate(h.checkout)}</div>
                 </div>
               </div>

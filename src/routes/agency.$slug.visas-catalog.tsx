@@ -16,7 +16,9 @@ import { SimpleSheet as Sheet } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
 
 export const Route = createFileRoute("/agency/$slug/visas-catalog")({
-  head: ({ context }: any) => ({ meta: [{ title: `Catálogo de Requisitos · ${context?.brand?.platform_name || 'Turis'}` }] }),
+  head: ({ context }: any) => ({
+    meta: [{ title: `Catálogo de Requisitos · ${context?.brand?.platform_name || "Turis"}` }],
+  }),
   component: VisasCatalogPage,
 });
 
@@ -62,35 +64,35 @@ function VisasCatalogPage() {
     <div className="flex h-full flex-col overflow-hidden">
       <ConfirmDialog />
 
-              <PageHeader
-          title="Requisitos de Viagem"
-          filters={[
-            { label: "Todos", value: "all" },
-            { label: "Vistos", value: "visa" },
-            { label: "Taxas", value: "fee" },
-            { label: "Saúde", value: "health" },
-            { label: "Seguro", value: "insurance" },
-            { label: "Outros", value: "other" },
-          ]}
-          activeFilter={activeTab}
-          onFilterChange={(v) => setActiveTab(v as any)}
-          actions={
-            <Link
-              to="/agency/$slug/visas"
-              params={{ slug }}
-              className="inline-flex h-7 items-center gap-1.5 rounded-full border border-white/10 bg-white/5 px-3 ds-meta font-bold text-white/90 hover:bg-white/10 transition-colors cursor-pointer shrink-0"
-            >
-              <ArrowLeft className="w-3 h-3" /> Voltar
-            </Link>
-          }
-          primaryAction={
-            <ModuleActionButton
-        label="Novo Catálogo"
-        icon={<Plus className="h-3.5 w-3.5" />}
-              onClick={() => setOpen(true)}
-            />
-          }
-        />
+      <PageHeader
+        title="Requisitos de Viagem"
+        filters={[
+          { label: "Todos", value: "all" },
+          { label: "Vistos", value: "visa" },
+          { label: "Taxas", value: "fee" },
+          { label: "Saúde", value: "health" },
+          { label: "Seguro", value: "insurance" },
+          { label: "Outros", value: "other" },
+        ]}
+        activeFilter={activeTab}
+        onFilterChange={(v) => setActiveTab(v as any)}
+        actions={
+          <Link
+            to="/agency/$slug/visas"
+            params={{ slug }}
+            className="inline-flex h-7 items-center gap-1.5 rounded-full border glass px-3 ds-meta font-bold text-white/90 hover:glass-dark transition-colors cursor-pointer shrink-0"
+          >
+            <ArrowLeft className="w-3 h-3" /> Voltar
+          </Link>
+        }
+        primaryAction={
+          <ModuleActionButton
+            label="Novo Catálogo"
+            icon={<Plus className="h-3.5 w-3.5" />}
+            onClick={() => setOpen(true)}
+          />
+        }
+      />
 
       <div className="flex-1 overflow-y-auto px-4  md:pr-6 py-4 min-h-0 pb-24">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -98,7 +100,9 @@ function VisasCatalogPage() {
             <div
               key={req.id}
               className={`rounded-[var(--radius-card)] border glass-card border-none p-5 flex flex-col justify-between ${
-                req.agency_id === null ? "border-border/60 glass bg-white/5 border-white/10/10" : "border-border"
+                req.agency_id === null
+                  ? "border-border/60 glass/10"
+                  : "border-border"
               }`}
             >
               <div>
@@ -113,7 +117,7 @@ function VisasCatalogPage() {
                             ? "bg-warning/15 text-warning"
                             : req.category === "insurance"
                               ? "bg-info/15 text-info"
-                              : "glass bg-white/5 border-white/10 text-muted-foreground"
+                              : "glass text-muted-foreground"
                     }`}
                   >
                     {req.category === "visa"
@@ -165,7 +169,7 @@ function VisasCatalogPage() {
                 </div>
 
                 {req.notes && (
-                  <div className="ds-meta italic text-muted-foreground/80 glass bg-white/5 border-white/10/30 rounded p-2.5 mt-3 border-none/30">
+                  <div className="ds-meta italic text-muted-foreground/80 glass/30 rounded p-2.5 mt-3 border-none/30">
                     {req.notes}
                   </div>
                 )}

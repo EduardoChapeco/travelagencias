@@ -13,6 +13,7 @@ Página (ex: crm.tsx)
 ```
 
 ## Relação de Ações Declaradas por Módulo
+
 - **Tarefas (Tasks)**: "Nova Tarefa" (Abre modal de criação, insere no banco, invalida cache re-renderizando a lista e o Kanban).
 - **CRM**: "Novo Lead" (Abre formulário de criação de lead).
 - **Orçamentos & Propostas (Proposals)**: "Nova Cotação" / "Nova Proposta" (Abre fluxo de criação no workspace).

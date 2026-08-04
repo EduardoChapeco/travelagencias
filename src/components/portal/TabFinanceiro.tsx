@@ -52,20 +52,18 @@ export function TabFinanceiro({
         {/* Summary card */}
         <div className="md:col-span-1">
           <div className="bg-foreground rounded-3xl p-6 text-background">
-            <h3 className="ds-label-caps text-background/50 mb-2">
-              Valor do Pacote
-            </h3>
+            <h3 className="ds-label-caps text-background/50 mb-2">Valor do Pacote</h3>
             <div className="text-3xl font-black tracking-tight mb-6">
               {formatCurrency(trip.total_sale, trip.currency)}
             </div>
             <div className="space-y-3">
-              <div className="flex justify-between items-center bg-white/10 p-3 rounded-[var(--radius-card)]">
+              <div className="flex justify-between items-center glass-dark p-3 rounded-[var(--radius-card)]">
                 <span className="text-xs font-medium">Pago</span>
                 <span className="text-sm font-bold text-success">
                   {formatCurrency(trip.total_paid ?? 0, trip.currency)}
                 </span>
               </div>
-              <div className="flex justify-between items-center bg-white/10 p-3 rounded-[var(--radius-card)] border border-warning/30">
+              <div className="flex justify-between items-center glass-dark p-3 rounded-[var(--radius-card)] border border-warning/30">
                 <span className="text-xs font-medium">Pendente</span>
                 <span className="text-sm font-black text-warning">
                   {formatCurrency(outstanding, trip.currency)}

@@ -173,14 +173,16 @@ export function SectionTours({ draft, save }: Props) {
                 <div className="flex-1">
                   <L label="Filtro de Busca">
                     <Input
-                      className={SMALL_INPUT} value={searchTerm}
+                      className={SMALL_INPUT}
+                      value={searchTerm}
                       onChange={(e) => setSearchTerm(e.target.value)}
                       placeholder="Ex: Nordeste, Europa, Itália..."
                       onKeyDown={(e) => e.key === "Enter" && handleSearchPromotions()}
                     />
                   </L>
                 </div>
-                <Button variant="default"
+                <Button
+                  variant="default"
                   type="button"
                   disabled={loading}
                   onClick={handleSearchPromotions}

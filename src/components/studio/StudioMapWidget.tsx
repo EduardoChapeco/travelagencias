@@ -205,7 +205,7 @@ export function StudioMapWidget({
         </MapContainer>
 
         {capturing && (
-          <div className="absolute inset-0 bg-white/50 backdrop-blur-sm flex items-center justify-center z-10">
+          <div className="absolute inset-0 bg-foreground/50 backdrop-blur-sm flex items-center justify-center z-10">
             <div className="bg-white p-4 rounded-full border border-border flex items-center gap-3">
               <Loader2 className="h-5 w-5 animate-spin text-primary" />
               <span className="text-sm font-medium">Capturando mapa em alta resolução...</span>

@@ -30,7 +30,7 @@ import {
   Puzzle,
   CreditCard,
   Shield,
-  type LucideIcon
+  type LucideIcon,
 } from "lucide-react";
 
 export interface SubModuleConfig {
@@ -71,8 +71,8 @@ export const NAVIGATION_MODULES: ModuleNavConfig[] = [
       { label: "Timeline", to: "daily-tasks?view=timeline", icon: Clock },
       { label: "Calendário", to: "daily-tasks?view=calendar", icon: Calendar },
       { label: "Workload", to: "daily-tasks?view=workload", icon: Users2, adminOnly: true },
-      { label: "Relatórios", to: "daily-tasks?view=reports", icon: BarChart3, adminOnly: true }
-    ]
+      { label: "Relatórios", to: "daily-tasks?view=reports", icon: BarChart3, adminOnly: true },
+    ],
   },
   { id: "calendar", label: "calendar", to: "calendar", icon: Calendar },
   { id: "inbox", label: "inbox", to: "inbox", icon: MessageSquare },
@@ -86,14 +86,14 @@ export const NAVIGATION_MODULES: ModuleNavConfig[] = [
       { label: "Negociações & Leads", to: "crm", icon: Users },
       { label: "Cotações VibeTour", to: "quotes", icon: Radar },
       { label: "Orçamentos & Propostas", to: "proposals", icon: FileText },
-      { label: "Contratos", to: "contracts", icon: ScrollText }
+      { label: "Contratos", to: "contracts", icon: ScrollText },
     ],
     aiActions: [
       {
         label: "Resumir Pipeline",
-        prompt: "Analise o pipeline de vendas atual e me dê um resumo das oportunidades abertas."
-      }
-    ]
+        prompt: "Analise o pipeline de vendas atual e me dê um resumo das oportunidades abertas.",
+      },
+    ],
   },
   {
     id: "trips",
@@ -104,8 +104,8 @@ export const NAVIGATION_MODULES: ModuleNavConfig[] = [
     subModules: [
       { label: "Todas as Viagens", to: "trips", icon: Luggage },
       { label: "Aéreos & Conferência", to: "vouchers", icon: Plane },
-      { label: "Check-in & Embarques", to: "boarding", icon: ClipboardCheck }
-    ]
+      { label: "Check-in & Embarques", to: "boarding", icon: ClipboardCheck },
+    ],
   },
   {
     id: "group-tours",
@@ -117,14 +117,14 @@ export const NAVIGATION_MODULES: ModuleNavConfig[] = [
       { label: "Excursões & Grupos", to: "group-tours", icon: Bus },
       { label: "Frota & Ônibus", to: "bus-layouts", icon: Bus },
       { label: "Rooming List Geral", to: "rooming-list", icon: BedDouble },
-      { label: "Financeiro do Hub", to: "financial/groups", icon: Wallet }
+      { label: "Financeiro do Hub", to: "financial/groups", icon: Wallet },
     ],
     aiActions: [
       {
         label: "Resumir Grupos",
-        prompt: "Liste os grupos de excursão ativos e me dê um resumo de ocupação e status."
-      }
-    ]
+        prompt: "Liste os grupos de excursão ativos e me dê um resumo de ocupação e status.",
+      },
+    ],
   },
   {
     id: "clients",
@@ -135,8 +135,8 @@ export const NAVIGATION_MODULES: ModuleNavConfig[] = [
     subModules: [
       { label: "Clientes", to: "clients", icon: UserRound },
       { label: "Corporativo", to: "corporate", icon: Building2 },
-      { label: "Fornecedores", to: "suppliers", icon: Store }
-    ]
+      { label: "Fornecedores", to: "suppliers", icon: Store },
+    ],
   },
   {
     id: "financial",
@@ -149,8 +149,8 @@ export const NAVIGATION_MODULES: ModuleNavConfig[] = [
       { label: "Conciliação", to: "financial/reconciliation", icon: ClipboardCheck },
       { label: "Faturas", to: "financial/invoices", icon: FileText },
       { label: "Grupos & Excursões", to: "financial/groups", icon: Bus },
-      { label: "Livro-Razão", to: "financial/ledger", icon: FileText }
-    ]
+      { label: "Livro-Razão", to: "financial/ledger", icon: FileText },
+    ],
   },
   {
     id: "support",
@@ -160,8 +160,8 @@ export const NAVIGATION_MODULES: ModuleNavConfig[] = [
     matchPaths: ["visas"],
     subModules: [
       { label: "Suporte", to: "support", icon: LifeBuoy },
-      { label: "Vistos", to: "visas", icon: Globe2 }
-    ]
+      { label: "Vistos", to: "visas", icon: Globe2 },
+    ],
   },
   {
     id: "portal",
@@ -173,8 +173,8 @@ export const NAVIGATION_MODULES: ModuleNavConfig[] = [
     subModules: [
       { label: "Site da Agência", to: "portal", icon: Globe },
       { label: "Monitor Concorrentes", to: "competitors", icon: Radar },
-      { label: "Inteligência Destinos", to: "destination-intelligence", icon: BrainCircuit }
-    ]
+      { label: "Inteligência Destinos", to: "destination-intelligence", icon: BrainCircuit },
+    ],
   },
   {
     id: "settings",
@@ -191,9 +191,9 @@ export const NAVIGATION_MODULES: ModuleNavConfig[] = [
       { label: "Assinatura & Planos", to: "billing", icon: CreditCard },
       { label: "Configurações Gerais", to: "settings", icon: Settings },
       { label: "Fechamentos & Comissões", to: "settings/financial", icon: Wallet },
-      { label: "Auditoria de IA", to: "settings/ai-audit", icon: Shield }
-    ]
-  }
+      { label: "Auditoria de IA", to: "settings/ai-audit", icon: Shield },
+    ],
+  },
 ];
 
 export function buildContext(
@@ -201,7 +201,7 @@ export function buildContext(
   base: string,
   isAdmin: boolean,
   tripId?: string,
-  trip?: any
+  trip?: any,
 ) {
   const activeModule = NAVIGATION_MODULES.find((m) => {
     if (m.to === "") return pathname === base;
@@ -230,9 +230,8 @@ export function buildContext(
     .filter((sub) => !sub.adminOnly || isAdmin)
     .map((sub) => {
       // Se sub.to já tem parâmetros ou caminho alternativo completo, usa
-      const absoluteTo = sub.to.startsWith("http") || sub.to.startsWith("/") 
-        ? sub.to 
-        : `${base}/${sub.to}`;
+      const absoluteTo =
+        sub.to.startsWith("http") || sub.to.startsWith("/") ? sub.to : `${base}/${sub.to}`;
       return {
         label: sub.label,
         to: absoluteTo,

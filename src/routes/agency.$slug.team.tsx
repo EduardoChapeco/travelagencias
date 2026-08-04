@@ -4,7 +4,13 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { Plus, Trash2, Copy, Percent, X, PlusCircle, AlertCircle } from "lucide-react";
 import { toast } from "sonner";
 import {
-  fetchTeamMembers, fetchTeamInvites, inviteTeamMember, deleteTeamInvite, removeTeamMember, changeTeamMemberRole, } from "@/services/settings";
+  fetchTeamMembers,
+  fetchTeamInvites,
+  inviteTeamMember,
+  deleteTeamInvite,
+  removeTeamMember,
+  changeTeamMemberRole,
+} from "@/services/settings";
 import { useAgency } from "@/lib/agency-context";
 import { EmptyState } from "@/components/shell/PageHeader";
 import { PageHeader, ModuleActionButton } from "@/components/shell/PageHeader";
@@ -19,7 +25,9 @@ import { supabase } from "@/integrations/supabase/client";
 import { useConfirm } from "@/hooks/use-confirm";
 
 export const Route = createFileRoute("/agency/$slug/team")({
-  head: ({ context }: any) => ({ meta: [{ title: `Equipe · ${context?.brand?.platform_name || 'Turis'}` }] }),
+  head: ({ context }: any) => ({
+    meta: [{ title: `Equipe · ${context?.brand?.platform_name || "Turis"}` }],
+  }),
   component: TeamPage,
 });
 
@@ -127,21 +135,21 @@ function TeamPage() {
 
   return (
     <div className="flex h-full flex-col overflow-hidden">
-              <PageHeader
-          title="Equipe"
-          search={{
-            value: searchQuery,
-            onChange: setSearchQuery,
-            placeholder: "Buscar por nome ou email...",
-          }}
-          primaryAction={
-            <ModuleActionButton
-        label="Convidar Membro"
-        icon={<Plus className="h-3.5 w-3.5" />}
-              onClick={() => setOpen(true)}
-            />
-          }
-        />
+      <PageHeader
+        title="Equipe"
+        search={{
+          value: searchQuery,
+          onChange: setSearchQuery,
+          placeholder: "Buscar por nome ou email...",
+        }}
+        primaryAction={
+          <ModuleActionButton
+            label="Convidar Membro"
+            icon={<Plus className="h-3.5 w-3.5" />}
+            onClick={() => setOpen(true)}
+          />
+        }
+      />
 
       <div className="flex-1 overflow-y-auto px-4  md:pr-6 py-4 min-h-0 pb-24">
         {(members.isError || invites.isError) && (
@@ -151,7 +159,11 @@ function TeamPage() {
             </div>
             <h3 className="text-sm font-bold text-red-800">Falha ao Carregar Equipe</h3>
             <p className="text-xs text-red-600 mt-1">
-              {members.isError && members.error instanceof Error ? members.error.message : invites.isError && invites.error instanceof Error ? invites.error.message : "Erro desconhecido."}
+              {members.isError && members.error instanceof Error
+                ? members.error.message
+                : invites.isError && invites.error instanceof Error
+                  ? invites.error.message
+                  : "Erro desconhecido."}
             </p>
           </div>
         )}
@@ -164,7 +176,7 @@ function TeamPage() {
         ) : (
           <div className="overflow-hidden rounded-[var(--radius-card)] border-none mb-6 glass-card border-none">
             <table className="w-full text-sm">
-              <thead className="glass bg-white/5 border-white/10/40 text-left ds-meta uppercase text-muted-foreground">
+              <thead className="glass/40 text-left ds-meta uppercase text-muted-foreground">
                 <tr>
                   <th className="px-3 py-2">Nome</th>
                   <th className="px-3 py-2">Papel</th>
@@ -234,7 +246,7 @@ function TeamPage() {
         ) : (
           <div className="overflow-hidden rounded-[var(--radius-card)] border-none">
             <table className="w-full text-sm">
-              <thead className="glass bg-white/5 border-white/10/40 text-left ds-meta uppercase text-muted-foreground">
+              <thead className="glass/40 text-left ds-meta uppercase text-muted-foreground">
                 <tr>
                   <th className="px-3 py-2">Email</th>
                   <th className="px-3 py-2">Papel</th>

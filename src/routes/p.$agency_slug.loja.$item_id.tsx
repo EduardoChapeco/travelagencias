@@ -75,15 +75,15 @@ function PublicStoreItemDetail() {
   const leadMutation = useMutation({
     mutationFn: async () => {
       if (!agencyId) throw new Error("Agência não encontrada");
-      
+
       const { data, error } = await supabase.from("public_leads").insert({
         agency_id: agencyId,
         name: formName,
         email: formEmail,
         phone: formPhone,
         message: `[Interesse pela Loja Virtual]\nItem: ${item?.title}\nLink ID: ${item_id}\n\nMensagem do cliente: ${formNotes}`,
-                      });
-      
+      });
+
       if (error) throw error;
       return data;
     },
@@ -153,14 +153,10 @@ function PublicStoreItemDetail() {
         <div className="lg:col-span-2 space-y-8">
           {item.store_cover ? (
             <div className="aspect-video w-full overflow-hidden rounded-[var(--radius-card)] glass-card border-none-muted border-none/60">
-              <img
-                src={item.store_cover}
-                alt={item.title}
-                className="w-full h-full object-cover"
-              />
+              <img src={item.store_cover} alt={item.title} className="w-full h-full object-cover" />
             </div>
           ) : (
-            <div className="aspect-video w-full rounded-[var(--radius-card)] glass bg-white/5 border-white/10 flex flex-col items-center justify-center text-muted-foreground/30 border-none/60">
+            <div className="aspect-video w-full rounded-[var(--radius-card)] glass flex flex-col items-center justify-center text-muted-foreground/30 border-none/60">
               <MapPin className="h-16 w-16 mb-4" />
               <span className="font-semibold tracking-widest uppercase text-sm">Sem Imagem</span>
             </div>
@@ -172,7 +168,7 @@ function PublicStoreItemDetail() {
                 {itemType === "group_tour" ? "Grupo de Viagem" : "Pacote Personalizado"}
               </span>
             </div>
-            
+
             <h1 className="text-3xl font-black text-foreground sm:text-4xl leading-tight mb-4">
               {item.title}
             </h1>
@@ -183,12 +179,14 @@ function PublicStoreItemDetail() {
                 <span>Destino: {(item as any).destination}</span>
               </div>
             )}
-            
+
             <div className="prose prose-neutral dark:prose-invert max-w-none prose-p:leading-relaxed">
               {item.description ? (
                 <p className="text-muted-foreground leading-relaxed">{item.description}</p>
               ) : (
-                <p className="italic text-muted-foreground">Nenhuma descrição detalhada fornecida.</p>
+                <p className="italic text-muted-foreground">
+                  Nenhuma descrição detalhada fornecida.
+                </p>
               )}
             </div>
           </div>
@@ -197,9 +195,11 @@ function PublicStoreItemDetail() {
         <div className="space-y-6">
           <div className="glass-card border-none border-none/80 rounded-[var(--radius-card)] p-6 sticky top-24 shadow-none">
             <h3 className="text-xl font-bold text-foreground mb-2">Investimento</h3>
-            
+
             <div className="flex items-baseline gap-2 mb-6">
-              <span className="text-sm font-bold text-muted-foreground uppercase tracking-widest">A partir de</span>
+              <span className="text-sm font-bold text-muted-foreground uppercase tracking-widest">
+                A partir de
+              </span>
               <span className="text-3xl font-black text-brand">
                 {item.store_price ? formatCurrency(item.store_price) : "Sob consulta"}
               </span>
@@ -207,7 +207,7 @@ function PublicStoreItemDetail() {
 
             <div className="border-t border-border/40 pt-6">
               <h4 className="font-bold text-foreground mb-4">Tenho interesse neste pacote</h4>
-              
+
               {formSubmitted ? (
                 <div className="bg-success-bg border border-success/20 rounded-[var(--radius-card)] p-6 text-center">
                   <div className="mx-auto w-12 h-12 bg-success/20 text-success rounded-full flex items-center justify-center mb-4">
@@ -221,48 +221,53 @@ function PublicStoreItemDetail() {
               ) : (
                 <form onSubmit={handleInterestSubmit} className="space-y-4">
                   <div className="space-y-2">
-                    <label className="text-xs font-semibold text-muted-foreground uppercase tracking-widest">Seu Nome</label>
-                    <Input 
-                      placeholder="Nome completo" 
+                    <label className="text-xs font-semibold text-muted-foreground uppercase tracking-widest">
+                      Seu Nome
+                    </label>
+                    <Input
+                      placeholder="Nome completo"
                       value={formName}
                       onChange={(e) => setFormName(e.target.value)}
-                      
                     />
                   </div>
-                  
+
                   <div className="space-y-2">
-                    <label className="text-xs font-semibold text-muted-foreground uppercase tracking-widest">E-mail</label>
-                    <Input 
+                    <label className="text-xs font-semibold text-muted-foreground uppercase tracking-widest">
+                      E-mail
+                    </label>
+                    <Input
                       type="email"
-                      placeholder="seu@email.com" 
+                      placeholder="seu@email.com"
                       value={formEmail}
                       onChange={(e) => setFormEmail(e.target.value)}
-                      
                     />
                   </div>
-                  
+
                   <div className="space-y-2">
-                    <label className="text-xs font-semibold text-muted-foreground uppercase tracking-widest">WhatsApp</label>
-                    <Input 
-                      placeholder="(11) 99999-9999" 
+                    <label className="text-xs font-semibold text-muted-foreground uppercase tracking-widest">
+                      WhatsApp
+                    </label>
+                    <Input
+                      placeholder="(11) 99999-9999"
                       value={formPhone}
                       onChange={(e) => setFormPhone(e.target.value)}
-                      
                     />
                   </div>
-                  
+
                   <div className="space-y-2">
-                    <label className="text-xs font-semibold text-muted-foreground uppercase tracking-widest">Observações (opcional)</label>
-                    <Textarea 
-                      placeholder="Alguma dúvida ou detalhe específico?" 
+                    <label className="text-xs font-semibold text-muted-foreground uppercase tracking-widest">
+                      Observações (opcional)
+                    </label>
+                    <Textarea
+                      placeholder="Alguma dúvida ou detalhe específico?"
                       className="min-h-[80px] resize-none"
                       value={formNotes}
                       onChange={(e) => setFormNotes(e.target.value)}
                     />
                   </div>
-                  
-                  <Button 
-                    type="submit" 
+
+                  <Button
+                    type="submit"
                     className="w-full font-bold text-base h-12 bg-brand text-brand-foreground hover:opacity-90 transition-opacity"
                     disabled={leadMutation.isPending}
                   >

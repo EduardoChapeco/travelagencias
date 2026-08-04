@@ -11,7 +11,6 @@ import { TASK_STATUSES, TASK_PRIORITIES } from "@/lib/tasks/task.constants";
 import { TaskFiltersState, TaskStatus, TaskPriority } from "@/lib/tasks/task.types";
 import { Calendar, User, Flag, RefreshCw } from "lucide-react";
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
 const db = supabase as any;
 
 interface TaskFiltersDrawerProps {
@@ -107,23 +106,33 @@ export function TaskFiltersDrawer({
           <div className="space-y-4">
             <div className="flex items-center justify-between">
               <div className="space-y-0.5">
-                <label className="text-xs font-semibold text-foreground">Mostrar Tarefas Concluídas</label>
-                <p className="ds-meta text-muted-foreground">Exibe tarefas marcadas como resolvidas/canceladas.</p>
+                <label className="text-xs font-semibold text-foreground">
+                  Mostrar Tarefas Concluídas
+                </label>
+                <p className="ds-meta text-muted-foreground">
+                  Exibe tarefas marcadas como resolvidas/canceladas.
+                </p>
               </div>
               <Switch
                 checked={localFilters.show_done}
-                onCheckedChange={(checked) => setLocalFilters((prev) => ({ ...prev, show_done: checked }))}
+                onCheckedChange={(checked) =>
+                  setLocalFilters((prev) => ({ ...prev, show_done: checked }))
+                }
               />
             </div>
 
             <div className="flex items-center justify-between">
               <div className="space-y-0.5">
                 <label className="text-xs font-semibold text-foreground">Mostrar Subtarefas</label>
-                <p className="ds-meta text-muted-foreground">Exibe tarefas filhas integradas à lista principal.</p>
+                <p className="ds-meta text-muted-foreground">
+                  Exibe tarefas filhas integradas à lista principal.
+                </p>
               </div>
               <Switch
                 checked={localFilters.show_subtasks}
-                onCheckedChange={(checked) => setLocalFilters((prev) => ({ ...prev, show_subtasks: checked }))}
+                onCheckedChange={(checked) =>
+                  setLocalFilters((prev) => ({ ...prev, show_subtasks: checked }))
+                }
               />
             </div>
           </div>
@@ -146,7 +155,9 @@ export function TaskFiltersDrawer({
                     className="flex items-center gap-2 px-2.5 py-1.5 rounded-2xl border border-border/65 hover:bg-surface-alt/45 cursor-pointer transition-colors"
                   >
                     <Checkbox checked={checked} onCheckedChange={() => {}} />
-                    <span className="text-xs font-medium text-foreground truncate">{cfg.label}</span>
+                    <span className="text-xs font-medium text-foreground truncate">
+                      {cfg.label}
+                    </span>
                   </div>
                 );
               })}
@@ -173,7 +184,10 @@ export function TaskFiltersDrawer({
                   >
                     <Checkbox checked={checked} onCheckedChange={() => {}} />
                     <div className="flex items-center gap-1.5 truncate">
-                      <span className="w-2 h-2 rounded-full shrink-0" style={{ backgroundColor: cfg.color }} />
+                      <span
+                        className="w-2 h-2 rounded-full shrink-0"
+                        style={{ backgroundColor: cfg.color }}
+                      />
                       <span className="text-xs font-medium text-foreground">{cfg.label}</span>
                     </div>
                   </div>
@@ -206,7 +220,9 @@ export function TaskFiltersDrawer({
                         <div className="w-5 h-5 rounded-full bg-surface-alt border border-border flex items-center justify-center text-[9px] font-bold text-muted-foreground shrink-0 uppercase">
                           {member.full_name.charAt(0)}
                         </div>
-                        <span className="text-xs font-medium text-foreground truncate">{member.full_name}</span>
+                        <span className="text-xs font-medium text-foreground truncate">
+                          {member.full_name}
+                        </span>
                       </div>
                       <Checkbox checked={checked} onCheckedChange={() => {}} />
                     </div>
@@ -226,23 +242,33 @@ export function TaskFiltersDrawer({
             </h3>
             <div className="grid grid-cols-2 gap-2">
               <div className="space-y-1">
-                <label className="ds-meta font-bold text-muted-foreground uppercase tracking-wider">De</label>
+                <label className="ds-meta font-bold text-muted-foreground uppercase tracking-wider">
+                  De
+                </label>
                 <Input
                   type="date"
                   value={localFilters.due_date_from || ""}
                   onChange={(e) =>
-                    setLocalFilters((prev) => ({ ...prev, due_date_from: e.target.value || undefined }))
+                    setLocalFilters((prev) => ({
+                      ...prev,
+                      due_date_from: e.target.value || undefined,
+                    }))
                   }
                   className="border-border/60"
                 />
               </div>
               <div className="space-y-1">
-                <label className="ds-meta font-bold text-muted-foreground uppercase tracking-wider">Até</label>
+                <label className="ds-meta font-bold text-muted-foreground uppercase tracking-wider">
+                  Até
+                </label>
                 <Input
                   type="date"
                   value={localFilters.due_date_to || ""}
                   onChange={(e) =>
-                    setLocalFilters((prev) => ({ ...prev, due_date_to: e.target.value || undefined }))
+                    setLocalFilters((prev) => ({
+                      ...prev,
+                      due_date_to: e.target.value || undefined,
+                    }))
                   }
                   className="border-border/60"
                 />

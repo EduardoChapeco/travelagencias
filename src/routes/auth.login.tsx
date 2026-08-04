@@ -16,8 +16,11 @@ export const Route = createFileRoute("/auth/login")({
   ssr: false,
   head: ({ context }: any) => ({
     meta: [
-      { title: `Entrar · ${context?.brand?.platform_name || 'Turis'}` },
-      { name: "description", content: `Acesse sua agência ou conta no ${context?.brand?.platform_name || 'Turis'}.` },
+      { title: `Entrar · ${context?.brand?.platform_name || "Turis"}` },
+      {
+        name: "description",
+        content: `Acesse sua agência ou conta no ${context?.brand?.platform_name || "Turis"}.`,
+      },
     ],
   }),
   component: LoginPage,
@@ -114,7 +117,9 @@ function LoginPage() {
       }
 
       if (!agency || agency.onboarding_completed === false) {
-        toast.info(`Sua conta foi criada! Configure sua agência para começar a usar o ${brandName}.`);
+        toast.info(
+          `Sua conta foi criada! Configure sua agência para começar a usar o ${brandName}.`,
+        );
         navigate({ to: "/auth/onboarding", replace: true });
         return;
       }
@@ -147,19 +152,21 @@ function LoginPage() {
   return (
     <div className="relative flex min-h-screen w-full items-center justify-center p-6 bg-black selection:bg-brand/30 overflow-hidden">
       {/* Ambient background wallpaper */}
-      <div 
+      <div
         className="absolute inset-0 bg-cover bg-center transition-transform duration-[20s] ease-linear hover:scale-105 pointer-events-none"
-        style={{ backgroundImage: "url('https://images.unsplash.com/photo-1499856871958-5b9627545d1a?q=80&w=2020&auto=format&fit=crop')" }}
+        style={{
+          backgroundImage:
+            "url('https://images.unsplash.com/photo-1499856871958-5b9627545d1a?q=80&w=2020&auto=format&fit=crop')",
+        }}
       >
         <div className="absolute inset-0 bg-gradient-to-b from-black/25 via-transparent to-black/60" />
       </div>
 
       {/* Centered Glass Login Card */}
-      <div className="w-full max-w-[440px] p-8 md:p-10 rounded-[32px] glass border border-white/20 shadow-2xl relative z-10 flex flex-col text-white backdrop-blur-3xl animate-fadeIn">
-        
+      <div className="w-full max-w-[440px] p-8 md:p-10 rounded-[32px] glass border border-border shadow-2xl relative z-10 flex flex-col text-white backdrop-blur-3xl animate-fadeIn">
         {/* Header Logo */}
         <div className="flex flex-col items-center text-center gap-2 mb-8">
-          <div className="flex h-12 w-12 items-center justify-center rounded-[var(--radius-card)] bg-white/10 border border-white/20 font-black text-lg text-white shadow-inner">
+          <div className="flex h-12 w-12 items-center justify-center rounded-[var(--radius-card)] glass-dark border border-border font-black text-lg text-white shadow-inner">
             {brand?.logo_url ? (
               <img src={brand.logo_url} alt={brandName} className="h-7 w-7 object-contain" />
             ) : (
@@ -167,7 +174,9 @@ function LoginPage() {
             )}
           </div>
           <span className="text-xl font-extrabold tracking-tight">{brandName}</span>
-          <p className="text-xs text-white/60 font-medium">A plataforma operacional para agências de turismo</p>
+          <p className="text-xs text-white/60 font-medium">
+            A plataforma operacional para agências de turismo
+          </p>
         </div>
 
         {errorMsg && (
@@ -187,7 +196,7 @@ function LoginPage() {
               placeholder="nome@suaagencia.com.br"
               autoComplete="email"
               {...register("email")}
-              className="rounded-[var(--radius-card)] bg-white/5 border-white/10 focus:border-white/30 text-white placeholder:text-white/30 font-medium"
+              className="rounded-[var(--radius-card)] glass focus:border-border-strong text-white placeholder:text-white/30 font-medium"
             />
           </Field>
 
@@ -209,14 +218,15 @@ function LoginPage() {
               placeholder="••••••••"
               autoComplete="current-password"
               {...register("password")}
-              className="rounded-[var(--radius-card)] bg-white/5 border-white/10 focus:border-white/30 text-white placeholder:text-white/30 font-medium"
+              className="rounded-[var(--radius-card)] glass focus:border-border-strong text-white placeholder:text-white/30 font-medium"
             />
             {errors.password?.message && (
               <p className="ds-meta font-bold text-rose-300 mt-1">{errors.password.message}</p>
             )}
           </div>
 
-          <Button variant="default"
+          <Button
+            variant="default"
             id="login-submit"
             type="submit"
             disabled={isSubmitting}
@@ -226,7 +236,7 @@ function LoginPage() {
           </Button>
         </form>
 
-        <div className="h-px w-full bg-white/10 my-6" />
+        <div className="h-px w-full glass-dark my-6" />
 
         <p className="text-center text-xs text-white/70 font-semibold">
           Sua agência ainda não usa o {brandName}?{" "}

@@ -44,7 +44,7 @@ export default function TemplateEditorialFlat({ proposal: p, agency }: TemplateP
           )}
 
           <div>
-            <div className="inline-flex items-center rounded-full px-4 py-1.5 mb-6 ds-label-caps bg-white/20 backdrop-blur-sm">
+            <div className="inline-flex items-center rounded-full px-4 py-1.5 mb-6 ds-label-caps glass-dark backdrop-blur-sm">
               Proposta #{p.number}
             </div>
             <h1
@@ -147,10 +147,7 @@ export default function TemplateEditorialFlat({ proposal: p, agency }: TemplateP
                     >
                       <div className="flex items-center gap-2">
                         <Plane className="w-4 h-4" style={{ color: brand }} />
-                        <span
-                          className="ds-label-caps"
-                          style={{ color: brand }}
-                        >
+                        <span className="ds-label-caps" style={{ color: brand }}>
                           {f.airline || "Companhia"}
                         </span>
                       </div>
@@ -208,9 +205,7 @@ export default function TemplateEditorialFlat({ proposal: p, agency }: TemplateP
                     className="rounded-2xl overflow-hidden border border-slate-200 bg-white break-inside-avoid"
                   >
                     <div className="bg-[#FFFBEB] px-5 py-2.5 flex items-center gap-2 border-b border-amber-100">
-                      <span className="ds-label-caps text-amber-700">
-                        Hospedagem
-                      </span>
+                      <span className="ds-label-caps text-amber-700">Hospedagem</span>
                     </div>
                     <div className="p-6">
                       <h3 className="text-2xl font-bold text-slate-900 mb-6">{h.name}</h3>
@@ -219,13 +214,17 @@ export default function TemplateEditorialFlat({ proposal: p, agency }: TemplateP
                           <div className="ds-meta uppercase text-slate-500 font-bold mb-1">
                             Check-in
                           </div>
-                          <div className="font-semibold text-slate-900">{formatDate(h.checkin)}</div>
+                          <div className="font-semibold text-slate-900">
+                            {formatDate(h.checkin)}
+                          </div>
                         </div>
                         <div className="bg-slate-50 p-4">
                           <div className="ds-meta uppercase text-slate-500 font-bold mb-1">
                             Check-out
                           </div>
-                          <div className="font-semibold text-slate-900">{formatDate(h.checkout)}</div>
+                          <div className="font-semibold text-slate-900">
+                            {formatDate(h.checkout)}
+                          </div>
                         </div>
                         <div className="bg-slate-50 p-4">
                           <div className="ds-meta uppercase text-slate-500 font-bold mb-1">
@@ -366,7 +365,8 @@ export default function TemplateEditorialFlat({ proposal: p, agency }: TemplateP
                   Cartão de Crédito
                 </div>
                 <div className="text-xl font-semibold text-slate-800">
-                  {vm.totals.parcelasCartao}x de {formatCurrency(vm.totals.valorParcelaCartao, p.currency)}
+                  {vm.totals.parcelasCartao}x de{" "}
+                  {formatCurrency(vm.totals.valorParcelaCartao, p.currency)}
                 </div>
               </div>
             </div>
@@ -392,9 +392,7 @@ export default function TemplateEditorialFlat({ proposal: p, agency }: TemplateP
             )}
             <div>
               <div className="font-bold text-slate-900 text-lg">{p.agent_name}</div>
-              <div className="ds-label-caps text-slate-400 mb-1">
-                Consultor Oficial
-              </div>
+              <div className="ds-label-caps text-slate-400 mb-1">Consultor Oficial</div>
               {p.agent_whatsapp && (
                 <div className="text-sm text-emerald-600 font-medium flex items-center gap-1">
                   <PhoneCall className="w-3 h-3" /> {p.agent_whatsapp}
@@ -416,9 +414,7 @@ export default function TemplateEditorialFlat({ proposal: p, agency }: TemplateP
           </div>
         )}
         <div className="text-right">
-          <div className="ds-meta uppercase tracking-widest text-slate-400 mb-1">
-            Documento Ref
-          </div>
+          <div className="ds-meta uppercase tracking-widest text-slate-400 mb-1">Documento Ref</div>
           <div className="font-mono text-xs text-slate-600">{p.public_token?.slice(0, 12)}</div>
         </div>
       </div>

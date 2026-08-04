@@ -24,11 +24,11 @@ export const createTaskSchema = z.object({
   source_url: z.string().optional().nullable(),
   source_metadata: z.record(z.any()).optional().nullable(),
   is_recurring: z.boolean().optional().default(false),
-  recurrence_rule: z.record(z.any()).optional().nullable()
+  recurrence_rule: z.record(z.any()).optional().nullable(),
 });
 
 export const updateTaskSchema = createTaskSchema.partial().extend({
-  id: z.string().uuid()
+  id: z.string().uuid(),
 });
 
 export const createChecklistItemSchema = z.object({
@@ -37,12 +37,12 @@ export const createChecklistItemSchema = z.object({
 });
 
 export const updateChecklistItemSchema = createChecklistItemSchema.partial().extend({
-  is_done: z.boolean().optional()
+  is_done: z.boolean().optional(),
 });
 
 export const createCommentSchema = z.object({
   content: z.any(), // JSONB (Rich text)
-  parent_id: z.string().uuid().optional().nullable()
+  parent_id: z.string().uuid().optional().nullable(),
 });
 
 export type CreateTaskFormValues = z.infer<typeof createTaskSchema>;

@@ -29,7 +29,7 @@ export function KpiCard({
       className={cn(
         "rounded-[var(--radius-card)] p-5 backdrop-blur-3xl",
         bgClasses[tone],
-        className
+        className,
       )}
       {...props}
     >
@@ -39,9 +39,7 @@ export function KpiCard({
         </span>
         {icon}
       </div>
-      <div className="font-mono text-2xl font-bold tracking-tight text-foreground">
-        {value}
-      </div>
+      <div className="font-mono text-2xl font-bold tracking-tight text-foreground">{value}</div>
     </div>
   );
 }

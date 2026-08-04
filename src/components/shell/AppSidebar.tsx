@@ -142,8 +142,6 @@ export function AppSidebar({
     },
   });
 
-  if (!slug || !agency) return null;
-
   const { data: unreadCount = 0 } = useUnreadConversations();
 
   // ── Build contextual items ────────────────────────────────────────────────
@@ -175,8 +173,9 @@ export function AppSidebar({
 
   // isHome é recebida como prop — não redeclarar aqui
 
-
   const primaryAction = useLayoutStore((state) => state.primaryAction);
+
+  if (!slug || !agency) return null;
 
   if (isHome) {
     return (
@@ -186,10 +185,10 @@ export function AppSidebar({
         contextItems={contextItems as ContextItem[]}
         footer={
           <Button
-              onClick={() => signOut().then(() => navigate({ to: "/auth/login", replace: true }))}
-              className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full text-os-faint transition-all hover:bg-white/10 hover:text-os cursor-pointer"
-              title="Sair da conta"
-            >
+            onClick={() => signOut().then(() => navigate({ to: "/auth/login", replace: true }))}
+            className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full text-os-faint transition-all hover:glass-dark hover:text-os cursor-pointer"
+            title="Sair da conta"
+          >
             <LogOut className="h-[18px] w-[18px] shrink-0" strokeWidth={2} />
           </Button>
         }
@@ -208,7 +207,7 @@ export function AppSidebar({
                 <Button
                   onClick={primaryAction.onClick}
                   disabled={primaryAction.disabled || primaryAction.loading}
-                  className="h-14 w-14 rounded-full flex items-center justify-center bg-primary text-primary-foreground border border-white/10 hover:scale-[1.05] active:scale-[0.98] transition-all cursor-pointer shadow-[0_4px_12px_rgba(47,96,230,0.3)] disabled:opacity-50 shrink-0"
+                  className="h-14 w-14 rounded-full flex items-center justify-center bg-primary text-primary-foreground border border-border hover:scale-[1.05] active:scale-[0.98] transition-all cursor-pointer shadow-[0_4px_12px_rgba(47,96,230,0.3)] disabled:opacity-50 shrink-0"
                 >
                   {primaryAction.icon || <Plus className="h-6 w-6" />}
                 </Button>
@@ -216,7 +215,7 @@ export function AppSidebar({
               <TooltipContent
                 side="right"
                 sideOffset={12}
-                className="rounded-[var(--radius-card)] px-3 py-1.5 text-xs font-semibold bg-black/80 backdrop-blur-md text-os border border-white/10"
+                className="rounded-[var(--radius-card)] px-3 py-1.5 text-xs font-semibold bg-black/80 backdrop-blur-md text-os border border-border"
               >
                 {primaryAction.label}
               </TooltipContent>
@@ -237,7 +236,7 @@ export function AppSidebar({
           footer={
             <Button
               onClick={() => signOut().then(() => navigate({ to: "/auth/login", replace: true }))}
-              className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full text-os-faint transition-all hover:bg-white/10 hover:text-os cursor-pointer"
+              className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full text-os-faint transition-all hover:glass-dark hover:text-os cursor-pointer"
               title="Sair da conta"
             >
               <LogOut className="h-[18px] w-[18px] shrink-0" strokeWidth={2} />

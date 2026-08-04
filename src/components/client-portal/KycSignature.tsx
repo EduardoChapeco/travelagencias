@@ -41,7 +41,7 @@ export function KycSignature({ onSign, isLoading }: KycSignatureProps) {
           (err) => {
             console.warn("Geolocalização negada/falhou:", err);
             // Podemos falhar suavemente ou bloquear, mas seguiremos com aviso.
-          }
+          },
         );
       }
 
@@ -51,7 +51,7 @@ export function KycSignature({ onSign, isLoading }: KycSignatureProps) {
         audio: false,
       });
       setStream(mediaStream);
-      
+
       if (videoRef.current) {
         videoRef.current.srcObject = mediaStream;
       }
@@ -68,21 +68,25 @@ export function KycSignature({ onSign, isLoading }: KycSignatureProps) {
       canvas.width = video.videoWidth;
       canvas.height = video.videoHeight;
       const ctx = canvas.getContext("2d");
-      
+
       if (ctx) {
         ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
-        canvas.toBlob((blob) => {
-          if (blob) {
-            setPhotoBlob(blob);
-            setPhotoUrl(URL.createObjectURL(blob));
-            setStep("review");
-            
-            // Pausar câmera
-            if (stream) {
-              stream.getTracks().forEach((t) => t.stop());
+        canvas.toBlob(
+          (blob) => {
+            if (blob) {
+              setPhotoBlob(blob);
+              setPhotoUrl(URL.createObjectURL(blob));
+              setStep("review");
+
+              // Pausar câmera
+              if (stream) {
+                stream.getTracks().forEach((t) => t.stop());
+              }
             }
-          }
-        }, "image/jpeg", 0.8);
+          },
+          "image/jpeg",
+          0.8,
+        );
       }
     }
   }, [stream]);
@@ -96,7 +100,7 @@ export function KycSignature({ onSign, isLoading }: KycSignatureProps) {
 
   const handleConfirm = () => {
     if (!photoBlob) return;
-    
+
     // Se o cliente não liberou o GPS, mandamos 0 ou rejeitamos. Para não bloquear o fluxo (pois muitos usuários negam GPS na web), vamos deixar opcional, mas você pode mudar para obrigatório.
     const lat = location?.lat || 0;
     const lng = location?.lng || 0;
@@ -113,7 +117,8 @@ export function KycSignature({ onSign, isLoading }: KycSignatureProps) {
         <div>
           <h3 className="font-bold text-lg">Assinatura com Verificação</h3>
           <p className="text-sm text-muted-foreground mt-2">
-            Para garantir a sua segurança e evitar fraudes, precisamos de uma foto sua (Selfie) e da sua localização atual antes de assinar.
+            Para garantir a sua segurança e evitar fraudes, precisamos de uma foto sua (Selfie) e da
+            sua localização atual antes de assinar.
           </p>
         </div>
         <Button
@@ -133,7 +138,12 @@ export function KycSignature({ onSign, isLoading }: KycSignatureProps) {
           <div className="text-center p-6 bg-surface text-foreground rounded-[var(--radius-card)]">
             <ShieldAlert className="h-10 w-10 text-red-500 mx-auto mb-3" />
             <p className="font-semibold">{errorMsg}</p>
-            <Button onClick={() => setStep("intro")} className="mt-4 text-primary text-sm font-semibold hover:underline">Tentar Novamente</Button>
+            <Button
+              onClick={() => setStep("intro")}
+              className="mt-4 text-primary text-sm font-semibold hover:underline"
+            >
+              Tentar Novamente
+            </Button>
           </div>
         ) : (
           <div className="relative aspect-[3/4] w-full rounded-[var(--radius-card)] overflow-hidden bg-zinc-900">
@@ -148,10 +158,12 @@ export function KycSignature({ onSign, isLoading }: KycSignatureProps) {
             <div className="absolute inset-0 z-10 flex flex-col items-center justify-center pointer-events-none p-4">
               <div className="w-48 h-64 border-2 border-dashed border-white/50 rounded-[40px]"></div>
               <p className="text-white text-xs font-semibold mt-4 drop-shadow-md text-center">
-                Enquadre seu rosto<br/>{location ? "📍 Localização Detectada" : "Procurando GPS..."}
+                Enquadre seu rosto
+                <br />
+                {location ? "📍 Localização Detectada" : "Procurando GPS..."}
               </p>
             </div>
-            
+
             <div className="absolute bottom-6 left-0 right-0 flex justify-center z-20">
               <Button
                 onClick={capturePhoto}
@@ -171,16 +183,22 @@ export function KycSignature({ onSign, isLoading }: KycSignatureProps) {
     return (
       <div className="bg-surface border border-border p-6 rounded-2xl text-center space-y-4 max-w-sm mx-auto">
         <h3 className="font-bold text-lg">Tudo certo?</h3>
-        
+
         <div className="relative aspect-square w-48 mx-auto rounded-full overflow-hidden border-4 border-border shadow-inner">
-          {photoUrl && <img src={photoUrl} alt="Selfie" className="w-full h-full object-cover scale-x-[-1]" />}
+          {photoUrl && (
+            <img src={photoUrl} alt="Selfie" className="w-full h-full object-cover scale-x-[-1]" />
+          )}
         </div>
-        
+
         <div className="flex justify-center items-center gap-2 text-xs font-medium bg-accent px-3 py-1.5 rounded-full inline-flex mx-auto text-muted-foreground">
           {location?.lat ? (
-            <><MapPin className="h-3.5 w-3.5 text-green-600" /> GPS Registrado</>
+            <>
+              <MapPin className="h-3.5 w-3.5 text-green-600" /> GPS Registrado
+            </>
           ) : (
-            <><MapPin className="h-3.5 w-3.5 text-red-500" /> GPS Indisponível</>
+            <>
+              <MapPin className="h-3.5 w-3.5 text-red-500" /> GPS Indisponível
+            </>
           )}
         </div>
 
@@ -190,10 +208,14 @@ export function KycSignature({ onSign, isLoading }: KycSignatureProps) {
             disabled={isLoading}
             className="w-full bg-green-600 text-white font-semibold h-11 rounded-[var(--radius-card)] flex items-center justify-center gap-2 hover:bg-green-700 transition-colors disabled:opacity-50"
           >
-            {isLoading ? <Loader2 className="h-5 w-5 animate-spin" /> : <CheckCircle className="h-5 w-5" />}
+            {isLoading ? (
+              <Loader2 className="h-5 w-5 animate-spin" />
+            ) : (
+              <CheckCircle className="h-5 w-5" />
+            )}
             Confirmar e Assinar
           </Button>
-          
+
           <Button
             onClick={handleRetake}
             disabled={isLoading}

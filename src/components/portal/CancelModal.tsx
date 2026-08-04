@@ -42,9 +42,7 @@ export function CancelModal({
           </div>
 
           <div className="space-y-2">
-            <label className="ds-label-caps text-muted-foreground">
-              Motivo do Cancelamento
-            </label>
+            <label className="ds-label-caps text-muted-foreground">Motivo do Cancelamento</label>
             <Textarea
               value={cancelReason}
               onChange={(e) => onReasonChange(e.target.value)}

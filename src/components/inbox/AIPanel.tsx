@@ -12,7 +12,8 @@ export function AIPanel({ email }: AIPanelProps) {
   if (!email) return null; // Only shows when an email is selected
 
   const entities = email.ai_extracted_entities || {};
-  const hasExtractedData = entities.locs?.length > 0 || entities.passengers?.length > 0 || entities.ticket_hash;
+  const hasExtractedData =
+    entities.locs?.length > 0 || entities.passengers?.length > 0 || entities.ticket_hash;
 
   return (
     <div className="w-80 border-l border-border h-full flex flex-col bg-surface-alt">
@@ -30,10 +31,11 @@ export function AIPanel({ email }: AIPanelProps) {
 
       <ScrollArea className="flex-1">
         <div className="p-4 space-y-6">
-          
           {/* Summary Section */}
           <div className="space-y-2">
-            <h4 className="text-xs font-semibold uppercase text-muted-foreground tracking-wider">Resumo Rápido</h4>
+            <h4 className="text-xs font-semibold uppercase text-muted-foreground tracking-wider">
+              Resumo Rápido
+            </h4>
             <div className="p-3 bg-card border border-border rounded-2xl text-sm text-foreground shadow-sm">
               {email.ai_summary || "O Cérebro IA não gerou resumo para este email."}
             </div>
@@ -41,8 +43,10 @@ export function AIPanel({ email }: AIPanelProps) {
 
           {/* Extracted Entities */}
           <div className="space-y-3">
-            <h4 className="text-xs font-semibold uppercase text-muted-foreground tracking-wider">Entidades Identificadas</h4>
-            
+            <h4 className="text-xs font-semibold uppercase text-muted-foreground tracking-wider">
+              Entidades Identificadas
+            </h4>
+
             {hasExtractedData ? (
               <div className="space-y-2">
                 {entities.ticket_hash && (
@@ -54,42 +58,58 @@ export function AIPanel({ email }: AIPanelProps) {
                     {email.linked_ticket_id ? (
                       <CheckCircle2 className="w-4 h-4 text-success" />
                     ) : (
-                      <Button variant="ghost" size="sm" className="h-6 text-xs px-2">Vincular</Button>
+                      <Button variant="ghost" size="sm" className="h-6 text-xs px-2">
+                        Vincular
+                      </Button>
                     )}
                   </div>
                 )}
-                
+
                 {entities.locs?.map((loc: string, i: number) => (
-                  <div key={i} className="flex items-center justify-between p-2 rounded-full bg-card border border-border">
+                  <div
+                    key={i}
+                    className="flex items-center justify-between p-2 rounded-full bg-card border border-border"
+                  >
                     <div className="flex items-center gap-2 text-sm">
                       <Plane className="w-4 h-4 text-muted-foreground" />
                       <span className="font-medium">LOC: {loc}</span>
                     </div>
-                    <Button variant="ghost" size="sm" className="h-6 text-xs px-2">Vincular</Button>
+                    <Button variant="ghost" size="sm" className="h-6 text-xs px-2">
+                      Vincular
+                    </Button>
                   </div>
                 ))}
-                
+
                 {entities.passengers?.map((pax: string, i: number) => (
-                  <div key={i} className="flex items-center gap-2 p-2 rounded-full bg-card border border-border text-sm">
+                  <div
+                    key={i}
+                    className="flex items-center gap-2 p-2 rounded-full bg-card border border-border text-sm"
+                  >
                     <div className="w-2 h-2 rounded-full bg-primary/30" />
                     <span className="truncate">{pax}</span>
                   </div>
                 ))}
               </div>
             ) : (
-              <p className="text-sm text-muted-foreground">Nenhuma entidade estruturada (LOC, Nomes) extraída.</p>
+              <p className="text-sm text-muted-foreground">
+                Nenhuma entidade estruturada (LOC, Nomes) extraída.
+              </p>
             )}
           </div>
 
           {/* Action Suggestions */}
           <div className="space-y-2">
-            <h4 className="text-xs font-semibold uppercase text-muted-foreground tracking-wider">Próxima Ação Sugerida</h4>
-            <Button className="w-full justify-start shadow-sm" variant={email.linked_ticket_id ? "secondary" : "default"}>
+            <h4 className="text-xs font-semibold uppercase text-muted-foreground tracking-wider">
+              Próxima Ação Sugerida
+            </h4>
+            <Button
+              className="w-full justify-start shadow-sm"
+              variant={email.linked_ticket_id ? "secondary" : "default"}
+            >
               <Zap className="w-4 h-4 mr-2" />
-              {email.linked_ticket_id ? 'Responder no Ticket' : 'Transformar em Ticket'}
+              {email.linked_ticket_id ? "Responder no Ticket" : "Transformar em Ticket"}
             </Button>
           </div>
-
         </div>
       </ScrollArea>
     </div>

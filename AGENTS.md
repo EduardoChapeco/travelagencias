@@ -1,298 +1,402 @@
-# 🏛️ PROTOCOLO SUPREMO DE ENGENHARIA — TravelOS
-## IDENTITY AND PURPOSE
-Você opera como um **time de elite de BigTech** — PhD Senior Engineer + Security Architect + Performance Specialist em sistemas de turismo de alta complexidade. Sua missão é entregar código de nível elite: seguro, performático, escalável, sem bugs, 100% sincronizado de ponta a ponta. Tolerância zero para vulnerabilidades, código duplicado, renders fantasmas ou contratos quebrados.
+# AGENTS.md — Protocolo Supremo de Engenharia (TravelOS)
+
+> **Documento Vinculante.** Qualquer pessoa ou agente que edite este projeto deve obedecer estas regras sem exceção.
+> Em caso de conflito entre uma instrução no chat e este documento, **este documento sempre prevalece**.
+> A única autoridade superior é o usuário (dono do produto).
 
 ---
 
-## 🚀 REGRA PÉTREA 1 — "Deploy Completo"
+## 🏛️ § 1 — Fontes Únicas de Verdade
 
-Toda vez que o usuário solicitar **"deploy completo"**, execute o seguinte pipeline na ordem exata:
+| Assunto                                           | Documento                              |
+| ------------------------------------------------- | -------------------------------------- |
+| Tokens de design, tipografia, estados, responsivo | `DESIGN.md` + `src/styles.css`         |
+| Plano, escopo, fora de escopo, critérios          | `docs/MASTER_PLAN.md`                  |
+| Fases e aceite                                    | `docs/ROADMAP.md`                      |
+| Camadas, cache, filas, observabilidade            | `docs/ARCHITECTURE.md`                 |
+| Entidades, invariantes, máquinas de estado        | `docs/DOMAIN_MODEL.md`                 |
+| Rotas, permissão, fase                            | `docs/ROUTES.md` + `src/lib/routes.ts` |
+| Segurança, RBAC/RLS, LGPD, uploads, webhooks      | `docs/SECURITY.md`                     |
+| Contratos de API/serviços                         | `docs/API_CONTRACTS.md`                |
+| Componentes canônicos e estados                   | `docs/COMPONENT_CATALOG.md`            |
+| Regras de negócio de turismo                      | `docs/DOMAIN_MODEL.md`                 |
 
-### FASE 1 — Auditoria de Qualidade & Segurança (Pré-deploy)
-- `npm run typecheck` → TypeScript zero erros. Se falhar: corrija de forma autônoma.
-- `npm run build` → Build de produção completo (`cross-env NODE_OPTIONS=--max-old-space-size=8192 vite build`). Corrija qualquer erro de compilação antes de prosseguir.
-- Rodar **Security Sweep Completo** (ver Regra 3 abaixo).
-- Rodar **Match Global** (ver Regra 2 abaixo).
+O registro tipado de rotas em `src/lib/routes.ts` é a fonte de verdade programática e deve espelhar `docs/ROUTES.md`.
 
-### FASE 2 — Deploy de Backend/Infraestrutura (Supabase)
+---
+
+## ⚙️ § 2 — Stack Técnica e Estrutura Obrigatória
+
+- **Runtime:** TanStack Start + React 19, TypeScript **strict**, Tailwind v4, shadcn/ui.
+- **Data fetching:** TanStack Query centralizado — nunca `useEffect + fetch` para carga inicial.
+- **Deploy:** Cloudflare Pages via Wrangler (Nitro adapter).
+- **Backend:** Supabase (PostgreSQL + Auth + Storage + Edge Functions + Realtime).
+
+### Estrutura de pastas obrigatória:
+```
+src/
+  components/
+    ui/         ← primitivos shadcn (não modificar sem análise de blast-radius)
+    modules/    ← componentes de painel/módulos (propostas, viagens, clientes...)
+    state/      ← estados canônicos (empty, error, loading, permission, unconfigured)
+  features/     ← features por domínio de negócio
+  routes/       ← rotas file-based (rota = arquivo)
+  lib/          ← utilidades compartilhadas, registry, formatação
+  services/     ← domain services tipados (BFF/server functions)
+  types/        ← tipos de domínio, DTOs, supabase.ts gerado
+```
+
+- Nada de `App.tsx` monolítico. Nada de `src/pages/`.
+- `src/types/supabase.ts` é **sempre gerado automaticamente** por `supabase gen types typescript --linked`, nunca editado à mão.
+
+---
+
+## 🚀 § 3 — Protocolo de Execução Obrigatório (Todo Task/Feature)
+
+Todo trabalho deve seguir este fluxo na íntegra. **Se uma etapa for pulada, a entrega é considerada inválida.**
+
+```
+1. INVENTORY      → Buscar se já existe no codebase (componente, hook, tabela, tipo)
+2. BLAST RADIUS   → Mapear o raio de impacto completo (ver § 5)
+3. PLAN           → Plano de implementação por microfase (ver § 4)
+4. IMPLEMENT      → Código de precisão cirúrgica
+5. TYPECHECK      → npm run typecheck sem erros (antes de qualquer deploy ou merge)
+6. SECURITY SWEEP → RLS, IDOR, XSS, service_role, secrets (ver § 7)
+7. MATCH GLOBAL   → schema ↔ supabase.ts ↔ frontend ↔ migrations (ver § 9)
+8. RELEASE GATE   → Evidência real de funcionamento, não declaração
+```
+
+---
+
+## 📋 § 4 — Planejamento em Microfases
+
+Antes de escrever uma linha de código, criar plano detalhado que cobre:
+
+- Impacto nas **tabelas** (novas colunas, novos índices, migrações)
+- Impacto nos **schemas/tipos** (supabase.ts atualizado)
+- Impacto nos **contratos** (Edge Functions, RPCs, API)
+- Impacto nas **rotas** (nova rota, mudança de layout)
+- Impacto nos **componentes** (quais consomem, quais quebram)
+- Impacto no **RLS** (novas policies, tabelas cobertas)
+- **Casos de uso mapeados:** admin, operador, cliente final
+- **Casos de erro mapeados:** estado vazio, loading, erro de rede, permissão negada
+
+**Proibição do Autoengano:** Nenhum agente pode:
+- Declarar "concluído" sem evidência de runtime.
+- Chamar CRUD raso de "premium".
+- Declarar "build ok" sem ter executado `tsc`.
+- Usar linguagem de vitória antes do Release Gate.
+
+---
+
+## 💥 § 5 — Análise de Blast Radius (Efeito Borboleta Zero)
+
+Antes de tocar qualquer elemento existente (botão, campo, hook, rota, tabela, coluna), responder obrigatoriamente:
+
+1. **Onde é renderizado?** Buscar todos os imports/usos — não apenas o arquivo óbvio.
+   ```bash
+   grep -r "NomeDoComponente" src/ --include="*.tsx" --include="*.ts" -l
+   ```
+2. **O que dispara?** Handlers, hooks, contexts, stores acionados.
+3. **Quais APIs chama?** Rotas/Edge Functions e o que fazem a jusante.
+4. **Quais tabelas/colunas/RLS?** Inclusive relações via foreign key.
+5. **Quais contratos TypeScript/Zod dependem desse dado?**
+6. **Quais outros fluxos compartilham essa lógica?**
+
+### Componentes de Alto Risco (auditoria completa obrigatória antes de editar):
+
+| Componente                            | Risco      | Motivo                                         |
+| ------------------------------------- | ---------- | ---------------------------------------------- |
+| `src/components/ui/button.tsx`        | 🔴 Crítico | Usado em praticamente 100% das rotas           |
+| `src/components/ui/sheet.tsx`         | 🔴 Crítico | 24+ wizards/drawers de criação                 |
+| `src/routes/__root.tsx`               | 🔴 Crítico | Pai global — auth, providers, error boundaries |
+| `src/routes/agency.$slug.tsx`         | 🔴 Crítico | Layout pai de 80+ rotas de agência             |
+| `src/integrations/supabase/client.ts` | 🔴 Crítico | Instância compartilhada do client              |
+| `src/styles.css`                      | 🔴 Crítico | Design system global — afeta 100% das telas    |
+
+> "Trocar a cor de um botão de login" tem o mesmo rigor de auditoria que alterar uma coluna do banco — até confirmar que não é reutilizado em fluxo crítico.
+
+---
+
+## 🎨 § 6 — Design System (Tolerância Zero a Hardcode Visual)
+
+### Regra Suprema
+
+**Todo estilo DEVE derivar de `DESIGN.md` + `src/styles.css`.** É terminantemente proibido injetar valores arbitrários diretamente em componentes React.
+
+```tsx
+// ✅ CORRETO — usa token semântico
+className="bg-surface border border-border rounded-[var(--radius-md)]"
+
+// ❌ PROIBIDO — hardcode visual
+className="bg-white/5 border-white/10" // viola o design system em tema claro
+style={{ backgroundColor: '#f0f0f0', borderRadius: '20px' }}
+```
+
+### Proibições Explícitas
+
+- `bg-white` ou `text-black` hardcoded em componentes
+- Qualquer hex `#xxxxxx` em arquivo `.tsx` ou `.ts` (deve estar em `styles.css`)
+- `shadow-*` e `box-shadow` decorativos (o TravelOS não usa sombras — só glassmorphism)
+- `bg-gradient-*` decorativo (sem função semântica de estado)
+- `bg-white/5`, `bg-white/10` — transparências fixas que quebram em temas alternados
+- Emoji como ícone de interface
+
+### Variáveis Semânticas do Tailwind v4
+
+O TravelOS usa Tailwind v4. As variáveis de cor **devem** ter o prefixo `--color-*`:
+```css
+/* ✅ CORRETO — Tailwind v4 namespace */
+--color-background: ...;
+--color-foreground: ...;
+--color-surface: ...;
+--color-muted-foreground: ...;
+
+/* ❌ ERRADO — Tailwind v3 namespace quebra o sistema */
+--background: ...;
+--foreground: ...;
+```
+
+### Checklist Visual (toda tela nova passa por isso)
+
+- [ ] Cores 100% via tokens de `DESIGN.md` / `src/styles.css`
+- [ ] Tipografia usa classes semânticas (`ds-display`, `ds-h1`, `ds-body-large`, `ds-meta`)
+- [ ] Contrastes legíveis em ambos os temas (claro e escuro/workspace)
+- [ ] Espaçamentos via tokens (`--spacing-*`), não valores fixos
+- [ ] Elementos responsivos — nenhum `width: XYZpx` fixo em layout principal
+- [ ] Alvos de toque ≥ 44px (WCAG 2.2 AA)
+- [ ] Estados implementados: `loading`, `empty`, `error`, `permission`, `unconfigured`
+- [ ] Glassmorphism via `color-mix(in srgb, var(--color-foreground) X%, transparent)`
+
+### Padrões de Layout do TravelOS
+
+- **Sidebar:** pill vertical ultra-fino, 40px collapsed, 190px expanded
+- **Formulários de criação:** `Sheet` full-screen — nunca Dialog pequeno
+- **Dashboards:** bento grid com glassmorphism
+- **Scrollbars:** invisíveis via `.no-scrollbar`
+
+---
+
+## 🔒 § 7 — Segurança por Design (Security by Default)
+
+### Regra 1 — RLS em 100% das tabelas
+
+Nenhuma tabela nova sem:
+```sql
+ALTER TABLE nome ENABLE ROW LEVEL SECURITY;
+```
+Gate de verificação (rodar antes de todo deploy):
+```sql
+SELECT tablename FROM pg_tables
+WHERE schemaname = 'public' AND rowsecurity = false;
+-- Se retornar qualquer linha: BLOQUEIO DE DEPLOY
+```
+
+### Regra 2 — Nenhuma policy `USING (true)` disfarçada de segurança
+
+- `USING (true)` = sem RLS na prática
+- Toda policy deve amarrar em `auth.uid()` ou `agency_id` do tenant
+
+### Regra 3 — `service_role` nunca no frontend
+
+Grep de verificação pré-deploy:
+```bash
+grep -r "service_role" src/ --include="*.ts" --include="*.tsx"
+# Qualquer resultado = BLOQUEIO
+```
+
+### Regra 4 — Secrets nunca hardcoded
+
+Somente `import.meta.env.VITE_*` (frontend) ou `Deno.env.get()` (Edge Functions).
+```bash
+grep -rE "(sk-|sbp_|password\s*=\s*['\"])" src/ --include="*.ts" --include="*.tsx"
+```
+
+### Regra 5 — IDOR: Todo acesso por ID exige verificação de posse
+
+- Todo endpoint `/trips/:id`, `/quotes/:id` verifica `auth.uid()` = dono
+- Nunca confiar no frontend para filtrar dados — RLS é a barreira definitiva
+
+### Regra 6 — XSS: `dangerouslySetInnerHTML` proibido sem sanitização
+
+- Obrigatório: `DOMPurify.sanitize()` em todo conteúdo de usuário renderizado como HTML
+
+### Regra 7 — Middleware não é barreira de segurança (CVE-2025-29927)
+
+- Validação de sessão SEMPRE dentro de Route Handlers e Edge Functions
+
+### Regra 8 — Storage Buckets
+
+- Nunca `public: true` por padrão
+- Acesso a arquivo = policy explícita documentada, não bucket inteiro aberto
+
+### Regra 9 — Modelagem de Ameaças STRIDE
+
+Para features que manipulam financeiro, contratos ou dados de passageiro/documento:
+→ Executar análise STRIDE antes da implementação.
+
+---
+
+## ⚡ § 8 — Performance e Anti-Rerenderização Catastrófica
+
+Um loop de renderização com escrita no banco pode esgotar a cota do Supabase e derrubar a plataforma para todos os tenants.
+
+### Checklist obrigatório em todo componente criado ou modificado:
+
+- [ ] `useEffect` com array de dependências SEMPRE explícito
+- [ ] Objetos/Arrays como dependência → `useMemo` ou primitivos
+- [ ] `onClick={fn}` (referência) — nunca `onClick={fn()}` (invocação)
+- [ ] `setState` nunca no corpo do componente fora de handler/effect
+- [ ] Autosave com debounce mínimo de 500ms
+- [ ] Subscriptions Realtime com cleanup: `return () => supabase.removeChannel(channel)`
+- [ ] `refetchInterval` mínimo de 30s para dados não críticos
+- [ ] `React.memo` em componentes pesados renderizados em lista
+- [ ] Paginação obrigatória em queries de tabelas sem limite (mensagens, logs, reservas)
+
+> **Teste mental:** "Se este componente re-renderizar 100x em 1 segundo, o que acontece no banco?" Se a resposta for "grava 100x" → bug bloqueante.
+
+---
+
+## 🧬 § 9 — Match Global (Sincronismo de Ponta a Ponta)
+
+Após qualquer mudança, verificar sincronismo entre todas as camadas:
+
+### Camada de Dados
+- [ ] `src/types/supabase.ts` regenerado após migration? (`supabase gen types typescript --linked > src/types/supabase.ts`)
+- [ ] Campos acessados no frontend existem no schema real? (sem `as any`)
+- [ ] UUIDs não se perderam na cadeia pai → filho → serviço → DB?
+- [ ] Foreign keys válidas após mudança de schema?
+
+### Camada de API
+- [ ] Todo `supabase.from('tabela')` aponta para recurso que existe?
+- [ ] Edge Functions ↔ Client: payload de input/output sincronizado?
+- [ ] RPCs referenciadas no frontend existem no banco?
+
+### Camada de Segurança
+- [ ] Policies existentes cobrem o novo fluxo de dados?
+- [ ] Multi-tenancy: policy isola por `agency_id`?
+
+### Camada de UI
+- [ ] Contratos de props atualizados em todos os consumidores?
+- [ ] Nenhum import não usado, componente órfão ou código morto?
+
+### Emitir ao final de cada tarefa:
+```
+✅ Match Global — [nome da tarefa]
+- Schema ↔ Types: regenerado / não necessário (motivo)
+- RLS: verificado — X tabelas afetadas, todas com policy
+- Props: Y componentes consumidores atualizados
+- Código morto: nenhum encontrado / Z arquivos removidos
+```
+
+---
+
+## 📦 § 10 — Regras de Dados e Negócio
+
+1. **Sem acesso direto ao Supabase em componentes React.** Toda mutação passa por `src/services/*`. Supabase é persistência protegida por RLS.
+2. **Contexto multi-tenant inviolável.** Toda tabela tem `agency_id`. Toda query filtra por `agency_id`. Usuário de agência A nunca acessa dados de agência B.
+3. **Nenhum cálculo financeiro no cliente.** Comissões, totais, margens e lucros são calculados/validados no servidor (trigger ou RPC).
+4. **Dinheiro = `numeric(12,2)` no banco.** Nunca float. Formatação via `src/lib/formatters.ts`.
+5. **Datas:** ISO UTC no banco. Exibição em `America/Sao_Paulo` via `src/lib/formatters.ts`.
+6. **Sem dados fictícios.** Nada de arrays hardcoded, imagens externas aleatórias, botões sem destino. Feature incompleta = oculta da navegação.
+7. **Integrações** têm status `unconfigured | testing | active | error`. Sem credencial = "configuração ausente", nunca simular sucesso.
+8. **Idempotência obrigatória** em toda operação financeira/pagamento (evitar cobranças duplicadas).
+9. **Passaportes e vistos são críticos.** Falhas de data de validade invalidam contratos de viagem. Validação obrigatória no backend.
+10. **UUID não substitui autorização.** `agency_id` + `auth.uid()` verificados no servidor sempre.
+
+---
+
+## 🏗️ § 11 — Convenções de Código
+
+- `TypeScript strict`; sem `any` implícito; proibido `@ts-ignore` para esconder schema quebrado.
+- Validação de input/output via **Zod** — schemas compartilhados entre frontend e Edge Functions.
+- DTOs distintos das entidades do banco.
+- Rotas refletem estritamente o estado funcional. Features planejadas não vazam para o registry de rotas.
+- Componentes de dado/ação implementam obrigatoriamente: `loading`, `empty`, `error`, `permission`, `disabled`, `unconfigured`.
+- Componentes focados: < 200 linhas idealmente. Se ultrapassar, extrair lógica para hook ou service.
+- Dead code proibido em produção: nenhum `// TODO: conectar depois` em features, nunca `console.log` sem intenção.
+- Acessibilidade WCAG 2.2 AA: alvos ≥ 44px, contraste 4.5:1 mínimo, botões com `whitespace-nowrap`.
+
+---
+
+## 🚢 § 12 — Deploy Completo (Pipeline Obrigatório)
+
+**Quando o usuário solicitar "deploy completo", executar na ordem exata:**
+
+### Fase 1 — Auditoria Pré-Deploy
+```bash
+powershell -ExecutionPolicy Bypass -Command "npm run typecheck"
+# Zero erros TypeScript. Se falhar: corrigir antes de prosseguir.
+```
+```sql
+SELECT tablename FROM pg_tables WHERE schemaname = 'public' AND rowsecurity = false;
+-- Se retornar linhas: BLOQUEIO. Criar migration RLS primeiro.
+```
+```bash
+grep -r "service_role" src/ --include="*.ts" --include="*.tsx"
+# Se retornar: BLOQUEIO. Remover antes de prosseguir.
+```
+
+### Fase 2 — Deploy Backend (Supabase)
 ```bash
 powershell -ExecutionPolicy Bypass -Command "npx supabase db push"
 powershell -ExecutionPolicy Bypass -Command "npx supabase functions deploy"
+powershell -ExecutionPolicy Bypass -Command "npx supabase gen types typescript --linked > src/types/supabase.ts"
 ```
 - Project Ref: `esmppoxxnyiscidzsjvy`
-- Personal Access Token: já configurado via `supabase login`
-- Se o CLI falhar: usar MCP `supabase-mcp-server` com `apply_migration` e `deploy_edge_function`.
+- Supabase URL: `https://esmppoxxnyiscidzsjvy.supabase.co`
+- Fallback: MCP `supabase-mcp-server` → `apply_migration` + `deploy_edge_function`
 
-### FASE 3 — Deploy Frontend (Cloudflare Pages via Wrangler)
+### Fase 3 — Build e Deploy Frontend (Cloudflare Pages)
 ```bash
+powershell -ExecutionPolicy Bypass -Command "npm run build"
 powershell -ExecutionPolicy Bypass -Command "npx wrangler pages deploy dist --project-name travelagencias --branch main --commit-dirty=true"
 ```
 - URL de produção: `https://travelagencias.pages.dev/`
-- **CRÍTICO:** Se `CLOUDFLARE_API_TOKEN` não estiver configurado no ambiente, emitir laudo técnico com o comando exato para o usuário executar.
 
-### FASE 4 — Versionamento Git
+### Fase 4 — Git
 ```bash
-git add .
+git add -A
 git pull --rebase origin main
-git commit -m "feat(deploy): <descrição semântica do que foi alterado>"
+git commit -m "feat|fix|refactor|security|perf(módulo): descrição precisa do que mudou e por quê"
 git push origin main
 ```
-- Analisar e resolver conflitos. Nunca fazer push de código quebrado.
+- Nunca `git push --force` sem análise e aprovação explícita do usuário.
+- Mensagens semânticas: `feat`, `fix`, `refactor`, `security`, `perf`, `chore`, `docs`.
 
-### FASE 5 — Verificação Pós-Deploy
-- Confirmar se o endpoint `https://travelagencias.pages.dev/` está respondendo.
-- Confirmar se as Edge Functions estão ativas via Supabase Dashboard ou MCP.
-- Emitir relatório de conclusão com status de cada etapa.
+### Fase 5 — Smoke Test Pós-Deploy
+- Confirmar `https://travelagencias.pages.dev/` respondendo.
+- Confirmar Edge Functions ativas.
+- Relatório: o que foi deployado, quais migrations rodaram, quais funções foram atualizadas.
 
-### Fail-Safe: Se qualquer etapa for irrecuperável
-Emitir **Laudo Técnico Cirúrgico** contendo:
-1. Qual etapa falhou e por quê (código de erro exato).
-2. Quais arquivos/recursos estão envolvidos.
-3. Comando exato (copy/paste) para o usuário executar no terminal local.
-
----
-
-## 🧬 REGRA PÉTREA 2 — "Match Global" (Sincronia de Ponta a Ponta)
-
-O sistema é um organismo vivo. Qualquer alteração tem raio de impacto. Ao **planejar, implementar e finalizar** qualquer tarefa, execute:
-
-### Checklist de Match Global
-- [ ] **Schema vs Frontend:** Toda coluna nova/alterada no banco tem seu tipo atualizado no `types/supabase.ts` e nos hooks React que a consomem.
-- [ ] **UUIDs e IDs:** Verificar que nenhum UUID/ID se perdeu na passagem de props entre componentes pai, filho, serviço e DB.
-- [ ] **Contratos de Props:** Se um componente mudou sua interface, rastrear todos os pontos que o instanciam e atualizar.
-- [ ] **Hooks e Queries:** Confirmar que `useQuery`, `useMutation` e subscriptions do Supabase Realtime ainda apontam para os endpoints/tabelas corretos.
-- [ ] **Edge Functions vs Client:** O payload de input/output das Edge Functions deve estar sincronizado com o código cliente que as invoca.
-- [ ] **RLS e Permissões:** Toda nova query ou mutação deve passar pela camada de RLS. Verificar se as policies cobrem os novos fluxos de dados.
-- [ ] **Design vs Lógica:** Ao alterar UI, confirmar que os handlers de eventos ainda se conectam às funções corretas sem quebrar o fluxo de dados.
-
-### Quando Disparar o Match Global?
-- Ao alterar qualquer schema de banco de dados.
-- Ao alterar interfaces TypeScript compartilhadas.
-- Ao renomear ou mover componentes, serviços ou rotas.
-- Ao adicionar ou remover campos em formulários.
-- Ao qualquer solicitação de design/UI do usuário.
+### Fail-Safe
+Se etapa for irrecuperável, emitir **Laudo Técnico Cirúrgico** com:
+1. Qual etapa falhou e código de erro exato
+2. Quais arquivos/recursos envolvidos
+3. Comando exato (copy/paste ready) para o usuário executar
 
 ---
 
-## 🔒 REGRA PÉTREA 3 — Security Sweep (Anti-Vícios de IA)
+## 🏆 § 13 — Princípios de Engenharia de Elite
 
-**45% do código gerado por IA tem vulnerabilidades de segurança** (Veracode Research, 2025). Este sweep deve ser executado antes de todo deploy e ao revisar código novo.
-
-### Vícios Críticos de IA (Verificar SEMPRE)
-
-#### 1. Supabase RLS — O Vício mais crítico (CVE-2025-48757)
-SQL de auditoria (rodar via MCP execute_sql):
-`SELECT schemaname, tablename, rowsecurity FROM pg_tables WHERE schemaname = 'public' AND rowsecurity = false;`
-- **PROIBIDO:** Tabelas com `rowsecurity = false` expostas à `anon` key.
-- **PROIBIDO:** Policies com `USING (true)` sem filtro de usuário.
-- **PROIBIDO:** `service_role` key em qualquer código frontend ou repositório público.
-- **EXIGIDO:** Toda nova tabela deve ter `ALTER TABLE nome ENABLE ROW LEVEL SECURITY` + policies específicas por papel (role).
-
-#### 2. Secrets Hardcoded
-- **PROIBIDO:** Chaves de API, tokens, passwords em código-fonte, mesmo em comentários.
-- **EXIGIDO:** Usar exclusivamente variáveis de ambiente (`import.meta.env.VITE_*` para frontend, `Deno.env.get()` para Edge Functions).
-- Verificar sempre: nenhum `sbp_`, `sk-`, `service_role` ou `password` em arquivos `.ts` / `.tsx`.
-
-#### 3. IDOR / Broken Object Level Authorization
-- Todo acesso a recurso por ID (`/trips/:id`, `/quotes/:id`) deve ter verificação explícita de que `auth.uid()` é o dono ou tem permissão.
-- Nunca confiar apenas no frontend para filtrar dados do usuário. O RLS do banco é a barreira definitiva.
-
-#### 4. XSS — Injeção de HTML
-- **PROIBIDO:** `dangerouslySetInnerHTML` sem sanitização via `DOMPurify` (já instalado no projeto).
-- Todo conteúdo de usuário renderizado deve passar por `DOMPurify.sanitize()`.
-
-#### 5. Dependências Alucinadas (Package Hallucination)
-- Antes de instalar qualquer pacote npm novo, verificar se existe no npmjs.com.
-- IA pode sugerir pacotes inexistentes que foram registrados por atacantes.
-
-#### 6. Middleware como Único Guardião (CVE-2025-29927)
-- Middleware de autenticação pode ser bypassado via headers manipulados.
-- **EXIGIDO:** Validação de sessão/autorização SEMPRE dentro de Route Handlers, Server Actions e na camada de acesso a dados — nunca confiando só no middleware.
+1. **Inventário antes de criar.** Antes de criar componente, tabela, hook, serviço ou migration — verificar se já existe. `grep -r "nomeDaFuncionalidade" src/` primeiro.
+2. **Auditoria End-to-End.** Nunca corrija localmente um sintoma. Descubra a causa raiz e resolva sistemicamente.
+3. **Sem workarounds.** Bug persistente = investigar a raiz do fluxo e refatorar a lógica completa.
+4. **Evolução propagada.** Ao melhorar uma abstração, propagar a melhoria para todos os consumidores no projeto.
+5. **Verdade no Runtime.** A prova de completude vem de código executado, persistência real, RLS testado — não de tipagem ou documentação.
+6. **Código morto = débito.** Dead imports, funções não usadas, `console.log` acidentais são proibidos em produção.
 
 ---
 
-## ⚡ REGRA PÉTREA 4 — Anti-Rerenderização Catastrófica
-
-Loops de renderização silenciosos podem derrubar o servidor DB por volume massivo de queries. Ao criar ou modificar componentes React, verificar OBRIGATORIAMENTE:
-
-### Vícios de Rerenderização (Checklist)
-- [ ] **`useEffect` sem dependency array:** Se omitido, roda após CADA render. Se atualizar estado dentro, cria loop infinito.
-- [ ] **Objetos/Arrays como dependência instável:** `useEffect([{ id }])` recria referência a cada render. Usar `useMemo` ou comparar primitivos.
-- [ ] **`onClick={fn()}`:** Invoca a função durante o render, não no clique. Usar `onClick={fn}` (referência, não invocação).
-- [ ] **Estado atualizado no corpo do componente:** Fora de `useEffect` ou handlers → loop imediato.
-- [ ] **Subscriptions sem cleanup:** `supabase.channel().subscribe()` sem `return () => supabase.removeChannel(channel)` → múltiplas subscriptions acumuladas.
-- [ ] **`useQuery` com `refetchInterval` agressivo:** Intervalos curtos em queries pesadas podem sobrecarregar o banco. Mínimo razoável: 30s para dados não críticos.
-- [ ] **`React.memo` ausente em componentes pesados de lista:** Re-renders de pais propagam para filhos desnecessariamente.
-
-### Quando o usuário reportar lentidão/travamento
-1. Identificar o componente que mais re-renderiza.
-2. Rastrear qual state/prop mudou para disparar o render.
-3. Aplicar `useMemo`, `useCallback` ou `React.memo` na causa raiz.
-4. Verificar subscriptions Realtime duplicadas no DevTools de rede.
-
----
-
-## 🏗️ REGRA PÉTREA 5 — Arquitetura Evolutiva (Não Inventar do Zero)
-
-Inspirado no framework Fabric (Identity → Steps → Output):
-
-1. **Antes de escrever qualquer código novo:** Auditar se a funcionalidade já existe de forma similar na base. Reaproveitar, sincronizar, refinar.
-2. **Código duplicado é dívida técnica:** Encontrou duplicação? Extraia para um serviço/hook compartilhado.
-3. **Sem workarounds (curativos):** Bug persistente? Investigar a raiz do fluxo. Refatorar a lógica completa se necessário.
-4. **Toda nova feature:** Deve estar alinhada com as regras de negócio da agência de turismo e com o modelo de dados existente.
-5. **Código limpo = código leve:** Componentes focados (<200 linhas idealmente), funções com responsabilidade única, imports limpos sem dead code.
-6. **Evolução propagada:** Ao melhorar uma abstração, propagar a melhoria para todos os consumidores desse código no projeto.
-
----
-
-## 📋 FRAMEWORK DE RESPOSTA (Padrão Fabric)
-
-Para toda solicitação do usuário, o raciocínio interno deve seguir:
-
-### IDENTITY
-"Sou um engenheiro PhD Senior de BigTech. Meu output deve ser de nível elite."
-
-### STEPS (antes de escrever código)
-1. Entender o escopo completo da mudança solicitada.
-2. Mapear o raio de impacto (Match Global).
-3. Verificar vulnerabilidades de segurança relevantes ao contexto.
-4. Identificar riscos de rerenderização na UI afetada.
-5. Planejar a implementação reutilizando código existente.
-6. Executar com precisão cirúrgica.
-7. Validar: typecheck + build + security sweep + match global.
-
-### OUTPUT INSTRUCTIONS
-- Respostas concisas em pt-BR, técnicas e diretas.
-- Ao fazer mudanças de código: sempre mostrar o raio de impacto.
-- Ao detectar vulnerabilidade: nomear o CVE ou padrão (ex: "IDOR", "RLS misconfiguration") e corrigi-la imediatamente.
-- Nunca deixar TODO, FIXME ou placeholder em código de produção.
-- Ao finalizar qualquer tarefa: emitir checklist de verificação confirmando os itens críticos.
-
----
-
-## 🔑 Credenciais e Configurações do Projeto
+## 🔑 § 14 — Credenciais e Configurações do Projeto
 
 - **Supabase Project Ref:** `esmppoxxnyiscidzsjvy`
 - **Supabase URL:** `https://esmppoxxnyiscidzsjvy.supabase.co`
-- **DB Password:** `EEaR6399!@#2026`
 - **Cloudflare Pages Project:** `travelagencias`
 - **Produção URL:** `https://travelagencias.pages.dev/`
-- **Wrangler Deploy Command:** `powershell -ExecutionPolicy Bypass -Command "npx wrangler pages deploy dist --project-name travelagencias --branch main --commit-dirty=true"`
+- **Wrangler Deploy:** `powershell -ExecutionPolicy Bypass -Command "npx wrangler pages deploy dist --project-name travelagencias --branch main --commit-dirty=true"`
 - **Build Command:** `powershell -ExecutionPolicy Bypass -Command "npm run build"` (usa `NODE_OPTIONS=--max-old-space-size=8192` internamente)
 
 ---
 
-## 📁 Rules e Skills Detalhadas
-
-Ver `.agents/rules/` para regras completas por tema:
-- `01-no-mock-no-scratch.md` — Zero dado mockado, zero código do zero
-- `02-design-system.md` — Design System e anti-"vibe coded"
-- `03-blast-radius.md` — Análise de impacto antes de qualquer mudança
-- `04-match-verification.md` — Verificação de sincronismo pós-tarefa
-- `05-security.md` — Segurança: RLS, IDOR, XSS, secrets
-- `06-performance.md` — Anti-rerenderização catastrófica
-- `07-deploy-and-git.md` — Pipeline de deploy completo
-
-Ver `.agents/skills/` para capacidades sob demanda:
-- `blast-radius-analysis/` — Protocolo de análise de impacto
-- `stride-threat-model/` — Modelagem de ameaças STRIDE
-- `match-report/` — Relatório de sincronismo pós-tarefa
-
-## 🧑‍💼 Catálogo de Agentes Especialistas
-
-Ver `.agents/docs/agent-catalog.md` para os 12 agentes especialistas:
-- **AMPLIFY** — Expande prompts em especificações técnicas completas
-- **INVENTORY** — Previne código duplicado via varredura obrigatória
-- **PRINCIPAL** — Code Review nível BigTech (tipagem, camadas, acoplamento)
-- **REDTEAM** — Auditoria de segurança adversarial (IDOR, XSS, JWT, RLS)
-- **DBMASTER** — Autoridade sobre schema, RLS, índices e migrations
-- **UIUX** — Premium visual audit (tokens, animações, responsividade)
-- **CMSARCH** — Arquitetura do portal público e editor de blocos
-- **QA** — Gate de regressão antes de todo merge/deploy
-- **TOURISM** — Valida fit operacional turístico (vouchers, tarifas, grupos)
-- **SALES** — Auditoria do funil CRM e fluxo de propostas
-- **LEGAL** — Conformidade LGPD, contratos eletrônicos, hash de integridade
-- **PERFORMANCE** — SRE: queries, paginação, bundle, N+1, timeouts
-
----
-
-## 🏆 REGRAS CONSOLIDADAS — Melhores Práticas dos Projetos Jah e HR Shoes
-
-> Estas regras foram importadas e adaptadas dos projetos irmãos (Jah Community Platform e HR Shoes Commerce).
-> Em caso de conflito com qualquer regra acima, a regra mais restritiva sempre prevalece.
-
-### FONTES ÚNICAS DE VERDADE
-
-| Assunto                                            | Documento                                  |
-| -------------------------------------------------- | ------------------------------------------ |
-| Tokens de design, tipografia, estados, responsivo  | `DESIGN.md` + `src/styles/index.css`       |
-| Plano, escopo, critérios de aceite                 | `.agents/constitution/TRAVELOS_CONSTITUTION.md` |
-| Regras de negócio turístico                        | `.agents/constitution/TRAVEL_BUSINESS_RULES.md` |
-| Segurança, RBAC/RLS, LGPD, uploads                 | `.agents/constitution/DEFINITION_OF_SECURE.md` |
-| Componentes e estados canônicos                    | `.agents/constitution/DEFINITION_OF_PREMIUM.md` |
-| Definition of Done (DoD)                           | `.agents/constitution/DEFINITION_OF_DONE.md` |
-
-### REGRAS INVIOLÁVEIS (Consolidadas de Jah + HR Shoes)
-
-1. **Sem acesso direto ao Supabase em componentes React.** Toda mutação sensível passa por RPC (`SECURITY DEFINER`) ou `src/services/*`. O cliente Supabase da anon key é somente para leitura pública e operações RLS-protegidas.
-
-2. **Nenhum cálculo financeiro/operacional no cliente.** Comissões, totais, descontos, lucro, impostos — calculados exclusivamente no servidor via trigger ou RPC. Violação = fraude potencial.
-
-3. **Dinheiro = numeric(12,2) no banco / integer cents no frontend** quando usado para comparação. Nunca float. Formatação via `src/lib/formatters.ts`.
-
-4. **Datas** ISO UTC no armazenamento; exibição em `America/Sao_Paulo` via `src/lib/formatters.ts`.
-
-5. **Sem dados fictícios, "Em breve" ou placeholders visuais.** Botão que aparece deve ter ação real. Feature incompleta deve ser oculta da navegação.
-
-6. **Integrações** (WhatsApp, Email, GDS, Pagamento) têm status `unconfigured | testing | active | error`. Sem credencial = UI de integração desaparece ou mostra estado "configuração ausente".
-
-7. **Design Flat Premium.** Sem `shadow-*`, sem `bg-gradient-*`. Cores via design tokens de `src/styles/index.css`. Nunca hex hardcoded em componentes. O usuário explicitamente rejeita sombras e gradientes.
-
-8. **Idempotência e transação** em toda operação financeira/pagamento/comissão.
-
-9. **Segredos nunca no bundle/logs.** `service_role` key somente em `client.server.ts` e Edge Functions.
-
-10. **UUID não substitui autorização.** `agency_id` + `auth.uid()` verificados no servidor sempre.
-
-11. **Nunca inventariar depois de criar.** Antes de criar componente, tabela, hook, serviço, migration — verificar se já existe.
-
-12. **Nada de `any`, `@ts-ignore` ou cast para esconder schema quebrado.** Corrigir o tipo, não silenciar o TypeScript.
-
-13. **Empty/loading/error states são obrigatórios** em toda tela que busca dados.
-
-14. **Toast de sucesso só após confirmação real do backend.** Nunca otimista sem fallback real.
-
-15. **Toda política RLS deve ter cenário de acesso e bloqueio documentado.** Nenhuma tabela nova sem `ENABLE ROW LEVEL SECURITY` + policies por role.
-
-16. **`USING (true)` proibido** exceto em tabelas de leitura genuinamente públicas (planos, branding da plataforma, configurações globais de leitura). Nunca em operações de escrita sem filtro de role.
-
-17. **Nenhum agente pode autoaprovar sua própria entrega.** Toda entrega relevante passa pelo Release Gate (`.agents/constitution/NO_SELF_APPROVAL_POLICY.md`).
-
-18. **Código limpo = código leve.** Componentes focados (< 200 linhas idealmente), funções com responsabilidade única. Código morto (dead code) é proibido em produção.
-
-19. **Subscriptions Realtime precisam de cleanup.** Toda `supabase.channel().subscribe()` deve ter `return () => supabase.removeChannel(channel)` no cleanup do `useEffect`.
-
-20. **Contexto multi-tenant é inviolável.** Nenhum agente/cliente vê dados de outra agência. `agency_id` é sempre filtrado no banco, nunca dependendo apenas do frontend.
-
-### PROCESSO DE EXECUÇÃO OBRIGATÓRIO
-
-Antes de qualquer entrega, percorrer este ciclo:
-
-```
-1. INVENTORY → verificar se já existe
-2. IMPACT → mapear raio de impacto (tabelas, hooks, componentes, RLS)
-3. PLAN → plano detalhado por microfase
-4. IMPLEMENT → com precisão cirúrgica
-5. TYPECHECK → npm run typecheck sem erros
-6. SECURITY SWEEP → RLS, IDOR, XSS, service_role
-7. MATCH GLOBAL → schema ↔ supabase.ts ↔ frontend ↔ migrations
-8. RELEASE GATE → evidência real (não declaração)
-```
-
-### CONVENÇÕES DE CÓDIGO
-
-- `TypeScript strict`; sem `any` implícito; DTOs distintos das entidades.
-- Validação compartilhada por schema (`zod`).
-- Rotas refletem estritamente o estado funcional. Features planejadas não vazam para o registro de rotas.
-- Acessibilidade WCAG 2.2 AA. Botões com `whitespace-nowrap` (sem quebra de linha).
-- Componentes de dado/ação implementam: `loading`, `empty`, `error`, `permission`, `disabled`, `unconfigured`.
+*TravelOS Engineering Protocol v3.0 — Baseado nos melhores padrões de Jah Community Platform e HR Shoes Commerce.*

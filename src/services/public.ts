@@ -282,7 +282,15 @@ export async function fetchPublicTour(agencySlug: string, tourId: string) {
     .eq("group_tour_id", tourId)
     .eq("status", "confirmed");
 
-  return { agency, tour, days, layout, assignedSeats, settings, confirmedCount: confirmedCount || 0 };
+  return {
+    agency,
+    tour,
+    days,
+    layout,
+    assignedSeats,
+    settings,
+    confirmedCount: confirmedCount || 0,
+  };
 }
 
 export async function enrollPublicTour(

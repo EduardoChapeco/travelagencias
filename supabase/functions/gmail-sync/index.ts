@@ -10,18 +10,26 @@ const corsHeaders = {
 const GMAIL_API_BASE = "https://gmail.googleapis.com/gmail/v1/users/me";
 
 /** Extract clear text body from Gmail parts */
-function extractBody(payload: any): { text: string, html: string } {
+function extractBody(payload: any): { text: string; html: string } {
   let text = "";
   let html = "";
-  
+
   if (!payload) return { text, html };
-  
+
   if (payload.mimeType === "text/plain" && payload.body?.data) {
-    text = new TextDecoder().decode(Uint8Array.from(atob(payload.body.data.replace(/-/g, "+").replace(/_/g, "/")), c => c.charCodeAt(0)));
+    text = new TextDecoder().decode(
+      Uint8Array.from(atob(payload.body.data.replace(/-/g, "+").replace(/_/g, "/")), (c) =>
+        c.charCodeAt(0),
+      ),
+    );
   } else if (payload.mimeType === "text/html" && payload.body?.data) {
-    html = new TextDecoder().decode(Uint8Array.from(atob(payload.body.data.replace(/-/g, "+").replace(/_/g, "/")), c => c.charCodeAt(0)));
+    html = new TextDecoder().decode(
+      Uint8Array.from(atob(payload.body.data.replace(/-/g, "+").replace(/_/g, "/")), (c) =>
+        c.charCodeAt(0),
+      ),
+    );
   }
-  
+
   if (payload.parts) {
     for (const part of payload.parts) {
       const parsed = extractBody(part);
@@ -38,7 +46,7 @@ async function extractEntitiesWithOrchestrator(
   body: string,
   orchestratorUrl: string,
   serviceRoleKey: string,
-  agencyId: string | null
+  agencyId: string | null,
 ) {
   const prompt = `
     Analise o seguinte email recebido por uma agência de viagens.
@@ -60,7 +68,7 @@ async function extractEntitiesWithOrchestrator(
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        "Authorization": `Bearer ${serviceRoleKey}`,
+        Authorization: `Bearer ${serviceRoleKey}`,
       },
       body: JSON.stringify({
         action: "completion",
@@ -96,14 +104,14 @@ async function generateEmbedding(
   text: string,
   orchestratorUrl: string,
   serviceRoleKey: string,
-  agencyId: string | null
+  agencyId: string | null,
 ): Promise<number[] | null> {
   try {
     const res = await fetch(orchestratorUrl, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        "Authorization": `Bearer ${serviceRoleKey}`,
+        Authorization: `Bearer ${serviceRoleKey}`,
       },
       body: JSON.stringify({
         action: "embeddings",
@@ -130,7 +138,7 @@ serve(async (req) => {
     const { message } = await req.json();
     if (!message?.data) return new Response("Invalid Pub/Sub message", { status: 400 });
 
-    const dataBuffer = Uint8Array.from(atob(message.data), c => c.charCodeAt(0));
+    const dataBuffer = Uint8Array.from(atob(message.data), (c) => c.charCodeAt(0));
     const dataStr = new TextDecoder().decode(dataBuffer);
     const payload = JSON.parse(dataStr);
 
@@ -155,9 +163,12 @@ serve(async (req) => {
 
     // 2. Fetch new emails since historyId
     const startHistoryId = account.gmail_history_id ?? historyId;
-    const historyRes = await fetch(`${GMAIL_API_BASE}/history?startHistoryId=${startHistoryId}&historyTypes=messageAdded`, {
-      headers: { Authorization: `Bearer ${account.access_token_enc}` }
-    });
+    const historyRes = await fetch(
+      `${GMAIL_API_BASE}/history?startHistoryId=${startHistoryId}&historyTypes=messageAdded`,
+      {
+        headers: { Authorization: `Bearer ${account.access_token_enc}` },
+      },
+    );
 
     if (!historyRes.ok) {
       console.error("History fetch failed", await historyRes.text());
@@ -166,28 +177,33 @@ serve(async (req) => {
 
     const historyData = await historyRes.json();
     const newMsgIds: string[] = (historyData.history ?? []).flatMap((h: any) =>
-      (h.messagesAdded ?? []).map((m: any) => m.message.id)
+      (h.messagesAdded ?? []).map((m: any) => m.message.id),
     );
 
     // 3. Process each message
     for (const msgId of newMsgIds) {
-      const { data: existingMsg } = await supabase.from("emails").select("id").eq("gmail_message_id", msgId).maybeSingle();
+      const { data: existingMsg } = await supabase
+        .from("emails")
+        .select("id")
+        .eq("gmail_message_id", msgId)
+        .maybeSingle();
       if (existingMsg) continue;
 
       const msgRes = await fetch(`${GMAIL_API_BASE}/messages/${msgId}?format=full`, {
-        headers: { Authorization: `Bearer ${account.access_token_enc}` }
+        headers: { Authorization: `Bearer ${account.access_token_enc}` },
       });
       if (!msgRes.ok) continue;
       const msg = await msgRes.json();
 
       const headers = msg.payload?.headers ?? [];
-      const getHeader = (name: string) => headers.find((h: any) => h.name.toLowerCase() === name.toLowerCase())?.value ?? "";
-      
+      const getHeader = (name: string) =>
+        headers.find((h: any) => h.name.toLowerCase() === name.toLowerCase())?.value ?? "";
+
       const from = getHeader("From");
       const subject = getHeader("Subject");
       const to = getHeader("To");
       const threadId = msg.threadId;
-      
+
       const { text: bodyText, html: bodyHtml } = extractBody(msg.payload);
 
       if (from.includes(emailAddress)) continue;
@@ -200,13 +216,13 @@ serve(async (req) => {
         bodyText || bodyHtml,
         orchestratorUrl,
         serviceRoleKey,
-        agencyId
+        agencyId,
       );
       const vector = await generateEmbedding(
         `${subject} ${bodyText}`,
         orchestratorUrl,
         serviceRoleKey,
-        agencyId
+        agencyId,
       );
 
       // 5. Semantic Linking & Conciliation
@@ -214,7 +230,11 @@ serve(async (req) => {
       let link_method = "none";
 
       if (aiData.ticket_hash) {
-        const { data: tkt } = await supabase.from("support_tickets").select("id").eq("ticket_hash", aiData.ticket_hash).maybeSingle();
+        const { data: tkt } = await supabase
+          .from("support_tickets")
+          .select("id")
+          .eq("ticket_hash", aiData.ticket_hash)
+          .maybeSingle();
         if (tkt) {
           linked_ticket_id = tkt.id;
           link_method = "hash_exact_match";
@@ -222,7 +242,14 @@ serve(async (req) => {
       }
 
       if (!linked_ticket_id) {
-        const { data: prevEmail } = await supabase.from("emails").select("linked_ticket_id").eq("gmail_thread_id", threadId).not("linked_ticket_id", "is", null).order("created_at", { ascending: false }).limit(1).maybeSingle();
+        const { data: prevEmail } = await supabase
+          .from("emails")
+          .select("linked_ticket_id")
+          .eq("gmail_thread_id", threadId)
+          .not("linked_ticket_id", "is", null)
+          .order("created_at", { ascending: false })
+          .limit(1)
+          .maybeSingle();
         if (prevEmail?.linked_ticket_id) {
           linked_ticket_id = prevEmail.linked_ticket_id;
           link_method = "thread_match";
@@ -230,24 +257,28 @@ serve(async (req) => {
       }
 
       // 6. Insert into emails table
-      const { data: insertedEmail, error: insertError } = await supabase.from("emails").insert({
-        org_id: account.org_id,
-        email_account_id: account.id,
-        gmail_message_id: msgId,
-        gmail_thread_id: threadId,
-        subject,
-        body_text: bodyText,
-        body_html: bodyHtml,
-        body_vector: vector,
-        from_email: from,
-        to_emails: to.split(",").map((s: string) => s.trim()),
-        direction: "inbound",
-        ai_category: aiData.intent,
-        ai_extracted_entities: aiData,
-        ai_summary: aiData.summary,
-        linked_ticket_id,
-        link_method
-      }).select().single();
+      const { data: insertedEmail, error: insertError } = await supabase
+        .from("emails")
+        .insert({
+          org_id: account.org_id,
+          email_account_id: account.id,
+          gmail_message_id: msgId,
+          gmail_thread_id: threadId,
+          subject,
+          body_text: bodyText,
+          body_html: bodyHtml,
+          body_vector: vector,
+          from_email: from,
+          to_emails: to.split(",").map((s: string) => s.trim()),
+          direction: "inbound",
+          ai_category: aiData.intent,
+          ai_extracted_entities: aiData,
+          ai_summary: aiData.summary,
+          linked_ticket_id,
+          link_method,
+        })
+        .select()
+        .single();
 
       if (insertError) {
         console.error("Failed to insert email:", insertError);
@@ -261,16 +292,18 @@ serve(async (req) => {
           org_id: account.org_id,
           event_type: "email_received",
           email_id: insertedEmail.id,
-          description: `Novo email recebido: ${subject}`
+          description: `Novo email recebido: ${subject}`,
         });
       }
     }
 
     // Update history id
-    await supabase.from("email_accounts").update({ gmail_history_id: historyData.historyId, last_sync_at: new Date().toISOString() }).eq("id", account.id);
+    await supabase
+      .from("email_accounts")
+      .update({ gmail_history_id: historyData.historyId, last_sync_at: new Date().toISOString() })
+      .eq("id", account.id);
 
     return new Response("OK", { status: 200 });
-
   } catch (err: any) {
     console.error("gmail-sync error:", err);
     return new Response(JSON.stringify({ error: err.message }), { status: 500 });

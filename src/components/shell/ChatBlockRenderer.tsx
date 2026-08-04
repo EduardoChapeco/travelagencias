@@ -41,9 +41,7 @@ export function LeadCard({ data }: { data: any }) {
         )}
         {data.notes && (
           <div className="col-span-2 border-t border-border/40 pt-1.5 mt-1">
-            <span className="ds-meta text-muted-foreground block uppercase">
-              Notas de Viagem
-            </span>
+            <span className="ds-meta text-muted-foreground block uppercase">Notas de Viagem</span>
             <p className="ds-meta text-muted-foreground line-clamp-2 mt-0.5">{data.notes}</p>
           </div>
         )}
@@ -169,7 +167,7 @@ export function ConfirmationCard({
               className="flex justify-between gap-2 border-b border-border/20 last:border-b-0 pb-1 last:pb-0"
             >
               <span className="font-semibold text-muted-foreground/80">{label}:</span>
-              <span className="text-foreground text-right truncate max-w-[140px]">
+              <span className="text-foreground text-right truncate max-w-32">
                 {typeof v === "object" ? JSON.stringify(v) : String(v)}
               </span>
             </div>

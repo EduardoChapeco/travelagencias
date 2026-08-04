@@ -123,7 +123,12 @@ export function AILandingPageSheet({
         )}
 
         <div className="pt-4 flex justify-end gap-3 border-t border-border mt-4">
-          <Button variant="ghost" type="button" onClick={() => onOpenChange(false)} disabled={loading}>
+          <Button
+            variant="ghost"
+            type="button"
+            onClick={() => onOpenChange(false)}
+            disabled={loading}
+          >
             Cancelar
           </Button>
           <Button variant="default" type="submit" disabled={loading} className="gap-2">

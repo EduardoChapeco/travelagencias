@@ -2,7 +2,25 @@ import { createFileRoute, Link, useParams } from "@tanstack/react-router";
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import {
-  Search, Filter, FileText, Building2, Calendar, FileSignature, ArrowRight, User, Settings2, ChevronDown, BookOpen, AlertCircle, Eye, Trash2, Copy, Archive, MoreHorizontal, Edit2 } from "lucide-react";
+  Search,
+  Filter,
+  FileText,
+  Building2,
+  Calendar,
+  FileSignature,
+  ArrowRight,
+  User,
+  Settings2,
+  ChevronDown,
+  BookOpen,
+  AlertCircle,
+  Eye,
+  Trash2,
+  Copy,
+  Archive,
+  MoreHorizontal,
+  Edit2,
+} from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAgency } from "@/lib/agency-context";
 import { EmptyState } from "@/components/shell/PageHeader";
@@ -29,7 +47,9 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ContractClauseLibrary } from "@/components/contracts/ContractClauseLibrary";
 
 export const Route = createFileRoute("/agency/$slug/contracts")({
-  head: ({ context }: any) => ({ meta: [{ title: `Contratos · ${context?.brand?.platform_name || 'Turis'}` }] }),
+  head: ({ context }: any) => ({
+    meta: [{ title: `Contratos · ${context?.brand?.platform_name || "Turis"}` }],
+  }),
   component: ContractsPage,
 });
 
@@ -44,8 +64,6 @@ type ContractRow = {
   package_summary: string | null;
   client_data: { name?: string } | null;
 };
-
-
 
 function ContractsPage() {
   const { agency, isAgencyAdmin } = useAgency();
@@ -93,7 +111,9 @@ function ContractsPage() {
       cell: ({ row }) => (
         <div className="flex flex-col">
           <span className="font-medium text-foreground">v{row.getValue("version")}</span>
-          <span className="ds-meta text-muted-foreground">{formatDate(row.original.created_at)}</span>
+          <span className="ds-meta text-muted-foreground">
+            {formatDate(row.original.created_at)}
+          </span>
         </div>
       ),
       size: 100,
@@ -103,11 +123,17 @@ function ContractsPage() {
       header: ({ column }) => <DataTableColumnHeader column={column} title="Cliente" />,
       cell: ({ row }) => {
         const clientNames = Array.isArray(row.original.client_data)
-          ? row.original.client_data.map((x: any) => x.name || x.full_name || "").filter(Boolean).join(", ")
+          ? row.original.client_data
+              .map((x: any) => x.name || x.full_name || "")
+              .filter(Boolean)
+              .join(", ")
           : (row.original.client_data as any)?.name;
         const displayNames = clientNames || "Não identificado";
         return (
-          <span className="font-medium text-foreground truncate max-w-[200px] block" title={displayNames}>
+          <span
+            className="font-medium text-foreground truncate max-w-xs block"
+            title={displayNames}
+          >
             {displayNames}
           </span>
         );
@@ -134,16 +160,14 @@ function ContractsPage() {
       cell: ({ row }) => {
         const status = row.getValue("status") as string;
         const statusInfo = CONTRACT_STATUS_MAP[status] || { label: status, tone: "neutral" };
-        return (
-          <StatusBadge tone={statusInfo.tone}>
-            {statusInfo.label}
-          </StatusBadge>
-        );
+        return <StatusBadge tone={statusInfo.tone}>{statusInfo.label}</StatusBadge>;
       },
     },
     {
       accessorKey: "total_value",
-      header: ({ column }) => <DataTableColumnHeader column={column} title="Valor Total" className="justify-end" />,
+      header: ({ column }) => (
+        <DataTableColumnHeader column={column} title="Valor Total" className="justify-end" />
+      ),
       cell: ({ row }) => (
         <div className="text-right font-mono text-xs whitespace-nowrap">
           {formatCurrency(Number(row.getValue("total_value")))}
@@ -152,7 +176,9 @@ function ContractsPage() {
     },
     {
       id: "actions",
-      header: ({ column }) => <DataTableColumnHeader column={column} title="Ações" className="justify-end" />,
+      header: ({ column }) => (
+        <DataTableColumnHeader column={column} title="Ações" className="justify-end" />
+      ),
       cell: ({ row }) => {
         const c = row.original;
         return (
@@ -172,46 +198,64 @@ function ContractsPage() {
 
   return (
     <div className="w-full flex h-full flex-col overflow-hidden">
-              <PageHeader
-          title="Contratos"
-          search={activeTab === "list" ? {
-            value: search,
-            onChange: (v) => {
-              setSearch(v);
-              setPage(1);
-            },
-            placeholder: "Buscar por pacote...",
-          } : undefined}
-          filters={[
-            { label: "Lista de Contratos", value: "list" },
-            ...(isAgencyAdmin ? [
-              { label: "Biblioteca de Cláusulas", value: "clauses" },
-              { label: "Configurações", value: "admin" },
-            ] : []),
-          ]}
-          activeFilter={activeTab}
-          onFilterChange={(v) => setActiveTab(v as any)}
-          actions={
-            activeTab === "list" ? (
-              <Select
-                value={statusFilter}
-                onChange={(e: any) => {
-                  setStatusFilter(e.target.value);
+      <PageHeader
+        title="Contratos"
+        search={
+          activeTab === "list"
+            ? {
+                value: search,
+                onChange: (v) => {
+                  setSearch(v);
                   setPage(1);
-                }}
-                className="h-7 ds-meta font-semibold hover:bg-white/5 rounded-full text-white/70 hover:text-white px-2 cursor-pointer"
-              >
-                <option value="all" className="bg-neutral-900 text-white">Todos Status</option>
-                <option value="draft" className="bg-neutral-900 text-white">Rascunho</option>
-                <option value="sent" className="bg-neutral-900 text-white">Enviado</option>
-                <option value="viewed" className="bg-neutral-900 text-white">Visualizado</option>
-                <option value="signed" className="bg-neutral-900 text-white">Assinado</option>
-                <option value="cancelled" className="bg-neutral-900 text-white">Cancelado</option>
-              </Select>
-            ) : undefined
-          }
-        />
-      
+                },
+                placeholder: "Buscar por pacote...",
+              }
+            : undefined
+        }
+        filters={[
+          { label: "Lista de Contratos", value: "list" },
+          ...(isAgencyAdmin
+            ? [
+                { label: "Biblioteca de Cláusulas", value: "clauses" },
+                { label: "Configurações", value: "admin" },
+              ]
+            : []),
+        ]}
+        activeFilter={activeTab}
+        onFilterChange={(v) => setActiveTab(v as any)}
+        actions={
+          activeTab === "list" ? (
+            <Select
+              value={statusFilter}
+              onChange={(e: any) => {
+                setStatusFilter(e.target.value);
+                setPage(1);
+              }}
+              className="h-7 ds-meta font-semibold hover:glass rounded-full text-white/70 hover:text-white px-2 cursor-pointer"
+            >
+              <option value="all" className="bg-neutral-900 text-white">
+                Todos Status
+              </option>
+              <option value="draft" className="bg-neutral-900 text-white">
+                Rascunho
+              </option>
+              <option value="sent" className="bg-neutral-900 text-white">
+                Enviado
+              </option>
+              <option value="viewed" className="bg-neutral-900 text-white">
+                Visualizado
+              </option>
+              <option value="signed" className="bg-neutral-900 text-white">
+                Assinado
+              </option>
+              <option value="cancelled" className="bg-neutral-900 text-white">
+                Cancelado
+              </option>
+            </Select>
+          ) : undefined
+        }
+      />
+
       <Tabs value={activeTab} onValueChange={setActiveTab} className="flex flex-col flex-1 min-h-0">
         {activeTab === "list" && (
           <div className="page-content page-section dock-offset">
@@ -267,7 +311,7 @@ function ContractsPage() {
             <ContractClauseLibrary agencyId={agency.id} isInline={true} />
           </div>
         )}
- 
+
         {/* ── Visualização do Painel de Administrador (Inline) ───────────────────────── */}
         {activeTab === "admin" && agency && (
           <div className="page-content page-section dock-offset">

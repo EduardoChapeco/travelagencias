@@ -49,8 +49,7 @@ serve(async (req) => {
     const itemsXml = (tours || [])
       .map((t) => {
         const link = `https://${agency.slug}.turis.com/tour/${t.id}`;
-        const imageLink =
-          t.cover_image_url || `https://${agency.slug}.turis.com/placeholder.jpg`;
+        const imageLink = t.cover_image_url || `https://${agency.slug}.turis.com/placeholder.jpg`;
         // Calculate availability dynamically
         const availableSeats = (t.total_seats || 0) - (t.reserved_seats || 0);
         const availability = availableSeats > 0 ? "in stock" : "out of stock";

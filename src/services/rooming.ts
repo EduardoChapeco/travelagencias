@@ -85,12 +85,9 @@ export async function createRoomRecord(
  */
 export async function updateRoomRecord(
   roomId: string,
-  patch: Partial<Omit<RoomRecord, "id" | "created_at" | "updated_at">>,
+  patch: Database["public"]["Tables"]["boarding_rooming_list"]["Update"],
 ): Promise<void> {
-  const { error } = await supabase
-    .from("boarding_rooming_list")
-    .update(patch as any)
-    .eq("id", roomId);
+  const { error } = await supabase.from("boarding_rooming_list").update(patch).eq("id", roomId);
 
   if (error) throw new Error(`Error updating room: ${error.message}`);
 }

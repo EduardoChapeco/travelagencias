@@ -33,7 +33,9 @@ import { supabase } from "@/integrations/supabase/client";
 import { PageHeader } from "@/components/shell/PageHeader";
 
 export const Route = createFileRoute("/agency/$slug/company")({
-  head: ({ context }: any) => ({ meta: [{ title: `Minha empresa · ${context?.brand?.platform_name || 'Turis'}` }] }),
+  head: ({ context }: any) => ({
+    meta: [{ title: `Minha empresa · ${context?.brand?.platform_name || "Turis"}` }],
+  }),
   component: Page,
 });
 
@@ -390,42 +392,42 @@ function Page() {
 
   return (
     <div className="flex h-full flex-col overflow-hidden">
-              <PageHeader
-          title="Dados da Agência"
-          filters={TABS.map((t) => ({ label: t.label, value: t.id }))}
-          activeFilter={tab}
-          onFilterChange={(v) => setTab(v as any)}
-          actions={
-            <div className="flex items-center gap-1.5">
-              <a
-                href={portalUrl}
-                target="_blank"
-                rel="noreferrer"
-                className="h-7 px-3 flex items-center gap-1 rounded-full text-white/60 hover:text-white hover:bg-white/10 transition-colors"
-              >
-                <Eye className="h-3.5 w-3.5" />
-                <span className="hidden sm:inline">Ver portal</span>
-              </a>
-              <Button
-                onClick={() => setPreviewOpen(!previewOpen)}
-                className="h-7 px-3 flex items-center gap-1 rounded-full text-white/60 hover:text-white hover:bg-white/10 transition-colors cursor-pointer"
-              >
-                <Globe className="h-3.5 w-3.5" />
-                <span>{previewOpen ? "Fechar prévia" : "Prévia"}</span>
-              </Button>
-              <Button
-                type="submit"
-                form="company-form"
-                disabled={busy}
-                className="h-7 px-3 flex items-center gap-1 rounded-full bg-brand text-brand-foreground hover:bg-brand/90 transition-colors cursor-pointer disabled:opacity-50 font-bold"
-              >
-                <Save className="h-3.5 w-3.5" />
-                <span>{busy ? "Salvando..." : "Salvar"}</span>
-              </Button>
-            </div>
-          }
-        />
-      
+      <PageHeader
+        title="Dados da Agência"
+        filters={TABS.map((t) => ({ label: t.label, value: t.id }))}
+        activeFilter={tab}
+        onFilterChange={(v) => setTab(v as any)}
+        actions={
+          <div className="flex items-center gap-1.5">
+            <a
+              href={portalUrl}
+              target="_blank"
+              rel="noreferrer"
+              className="h-7 px-3 flex items-center gap-1 rounded-full text-white/60 hover:text-white hover:glass-dark transition-colors"
+            >
+              <Eye className="h-3.5 w-3.5" />
+              <span className="hidden sm:inline">Ver portal</span>
+            </a>
+            <Button
+              onClick={() => setPreviewOpen(!previewOpen)}
+              className="h-7 px-3 flex items-center gap-1 rounded-full text-white/60 hover:text-white hover:glass-dark transition-colors cursor-pointer"
+            >
+              <Globe className="h-3.5 w-3.5" />
+              <span>{previewOpen ? "Fechar prévia" : "Prévia"}</span>
+            </Button>
+            <Button
+              type="submit"
+              form="company-form"
+              disabled={busy}
+              className="h-7 px-3 flex items-center gap-1 rounded-full bg-brand text-brand-foreground hover:bg-brand/90 transition-colors cursor-pointer disabled:opacity-50 font-bold"
+            >
+              <Save className="h-3.5 w-3.5" />
+              <span>{busy ? "Salvando..." : "Salvar"}</span>
+            </Button>
+          </div>
+        }
+      />
+
       <div className="flex-1 overflow-y-auto px-4  md:pr-6 py-4 min-h-0 pb-24">
         <div className={`grid gap-6 ${previewOpen ? "lg:grid-cols-[1fr_340px]" : ""}`}>
           <div className="space-y-0">
@@ -587,13 +589,13 @@ function Page() {
                           type="button"
                           onClick={syncGbp}
                           disabled={gbpSyncing}
-                          className="flex items-center gap-1.5 rounded-full border-none px-2.5 py-1 text-xs font-medium hover:glass bg-white/5 border-white/10 disabled:opacity-50 transition-colors"
+                          className="flex items-center gap-1.5 rounded-full border-none px-2.5 py-1 text-xs font-medium hover:glass disabled:opacity-50 transition-colors"
                         >
                           <RefreshCw className={`h-3 w-3 ${gbpSyncing ? "animate-spin" : ""}`} />
                           {gbpSyncing ? "Sincronizando…" : "Sincronizar GBP"}
                         </Button>
                       </div>
-                      <div className="mb-3 flex items-start gap-2 rounded-full border-none/50 glass bg-white/5 border-white/10 px-3 py-2">
+                      <div className="mb-3 flex items-start gap-2 rounded-full border-none/50 glass px-3 py-2">
                         <Info className="mt-0.5 h-3.5 w-3.5 shrink-0 text-muted-foreground" />
                         <p className="ds-meta text-muted-foreground">
                           Preencha o Google Business ID e o Maps URL para sincronizar dados com o
@@ -664,7 +666,7 @@ function Page() {
                         </Field>
                       ))}
                     </div>
-                    <div className="rounded-full border-none glass bg-white/5 border-white/10 p-3 text-xs text-muted-foreground">
+                    <div className="rounded-full border-none glass p-3 text-xs text-muted-foreground">
                       <p className="font-medium text-foreground mb-1">Prévia no portal público</p>
                       <p>Todas as redes ativas aparecem como ícones no rodapé do portal.</p>
                       <a
@@ -796,7 +798,7 @@ function Page() {
               </div>
               <div className="overflow-hidden" style={{ maxHeight: "70vh", overflowY: "auto" }}>
                 {/* Hero preview */}
-                <div className="relative flex h-32 items-end glass bg-white/5 border-white/10 overflow-hidden">
+                <div className="relative flex h-32 items-end glass overflow-hidden">
                   {form.cover_image_url && (
                     <img
                       src={form.cover_image_url}
@@ -829,27 +831,27 @@ function Page() {
                   </div>
                   <div className="flex flex-wrap gap-1">
                     {form.portal_theme.show_tours && (
-                      <span className="rounded-full glass bg-white/5 border-white/10 px-2 py-0.5 ds-meta">
+                      <span className="rounded-full glass px-2 py-0.5 ds-meta">
                         Roteiros
                       </span>
                     )}
                     {form.portal_theme.show_blog && (
-                      <span className="rounded-full glass bg-white/5 border-white/10 px-2 py-0.5 ds-meta">
+                      <span className="rounded-full glass px-2 py-0.5 ds-meta">
                         Blog
                       </span>
                     )}
                     {form.portal_theme.show_gallery && (
-                      <span className="rounded-full glass bg-white/5 border-white/10 px-2 py-0.5 ds-meta">
+                      <span className="rounded-full glass px-2 py-0.5 ds-meta">
                         Galeria
                       </span>
                     )}
                     {form.portal_theme.show_hours && (
-                      <span className="rounded-full glass bg-white/5 border-white/10 px-2 py-0.5 ds-meta">
+                      <span className="rounded-full glass px-2 py-0.5 ds-meta">
                         Horários
                       </span>
                     )}
                     {form.portal_theme.show_map && (
-                      <span className="rounded-full glass bg-white/5 border-white/10 px-2 py-0.5 ds-meta">
+                      <span className="rounded-full glass px-2 py-0.5 ds-meta">
                         Mapa
                       </span>
                     )}

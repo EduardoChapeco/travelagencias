@@ -9,7 +9,9 @@ import { FormTextarea as Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 
 export const Route = createFileRoute("/p/$agency_slug/visa/$id")({
-  head: ({ context }: any) => ({ meta: [{ title: `Solicitação de visto · ${context?.brand?.platform_name || 'Turis'}` }] }),
+  head: ({ context }: any) => ({
+    meta: [{ title: `Solicitação de visto · ${context?.brand?.platform_name || "Turis"}` }],
+  }),
   component: Page,
 });
 
@@ -81,7 +83,7 @@ function Page() {
           Os seus dados já estão no sistema da nossa agência.
         </p>
 
-        <div className="mt-6 glass bg-white/5 border-white/10/50 border-none/50 p-4 rounded-[var(--radius-card)]">
+        <div className="mt-6 glass/50 border-none/50 p-4 rounded-[var(--radius-card)]">
           <div className="ds-meta uppercase tracking-widest font-bold text-muted-foreground">
             Protocolo de Atendimento
           </div>

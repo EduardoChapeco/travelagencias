@@ -1,18 +1,38 @@
 import { useState, useEffect, useRef, useCallback } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { TaskWithRelations, TaskStatus, TaskPriority, TaskChecklistItem } from "@/lib/tasks/task.types";
+import {
+  TaskWithRelations,
+  TaskStatus,
+  TaskPriority,
+  TaskChecklistItem,
+} from "@/lib/tasks/task.types";
 import { TASK_STATUSES, TASK_PRIORITIES } from "@/lib/tasks/task.constants";
 import { toast } from "sonner";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import { cn } from "@/lib/utils";
 import {
-  X, Check, Loader2, Edit3, Save,
-  Calendar, Clock, User, Flag, Tag,
-  AlignLeft, Circle, CheckCircle2, BarChart3,
-  Timer, RotateCcw, MessageSquare, Trash2,
-  AlertTriangle, Plus,
+  X,
+  Check,
+  Loader2,
+  Edit3,
+  Save,
+  Calendar,
+  Clock,
+  User,
+  Flag,
+  Tag,
+  AlignLeft,
+  Circle,
+  CheckCircle2,
+  BarChart3,
+  Timer,
+  RotateCcw,
+  MessageSquare,
+  Trash2,
+  AlertTriangle,
+  Plus,
 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
@@ -40,7 +60,6 @@ import { TaskChecklistSection } from "./TaskChecklistSection";
 import { TaskCommentsSection } from "./TaskCommentsSection";
 import { DSTagPicker } from "@/components/ds/DSTagPicker";
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
 const db = supabase as any;
 
 interface TaskDetailDrawerProps {
@@ -92,9 +111,7 @@ export function TaskDetailDrawer({ task, open, onClose, onUpdated }: TaskDetailD
 
   // ── Checklist state ────────────────────────────────────────────────────────
 
-
   // ── Comments state ─────────────────────────────────────────────────────────
-
 
   // ── Sync draft when task changes ───────────────────────────────────────────
   useEffect(() => {
@@ -111,12 +128,9 @@ export function TaskDetailDrawer({ task, open, onClose, onUpdated }: TaskDetailD
     setDescValue((task.description as string) || "");
     setIsDirty(false);
 
-
     // Load checklist
 
-
     // Load comments
-
   }, [task?.id, open]);
 
   // Track dirty state
@@ -137,7 +151,9 @@ export function TaskDetailDrawer({ task, open, onClose, onUpdated }: TaskDetailD
     setIsSaving(true);
     try {
       // Log activity
-      const { data: { user } } = await supabase.auth.getUser();
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
 
       const { error } = await db
         .from("tasks")
@@ -152,9 +168,7 @@ export function TaskDetailDrawer({ task, open, onClose, onUpdated }: TaskDetailD
           ...(draft.status === "done" && task.status !== "done"
             ? { resolved_at: new Date().toISOString() }
             : {}),
-          ...(draft.status !== "done" && task.status === "done"
-            ? { resolved_at: null }
-            : {}),
+          ...(draft.status !== "done" && task.status === "done" ? { resolved_at: null } : {}),
         })
         .eq("id", task.id);
 
@@ -162,14 +176,17 @@ export function TaskDetailDrawer({ task, open, onClose, onUpdated }: TaskDetailD
 
       // Insert activity log
       if (user) {
-        await db.from("task_activity_logs").insert({
-          task_id: task.id,
-          agency_id: task.agency_id,
-          user_id: user.id,
-          action: "updated",
-          new_value: { title: draft.title, status: draft.status, priority: draft.priority },
-          old_value: { title: task.title, status: task.status, priority: task.priority },
-        }).then(() => {}); // fire-and-forget — don't block save
+        await db
+          .from("task_activity_logs")
+          .insert({
+            task_id: task.id,
+            agency_id: task.agency_id,
+            user_id: user.id,
+            action: "updated",
+            new_value: { title: draft.title, status: draft.status, priority: draft.priority },
+            old_value: { title: task.title, status: task.status, priority: task.priority },
+          })
+          .then(() => {}); // fire-and-forget — don't block save
       }
 
       setIsDirty(false);
@@ -205,14 +222,16 @@ export function TaskDetailDrawer({ task, open, onClose, onUpdated }: TaskDetailD
 
   // ── Comments ──────────────────────────────────────────────────────────────
 
-
   const doneCount = localChecklist.filter((c) => c.is_done).length;
   const checkProgress = localChecklist.length > 0 ? (doneCount / localChecklist.length) * 100 : 0;
 
   if (!task) return null;
 
   const statusDef = TASK_STATUSES[draft.status] || { label: draft.status, color: "var(--muted)" };
-  const priorityDef = TASK_PRIORITIES[draft.priority] || { label: draft.priority, color: "var(--muted)" };
+  const priorityDef = TASK_PRIORITIES[draft.priority] || {
+    label: draft.priority,
+    color: "var(--muted)",
+  };
 
   return (
     <>
@@ -230,24 +249,27 @@ export function TaskDetailDrawer({ task, open, onClose, onUpdated }: TaskDetailD
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel onClick={handleDiscardAndClose}>Descartar</AlertDialogCancel>
-            <AlertDialogAction onClick={handleSaveAndClose} className="bg-[var(--success)] hover:bg-[var(--success)]/90">
+            <AlertDialogAction
+              onClick={handleSaveAndClose}
+              className="bg-[var(--success)] hover:bg-[var(--success)]/90"
+            >
               Salvar e Fechar
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
 
-      <div 
+      <div
         className={cn(
           "fixed inset-0 z-50 flex items-end justify-center p-4 bg-overlay/30 backdrop-blur-xs transition-opacity duration-300",
-          open ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none"
+          open ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none",
         )}
       >
         <div className="absolute inset-0" onClick={handleClose} />
         <div
           className={cn(
             "relative w-full max-w-3xl h-[85vh] sm:h-[80vh] flex flex-col bg-[var(--surface)] border border-border/80 rounded-2xl overflow-hidden transition-all duration-300 transform",
-            open ? "translate-y-0 opacity-100" : "translate-y-12 opacity-0"
+            open ? "translate-y-0 opacity-100" : "translate-y-12 opacity-0",
           )}
         >
           {/* ── Header ────────────────────────────────────────────────────── */}
@@ -271,7 +293,8 @@ export function TaskDetailDrawer({ task, open, onClose, onUpdated }: TaskDetailD
                   #{task.id.slice(0, 8)}
                 </span>
                 <span className="ds-meta text-muted-foreground/60">
-                  Criada {format(new Date(task.created_at), "dd/MM/yy 'às' HH:mm", { locale: ptBR })}
+                  Criada{" "}
+                  {format(new Date(task.created_at), "dd/MM/yy 'às' HH:mm", { locale: ptBR })}
                 </span>
                 {isSaving && (
                   <span className="flex items-center gap-1 ds-meta text-brand">
@@ -291,7 +314,6 @@ export function TaskDetailDrawer({ task, open, onClose, onUpdated }: TaskDetailD
           {/* ── Scrollable Content ─────────────────────────────────────────── */}
           <div className="flex-1 overflow-y-auto">
             <div className="px-6 py-4 space-y-5">
-
               {/* ── Properties Grid ───────────────────────────────────────── */}
               <div className="grid grid-cols-2 gap-3">
                 {/* Status */}
@@ -305,15 +327,21 @@ export function TaskDetailDrawer({ task, open, onClose, onUpdated }: TaskDetailD
                   >
                     <SelectTrigger className="font-semibold border-border/60 bg-[var(--surface-alt)]/40">
                       <div className="flex items-center gap-1.5">
-                        <span className="h-2 w-2 rounded-full shrink-0" style={{ backgroundColor: statusDef.color }} />
+                        <span
+                          className="h-2 w-2 rounded-full shrink-0"
+                          style={{ backgroundColor: statusDef.color }}
+                        />
                         <SelectValue />
                       </div>
                     </SelectTrigger>
                     <SelectContent>
                       {Object.entries(TASK_STATUSES).map(([k, v]) => (
-                        <SelectItem key={k} value={k} >
+                        <SelectItem key={k} value={k}>
                           <div className="flex items-center gap-2">
-                            <span className="h-2 w-2 rounded-full" style={{ backgroundColor: v.color }} />
+                            <span
+                              className="h-2 w-2 rounded-full"
+                              style={{ backgroundColor: v.color }}
+                            />
                             {v.label}
                           </div>
                         </SelectItem>
@@ -333,15 +361,21 @@ export function TaskDetailDrawer({ task, open, onClose, onUpdated }: TaskDetailD
                   >
                     <SelectTrigger className="font-semibold border-border/60 bg-[var(--surface-alt)]/40">
                       <div className="flex items-center gap-1.5">
-                        <span className="h-2 w-2 rounded-full shrink-0" style={{ backgroundColor: priorityDef.color }} />
+                        <span
+                          className="h-2 w-2 rounded-full shrink-0"
+                          style={{ backgroundColor: priorityDef.color }}
+                        />
                         <SelectValue />
                       </div>
                     </SelectTrigger>
                     <SelectContent>
                       {Object.entries(TASK_PRIORITIES).map(([k, v]) => (
-                        <SelectItem key={k} value={k} >
+                        <SelectItem key={k} value={k}>
                           <div className="flex items-center gap-2">
-                            <span className="h-2 w-2 rounded-full" style={{ backgroundColor: v.color }} />
+                            <span
+                              className="h-2 w-2 rounded-full"
+                              style={{ backgroundColor: v.color }}
+                            />
                             {v.label}
                           </div>
                         </SelectItem>
@@ -374,7 +408,9 @@ export function TaskDetailDrawer({ task, open, onClose, onUpdated }: TaskDetailD
                         <div className="h-5 w-5 rounded-full bg-brand/10 text-brand flex items-center justify-center text-[9px] font-black uppercase shrink-0">
                           {task.assignee.name?.charAt(0) || "?"}
                         </div>
-                        <span className="text-xs font-semibold truncate text-foreground">{task.assignee.name || "—"}</span>
+                        <span className="text-xs font-semibold truncate text-foreground">
+                          {task.assignee.name || "—"}
+                        </span>
                       </>
                     ) : (
                       <span className="text-xs text-muted-foreground/60">Não atribuído</span>
@@ -423,7 +459,8 @@ export function TaskDetailDrawer({ task, open, onClose, onUpdated }: TaskDetailD
                     <BarChart3 className="h-3 w-3" /> Dif.
                   </div>
                   <div className="text-base font-bold text-foreground">
-                    {task.difficulty_score || 1}<span className="ds-meta text-muted-foreground">/5</span>
+                    {task.difficulty_score || 1}
+                    <span className="ds-meta text-muted-foreground">/5</span>
                   </div>
                 </div>
               </div>
@@ -465,13 +502,9 @@ export function TaskDetailDrawer({ task, open, onClose, onUpdated }: TaskDetailD
                 onChange={(items) => setLocalChecklist(items)}
               />
 
-              <TaskCommentsSection
-                taskId={task.id}
-                agencyId={task.agency_id}
-              />
+              <TaskCommentsSection taskId={task.id} agencyId={task.agency_id} />
             </div>
           </div>
-
 
           {/* ── Footer Actions ─────────────────────────────────────────────── */}
           <div className="shrink-0 border-t border-border/60 px-6 py-3 flex items-center justify-between gap-3 bg-[var(--surface-alt)]/20">
@@ -479,14 +512,22 @@ export function TaskDetailDrawer({ task, open, onClose, onUpdated }: TaskDetailD
               <Badge
                 variant="outline"
                 className="text-[9px] font-bold"
-                style={{ color: statusDef.color, borderColor: `${statusDef.color}30`, backgroundColor: `${statusDef.color}08` }}
+                style={{
+                  color: statusDef.color,
+                  borderColor: `${statusDef.color}30`,
+                  backgroundColor: `${statusDef.color}08`,
+                }}
               >
                 {statusDef.label}
               </Badge>
               <Badge
                 variant="outline"
                 className="text-[9px] font-bold"
-                style={{ color: priorityDef.color, borderColor: `${priorityDef.color}30`, backgroundColor: `${priorityDef.color}08` }}
+                style={{
+                  color: priorityDef.color,
+                  borderColor: `${priorityDef.color}30`,
+                  backgroundColor: `${priorityDef.color}08`,
+                }}
               >
                 {priorityDef.label}
               </Badge>
@@ -527,7 +568,7 @@ export function TaskDetailDrawer({ task, open, onClose, onUpdated }: TaskDetailD
                   "h-8 text-xs gap-1.5 transition-all",
                   isDirty
                     ? "bg-brand hover:bg-brand/90 text-white"
-                    : "opacity-50 cursor-not-allowed"
+                    : "opacity-50 cursor-not-allowed",
                 )}
               >
                 {isSaving ? (

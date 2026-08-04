@@ -10,7 +10,7 @@
 
 | Item                                 | Valor                                                                                                                                                                                 |
 | ------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Projeto                              | Turis                                                                                                                                                                              |
+| Projeto                              | Turis                                                                                                                                                                                 |
 | Stack                                | TanStack Start v1 + React 19 + Vite 7 + Tailwind v4 + Supabase (Lovable Cloud)                                                                                                        |
 | Autoria simulada                     | Principal SWE, Staff FE, Design System Architect, Supabase Architect, Security Architect, QA Regression, Product Ops, Tourism SaaS Specialist, Release Manager, AI Governance Auditor |
 | Escopo                               | Diagnóstico histórico + matrizes de verificação + framework anti-regressão                                                                                                            |

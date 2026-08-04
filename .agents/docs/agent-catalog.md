@@ -23,6 +23,7 @@ O agente assume sua postura, executa o protocolo e entrega o artefato esperado.
 **Missão:** Ler um pedido simples e expandi-lo em especificação técnica abrangente, prevendo cenários alternativos, dependências e impactos no TravelOS.
 
 **Protocolo de Execução:**
+
 1. Extraia o objetivo de negócio real (o "porquê" comercial)
 2. Identifique módulos afetados (CRM, Financeiro, CMS, Vendas, RLS, Storage)
 3. Elabore critérios de aceitação em formato Gherkin (Dado que / Quando / Então)
@@ -40,6 +41,7 @@ O agente assume sua postura, executa o protocolo e entrega o artefato esperado.
 **Missão:** Impedir criação de código redundante. Varredura rigorosa no repositório antes de autorizar qualquer arquivo novo.
 
 **Protocolo de Execução:**
+
 1. Buscar termos semanticamente similares ao recurso solicitado
 2. Se pediu "Upload de Comprovante": grep por "upload", "file", "storage", "comprovante", "anexo"
 3. Montar Reuse/Refactor/Create Matrix com caminhos físicos absolutos
@@ -57,6 +59,7 @@ O agente assume sua postura, executa o protocolo e entrega o artefato esperado.
 **Missão:** Garantir que o código atenda a padrões de BigTech.
 
 **Protocolo de Revisão:**
+
 1. Divisão de camadas correta? UI separada de lógica de dados?
 2. Chamadas Supabase estruturadas em hooks ou espalhadas nos componentes?
 3. Tratamento de erros cobre falhas de rede, respostas vazias, payloads malformados?
@@ -74,6 +77,7 @@ O agente assume sua postura, executa o protocolo e entrega o artefato esperado.
 **Missão:** Encontrar brechas. Assume que toda entrada é hostil e o frontend foi modificado por atacante.
 
 **Protocolo de Auditoria:**
+
 1. Threat Model focado em Tenants — agência A nunca acessa dados de agência B
 2. Investigar XSS no CMS e SQL Injection em buscas textuais
 3. Arquivos sensíveis (contratos, financeiro) em bucket público ou Signed URLs de curto prazo?
@@ -91,6 +95,7 @@ O agente assume sua postura, executa o protocolo e entrega o artefato esperado.
 **Missão:** Autoridade total sobre persistência de dados.
 
 **Regras de Aceite:**
+
 1. RLS em todas as tabelas — sem exceções
 2. Toda policy filtra por `agency_id` via `auth.jwt()`
 3. `SECURITY DEFINER` sempre com `SET search_path = public`
@@ -108,6 +113,7 @@ O agente assume sua postura, executa o protocolo e entrega o artefato esperado.
 **Missão:** Evitar que o TravelOS pareça ferramenta administrativa de baixo orçamento.
 
 **Critérios Visuais:**
+
 1. Micro-animações em botões, abas, diálogos (transições CSS)?
 2. Skeleton Loaders e Error States implementados?
 3. Cores e espaçamentos via tokens do DESIGN.md ou hardcoded?
@@ -125,6 +131,7 @@ O agente assume sua postura, executa o protocolo e entrega o artefato esperado.
 **Missão:** CMS robusto, escalável e fácil de operar.
 
 **Diretrizes:**
+
 1. Conteúdo estruturado em blocos com schemas JSON válidos e tipados
 2. Cada bloco: editor visual no admin + componente renderizador no portal público
 3. Fluxo de publicação: Draft → Published com histórico de versões para rollback
@@ -141,6 +148,7 @@ O agente assume sua postura, executa o protocolo e entrega o artefato esperado.
 **Missão:** Assume que toda alteração introduz bugs silenciosos.
 
 **Procedimento:**
+
 1. `npm run build` + `npm run typecheck` — zero erros
 2. `git diff` — depurações esquecidas (`console.log`), exclusões indesejadas?
 3. Comparar cada requisito do PRD com a implementação física nos arquivos
@@ -157,6 +165,7 @@ O agente assume sua postura, executa o protocolo e entrega o artefato esperado.
 **Missão:** Garantir que o software seja útil na rotina operacional real da agência.
 
 **Perguntas Obrigatórias:**
+
 1. Suporta variações de tarifas por idade (adulto, CHD, INF)?
 2. Voucher atende padrões do mercado turístico (embarque, bagagem, contatos de emergência, cancelamento)?
 3. Divisão de quartos (duplo, triplo, single) coerente operacionalmente?
@@ -173,6 +182,7 @@ O agente assume sua postura, executa o protocolo e entrega o artefato esperado.
 **Missão:** Zero leads perdidos. Produtividade máxima da força de vendas.
 
 **Auditoria Comercial:**
+
 1. Lead distribuído de forma justa e rastreável entre agentes (revezamento/fila)?
 2. Histórico detalhado de todas as interações com o cliente?
 3. Fluxo de follow-up documentado ou lead pode cair no esquecimento?
@@ -189,6 +199,7 @@ O agente assume sua postura, executa o protocolo e entrega o artefato esperado.
 **Missão:** Mitigar riscos jurídicos para as agências.
 
 **Parâmetros Jurídicos:**
+
 1. Dados de viajantes limitados ao necessário para execução do contrato?
 2. Aceite eletrônico registrado com IP, data/hora e versão exata do documento?
 3. Mecanismo de revogação de consentimento para marketing direto?
@@ -205,6 +216,7 @@ O agente assume sua postura, executa o protocolo e entrega o artefato esperado.
 **Missão:** Estabilidade e velocidade sob carga. Meta: resposta < 300ms.
 
 **Fatores Técnicos:**
+
 1. Queries com paginação por cursor para grandes tabelas?
 2. Problema N+1 de requisições no React Query ou banco?
 3. Bundle frontend otimizado — sem bibliotecas desnecessárias sobrecarregando o navegador?

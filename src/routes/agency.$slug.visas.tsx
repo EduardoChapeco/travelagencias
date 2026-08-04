@@ -1,13 +1,38 @@
 import { createFileRoute, Link, useParams } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
 import { useQuery, useQueryClient, useMutation } from "@tanstack/react-query";
-import { Plus, GripVertical, Search, Globe, FileText, Check, Clock, Settings2, AlertCircle } from "lucide-react";
+import {
+  Plus,
+  GripVertical,
+  Search,
+  Globe,
+  FileText,
+  Check,
+  Clock,
+  Settings2,
+  AlertCircle,
+} from "lucide-react";
 import { PageHeader, ModuleActionButton } from "@/components/shell/PageHeader";
 import { ModuleAdminPanel } from "@/components/shell/ModuleAdminPanel";
 import {
-  DndContext, DragOverlay, PointerSensor, TouchSensor, KeyboardSensor, useSensor, useSensors, closestCorners, type DragEndEvent, type DragStartEvent, } from "@dnd-kit/core";
+  DndContext,
+  DragOverlay,
+  PointerSensor,
+  TouchSensor,
+  KeyboardSensor,
+  useSensor,
+  useSensors,
+  closestCorners,
+  type DragEndEvent,
+  type DragStartEvent,
+} from "@dnd-kit/core";
 import {
-  SortableContext, useSortable, verticalListSortingStrategy, arrayMove, sortableKeyboardCoordinates, } from "@dnd-kit/sortable";
+  SortableContext,
+  useSortable,
+  verticalListSortingStrategy,
+  arrayMove,
+  sortableKeyboardCoordinates,
+} from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import { fetchVisaStages, fetchVisas, persistVisaMove } from "@/services/visas";
 import { useAgency } from "@/lib/agency-context";
@@ -18,7 +43,9 @@ import { formatDate } from "@/lib/formatters";
 import { NewVisaWizard } from "@/components/visas/NewVisaWizard";
 
 export const Route = createFileRoute("/agency/$slug/visas")({
-  head: ({ context }: any) => ({ meta: [{ title: `Vistos e Passaportes · ${context?.brand?.platform_name || 'Turis'}` }] }),
+  head: ({ context }: any) => ({
+    meta: [{ title: `Vistos e Passaportes · ${context?.brand?.platform_name || "Turis"}` }],
+  }),
   component: VisasPage,
 });
 
@@ -157,36 +184,36 @@ function VisasPage() {
 
   return (
     <div className="flex h-full flex-col overflow-hidden">
-              <PageHeader
-          title="Vistos"
-          actions={
-            <div className="flex items-center gap-1.5">
-              <Link
-                to="/agency/$slug/visas-catalog"
-                params={{ slug }}
-                className="h-7 px-2.5 flex items-center gap-1.5 rounded-full border border-white/15 text-white/60 hover:text-white hover:bg-white/10 transition-colors cursor-pointer ds-meta font-semibold"
+      <PageHeader
+        title="Vistos"
+        actions={
+          <div className="flex items-center gap-1.5">
+            <Link
+              to="/agency/$slug/visas-catalog"
+              params={{ slug }}
+              className="h-7 px-2.5 flex items-center gap-1.5 rounded-full border border-white/15 text-white/60 hover:text-white hover:glass-dark transition-colors cursor-pointer ds-meta font-semibold"
+            >
+              <FileText className="w-3.5 h-3.5" /> Catálogo
+            </Link>
+            {isAgencyAdmin && (
+              <Button
+                onClick={() => setAdminPanelOpen(true)}
+                className="h-7 w-7 flex items-center justify-center rounded-full border border-white/15 text-white/60 hover:text-white hover:glass-dark transition-colors cursor-pointer"
+                title="Administrar Vistos"
               >
-                <FileText className="w-3.5 h-3.5" /> Catálogo
-              </Link>
-              {isAgencyAdmin && (
-                <Button
-                  onClick={() => setAdminPanelOpen(true)}
-                  className="h-7 w-7 flex items-center justify-center rounded-full border border-white/15 text-white/60 hover:text-white hover:bg-white/10 transition-colors cursor-pointer"
-                  title="Administrar Vistos"
-                >
-                  <Settings2 className="h-3.5 w-3.5" />
-                </Button>
-              )}
-            </div>
-          }
-          primaryAction={
-            <ModuleActionButton
-        label="Novo Processo"
-        icon={<Plus className="h-3.5 w-3.5" />}
-              onClick={() => setNewOpen(true)}
-            />
-          }
-        />
+                <Settings2 className="h-3.5 w-3.5" />
+              </Button>
+            )}
+          </div>
+        }
+        primaryAction={
+          <ModuleActionButton
+            label="Novo Processo"
+            icon={<Plus className="h-3.5 w-3.5" />}
+            onClick={() => setNewOpen(true)}
+          />
+        }
+      />
 
       <div className="flex-1 overflow-x-auto pt-4 px-4  md:pr-6 pb-24">
         {(stagesQ.isError || visasQ.isError) && (
@@ -194,9 +221,15 @@ function VisasPage() {
             <div className="h-9 w-9 rounded-full bg-red-100 flex items-center justify-center mb-2">
               <AlertCircle className="h-4 w-4 text-red-600" />
             </div>
-            <h3 className="text-sm font-bold text-red-800">Falha ao Carregar Processos de Vistos</h3>
+            <h3 className="text-sm font-bold text-red-800">
+              Falha ao Carregar Processos de Vistos
+            </h3>
             <p className="text-xs text-red-600 mt-1">
-              {stagesQ.isError && stagesQ.error instanceof Error ? stagesQ.error.message : visasQ.isError && visasQ.error instanceof Error ? visasQ.error.message : "Erro desconhecido."}
+              {stagesQ.isError && stagesQ.error instanceof Error
+                ? stagesQ.error.message
+                : visasQ.isError && visasQ.error instanceof Error
+                  ? visasQ.error.message
+                  : "Erro desconhecido."}
             </p>
           </div>
         )}
@@ -246,7 +279,7 @@ function StageColumn({ stage, items }: { stage: VisaStage; items: Visa[] }) {
   return (
     <div
       ref={setNodeRef}
-      className="flex h-full w-80 shrink-0 flex-col rounded-[var(--radius-card)] glass bg-white/5 border-white/10/50 border-none"
+      className="flex h-full w-80 shrink-0 flex-col rounded-[var(--radius-card)] glass/50 border-none"
     >
       <div className="flex items-center justify-between border-b border-border p-3">
         <div className="flex items-center gap-2">

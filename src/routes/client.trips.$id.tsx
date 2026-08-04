@@ -74,7 +74,9 @@ import { TabMemorias } from "@/components/portal/TabMemorias";
 // ─────────────────────────────────────────────────────────────────────────────
 
 export const Route = createFileRoute("/client/trips/$id")({
-  head: ({ context }: any) => ({ meta: [{ title: `Minha Viagem · ${context?.brand?.platform_name || 'Turis'}` }] }),
+  head: ({ context }: any) => ({
+    meta: [{ title: `Minha Viagem · ${context?.brand?.platform_name || "Turis"}` }],
+  }),
   component: ClientTripDetail,
 });
 
@@ -600,7 +602,7 @@ function ClientTripDetail() {
         <div className="absolute top-6 left-6">
           <Link
             to="/client/trips"
-            className="flex h-12 w-12 items-center justify-center rounded-full bg-white/20 text-white backdrop-blur-md hover:bg-white/30 transition-all"
+            className="flex h-12 w-12 items-center justify-center rounded-full glass-dark text-white backdrop-blur-md hover:bg-white/30 transition-all"
           >
             <ArrowLeft className="h-5 w-5" />
           </Link>
@@ -738,9 +740,7 @@ function ClientTripDetail() {
             {daysToTrip !== null && daysToTrip > 0 && (
               <div className="bg-brand text-brand-foreground rounded-3xl p-6 flex items-center justify-between">
                 <div>
-                  <div className="ds-label-caps opacity-80">
-                    Contagem Regressiva
-                  </div>
+                  <div className="ds-label-caps opacity-80">Contagem Regressiva</div>
                   <div className="text-sm font-medium mt-1">
                     Sua viagem se aproxima! Prepare as malas.
                   </div>
@@ -792,7 +792,7 @@ function ClientTripDetail() {
                       </h3>
                     </div>
                     <div className="grid grid-cols-2 gap-4 text-xs">
-                      <div className="p-3 glass bg-white/5 border-white/10/50 border-none rounded-[var(--radius-card)]">
+                      <div className="p-3 glass/50 border-none rounded-[var(--radius-card)]">
                         <span className="ds-meta text-muted-foreground uppercase font-bold block">
                           Sua Poltrona
                         </span>
@@ -800,7 +800,7 @@ function ClientTripDetail() {
                           {enrollment?.seat_number || "A definir"}
                         </strong>
                       </div>
-                      <div className="p-3 glass bg-white/5 border-white/10/50 border-none rounded-[var(--radius-card)]">
+                      <div className="p-3 glass/50 border-none rounded-[var(--radius-card)]">
                         <span className="ds-meta text-muted-foreground uppercase font-bold block">
                           Acomodação
                         </span>
@@ -837,7 +837,7 @@ function ClientTripDetail() {
         {activeTab === "explorar" && (
           <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
             <div className="bg-brand rounded-3xl p-8 text-brand-foreground relative overflow-hidden">
-              <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full blur-3xl -mr-20 -mt-20" />
+              <div className="absolute top-0 right-0 w-64 h-64 glass-dark rounded-full blur-3xl -mr-20 -mt-20" />
               <Compass className="w-10 h-10 mb-4 opacity-90" />
               <h2 className="text-3xl font-black tracking-tight mb-2">Seu Guia Inteligente</h2>
               <p className="text-white/80 font-medium max-w-lg leading-relaxed">
@@ -936,7 +936,7 @@ function ClientTripDetail() {
             <div className="space-y-6 py-4">
               {/* Opções de escolha se houver mais de uma */}
               {activeCase.alternatives && activeCase.alternatives.length > 1 && (
-                <div className="space-y-2 glass bg-white/5 border-white/10/10 p-3 rounded-[var(--radius-card)] border-none/60">
+                <div className="space-y-2 glass/10 p-3 rounded-[var(--radius-card)] border-none/60">
                   <span className="ds-meta font-bold text-muted-foreground uppercase block">
                     Selecione a opção de voo preferida:
                   </span>
@@ -1159,7 +1159,7 @@ function ClientTripDetail() {
               </div>
 
               {/* Signature Input */}
-              <div className="space-y-2 glass bg-white/5 border-white/10/10 p-4 rounded-[var(--radius-card)] border-none/60">
+              <div className="space-y-2 glass/10 p-4 rounded-[var(--radius-card)] border-none/60">
                 <Label htmlFor="sig-name" className="text-xs font-bold text-foreground">
                   Assinatura Eletrônica do Passageiro
                 </Label>

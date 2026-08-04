@@ -198,14 +198,16 @@ function ClientCombobox({
                 onChange={(e) => setQuickPhone(e.target.value)}
               />
               <div className="flex gap-2 pt-1">
-                <Button variant="ghost"
+                <Button
+                  variant="ghost"
                   type="button"
                   onClick={() => setShowQuickCreate(false)}
                   className="flex-1 h-8 text-xs"
                 >
                   Cancelar
                 </Button>
-                <Button variant="default"
+                <Button
+                  variant="default"
                   type="button"
                   onClick={handleQuickCreate}
                   disabled={creating || !quickName.trim()}
@@ -778,7 +780,11 @@ export function NewProposalSheet({
           <Button variant="ghost" type="button" onClick={onClose}>
             Cancelar
           </Button>
-          <Button variant="default" type="submit" disabled={submitting || !title.trim() || ocrLoading}>
+          <Button
+            variant="default"
+            type="submit"
+            disabled={submitting || !title.trim() || ocrLoading}
+          >
             {submitting ? "Criando…" : "Criar cotação →"}
           </Button>
         </div>

@@ -68,14 +68,6 @@ rounded:
   2xl: 28px
   3xl: 32px
   full: 999px
-spacing:
-  xs: 4px
-  sm: 8px
-  md: 16px
-  lg: 24px
-  xl: 32px
-  2xl: 48px
-  3xl: 64px
 components:
   button-primary:
     backgroundColor: "{colors.primary}"
@@ -84,11 +76,11 @@ components:
   card:
     backgroundColor: "{colors.surface}"
     rounded: "{rounded.2xl}"
-    padding: "{spacing.lg}"
+    padding: "24px"
   sheet:
     backgroundColor: "{colors.surface}"
     rounded: "{rounded.3xl}"
-    padding: "{spacing.xl}"
+    padding: "32px"
   badge:
     rounded: "{rounded.xs}"
 ---
@@ -101,14 +93,14 @@ The workspace is a fluid, transparent canvas resting on top of a global wallpape
 
 ## Colors
 
-The core palette relies heavily on alphas (transparencies) over a neutral wallpaper, with a single electric blue accent. 
+The core palette relies heavily on alphas (transparencies) over a neutral wallpaper, with a single electric blue accent.
 
 - **Primary (#3D6FF2):** The only driver for interaction. Used for active states and CTAs.
 - **Background & Foreground:** High-contrast neutral pairing, but largely superseded by the glass workspace in the main app.
 
 ## Typography
 
-Strictly sans-serif (`Inter`) for the UI, with monospace (`JetBrains Mono`) for technical metadata and labels. 
+Strictly sans-serif (`Inter`) for the UI, with monospace (`JetBrains Mono`) for technical metadata and labels.
 
 - No serifs anywhere.
 - Headlines are tightly tracked (`-0.02em`) to maintain a structural, application-like feel.

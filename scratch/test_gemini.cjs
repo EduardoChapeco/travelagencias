@@ -7,7 +7,7 @@ async function testKey(name, key) {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
-        contents: [{ parts: [{ text: "Reponda apenas 'OK' se você recebeu isso." }] }]
+        contents: [{ parts: [{ text: "Reponda apenas 'OK' se você recebeu isso." }] }],
       }),
     });
     console.log(`Key ${name} status:`, res.status);

@@ -6,7 +6,18 @@ import { handleViewReceipt } from "@/utils/storage-helper";
 import { useAgency } from "@/lib/agency-context";
 import { toast } from "sonner";
 import {
-  CheckCircle, XCircle, Clock, FileText, AlertCircle, Eye, Check, X, CreditCard, Building, DollarSign, } from "lucide-react";
+  CheckCircle,
+  XCircle,
+  Clock,
+  FileText,
+  AlertCircle,
+  Eye,
+  Check,
+  X,
+  CreditCard,
+  Building,
+  DollarSign,
+} from "lucide-react";
 import { Field } from "@/components/ui/field";
 import { FormInput as Input } from "@/components/ui/input";
 import { NativeSelect as Select } from "@/components/ui/select";
@@ -17,7 +28,9 @@ import { formatCurrency, formatDate } from "@/lib/formatters";
 import { FormTextarea as Textarea } from "@/components/ui/textarea";
 
 export const Route = createFileRoute("/agency/$slug/financial/reconciliation")({
-  head: ({ context }: any) => ({ meta: [{ title: `Conciliação Diária · ${context?.brand?.platform_name || 'Turis'}` }] }),
+  head: ({ context }: any) => ({
+    meta: [{ title: `Conciliação Diária · ${context?.brand?.platform_name || "Turis"}` }],
+  }),
   component: ReconciliationPage,
 });
 
@@ -117,10 +130,7 @@ function ReconciliationPage() {
     enabled: !!agency,
     queryKey: ["active-sessions-reconciliation", agency?.id],
     queryFn: async () => {
-      const { data, error } = await supabase
-        .from("cash_sessions")
-        .select("*")
-        .eq("status", "open");
+      const { data, error } = await supabase.from("cash_sessions").select("*").eq("status", "open");
       if (error) throw error;
       return (data || []) as {
         id: string;
@@ -236,285 +246,298 @@ function ReconciliationPage() {
     <div className="flex h-full flex-col overflow-hidden">
       <div className="flex-1 overflow-y-auto px-4 md:px-6 py-4 min-h-0 space-y-6">
         <div className="mb-2">
-        <h2 className="text-lg font-bold text-foreground">Conciliação Diária de Recibos</h2>
-        <p className="text-xs text-muted-foreground mt-0.5">
-          Audite, aprove ou recuse comprovantes Pix e depósitos enviados pelos viajantes.
-        </p>
-      </div>
+          <h2 className="text-lg font-bold text-foreground">Conciliação Diária de Recibos</h2>
+          <p className="text-xs text-muted-foreground mt-0.5">
+            Audite, aprove ou recuse comprovantes Pix e depósitos enviados pelos viajantes.
+          </p>
+        </div>
 
-      {/* Filter and stats banner */}
-      <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-4 mb-6">
-        <Input
-          placeholder="Filtrar por passageiro, código ou viagem..."
-          value={filterQuery}
-          onChange={(e) => setFilterQuery(e.target.value)}
-          className="max-w-md"
-        />
+        {/* Filter and stats banner */}
+        <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-4 mb-6">
+          <Input
+            placeholder="Filtrar por passageiro, código ou viagem..."
+            value={filterQuery}
+            onChange={(e) => setFilterQuery(e.target.value)}
+            className="max-w-md"
+          />
 
-        <div className="flex items-center gap-3 bg-amber-500/5 border border-amber-500/20 px-3 py-2 rounded-[var(--radius-card)] text-xs text-amber-800">
-          <Clock className="w-4 h-4 text-amber-600 shrink-0" />
-          <span>
-            <strong>{list.length}</strong> comprovantes pendentes de validação hoje.
-          </span>
-        </div>
-      </div>
-
-      {/* Main List */}
-      {receiptsQ.isLoading ? (
-        <div className="text-center py-10 text-xs text-muted-foreground animate-pulse">
-          Carregando comprovantes...
-        </div>
-      ) : receiptsQ.isError ? (
-        <div className="border border-red-200 bg-red-50 text-red-800 rounded-[var(--radius-card)] p-6 text-center text-xs flex items-center justify-center gap-2">
-          <AlertCircle className="w-4 h-4 text-red-600" />
-          <span>Erro ao carregar os comprovantes pendentes. Por favor, recarregue a página ou verifique suas permissões.</span>
-        </div>
-      ) : filtered.length === 0 ? (
-        <div className="border border-dashed border-border rounded-[var(--radius-card)] py-12 text-center text-xs text-muted-foreground glass-card border-none">
-          <CheckCircle className="w-8 h-8 mx-auto text-emerald-600 mb-2.5 opacity-60" />
-          <span>Tudo limpo! Nenhum comprovante aguardando conciliação.</span>
-        </div>
-      ) : (
-        <div className="overflow-hidden rounded-[var(--radius-card)] border-none glass-card border-none shadow-none">
-          <div className="overflow-x-auto w-full">
-            <table className="w-full text-xs">
-              <thead className="glass bg-white/5 border-white/10/40 border-b border-border text-left ds-meta uppercase font-bold tracking-wider text-muted-foreground">
-                <tr>
-                  <th className="px-4 py-3">Código/Viagem</th>
-                  <th className="px-4 py-3">Passageiro</th>
-                  <th className="px-4 py-3">Parcela</th>
-                  <th className="px-4 py-3 text-right">Valor</th>
-                  <th className="px-4 py-3">Método</th>
-                  <th className="px-4 py-3">Enviado em</th>
-                  <th className="px-4 py-3 text-right">Ações</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-border">
-                {filtered.map((rec) => (
-                  <tr key={rec.id} className="hover:bg-gray-50/60 transition-colors">
-                    <td className="px-4 py-3.5">
-                      <div className="font-mono font-bold text-gray-700">
-                        {rec.payment_plan?.trip?.code}
-                      </div>
-                      <div className="ds-meta text-muted-foreground truncate max-w-[220px] mt-0.5">
-                        {rec.payment_plan?.trip?.title}
-                      </div>
-                    </td>
-                    <td className="px-4 py-3.5 font-semibold text-gray-900">
-                      {rec.payment_plan?.trip?.client?.full_name || "—"}
-                    </td>
-                    <td className="px-4 py-3.5">
-                      <span className="font-mono text-gray-600">Parcela #{rec.number}</span>
-                      <div className="text-[9px] text-muted-foreground mt-0.5">
-                        Vencimento: {formatDate(rec.due_date)}
-                      </div>
-                    </td>
-                    <td className="px-4 py-3.5 text-right font-mono font-bold text-gray-900">
-                      {formatCurrency(rec.amount)}
-                    </td>
-                    <td className="px-4 py-3.5 capitalize">
-                      <span className="inline-flex items-center gap-1">
-                        <CreditCard className="w-3.5 h-3.5 text-muted-foreground" />
-                        {rec.payment_method === "bank_transfer"
-                          ? "T. Bancária"
-                          : rec.payment_method}
-                      </span>
-                    </td>
-                    <td className="px-4 py-3.5 text-muted-foreground font-mono">
-                      {new Date(rec.receipt_uploaded_at).toLocaleString("pt-BR", {
-                        day: "2-digit",
-                        month: "2-digit",
-                        hour: "2-digit",
-                        minute: "2-digit",
-                      })}
-                    </td>
-                    <td className="px-4 py-3.5 text-right">
-                      <div className="inline-flex items-center gap-1.5">
-                        <Button
-                          onClick={() => handleViewReceipt(rec.receipt_url)}
-                          className="h-7 w-7 rounded-[var(--radius-card)] border-none flex items-center justify-center text-gray-400 hover:text-gray-900 hover:bg-gray-100 transition-colors bg-transparent cursor-pointer"
-                          title="Ver Comprovante"
-                        >
-                          <Eye className="w-4 h-4" />
-                        </Button>
-                        <Button
-                          onClick={() => {
-                            setSelectedReceipt(rec);
-                            const matchingSession = sessionsQ.data?.find(
-                              (s) => s.status === "open",
-                            );
-                            if (matchingSession) {
-                              setSelectedSessionId(matchingSession.id);
-                              setSelectedRegisterId(matchingSession.cash_register_id);
-                            }
-                          }}
-                          className="h-7 px-2.5 rounded-[var(--radius-card)] bg-emerald-600 hover:bg-emerald-700 text-white font-bold ds-meta uppercase tracking-wide flex items-center gap-1 cursor-pointer transition-colors"
-                        >
-                          <Check className="w-3.5 h-3.5" /> Conciliar
-                        </Button>
-                        <Button
-                          onClick={() => setRejectReceipt(rec)}
-                          className="h-7 px-2.5 rounded-[var(--radius-card)] border-none hover:bg-rose-50 text-rose-600 font-bold ds-meta uppercase tracking-wide flex items-center gap-1 cursor-pointer transition-colors"
-                        >
-                          <X className="w-3.5 h-3.5" /> Recusar
-                        </Button>
-                      </div>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+          <div className="flex items-center gap-3 bg-amber-500/5 border border-amber-500/20 px-3 py-2 rounded-[var(--radius-card)] text-xs text-amber-800">
+            <Clock className="w-4 h-4 text-amber-600 shrink-0" />
+            <span>
+              <strong>{list.length}</strong> comprovantes pendentes de validação hoje.
+            </span>
           </div>
         </div>
-      )}
 
-      {/* Approve / Conciliation Drawer Modal */}
-      <Dialog open={!!selectedReceipt} onOpenChange={(open) => !open && setSelectedReceipt(null)}>
-        <DialogContent className="max-w-md p-0 overflow-hidden border-none/10 max-h-[90vh] glass dark:glass-dark text-white">
-          <DialogHeader className="px-5 py-4 border-b border-white/10 bg-white/5">
-            <DialogTitle className="flex items-center gap-2">
-              <CheckCircle className="w-5 h-5 text-emerald-450" />
-              <span className="font-bold text-white text-sm uppercase tracking-wider">
-                Aprovar Comprovante
-              </span>
-            </DialogTitle>
-          </DialogHeader>
+        {/* Main List */}
+        {receiptsQ.isLoading ? (
+          <div className="text-center py-10 text-xs text-muted-foreground animate-pulse">
+            Carregando comprovantes...
+          </div>
+        ) : receiptsQ.isError ? (
+          <div className="border border-red-200 bg-red-50 text-red-800 rounded-[var(--radius-card)] p-6 text-center text-xs flex items-center justify-center gap-2">
+            <AlertCircle className="w-4 h-4 text-red-600" />
+            <span>
+              Erro ao carregar os comprovantes pendentes. Por favor, recarregue a página ou
+              verifique suas permissões.
+            </span>
+          </div>
+        ) : filtered.length === 0 ? (
+          <div className="border border-dashed border-border rounded-[var(--radius-card)] py-12 text-center text-xs text-muted-foreground glass-card border-none">
+            <CheckCircle className="w-8 h-8 mx-auto text-emerald-600 mb-2.5 opacity-60" />
+            <span>Tudo limpo! Nenhum comprovante aguardando conciliação.</span>
+          </div>
+        ) : (
+          <div className="overflow-hidden rounded-[var(--radius-card)] border-none glass-card border-none shadow-none">
+            <div className="overflow-x-auto w-full">
+              <table className="w-full text-xs">
+                <thead className="glass/40 border-b border-border text-left ds-meta uppercase font-bold tracking-wider text-muted-foreground">
+                  <tr>
+                    <th className="px-4 py-3">Código/Viagem</th>
+                    <th className="px-4 py-3">Passageiro</th>
+                    <th className="px-4 py-3">Parcela</th>
+                    <th className="px-4 py-3 text-right">Valor</th>
+                    <th className="px-4 py-3">Método</th>
+                    <th className="px-4 py-3">Enviado em</th>
+                    <th className="px-4 py-3 text-right">Ações</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-border">
+                  {filtered.map((rec) => (
+                    <tr key={rec.id} className="hover:bg-gray-50/60 transition-colors">
+                      <td className="px-4 py-3.5">
+                        <div className="font-mono font-bold text-gray-700">
+                          {rec.payment_plan?.trip?.code}
+                        </div>
+                        <div className="ds-meta text-muted-foreground truncate max-w-[220px] mt-0.5">
+                          {rec.payment_plan?.trip?.title}
+                        </div>
+                      </td>
+                      <td className="px-4 py-3.5 font-semibold text-gray-900">
+                        {rec.payment_plan?.trip?.client?.full_name || "—"}
+                      </td>
+                      <td className="px-4 py-3.5">
+                        <span className="font-mono text-gray-600">Parcela #{rec.number}</span>
+                        <div className="text-[9px] text-muted-foreground mt-0.5">
+                          Vencimento: {formatDate(rec.due_date)}
+                        </div>
+                      </td>
+                      <td className="px-4 py-3.5 text-right font-mono font-bold text-gray-900">
+                        {formatCurrency(rec.amount)}
+                      </td>
+                      <td className="px-4 py-3.5 capitalize">
+                        <span className="inline-flex items-center gap-1">
+                          <CreditCard className="w-3.5 h-3.5 text-muted-foreground" />
+                          {rec.payment_method === "bank_transfer"
+                            ? "T. Bancária"
+                            : rec.payment_method}
+                        </span>
+                      </td>
+                      <td className="px-4 py-3.5 text-muted-foreground font-mono">
+                        {new Date(rec.receipt_uploaded_at).toLocaleString("pt-BR", {
+                          day: "2-digit",
+                          month: "2-digit",
+                          hour: "2-digit",
+                          minute: "2-digit",
+                        })}
+                      </td>
+                      <td className="px-4 py-3.5 text-right">
+                        <div className="inline-flex items-center gap-1.5">
+                          <Button
+                            onClick={() => handleViewReceipt(rec.receipt_url)}
+                            className="h-7 w-7 rounded-[var(--radius-card)] border-none flex items-center justify-center text-gray-400 hover:text-gray-900 hover:bg-gray-100 transition-colors bg-transparent cursor-pointer"
+                            title="Ver Comprovante"
+                          >
+                            <Eye className="w-4 h-4" />
+                          </Button>
+                          <Button
+                            onClick={() => {
+                              setSelectedReceipt(rec);
+                              const matchingSession = sessionsQ.data?.find(
+                                (s) => s.status === "open",
+                              );
+                              if (matchingSession) {
+                                setSelectedSessionId(matchingSession.id);
+                                setSelectedRegisterId(matchingSession.cash_register_id);
+                              }
+                            }}
+                            className="h-7 px-2.5 rounded-[var(--radius-card)] bg-emerald-600 hover:bg-emerald-700 text-white font-bold ds-meta uppercase tracking-wide flex items-center gap-1 cursor-pointer transition-colors"
+                          >
+                            <Check className="w-3.5 h-3.5" /> Conciliar
+                          </Button>
+                          <Button
+                            onClick={() => setRejectReceipt(rec)}
+                            className="h-7 px-2.5 rounded-[var(--radius-card)] border-none hover:bg-rose-50 text-rose-600 font-bold ds-meta uppercase tracking-wide flex items-center gap-1 cursor-pointer transition-colors"
+                          >
+                            <X className="w-3.5 h-3.5" /> Recusar
+                          </Button>
+                        </div>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        )}
+
+        {/* Approve / Conciliation Drawer Modal */}
+        <Dialog open={!!selectedReceipt} onOpenChange={(open) => !open && setSelectedReceipt(null)}>
+          <DialogContent className="max-w-md p-0 overflow-hidden border-none/10 max-h-[90vh] glass dark:glass-dark text-white">
+            <DialogHeader className="px-5 py-4 border-b glass">
+              <DialogTitle className="flex items-center gap-2">
+                <CheckCircle className="w-5 h-5 text-emerald-450" />
+                <span className="font-bold text-white text-sm uppercase tracking-wider">
+                  Aprovar Comprovante
+                </span>
+              </DialogTitle>
+            </DialogHeader>
 
             {selectedReceipt && (
               <div className="p-5 space-y-4">
-              <div className="bg-gray-50 border-none rounded-[var(--radius-card)] p-4 text-xs space-y-2 font-mono">
-                <div className="flex justify-between">
-                  <span className="text-gray-400">Passageiro:</span>
-                  <strong className="text-gray-800">
-                    {selectedReceipt.payment_plan?.trip?.client?.full_name}
-                  </strong>
+                <div className="bg-gray-50 border-none rounded-[var(--radius-card)] p-4 text-xs space-y-2 font-mono">
+                  <div className="flex justify-between">
+                    <span className="text-gray-400">Passageiro:</span>
+                    <strong className="text-gray-800">
+                      {selectedReceipt.payment_plan?.trip?.client?.full_name}
+                    </strong>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-gray-400">Valor a Ratear:</span>
+                    <strong className="text-gray-800">
+                      {formatCurrency(selectedReceipt.amount)}
+                    </strong>
+                  </div>
+                  <div className="flex justify-between border-t border-border/50 pt-1.5 mt-1.5 font-bold">
+                    <span className="text-gray-600">Comprovante:</span>
+                    <Button
+                      onClick={() => handleViewReceipt(selectedReceipt.receipt_url)}
+                      className="text-brand underline flex items-center gap-1 bg-transparent border-0 p-0 cursor-pointer"
+                    >
+                      <FileText className="w-3.5 h-3.5" /> Abrir Anexo
+                    </Button>
+                  </div>
                 </div>
-                <div className="flex justify-between">
-                  <span className="text-gray-400">Valor a Ratear:</span>
-                  <strong className="text-gray-800">{formatCurrency(selectedReceipt.amount)}</strong>
-                </div>
-                <div className="flex justify-between border-t border-border/50 pt-1.5 mt-1.5 font-bold">
-                  <span className="text-gray-600">Comprovante:</span>
-                  <Button
-                    onClick={() => handleViewReceipt(selectedReceipt.receipt_url)}
-                    className="text-brand underline flex items-center gap-1 bg-transparent border-0 p-0 cursor-pointer"
+
+                <div>
+                  <label className="text-xs font-bold text-muted-foreground uppercase tracking-wide block mb-1.5">
+                    Destinar ao Caixa / Conta Bancária *
+                  </label>
+                  <Select
+                    value={selectedRegisterId}
+                    onChange={(e) => {
+                      const regId = e.target.value;
+                      setSelectedRegisterId(regId);
+                      // Match corresponding session
+                      const sess = sessionsQ.data?.find(
+                        (s) => s.cash_register_id === regId && s.status === "open",
+                      );
+                      setSelectedSessionId(sess ? String(sess.id) : "");
+                    }}
+                    className="w-full rounded-[var(--radius-card)] border-none"
+                    required
                   >
-                    <FileText className="w-3.5 h-3.5" /> Abrir Anexo
+                    <option value="">Selecione a conta de depósito...</option>
+                    {registersQ.data?.map((r: any) => (
+                      <option key={r.id} value={r.id}>
+                        {r.name} ({r.type === "bank_account" ? "Conta Digital" : "Caixa Físico"})
+                      </option>
+                    ))}
+                  </Select>
+                </div>
+
+                {selectedRegisterId && !selectedSessionId && (
+                  <div className="ds-meta text-amber-700 bg-amber-500/10 border border-amber-500/20 p-3 rounded-[var(--radius-card)] flex items-start gap-1.5">
+                    <AlertCircle className="w-4 h-4 mt-0.5 shrink-0" />
+                    <span>
+                      A conta digital/banco aceita depósitos diretos sem expediente aberto, mas o
+                      caixa físico exige uma sessão aberta. Registrando como depósito direto na
+                      conta.
+                    </span>
+                  </div>
+                )}
+
+                <div className="flex gap-2.5 pt-2 border-t border-border">
+                  <Button
+                    variant="ghost"
+                    onClick={() => setSelectedReceipt(null)}
+                    className="flex-1 h-10 text-xs"
+                  >
+                    Cancelar
+                  </Button>
+                  <Button
+                    variant="default"
+                    onClick={() =>
+                      approveReceipt.mutate({
+                        receiptId: selectedReceipt.id,
+                        regId: selectedRegisterId,
+                        sessId: selectedSessionId,
+                      })
+                    }
+                    disabled={actionBusy || !selectedRegisterId}
+                    className="flex-1 h-10 ds-label-caps tracking-wider bg-emerald-600 hover:bg-emerald-700 text-white rounded-[var(--radius-card)]"
+                  >
+                    {actionBusy ? "Salvando..." : "Confirmar e Lançar"}
                   </Button>
                 </div>
               </div>
-
-              <div>
-                <label className="text-xs font-bold text-muted-foreground uppercase tracking-wide block mb-1.5">
-                  Destinar ao Caixa / Conta Bancária *
-                </label>
-                <Select
-                  value={selectedRegisterId}
-                  onChange={(e) => {
-                    const regId = e.target.value;
-                    setSelectedRegisterId(regId);
-                    // Match corresponding session
-                    const sess = sessionsQ.data?.find(
-                      (s) => s.cash_register_id === regId && s.status === "open",
-                    );
-                    setSelectedSessionId(sess ? String(sess.id) : "");
-                  }}
-                  className="w-full rounded-[var(--radius-card)] border-none"
-                  required
-                >
-                  <option value="">Selecione a conta de depósito...</option>
-                  {registersQ.data?.map((r: any) => (
-                    <option key={r.id} value={r.id}>
-                      {r.name} ({r.type === "bank_account" ? "Conta Digital" : "Caixa Físico"})
-                    </option>
-                  ))}
-                </Select>
-              </div>
-
-              {selectedRegisterId && !selectedSessionId && (
-                <div className="ds-meta text-amber-700 bg-amber-500/10 border border-amber-500/20 p-3 rounded-[var(--radius-card)] flex items-start gap-1.5">
-                  <AlertCircle className="w-4 h-4 mt-0.5 shrink-0" />
-                  <span>
-                    A conta digital/banco aceita depósitos diretos sem expediente aberto, mas o
-                    caixa físico exige uma sessão aberta. Registrando como depósito direto na conta.
-                  </span>
-                </div>
-              )}
-
-              <div className="flex gap-2.5 pt-2 border-t border-border">
-                <Button variant="ghost"
-                  onClick={() => setSelectedReceipt(null)}
-                  className="flex-1 h-10 text-xs"
-                >
-                  Cancelar
-                </Button>
-                <Button variant="default"
-                  onClick={() =>
-                    approveReceipt.mutate({
-                      receiptId: selectedReceipt.id,
-                      regId: selectedRegisterId,
-                      sessId: selectedSessionId,
-                    })
-                  }
-                  disabled={actionBusy || !selectedRegisterId}
-                  className="flex-1 h-10 ds-label-caps tracking-wider bg-emerald-600 hover:bg-emerald-700 text-white rounded-[var(--radius-card)]"
-                >
-                  {actionBusy ? "Salvando..." : "Confirmar e Lançar"}
-                </Button>
-                </div>
-              </div>
             )}
-        </DialogContent>
-      </Dialog>
+          </DialogContent>
+        </Dialog>
 
-      {/* Reject Drawer Modal */}
-      <Dialog open={!!rejectReceipt} onOpenChange={(open) => !open && setRejectReceipt(null)}>
-        <DialogContent className="max-w-md p-0 overflow-hidden border-none/10 max-h-[90vh] glass dark:glass-dark text-white">
-          <DialogHeader className="px-5 py-4 border-b border-white/10 bg-white/5">
-            <DialogTitle className="flex items-center gap-2">
-              <XCircle className="w-5 h-5 text-rose-450" />
-              <span className="font-bold text-white text-sm uppercase tracking-wider">
-                Recusar Comprovante
-              </span>
-            </DialogTitle>
-          </DialogHeader>
+        {/* Reject Drawer Modal */}
+        <Dialog open={!!rejectReceipt} onOpenChange={(open) => !open && setRejectReceipt(null)}>
+          <DialogContent className="max-w-md p-0 overflow-hidden border-none/10 max-h-[90vh] glass dark:glass-dark text-white">
+            <DialogHeader className="px-5 py-4 border-b glass">
+              <DialogTitle className="flex items-center gap-2">
+                <XCircle className="w-5 h-5 text-rose-450" />
+                <span className="font-bold text-white text-sm uppercase tracking-wider">
+                  Recusar Comprovante
+                </span>
+              </DialogTitle>
+            </DialogHeader>
 
             {rejectReceipt && (
               <div className="p-5 space-y-4 text-sm text-foreground/80">
-              <p className="text-xs text-muted-foreground leading-relaxed">
-                O cliente será alertado no portal sobre a recusa do comprovante da Parcela #
-                {rejectReceipt.number} (Valor: {formatCurrency(rejectReceipt.amount)}) e poderá enviar um
-                novo arquivo.
-              </p>
+                <p className="text-xs text-muted-foreground leading-relaxed">
+                  O cliente será alertado no portal sobre a recusa do comprovante da Parcela #
+                  {rejectReceipt.number} (Valor: {formatCurrency(rejectReceipt.amount)}) e poderá
+                  enviar um novo arquivo.
+                </p>
 
-              <Field label="Justificativa / Motivo da Recusa *">
-                <Textarea
-                  value={rejectionReason}
-                  onChange={(e) => setRejectionReason(e.target.value)}
-                  placeholder="Ex: Valor do Pix divergente, comprovante cortado, ou de outra data..."
-                  className="w-full rounded-[var(--radius-card)] border-none p-3 focus:border-brand h-20 resize-none"
-                  required
-                />
-              </Field>
+                <Field label="Justificativa / Motivo da Recusa *">
+                  <Textarea
+                    value={rejectionReason}
+                    onChange={(e) => setRejectionReason(e.target.value)}
+                    placeholder="Ex: Valor do Pix divergente, comprovante cortado, ou de outra data..."
+                    className="w-full rounded-[var(--radius-card)] border-none p-3 focus:border-brand h-20 resize-none"
+                    required
+                  />
+                </Field>
 
-              <div className="flex gap-2.5 pt-2 border-t border-border">
-                <Button variant="ghost" onClick={() => setRejectReceipt(null)} className="flex-1 h-10 text-xs">
-                  Voltar
-                </Button>
-                <Button variant="default"
-                  onClick={() =>
-                    rejectReceiptMutation.mutate({
-                      receiptId: rejectReceipt.id,
-                      reason: rejectionReason,
-                    })
-                  }
-                  disabled={actionBusy || !rejectionReason.trim()}
-                  className="flex-1 h-10 ds-label-caps tracking-wider bg-rose-600 hover:bg-rose-700 text-white rounded-[var(--radius-card)]"
-                >
-                  {actionBusy ? "Recusando..." : "Confirmar Recusa"}
-                </Button>
+                <div className="flex gap-2.5 pt-2 border-t border-border">
+                  <Button
+                    variant="ghost"
+                    onClick={() => setRejectReceipt(null)}
+                    className="flex-1 h-10 text-xs"
+                  >
+                    Voltar
+                  </Button>
+                  <Button
+                    variant="default"
+                    onClick={() =>
+                      rejectReceiptMutation.mutate({
+                        receiptId: rejectReceipt.id,
+                        reason: rejectionReason,
+                      })
+                    }
+                    disabled={actionBusy || !rejectionReason.trim()}
+                    className="flex-1 h-10 ds-label-caps tracking-wider bg-rose-600 hover:bg-rose-700 text-white rounded-[var(--radius-card)]"
+                  >
+                    {actionBusy ? "Recusando..." : "Confirmar Recusa"}
+                  </Button>
+                </div>
               </div>
-            </div>
             )}
           </DialogContent>
         </Dialog>

@@ -17,7 +17,9 @@ import { calculateQuoteTotals } from "@/lib/pricing";
 import { Button } from "@/components/ui/button";
 
 export const Route = createFileRoute("/agency/$slug/proposals/$id")({
-  head: ({ context }: any) => ({ meta: [{ title: `Editor de Proposta · ${context?.brand?.platform_name || 'Turis'}` }] }),
+  head: ({ context }: any) => ({
+    meta: [{ title: `Editor de Proposta · ${context?.brand?.platform_name || "Turis"}` }],
+  }),
   component: ProposalEditor,
 });
 
@@ -74,10 +76,10 @@ function ProposalEditor() {
 
       const nextState = { ...draft, ...patch };
 
-      // Removemos o envio de subtotal e total para o backend, pois 
+      // Removemos o envio de subtotal e total para o backend, pois
       // a autoridade do cálculo é inteiramente do servidor (via trigger recalculate_proposal_totals).
       const finalPatch = { ...patch };
-      
+
       const finalState = { ...nextState };
 
       setDraft(finalState);
@@ -219,7 +221,7 @@ function ProposalEditor() {
       : "";
 
   return (
-    <div className="flex h-full flex-col glass bg-white/5 border-white/10/10">
+    <div className="flex h-full flex-col glass/10">
       <StudioToolbar
         title={draft.title}
         subtitle={`Cotação #${draft.number}`}
@@ -245,7 +247,7 @@ function ProposalEditor() {
             navigator.clipboard.writeText(publicUrl);
             toast.success("Link público copiado");
           }}
-          className="flex h-9 items-center gap-1.5 rounded-full border-none px-3 text-xs font-medium hover:glass bg-white/5 border-white/10 transition-colors"
+          className="flex h-9 items-center gap-1.5 rounded-full border-none px-3 text-xs font-medium hover:glass transition-colors"
         >
           <Link2 className="h-3.5 w-3.5" /> Copiar link
         </Button>

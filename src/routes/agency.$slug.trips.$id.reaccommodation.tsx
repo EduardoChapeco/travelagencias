@@ -67,7 +67,9 @@ import { Switch } from "@/components/ui/switch";
 import { cn } from "@/lib/utils";
 
 export const Route = createFileRoute("/agency/$slug/trips/$id/reaccommodation")({
-  head: ({ context }: any) => ({ meta: [{ title: `Reacomodação Aérea · ${context?.brand?.platform_name || 'Turis'}` }] }),
+  head: ({ context }: any) => ({
+    meta: [{ title: `Reacomodação Aérea · ${context?.brand?.platform_name || "Turis"}` }],
+  }),
   component: TripReaccommodationPage,
 });
 
@@ -464,7 +466,7 @@ function TripReaccommodationPage() {
 
           return (
             <Card key={c.id} className="border-none/60 overflow-hidden shadow-none">
-              <CardHeader className="glass bg-white/5 border-white/10/20 border-b border-border/40 py-4 px-6">
+              <CardHeader className="glass/20 border-b border-border/40 py-4 px-6">
                 <div className="flex flex-wrap items-center justify-between gap-4">
                   <div className="flex items-center gap-3">
                     <span className="font-mono ds-label-caps tracking-wider bg-rose-500/10 text-rose-600 px-2.5 py-1 rounded">
@@ -568,15 +570,12 @@ function TripReaccommodationPage() {
                             : "bg-emerald-500/10 text-emerald-600 border-emerald-200";
 
                       return (
-                        <div
-                          key={alt.id}
-                          className="py-6 border-b border-border/30 last:border-0"
-                        >
+                        <div key={alt.id} className="py-6 border-b border-border/30 last:border-0">
                           <div className="p-4 grid grid-cols-1 lg:grid-cols-12 gap-6 items-center border-b border-border/30">
                             {/* Route & Segments */}
                             <div className="lg:col-span-4 space-y-2">
                               <div className="flex items-center gap-2">
-                                <span className="font-mono ds-meta font-bold px-1.5 py-0.5 rounded glass bg-white/5 border-white/10 border-none/60">
+                                <span className="font-mono ds-meta font-bold px-1.5 py-0.5 rounded glass border-none/60">
                                   ALT {alt.ranking}
                                 </span>
                                 <span className="text-xs text-muted-foreground font-medium capitalize">
@@ -698,7 +697,7 @@ function TripReaccommodationPage() {
                           )}
 
                           {/* AI & Deterministic details */}
-                          <div className="p-3 glass bg-white/5 border-white/10/10 ds-meta text-muted-foreground grid grid-cols-1 md:grid-cols-2 gap-4">
+                          <div className="p-3 glass/10 ds-meta text-muted-foreground grid grid-cols-1 md:grid-cols-2 gap-4">
                             <div>
                               <span className="font-semibold text-foreground">
                                 Diferença Determinística:
@@ -717,7 +716,7 @@ function TripReaccommodationPage() {
                     })}
 
                     {c.alternatives?.length === 0 && (
-                      <div className="rounded-[var(--radius-card)] border border-dashed border-border/60 p-6 text-center text-xs text-muted-foreground glass bg-white/5 border-white/10/5">
+                      <div className="rounded-[var(--radius-card)] border border-dashed border-border/60 p-6 text-center text-xs text-muted-foreground glass/5">
                         Nenhuma alternativa proposta ainda. Clique em "Adicionar Alternativa" para
                         cadastrar itinerários e rodar o comparador.
                       </div>
@@ -884,7 +883,7 @@ function TripReaccommodationPage() {
                     {c.operator_requests?.map((req: any) => (
                       <div
                         key={req.id}
-                        className="rounded-[var(--radius-card)] border-none/40 p-3 text-xs glass bg-white/5 border-white/10/10 flex items-center justify-between"
+                        className="rounded-[var(--radius-card)] border-none/40 p-3 text-xs glass/10 flex items-center justify-between"
                       >
                         <div>
                           <span className="font-semibold text-foreground">
@@ -960,7 +959,7 @@ function TripReaccommodationPage() {
         })}
 
         {casesQ.data?.length === 0 && (
-          <div className="rounded-[var(--radius-card)] border border-dashed border-border/60 p-12 text-center space-y-4 glass bg-white/5 border-white/10/5">
+          <div className="rounded-[var(--radius-card)] border border-dashed border-border/60 p-12 text-center space-y-4 glass/5">
             <Plane className="mx-auto h-12 w-12 text-muted-foreground opacity-50" />
             <div>
               <h3 className="font-semibold text-foreground text-sm">
@@ -1024,7 +1023,7 @@ function TripReaccommodationPage() {
               {altSegments.map((seg, index) => (
                 <div
                   key={index}
-                  className="p-4 rounded-[var(--radius-card)] border-none/60 glass bg-white/5 border-white/10/20 space-y-4 relative"
+                  className="p-4 rounded-[var(--radius-card)] border-none/60 glass/20 space-y-4 relative"
                 >
                   {altSegments.length > 1 && (
                     <Button
@@ -1085,9 +1084,7 @@ function TripReaccommodationPage() {
 
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div className="space-y-1">
-                      <Label className="ds-meta text-muted-foreground">
-                        Partida (Data e Hora)
-                      </Label>
+                      <Label className="ds-meta text-muted-foreground">Partida (Data e Hora)</Label>
                       <Input
                         type="datetime-local"
                         value={seg.departure_at}
@@ -1095,9 +1092,7 @@ function TripReaccommodationPage() {
                       />
                     </div>
                     <div className="space-y-1">
-                      <Label className="ds-meta text-muted-foreground">
-                        Chegada (Data e Hora)
-                      </Label>
+                      <Label className="ds-meta text-muted-foreground">Chegada (Data e Hora)</Label>
                       <Input
                         type="datetime-local"
                         value={seg.arrival_at}

@@ -1,10 +1,22 @@
 import { createFileRoute, useParams, Link } from "@tanstack/react-router";
 import { useState, useEffect } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { 
-  Save, RefreshCcw, Settings2, ArrowLeft, Undo, Redo, 
-  Trash2, User, HelpCircle, Compass, Layout, 
-  Map as MapIcon, Sparkles, Check, Info
+import {
+  Save,
+  RefreshCcw,
+  Settings2,
+  ArrowLeft,
+  Undo,
+  Redo,
+  Trash2,
+  User,
+  HelpCircle,
+  Compass,
+  Layout,
+  Map as MapIcon,
+  Sparkles,
+  Check,
+  Info,
 } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
@@ -18,11 +30,22 @@ import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
 export const Route = createFileRoute("/agency/$slug/bus-layouts/$id")({
-  head: ({ context }: any) => ({ meta: [{ title: `Editor de Frota · ${context?.brand?.platform_name || 'Turis'}` }] }),
+  head: ({ context }: any) => ({
+    meta: [{ title: `Editor de Frota · ${context?.brand?.platform_name || "Turis"}` }],
+  }),
   component: BusLayoutEditorPage,
 });
 
-type ElementType = "seat" | "aisle" | "wc" | "door" | "driver" | "stairs" | "empty" | "kitchen" | "guide";
+type ElementType =
+  | "seat"
+  | "aisle"
+  | "wc"
+  | "door"
+  | "driver"
+  | "stairs"
+  | "empty"
+  | "kitchen"
+  | "guide";
 
 type SeatCell = {
   r: number;
@@ -48,10 +71,12 @@ function BusLayoutEditorPage() {
   const [isDoubleDecker, setIsDoubleDecker] = useState<boolean>(false);
   const [saving, setSaving] = useState(false);
   const [editOpen, setEditOpen] = useState(false);
-  
+
   // Ferramenta ativa de pintura
   const [activeTool, setActiveTool] = useState<ElementType>("seat");
-  const [defaultCategory, setDefaultCategory] = useState<"convencional" | "executivo" | "semi_leito" | "leito" | "leito_cama">("convencional");
+  const [defaultCategory, setDefaultCategory] = useState<
+    "convencional" | "executivo" | "semi_leito" | "leito" | "leito_cama"
+  >("convencional");
 
   // Histórico para Undo/Redo
   const [history, setHistory] = useState<HistoryState[]>([]);
@@ -92,15 +117,15 @@ function BusLayoutEditorPage() {
       if (q.data.seat_map && Array.isArray(q.data.seat_map) && q.data.seat_map.length > 0) {
         const rawMap = q.data.seat_map as unknown as SeatCell[];
         // Normalizar dados antigos que não possuem propriedade deck
-        const normalized = rawMap.map(cell => ({
+        const normalized = rawMap.map((cell) => ({
           ...cell,
           deck: cell.deck || 1,
           status: cell.status || (cell.type === "seat" ? "available" : undefined),
           category: cell.category || (cell.type === "seat" ? "convencional" : undefined),
         }));
         setMap(normalized);
-        setIsDoubleDecker(normalized.some(c => c.deck === 2));
-        
+        setIsDoubleDecker(normalized.some((c) => c.deck === 2));
+
         // Inicializar histórico
         setHistory([normalized]);
         setHistoryIndex(0);
@@ -186,7 +211,7 @@ function BusLayoutEditorPage() {
       if (idx !== indexInMap) return cell;
 
       const updatedCell = { ...cell, type: activeTool };
-      
+
       // Aplicar configurações da ferramenta
       if (activeTool === "seat") {
         // Encontrar maior número de poltrona para sugerir o seguinte
@@ -247,7 +272,7 @@ function BusLayoutEditorPage() {
     const newMap = [...map];
     newMap[selectedCellIndex] = {
       ...newMap[selectedCellIndex],
-      [field]: value
+      [field]: value,
     };
     setMap(newMap);
     pushHistory(newMap);
@@ -280,19 +305,23 @@ function BusLayoutEditorPage() {
     setIsDoubleDecker(nextState);
 
     if (nextState) {
-      const deck1Cells = map.filter(c => c.deck === 1);
-      const deck2Cells = deck1Cells.map(c => ({
+      const deck1Cells = map.filter((c) => c.deck === 1);
+      const deck2Cells = deck1Cells.map((c) => ({
         ...c,
         deck: 2,
         category: "executivo" as const,
-        label: c.label ? String(parseInt(c.label, 10) + deck1Cells.filter(x => x.type === "seat").length).padStart(2, "0") : ""
+        label: c.label
+          ? String(
+              parseInt(c.label, 10) + deck1Cells.filter((x) => x.type === "seat").length,
+            ).padStart(2, "0")
+          : "",
       }));
       const newMap = [...deck1Cells, ...deck2Cells];
       setMap(newMap);
       pushHistory(newMap);
       toast.success("Segundo andar habilitado (Double Decker)!");
     } else {
-      const newMap = map.filter(c => c.deck === 1);
+      const newMap = map.filter((c) => c.deck === 1);
       setMap(newMap);
       pushHistory(newMap);
       setActiveDeck(1);
@@ -302,19 +331,18 @@ function BusLayoutEditorPage() {
 
   async function saveLayout() {
     const seatLabels = map
-      .filter(c => c.type === "seat" && c.label)
-      .map(c => c.label.trim().toLowerCase());
-    
+      .filter((c) => c.type === "seat" && c.label)
+      .map((c) => c.label.trim().toLowerCase());
+
     const duplicates = seatLabels.filter((item, index) => seatLabels.indexOf(item) !== index);
     if (duplicates.length > 0) {
-      return toast.error(`Erro: Existem poltronas com numeração duplicada (${[...new Set(duplicates)].join(", ")}).`);
+      return toast.error(
+        `Erro: Existem poltronas com numeração duplicada (${[...new Set(duplicates)].join(", ")}).`,
+      );
     }
 
     setSaving(true);
-    const { error } = await supabase
-      .from("bus_layouts")
-      .update({ seat_map: map })
-      .eq("id", id);
+    const { error } = await supabase.from("bus_layouts").update({ seat_map: map }).eq("id", id);
     setSaving(false);
 
     if (error) return toast.error(error.message);
@@ -322,7 +350,10 @@ function BusLayoutEditorPage() {
     qc.invalidateQueries({ queryKey: ["bus-layout", id] });
   }
 
-  if (!q.data) return <div className="text-sm text-muted-foreground p-8 animate-pulse">Carregando editor...</div>;
+  if (!q.data)
+    return (
+      <div className="text-sm text-muted-foreground p-8 animate-pulse">Carregando editor...</div>
+    );
   const l = q.data;
 
   const deckMap = map
@@ -344,9 +375,7 @@ function BusLayoutEditorPage() {
             <ArrowLeft className="h-4 w-4" />
           </Link>
           <div>
-            <div className="text-sm font-semibold">
-              Editor de Frota
-            </div>
+            <div className="text-sm font-semibold">Editor de Frota</div>
             <div className="ds-meta text-muted-foreground">
               {l.name} ({l.vehicle_type === "bus" ? "Ônibus" : l.vehicle_type})
             </div>
@@ -367,9 +396,8 @@ function BusLayoutEditorPage() {
 
       {/* ── Body ─────────────────────────────────────────────────────────────── */}
       <div className="flex flex-1 overflow-hidden">
-        
         {/* Left: Sidebar (Configs & Palette) */}
-        <div className="w-[280px] shrink-0 border-r border-border bg-surface overflow-y-auto p-4 space-y-6">
+        <div className="w-72 shrink-0 border-r border-border bg-surface overflow-y-auto p-4 space-y-6">
           {/* Alerta de Viagens Ativas */}
           {qTripsInUse.data && qTripsInUse.data.length > 0 && (
             <div className="rounded-2xl border border-warning/20 bg-warning/5 p-3 space-y-2 text-xs">
@@ -377,8 +405,9 @@ function BusLayoutEditorPage() {
                 <Info className="h-3.5 w-3.5" /> Layout em Uso
               </div>
               <p className="text-muted-foreground leading-normal">
-                Este veículo está vinculado a <strong>{qTripsInUse.data.length} viagens confirmadas</strong>. 
-                Alterações radicais afetarão as reservas.
+                Este veículo está vinculado a{" "}
+                <strong>{qTripsInUse.data.length} viagens confirmadas</strong>. Alterações radicais
+                afetarão as reservas.
               </p>
             </div>
           )}
@@ -437,7 +466,7 @@ function BusLayoutEditorPage() {
                     "h-8 justify-start text-xs font-medium transition-all px-2 rounded-md border cursor-pointer shadow-none",
                     activeTool === t.type
                       ? "bg-primary text-primary-foreground border-primary"
-                      : "bg-transparent border-transparent text-muted-foreground hover:bg-surface-alt hover:text-foreground hover:border-border"
+                      : "bg-transparent border-transparent text-muted-foreground hover:bg-surface-alt hover:text-foreground hover:border-border",
                   )}
                 >
                   <span className="truncate">{t.label}</span>
@@ -447,7 +476,9 @@ function BusLayoutEditorPage() {
 
             {activeTool === "seat" && (
               <div className="pt-4 border-t border-border space-y-2 mt-4">
-                <span className="text-xs font-medium text-muted-foreground block mb-1">Categoria Padrão</span>
+                <span className="text-xs font-medium text-muted-foreground block mb-1">
+                  Categoria Padrão
+                </span>
                 <Select
                   value={defaultCategory}
                   onChange={(e: any) => setDefaultCategory(e.target.value)}
@@ -466,7 +497,6 @@ function BusLayoutEditorPage() {
 
         {/* Center: Canvas */}
         <div className="flex-1 min-w-0 overflow-auto bg-surface-alt/30 flex items-start justify-center p-8 relative">
-          
           {/* Controles do Canvas (Undo/Redo e Decks) */}
           <div className="absolute top-4 left-4 right-4 flex items-center justify-between z-10 pointer-events-none">
             <div className="flex items-center gap-1 bg-surface p-1 rounded-full border border-border shadow-sm pointer-events-auto">
@@ -489,7 +519,8 @@ function BusLayoutEditorPage() {
             </div>
 
             <div className="flex items-center gap-1 bg-surface p-1 rounded-full border border-border shadow-sm pointer-events-auto">
-              <Button variant="ghost"
+              <Button
+                variant="ghost"
                 disabled={historyIndex <= 0}
                 onClick={handleUndo}
                 className="h-7 w-7 p-0 rounded-full cursor-pointer"
@@ -497,7 +528,8 @@ function BusLayoutEditorPage() {
               >
                 <Undo className="h-3.5 w-3.5" />
               </Button>
-              <Button variant="ghost"
+              <Button
+                variant="ghost"
                 disabled={historyIndex >= history.length - 1}
                 onClick={handleRedo}
                 className="h-7 w-7 p-0 rounded-full cursor-pointer"
@@ -517,8 +549,7 @@ function BusLayoutEditorPage() {
           </div>
 
           <div className="flex items-center justify-center min-h-full py-16">
-            <div className="border border-border bg-surface rounded-[2rem] p-6 shadow-sm relative min-w-[280px]">
-              
+            <div className="border border-border bg-surface rounded-[2rem] p-6 shadow-sm relative min-w-72">
               <div className="h-10 mb-6 border-b border-dashed border-border/60 bg-surface-alt/30 rounded-t-3xl flex items-center justify-center text-xs font-bold uppercase tracking-widest text-muted-foreground select-none">
                 🚍 Cabine Frontal
               </div>
@@ -531,7 +562,7 @@ function BusLayoutEditorPage() {
               >
                 {deckMap.map(({ cell, index }) => {
                   const isSelected = selectedCellIndex === index;
-                  
+
                   const getSeatColorClass = (cat: any) => {
                     switch (cat) {
                       case "executivo":
@@ -555,15 +586,23 @@ function BusLayoutEditorPage() {
                         className={cn(
                           "flex h-11 w-11 p-0 items-center justify-center rounded-xl border text-xs font-bold transition-all relative cursor-pointer shadow-none",
                           cell.type === "seat" && getSeatColorClass(cell.category),
-                          cell.type === "aisle" && "border-dashed border-border bg-transparent text-muted-foreground/30 hover:bg-surface-alt/30",
-                          cell.type === "wc" && "border-info/30 bg-info/10 text-info hover:bg-info/20",
-                          cell.type === "door" && "border-warning/30 bg-warning/10 text-warning hover:bg-warning/20",
-                          cell.type === "driver" && "border-success/30 bg-success/10 text-success hover:bg-success/20",
-                          cell.type === "stairs" && "border-purple-200 bg-purple-50 text-purple-700 hover:bg-purple-100",
-                          cell.type === "kitchen" && "border-orange-200 bg-orange-50 text-orange-700 hover:bg-orange-100",
-                          cell.type === "guide" && "border-cyan-200 bg-cyan-50 text-cyan-700 hover:bg-cyan-100",
-                          cell.type === "empty" && "border-transparent bg-transparent text-transparent hover:bg-surface-alt/50",
-                          isSelected && "ring-2 ring-primary border-primary scale-105 z-10"
+                          cell.type === "aisle" &&
+                            "border-dashed border-border bg-transparent text-muted-foreground/30 hover:bg-surface-alt/30",
+                          cell.type === "wc" &&
+                            "border-info/30 bg-info/10 text-info hover:bg-info/20",
+                          cell.type === "door" &&
+                            "border-warning/30 bg-warning/10 text-warning hover:bg-warning/20",
+                          cell.type === "driver" &&
+                            "border-success/30 bg-success/10 text-success hover:bg-success/20",
+                          cell.type === "stairs" &&
+                            "border-purple-200 bg-purple-50 text-purple-700 hover:bg-purple-100",
+                          cell.type === "kitchen" &&
+                            "border-orange-200 bg-orange-50 text-orange-700 hover:bg-orange-100",
+                          cell.type === "guide" &&
+                            "border-cyan-200 bg-cyan-50 text-cyan-700 hover:bg-cyan-100",
+                          cell.type === "empty" &&
+                            "border-transparent bg-transparent text-transparent hover:bg-surface-alt/50",
+                          isSelected && "ring-2 ring-primary border-primary scale-105 z-10",
                         )}
                       >
                         {cell.type === "seat" && (cell.label || "💺")}
@@ -574,7 +613,7 @@ function BusLayoutEditorPage() {
                         {cell.type === "kitchen" && "☕"}
                         {cell.type === "guide" && "🎙️"}
                         {cell.type === "aisle" && ""}
-                        
+
                         {cell.type === "seat" && cell.status === "blocked" && (
                           <div className="absolute -top-1 -right-1 h-3 w-3 bg-danger rounded-full border border-background shadow-sm" />
                         )}
@@ -591,7 +630,7 @@ function BusLayoutEditorPage() {
         </div>
 
         {/* Right: Inspector Lateral */}
-        <div className="w-[280px] shrink-0 border-l border-border bg-surface overflow-y-auto p-4 flex flex-col">
+        <div className="w-72 shrink-0 border-l border-border bg-surface overflow-y-auto p-4 flex flex-col">
           <div className="space-y-4">
             <h3 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider flex items-center gap-1.5 border-b border-border pb-3">
               <MapIcon className="h-3.5 w-3.5" /> Inspector de Célula
@@ -600,9 +639,12 @@ function BusLayoutEditorPage() {
             {selectedCell ? (
               <div className="space-y-4">
                 <div className="p-3 bg-surface-alt/50 border border-border rounded-[var(--radius-card)] space-y-1">
-                  <div className="text-[10px] uppercase tracking-wider font-bold text-muted-foreground">Posição no Grid</div>
+                  <div className="text-[10px] uppercase tracking-wider font-bold text-muted-foreground">
+                    Posição no Grid
+                  </div>
                   <div className="text-xs font-semibold text-foreground">
-                    Linha {selectedCell.r + 1}, Coluna {selectedCell.c + 1} ({selectedCell.deck === 1 ? "1º Andar" : "2º Andar"})
+                    Linha {selectedCell.r + 1}, Coluna {selectedCell.c + 1} (
+                    {selectedCell.deck === 1 ? "1º Andar" : "2º Andar"})
                   </div>
                 </div>
 
@@ -663,7 +705,7 @@ function BusLayoutEditorPage() {
                     </Field>
                   </>
                 )}
-                
+
                 {selectedCell.type !== "seat" && selectedCell.type !== "aisle" && (
                   <Field label="Etiqueta / Nome">
                     <Input
@@ -677,7 +719,8 @@ function BusLayoutEditorPage() {
               </div>
             ) : (
               <div className="text-center py-12 px-4 rounded-[var(--radius-card)] border border-dashed border-border bg-surface-alt/30 text-xs text-muted-foreground leading-normal">
-                Clique em qualquer elemento do mapa do veículo para visualizar e alterar suas propriedades.
+                Clique em qualquer elemento do mapa do veículo para visualizar e alterar suas
+                propriedades.
               </div>
             )}
           </div>
@@ -741,11 +784,13 @@ export function EditVehicleModal({
     const dimChanged = Number(rows) !== Number(layout.rows) || Number(cols) !== Number(layout.cols);
     if (dimChanged && Array.isArray(layout.seat_map)) {
       const oldMap = layout.seat_map as SeatCell[];
-      const oldCells = new Map(oldMap.map(cell => [`${cell.r}-${cell.c}-${cell.deck || 1}`, cell]));
+      const oldCells = new Map(
+        oldMap.map((cell) => [`${cell.r}-${cell.c}-${cell.deck || 1}`, cell]),
+      );
       const newMap: SeatCell[] = [];
       let nextSeatNumber = 1;
-      
-      oldMap.forEach(cell => {
+
+      oldMap.forEach((cell) => {
         if (cell.type === "seat") {
           const num = parseInt(cell.label, 10);
           if (!isNaN(num) && num >= nextSeatNumber) {
@@ -754,10 +799,10 @@ export function EditVehicleModal({
         }
       });
 
-      const decks = [...new Set(oldMap.map(c => c.deck || 1))];
+      const decks = [...new Set(oldMap.map((c) => c.deck || 1))];
       if (decks.length === 0) decks.push(1);
 
-      decks.forEach(deck => {
+      decks.forEach((deck) => {
         for (let r = 0; r < rows; r++) {
           for (let c = 0; c < cols; c++) {
             const key = `${r}-${c}-${deck}`;
@@ -766,7 +811,7 @@ export function EditVehicleModal({
                 ...oldCells.get(key)!,
                 r,
                 c,
-                deck
+                deck,
               });
             } else {
               const isAisle = cols > 2 && c === Math.floor(cols / 2);
@@ -786,10 +831,7 @@ export function EditVehicleModal({
       updates.seat_map = newMap;
     }
 
-    const { error } = await supabase
-      .from("bus_layouts")
-      .update(updates)
-      .eq("id", layout.id);
+    const { error } = await supabase.from("bus_layouts").update(updates).eq("id", layout.id);
     setSubmitting(false);
 
     if (error) return toast.error(error.message);
@@ -836,7 +878,8 @@ export function EditVehicleModal({
           </Field>
         </div>
         <p className="text-xs text-muted-foreground pt-2">
-          Aviso: Alterar o número de fileiras ou colunas preservará os assentos configurados nas posições correspondentes e adaptará a grade automaticamente.
+          Aviso: Alterar o número de fileiras ou colunas preservará os assentos configurados nas
+          posições correspondentes e adaptará a grade automaticamente.
         </p>
         <div className="flex justify-end gap-2 pt-4">
           <Button variant="ghost" type="button" onClick={onClose}>

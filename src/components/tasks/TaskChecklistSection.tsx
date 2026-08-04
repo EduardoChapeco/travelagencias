@@ -56,7 +56,7 @@ export function TaskChecklistSection({ taskId, agencyId, onChange }: TaskCheckli
 
   const toggleCheckItem = (item: TaskChecklistItem) => {
     const newDone = !item.is_done;
-    
+
     // Update local state optimistically
     const updated = checklist.map((c) => (c.id === item.id ? { ...c, is_done: newDone } : c));
     setChecklist(updated);
@@ -166,19 +166,27 @@ export function TaskChecklistSection({ taskId, agencyId, onChange }: TaskCheckli
 
       <div className="space-y-1">
         {checklist.map((item) => (
-          <div key={item.id} className="flex items-center gap-2 group p-2 rounded-2xl hover:bg-[var(--surface-alt)]/30 transition-colors">
+          <div
+            key={item.id}
+            className="flex items-center gap-2 group p-2 rounded-2xl hover:bg-[var(--surface-alt)]/30 transition-colors"
+          >
             <Button
               onClick={() => toggleCheckItem(item)}
               className={cn(
                 "h-4 w-4 rounded border flex items-center justify-center shrink-0 transition-all",
                 item.is_done
                   ? "bg-[var(--success)] border-[var(--success)] text-white"
-                  : "border-border hover:border-[var(--success)] text-transparent"
+                  : "border-border hover:border-[var(--success)] text-transparent",
               )}
             >
               <Check className="h-2.5 w-2.5 stroke-[3]" />
             </Button>
-            <span className={cn("flex-1 text-xs text-foreground leading-relaxed", item.is_done && "line-through text-muted-foreground")}>
+            <span
+              className={cn(
+                "flex-1 text-xs text-foreground leading-relaxed",
+                item.is_done && "line-through text-muted-foreground",
+              )}
+            >
               {item.title}
             </span>
             <Button

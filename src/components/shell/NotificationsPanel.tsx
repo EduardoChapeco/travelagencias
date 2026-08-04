@@ -154,7 +154,7 @@ export function NotificationsPanel({ onClose }: { onClose: () => void }) {
         </div>
       </div>
 
-      <div className="flex max-h-[400px] flex-col overflow-y-auto p-2 no-scrollbar">
+      <div className="flex max-h-96 flex-col overflow-y-auto p-2 no-scrollbar">
         {q.isLoading && (
           <div className="p-4 text-center text-xs text-muted-foreground">Carregando…</div>
         )}
@@ -248,7 +248,7 @@ export function NotificationBadge({ minimal = false }: { minimal?: boolean }) {
         .eq("agency_id", agency?.id as any)
         .is("read_at", null);
       if (error) throw error;
-      
+
       const filtered = (data ?? []).filter((n) => !n.user_id || n.user_id === user.id);
       return filtered.length;
     },
@@ -270,11 +270,13 @@ export function NotificationBadge({ minimal = false }: { minimal?: boolean }) {
       >
         <Bell className="h-3.5 w-3.5" />
         {q.data ? (
-          <span className={
-            minimal
-              ? "absolute -right-1 -top-1 flex h-3 w-3 items-center justify-center rounded-full bg-danger text-[7px] font-bold text-white"
-              : "absolute -right-1 -top-1 flex h-3.5 w-3.5 items-center justify-center rounded-full bg-danger text-[8px] font-bold text-white"
-          }>
+          <span
+            className={
+              minimal
+                ? "absolute -right-1 -top-1 flex h-3 w-3 items-center justify-center rounded-full bg-danger text-[7px] font-bold text-white"
+                : "absolute -right-1 -top-1 flex h-3.5 w-3.5 items-center justify-center rounded-full bg-danger text-[8px] font-bold text-white"
+            }
+          >
             {q.data > 9 ? "9+" : q.data}
           </span>
         ) : null}

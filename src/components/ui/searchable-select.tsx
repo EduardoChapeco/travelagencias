@@ -116,12 +116,12 @@ export function SearchableSelect({
           type="button"
           disabled={disabled}
           className={cn(
-            "flex w-full h-9 items-center justify-between gap-2 rounded-[var(--radius-input)] border border-input bg-transparent px-3 text-sm outline-none transition-colors shadow-xs",
-            "hover:border-white/20 focus:border-white/30 focus:ring-1 focus:ring-white/20",
+            "flex w-full h-9 items-center justify-between gap-2 rounded-[var(--radius-input)] border border-input bg-transparent px-3 text-sm outline-none transition-colors",
+            "hover:border-border focus:border-border-strong focus:ring-1 focus:ring-white/20",
             "disabled:cursor-not-allowed disabled:opacity-60",
             open && "border-border-strong ring-2 ring-ring/20",
             !value && "text-muted-foreground",
-            className
+            className,
           )}
         >
           <span className="flex-1 truncate text-left">
@@ -163,7 +163,7 @@ export function SearchableSelect({
 
       <PopoverContent
         align="start"
-        className="w-[var(--radix-popover-trigger-width)] p-0 rounded-[var(--radius-card)] border-white/10 glass text-white bg-black/40 backdrop-blur-2xl shadow-lg"
+        className="w-[var(--radix-popover-trigger-width)] p-0 rounded-[var(--radius-card)] border-border glass text-white bg-black/40 backdrop-blur-2xl"
       >
         {/* Search input */}
         <div className="flex items-center gap-2 border-b border-border px-3 py-2">
@@ -174,7 +174,7 @@ export function SearchableSelect({
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             placeholder={searchPlaceholder}
-            className="flex-1 border-none bg-transparent shadow-none focus-visible:ring-0 focus-visible:border-none px-0 h-8"
+            className="flex-1 border-none bg-transparent focus-visible:ring-0 focus-visible:border-none px-0 h-8"
           />
           {query && (
             <Button
@@ -208,7 +208,7 @@ export function SearchableSelect({
                 variant="ghost"
                 onClick={() => handleSelect(opt)}
                 className={cn(
-                  "flex w-full items-center gap-2 px-3 py-2 h-auto text-left text-sm transition-colors rounded-none hover:bg-white/10 font-normal",
+                  "flex w-full items-center gap-2 px-3 py-2 h-auto text-left text-sm transition-colors rounded-none hover:glass-dark font-normal",
                   opt.value === value && "bg-primary/20 font-semibold text-primary",
                 )}
               >

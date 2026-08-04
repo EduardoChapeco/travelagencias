@@ -1,4 +1,5 @@
 # UI-008 - 07_ROOT_CAUSE_TREE.md
+
 # ÁRVORE DE CAUSA RAIZ - UI-008
 
 Este documento diagnostica a origem da compressão e falta de CTA no estado vazio dos vouchers.

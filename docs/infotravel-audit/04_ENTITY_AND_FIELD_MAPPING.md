@@ -32,10 +32,10 @@ CREATE INDEX IF NOT EXISTS idx_external_links_internal ON public.external_entity
 
 ## 2. Matriz de Mapeamento de Entidades
 
-| Entidade Infotravel | Entidade Turis  | Tabela de Destino              | Chave de Vínculo Externo                  |        Direção da Sincronização        |
-| :------------------ | :----------------- | :----------------------------- | :---------------------------------------- | :------------------------------------: |
+| Entidade Infotravel | Entidade Turis     | Tabela de Destino              | Chave de Vínculo Externo                  |      Direção da Sincronização       |
+| :------------------ | :----------------- | :----------------------------- | :---------------------------------------- | :---------------------------------: |
 | `ApiBooking`        | Viagem / Reserva   | `public.trips`                 | `ApiBooking.id` (ou locator)              | `Infotravel` → `Turis` (Unilateral) |
-| `ApiClient`         | Cliente Principal  | `public.clients`               | `ApiClient.id` / `ApiClient.externalCode` |  `Bilateral` (Se editado via Portal)   |
+| `ApiClient`         | Cliente Principal  | `public.clients`               | `ApiClient.id` / `ApiClient.externalCode` | `Bilateral` (Se editado via Portal) |
 | `ApiName`           | Passageiro         | `public.trip_passengers`       | `ApiName.id` / `ApiName.document`         | `Infotravel` → `Turis` (Unilateral) |
 | `ApiHotel`          | Hotel / Acomodação | `public.boarding_rooming_list` | `ApiHotel.id`                             | `Infotravel` → `Turis` (Unilateral) |
 | `ApiFlight`         | Trecho Aéreo / Voo | `public.flight_segments`       | `ApiFlight.id`                            | `Infotravel` → `Turis` (Unilateral) |

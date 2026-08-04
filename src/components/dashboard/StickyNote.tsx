@@ -1,5 +1,15 @@
 import { useState, useRef, useEffect } from "react";
-import { Trash2, GripHorizontal, Palette, Users, Bus, ScrollText, Lock, Globe, UserCheck } from "lucide-react";
+import {
+  Trash2,
+  GripHorizontal,
+  Palette,
+  Users,
+  Bus,
+  ScrollText,
+  Lock,
+  Globe,
+  UserCheck,
+} from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useAgency } from "@/lib/agency-context";
 import { supabase } from "@/integrations/supabase/client";
@@ -33,11 +43,26 @@ interface StickyNoteProps {
 }
 
 const COLORS = [
-  { name: "yellow", bg: "bg-amber-100/90 dark:bg-amber-950/70 text-amber-950 dark:text-amber-100 border-amber-200/50" },
-  { name: "blue", bg: "bg-sky-100/90 dark:bg-sky-950/70 text-sky-950 dark:text-sky-100 border-sky-200/50" },
-  { name: "green", bg: "bg-emerald-100/90 dark:bg-emerald-950/70 text-emerald-950 dark:text-emerald-100 border-emerald-200/50" },
-  { name: "pink", bg: "bg-rose-100/90 dark:bg-rose-950/70 text-rose-950 dark:text-rose-100 border-rose-200/50" },
-  { name: "purple", bg: "bg-purple-100/90 dark:bg-purple-950/70 text-purple-950 dark:text-purple-100 border-purple-200/50" },
+  {
+    name: "yellow",
+    bg: "bg-amber-100/90 dark:bg-amber-950/70 text-amber-950 dark:text-amber-100 border-amber-200/50",
+  },
+  {
+    name: "blue",
+    bg: "bg-sky-100/90 dark:bg-sky-950/70 text-sky-950 dark:text-sky-100 border-sky-200/50",
+  },
+  {
+    name: "green",
+    bg: "bg-emerald-100/90 dark:bg-emerald-950/70 text-emerald-950 dark:text-emerald-100 border-emerald-200/50",
+  },
+  {
+    name: "pink",
+    bg: "bg-rose-100/90 dark:bg-rose-950/70 text-rose-950 dark:text-rose-100 border-rose-200/50",
+  },
+  {
+    name: "purple",
+    bg: "bg-purple-100/90 dark:bg-purple-950/70 text-purple-950 dark:text-purple-100 border-purple-200/50",
+  },
 ];
 
 export function StickyNote({
@@ -60,7 +85,9 @@ export function StickyNote({
 
   const [atIndex, setAtIndex] = useState<number | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
-  const [searchResults, setSearchResults] = useState<Array<{ id: string; type: "lead" | "trip" | "contract"; label: string }>>([]);
+  const [searchResults, setSearchResults] = useState<
+    Array<{ id: string; type: "lead" | "trip" | "contract"; label: string }>
+  >([]);
   const [showAutocomplete, setShowAutocomplete] = useState(false);
 
   const { agency } = useAgency();
@@ -74,7 +101,7 @@ export function StickyNote({
     const fetchMatches = async () => {
       try {
         const cleanQuery = searchQuery.trim();
-        
+
         // Fetch Leads (CRM)
         const leadsP = supabase
           .from("leads")
@@ -82,7 +109,7 @@ export function StickyNote({
           .eq("agency_id", agency.id)
           .ilike("name", `%${cleanQuery}%`)
           .limit(4);
-          
+
         // Fetch Trips
         const tripsP = supabase
           .from("trips")
@@ -90,7 +117,7 @@ export function StickyNote({
           .eq("agency_id", agency.id)
           .ilike("title", `%${cleanQuery}%`)
           .limit(4);
-          
+
         // Fetch Contracts
         const contractsP = supabase
           .from("contracts")
@@ -104,18 +131,22 @@ export function StickyNote({
         const items: Array<{ id: string; type: "lead" | "trip" | "contract"; label: string }> = [];
 
         if (leadsRes.data) {
-          leadsRes.data.forEach(l => {
+          leadsRes.data.forEach((l) => {
             items.push({ id: l.id, type: "lead", label: l.name });
           });
         }
         if (tripsRes.data) {
-          tripsRes.data.forEach(t => {
+          tripsRes.data.forEach((t) => {
             items.push({ id: t.id, type: "trip", label: `#${t.number} - ${t.title}` });
           });
         }
         if (contractsRes.data) {
-          contractsRes.data.forEach(c => {
-            items.push({ id: c.id, type: "contract", label: `Contrato: ${c.package_summary || 'Resumo'}` });
+          contractsRes.data.forEach((c) => {
+            items.push({
+              id: c.id,
+              type: "contract",
+              label: `Contrato: ${c.package_summary || "Resumo"}`,
+            });
           });
         }
 
@@ -147,7 +178,10 @@ export function StickyNote({
 
   const handleMouseDown = (e: React.MouseEvent) => {
     if (!isEditable) return;
-    if ((e.target as HTMLElement).closest("button") || (e.target as HTMLElement).closest("textarea")) {
+    if (
+      (e.target as HTMLElement).closest("button") ||
+      (e.target as HTMLElement).closest("textarea")
+    ) {
       return; // Ignore drag if clicking button or textarea
     }
     e.preventDefault();
@@ -224,21 +258,23 @@ export function StickyNote({
 
   const selectItem = (item: { id: string; type: "lead" | "trip" | "contract"; label: string }) => {
     if (atIndex === null) return;
-    
+
     const beforeAt = text.substring(0, atIndex);
-    const afterCaret = text.substring(noteRef.current?.querySelector("textarea")?.selectionStart || text.length);
-    
+    const afterCaret = text.substring(
+      noteRef.current?.querySelector("textarea")?.selectionStart || text.length,
+    );
+
     // Create tag: [Label](type:id)
     const tag = `[${item.label}](${item.type}:${item.id})`;
     const newText = beforeAt + tag + " " + afterCaret;
-    
+
     setText(newText);
     setShowAutocomplete(false);
     setAtIndex(null);
-    
+
     // Persist immediately
     onUpdate(note.id, { content: newText });
-    
+
     // Refocus and reposition caret
     setTimeout(() => {
       const textarea = noteRef.current?.querySelector("textarea");
@@ -286,7 +322,7 @@ export function StickyNote({
         "absolute rounded-[var(--radius-card)] border shadow-md p-4 flex flex-col backdrop-blur-md select-none group transition-shadow",
         activeColor.bg,
         isDragging ? "shadow-2xl z-40 scale-[1.02]" : "z-20 hover:shadow-lg",
-        !isEditable && "pointer-events-none"
+        !isEditable && "pointer-events-none",
       )}
       style={{
         left: `${position.x}px`,
@@ -302,7 +338,7 @@ export function StickyNote({
           className="h-6 flex items-center justify-between border-b border-black/5 dark:border-white/5 pb-2 mb-2 cursor-grab active:cursor-grabbing shrink-0"
         >
           <GripHorizontal className="w-3.5 h-3.5 opacity-40 hover:opacity-80 transition-opacity" />
-          
+
           <div className="flex items-center gap-1.5 opacity-0 group-hover:opacity-100 transition-opacity">
             {/* Color picker toggle */}
             <div className="relative">
@@ -311,7 +347,7 @@ export function StickyNote({
                   setShowColorPicker(!showColorPicker);
                   setShowSharingPicker(false);
                 }}
-                className="p-1 rounded-full hover:bg-black/5 dark:hover:bg-white/5 transition-colors cursor-pointer text-inherit"
+                className="p-1 rounded-full hover:glass dark:hover:glass transition-colors cursor-pointer text-inherit"
                 title="Mudar cor"
               >
                 <Palette className="w-3.5 h-3.5 opacity-60" />
@@ -323,8 +359,8 @@ export function StickyNote({
                       key={c.name}
                       onClick={() => handleColorSelect(c.name)}
                       className={cn(
-                        "w-5 h-5 rounded-full border border-black/10 cursor-pointer",
-                        c.bg.split(" ")[0]
+                        "w-5 h-5 rounded-full border border-border cursor-pointer",
+                        c.bg.split(" ")[0],
                       )}
                       title={c.name}
                     />
@@ -341,13 +377,13 @@ export function StickyNote({
                   setShowColorPicker(false);
                   setShowAgentSelector(false);
                 }}
-                className="p-1 rounded-full hover:bg-black/5 dark:hover:bg-white/5 transition-colors cursor-pointer text-inherit"
+                className="p-1 rounded-full hover:glass dark:hover:glass transition-colors cursor-pointer text-inherit"
                 title={
                   note.visibility === "public"
                     ? "Público Agência"
                     : note.visibility === "assigned"
-                    ? "Encaminhado para colega"
-                    : "Pessoal (Privado)"
+                      ? "Encaminhado para colega"
+                      : "Pessoal (Privado)"
                 }
               >
                 {note.visibility === "public" ? (
@@ -360,12 +396,14 @@ export function StickyNote({
               </Button>
               {showSharingPicker && (
                 <div className="absolute top-6 right-0 bg-white dark:bg-zinc-950 border border-border rounded-2xl p-2 flex flex-col gap-1 z-50 shadow-2xl w-48 text-foreground">
-                  <span className="text-[9px] font-black uppercase tracking-wider text-muted-foreground px-2 py-1">Visibilidade</span>
+                  <span className="text-[9px] font-black uppercase tracking-wider text-muted-foreground px-2 py-1">
+                    Visibilidade
+                  </span>
                   <Button
                     onClick={() => handleVisibilityChange("private")}
                     className={cn(
-                      "flex items-center gap-2 px-2.5 py-1.5 rounded-xl hover:bg-black/5 dark:hover:bg-white/5 text-left cursor-pointer transition-colors text-xs font-bold w-full",
-                      note.visibility === "private" && "bg-black/5 dark:bg-white/5"
+                      "flex items-center gap-2 px-2.5 py-1.5 rounded-xl hover:glass dark:hover:glass text-left cursor-pointer transition-colors text-xs font-bold w-full",
+                      note.visibility === "private" && "glass dark:glass",
                     )}
                   >
                     <Lock className="w-3.5 h-3.5 opacity-70" />
@@ -374,8 +412,8 @@ export function StickyNote({
                   <Button
                     onClick={() => handleVisibilityChange("public")}
                     className={cn(
-                      "flex items-center gap-2 px-2.5 py-1.5 rounded-xl hover:bg-black/5 dark:hover:bg-white/5 text-left cursor-pointer transition-colors text-xs font-bold w-full",
-                      note.visibility === "public" && "bg-black/5 dark:bg-white/5"
+                      "flex items-center gap-2 px-2.5 py-1.5 rounded-xl hover:glass dark:hover:glass text-left cursor-pointer transition-colors text-xs font-bold w-full",
+                      note.visibility === "public" && "glass dark:glass",
                     )}
                   >
                     <Globe className="w-3.5 h-3.5 opacity-70" />
@@ -386,8 +424,8 @@ export function StickyNote({
                       <Button
                         onClick={() => setShowAgentSelector(!showAgentSelector)}
                         className={cn(
-                          "flex items-center justify-between px-2.5 py-1.5 rounded-xl hover:bg-black/5 dark:hover:bg-white/5 text-left cursor-pointer transition-colors text-xs font-bold w-full",
-                          note.visibility === "assigned" && "bg-black/5 dark:bg-white/5"
+                          "flex items-center justify-between px-2.5 py-1.5 rounded-xl hover:glass dark:hover:glass text-left cursor-pointer transition-colors text-xs font-bold w-full",
+                          note.visibility === "assigned" && "glass dark:glass",
                         )}
                       >
                         <div className="flex items-center gap-2">
@@ -395,7 +433,7 @@ export function StickyNote({
                           <span>Para Agente...</span>
                         </div>
                       </Button>
-                      
+
                       {showAgentSelector && (
                         <div className="mt-1 border-t border-border pt-1.5 flex flex-col gap-0.5 max-h-32 overflow-y-auto no-scrollbar">
                           {teamMembers.map((member) => (
@@ -404,7 +442,8 @@ export function StickyNote({
                               onClick={() => handleAssignAgent(member.user_id)}
                               className={cn(
                                 "px-2.5 py-1.5 rounded-lg hover:bg-brand/10 hover:text-brand text-left cursor-pointer ds-meta font-black truncate w-full",
-                                note.assigned_profile_id === member.user_id && "text-brand bg-brand/5"
+                                note.assigned_profile_id === member.user_id &&
+                                  "text-brand bg-brand/5",
                               )}
                             >
                               {member.full_name}
@@ -421,7 +460,7 @@ export function StickyNote({
             {/* Delete note */}
             <Button
               onClick={() => onDelete(note.id)}
-              className="p-1 rounded-full hover:bg-black/5 dark:hover:bg-white/5 transition-colors text-rose-600 dark:text-rose-400 cursor-pointer"
+              className="p-1 rounded-full hover:glass dark:hover:glass transition-colors text-rose-600 dark:text-rose-400 cursor-pointer"
               title="Excluir lembrete"
             >
               <Trash2 className="w-3.5 h-3.5" />
@@ -446,7 +485,8 @@ export function StickyNote({
             {showAutocomplete && searchResults.length > 0 && (
               <div className="absolute bottom-2 left-0 right-0 bg-white/95 dark:bg-zinc-950/95 border border-border rounded-xl shadow-xl max-h-32 overflow-y-auto no-scrollbar z-50 p-1 flex flex-col gap-0.5 text-xs text-foreground">
                 {searchResults.map((item) => {
-                  const Icon = item.type === "lead" ? Users : item.type === "trip" ? Bus : ScrollText;
+                  const Icon =
+                    item.type === "lead" ? Users : item.type === "trip" ? Bus : ScrollText;
                   return (
                     <Button
                       key={`${item.type}-${item.id}`}
@@ -470,13 +510,15 @@ export function StickyNote({
             <div className="flex-1 w-full overflow-y-auto no-scrollbar text-xs font-semibold leading-relaxed whitespace-pre-wrap">
               {renderContent ? renderContent(text) : text}
             </div>
-            
+
             {/* Author / Creator indicator */}
             {note.profiles?.full_name && note.profile_id !== userId && (
               <div className="mt-2 text-[9px] font-black uppercase tracking-wider text-black/40 dark:text-white/40 flex items-center gap-1 shrink-0 border-t border-black/5 dark:border-white/5 pt-1.5 select-none">
                 <span>Por: {note.profiles.full_name}</span>
                 {note.visibility === "assigned" && (
-                  <span className="text-blue-600 dark:text-blue-400 font-black ml-auto">Direcionado a você</span>
+                  <span className="text-blue-600 dark:text-blue-400 font-black ml-auto">
+                    Direcionado a você
+                  </span>
                 )}
               </div>
             )}

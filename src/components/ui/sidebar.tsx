@@ -336,7 +336,8 @@ const SidebarInput = React.forwardRef<
     <Input
       ref={ref}
       data-sidebar="input"
-      className={cn( "h-8 w-full focus-visible:ring-2 focus-visible:ring-sidebar-ring", className, )} {...props}
+      className={cn("h-8 w-full focus-visible:ring-2 focus-visible:ring-sidebar-ring", className)}
+      {...props}
     />
   );
 });

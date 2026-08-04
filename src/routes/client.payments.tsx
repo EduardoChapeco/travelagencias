@@ -6,7 +6,9 @@ import { StatusBadge } from "@/components/ui/badge";
 import { formatCurrency, formatDate } from "@/lib/formatters";
 
 export const Route = createFileRoute("/client/payments")({
-  head: ({ context }: any) => ({ meta: [{ title: `Pagamentos · ${context?.brand?.platform_name || 'Turis'}` }] }),
+  head: ({ context }: any) => ({
+    meta: [{ title: `Pagamentos · ${context?.brand?.platform_name || "Turis"}` }],
+  }),
   component: ClientPaymentsPage,
 });
 
@@ -28,7 +30,7 @@ function ClientPaymentsPage() {
       {q.data && q.data.length > 0 && (
         <div className="overflow-hidden rounded-[var(--radius-card)] border-none">
           <table className="w-full text-sm">
-            <thead className="glass bg-white/5 border-white/10/40 text-left ds-meta uppercase text-muted-foreground">
+            <thead className="glass/40 text-left ds-meta uppercase text-muted-foreground">
               <tr>
                 <th className="px-3 py-2">Parcela</th>
                 <th className="px-3 py-2">Vencimento</th>
@@ -42,7 +44,9 @@ function ClientPaymentsPage() {
                 <tr key={p.id} className="border-t border-border">
                   <td className="px-3 py-2.5 font-mono text-xs">#{p.number}</td>
                   <td className="px-3 py-2.5 text-xs">{formatDate(p.due_date)}</td>
-                  <td className="px-3 py-2.5 text-right font-mono">{formatCurrency(Number(p.amount))}</td>
+                  <td className="px-3 py-2.5 text-right font-mono">
+                    {formatCurrency(Number(p.amount))}
+                  </td>
                   <td className="px-3 py-2.5 text-xs text-muted-foreground">
                     {p.payment_method ?? "—"}
                   </td>

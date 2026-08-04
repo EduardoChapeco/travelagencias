@@ -26,32 +26,32 @@ export function formatFriendlyDate(dateString?: string | null): string {
   if (isToday(date)) return "Hoje";
   if (isYesterday(date)) return "Ontem";
   if (isTomorrow(date)) return "Amanhã";
-  
+
   return format(date, "dd 'de' MMM", { locale: ptBR });
 }
 
 export function calculateTaskProgressLocally(task: TaskWithRelations): number {
   if (task.status === "done") return 1.0;
-  
+
   let progress = 0;
   const checklistTotal = task.checklist_items?.length || 0;
-  const checklistDone = task.checklist_items?.filter(c => c.is_done).length || 0;
-  
+  const checklistDone = task.checklist_items?.filter((c) => c.is_done).length || 0;
+
   const subtaskTotal = task.subtasks?.length || 0;
-  const subtaskDone = task.subtasks?.filter(s => s.status === "done").length || 0;
+  const subtaskDone = task.subtasks?.filter((s) => s.status === "done").length || 0;
 
   if (checklistTotal > 0) {
     progress += (checklistDone / checklistTotal) * 0.5;
   }
-  
+
   if (subtaskTotal > 0) {
     progress += (subtaskDone / subtaskTotal) * 0.5;
   }
-  
+
   if (checklistTotal === 0 && subtaskTotal === 0) {
     return 0; // if no sub-items and not done
   }
-  
+
   // If there's only one type of sub-item, we scale it to 100%
   if (checklistTotal > 0 && subtaskTotal === 0) {
     return checklistDone / checklistTotal;

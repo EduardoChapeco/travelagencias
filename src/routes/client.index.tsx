@@ -6,7 +6,9 @@ import { PageHeader } from "@/components/shell/PageHeader";
 import { formatCurrency, formatDate } from "@/lib/formatters";
 
 export const Route = createFileRoute("/client/")({
-  head: ({ context }: any) => ({ meta: [{ title: `Área do cliente · ${context?.brand?.platform_name || 'Turis'}` }] }),
+  head: ({ context }: any) => ({
+    meta: [{ title: `Área do cliente · ${context?.brand?.platform_name || "Turis"}` }],
+  }),
   component: ClientHome,
 });
 

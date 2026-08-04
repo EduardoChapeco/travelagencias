@@ -129,7 +129,7 @@ function SortableBlock({ block, selectedBlockId, setSelectedBlockId, removeBlock
       className={`rounded-full border overflow-hidden transition-all${
         selectedBlockId === block.id
           ? "border-brand glass-card border-none"
-          : "border-border glass bg-white/5 border-white/10/30 hover:border-brand/40"
+          : "border-border glass/30 hover:border-brand/40"
       }${isDragging ? "opacity-50 ring-2 ring-brand" : ""}`}
     >
       <div
@@ -189,7 +189,9 @@ function SortableBlockOverlay({ block }: any) {
 }
 
 export const Route = createFileRoute("/agency/$slug/portal/pages/$page_id")({
-  head: ({ context }: any) => ({ meta: [{ title: `Editor de Página · ${context?.brand?.platform_name || 'Turis'}` }] }),
+  head: ({ context }: any) => ({
+    meta: [{ title: `Editor de Página · ${context?.brand?.platform_name || "Turis"}` }],
+  }),
   component: PageEditorRoute,
 });
 
@@ -212,7 +214,12 @@ function PageEditorRoute() {
 
   const isNew = page_id === "new";
 
-  const { data: initialData, isLoading, isError, error } = useQuery({
+  const {
+    data: initialData,
+    isLoading,
+    isError,
+    error,
+  } = useQuery({
     enabled: !!agency && !isNew,
     queryKey: ["portal-page", page_id],
     queryFn: () => fetchPortalPage(page_id),
@@ -569,7 +576,7 @@ function PageEditorRoute() {
   if (isError || (!isNew && !initialData)) {
     return (
       <div className="flex min-h-[400px] flex-col items-center justify-center p-8 text-center m-6 rounded-[var(--radius-card)] glass-error">
-        <div className="h-10 w-10 rounded-full bg-white/10 flex items-center justify-center mb-4">
+        <div className="h-10 w-10 rounded-full glass-dark flex items-center justify-center mb-4">
           <AlertCircle className="h-5 w-5 shrink-0" />
         </div>
         <h3 className="text-base font-bold">Falha ao Carregar Página</h3>
@@ -578,7 +585,7 @@ function PageEditorRoute() {
         </p>
         <Button
           onClick={() => navigate({ to: "/agency/$slug/portal/pages", params: { slug } })}
-          className="mt-4 h-8 px-4 rounded-[var(--radius-card)] bg-white/10 hover:bg-white/20 text-xs font-semibold text-white cursor-pointer transition-colors"
+          className="mt-4 h-8 px-4 rounded-[var(--radius-card)] glass-dark hover:glass-dark text-xs font-semibold text-white cursor-pointer transition-colors"
         >
           Voltar às Páginas
         </Button>
@@ -668,12 +675,12 @@ function PageEditorRoute() {
   return (
     <div className="page-content dock-offset max-w-full flex flex-col p-0 relative min-h-0">
       {/* Top Navigation Bar - Ultrathin (h-11) */}
-      <div className="sticky top-0 z-10 flex h-11 items-center justify-between border-b border-white/10 glass bg-white/5 px-4 shrink-0 select-none">
+      <div className="sticky top-0 z-10 flex h-11 items-center justify-between border-b border-border glass px-4 shrink-0 select-none">
         <div className="flex items-center gap-2">
           {/* Page Dropdown Switcher */}
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button className="flex items-center gap-1.5 h-7 px-2.5 rounded-full border-none bg-white text-xs font-semibold text-foreground hover:glass bg-white/5 border-white/10 transition-colors cursor-pointer select-none">
+              <Button className="flex items-center gap-1.5 h-7 px-2.5 rounded-full border-none bg-white text-xs font-semibold text-foreground hover:glass transition-colors cursor-pointer select-none">
                 <span>Página: {title || "Nova Página"}</span>
                 <span className="text-muted-foreground text-[8px]">▼</span>
               </Button>
@@ -719,7 +726,7 @@ function PageEditorRoute() {
           {!isNew && (
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button className="flex h-7 w-7 items-center justify-center rounded-full border-none bg-white text-muted-foreground hover:glass bg-white/5 border-white/10 hover:text-foreground transition-colors cursor-pointer">
+                <Button className="flex h-7 w-7 items-center justify-center rounded-full border-none bg-white text-muted-foreground hover:glass hover:text-foreground transition-colors cursor-pointer">
                   <Settings className="w-3.5 h-3.5" />
                 </Button>
               </DropdownMenuTrigger>
@@ -789,7 +796,7 @@ function PageEditorRoute() {
         </div>
 
         {/* Viewport controls - compact divide group */}
-        <div className="hidden md:flex items-center glass bg-white/5 border-white/10 p-0.5 rounded-full divide-x divide-white/10">
+        <div className="hidden md:flex items-center glass p-0.5 rounded-full divide-x divide-white/10">
           <Button
             onClick={() => {
               if (mode === "biolink") {
@@ -800,7 +807,7 @@ function PageEditorRoute() {
             }}
             disabled={mode === "biolink"}
             title="Modo Desktop"
-            className={`h-6 px-2 flex items-center justify-center transition-colors cursor-pointer ${mode === "biolink" ? "opacity-30 cursor-not-allowed" : ""}${viewport === "desktop" ? "glass bg-white/5 border-white/10 text-foreground font-semibold" : "text-muted-foreground hover:text-foreground"}`}
+            className={`h-6 px-2 flex items-center justify-center transition-colors cursor-pointer ${mode === "biolink" ? "opacity-30 cursor-not-allowed" : ""}${viewport === "desktop" ? "glass text-foreground font-semibold" : "text-muted-foreground hover:text-foreground"}`}
           >
             <Monitor className="h-3.5 w-3.5" />
           </Button>
@@ -814,14 +821,14 @@ function PageEditorRoute() {
             }}
             disabled={mode === "biolink"}
             title="Modo Tablet"
-            className={`h-6 px-2 flex items-center justify-center transition-colors cursor-pointer ${mode === "biolink" ? "opacity-30 cursor-not-allowed" : ""}${viewport === "tablet" ? "glass bg-white/5 border-white/10 text-foreground font-semibold" : "text-muted-foreground hover:text-foreground"}`}
+            className={`h-6 px-2 flex items-center justify-center transition-colors cursor-pointer ${mode === "biolink" ? "opacity-30 cursor-not-allowed" : ""}${viewport === "tablet" ? "glass text-foreground font-semibold" : "text-muted-foreground hover:text-foreground"}`}
           >
             <Tablet className="h-3.5 w-3.5" />
           </Button>
           <Button
             onClick={() => setViewport("mobile")}
             title="Modo Celular"
-            className={`h-6 px-2 flex items-center justify-center transition-colors cursor-pointer${viewport === "mobile" ? "glass bg-white/5 border-white/10 text-foreground font-semibold" : "text-muted-foreground hover:text-foreground"}`}
+            className={`h-6 px-2 flex items-center justify-center transition-colors cursor-pointer${viewport === "mobile" ? "glass text-foreground font-semibold" : "text-muted-foreground hover:text-foreground"}`}
           >
             <Smartphone className="h-3.5 w-3.5" />
           </Button>
@@ -829,9 +836,7 @@ function PageEditorRoute() {
 
         <div className="hidden sm:flex items-center gap-2">
           {saveStatus === "saving" && (
-            <span className="ds-meta text-muted-foreground animate-pulse mr-1">
-              Salvando...
-            </span>
+            <span className="ds-meta text-muted-foreground animate-pulse mr-1">Salvando...</span>
           )}
           {saveStatus === "saved" && (
             <span className="ds-meta text-green-600 font-bold mr-1">✓ Salvo</span>
@@ -846,13 +851,14 @@ function PageEditorRoute() {
               target="_blank"
               rel="noopener noreferrer"
               title="Visualizar Página Ao Vivo"
-              className="p-1.5 rounded-full border-none bg-white text-muted-foreground hover:glass bg-white/5 border-white/10 hover:text-foreground transition-colors cursor-pointer flex items-center justify-center h-7 w-7"
+              className="p-1.5 rounded-full border-none bg-white text-muted-foreground hover:glass hover:text-foreground transition-colors cursor-pointer flex items-center justify-center h-7 w-7"
             >
               <ExternalLink className="h-3.5 h-3.5" />
             </a>
           )}
 
-          <Button variant="ghost"
+          <Button
+            variant="ghost"
             type="button"
             onClick={saveDraftOnly}
             disabled={submitting}
@@ -860,7 +866,8 @@ function PageEditorRoute() {
           >
             Salvar Rascunho
           </Button>
-          <Button variant="default"
+          <Button
+            variant="default"
             type="button"
             onClick={publishPage}
             disabled={submitting}
@@ -874,13 +881,13 @@ function PageEditorRoute() {
       {/* Main Workspace Layout */}
       <div className="flex flex-1 overflow-hidden min-h-0">
         {/* ── 1. ULTRAFINA SIDEBAR (w-12) ── */}
-        <div className="w-12 flex-shrink-0 border-r border-white/10 glass bg-white/5 flex flex-col items-center py-4 justify-between select-none">
+        <div className="w-12 flex-shrink-0 border-r border-border glass flex flex-col items-center py-4 justify-between select-none">
           <div className="flex flex-col items-center gap-5 w-full">
             {/* Back button */}
             <Button
               onClick={() => navigate({ to: "/agency/$slug/portal/pages", params: { slug } })}
               title="Voltar para Lista de Páginas"
-              className="p-2 rounded-full text-muted-foreground hover:text-foreground hover:glass bg-white/5 border-white/10 transition-colors cursor-pointer"
+              className="p-2 rounded-full text-muted-foreground hover:text-foreground hover:glass transition-colors cursor-pointer"
             >
               <ArrowLeft className="h-4.5 w-4.5" />
             </Button>
@@ -898,7 +905,7 @@ function PageEditorRoute() {
                 }
               }}
               title="Biblioteca de Seções"
-              className={`p-2 rounded-full transition-colors cursor-pointer ${isLeftSidebarOpen && leftTab === "sections" ? "bg-brand/10 text-brand font-bold" : "text-muted-foreground hover:text-foreground hover:glass bg-white/5 border-white/10"}`}
+              className={`p-2 rounded-full transition-colors cursor-pointer ${isLeftSidebarOpen && leftTab === "sections" ? "bg-brand/10 text-brand font-bold" : "text-muted-foreground hover:text-foreground hover:glass"}`}
             >
               <Plus className="h-4.5 w-4.5" />
             </Button>
@@ -913,7 +920,7 @@ function PageEditorRoute() {
                 }
               }}
               title="Templates Prontos"
-              className={`p-2 rounded-full transition-colors cursor-pointer ${isLeftSidebarOpen && leftTab === "templates" ? "bg-brand/10 text-brand font-bold" : "text-muted-foreground hover:text-foreground hover:glass bg-white/5 border-white/10"}`}
+              className={`p-2 rounded-full transition-colors cursor-pointer ${isLeftSidebarOpen && leftTab === "templates" ? "bg-brand/10 text-brand font-bold" : "text-muted-foreground hover:text-foreground hover:glass"}`}
             >
               <Sparkles className="h-4.5 w-4.5" />
             </Button>
@@ -928,7 +935,7 @@ function PageEditorRoute() {
                 }
               }}
               title="Camadas e Ordenação"
-              className={`p-2 rounded-full relative transition-colors cursor-pointer ${isLeftSidebarOpen && leftTab === "layers" ? "bg-brand/10 text-brand font-bold" : "text-muted-foreground hover:text-foreground hover:glass bg-white/5 border-white/10"}`}
+              className={`p-2 rounded-full relative transition-colors cursor-pointer ${isLeftSidebarOpen && leftTab === "layers" ? "bg-brand/10 text-brand font-bold" : "text-muted-foreground hover:text-foreground hover:glass"}`}
             >
               <Layers className="h-4.5 w-4.5" />
               {blocks.length > 0 && (
@@ -944,7 +951,7 @@ function PageEditorRoute() {
             <Button
               onClick={() => setPageSettingsOpen(true)}
               title="Configurações Gerais"
-              className="p-2 rounded-full text-muted-foreground hover:text-foreground hover:glass bg-white/5 border-white/10 transition-colors cursor-pointer"
+              className="p-2 rounded-full text-muted-foreground hover:text-foreground hover:glass transition-colors cursor-pointer"
             >
               <Settings className="h-4.5 w-4.5" />
             </Button>
@@ -952,7 +959,7 @@ function PageEditorRoute() {
             <Button
               onClick={() => setSeoSettingsOpen(true)}
               title="Configurações SEO"
-              className="p-2 rounded-full text-muted-foreground hover:text-foreground hover:glass bg-white/5 border-white/10 transition-colors cursor-pointer"
+              className="p-2 rounded-full text-muted-foreground hover:text-foreground hover:glass transition-colors cursor-pointer"
             >
               <Globe className="h-4.5 w-4.5" />
             </Button>
@@ -961,7 +968,7 @@ function PageEditorRoute() {
               <Button
                 onClick={() => setHistorySettingsOpen(true)}
                 title="Histórico de Versões"
-                className="p-2 rounded-full text-muted-foreground hover:text-foreground hover:glass bg-white/5 border-white/10 transition-colors cursor-pointer"
+                className="p-2 rounded-full text-muted-foreground hover:text-foreground hover:glass transition-colors cursor-pointer"
               >
                 <History className="h-4.5 w-4.5" />
               </Button>
@@ -971,9 +978,9 @@ function PageEditorRoute() {
 
         {/* ── 2. DRAWER PANEL: Tab Content (width 268px) ── */}
         {isLeftSidebarOpen && (
-          <div className="w-[268px] flex-shrink-0 border-r border-white/10 glass bg-white/5 flex flex-col overflow-hidden animate-in slide-in-from-left duration-200">
+          <div className="w-[268px] flex-shrink-0 border-r border-border glass flex flex-col overflow-hidden animate-in slide-in-from-left duration-200">
             {/* Minimally Styled Tabs */}
-            <div className="flex border-b border-white/10 shrink-0 select-none px-4 gap-4">
+            <div className="flex border-b border-border shrink-0 select-none px-4 gap-4">
               <Button
                 type="button"
                 onClick={() => setLeftTab("sections")}
@@ -1013,9 +1020,7 @@ function PageEditorRoute() {
             {leftTab === "sections" && (
               <div className="flex-1 flex flex-col min-h-0 overflow-y-auto p-4 space-y-4 scrollbar-thin">
                 <div>
-                  <h4 className="ds-label-caps font-bold text-foreground">
-                    Biblioteca de Seções
-                  </h4>
+                  <h4 className="ds-label-caps font-bold text-foreground">Biblioteca de Seções</h4>
                   <p className="ds-meta text-muted-foreground leading-normal mt-0.5">
                     Adicione novos blocos ao layout.
                   </p>
@@ -1042,105 +1047,106 @@ function PageEditorRoute() {
                           </h5>
                         </div>
                         <div className="grid grid-cols-2 gap-2">
-                        {visibleTypes.map((type) => {
-                          let IconComponent: React.ComponentType<any> = LayoutTemplate;
-                          if (type === "text") IconComponent = Type;
-                          else if (type === "gallery" || type === "biolink_header")
-                            IconComponent = ImageIcon;
-                          else if (type === "contact") IconComponent = PhoneCall;
-                          else if (type === "features" || type === "biolink_links")
-                            IconComponent = ListPlus;
-                          else if (
-                            type === "cta" ||
-                            type === "promotional_banner" ||
-                            type === "news_announcements_ticker"
-                          )
-                            IconComponent = Megaphone;
-                          else if (
-                            type === "faq" ||
-                            type === "support_ticket_form" ||
-                            type === "travel_tips_faq" ||
-                            type === "faq_category_accordion"
-                          )
-                            IconComponent = HelpCircle;
-                          else if (
-                            type === "testimonials" ||
-                            type === "live_reviews" ||
-                            type === "reviews_submission_form"
-                          )
-                            IconComponent = Quote;
-                          else if (type === "tours_grid" || type === "tours_carousel")
-                            IconComponent = Bus;
-                          else if (type === "stats") IconComponent = BarChart2;
-                          else if (type === "video") IconComponent = Play;
-                          else if (type === "map" || type === "dynamic_map_route")
-                            IconComponent = Map;
-                          else if (type === "blog_feed") IconComponent = Rss;
-                          else if (type === "featured_destination_filter") IconComponent = Globe;
-                          else if (type === "team_widget" || type === "agent_profile_card")
-                            IconComponent = Users;
-                          else if (
-                            type === "whatsapp_departments" ||
-                            type === "whatsapp_floating_bubble"
-                          )
-                            IconComponent = MessageSquare;
-                          else if (
-                            type === "countdown_tour" ||
-                            type === "live_sales_counter" ||
-                            type === "client_boarding_timeline"
-                          )
-                            IconComponent = Clock;
-                          else if (type === "exchange_rates" || type === "currency_calculator")
-                            IconComponent = Coins;
-                          else if (type === "agency_vouchers") IconComponent = Ticket;
-                          else if (type === "weather_forecast") IconComponent = CloudSun;
-                          else if (type === "itinerary_timeline") IconComponent = Calendar;
-                          else if (type === "lead_capture_callback") IconComponent = PhoneCall;
-                          else if (type === "payment_gateways_display") IconComponent = CreditCard;
-                          else if (
-                            type === "live_tours_map" ||
-                            type === "custom_package_lead_builder"
-                          )
-                            IconComponent = Compass;
-                          else if (type === "gift_cards_store") IconComponent = Gift;
-                          else if (type === "corporate_rfp_form") IconComponent = Building;
-                          else if (type === "client_document_upload") IconComponent = Upload;
-                          else if (type === "biolink_newsletter_box") IconComponent = Mail;
-                          else if (type === "visa_checker") IconComponent = FileText;
-                          else if (type === "insurance_simulator") IconComponent = Activity;
-                          else if (type === "agency_badges_trust") IconComponent = Check;
-                          else if (type === "interactive_flight_tracker") IconComponent = Plane;
-                          else if (type === "biolink_qr_code_share") IconComponent = QrCode;
+                          {visibleTypes.map((type) => {
+                            let IconComponent: React.ComponentType<any> = LayoutTemplate;
+                            if (type === "text") IconComponent = Type;
+                            else if (type === "gallery" || type === "biolink_header")
+                              IconComponent = ImageIcon;
+                            else if (type === "contact") IconComponent = PhoneCall;
+                            else if (type === "features" || type === "biolink_links")
+                              IconComponent = ListPlus;
+                            else if (
+                              type === "cta" ||
+                              type === "promotional_banner" ||
+                              type === "news_announcements_ticker"
+                            )
+                              IconComponent = Megaphone;
+                            else if (
+                              type === "faq" ||
+                              type === "support_ticket_form" ||
+                              type === "travel_tips_faq" ||
+                              type === "faq_category_accordion"
+                            )
+                              IconComponent = HelpCircle;
+                            else if (
+                              type === "testimonials" ||
+                              type === "live_reviews" ||
+                              type === "reviews_submission_form"
+                            )
+                              IconComponent = Quote;
+                            else if (type === "tours_grid" || type === "tours_carousel")
+                              IconComponent = Bus;
+                            else if (type === "stats") IconComponent = BarChart2;
+                            else if (type === "video") IconComponent = Play;
+                            else if (type === "map" || type === "dynamic_map_route")
+                              IconComponent = Map;
+                            else if (type === "blog_feed") IconComponent = Rss;
+                            else if (type === "featured_destination_filter") IconComponent = Globe;
+                            else if (type === "team_widget" || type === "agent_profile_card")
+                              IconComponent = Users;
+                            else if (
+                              type === "whatsapp_departments" ||
+                              type === "whatsapp_floating_bubble"
+                            )
+                              IconComponent = MessageSquare;
+                            else if (
+                              type === "countdown_tour" ||
+                              type === "live_sales_counter" ||
+                              type === "client_boarding_timeline"
+                            )
+                              IconComponent = Clock;
+                            else if (type === "exchange_rates" || type === "currency_calculator")
+                              IconComponent = Coins;
+                            else if (type === "agency_vouchers") IconComponent = Ticket;
+                            else if (type === "weather_forecast") IconComponent = CloudSun;
+                            else if (type === "itinerary_timeline") IconComponent = Calendar;
+                            else if (type === "lead_capture_callback") IconComponent = PhoneCall;
+                            else if (type === "payment_gateways_display")
+                              IconComponent = CreditCard;
+                            else if (
+                              type === "live_tours_map" ||
+                              type === "custom_package_lead_builder"
+                            )
+                              IconComponent = Compass;
+                            else if (type === "gift_cards_store") IconComponent = Gift;
+                            else if (type === "corporate_rfp_form") IconComponent = Building;
+                            else if (type === "client_document_upload") IconComponent = Upload;
+                            else if (type === "biolink_newsletter_box") IconComponent = Mail;
+                            else if (type === "visa_checker") IconComponent = FileText;
+                            else if (type === "insurance_simulator") IconComponent = Activity;
+                            else if (type === "agency_badges_trust") IconComponent = Check;
+                            else if (type === "interactive_flight_tracker") IconComponent = Plane;
+                            else if (type === "biolink_qr_code_share") IconComponent = QrCode;
 
-                          const isBiolinkType = type.startsWith("biolink_");
+                            const isBiolinkType = type.startsWith("biolink_");
 
-                          return (
-                            <Button
-                              key={type}
-                              type="button"
-                              onClick={() => addBlock(type)}
-                              className="w-full flex flex-col items-center justify-center gap-2 p-3 text-center transition-all glass bg-white/5 border-white/10/20 hover:glass bg-white/5 border-white/10/60 hover:border-brand/40 group cursor-pointer border-none rounded-[var(--radius-card)] hover:shadow-none relative overflow-hidden"
-                            >
-                              <div className="p-2 glass bg-white/5 border-white/10/50 rounded-full group-hover:bg-brand/10 transition-colors">
-                                <IconComponent
-                                  className={`h-4 w-4 shrink-0 transition-colors ${
-                                    isBiolinkType
-                                      ? "text-brand"
-                                      : "text-muted-foreground group-hover:text-brand"
-                                  }`}
-                                />
-                              </div>
-                              <span className="ds-meta font-semibold text-foreground leading-tight">
-                                {BLOCK_LABELS[type]}
-                              </span>
-                              {isBiolinkType && (
-                                <span className="absolute top-1 right-1 text-[7px] font-bold uppercase tracking-wider px-1 bg-brand/10 text-brand rounded-full shrink-0">
-                                  Bio
+                            return (
+                              <Button
+                                key={type}
+                                type="button"
+                                onClick={() => addBlock(type)}
+                                className="w-full flex flex-col items-center justify-center gap-2 p-3 text-center transition-all glass/20 hover:glass/60 hover:border-brand/40 group cursor-pointer border-none rounded-[var(--radius-card)] hover:shadow-none relative overflow-hidden"
+                              >
+                                <div className="p-2 glass/50 rounded-full group-hover:bg-brand/10 transition-colors">
+                                  <IconComponent
+                                    className={`h-4 w-4 shrink-0 transition-colors ${
+                                      isBiolinkType
+                                        ? "text-brand"
+                                        : "text-muted-foreground group-hover:text-brand"
+                                    }`}
+                                  />
+                                </div>
+                                <span className="ds-meta font-semibold text-foreground leading-tight">
+                                  {BLOCK_LABELS[type]}
                                 </span>
-                              )}
-                            </Button>
-                          );
-                        })}
+                                {isBiolinkType && (
+                                  <span className="absolute top-1 right-1 text-[7px] font-bold uppercase tracking-wider px-1 bg-brand/10 text-brand rounded-full shrink-0">
+                                    Bio
+                                  </span>
+                                )}
+                              </Button>
+                            );
+                          })}
                         </div>
                       </div>
                     );
@@ -1161,9 +1167,7 @@ function PageEditorRoute() {
             {leftTab === "templates" && (
               <div className="flex-1 flex flex-col min-h-0 overflow-y-auto p-4 space-y-4 scrollbar-thin">
                 <div>
-                  <h4 className="ds-label-caps font-bold text-foreground">
-                    Designs Prontos
-                  </h4>
+                  <h4 className="ds-label-caps font-bold text-foreground">Designs Prontos</h4>
                   <p className="ds-meta text-muted-foreground leading-normal mt-0.5">
                     Selecione um template pronto.
                   </p>
@@ -1175,7 +1179,7 @@ function PageEditorRoute() {
                       key={tpl.id}
                       type="button"
                       onClick={() => handleApplyTemplate(tpl.id)}
-                      className={`w-full text-left p-3 border rounded-[var(--radius-card)] hover:border-brand/40 transition-all flex flex-col gap-1.5 group cursor-pointer ${template === tpl.id ? "bg-brand/5 border-brand/40" : "glass bg-white/5 border-white/10"}`}
+                      className={`w-full text-left p-3 border rounded-[var(--radius-card)] hover:border-brand/40 transition-all flex flex-col gap-1.5 group cursor-pointer ${template === tpl.id ? "bg-brand/5 border-brand/40" : "glass"}`}
                     >
                       <div className="flex justify-between items-center w-full">
                         <span
@@ -1209,7 +1213,7 @@ function PageEditorRoute() {
                 </div>
                 <div className="flex-1 overflow-y-auto p-4 scrollbar-thin bg-white">
                   {blocks.length === 0 ? (
-                    <div className="border border-dashed border-border p-8 text-center glass bg-white/5 border-white/10/10">
+                    <div className="border border-dashed border-border p-8 text-center glass/10">
                       <p className="text-xs text-muted-foreground font-medium">Página vazia</p>
                       <p className="ds-meta text-muted-foreground/70 mt-1">
                         Adicione seções pela aba "Seções".
@@ -1242,10 +1246,10 @@ function PageEditorRoute() {
                           ))}
                         </div>
                       </SortableContext>
-                      
+
                       <DragOverlay>
                         {activeId ? (
-                          <SortableBlockOverlay block={blocks.find(b => b.id === activeId)} />
+                          <SortableBlockOverlay block={blocks.find((b) => b.id === activeId)} />
                         ) : null}
                       </DragOverlay>
                     </DndContext>
@@ -1257,9 +1261,9 @@ function PageEditorRoute() {
         )}
 
         {/* ── 2. CENTER CANVAS: Live page preview simulation (flex-1) ── */}
-        <div className="flex-1 glass bg-white/5 border-white/10/30 relative overflow-hidden flex flex-col items-center justify-start min-h-0 h-full">
+        <div className="flex-1 glass/30 relative overflow-hidden flex flex-col items-center justify-start min-h-0 h-full">
           {/* ── Canvas Ruler: device indicator ── */}
-          <div className="w-full flex items-center justify-center gap-2 py-2 shrink-0 border-b border-white/10 glass bg-white/5">
+          <div className="w-full flex items-center justify-center gap-2 py-2 shrink-0 border-b border-border glass">
             <span className="text-[9px] uppercase tracking-widest font-bold text-muted-foreground">
               {viewport === "desktop" && "Desktop · 1200px"}
               {viewport === "tablet" && "Tablet · 768px"}
@@ -1326,7 +1330,7 @@ function PageEditorRoute() {
             const blockLabel =
               BLOCK_LABELS[activeBlock?.type as keyof typeof BLOCK_LABELS] ?? "Seção";
             return (
-              <div className="w-[360px] flex-shrink-0 border-l border-white/10 glass bg-white/5 flex flex-col overflow-hidden">
+              <div className="w-[360px] flex-shrink-0 border-l border-border glass flex flex-col overflow-hidden">
                 {/* Header */}
                 <div className="flex items-start justify-between px-5 pt-4 pb-3 border-b border-border shrink-0">
                   <div className="flex flex-col gap-0.5">
@@ -1341,7 +1345,7 @@ function PageEditorRoute() {
                     type="button"
                     onClick={() => setSelectedBlockId(null)}
                     title="Fechar painel"
-                    className="p-1 text-muted-foreground hover:text-foreground hover:glass bg-white/5 border-white/10 rounded-full transition-colors mt-0.5"
+                    className="p-1 text-muted-foreground hover:text-foreground hover:glass rounded-full transition-colors mt-0.5"
                   >
                     <PanelLeft className="w-4 h-4" />
                   </Button>
@@ -1363,7 +1367,8 @@ function PageEditorRoute() {
 
                 {/* Footer actions */}
                 <div className="px-5 py-3 border-t border-border shrink-0 flex gap-2">
-                  <Button variant="ghost"
+                  <Button
+                    variant="ghost"
                     type="button"
                     onClick={() => {
                       removeBlock(selectedBlockId);
@@ -1373,7 +1378,8 @@ function PageEditorRoute() {
                   >
                     <Trash2 className="w-3.5 h-3.5 mr-1.5" /> Excluir
                   </Button>
-                  <Button variant="default"
+                  <Button
+                    variant="default"
                     type="button"
                     onClick={() => setSelectedBlockId(null)}
                     className="flex-1 justify-center ds-label-caps font-bold"
@@ -1405,7 +1411,8 @@ function PageEditorRoute() {
             <Button variant="ghost" type="button" onClick={() => setApplyConfirmTemplate(null)}>
               Cancelar
             </Button>
-            <Button variant="default"
+            <Button
+              variant="default"
               type="button"
               onClick={() => {
                 if (!applyConfirmTemplate) return;
@@ -1453,7 +1460,8 @@ function PageEditorRoute() {
             <Button variant="ghost" type="button" onClick={() => setRevertConfirmVersion(null)}>
               Cancelar
             </Button>
-            <Button variant="default"
+            <Button
+              variant="default"
               type="button"
               disabled={submitting}
               onClick={async () => {
@@ -1635,7 +1643,7 @@ function PageEditorRoute() {
             {versionsQuery.data?.map((v) => (
               <div
                 key={v.id}
-                className="flex flex-col gap-2 p-3 rounded-full border-none glass bg-white/5 border-white/10/30"
+                className="flex flex-col gap-2 p-3 rounded-full border-none glass/30"
               >
                 <div className="flex justify-between items-center">
                   <div>
@@ -1688,7 +1696,9 @@ function PageEditorRoute() {
       <Dialog open={showNewPageModal} onOpenChange={setShowNewPageModal}>
         <DialogContent className="max-w-md p-0 overflow-hidden border-none/10 max-h-[90vh] bg-background">
           <DialogHeader className="px-6 py-4 border-b border-border/40">
-            <DialogTitle className="text-sm font-bold text-foreground">Criar Nova Página</DialogTitle>
+            <DialogTitle className="text-sm font-bold text-foreground">
+              Criar Nova Página
+            </DialogTitle>
           </DialogHeader>
           <div className="p-6 space-y-4">
             <div className="space-y-3">
@@ -1764,7 +1774,7 @@ function PageEditorRoute() {
       </Dialog>
 
       {/* Floating Action Menu for mobile devices */}
-      <div className="sm:hidden fixed bottom-4 left-1/2 -translate-x-1/2 z-50 flex items-center gap-2 glass-card border-none/90 dark:bg-zinc-950/90 backdrop-blur-3xl border border-white/20 dark:border-white/10 p-2.5 rounded-3xl shadow-none w-[calc(100vw-32px)] max-w-sm justify-between">
+      <div className="sm:hidden fixed bottom-4 left-1/2 -translate-x-1/2 z-50 flex items-center gap-2 glass-card border-none/90 dark:bg-zinc-950/90 backdrop-blur-3xl border border-border dark:border-border p-2.5 rounded-3xl shadow-none w-[calc(100vw-32px)] max-w-sm justify-between">
         <div className="flex items-center gap-1.5 min-w-0">
           {saveStatus === "saving" && (
             <span className="ds-meta text-muted-foreground animate-pulse truncate">
@@ -1779,7 +1789,8 @@ function PageEditorRoute() {
           )}
         </div>
         <div className="flex items-center gap-2 shrink-0">
-          <Button variant="ghost"
+          <Button
+            variant="ghost"
             type="button"
             onClick={saveDraftOnly}
             disabled={submitting}
@@ -1787,7 +1798,8 @@ function PageEditorRoute() {
           >
             Salvar
           </Button>
-          <Button variant="default"
+          <Button
+            variant="default"
             type="button"
             onClick={publishPage}
             disabled={submitting}

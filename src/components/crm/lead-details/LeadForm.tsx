@@ -125,64 +125,41 @@ export function LeadForm({
       <h3 className="text-sm font-bold text-foreground">Editar Lead</h3>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <Field label="Nome completo *" error={errors.name?.message}>
-          <Input {...register("name")}  />
+          <Input {...register("name")} />
         </Field>
         <Field label="E-mail" error={errors.email?.message}>
-          <Input type="email" {...register("email")}  />
+          <Input type="email" {...register("email")} />
         </Field>
         <Field label="Telefone / WhatsApp" error={errors.phone?.message}>
-          <Input {...register("phone")}  />
+          <Input {...register("phone")} />
         </Field>
         <Field label="Destino de interesse" error={errors.destination?.message}>
-          <Input {...register("destination")}  />
+          <Input {...register("destination")} />
         </Field>
         <Field label="Período/Mês Flexível de Interesse" error={errors.interest_period?.message}>
-          <Input
-            {...register("interest_period")}
-            
-            placeholder="Ex: Julho/2026, Outubro"
-          />
+          <Input {...register("interest_period")} placeholder="Ex: Julho/2026, Outubro" />
         </Field>
         <Field label="Data de início (Se houver data)" error={errors.travel_start?.message}>
-          <Input type="date" {...register("travel_start")}  />
+          <Input type="date" {...register("travel_start")} />
         </Field>
         <Field label="Data de término (Se houver data)" error={errors.travel_end?.message}>
-          <Input type="date" {...register("travel_end")}  />
+          <Input type="date" {...register("travel_end")} />
         </Field>
 
         <div className="grid grid-cols-3 gap-2">
           <Field label="Adultos" error={errors.pax_adults?.message}>
-            <Input
-              type="number"
-              min={1}
-              {...register("pax_adults", { valueAsNumber: true })}
-              
-            />
+            <Input type="number" min={1} {...register("pax_adults", { valueAsNumber: true })} />
           </Field>
           <Field label="Crianças" error={errors.pax_children?.message}>
-            <Input
-              type="number"
-              min={0}
-              {...register("pax_children", { valueAsNumber: true })}
-              
-            />
+            <Input type="number" min={0} {...register("pax_children", { valueAsNumber: true })} />
           </Field>
           <Field label="Bebês" error={errors.pax_infants?.message}>
-            <Input
-              type="number"
-              min={0}
-              {...register("pax_infants", { valueAsNumber: true })}
-              
-            />
+            <Input type="number" min={0} {...register("pax_infants", { valueAsNumber: true })} />
           </Field>
         </div>
 
         <Field label="Idades das Crianças (ex: 5, 8)" error={errors.pax_ages_str?.message}>
-          <Input
-            {...register("pax_ages_str")}
-            
-            placeholder="Separadas por vírgula"
-          />
+          <Input {...register("pax_ages_str")} placeholder="Separadas por vírgula" />
         </Field>
 
         <div className="col-span-1 md:col-span-2 ds-meta bg-brand/5 border border-brand/10 p-3.5 rounded-[var(--radius-card)] text-muted-foreground space-y-1">
@@ -207,12 +184,11 @@ export function LeadForm({
             min={0}
             step="0.01"
             {...register("estimated_value", { valueAsNumber: true })}
-            
           />
         </Field>
 
         <Field label="Tipo de Interesse" error={errors.interest_type?.message}>
-          <Select {...register("interest_type")} >
+          <Select {...register("interest_type")}>
             <option value="">Não informado</option>
             {INTEREST_TYPES.map((t) => (
               <option key={t.v} value={t.v}>
@@ -223,11 +199,11 @@ export function LeadForm({
         </Field>
 
         <Field label="Origem / Canal" error={errors.source?.message}>
-          <Input {...register("source")}  />
+          <Input {...register("source")} />
         </Field>
 
         <Field label="Estágio do Funil" error={errors.stage_id?.message}>
-          <Select {...register("stage_id")} >
+          <Select {...register("stage_id")}>
             {stages.map((s) => (
               <option key={s.id} value={s.id}>
                 {s.name}
@@ -238,11 +214,11 @@ export function LeadForm({
       </div>
 
       <Field label="Anotações gerais" error={errors.notes?.message}>
-        <Textarea rows={3} {...register("notes")}  />
+        <Textarea rows={3} {...register("notes")} />
       </Field>
 
       <Field label="Motivo da Perda (Se perdido)" error={errors.lost_reason?.message}>
-        <Input {...register("lost_reason")}  />
+        <Input {...register("lost_reason")} />
       </Field>
 
       <div className="flex justify-end gap-2.5 pt-4 border-t border-border">

@@ -5,7 +5,9 @@ import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 
 export const Route = createFileRoute("/m/invite/$token")({
-  head: ({ context }: any) => ({ meta: [{ title: `Aceitar convite · ${context?.brand?.platform_name || 'Turis'}` }] }),
+  head: ({ context }: any) => ({
+    meta: [{ title: `Aceitar convite · ${context?.brand?.platform_name || "Turis"}` }],
+  }),
   component: AcceptInvitePage,
 });
 
@@ -83,7 +85,9 @@ function AcceptInvitePage() {
           <div className="rounded bg-warning/10 p-3 text-sm">
             Entre ou cadastre-se com o email <strong>{invite.email}</strong> para aceitar.
           </div>
-          <Button variant="ghost" onClick={() => navigate({ to: "/auth/login" })}>Entrar</Button>
+          <Button variant="ghost" onClick={() => navigate({ to: "/auth/login" })}>
+            Entrar
+          </Button>
           <Button variant="default" onClick={() => navigate({ to: "/auth/register" })}>
             Criar conta
           </Button>
