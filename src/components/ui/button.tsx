@@ -5,28 +5,28 @@ import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "@/lib/utils";
 
 const buttonVariants = cva(
-  "inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-[var(--radius-button)] text-sm font-medium cursor-pointer transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 disabled:cursor-not-allowed [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0",
+  "inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-[var(--radius-button)] text-sm font-semibold cursor-pointer transition-all duration-150 active:scale-[0.98] focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 disabled:cursor-not-allowed [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 select-none",
   {
     variants: {
       variant: {
-        default: "bg-primary text-primary-foreground hover:bg-primary/90",
-        destructive: "bg-destructive text-destructive-foreground hover:bg-destructive/90",
-        outline: "border border-input bg-transparent hover:bg-accent hover:text-accent-foreground",
-        secondary: "bg-secondary text-secondary-foreground hover:bg-secondary/80",
-        ghost: "hover:bg-accent hover:text-accent-foreground",
-        link: "text-primary underline-offset-4 hover:underline",
-        glass: "glass-pill text-white hover:glass-dark hover:border-border transition-all",
+        default: "bg-primary text-primary-foreground hover:bg-primary/90 shadow-none",
+        destructive: "bg-destructive text-destructive-foreground hover:bg-destructive/90 shadow-none",
+        outline: "border border-border/80 bg-transparent hover:bg-surface-alt hover:text-foreground shadow-none",
+        secondary: "bg-surface-alt text-foreground hover:bg-muted border border-border/80 shadow-none",
+        ghost: "hover:bg-white/10 hover:text-foreground text-muted-foreground shadow-none",
+        link: "text-foreground underline-offset-4 hover:underline",
+        glass: "bg-white/10 text-white hover:bg-white/15 border border-white/10 transition-all shadow-none",
         // Semantic actions mapping
-        "primary-action": "bg-primary text-primary-foreground hover:bg-primary/90",
-        "secondary-action": "bg-secondary text-secondary-foreground hover:bg-secondary/80",
+        "primary-action": "bg-primary text-primary-foreground hover:bg-primary/90 shadow-none",
+        "secondary-action": "bg-surface-alt text-foreground hover:bg-muted border border-border/80 shadow-none",
         "neutral-action":
-          "border border-input bg-transparent hover:bg-accent hover:text-accent-foreground",
-        subtle: "hover:bg-accent hover:text-accent-foreground",
-        selected: "glass-dark text-white border border-border hover:bg-white/15",
-        active: "bg-white/15 text-white border border-white/15 hover:glass-dark",
-        success: "bg-success text-white hover:bg-success/90",
-        warning: "bg-warning text-white hover:bg-warning/90",
-        informational: "bg-blue-600 text-white hover:bg-blue-700",
+          "border border-border/80 bg-transparent hover:bg-surface-alt hover:text-foreground shadow-none",
+        subtle: "hover:bg-surface-alt hover:text-foreground text-muted-foreground shadow-none",
+        selected: "bg-white/15 text-white border border-white/20 hover:bg-white/20 shadow-none",
+        active: "bg-primary text-primary-foreground border border-primary/20 shadow-none",
+        success: "bg-emerald-600 text-white hover:bg-emerald-700 shadow-none",
+        warning: "bg-amber-600 text-white hover:bg-amber-700 shadow-none",
+        informational: "bg-primary text-primary-foreground hover:bg-primary/90 shadow-none",
       },
       size: {
         default: "h-9 px-4 py-2",

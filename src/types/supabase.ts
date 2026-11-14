@@ -3186,6 +3186,7 @@ export type Database = {
           package_summary: string | null;
           passengers_data: Json;
           payment_terms: string | null;
+          group_enrollment_id: string | null;
           pdf_url: string | null;
           public_token: string | null;
           signatures: Json;
@@ -3194,7 +3195,7 @@ export type Database = {
           status: string;
           template_id: string | null;
           total_value: number;
-          trip_id: string;
+          trip_id: string | null;
           version: string;
           view_count: number | null;
           viewed_at: string | null;
@@ -3254,13 +3255,14 @@ export type Database = {
           payment_terms?: string | null;
           pdf_url?: string | null;
           public_token?: string | null;
+          group_enrollment_id?: string | null;
           signatures?: Json;
           signed_at?: string | null;
           signed_hash?: string | null;
           status?: string;
           template_id?: string | null;
           total_value?: number;
-          trip_id?: string;
+          trip_id?: string | null;
           version?: string;
           view_count?: number | null;
           viewed_at?: string | null;
@@ -7826,6 +7828,7 @@ export type Database = {
           status: string;
           total_amount: number;
           trip_id: string | null;
+          group_enrollment_id: string | null;
         };
         Insert: {
           agency_id: string;
@@ -7835,6 +7838,7 @@ export type Database = {
           status?: string;
           total_amount?: number;
           trip_id?: string | null;
+          group_enrollment_id?: string | null;
         };
         Update: {
           agency_id?: string;
@@ -11352,6 +11356,8 @@ export type Database = {
           lifecycle_status: string | null;
           notes: string | null;
           number: number;
+          operations_checklist: Json | null;
+          operations_status: string | null;
           operator: string | null;
           operator_booking_id: string | null;
           owner_id: string | null;
@@ -11404,6 +11410,8 @@ export type Database = {
           lifecycle_status?: string | null;
           notes?: string | null;
           number?: number;
+          operations_checklist?: Json | null;
+          operations_status?: string | null;
           operator?: string | null;
           operator_booking_id?: string | null;
           owner_id?: string | null;
@@ -11456,6 +11464,8 @@ export type Database = {
           lifecycle_status?: string | null;
           notes?: string | null;
           number?: number;
+          operations_checklist?: Json | null;
+          operations_status?: string | null;
           operator?: string | null;
           operator_booking_id?: string | null;
           owner_id?: string | null;

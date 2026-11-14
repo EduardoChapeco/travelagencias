@@ -11,9 +11,9 @@ import { useConfirm } from "@/hooks/use-confirm";
 import { Field } from "@/components/ui/field";
 import { FormInput as Input } from "@/components/ui/input";
 import { NativeSelect as Select } from "@/components/ui/select";
-import { FormTextarea as Textarea } from "@/components/ui/textarea";
-import { SimpleSheet as Sheet } from "@/components/ui/sheet";
+import { SheetPage } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
+import { FormTextarea as Textarea } from "@/components/ui/textarea";
 
 export const Route = createFileRoute("/agency/$slug/visas-catalog")({
   head: ({ context }: any) => ({
@@ -265,19 +265,20 @@ function RequirementFormSheet({
   }
 
   return (
-    <Sheet title="Novo Requisito Operacional" onClose={onClose}>
-      <form onSubmit={handleSubmit} className="space-y-5">
+    <SheetPage isOpen={true} title="Novo Requisito Operacional" onClose={onClose}>
+      <form onSubmit={handleSubmit} className="space-y-4">
         <Field label="Categoria *">
           <Select
             value={category}
             onChange={(e) => setCategory(e.target.value as Category)}
             required
+            className="h-9 rounded-xl bg-white/[0.04] border border-white/[0.08]"
           >
-            <option value="visa">Visto Consular</option>
-            <option value="fee">Taxa Turística</option>
-            <option value="health">Saúde & Vacinas</option>
-            <option value="insurance">Seguro Obrigatório</option>
-            <option value="other">Outros</option>
+            <option value="visa" className="bg-[#12141c] text-white">Visto Consular</option>
+            <option value="fee" className="bg-[#12141c] text-white">Taxa Turística</option>
+            <option value="health" className="bg-[#12141c] text-white">Saúde & Vacinas</option>
+            <option value="insurance" className="bg-[#12141c] text-white">Seguro Obrigatório</option>
+            <option value="other" className="bg-[#12141c] text-white">Outros</option>
           </Select>
         </Field>
 
@@ -322,7 +323,7 @@ function RequirementFormSheet({
           <Textarea
             value={docs}
             onChange={(e) => setDocs(e.target.value)}
-            rows={6}
+            rows={5}
             placeholder="- Passaporte Válido\n- Certificado Nacional de Vacinação..."
             required
           />
@@ -341,15 +342,15 @@ function RequirementFormSheet({
           />
         </Field>
 
-        <div className="border-t border-border pt-5 mt-6 flex justify-end gap-2">
-          <Button variant="ghost" type="button" onClick={onClose} disabled={busy}>
+        <div className="border-t border-white/[0.08] pt-4 mt-6 flex justify-end gap-2">
+          <Button variant="ghost" type="button" onClick={onClose} disabled={busy} className="h-9 px-4 rounded-full border border-white/[0.08] bg-white/[0.04] text-zinc-300 hover:text-white cursor-pointer">
             Cancelar
           </Button>
-          <Button variant="default" type="submit" disabled={busy} className="gap-2">
+          <Button type="submit" disabled={busy} className="h-9 px-5 rounded-full bg-white text-black font-semibold hover:bg-white/90 shadow-sm cursor-pointer disabled:opacity-50 flex items-center gap-1.5">
             <Save className="h-4 w-4" /> Salvar Requisito
           </Button>
         </div>
       </form>
-    </Sheet>
+    </SheetPage>
   );
 }

@@ -40,7 +40,7 @@ function StatusBadge({ children, tone = "neutral", className, ...props }: Status
     success: "bg-emerald-650 text-white",
     warning: "bg-amber-650 text-white",
     danger: "bg-rose-650 text-white",
-    info: "bg-blue-650 text-white",
+    info: "bg-primary text-primary-foreground",
     primary: "bg-brand text-white",
   };
 

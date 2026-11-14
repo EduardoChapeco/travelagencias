@@ -15,7 +15,7 @@ import {
 } from "lucide-react";
 import { processBoletoWithAI } from "@/lib/ocr-ai";
 import { toast } from "sonner";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { SheetPage } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
 import { useAgency } from "@/lib/agency-context";
 import { formatCurrency } from "@/lib/formatters";
@@ -153,7 +153,8 @@ function TripFinancial() {
         payment_warning: ocrResult.payment_warning ?? ocrResult.instructions ?? null,
         ocr_data: ocrResult,
       } as any)
-      .eq("id", ocrTargetInstId);
+      .eq("id", ocrTargetInstId)
+      .eq("agency_id", agency!.id);
     if (error) {
       toast.error("Erro ao salvar: " + error.message);
     } else {
@@ -474,17 +475,19 @@ function TripFinancial() {
       )}
 
       {/* ── OCR Boleto Modal ──────────────────────────────────────────────────── */}
-      <Dialog open={showOcrModal} onOpenChange={setShowOcrModal}>
-        <DialogContent className="max-w-md p-0 overflow-hidden border-none/10 max-h-[90vh] glass dark:glass-dark text-white">
-          <DialogHeader className="px-5 py-4 border-b glass">
-            <DialogTitle className="flex items-center gap-2">
-              <FileText className="h-5 w-5 text-brand" />
-              <span className="font-bold text-white text-sm uppercase tracking-wider">
-                Importar Boleto via OCR
-              </span>
-            </DialogTitle>
-          </DialogHeader>
-
+      <SheetPage 
+        isOpen={showOcrModal} 
+        onClose={() => setShowOcrModal(false)}
+        title={
+          <div className="flex items-center gap-2">
+            <FileText className="h-5 w-5 text-brand" />
+            <span className="font-bold text-foreground text-sm uppercase tracking-wider">
+              Ler Boleto
+            </span>
+          </div>
+        }
+        contentClassName="p-0"
+      >
           <div className="p-5 space-y-4">
             {/* File Upload */}
             {!ocrResult && (
@@ -612,8 +615,7 @@ function TripFinancial() {
               </div>
             )}
           </div>
-        </DialogContent>
-      </Dialog>
+      </SheetPage>
     </div>
   );
 }

@@ -27,7 +27,7 @@ import { PageHeader, ModuleActionButton, EmptyState } from "@/components/shell/P
 import { ModuleAdminPanel } from "@/components/shell/ModuleAdminPanel";
 import { Button } from "@/components/ui/button";
 import { TRIP_STATUS_MAP } from "@/lib/constants/status";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { SheetPage } from "@/components/ui/sheet";
 import { StatusBadge } from "@/components/ui/badge";
 import { formatCurrency, formatDate } from "@/lib/formatters";
 import { DataTable, DataTableColumnHeader } from "@/components/ui/data-table";
@@ -496,17 +496,17 @@ function TripsList() {
           <div className="flex items-center gap-1.5">
             <Button
               variant="ghost"
-              size="sm"
               onClick={() => setImportOpen(true)}
+              className="h-8 px-3 rounded-full bg-white/[0.04] text-zinc-300 hover:text-white border border-white/[0.08] hover:bg-white/[0.08] font-semibold text-xs flex items-center gap-1.5 cursor-pointer"
               title="Importar do Infotravel"
             >
-              <Search className="h-3 w-3" /> Infotravel
+              <Search className="h-3.5 w-3.5" /> Infotravel
             </Button>
             {isAgencyAdmin && (
               <Button
                 variant="ghost"
-                size="icon"
                 onClick={() => setAdminPanelOpen(true)}
+                className="h-8 w-8 p-0 rounded-full bg-white/[0.04] text-zinc-400 hover:text-white border border-white/[0.08] hover:bg-white/[0.08] flex items-center justify-center cursor-pointer"
                 title="Administrar Viagens"
               >
                 <Settings2 className="h-3.5 w-3.5" />
@@ -615,13 +615,15 @@ function TripsList() {
           agencyId={agency.id}
         />
       )}
-      <Dialog open={importOpen} onOpenChange={setImportOpen}>
-        <DialogContent className="max-w-sm">
-          <DialogHeader>
-            <DialogTitle className="flex items-center gap-2 text-brand">
-              <Search className="h-4 w-4" /> Importar do Infotravel
-            </DialogTitle>
-          </DialogHeader>
+      <SheetPage 
+        isOpen={importOpen} 
+        onClose={() => setImportOpen(false)}
+        title={
+          <div className="flex items-center gap-2 text-brand">
+            <Search className="h-4 w-4" /> Importar do Infotravel
+          </div>
+        }
+      >
 
           <div className="space-y-4 py-2">
             <div>
@@ -650,8 +652,7 @@ function TripsList() {
               {importing ? "Importando..." : "Confirmar Importação"}
             </Button>
           </div>
-        </DialogContent>
-      </Dialog>
+      </SheetPage>
     </div>
   );
 }

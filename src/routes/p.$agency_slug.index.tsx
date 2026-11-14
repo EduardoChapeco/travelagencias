@@ -183,7 +183,7 @@ function HomePage() {
                 rel="noreferrer"
                 className="inline-flex items-center gap-2 h-9 rounded border-none glass-card border-none px-3 ds-label-caps text-foreground hover:glass transition-colors"
               >
-                <MessageCircle className="h-3.5 w-3.5 text-[#22C55E]" /> WhatsApp
+                <MessageCircle className="h-3.5 w-3.5 text-foreground" /> WhatsApp
               </a>
             )}
           </div>
@@ -199,8 +199,8 @@ function HomePage() {
               Agência de viagens
             </span>
             {tours.length > 0 && (
-              <span className="inline-flex items-center gap-1.5 rounded-full border border-[#157F3D]/25 bg-[#EDF8F1] px-[10px] py-[5px] ds-label-caps text-[#157F3D]">
-                <span className="h-1.5 w-1.5 rounded-full bg-[#157F3D]" />
+              <span className="inline-flex items-center gap-1.5 rounded-full border border-border bg-background px-[10px] py-[5px] ds-label-caps text-foreground">
+                <span className="h-1.5 w-1.5 rounded-full bg-background" />
                 {tours.length} roteiros disponíveis
               </span>
             )}

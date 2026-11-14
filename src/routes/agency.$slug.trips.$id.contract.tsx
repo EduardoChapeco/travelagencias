@@ -126,15 +126,42 @@ function TripContract() {
     enabled: !!agency,
     queryKey: ["trip", tripId],
     queryFn: async () => {
-      const { data, error } = await supabase
+      let { data, error } = await supabase
         .from("trips")
         .select(
           "id, title, destination, travel_start, travel_end, total_sale, currency, client_id, pax_adults, pax_children, pax_infants, pax_seniors",
         )
         .eq("id", tripId)
         .maybeSingle();
-      if (error) throw error;
-      return data as Trip | null;
+      
+      if (!data) {
+        // Tenta buscar como matrícula de grupo (group_tour_enrollments)
+        const { data: enrol } = await supabase
+          .from("group_tour_enrollments")
+          .select("client_id, total_paid, group_tour:group_tours(title, destination, departure_date, return_date)")
+          .eq("id", tripId)
+          .maybeSingle();
+          
+        if (enrol && enrol.group_tour) {
+          const g = enrol.group_tour as any;
+          data = {
+            id: tripId,
+            title: g.title,
+            destination: g.destination,
+            travel_start: g.departure_date,
+            travel_end: g.return_date,
+            total_sale: enrol.total_paid,
+            currency: "BRL",
+            client_id: enrol.client_id,
+            pax_adults: 1,
+            pax_children: 0,
+            pax_infants: 0,
+            pax_seniors: 0,
+            isGroupEnrollment: true,
+          } as any;
+        }
+      }
+      return (data as any) || null;
     },
   });
 
@@ -145,7 +172,7 @@ function TripContract() {
       const { data, error } = await supabase
         .from("contracts")
         .select("*")
-        .eq("trip_id", tripId)
+        .or(`trip_id.eq.${tripId},group_enrollment_id.eq.${tripId}`)
         .order("created_at", { ascending: false })
         .limit(1)
         .maybeSingle();
@@ -331,7 +358,8 @@ function TripContract() {
         .from("contracts")
         .insert({
           agency_id: agency.id,
-          trip_id: tripId,
+          trip_id: (tripQ.data as any).isGroupEnrollment ? null : tripId,
+          group_enrollment_id: (tripQ.data as any).isGroupEnrollment ? tripId : null,
           status: "draft",
           package_summary: packageSummary,
           total_value: tripQ.data.total_sale ?? 0,
@@ -349,7 +377,7 @@ function TripContract() {
             clause_count: clauses.length + customClauses.length,
           },
           is_custom_clauses: customClauses.length > 0,
-        })
+        } as any)
         .select("*")
         .single();
 

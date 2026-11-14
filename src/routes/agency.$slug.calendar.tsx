@@ -28,7 +28,7 @@ import {
   Calendar as CalendarIcon,
   Search,
 } from "lucide-react";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { SheetPage } from "@/components/ui/sheet";
 import { supabase } from "@/integrations/supabase/client";
 import { useAgency } from "@/lib/agency-context";
 import { useConfirm } from "@/hooks/use-confirm";
@@ -463,23 +463,16 @@ function CalendarPage() {
         </div>
       </div>
 
-      <Dialog open={!!selectedMeeting} onOpenChange={(open) => !open && setSelectedMeeting(null)}>
-        <DialogContent className="max-w-md p-0 overflow-hidden border-none/10">
-          <DialogHeader className="px-6 py-4 border-b border-border/40">
-            <DialogTitle className="text-sm font-bold text-foreground">
-              {selectedMeeting?.title}
-              <span
-                className={`ds-meta font-extrabold uppercase px-1.5 py-0.5 rounded border inline-block ml-2 align-middle ${selectedMeeting ? MEETING_TYPE_COLORS[selectedMeeting.meeting_type] : ""}`}
+      <SheetPage isOpen={!!selectedMeeting} onClose={() => setSelectedMeeting(null)} title={selectedMeeting?.title || ""} contentClassName="p-0">
+          <div className="p-6">
+            <div className="space-y-3.5 text-xs">
+              <span className={`ds-meta font-extrabold uppercase px-1.5 py-0.5 rounded border inline-block ml-2 align-middle ${selectedMeeting ? MEETING_TYPE_COLORS[selectedMeeting.meeting_type] : ""}`}
               >
                 {selectedMeeting
                   ? MEETING_TYPE_LABELS[selectedMeeting.meeting_type] ||
                     selectedMeeting.meeting_type
                   : ""}
               </span>
-            </DialogTitle>
-          </DialogHeader>
-          <div className="p-6">
-            <div className="space-y-3.5 text-xs">
               {selectedMeeting?.description && (
                 <div className="space-y-1">
                   <span className="ds-meta uppercase font-bold text-muted-foreground block">
@@ -589,16 +582,9 @@ function CalendarPage() {
               </Button>
             </div>
           </div>
-        </DialogContent>
-      </Dialog>
+      </SheetPage>
 
-      <Dialog open={newEventOpen} onOpenChange={setNewEventOpen}>
-        <DialogContent className="max-w-md p-0 overflow-hidden border-none/10 max-h-[90vh] flex flex-col">
-          <DialogHeader className="px-6 py-4 border-b border-border/40">
-            <DialogTitle className="text-sm font-bold text-foreground">
-              Novo Compromisso
-            </DialogTitle>
-          </DialogHeader>
+      <SheetPage isOpen={newEventOpen} onClose={() => setNewEventOpen(false)} title="Novo Compromisso" contentClassName="p-0">
           <form
             onSubmit={async (e) => {
               e.preventDefault();
@@ -725,8 +711,7 @@ function CalendarPage() {
               </Button>
             </div>
           </form>
-        </DialogContent>
-      </Dialog>
+      </SheetPage>
       <ConfirmDialog />
       {adminPanelOpen && agency && (
         <ModuleAdminPanel

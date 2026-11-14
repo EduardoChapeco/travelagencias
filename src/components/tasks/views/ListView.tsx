@@ -181,15 +181,17 @@ function StatusGroupSection({
                     >
                       <td className="p-3 text-center">
                         <Button
+                          variant="ghost"
+                          size="sm"
                           onClick={(e) => {
                             e.stopPropagation();
                             toggleStatus(task.id, task.status as TaskStatus);
                           }}
                           className={cn(
-                            "flex h-4.5 w-4.5 mx-auto items-center justify-center rounded border cursor-pointer transition-all",
+                            "flex h-4.5 w-4.5 p-0 mx-auto items-center justify-center rounded border cursor-pointer transition-all",
                             task.status === "done"
-                              ? "bg-[var(--success)] border-[var(--success)] text-white"
-                              : "border-border hover:border-brand text-transparent",
+                              ? "bg-emerald-500 border-emerald-500 text-white"
+                              : "border-white/20 hover:border-white/40 text-transparent",
                           )}
                         >
                           <Check className="h-3 w-3 stroke-[3]" />
@@ -267,19 +269,19 @@ function StatusGroupSection({
         {/* Quick Add row inside card */}
         <form
           onSubmit={handleSubmit}
-          className="p-2.5 bg-[var(--surface-alt)]/10 flex items-center gap-2"
+          className="p-2 bg-white/[0.02] border-t border-white/[0.06] flex items-center gap-2"
         >
           <Input
             type="text"
-            placeholder={`+ Adicionar tarefa rápida em "${label}"...`}
+            placeholder={`+ Adicionar tarefa em "${label}"...`}
             value={quickTitle}
             onChange={(e) => setQuickTitle(e.target.value)}
-            className="flex-1 border-none ds-meta font-semibold placeholder:text-muted-foreground/60 px-2"
+            className="flex-1 bg-transparent border-none text-xs text-white placeholder:text-zinc-500 focus:outline-none px-2 h-7"
           />
           {quickTitle.trim() && (
             <Button
               type="submit"
-              className="h-7 px-3 rounded bg-brand text-white ds-meta font-bold hover:bg-brand/90 cursor-pointer transition-colors shrink-0"
+              className="h-7 px-3 rounded-full bg-white text-black text-xs font-semibold hover:bg-white/90 cursor-pointer transition-colors shrink-0"
             >
               Adicionar
             </Button>

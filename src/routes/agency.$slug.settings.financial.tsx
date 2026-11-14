@@ -17,7 +17,7 @@ import {
   ArrowUpRight,
   Calculator,
 } from "lucide-react";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { SheetPage } from "@/components/ui/sheet";
 import { formatCurrency } from "@/lib/formatters";
 import { PageHeader, ModuleActionButton } from "@/components/shell/PageHeader";
 import { Field } from "@/components/ui/field";
@@ -509,17 +509,19 @@ function FinancialSettingsPage() {
       </div>
 
       {/* New Plan Modal Overlay */}
-      <Dialog open={showPlanModal} onOpenChange={setShowPlanModal}>
-        <DialogContent className="max-w-md p-0 overflow-hidden border-none/10 max-h-[90vh] glass dark:glass-dark text-white">
-          <DialogHeader className="px-5 py-4 border-b glass">
-            <DialogTitle className="flex items-center gap-2">
-              <Percent className="w-5 h-5 text-brand" />
-              <span className="font-bold text-white text-sm uppercase tracking-wider">
-                Criar Novo Plano de Comissão
-              </span>
-            </DialogTitle>
-          </DialogHeader>
-
+      <SheetPage 
+        isOpen={showPlanModal} 
+        onClose={() => setShowPlanModal(false)}
+        title={
+          <div className="flex items-center gap-2">
+            <Percent className="w-5 h-5 text-brand" />
+            <span className="font-bold text-foreground text-sm uppercase tracking-wider">
+              Nova Regra de Comissionamento
+            </span>
+          </div>
+        }
+        contentClassName="p-0"
+      >
           <div className="p-5 space-y-4 text-xs">
             <Field label="Nome do Plano *">
               <Input
@@ -589,8 +591,7 @@ function FinancialSettingsPage() {
               </Button>
             </div>
           </div>
-        </DialogContent>
-      </Dialog>
+      </SheetPage>
     </div>
   );
 }

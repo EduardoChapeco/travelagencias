@@ -1,4 +1,4 @@
-import { createLazyFileRoute, useParams, useNavigate } from "@tanstack/react-router";
+import { createLazyFileRoute, useParams, useNavigate, Link } from "@tanstack/react-router";
 import { useState, useRef } from "react";
 import { useQuery, useQueryClient, useMutation } from "@tanstack/react-query";
 import {
@@ -46,8 +46,8 @@ import { PageHeader } from "@/components/shell/PageHeader";
 import { Field } from "@/components/ui/field";
 import { FormInput as Input } from "@/components/ui/input";
 import { NativeSelect as Select } from "@/components/ui/select";
-import { SimpleSheet as Sheet } from "@/components/ui/sheet";
 import { FormTextarea as Textarea } from "@/components/ui/textarea";
+import { SheetPage } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
 import { StatusBadge } from "@/components/ui/badge";
 import { formatDate, formatCurrency } from "@/lib/formatters";
@@ -64,6 +64,42 @@ import {
   useDroppable,
 } from "@dnd-kit/core";
 import { PaymentReceiptModal } from "@/components/financial/PaymentReceiptModal";
+import { CostsSpreadsheet } from "@/components/group-tours/CostsSpreadsheet";
+import { ReconciliationMatrix } from "@/components/group-tours/ReconciliationMatrix";
+import { PlanForm } from "@/components/trips/financial/PlanForm";
+
+function GroupPlanModal({
+  isOpen,
+  onClose,
+  enrollment,
+  agencyId,
+  onCreated,
+}: {
+  isOpen: boolean;
+  onClose: () => void;
+  enrollment: any;
+  agencyId: string;
+  onCreated: () => void;
+}) {
+  if (!isOpen || !enrollment) return null;
+  return (
+    <SheetPage isOpen={isOpen} onClose={() => onClose()} title={`Gerar Parcelas para ${enrollment.passenger_name}`}>
+        <PlanForm
+          agencyId={agencyId}
+          tripId=""
+          totalSale={enrollment.total_paid}
+          onCreated={() => {
+            onCreated();
+            onClose();
+          }}
+          onCancel={onClose}
+          isGroupEnrollment={true}
+          groupEnrollmentId={enrollment.id}
+          groupClientId={enrollment.client_id}
+        />
+    </SheetPage>
+  );
+}
 
 export const Route = createLazyFileRoute("/agency/$slug/group-tours/$id")({
   component: TourDetailPage,
@@ -95,7 +131,7 @@ type GroupCost = {
 };
 
 function TourDetailPage() {
-  const { id } = useParams({ from: "/agency/$slug/group-tours/$id" });
+  const { id, slug } = useParams({ from: "/agency/$slug/group-tours/$id" });
   const { agency } = useAgency();
   const qc = useQueryClient();
   const { confirm, ConfirmDialog } = useConfirm();
@@ -109,16 +145,18 @@ function TourDetailPage() {
 
   const [segmentFilter, setSegmentFilter] = useState<string>("all");
   const [receiptData, setReceiptData] = useState<any>(null);
+  const [selectedPlanEnrol, setSelectedPlanEnrol] = useState<any | null>(null);
 
   // Real group tour costs from DB
   const costsQ = useQuery({
     enabled: !!agency,
     queryKey: ["group-tour-costs", id],
     queryFn: async () => {
-      const { data, error } = await (supabase as any)
+      const { data, error } = await supabase
         .from("group_tour_costs")
         .select("*")
         .eq("group_tour_id", id)
+        .eq("agency_id", agency!.id)
         .order("created_at");
       if (error) throw error;
       return (data || []) as GroupCost[];
@@ -128,7 +166,7 @@ function TourDetailPage() {
   const tourCosts = costsQ.data ?? [];
 
   async function addCostToDB(desc: string, amount: number, type: "fixed" | "variable") {
-    const { error } = await (supabase as any).from("group_tour_costs").insert({
+    const { error } = await supabase.from("group_tour_costs").insert({
       group_tour_id: id,
       agency_id: agency!.id,
       description: desc,
@@ -141,27 +179,29 @@ function TourDetailPage() {
   }
 
   async function deleteCost(costId: string) {
-    const { error } = await (supabase as any).from("group_tour_costs").delete().eq("id", costId);
-    if (error) return toast.error(error.message);
+    const { error } = await supabase.from("group_tour_costs").delete().eq("id", costId).eq("agency_id", agency!.id);
+    if (error) throw error;
     qc.invalidateQueries({ queryKey: ["group-tour-costs", id] });
     toast.success("Custo removido");
   }
 
   async function updatePassengerSegment(enrollmentId: string, segment: string) {
-    const { error } = await (supabase as any)
+    const { error } = await supabase
       .from("group_tour_enrollments")
       .update({ segment_type: segment })
-      .eq("id", enrollmentId);
+      .eq("id", enrollmentId)
+      .eq("agency_id", agency!.id);
     if (error) return toast.error(error.message);
     toast.success("Segmento logístico atualizado");
     qc.invalidateQueries({ queryKey: ["group-enrollments", id] });
   }
 
   async function updatePassengerRouting(enrollmentId: string, routing: string) {
-    const { error } = await (supabase as any)
+    const { error } = await supabase
       .from("group_tour_enrollments")
       .update({ payment_routing: routing })
-      .eq("id", enrollmentId);
+      .eq("id", enrollmentId)
+      .eq("agency_id", agency!.id);
     if (error) return toast.error(error.message);
     toast.success("Rota de pagamento atualizada");
     qc.invalidateQueries({ queryKey: ["group-enrollments", id] });
@@ -175,6 +215,7 @@ function TourDetailPage() {
         .from("group_tours")
         .select("*")
         .eq("id", id)
+        .eq("agency_id", agency!.id)
         .maybeSingle();
       if (error) throw error;
       return data;
@@ -185,12 +226,13 @@ function TourDetailPage() {
     enabled: !!agency,
     queryKey: ["group-enrollments", id],
     queryFn: async () => {
-      const { data, error } = await (supabase as any)
+      const { data, error } = await supabase
         .from("group_tour_enrollments")
         .select(
-          "id, passenger_name, passenger_cpf, status, seat_number, total_paid, room_type, created_at, segment_type, payment_routing, email, phone, client_id, selected_pricing_tier, selected_extras",
+          "id, passenger_name, passenger_cpf, status, seat_number, total_paid, room_type, created_at, segment_type, payment_routing, email, phone, client_id, selected_pricing_tier, selected_extras, payment_plan_id",
         )
         .eq("group_tour_id", id)
+        .eq("agency_id", agency!.id)
         .order("created_at");
       if (error) throw error;
       return data;
@@ -215,14 +257,14 @@ function TourDetailPage() {
     const { error } = await supabase
       .from("group_tours")
       .update({ bus_layout_id: layoutId })
-      .eq("id", id);
+      .eq("id", id).eq("agency_id", agency!.id);
     if (error) return toast.error(error.message);
     toast.success("Layout de ônibus atualizado");
     qc.invalidateQueries({ queryKey: ["group-tour", id] });
   }
 
   async function updateStatus(s: string) {
-    const { error } = await supabase.from("group_tours").update({ status: s }).eq("id", id);
+    const { error } = await supabase.from("group_tours").update({ status: s }).eq("id", id).eq("agency_id", agency!.id);
     if (error) return toast.error(error.message);
     qc.invalidateQueries({ queryKey: ["group-tour", id] });
   }
@@ -232,7 +274,7 @@ function TourDetailPage() {
     const { error } = await supabase
       .from("group_tours")
       .update({ is_public: !tourQ.data.is_public })
-      .eq("id", id);
+      .eq("id", id).eq("agency_id", agency!.id);
     if (error) return toast.error(error.message);
     qc.invalidateQueries({ queryKey: ["group-tour", id] });
   }
@@ -290,7 +332,7 @@ function TourDetailPage() {
       const { error: err } = await supabase
         .from("group_tour_enrollments")
         .update({ status: "cancelled" })
-        .eq("id", e.id);
+        .eq("id", e.id).eq("agency_id", agency!.id);
       if (err) throw err;
 
       // 2. Decrement reserved_seats on group_tours
@@ -304,7 +346,7 @@ function TourDetailPage() {
         await supabase
           .from("group_tours")
           .update({ reserved_seats: Math.max(0, current - 1) })
-          .eq("id", id);
+          .eq("id", id).eq("agency_id", agency!.id);
       }
     },
     onSuccess: () => {
@@ -360,7 +402,7 @@ function TourDetailPage() {
         </p>
         <a
           href={`/agency/${agency?.slug}/group-tours`}
-          className="mt-4 px-4 py-2 bg-slate-900 hover:bg-slate-800 text-white rounded-[var(--radius-card)] text-xs font-semibold shadow-none transition-colors"
+          className="mt-4 px-4 py-2 bg-muted hover:bg-muted text-white rounded-[var(--radius-card)] text-xs font-semibold shadow-none transition-colors"
         >
           Voltar para Lista de Excursões
         </a>
@@ -457,54 +499,54 @@ function TourDetailPage() {
       </div>
 
       <Tabs defaultValue="overview" className="space-y-4">
-        <TabsList className="w-full justify-start rounded-none border-b border-border bg-transparent p-0 overflow-x-auto no-scrollbar flex-nowrap flex shrink-0">
+        <TabsList className="flex items-center gap-1 bg-white/[0.04] border border-white/[0.08] p-1 h-9 rounded-full overflow-x-auto no-scrollbar max-w-full shrink-0 mb-6">
           <TabsTrigger
             value="overview"
-            className="relative rounded-none border-b-2 border-transparent px-4 pb-3 pt-2 text-sm font-semibold text-muted-foreground shadow-none data-[state=active]:border-brand data-[state=active]:text-foreground data-[state=active]:shadow-none shrink-0 cursor-pointer"
+            className="px-3.5 h-7 rounded-full text-xs font-medium whitespace-nowrap text-zinc-400 data-[state=active]:bg-white data-[state=active]:text-black data-[state=active]:font-semibold transition-all duration-150 cursor-pointer"
           >
             Visão Geral
           </TabsTrigger>
           <TabsTrigger
             value="itinerary"
-            className="relative rounded-none border-b-2 border-transparent px-4 pb-3 pt-2 text-sm font-semibold text-muted-foreground shadow-none data-[state=active]:border-brand data-[state=active]:text-foreground data-[state=active]:shadow-none shrink-0 cursor-pointer"
+            className="px-3.5 h-7 rounded-full text-xs font-medium whitespace-nowrap text-zinc-400 data-[state=active]:bg-white data-[state=active]:text-black data-[state=active]:font-semibold transition-all duration-150 cursor-pointer"
           >
             Itinerário
           </TabsTrigger>
           <TabsTrigger
             value="passengers"
-            className="relative rounded-none border-b-2 border-transparent px-4 pb-3 pt-2 text-sm font-semibold text-muted-foreground shadow-none data-[state=active]:border-brand data-[state=active]:text-foreground data-[state=active]:shadow-none shrink-0 cursor-pointer"
+            className="px-3.5 h-7 rounded-full text-xs font-medium whitespace-nowrap text-zinc-400 data-[state=active]:bg-white data-[state=active]:text-black data-[state=active]:font-semibold transition-all duration-150 cursor-pointer"
           >
             Inscritos ({enrolQ.data?.length || 0})
           </TabsTrigger>
           <TabsTrigger
             value="finance"
-            className="relative rounded-none border-b-2 border-transparent px-4 pb-3 pt-2 text-sm font-semibold text-muted-foreground shadow-none data-[state=active]:border-brand data-[state=active]:text-foreground data-[state=active]:shadow-none shrink-0 cursor-pointer"
+            className="px-3.5 h-7 rounded-full text-xs font-medium whitespace-nowrap text-zinc-400 data-[state=active]:bg-white data-[state=active]:text-black data-[state=active]:font-semibold transition-all duration-150 cursor-pointer"
           >
             Financeiro & ROI
           </TabsTrigger>
           <TabsTrigger
             value="hotel_pricing"
-            className="relative rounded-none border-b-2 border-transparent px-4 pb-3 pt-2 text-sm font-semibold text-muted-foreground shadow-none data-[state=active]:border-brand data-[state=active]:text-foreground data-[state=active]:shadow-none shrink-0 cursor-pointer"
+            className="px-3.5 h-7 rounded-full text-xs font-medium whitespace-nowrap text-zinc-400 data-[state=active]:bg-white data-[state=active]:text-black data-[state=active]:font-semibold transition-all duration-150 cursor-pointer"
           >
             Hospedagem & Tarifas
           </TabsTrigger>
           <TabsTrigger
             value="rooming"
-            className="relative rounded-none border-b-2 border-transparent px-4 pb-3 pt-2 text-sm font-semibold text-muted-foreground shadow-none data-[state=active]:border-brand data-[state=active]:text-foreground data-[state=active]:shadow-none shrink-0 cursor-pointer"
+            className="px-3.5 h-7 rounded-full text-xs font-medium whitespace-nowrap text-zinc-400 data-[state=active]:bg-white data-[state=active]:text-black data-[state=active]:font-semibold transition-all duration-150 cursor-pointer"
           >
             Rooming List
           </TabsTrigger>
           {t.bus_layout_id && (
             <TabsTrigger
               value="bus_seats"
-              className="relative rounded-none border-b-2 border-transparent px-4 pb-3 pt-2 text-sm font-semibold text-muted-foreground shadow-none data-[state=active]:border-brand data-[state=active]:text-foreground data-[state=active]:shadow-none shrink-0 cursor-pointer"
+              className="px-3.5 h-7 rounded-full text-xs font-medium whitespace-nowrap text-zinc-400 data-[state=active]:bg-white data-[state=active]:text-black data-[state=active]:font-semibold transition-all duration-150 cursor-pointer"
             >
               Mapa do Ônibus
             </TabsTrigger>
           )}
           <TabsTrigger
             value="flyers"
-            className="relative rounded-none border-b-2 border-transparent px-4 pb-3 pt-2 text-sm font-semibold text-muted-foreground shadow-none data-[state=active]:border-brand data-[state=active]:text-foreground data-[state=active]:shadow-none shrink-0 cursor-pointer"
+            className="px-3.5 h-7 rounded-full text-xs font-medium whitespace-nowrap text-zinc-400 data-[state=active]:bg-white data-[state=active]:text-black data-[state=active]:font-semibold transition-all duration-150 cursor-pointer"
           >
             Divulgação & Flyers
           </TabsTrigger>
@@ -750,6 +792,19 @@ function TourDetailPage() {
                                 >
                                   Recibo
                                 </Button>
+                                <Link
+                                  to={"/agency/$slug/trips/$id/contract" as any}
+                                  params={{ slug: slug || "", id: e.id } as any}
+                                  className="inline-flex h-7 px-2.5 items-center justify-center rounded bg-blue-500/10 text-blue-600 hover:bg-blue-500/20 ds-meta font-bold transition-all cursor-pointer"
+                                >
+                                  Contrato
+                                </Link>
+                                <Button
+                                  onClick={() => setSelectedPlanEnrol(e)}
+                                  className="inline-flex h-7 px-2.5 items-center justify-center rounded bg-purple-500/10 text-purple-600 hover:bg-purple-500/20 ds-meta font-bold transition-all cursor-pointer"
+                                >
+                                  Parcelas
+                                </Button>
                                 <Button
                                   onClick={() => {
                                     confirm({
@@ -802,6 +857,11 @@ function TourDetailPage() {
                   </tbody>
                 </table>
               </div>
+
+              {/* Reconciliation Matrix - Phase 2 */}
+              <div className="mt-8">
+                <ReconciliationMatrix tourId={id} agencyId={agency?.id || ""} />
+              </div>
             </div>
           )}
         </TabsContent>
@@ -828,7 +888,7 @@ function TourDetailPage() {
                     {formatCurrency(totalCosts)}
                   </strong>
                 </div>
-                <div className="p-3 bg-[#e8f3f1] rounded-[var(--radius-card)]">
+                <div className="p-3 bg-background rounded-[var(--radius-card)]">
                   <span className="ds-meta text-teal-800 uppercase font-bold">
                     Resultado Líquido
                   </span>
@@ -838,87 +898,13 @@ function TourDetailPage() {
                 </div>
               </div>
 
-              {/* Costs Breakdown */}
-              <div className="bg-white border-none rounded-[var(--radius-card)] overflow-hidden">
-                <div className="px-5 py-4 border-b border-border flex justify-between items-center bg-gray-50/50">
-                  <div>
-                    <h4 className="ds-label-caps tracking-wider text-gray-700">
-                      Custos da Viagem (Rateio & Margem)
-                    </h4>
-                    <p className="ds-meta text-muted-foreground">
-                      Listagem de despesas fixas da excursão e taxas por passageiro.
-                    </p>
-                  </div>
-                  <Button
-                    variant="ghost"
-                    onClick={() => setAddCostSheet(true)}
-                    className="h-7 ds-meta font-bold"
-                  >
-                    + Novo Custo
-                  </Button>
-                </div>
-
-                <div className="divide-y divide-border">
-                  {costsQ.isLoading ? (
-                    <div className="px-5 py-4 text-xs text-muted-foreground">
-                      Carregando custos...
-                    </div>
-                  ) : costsQ.isError ? (
-                    <div className="px-5 py-4 text-xs text-red-650 bg-red-50/40">
-                      ⚠️ Falha ao obter despesas da viagem:{" "}
-                      {costsQ.error instanceof Error ? costsQ.error.message : "Erro"}
-                    </div>
-                  ) : tourCosts.length === 0 ? (
-                    <div className="px-5 py-4 text-xs text-muted-foreground italic">
-                      Nenhum custo lançado ainda.
-                    </div>
-                  ) : (
-                    tourCosts.map((cost) => (
-                      <div
-                        key={cost.id}
-                        className="px-5 py-3.5 flex items-center justify-between text-xs hover:bg-gray-50"
-                      >
-                        <div>
-                          <div className="font-semibold text-gray-800">{cost.description}</div>
-                          <div className="ds-meta text-muted-foreground mt-0.5">
-                            {cost.type === "fixed"
-                              ? "Custo Fixo"
-                              : `Variável (${formatCurrency(Number(cost.amount))} x ${pCount} pax)`}
-                          </div>
-                        </div>
-                        <div className="flex items-center gap-3">
-                          <strong className="font-mono text-gray-900">
-                            {cost.type === "fixed"
-                              ? formatCurrency(Number(cost.amount))
-                              : formatCurrency(Number(cost.amount) * pCount)}
-                          </strong>
-                          <Button
-                            onClick={() => deleteCost(cost.id)}
-                            className="text-muted-foreground hover:text-danger p-1"
-                          >
-                            <Trash2 className="w-3.5 h-3.5" />
-                          </Button>
-                        </div>
-                      </div>
-                    ))
-                  )}
-                  {adsSpend > 0 && (
-                    <div className="px-5 py-3.5 flex items-center justify-between text-xs bg-amber-500/5 hover:bg-amber-500/10">
-                      <div>
-                        <div className="font-semibold text-amber-800">
-                          Orçamento Ads da Campanha (Google/Meta)
-                        </div>
-                        <div className="ds-meta text-amber-700 mt-0.5">
-                          Custo de captação integrado
-                        </div>
-                      </div>
-                      <strong className="font-mono text-amber-900">
-                        {formatCurrency(adsSpend)}
-                      </strong>
-                    </div>
-                  )}
-                </div>
-              </div>
+              {/* Costs Breakdown (Spreadsheet Mode) */}
+              <CostsSpreadsheet
+                tourId={id}
+                agencyId={agency?.id || ""}
+                initialCosts={tourCosts}
+                paxCount={pCount}
+              />
             </div>
 
             {/* Sidebar Budgets */}
@@ -1046,7 +1032,7 @@ function TourDetailPage() {
 
       {/* Sheet: Add Cost */}
       {addCostSheet && (
-        <Sheet onClose={() => setAddCostSheet(false)} title="Lançar Novo Custo">
+        <SheetPage isOpen={true} onClose={() => setAddCostSheet(false)} title="Lançar Novo Custo">
           <form
             onSubmit={async (e) => {
               e.preventDefault();
@@ -1072,27 +1058,27 @@ function TourDetailPage() {
                 <Input name="amount" type="number" step="0.01" required />
               </Field>
               <Field label="Tipo de Custo">
-                <Select name="type">
-                  <option value="fixed">Fixo (Total Grupo)</option>
-                  <option value="variable">Variável (Por Passageiro)</option>
+                <Select name="type" className="h-9 rounded-xl bg-white/[0.04] border border-white/[0.08]">
+                  <option value="fixed" className="bg-[#12141c] text-white">Fixo (Total Grupo)</option>
+                  <option value="variable" className="bg-[#12141c] text-white">Variável (Por Passageiro)</option>
                 </Select>
               </Field>
             </div>
-            <div className="flex justify-end gap-2 pt-2">
-              <Button variant="ghost" type="button" onClick={() => setAddCostSheet(false)}>
+            <div className="flex justify-end gap-2 pt-4 border-t border-white/[0.08]">
+              <Button variant="ghost" type="button" onClick={() => setAddCostSheet(false)} className="h-9 px-4 rounded-full border border-white/[0.08] bg-white/[0.04] text-zinc-300 hover:text-white cursor-pointer">
                 Cancelar
               </Button>
-              <Button variant="default" type="submit">
+              <Button type="submit" className="h-9 px-5 rounded-full bg-white text-black font-semibold hover:bg-white/90 shadow-sm cursor-pointer">
                 Adicionar Custo
               </Button>
             </div>
           </form>
-        </Sheet>
+        </SheetPage>
       )}
 
       {/* Sheet: Adjust Savings */}
       {vaultSheet && (
-        <Sheet onClose={() => setVaultSheet(false)} title="Ajustar Saldo Poupança">
+        <SheetPage isOpen={true} onClose={() => setVaultSheet(false)} title="Ajustar Saldo Poupança">
           <form
             onSubmit={(e) => {
               e.preventDefault();
@@ -1111,21 +1097,21 @@ function TourDetailPage() {
                 required
               />
             </Field>
-            <div className="flex justify-end gap-2 pt-2">
-              <Button variant="ghost" type="button" onClick={() => setVaultSheet(false)}>
+            <div className="flex justify-end gap-2 pt-4 border-t border-white/[0.08]">
+              <Button variant="ghost" type="button" onClick={() => setVaultSheet(false)} className="h-9 px-4 rounded-full border border-white/[0.08] bg-white/[0.04] text-zinc-300 hover:text-white cursor-pointer">
                 Cancelar
               </Button>
-              <Button variant="default" type="submit">
+              <Button type="submit" className="h-9 px-5 rounded-full bg-white text-black font-semibold hover:bg-white/90 shadow-sm cursor-pointer">
                 Salvar Saldo
               </Button>
             </div>
           </form>
-        </Sheet>
+        </SheetPage>
       )}
 
       {/* Sheet: Adjust Ads Budget */}
       {adsSheet && (
-        <Sheet onClose={() => setAdsSheet(false)} title="Lançar Gastos de Campanhas">
+        <SheetPage isOpen={true} onClose={() => setAdsSheet(false)} title="Lançar Gastos de Campanhas">
           <form
             onSubmit={(e) => {
               e.preventDefault();
@@ -1144,16 +1130,16 @@ function TourDetailPage() {
                 required
               />
             </Field>
-            <div className="flex justify-end gap-2 pt-2">
-              <Button variant="ghost" type="button" onClick={() => setAdsSheet(false)}>
+            <div className="flex justify-end gap-2 pt-4 border-t border-white/[0.08]">
+              <Button variant="ghost" type="button" onClick={() => setAdsSheet(false)} className="h-9 px-4 rounded-full border border-white/[0.08] bg-white/[0.04] text-zinc-300 hover:text-white cursor-pointer">
                 Cancelar
               </Button>
-              <Button variant="default" type="submit">
+              <Button type="submit" className="h-9 px-5 rounded-full bg-white text-black font-semibold hover:bg-white/90 shadow-sm cursor-pointer">
                 Salvar Gastos
               </Button>
             </div>
           </form>
-        </Sheet>
+        </SheetPage>
       )}
 
       {receiptData && (
@@ -1163,6 +1149,17 @@ function TourDetailPage() {
           data={receiptData}
         />
       )}
+
+      {selectedPlanEnrol && agency && (
+        <GroupPlanModal
+          isOpen={!!selectedPlanEnrol}
+          onClose={() => setSelectedPlanEnrol(null)}
+          enrollment={selectedPlanEnrol}
+          agencyId={agency.id}
+          onCreated={() => qc.invalidateQueries({ queryKey: ["group-tours-financial", id] })}
+        />
+      )}
+      
       <ConfirmDialog />
     </div>
   );
@@ -1286,22 +1283,22 @@ function FlyersTabContent({ tour, agency }: { tour: any; agency: any }) {
     dark: {
       gradient: "bg-gradient-to-t from-slate-950 via-slate-950/60 to-slate-950/30",
       accentText: "text-amber-400",
-      accentBg: "bg-amber-400 text-slate-950",
+      accentBg: "bg-amber-400 text-foreground",
     },
     sunset: {
       gradient: "bg-gradient-to-t from-indigo-950 via-purple-900/60 to-orange-500/30",
       accentText: "text-orange-400",
-      accentBg: "bg-orange-400 text-slate-950",
+      accentBg: "bg-orange-400 text-foreground",
     },
     gold: {
       gradient: "bg-gradient-to-t from-black via-slate-950/70 to-amber-950/40",
       accentText: "text-yellow-400",
-      accentBg: "bg-yellow-400 text-slate-950",
+      accentBg: "bg-yellow-400 text-foreground",
     },
     teal: {
       gradient: "bg-gradient-to-t from-teal-950 via-teal-900/60 to-emerald-950/30",
       accentText: "text-emerald-400",
-      accentBg: "bg-emerald-400 text-slate-950",
+      accentBg: "bg-emerald-400 text-foreground",
     },
   };
 
@@ -1311,13 +1308,13 @@ function FlyersTabContent({ tour, agency }: { tour: any; agency: any }) {
     <div className="grid grid-cols-1 md:grid-cols-3 gap-6 p-1">
       {/* Col 1: Preview */}
       <div className="flex flex-col items-center space-y-4">
-        <h4 className="text-xs font-bold text-slate-800 self-start uppercase tracking-wider">
+        <h4 className="text-xs font-bold text-foreground self-start uppercase tracking-wider">
           Visualização do Flyer
         </h4>
 
         <div
           ref={flyerRef}
-          className="relative w-[300px] h-[533px] rounded-[var(--radius-card)] overflow-hidden border border-slate-800 bg-slate-950 flex flex-col justify-between p-4.5 select-none shadow-xl text-white font-sans"
+          className="relative w-[300px] h-[533px] rounded-[var(--radius-card)] overflow-hidden border border-border bg-muted flex flex-col justify-between p-4.5 select-none shadow-xl text-white font-sans"
           style={{ aspectRatio: "9/16" }}
         >
           {/* Cover image as full-bleed background */}
@@ -1328,7 +1325,7 @@ function FlyersTabContent({ tour, agency }: { tour: any; agency: any }) {
               className="absolute inset-0 w-full h-full object-cover z-0 opacity-80"
             />
           ) : (
-            <div className="absolute inset-0 bg-slate-900 z-0" />
+            <div className="absolute inset-0 bg-muted z-0" />
           )}
 
           {/* Linear gradient overlay based on selected theme */}
@@ -1341,7 +1338,7 @@ function FlyersTabContent({ tour, agency }: { tour: any; agency: any }) {
             >
               Vagas Limitadas
             </span>
-            <div className="text-[9px] font-black uppercase tracking-wider text-white bg-slate-950/40 backdrop-blur-xs px-2 py-0.5 rounded border border-border">
+            <div className="text-[9px] font-black uppercase tracking-wider text-white bg-muted/40 backdrop-blur-xs px-2 py-0.5 rounded border border-border">
               {agency?.name}
             </div>
           </div>
@@ -1387,7 +1384,7 @@ function FlyersTabContent({ tour, agency }: { tour: any; agency: any }) {
                   {tour.includes.slice(0, 3).map((inc: string, idx: number) => (
                     <span
                       key={idx}
-                      className="bg-slate-950/60 backdrop-blur-xs border border-border text-white rounded px-1.5 py-0.5 text-[7.5px] font-medium max-w-[85px] truncate"
+                      className="bg-muted/60 backdrop-blur-xs border border-border text-white rounded px-1.5 py-0.5 text-[7.5px] font-medium max-w-[85px] truncate"
                     >
                       ✓ {inc}
                     </span>
@@ -1408,19 +1405,19 @@ function FlyersTabContent({ tour, agency }: { tour: any; agency: any }) {
             </div>
 
             {/* Premium QR Code scanning card */}
-            <div className="bg-white text-slate-950 rounded-[var(--radius-card)] p-2 flex items-center justify-between gap-2.5 shadow-none border border-border">
+            <div className="bg-white text-foreground rounded-[var(--radius-card)] p-2 flex items-center justify-between gap-2.5 shadow-none border border-border">
               <div className="flex-1 min-w-0">
-                <span className="text-[8px] font-black uppercase tracking-wider block text-slate-900 leading-none">
+                <span className="text-[8px] font-black uppercase tracking-wider block text-foreground leading-none">
                   {ctaTitle}
                 </span>
-                <span className="text-[7px] text-slate-500 block leading-tight mt-1 font-semibold">
+                <span className="text-[7px] text-foreground block leading-tight mt-1 font-semibold">
                   {ctaSubtitle}
                 </span>
               </div>
               <img
                 src={qrCodeUrl}
                 alt="Inscrições"
-                className="h-10 w-10 border border-slate-200 p-0.5 bg-white shrink-0 rounded-[var(--radius-card)] shadow-none"
+                className="h-10 w-10 border border-border p-0.5 bg-white shrink-0 rounded-[var(--radius-card)] shadow-none"
               />
             </div>
           </div>
@@ -1437,7 +1434,7 @@ function FlyersTabContent({ tour, agency }: { tour: any; agency: any }) {
 
       {/* Col 2: Customization Controls */}
       <div className="bg-white border-none rounded-[var(--radius-card)] p-5 space-y-4 shadow-none self-start">
-        <h4 className="text-xs font-bold text-slate-800 uppercase tracking-wider border-b border-border pb-3">
+        <h4 className="text-xs font-bold text-foreground uppercase tracking-wider border-b border-border pb-3">
           Personalizar Flyer
         </h4>
 
@@ -1447,7 +1444,7 @@ function FlyersTabContent({ tour, agency }: { tour: any; agency: any }) {
           </label>
           <div className="grid grid-cols-2 gap-2">
             {[
-              { id: "dark", label: "Midnight Dark", bg: "bg-slate-950 border-slate-800" },
+              { id: "dark", label: "Midnight Dark", bg: "bg-muted border-border" },
               {
                 id: "sunset",
                 label: "Sunset Glow",
@@ -1471,7 +1468,7 @@ function FlyersTabContent({ tour, agency }: { tour: any; agency: any }) {
                 className={`p-2 rounded-[var(--radius-card)] border ds-meta font-medium text-left flex items-center gap-2 cursor-pointer transition-all ${
                   selectedTheme === th.id
                     ? "border-brand bg-brand/5 font-bold shadow-xs"
-                    : "border-border hover:bg-slate-50 text-slate-650"
+                    : "border-border hover:bg-muted text-foreground"
                 }`}
               >
                 <span className={`h-3 w-3 rounded-full border shrink-0 ${th.bg}`} />
@@ -1504,7 +1501,7 @@ function FlyersTabContent({ tour, agency }: { tour: any; agency: any }) {
 
       {/* Col 3: Apresentação Comercial */}
       <div className="bg-white border-none rounded-[var(--radius-card)] p-5 space-y-4 shadow-none self-start">
-        <h4 className="text-xs font-bold text-slate-800 uppercase tracking-wider border-b border-border pb-3">
+        <h4 className="text-xs font-bold text-foreground uppercase tracking-wider border-b border-border pb-3">
           Apresentação da Viagem
         </h4>
         <p className="text-xs text-muted-foreground leading-relaxed">
@@ -1522,7 +1519,7 @@ function FlyersTabContent({ tour, agency }: { tour: any; agency: any }) {
           ].map((item, idx) => (
             <div
               key={idx}
-              className="flex items-center gap-2 p-2 bg-slate-50 border border-slate-100 rounded-[var(--radius-card)]"
+              className="flex items-center gap-2 p-2 bg-muted border border-border rounded-[var(--radius-card)]"
             >
               <span className="h-1.5 w-1.5 rounded-full bg-brand" />
               <span>{item}</span>
@@ -1534,7 +1531,7 @@ function FlyersTabContent({ tour, agency }: { tour: any; agency: any }) {
           <Button
             onClick={handleCreateBrochure}
             disabled={creatingBrochure}
-            className="flex items-center justify-center gap-2 h-10 w-full rounded-[var(--radius-card)] bg-slate-900 text-xs font-bold text-white hover:bg-slate-800 transition-colors cursor-pointer disabled:opacity-50"
+            className="flex items-center justify-center gap-2 h-10 w-full rounded-[var(--radius-card)] bg-muted text-xs font-bold text-white hover:bg-muted transition-colors cursor-pointer disabled:opacity-50"
           >
             <Sparkles className="h-4 w-4 text-brand" /> Criar Apresentação no Studio
           </Button>
@@ -1613,7 +1610,7 @@ function HotelPricingTabContent({ tour, onUpdate }: { tour: any; onUpdate: () =>
           hotel_details: nextHotel,
           promo_media: nextPromo,
         })
-        .eq("id", tour.id);
+        .eq("id", tour.id).eq("agency_id", agency!.id);
 
       if (error) throw error;
       toast.success("Informações do hotel salvas!");
@@ -1760,7 +1757,7 @@ function HotelPricingTabContent({ tour, onUpdate }: { tour: any; onUpdate: () =>
   return (
     <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
       {/* Hotel & Video Column */}
-      <div className="lg:col-span-1 bg-white border-none rounded-[var(--radius-card)] p-5 space-y-4 shadow-none self-start">
+      <div className="lg:col-span-1 bg-[#12141c] border border-white/[0.08] rounded-2xl p-5 space-y-4 shadow-none self-start">
         <div className="flex items-center gap-2 border-b border-border pb-3">
           <Hotel className="h-5 w-5 text-brand" />
           <h3 className="font-bold text-sm text-foreground">Hospedagem & Mídia</h3>
@@ -1831,7 +1828,7 @@ function HotelPricingTabContent({ tour, onUpdate }: { tour: any; onUpdate: () =>
                 const { error } = await supabase
                   .from("group_tours")
                   .update({ hotel_details: nextHotel })
-                  .eq("id", tour.id);
+                  .eq("id", tour.id).eq("agency_id", agency!.id);
                 if (error) throw error;
                 toast.success("Galeria atualizada!");
                 onUpdate();
@@ -1862,7 +1859,7 @@ function HotelPricingTabContent({ tour, onUpdate }: { tour: any; onUpdate: () =>
                     className={`px-2 py-1 rounded-full ds-meta font-semibold border transition-all cursor-pointer ${
                       isSel
                         ? "bg-brand/10 border-brand text-brand"
-                        : "bg-slate-50 border-border text-muted-foreground hover:border-slate-350"
+                        : "bg-muted border-border text-muted-foreground hover:border-border"
                     }`}
                   >
                     {am}
@@ -1886,7 +1883,7 @@ function HotelPricingTabContent({ tour, onUpdate }: { tour: any; onUpdate: () =>
       {/* Pricing & Extras Columns */}
       <div className="lg:col-span-2 space-y-6">
         {/* pricing card */}
-        <div className="bg-white border-none rounded-[var(--radius-card)] p-5 space-y-4 shadow-none">
+        <div className="bg-[#12141c] border border-white/[0.08] rounded-2xl p-5 space-y-4 shadow-none">
           <div className="flex items-center justify-between border-b border-border pb-3">
             <div className="flex items-center gap-2">
               <BedDouble className="h-5 w-5 text-brand" />
@@ -1905,7 +1902,7 @@ function HotelPricingTabContent({ tour, onUpdate }: { tour: any; onUpdate: () =>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             {/* CRUD form */}
-            <div className="p-4 border-none rounded-[var(--radius-card)] bg-slate-50/50 space-y-3 self-start">
+            <div className="p-4 border-none rounded-[var(--radius-card)] bg-muted/50 space-y-3 self-start">
               <span className="ds-meta font-bold text-muted-foreground uppercase tracking-widest block">
                 Cadastrar Tarifa
               </span>
@@ -1945,10 +1942,10 @@ function HotelPricingTabContent({ tour, onUpdate }: { tour: any; onUpdate: () =>
                 pricingTiers.map((t: any, i: number) => (
                   <div
                     key={i}
-                    className="flex items-center justify-between p-2.5 rounded-[var(--radius-card)] border-none bg-white text-xs"
+                    className="flex items-center justify-between p-2.5 rounded-xl border border-white/[0.08] bg-white/[0.04] text-xs"
                   >
                     <div className="min-w-0 flex-1">
-                      <strong className="font-semibold block truncate text-slate-800">
+                      <strong className="font-semibold block truncate text-foreground">
                         {t.name}
                       </strong>
                       {t.description && (
@@ -1971,7 +1968,7 @@ function HotelPricingTabContent({ tour, onUpdate }: { tour: any; onUpdate: () =>
                   </div>
                 ))
               ) : (
-                <div className="text-center py-8 text-xs text-muted-foreground border border-dashed border-border rounded-[var(--radius-card)] bg-slate-50/50">
+                <div className="text-center py-8 text-xs text-muted-foreground border border-dashed border-border rounded-[var(--radius-card)] bg-muted/50">
                   Nenhuma acomodação cadastrada. Clientes usarão o preço base do pacote.
                 </div>
               )}
@@ -1980,7 +1977,7 @@ function HotelPricingTabContent({ tour, onUpdate }: { tour: any; onUpdate: () =>
         </div>
 
         {/* Extras card */}
-        <div className="bg-white border-none rounded-[var(--radius-card)] p-5 space-y-4 shadow-none">
+        <div className="bg-[#12141c] border border-white/[0.08] rounded-2xl p-5 space-y-4 shadow-none">
           <div className="flex items-center border-b border-border pb-3">
             <Layers className="h-5 w-5 text-brand mr-2" />
             <h3 className="font-bold text-sm text-foreground">
@@ -1990,7 +1987,7 @@ function HotelPricingTabContent({ tour, onUpdate }: { tour: any; onUpdate: () =>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             {/* CRUD form */}
-            <div className="p-4 border-none rounded-[var(--radius-card)] bg-slate-50/50 space-y-3 self-start">
+            <div className="p-4 border-none rounded-[var(--radius-card)] bg-muted/50 space-y-3 self-start">
               <span className="ds-meta font-bold text-muted-foreground uppercase tracking-widest block">
                 Cadastrar Opcional
               </span>
@@ -2033,7 +2030,7 @@ function HotelPricingTabContent({ tour, onUpdate }: { tour: any; onUpdate: () =>
                     className="flex items-center justify-between p-2.5 rounded-[var(--radius-card)] border-none bg-white text-xs"
                   >
                     <div className="min-w-0 flex-1">
-                      <strong className="font-semibold block truncate text-slate-800">
+                      <strong className="font-semibold block truncate text-foreground">
                         {e.name}
                       </strong>
                       {e.description && (
@@ -2056,7 +2053,7 @@ function HotelPricingTabContent({ tour, onUpdate }: { tour: any; onUpdate: () =>
                   </div>
                 ))
               ) : (
-                <div className="text-center py-8 text-xs text-muted-foreground border border-dashed border-border rounded-[var(--radius-card)] bg-slate-50/50">
+                <div className="text-center py-8 text-xs text-muted-foreground border border-dashed border-border rounded-[var(--radius-card)] bg-muted/50">
                   Nenhum opcional cadastrado.
                 </div>
               )}
@@ -2086,6 +2083,7 @@ function ItineraryEditor({
   days: ItineraryDay[];
   onUpdate: () => void;
 }) {
+  const { agency } = useAgency();
   const { confirm, ConfirmDialog } = useConfirm();
   const [adding, setAdding] = useState(false);
   const [dayNum, setDayNum] = useState(days.length + 1);
@@ -2100,7 +2098,7 @@ function ItineraryEditor({
     const { error } = await supabase
       .from("group_tours")
       .update({ itinerary: next as unknown as never })
-      .eq("id", tourId);
+      .eq("id", tourId).eq("agency_id", agency!.id);
     if (error) return toast.error(error.message);
     onUpdate();
   }
@@ -2352,7 +2350,7 @@ function NewEnrol({
         await supabase
           .from("group_tours")
           .update({ reserved_seats: (cur.reserved_seats || 0) + 1 })
-          .eq("id", tourId);
+          .eq("id", tourId).eq("agency_id", agencyId);
     }
     setSubmitting(false);
     if (error) return toast.error(error.message);
@@ -2361,24 +2359,24 @@ function NewEnrol({
   }
 
   return (
-    <Sheet onClose={onClose} title="Nova inscrição manual">
-      <form onSubmit={submit} className="space-y-3">
+    <SheetPage isOpen={true} onClose={onClose} title="Nova Inscrição Manual">
+      <form onSubmit={submit} className="space-y-4">
         <Field label="Nome do passageiro *">
-          <Input required value={name} onChange={(e) => setName(e.target.value)} />
+          <Input required value={name} onChange={(e) => setName(e.target.value)} placeholder="Nome completo" />
         </Field>
         <Field label="CPF">
-          <Input value={cpf} onChange={(e) => setCpf(e.target.value)} />
+          <Input value={cpf} onChange={(e) => setCpf(e.target.value)} placeholder="000.000.000-00" />
         </Field>
-        <div className="flex justify-end gap-2 pt-2">
-          <Button variant="ghost" type="button" onClick={onClose}>
+        <div className="flex justify-end gap-2 pt-4 border-t border-white/[0.08]">
+          <Button variant="ghost" type="button" onClick={onClose} className="h-9 px-4 rounded-full border border-white/[0.08] bg-white/[0.04] text-zinc-300 hover:text-white cursor-pointer">
             Cancelar
           </Button>
-          <Button variant="default" type="submit" disabled={submitting}>
-            {submitting ? "Salvando…" : "Inscrever"}
+          <Button type="submit" disabled={submitting} className="h-9 px-5 rounded-full bg-white text-black font-semibold hover:bg-white/90 shadow-sm cursor-pointer disabled:opacity-50">
+            {submitting ? "Salvando…" : "Inscrever Passageiro"}
           </Button>
         </div>
       </form>
-    </Sheet>
+    </SheetPage>
   );
 }
 
@@ -2393,9 +2391,10 @@ function BusSeatManager({
   passengers: { id: string; passenger_name: string; seat_number: string | null }[];
   onChange: () => void;
 }) {
+  const { agency } = useAgency();
   const { confirm, ConfirmDialog } = useConfirm();
   const [selectedSeat, setSelectedSeat] = useState<SeatCell | null>(null);
-  const [selectedPax, setSelectedPax] = useState("");
+  const [selectedPax, setSelectedPax] = useState<string | null>(null);
   const [activeDeck, setActiveDeck] = useState<number>(1);
 
   const qMap = useQuery({
@@ -2417,13 +2416,13 @@ function BusSeatManager({
       await supabase
         .from("group_tour_enrollments")
         .update({ seat_number: null })
-        .eq("group_tour_id", tourId)
+        .eq("group_tour_id", tourId).eq("agency_id", agency!.id)
         .eq("seat_number", selectedSeat.label);
       if (selectedPax !== "remove") {
         const { error } = await supabase
           .from("group_tour_enrollments")
           .update({ seat_number: selectedSeat.label })
-          .eq("id", selectedPax);
+          .eq("id", selectedPax).eq("agency_id", agency!.id);
         if (error) return toast.error(error.message);
       }
       toast.success("Assento atualizado!");
@@ -2625,7 +2624,7 @@ function BusSeatManager({
             </div>
             <h4 className="text-sm font-semibold mb-4 text-foreground">Gerenciar Assento</h4>
             <Field label="Passageiro">
-              <Select value={selectedPax} onChange={(e) => setSelectedPax(e.target.value)}>
+              <Select value={selectedPax || ""} onChange={(e) => setSelectedPax(e.target.value)}>
                 <option value="">Selecione o passageiro...</option>
                 <option value="remove">Livre (Remover reserva)</option>
                 {passengers.map((p) => (
@@ -2788,7 +2787,7 @@ function EditTour({
         promo_media: nextPromoMedia,
         financial: nextFinancial,
       })
-      .eq("id", tour.id);
+      .eq("id", tour.id).eq("agency_id", agency!.id);
     setBusy(false);
     if (error) toast.error("Erro ao salvar: " + error.message);
     else {
@@ -2798,7 +2797,7 @@ function EditTour({
   }
 
   return (
-    <Sheet onClose={onClose} title="Editar Excursão">
+    <SheetPage isOpen={true} onClose={onClose} title="Editar Excursão">
       <form onSubmit={save} className="space-y-4">
         <Field label="Nome da Excursão">
           <Input value={f.title} onChange={(e) => setF({ ...f, title: e.target.value })} required />
@@ -2945,7 +2944,7 @@ function EditTour({
         </Field>
 
         <div className="space-y-4 pt-3 border-t border-border">
-          <h4 className="text-xs font-bold text-slate-800 uppercase tracking-wider">
+          <h4 className="text-xs font-bold text-foreground uppercase tracking-wider">
             Hospedagem & Vídeo (Básico)
           </h4>
           <Field label="Nome da Hospedagem">
@@ -3029,7 +3028,7 @@ function EditTour({
                       setNewInc("");
                     }
                   }}
-                  className="bg-slate-100 hover:bg-slate-200 border-none px-3 rounded-[var(--radius-card)] text-sm shrink-0 cursor-pointer"
+                  className="bg-muted hover:bg-muted border-none px-3 rounded-[var(--radius-card)] text-sm shrink-0 cursor-pointer"
                 >
                   +
                 </Button>
@@ -3083,7 +3082,7 @@ function EditTour({
                       setNewExc("");
                     }
                   }}
-                  className="bg-slate-100 hover:bg-slate-200 border-none px-3 rounded-[var(--radius-card)] text-sm shrink-0 cursor-pointer"
+                  className="bg-muted hover:bg-muted border-none px-3 rounded-[var(--radius-card)] text-sm shrink-0 cursor-pointer"
                 >
                   +
                 </Button>
@@ -3112,16 +3111,16 @@ function EditTour({
           </div>
         </div>
 
-        <div className="mt-6 flex justify-end gap-3 pt-2">
-          <Button variant="ghost" type="button" onClick={onClose}>
+        <div className="mt-6 flex justify-end gap-2 pt-4 border-t border-white/[0.08]">
+          <Button variant="ghost" type="button" onClick={onClose} className="h-9 px-4 rounded-full border border-white/[0.08] bg-white/[0.04] text-zinc-300 hover:text-white cursor-pointer">
             Cancelar
           </Button>
-          <Button variant="default" disabled={busy}>
+          <Button type="submit" disabled={busy} className="h-9 px-5 rounded-full bg-white text-black font-semibold hover:bg-white/90 shadow-sm cursor-pointer disabled:opacity-50">
             {busy ? "Salvando..." : "Salvar Alterações"}
           </Button>
         </div>
       </form>
-    </Sheet>
+    </SheetPage>
   );
 }
 

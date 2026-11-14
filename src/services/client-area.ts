@@ -405,9 +405,63 @@ export async function resolveClientWebchatConversation(
   return "";
 }
 
-export async function createClientWebchatConversation(_data: unknown) {
-  // Conversation creation is handled server-side via Edge Function / agent
-  return { id: "" };
+export async function createClientWebchatConversation(agencyId: string) {
+  const user = await getClientUser();
+  const { data: clientRow } = await supabase
+    .from("clients")
+    .select("id")
+    .eq("agency_id", agencyId)
+    .eq("user_id", user.id)
+    .maybeSingle();
+
+  if (!clientRow) throw new Error("Cliente não encontrado.");
+
+  const { data: contact } = await supabase
+    .from("contacts")
+    .select("id")
+    .eq("agency_id", agencyId)
+    .eq("client_id", clientRow.id)
+    .maybeSingle();
+
+  if (!contact) throw new Error("Contato não encontrado.");
+
+  // Get or create a webchat channel
+  let { data: channel } = await supabase
+    .from("channels")
+    .select("id")
+    .eq("agency_id", agencyId)
+    .eq("type", "webchat")
+    .limit(1)
+    .maybeSingle();
+
+  if (!channel) {
+    const { data: newChannel, error: channelErr } = await supabase
+      .from("channels")
+      .insert({
+        agency_id: agencyId,
+        type: "webchat",
+        display_name: "Webchat",
+        external_id: `webchat-${agencyId}`,
+      })
+      .select("id")
+      .single();
+    if (channelErr) throw channelErr;
+    channel = newChannel;
+  }
+
+  const { data, error } = await supabase
+    .from("conversations")
+    .insert({
+      agency_id: agencyId,
+      contact_id: contact.id,
+      channel_id: channel.id,
+      status: "open",
+    })
+    .select("id")
+    .single();
+
+  if (error) throw error;
+  return { id: data.id };
 }
 
 /**

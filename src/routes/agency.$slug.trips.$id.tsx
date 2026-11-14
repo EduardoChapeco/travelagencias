@@ -1,5 +1,5 @@
 import { Button } from "@/components/ui/button";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { SheetPage } from "@/components/ui/sheet";
 import {
   createFileRoute,
   Link,
@@ -38,6 +38,7 @@ import {
   CheckCircle2,
   Navigation,
   Loader2,
+  Search,
 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAgency, getModuleName } from "@/lib/agency-context";
@@ -522,13 +523,15 @@ function TripLayout() {
       </div>
 
       {/* Modal de Importação de Reserva GDS */}
-      <Dialog open={showImportModal} onOpenChange={setShowImportModal}>
-        <DialogContent className="max-w-md">
-          <DialogHeader>
-            <DialogTitle className="flex items-center gap-2">
-              <Download className="h-5 w-5 text-brand" /> Vincular Localizador de Reserva
-            </DialogTitle>
-          </DialogHeader>
+      <SheetPage 
+        isOpen={showImportModal} 
+        onClose={() => setShowImportModal(false)}
+        title={
+          <div className="flex items-center gap-2">
+            <Download className="h-5 w-5 text-brand" /> Vincular Localizador de Reserva
+          </div>
+        }
+      >
           <div className="flex flex-col space-y-4">
             <p className="text-xs text-muted-foreground leading-relaxed">
               Insira o código localizador da reserva da operadora parceira para vincular a esta
@@ -574,27 +577,26 @@ function TripLayout() {
               </Button>
             </div>
           </div>
-        </DialogContent>
-      </Dialog>
+      </SheetPage>
 
       {/* Modal de Emissão na Operadora (Duas Etapas) */}
-      <Dialog open={showEmitModal} onOpenChange={setShowEmitModal}>
-        <DialogContent className="max-w-md">
-          <DialogHeader>
-            <DialogTitle className="flex items-center gap-2">
-              {emitStep === 1 ? (
-                <>
-                  <Wifi className="h-5 w-5 text-brand" /> Etapa 1: Validação de Passageiros &
-                  Tarifas
-                </>
-              ) : (
-                <>
-                  <CheckCircle2 className="h-5 w-5 text-emerald-500" /> Etapa 2: Confirmar Emissão
-                  Oficial
-                </>
-              )}
-            </DialogTitle>
-          </DialogHeader>
+      <SheetPage 
+        isOpen={showEmitModal} 
+        onClose={() => setShowEmitModal(false)}
+        title={
+          <div className="flex items-center gap-2">
+            {emitStep === 1 ? (
+              <>
+                <Search className="h-5 w-5 text-brand" /> Cotar Viagem na Operadora
+              </>
+            ) : (
+              <>
+                <Send className="h-5 w-5 text-brand" /> Emitir e Confirmar Reserva
+              </>
+            )}
+          </div>
+        }
+      >
           <div className="flex flex-col space-y-4">
             {emitStep === 1 ? (
               <>
@@ -698,8 +700,7 @@ function TripLayout() {
               </>
             )}
           </div>
-        </DialogContent>
-      </Dialog>
+      </SheetPage>
     </div>
   );
 }

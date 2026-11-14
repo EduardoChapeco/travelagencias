@@ -6,7 +6,7 @@ import { useQuery } from "@tanstack/react-query";
 import { TASK_STATUSES, TASK_PRIORITIES } from "@/lib/tasks/task.constants";
 import { TaskStatus, TaskPriority } from "@/lib/tasks/task.types";
 import { toast } from "sonner";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { SheetPage } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -110,12 +110,7 @@ export function NewTaskModal({
   const priorityDef = TASK_PRIORITIES[priority];
 
   return (
-    <Dialog open={open} onOpenChange={(v) => !v && onClose()}>
-      <DialogContent className="max-w-lg w-full p-0 overflow-hidden rounded-2xl border border-border bg-[var(--surface)]">
-        <DialogHeader className="px-6 pt-6 pb-4 border-b border-border/60">
-          <DialogTitle className="text-base font-bold text-foreground">Nova Tarefa</DialogTitle>
-        </DialogHeader>
-
+    <SheetPage isOpen={open} onClose={onClose} title="Nova Tarefa" contentClassName="p-0">
         <form onSubmit={handleSubmit} className="p-6 space-y-5">
           {/* Título */}
           <div className="space-y-1.5">
@@ -318,7 +313,6 @@ export function NewTaskModal({
             </Button>
           </div>
         </form>
-      </DialogContent>
-    </Dialog>
+    </SheetPage>
   );
 }

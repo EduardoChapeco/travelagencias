@@ -1,4 +1,4 @@
-import { SimpleSheet as Sheet } from "@/components/ui/sheet";
+import { SheetPage } from "@/components/ui/sheet";
 import { Field } from "@/components/ui/field";
 import { FormInput as Input } from "@/components/ui/input";
 import { NativeSelect as Select } from "@/components/ui/select";
@@ -127,12 +127,12 @@ export function ClientFormSheet({
   }
 
   return (
-    <Sheet onClose={onClose} title="Novo cliente">
-      <form onSubmit={handleSubmit(onSubmit)} className="space-y-3">
-        <Field label="Tipo" error={errors.kind?.message}>
-          <Select {...register("kind")}>
+    <SheetPage isOpen={true} onClose={onClose} title="Novo Cliente">
+      <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+        <Field label="Tipo de Cliente" error={errors.kind?.message}>
+          <Select {...register("kind")} className="h-9 rounded-xl bg-white/[0.04] border border-white/[0.08]">
             <option value="individual">Pessoa física</option>
-            <option value="company">Empresa</option>
+            <option value="company">Empresa / Corporativo</option>
           </Select>
         </Field>
 
@@ -160,7 +160,7 @@ export function ClientFormSheet({
           )}
         </div>
 
-        <Field label="Email" error={errors.email?.message}>
+        <Field label="E-mail principal" error={errors.email?.message}>
           <Input type="email" {...register("email")} />
         </Field>
 
@@ -168,19 +168,19 @@ export function ClientFormSheet({
           <Input {...register("phone")} />
         </Field>
 
-        <Field label="Notas" error={errors.notes?.message}>
+        <Field label="Notas internas" error={errors.notes?.message}>
           <Textarea {...register("notes")} />
         </Field>
 
-        <div className="flex justify-end gap-2 pt-2">
-          <Button variant="ghost" type="button" onClick={onClose}>
+        <div className="flex justify-end gap-2 pt-4 border-t border-white/[0.08]">
+          <Button variant="ghost" type="button" onClick={onClose} className="h-9 px-4 rounded-full border border-white/[0.08] bg-white/[0.04] text-zinc-300 hover:text-white cursor-pointer">
             Cancelar
           </Button>
-          <Button variant="default" type="submit" disabled={submitting}>
-            {submitting ? "Criando…" : "Criar cliente"}
+          <Button type="submit" disabled={submitting} className="h-9 px-5 rounded-full bg-white text-black font-semibold hover:bg-white/90 shadow-sm cursor-pointer disabled:opacity-50">
+            {submitting ? "Criando…" : "Criar Cliente"}
           </Button>
         </div>
       </form>
-    </Sheet>
+    </SheetPage>
   );
 }

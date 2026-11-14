@@ -98,14 +98,14 @@ export function LeadCardView({
   return (
     <div
       {...(dragAttributes ?? {})}
-      className={`group relative cursor-grab rounded-3xl p-4 transition-all duration-200 active:cursor-grabbing glass-card ${
+      className={`group relative cursor-grab rounded-2xl p-3.5 transition-all duration-150 active:cursor-grabbing bg-white/[0.04] border ${
         dragging
-          ? "border-brand ring-2 ring-brand/20 scale-105 z-50 rotate-1 opacity-95"
+          ? "border-white/40 ring-2 ring-white/20 scale-105 z-50 rotate-1 opacity-95 bg-white/[0.08] shadow-2xl"
           : isCold
-            ? "border-danger/40 bg-danger/[0.01] hover:border-danger/60 hover:-translate-y-0.5"
+            ? "border-rose-500/30 bg-rose-500/[0.02] hover:border-rose-500/50"
             : isStale
-              ? "border-warning/40 bg-warning/[0.01] hover:border-warning/60 hover:-translate-y-0.5"
-              : "border-border/60 hover:border-brand/40 hover:-translate-y-0.5 hover:bg-surface-alt/80 hover:ring-1 hover:ring-brand/10"
+              ? "border-amber-500/30 bg-amber-500/[0.02] hover:border-amber-500/50"
+              : "border-white/[0.08] hover:border-white/20 hover:bg-white/[0.06]"
       }`}
     >
       <div className="flex items-start gap-3">
@@ -226,12 +226,12 @@ export function LeadCardView({
       {/* Hover action overlay */}
       {!dragging && (onArchive || onTransfer || onCreateProposal) && (
         <div
-          className="absolute right-2 top-2 opacity-0 group-hover:opacity-100 transition-opacity flex items-center gap-1 bg-surface/95 backdrop-blur-md p-1 rounded-full border border-border/80 ring-1 ring-black/5"
+          className="absolute right-2 top-2 opacity-0 group-hover:opacity-100 transition-opacity flex items-center gap-1 bg-[#181b24]/95 backdrop-blur-md p-1 rounded-xl border border-white/10"
           onPointerDown={(e) => e.stopPropagation()}
         >
           {transferMode ? (
             <Select
-              className="ds-meta h-6 rounded px-1 focus:outline-brand"
+              className="text-xs h-7 rounded-lg px-1.5 bg-white/5 border border-white/10 text-white focus:outline-none"
               onChange={(e) => {
                 if (e.target.value && onTransfer) {
                   onTransfer(lead.id, e.target.value);
@@ -241,11 +241,11 @@ export function LeadCardView({
               onBlur={() => setTransferMode(false)}
               autoFocus
             >
-              <option value="">Transferir para...</option>
+              <option value="" className="bg-[#181b24] text-white">Transferir para...</option>
               {users.map(
                 (u) =>
                   u.user_id && (
-                    <option key={u.user_id} value={u.user_id}>
+                    <option key={u.user_id} value={u.user_id} className="bg-[#181b24] text-white">
                       {u.user_name || "Sem nome"}
                     </option>
                   ),
@@ -256,8 +256,9 @@ export function LeadCardView({
               {lead.phone && (
                 <Button
                   type="button"
+                  variant="ghost"
                   onClick={handleWhatsApp}
-                  className="p-1 text-emerald-500 hover:bg-emerald-500/10 rounded transition-colors"
+                  className="h-7 w-7 p-0 flex items-center justify-center text-emerald-400 hover:text-emerald-300 hover:bg-emerald-500/20 rounded-lg transition-colors cursor-pointer"
                   title="WhatsApp Rápido"
                 >
                   <Send className="h-3.5 w-3.5" />
@@ -266,8 +267,9 @@ export function LeadCardView({
               {onCreateProposal && !lead.client_id && (
                 <Button
                   type="button"
+                  variant="ghost"
                   onClick={handleCreateProposal}
-                  className="p-1 text-brand hover:bg-brand/10 rounded transition-colors"
+                  className="h-7 w-7 p-0 flex items-center justify-center text-zinc-300 hover:text-white hover:bg-white/10 rounded-lg transition-colors cursor-pointer"
                   title="Criar Proposta"
                 >
                   <FileText className="h-3.5 w-3.5" />
@@ -276,8 +278,9 @@ export function LeadCardView({
               {onTransfer && (
                 <Button
                   type="button"
+                  variant="ghost"
                   onClick={() => setTransferMode(true)}
-                  className="p-1 text-muted-foreground hover:text-foreground hover:bg-surface-alt rounded transition-colors"
+                  className="h-7 w-7 p-0 flex items-center justify-center text-zinc-400 hover:text-white hover:bg-white/10 rounded-lg transition-colors cursor-pointer"
                   title="Transferir Dono"
                 >
                   <UserPlus className="h-3.5 w-3.5" />
@@ -286,8 +289,9 @@ export function LeadCardView({
               {onArchive && (
                 <Button
                   type="button"
+                  variant="ghost"
                   onClick={() => onArchive(lead.id)}
-                  className="p-1 text-muted-foreground hover:text-danger hover:bg-danger/10 rounded transition-colors"
+                  className="h-7 w-7 p-0 flex items-center justify-center text-zinc-400 hover:text-rose-400 hover:bg-rose-500/10 rounded-lg transition-colors cursor-pointer"
                   title="Arquivar Lead"
                 >
                   <Archive className="h-3.5 w-3.5" />

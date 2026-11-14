@@ -1,4 +1,5 @@
 import { supabase } from "@/integrations/supabase/client";
+import { testInfotravelOperatorServerFn } from "./infotravel.server";
 
 // ─── Settings / Company Profile ────────────────────────────────────────────────
 
@@ -143,9 +144,18 @@ export interface IntegrationCredential {
 }
 
 export interface InfotravelOperator {
+  id?: string;
   operator_id: string;
   operator_name: string;
+  infotravel_url?: string;
+  infotravel_username?: string;
+  infotravel_password?: string;
+  has_password?: boolean;
+  infotravel_client?: string;
+  infotravel_agency?: string;
+  markup?: number;
   is_active: boolean;
+  created_at?: string;
   updated_at?: string;
   last_sync_error?: string | null;
   last_sync_at?: string | null;
@@ -199,16 +209,22 @@ export async function deleteIntegrationCredential(agencyId: string, id: string) 
   if (error) throw error;
 }
 
-/** Lista todas as operadoras Infotravel cadastradas para a agência */
+/** Lista todas as operadoras Infotravel cadastradas para a agência (100% Server-Side e senhas mascaradas) */
 export async function fetchOperators(agencyId: string): Promise<InfotravelOperator[]> {
-  const { data, error } = await supabase.functions.invoke("integration-manager", {
-    body: { action: "list-operators", agency_id: agencyId },
-  });
-  if (error) throw error;
-  return data?.operators ?? [];
+  try {
+    const { data, error } = await supabase.functions.invoke("integration-manager", {
+      body: { action: "list-operators", agency_id: agencyId },
+    });
+
+    if (error) throw error;
+    return data?.operators ?? [];
+  } catch (err) {
+    console.error("[fetchOperators] Erro ao buscar operadoras:", err);
+    return [];
+  }
 }
 
-/** Salva todas as credenciais de uma operadora Infotravel em batch */
+/** Salva todas as credenciais de uma operadora Infotravel de forma segura (Server-Side com write-only password) */
 export async function saveOperator(
   agencyId: string,
   payload: {
@@ -216,7 +232,7 @@ export async function saveOperator(
     operator_name: string;
     infotravel_url: string;
     infotravel_username: string;
-    infotravel_password: string;
+    infotravel_password?: string;
     infotravel_client?: string;
     infotravel_agency?: string;
     markup?: number;
@@ -230,23 +246,47 @@ export async function saveOperator(
       ...payload,
     },
   });
-  if (error) throw error;
+
+  if (error || !data?.success) {
+    throw new Error(error?.message || data?.message || "Erro ao salvar operadora.");
+  }
+
+  return { success: true, operator_id: payload.operator_id };
+}
+
+/** Reativa uma operadora pausada pelo disjuntor de segurança */
+export async function resetOperatorCircuit(agencyId: string, operatorId: string) {
+  const { data, error } = await supabase.functions.invoke("integration-manager", {
+    body: {
+      action: "reset-operator-circuit",
+      agency_id: agencyId,
+      operator_id: operatorId,
+    },
+  });
+
+  if (error || !data?.success) {
+    throw new Error(error?.message || data?.message || "Erro ao reativar operadora.");
+  }
+
   return data;
 }
 
 /** Remove uma operadora Infotravel e todas as suas credenciais */
 export async function deleteOperator(agencyId: string, operatorId: string) {
-  const { error } = await supabase.functions.invoke("integration-manager", {
+  const { data, error } = await supabase.functions.invoke("integration-manager", {
     body: {
       action: "delete-operator",
       agency_id: agencyId,
       operator_id: operatorId,
     },
   });
-  if (error) throw error;
+
+  if (error || !data?.success) {
+    throw new Error(error?.message || data?.message || "Erro ao remover operadora.");
+  }
 }
 
-/** Testa a conexão com uma operadora Infotravel pelo operator_id salvo */
+/** Testa a conexão com uma operadora Infotravel pelo operator_id salvo ou credenciais diretas */
 export async function testOperatorConnection(
   agencyId: string,
   operatorId?: string,
@@ -258,16 +298,68 @@ export async function testOperatorConnection(
     infotravel_agency?: string;
   },
 ): Promise<{ success: boolean; message: string }> {
-  const { data, error } = await supabase.functions.invoke("integration-manager", {
-    body: {
-      action: "test-operator",
-      agency_id: agencyId,
-      operator_id: operatorId,
-      ...directCredentials,
-    },
-  });
-  if (error) throw new Error(error.message || "Erro ao testar conexão.");
-  return data;
+  try {
+    let creds = directCredentials;
+    if (!creds && operatorId) {
+      const { data: keys } = await supabase
+        .from("api_keys")
+        .select("provider, key_value")
+        .eq("agency_id", agencyId)
+        .eq("operator_id", operatorId);
+
+      const getVal = (p: string) => keys?.find((k) => k.provider === p)?.key_value || "";
+      creds = {
+        infotravel_url: getVal("infotravel_url"),
+        infotravel_username: getVal("infotravel_username"),
+        infotravel_password: getVal("infotravel_password"),
+        infotravel_client: getVal("infotravel_client"),
+        infotravel_agency: getVal("infotravel_agency"),
+      };
+    }
+
+    if (!creds?.infotravel_username || !creds?.infotravel_password) {
+      return {
+        success: false,
+        message: "Usuário e senha são obrigatórios para testar a conexão com a operadora.",
+      };
+    }
+
+    // Executa no servidor via Server Function (Cloudflare Worker backend - zero CORS)
+    const result = await testInfotravelOperatorServerFn({
+      data: {
+        url: creds.infotravel_url,
+        username: creds.infotravel_username,
+        password: creds.infotravel_password,
+        agency: creds.infotravel_agency || "235868",
+        client: creds.infotravel_client || creds.infotravel_agency || "",
+      },
+    });
+
+    if (result.success) {
+      if (operatorId) {
+        await supabase
+          .from("api_keys")
+          .update({ is_active: true, last_sync_at: new Date().toISOString(), last_sync_error: null })
+          .eq("agency_id", agencyId)
+          .eq("operator_id", operatorId);
+      }
+    } else {
+      if (operatorId) {
+        await supabase
+          .from("api_keys")
+          .update({ last_sync_error: result.message, last_sync_at: new Date().toISOString() })
+          .eq("agency_id", agencyId)
+          .eq("operator_id", operatorId);
+      }
+    }
+
+    return result;
+  } catch (err: any) {
+    return {
+      success: false,
+      message: `Erro ao comunicar com o servidor: ${err.message}`,
+    };
+  }
 }
 
 // ─── Team ─────────────────────────────────────────────────────────────────────

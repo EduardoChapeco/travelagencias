@@ -213,65 +213,65 @@ function LeadDetailPage() {
 
           <div className="flex items-center gap-2 flex-wrap">
             {lead.phone && (
-              <a
-                href={`https://wa.me/${lead.phone.replace(/\D/g, "")}`}
-                target="_blank"
-                className="inline-flex h-9 items-center gap-1.5 rounded-full border border-emerald-500/30 bg-emerald-500/5 hover:bg-emerald-500/10 px-3 text-xs font-bold text-emerald-500 transition-colors"
-                title="WhatsApp Rápido"
-              >
-                <Send className="h-3.5 w-3.5" /> WhatsApp
-              </a>
-            )}
-            {lead.phone && (
-              <Button
-                onClick={handleShareFormWhatsApp}
-                className="inline-flex h-9 items-center gap-1.5 rounded-full border border-emerald-600/30 bg-emerald-600/5 hover:bg-emerald-600/10 px-3 text-xs font-bold text-emerald-600 transition-colors"
-                title="Enviar Formulário via WhatsApp"
-              >
-                <MessageSquare className="h-3.5 w-3.5" /> Enviar Form WA
-              </Button>
+              <>
+                <Button
+                  variant="ghost"
+                  onClick={() => {
+                    if (lead.phone) {
+                      window.open(`https://wa.me/${lead.phone.replace(/\D/g, "")}`, "_blank");
+                    }
+                  }}
+                  className="gap-1.5 text-xs font-semibold h-8 px-3 rounded-full bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-400 border border-emerald-500/20"
+                >
+                  <Send className="h-3.5 w-3.5" /> WhatsApp
+                </Button>
+                <Button
+                  variant="ghost"
+                  onClick={handleShareFormWhatsApp}
+                  className="gap-1.5 text-xs font-semibold h-8 px-3 rounded-full bg-white/[0.04] hover:bg-white/[0.08] text-zinc-300 hover:text-white border border-white/[0.08]"
+                >
+                  <Send className="h-3.5 w-3.5" /> Enviar Form WA
+                </Button>
+              </>
             )}
             <Button
+              variant="ghost"
               onClick={handleCopyFormLink}
-              className="inline-flex h-9 items-center gap-1.5 rounded-full border border-brand/30 bg-brand/5 hover:bg-brand/10 px-3 text-xs font-bold text-brand transition-colors"
-              title="Copiar Link do Formulário"
+              className="gap-1.5 text-xs font-semibold h-8 px-3 rounded-full bg-white/[0.04] hover:bg-white/[0.08] text-zinc-300 hover:text-white border border-white/[0.08]"
             >
               <FileText className="h-3.5 w-3.5" /> Link Form
             </Button>
-
             <Button
-              variant="default"
               onClick={() =>
                 navigate({
-                  to: "/agency/$slug/proposals/new",
+                  to: "/agency/$slug/quotes",
                   params: { slug },
-                  search: { lead_id: lead.id, client_id: lead.client_id || undefined },
+                  search: { lead_id: lead.id } as any,
                 })
               }
-              className="gap-1.5 text-xs font-bold h-9 bg-brand hover:bg-brand/90 text-brand-foreground"
+              className="gap-1.5 text-xs font-semibold h-8 px-3.5 rounded-full bg-white text-black hover:bg-white/90 shadow-sm"
             >
-              <Sparkles className="h-4 w-4" /> Nova Cotação
+              <Sparkles className="h-3.5 w-3.5 stroke-[2.5]" /> Nova Cotação
             </Button>
             {!lead.client_id ? (
               <Button
-                variant="default"
                 onClick={() => setConfirmConvertOpen(true)}
-                className="gap-1.5 text-xs font-bold h-9"
+                className="gap-1.5 text-xs font-semibold h-8 px-3.5 rounded-full bg-white text-black hover:bg-white/90 shadow-sm"
               >
-                <UserCheck className="h-4 w-4" /> Converter em Cliente
+                <UserCheck className="h-3.5 w-3.5 stroke-[2.5]" /> Converter em Cliente
               </Button>
             ) : (
-              <span className="text-xs font-bold bg-success/10 border border-success/30 text-success rounded-full px-4 py-1.5 flex items-center gap-1">
+              <span className="text-xs font-semibold bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 rounded-full px-3.5 h-8 flex items-center gap-1">
                 <Check className="h-3.5 w-3.5" /> Convertido
               </span>
             )}
             <Button
               variant="ghost"
               onClick={() => setEditing((e) => !e)}
-              className="h-9 w-9 p-0 flex items-center justify-center rounded-full hover:bg-muted text-muted-foreground hover:text-foreground transition-colors"
+              className="h-8 w-8 p-0 flex items-center justify-center rounded-full text-zinc-400 hover:text-white hover:bg-white/10 transition-colors"
               title={editing ? "Fechar edição" : "Editar"}
             >
-              {editing ? <X className="h-4 w-4" /> : <Pencil className="h-4 w-4" />}
+              {editing ? <X className="h-3.5 w-3.5" /> : <Pencil className="h-3.5 w-3.5" />}
             </Button>
           </div>
         </div>
@@ -289,46 +289,46 @@ function LeadDetailPage() {
           />
         ) : (
           <Tabs defaultValue="general" className="w-full">
-            <TabsList className="w-full justify-start rounded-none border-b border-border bg-transparent p-0 overflow-x-auto no-scrollbar flex-nowrap flex shrink-0 mb-6">
+            <TabsList className="flex items-center gap-1 bg-white/[0.04] border border-white/[0.08] p-1 h-9 rounded-full overflow-x-auto no-scrollbar max-w-full shrink-0 mb-6">
               <TabsTrigger
                 value="general"
-                className="relative rounded-none border-b-2 border-transparent px-4 pb-3 pt-2 text-xs font-bold text-muted-foreground shadow-none data-[state=active]:border-brand data-[state=active]:text-foreground data-[state=active]:shadow-none bg-transparent hover:text-brand transition-colors shrink-0 cursor-pointer"
+                className="px-3.5 h-7 rounded-full text-xs font-medium whitespace-nowrap text-zinc-400 data-[state=active]:bg-white data-[state=active]:text-black data-[state=active]:font-semibold transition-all duration-150 cursor-pointer"
               >
                 Geral
               </TabsTrigger>
               <TabsTrigger
                 value="pax"
-                className="relative rounded-none border-b-2 border-transparent px-4 pb-3 pt-2 text-xs font-bold text-muted-foreground shadow-none data-[state=active]:border-brand data-[state=active]:text-foreground data-[state=active]:shadow-none bg-transparent hover:text-brand transition-colors shrink-0 cursor-pointer"
+                className="px-3.5 h-7 rounded-full text-xs font-medium whitespace-nowrap text-zinc-400 data-[state=active]:bg-white data-[state=active]:text-black data-[state=active]:font-semibold transition-all duration-150 cursor-pointer"
               >
                 Acompanhantes
               </TabsTrigger>
               <TabsTrigger
                 value="meetings"
-                className="relative rounded-none border-b-2 border-transparent px-4 pb-3 pt-2 text-xs font-bold text-muted-foreground shadow-none data-[state=active]:border-brand data-[state=active]:text-foreground data-[state=active]:shadow-none bg-transparent hover:text-brand transition-colors shrink-0 cursor-pointer"
+                className="px-3.5 h-7 rounded-full text-xs font-medium whitespace-nowrap text-zinc-400 data-[state=active]:bg-white data-[state=active]:text-black data-[state=active]:font-semibold transition-all duration-150 cursor-pointer"
               >
                 Agenda & Lembretes
               </TabsTrigger>
               <TabsTrigger
                 value="proposals"
-                className="relative rounded-none border-b-2 border-transparent px-4 pb-3 pt-2 text-xs font-bold text-muted-foreground shadow-none data-[state=active]:border-brand data-[state=active]:text-foreground data-[state=active]:shadow-none bg-transparent hover:text-brand transition-colors shrink-0 cursor-pointer"
+                className="px-3.5 h-7 rounded-full text-xs font-medium whitespace-nowrap text-zinc-400 data-[state=active]:bg-white data-[state=active]:text-black data-[state=active]:font-semibold transition-all duration-150 cursor-pointer"
               >
                 Cotações
               </TabsTrigger>
               <TabsTrigger
                 value="omnichannel"
-                className="relative rounded-none border-b-2 border-transparent px-4 pb-3 pt-2 text-xs font-bold text-muted-foreground shadow-none data-[state=active]:border-brand data-[state=active]:text-foreground data-[state=active]:shadow-none flex items-center gap-1 bg-transparent hover:text-brand transition-colors shrink-0 cursor-pointer"
+                className="px-3.5 h-7 rounded-full text-xs font-medium whitespace-nowrap text-zinc-400 data-[state=active]:bg-white data-[state=active]:text-black data-[state=active]:font-semibold transition-all duration-150 flex items-center gap-1 cursor-pointer"
               >
                 <MessageSquare className="h-3.5 w-3.5" /> Mensagens
               </TabsTrigger>
               <TabsTrigger
                 value="ai_insights"
-                className="relative rounded-none border-b-2 border-transparent px-4 pb-3 pt-2 text-xs font-bold text-muted-foreground shadow-none data-[state=active]:border-brand data-[state=active]:text-foreground data-[state=active]:shadow-none flex items-center gap-1 text-brand bg-transparent hover:text-brand transition-colors shrink-0 cursor-pointer"
+                className="px-3.5 h-7 rounded-full text-xs font-medium whitespace-nowrap text-zinc-400 data-[state=active]:bg-white data-[state=active]:text-black data-[state=active]:font-semibold transition-all duration-150 flex items-center gap-1 cursor-pointer"
               >
                 <Sparkles className="h-3.5 w-3.5" /> IA Hunter
               </TabsTrigger>
               <TabsTrigger
                 value="timeline"
-                className="relative rounded-none border-b-2 border-transparent px-4 pb-3 pt-2 text-xs font-bold text-muted-foreground shadow-none data-[state=active]:border-brand data-[state=active]:text-foreground data-[state=active]:shadow-none bg-transparent hover:text-brand transition-colors shrink-0 cursor-pointer"
+                className="px-3.5 h-7 rounded-full text-xs font-medium whitespace-nowrap text-zinc-400 data-[state=active]:bg-white data-[state=active]:text-black data-[state=active]:font-semibold transition-all duration-150 cursor-pointer"
               >
                 Histórico
               </TabsTrigger>
@@ -604,6 +604,7 @@ function LeadDetailPage() {
                         className="border-none/60 p-4 rounded-[var(--radius-card)] glass/15 relative hover:border-border transition-colors"
                       >
                         <Button
+                          variant="ghost"
                           onClick={() => {
                             confirm({
                               title: "Remover Acompanhante",
@@ -614,7 +615,7 @@ function LeadDetailPage() {
                               },
                             });
                           }}
-                          className="absolute right-3 top-3 text-muted-foreground hover:text-danger p-1 cursor-pointer"
+                          className="absolute right-3 top-3 text-zinc-400 hover:text-rose-400 p-1.5 rounded-lg hover:bg-rose-500/10 cursor-pointer transition-colors"
                           title="Remover"
                         >
                           <X className="h-3.5 w-3.5" />
@@ -622,7 +623,7 @@ function LeadDetailPage() {
                         <span className="text-xs font-bold text-foreground block truncate pr-8">
                           {pax.full_name}
                         </span>
-                        <span className="text-[9px] text-brand uppercase font-extrabold bg-brand/5 border border-brand/10 px-1.5 py-0.5 rounded inline-block mt-1">
+                        <span className="text-[9px] text-zinc-300 uppercase font-bold bg-white/5 border border-white/10 px-1.5 py-0.5 rounded-md inline-block mt-1">
                           {pax.relationship === "spouse"
                             ? "Cônjuge"
                             : pax.relationship === "child"
@@ -652,12 +653,13 @@ function LeadDetailPage() {
               </div>
 
               {/* Add Traveler form */}
-              <div className="rounded-[var(--radius-card)] border-none glass-card border-none p-5 space-y-4">
+              <div className="rounded-[var(--radius-card)] border border-white/[0.08] bg-[#12141c] p-5 space-y-4">
                 <Button
+                  variant="ghost"
                   onClick={() => setPaxFormOpen((o) => !o)}
-                  className="text-xs font-bold text-brand hover:underline flex items-center gap-1 cursor-pointer"
+                  className="text-xs font-semibold text-zinc-300 hover:text-white bg-white/[0.04] hover:bg-white/[0.08] border border-white/[0.08] rounded-full px-3.5 h-8 flex items-center gap-1.5 cursor-pointer"
                 >
-                  <Plus className="h-4 w-4" />{" "}
+                  <Plus className="h-3.5 w-3.5" />
                   {paxFormOpen ? "Fechar Formulário" : "Adicionar Acompanhante Manualmente"}
                 </Button>
 
@@ -667,7 +669,7 @@ function LeadDetailPage() {
                       e.preventDefault();
                       await handleAddPax(paxForm);
                     }}
-                    className="border-none p-4 rounded-[var(--radius-card)] glass/10 space-y-3"
+                    className="border border-white/[0.08] p-4 rounded-xl bg-white/[0.02] space-y-3"
                   >
                     <Field label="Nome Completo *">
                       <Input
@@ -725,7 +727,7 @@ function LeadDetailPage() {
                         </SelectContent>
                       </Select>
                     </Field>
-                    <Button variant="default" type="submit" className="w-full text-xs h-9">
+                    <Button type="submit" className="w-full text-xs h-9 font-semibold bg-white text-black hover:bg-white/90 rounded-full cursor-pointer">
                       Adicionar Acompanhante
                     </Button>
                   </form>
@@ -735,14 +737,15 @@ function LeadDetailPage() {
 
             <TabsContent value="meetings" className="space-y-6">
               {/* Meeting Scheduler and Follow-ups */}
-              <div className="rounded-[var(--radius-card)] border-none glass-card border-none p-5 space-y-4">
+              <div className="rounded-[var(--radius-card)] border border-white/[0.08] bg-[#12141c] p-5 space-y-4">
                 <div className="flex items-center justify-between border-b border-border/40 pb-2">
                   <h4 className="ds-label-caps text-muted-foreground">
                     Compromissos & Reuniões Agendadas
                   </h4>
                   <Button
+                    variant="ghost"
                     onClick={() => setMeetingFormOpen((o) => !o)}
-                    className="text-brand text-xs font-bold hover:underline flex items-center gap-0.5 cursor-pointer"
+                    className="text-xs font-semibold text-zinc-300 hover:text-white bg-white/[0.04] hover:bg-white/[0.08] border border-white/[0.08] rounded-full px-3.5 h-8 flex items-center gap-1.5 cursor-pointer"
                   >
                     <Plus className="h-3.5 w-3.5" /> Agendar Reunião
                   </Button>
@@ -923,8 +926,9 @@ function LeadDetailPage() {
                 <div className="flex items-center justify-between border-b border-border/40 pb-2">
                   <h4 className="ds-label-caps text-muted-foreground">Propostas de Venda</h4>
                   <Button
+                    variant="ghost"
                     onClick={() => setProposalSheetOpen(true)}
-                    className="text-brand text-xs font-bold hover:underline flex items-center gap-0.5 cursor-pointer"
+                    className="text-xs font-semibold text-zinc-300 hover:text-white bg-white/[0.04] hover:bg-white/[0.08] border border-white/[0.08] rounded-full px-3.5 h-8 flex items-center gap-1.5 cursor-pointer"
                   >
                     <Plus className="h-3.5 w-3.5" /> Nova Cotação
                   </Button>

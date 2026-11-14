@@ -23,6 +23,7 @@ import {
   SupplierAutocomplete,
   type SupplierOption,
 } from "@/components/suppliers/SupplierAutocomplete";
+import { SheetPage } from "@/components/ui/sheet";
 
 interface Props {
   draft: Proposal;
@@ -227,129 +228,117 @@ export function SectionFlights({ draft, save }: Props) {
         </Button>
       </div>
 
-      {infotravelOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-overlay p-4">
-          <div
-            className="w-full max-w-lg rounded-2xl border border-border bg-surface p-5 flex flex-col max-h-[85vh] overflow-hidden shadow-none"
-            onClick={(e) => e.stopPropagation()}
-          >
-            <div className="flex items-center justify-between border-b border-border pb-3 mb-4">
-              <h3 className="ds-h3 text-foreground flex items-center gap-2">
-                <Search className="h-4 w-4 text-brand" /> Buscar Voo no Infotravel
-              </h3>
-              <Button
-                type="button"
-                onClick={() => setInfotravelOpen(false)}
-                className="text-xs text-muted-foreground hover:text-foreground font-semibold"
-              >
-                Fechar
-              </Button>
-            </div>
-
-            <div className="space-y-3 flex-1 overflow-y-auto no-scrollbar pr-1">
-              <div className="grid grid-cols-2 gap-2">
-                <L label="Origem (IATA)">
-                  <Input
-                    className={SMALL_INPUT}
-                    value={searchParams.origin}
-                    onChange={(e) =>
-                      setSearchParams({ ...searchParams, origin: e.target.value.toUpperCase() })
-                    }
-                    placeholder="Ex: GRU"
-                  />
-                </L>
-                <L label="Destino (IATA)">
-                  <Input
-                    className={SMALL_INPUT}
-                    value={searchParams.destination}
-                    onChange={(e) =>
-                      setSearchParams({
-                        ...searchParams,
-                        destination: e.target.value.toUpperCase(),
-                      })
-                    }
-                    placeholder="Ex: JFK"
-                  />
-                </L>
-                <div className="col-span-2">
-                  <L label="Data do Voo">
-                    <Input
-                      type="date"
-                      className={SMALL_INPUT}
-                      value={searchParams.date}
-                      onChange={(e) => setSearchParams({ ...searchParams, date: e.target.value })}
-                    />
-                  </L>
-                </div>
-              </div>
-
-              <Button
-                variant="default"
-                type="button"
-                className="w-full"
-                disabled={
-                  searching ||
-                  !searchParams.origin ||
-                  !searchParams.destination ||
-                  !searchParams.date
+      <SheetPage
+        isOpen={infotravelOpen}
+        onClose={() => setInfotravelOpen(false)}
+        title={
+          <div className="flex items-center gap-2">
+            <Search className="h-4 w-4 text-brand" /> Buscar Voo no Infotravel
+          </div>
+        }
+      >
+        <div className="space-y-3 flex-1 overflow-y-auto no-scrollbar pr-1">
+          <div className="grid grid-cols-2 gap-2">
+            <L label="Origem (IATA)">
+              <Input
+                className={SMALL_INPUT}
+                value={searchParams.origin}
+                onChange={(e) =>
+                  setSearchParams({ ...searchParams, origin: e.target.value.toUpperCase() })
                 }
-                onClick={handleSearch}
-              >
-                {searching ? "Buscando tarifas..." : "Pesquisar Tarifas"}
-              </Button>
-
-              <div className="space-y-2 pt-2">
-                {results.length === 0 && !searching && (
-                  <p className="text-center text-xs text-muted-foreground py-4 font-sans">
-                    Insira os aeroportos e a data acima para buscar voos.
-                  </p>
-                )}
-                {results.map((flight) => (
-                  <div
-                    key={flight.id}
-                    className="flex gap-3 p-3 rounded border border-border hover:border-brand/40 bg-surface-alt/25 transition-all group text-left"
-                  >
-                    <div className="flex-1 min-w-0 flex flex-col justify-between">
-                      <div>
-                        <div className="flex items-center justify-between mb-1">
-                          <h4 className="text-xs font-bold text-foreground truncate group-hover:text-brand transition-colors">
-                            {flight.airline} • Voo {flight.flight_number}
-                          </h4>
-                          <span className="ds-meta text-muted-foreground font-mono">
-                            {flight.stops === 0 ? "Direto" : `${flight.stops} parada(s)`}
-                          </span>
-                        </div>
-                        <p className="ds-meta text-muted-foreground font-sans truncate">
-                          {flight.origin} {flight.departure_time} → {flight.destination}{" "}
-                          {flight.arrival_time}
-                        </p>
-                        <p className="text-[9px] text-muted-foreground/85 font-sans mt-0.5">
-                          {flight.baggage_rules}
-                        </p>
-                      </div>
-                      <div className="flex items-center justify-between mt-2 pt-1 border-t border-border/10">
-                        <span className="text-xs font-bold text-foreground font-mono">
-                          {flight.price.toLocaleString("pt-BR", {
-                            style: "currency",
-                            currency: "BRL",
-                          })}
-                        </span>
-                        <Button
-                          type="button"
-                          onClick={() => importFlight(flight)}
-                          className="px-2.5 py-1 ds-meta bg-primary text-primary-foreground font-semibold rounded hover:bg-primary/95 transition-all cursor-pointer"
-                        >
-                          Selecionar
-                        </Button>
-                      </div>
-                    </div>
-                  </div>
-                ))}
-              </div>
+                placeholder="Ex: GRU"
+              />
+            </L>
+            <L label="Destino (IATA)">
+              <Input
+                className={SMALL_INPUT}
+                value={searchParams.destination}
+                onChange={(e) =>
+                  setSearchParams({
+                    ...searchParams,
+                    destination: e.target.value.toUpperCase(),
+                  })
+                }
+                placeholder="Ex: JFK"
+              />
+            </L>
+            <div className="col-span-2">
+              <L label="Data do Voo">
+                <Input
+                  type="date"
+                  className={SMALL_INPUT}
+                  value={searchParams.date}
+                  onChange={(e) => setSearchParams({ ...searchParams, date: e.target.value })}
+                />
+              </L>
             </div>
           </div>
+
+          <Button
+            variant="default"
+            type="button"
+            className="w-full"
+            disabled={
+              searching ||
+              !searchParams.origin ||
+              !searchParams.destination ||
+              !searchParams.date
+            }
+            onClick={handleSearch}
+          >
+            {searching ? "Buscando tarifas..." : "Pesquisar Tarifas"}
+          </Button>
+
+          <div className="space-y-2 pt-2">
+            {results.length === 0 && !searching && (
+              <p className="text-center text-xs text-muted-foreground py-4 font-sans">
+                Insira os aeroportos e a data acima para buscar voos.
+              </p>
+            )}
+            {results.map((flight) => (
+              <div
+                key={flight.id}
+                className="flex gap-3 p-3 rounded border border-border hover:border-brand/40 bg-surface-alt/25 transition-all group text-left"
+              >
+                <div className="flex-1 min-w-0 flex flex-col justify-between">
+                  <div>
+                    <div className="flex items-center justify-between mb-1">
+                      <h4 className="text-xs font-bold text-foreground truncate group-hover:text-brand transition-colors">
+                        {flight.airline} • Voo {flight.flight_number}
+                      </h4>
+                      <span className="ds-meta text-muted-foreground font-mono">
+                        {flight.stops === 0 ? "Direto" : `${flight.stops} parada(s)`}
+                      </span>
+                    </div>
+                    <p className="ds-meta text-muted-foreground font-sans truncate">
+                      {flight.origin} {flight.departure_time} → {flight.destination}{" "}
+                      {flight.arrival_time}
+                    </p>
+                    <p className="text-[9px] text-muted-foreground/85 font-sans mt-0.5">
+                      {flight.baggage_rules}
+                    </p>
+                  </div>
+                  <div className="flex items-center justify-between mt-2 pt-1 border-t border-border/10">
+                    <span className="text-xs font-bold text-foreground font-mono">
+                      {flight.price.toLocaleString("pt-BR", {
+                        style: "currency",
+                        currency: "BRL",
+                      })}
+                    </span>
+                    <Button
+                      type="button"
+                      onClick={() => importFlight(flight)}
+                      className="px-2.5 py-1 ds-meta bg-primary text-primary-foreground font-semibold rounded hover:bg-primary/95 transition-all cursor-pointer"
+                    >
+                      Selecionar
+                    </Button>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
         </div>
-      )}
+      </SheetPage>
     </Accordion>
   );
 }

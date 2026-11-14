@@ -20,6 +20,7 @@ import {
   Info,
   ArrowRight,
   X,
+  Sparkles,
 } from "lucide-react";
 import { toast } from "sonner";
 import {
@@ -35,14 +36,7 @@ import {
 import { StatusBadge } from "@/components/ui/badge";
 import { formatDate } from "@/lib/formatters";
 import { Button } from "@/components/ui/button";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
+import { SheetPage } from "@/components/ui/sheet";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -70,6 +64,7 @@ import {
 import { TabFinanceiro } from "@/components/portal/TabFinanceiro";
 import { TabContatos } from "@/components/portal/TabContatos";
 import { TabMemorias } from "@/components/portal/TabMemorias";
+import { TabUpsell } from "@/components/portal/TabUpsell";
 
 // ─────────────────────────────────────────────────────────────────────────────
 
@@ -88,7 +83,7 @@ const TRIP_STATUS: Record<string, string> = {
   cancelled: "Cancelada",
 };
 
-type TabKey = "resumo" | "explorar" | "financeiro" | "memorias" | "contatos";
+type TabKey = "resumo" | "explorar" | "financeiro" | "memorias" | "contatos" | "upsell";
 
 function ClientTripDetail() {
   const { id } = useParams({ from: "/client/trips/$id" });
@@ -668,6 +663,12 @@ function ClientTripDetail() {
             onClick={() => setActiveTab("financeiro")}
           />
           <TabButton
+            label="Upgrades"
+            icon={<Sparkles className="w-4 h-4" />}
+            active={activeTab === "upsell"}
+            onClick={() => setActiveTab("upsell")}
+          />
+          <TabButton
             label="Contatos"
             icon={<Phone className="w-4 h-4" />}
             active={activeTab === "contatos"}
@@ -833,7 +834,10 @@ function ClientTripDetail() {
           </div>
         )}
 
-        {/* ── EXPLORAR ─────────────────────────────────────────────────── */}
+        {/* ── UPSELL ────────────────────────────────────────────────────── */}
+        {activeTab === "upsell" && <TabUpsell tripId={id} agencyId={trip.agency_id} />}
+
+        {/* ── EXPLORAR (IA) ────────────────────────────────────────────── */}
         {activeTab === "explorar" && (
           <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
             <div className="bg-brand rounded-3xl p-8 text-brand-foreground relative overflow-hidden">
@@ -914,23 +918,28 @@ function ClientTripDetail() {
         />
       )}
 
-      {/* ── Reacomodação Review & Acceptance Dialog ───────────────────── */}
-      <Dialog open={isClientReviewOpen} onOpenChange={setIsClientReviewOpen}>
-        <DialogContent className="sm:max-w-[760px] max-h-[90vh] overflow-y-auto">
-          <DialogHeader>
-            <div className="flex items-center gap-2 text-rose-600 font-bold text-sm uppercase tracking-wide">
-              <AlertTriangle className="h-5 w-5 animate-pulse" />
-              Notificação de Alteração de Voo
-            </div>
-            <DialogTitle className="text-xl font-bold mt-1">
-              Revisão de Reacomodação Aérea
-            </DialogTitle>
-            <DialogDescription className="text-xs">
-              A companhia aérea realizou alterações no seu itinerário original. Por favor, analise a
-              nova proposta de voo abaixo e assine eletronicamente para confirmar suas novas
-              passagens.
-            </DialogDescription>
-          </DialogHeader>
+      {/* ── Reacomodação Review & Acceptance SheetPage ───────────────────── */}
+      <SheetPage 
+        isOpen={isClientReviewOpen} 
+        onClose={() => setIsClientReviewOpen(false)}
+        title={
+          <div className="flex items-center gap-2 text-rose-600 font-bold text-sm uppercase tracking-wide">
+            <AlertTriangle className="h-5 w-5 animate-pulse" />
+            Notificação de Alteração de Voo
+          </div>
+        }
+        width="clamp(480px, 60vw, 760px)"
+      >
+        <div className="mb-6">
+          <h2 className="text-xl font-bold mt-1">
+            Revisão de Reacomodação Aérea
+          </h2>
+          <p className="text-xs text-muted-foreground mt-1">
+            A companhia aérea realizou alterações no seu itinerário original. Por favor, analise a
+            nova proposta de voo abaixo e assine eletronicamente para confirmar suas novas
+            passagens.
+          </p>
+        </div>
 
           {activeCase && activeCase.original_itinerary && (
             <div className="space-y-6 py-4">
@@ -1178,7 +1187,7 @@ function ClientTripDetail() {
             </div>
           )}
 
-          <DialogFooter className="flex flex-col sm:flex-row gap-3">
+          <div className="flex flex-col sm:flex-row gap-3 mt-8 pt-4 border-t border-border/40">
             <Button
               variant="outline"
               className="cursor-pointer border-rose-200 text-rose-600 hover:bg-rose-50 rounded-[var(--radius-card)] text-xs px-5 py-3 order-2 sm:order-1"
@@ -1237,9 +1246,8 @@ function ClientTripDetail() {
                 {clientDecisionMut.isPending ? "Assinando..." : "Assinar e Confirmar Aceite"}
               </Button>
             </div>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
+          </div>
+      </SheetPage>
     </div>
   );
 }

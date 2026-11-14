@@ -13,6 +13,9 @@ export interface ApiFare {
   code?: string;
   description?: string;
   price?: ApiPrice;
+  baggageAllowance?: string;
+  cabinClass?: string;
+  refundable?: boolean;
 }
 
 export interface ApiAirport {
@@ -27,6 +30,17 @@ export interface ApiAirport {
 export interface ApiAirline {
   code?: string;
   name?: string;
+  logoUrl?: string;
+}
+
+export interface ApiFlightSegment {
+  flightNumber?: string;
+  airline?: ApiAirline;
+  origin?: ApiAirport;
+  destination?: ApiAirport;
+  departure?: string;
+  arrival?: string;
+  durationMinutes?: number;
 }
 
 export interface ApiFlight {
@@ -39,17 +53,29 @@ export interface ApiFlight {
   arrival?: string; // ISO date-time
   number?: string;
   stopsCount?: number;
+  durationMinutes?: number;
+  segments?: ApiFlightSegment[];
   fares?: ApiFare[];
 }
 
 export interface ApiRoute {
   numberRoute?: number;
+  type?: "OUTBOUND" | "INBOUND";
   flights?: ApiFlight[];
 }
 
 export interface ApiFlightAvail {
+  id?: string;
   provider?: string;
+  supplierName?: string;
   routes?: ApiRoute[];
+  outbound?: ApiFlight;
+  inbound?: ApiFlight;
+  pricePerPerson?: number;
+  totalPrice?: number;
+  taxes?: number;
+  fees?: number;
+  currency?: string;
 }
 
 export interface ApiImage {
@@ -58,14 +84,54 @@ export interface ApiImage {
   description?: string;
 }
 
+export interface ApiHotelRoomCondition {
+  id: string;
+  boardType: {
+    code: string;
+    description: string;
+  };
+  cancellationPolicy: {
+    refundable: boolean;
+    description: string;
+    deadline?: string;
+  };
+  priceForNights: number;
+  pricePerPerson: number;
+  taxes: number;
+}
+
+export interface ApiHotelRoomCategory {
+  id: string;
+  name: string;
+  availableQuantity: number;
+  maxOccupancy: number;
+  conditions: ApiHotelRoomCondition[];
+}
+
+export interface ApiHotelSupplierOffer {
+  supplierId: string;
+  supplierName: string;
+  isDirectContract: boolean;
+  lowestPrice: number;
+  roomCategories: ApiHotelRoomCategory[];
+}
+
 export interface ApiHotel {
-  id?: number;
+  id?: number | string;
   name?: string;
+  category?: number | string; // estrelas
+  stars?: number;
+  address?: string;
+  neighborhood?: string;
   city?: {
-    code?: number;
+    code?: number | string;
     name?: string;
   };
   images?: ApiImage[];
+  featuredBadge?: string;
+  amenities?: string[];
+  description?: string;
+  suppliers?: ApiHotelSupplierOffer[];
 }
 
 export interface ApiRoom {
@@ -98,6 +164,121 @@ export interface ApiHotelAvail {
   hotel?: ApiHotel;
   lowestFare?: ApiLowestFare;
   roomGroups?: ApiRoomGroup[];
+  pricePerPerson?: number;
+  totalPrice?: number;
+  taxes?: number;
+}
+
+export interface ApiTransferAvail {
+  id: string;
+  title: string;
+  description: string;
+  type: "roundtrip" | "one_way" | "in" | "out";
+  provider: string;
+  supplierName: string;
+  vehicleType: string;
+  imageUrl?: string;
+  price: number;
+  taxes: number;
+  fees: number;
+  currency: string;
+}
+
+export interface ApiTourAvail {
+  id: string;
+  title: string;
+  description: string;
+  duration: string;
+  includes: string[];
+  provider: string;
+  supplierName: string;
+  imageUrl?: string;
+  pricePerPerson: number;
+  totalPrice: number;
+  taxes: number;
+  currency: string;
+}
+
+export interface ApiInsuranceAvail {
+  id: string;
+  title: string;
+  planName: string;
+  coverageMedical: string;
+  provider: string;
+  pricePerPerson: number;
+  totalPrice: number;
+  currency: string;
+}
+
+export interface ApiChipAvail {
+  id: string;
+  title: string;
+  dataLimit: string;
+  validityDays: number;
+  type: "eSIM" | "physical";
+  provider: string;
+  price: number;
+  currency: string;
+}
+
+export interface RoomOccupancy {
+  id: string;
+  adults: number;
+  childrenAges: number[];
+  infantsAges: number[];
+}
+
+export interface PackageSearchParams {
+  origin: {
+    code: string;
+    name: string;
+    city: string;
+  };
+  destination: {
+    code: string;
+    name: string;
+    city: string;
+  };
+  departureDate: string; // YYYY-MM-DD
+  returnDate: string; // YYYY-MM-DD
+  nights: number;
+  isCombined: boolean;
+  differentAirDestination?: boolean;
+  hotelNextDay?: boolean;
+  baggage: "all" | "included" | "none";
+  stops: "any" | "direct" | "max_1" | "2_plus";
+  rooms: RoomOccupancy[];
+}
+
+export interface CartItem {
+  id: string;
+  type: "hotel" | "flight" | "transfer" | "activity" | "insurance" | "ticket" | "chip" | "service_package" | "other";
+  title: string;
+  subtitle: string;
+  utilizationPeriod: string;
+  passengersSummary: string;
+  taxAmount: number;
+  priceAmount: number;
+  supplierName: string;
+  details: Record<string, any>;
+}
+
+export interface PackageCartState {
+  quoteId?: string;
+  items: CartItem[];
+  client: {
+    attendant: string;
+    name: string;
+    email: string;
+    phone: string;
+    notes?: string;
+  };
+  adjustment: {
+    markupPercent: number;
+    discountAmount: number;
+    commissionPercent: number;
+    currency: string;
+  };
 }
 
 export interface ApiDocument {

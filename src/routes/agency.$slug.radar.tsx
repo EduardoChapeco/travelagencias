@@ -256,7 +256,7 @@ function RadarTVPage() {
     <div
       ref={containerRef}
       className={cn(
-        "flex flex-col min-h-screen bg-[#060814] text-slate-100 font-sans selection:bg-brand/30 select-none transition-all duration-300 relative overflow-hidden",
+        "flex flex-col min-h-screen bg-background text-foreground font-sans selection:bg-brand/30 select-none transition-all duration-300 relative overflow-hidden",
         isFullscreen ? "p-6" : "p-4 md:p-6",
       )}
     >
@@ -265,13 +265,13 @@ function RadarTVPage() {
       <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] rounded-full bg-brand/5 blur-[120px] pointer-events-none" />
 
       {/* Header do Painel */}
-      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 border-b border-slate-800/80 pb-4 mb-4 shrink-0 relative z-10">
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 border-b border-border pb-4 mb-4 shrink-0 relative z-10">
         <div className="flex items-center gap-3">
           {!isFullscreen && (
             <Link
               to="/agency/$slug"
               params={{ slug }}
-              className="p-2 rounded-[var(--radius-card)] bg-slate-900/80 border border-slate-800 text-slate-400 hover:text-slate-100 hover:bg-slate-800 transition-all cursor-pointer"
+              className="p-2 rounded-[var(--radius-card)] bg-muted border border-border text-muted-foreground hover:text-foreground hover:bg-accent transition-all cursor-pointer"
             >
               <ArrowLeft className="h-4 w-4" />
             </Link>
@@ -285,26 +285,26 @@ function RadarTVPage() {
             </div>
             <h1 className="text-xl md:text-2xl font-black tracking-tight text-white flex items-center gap-2 mt-0.5">
               <Globe className="h-5 w-5 text-brand" /> {agency?.name}{" "}
-              <span className="text-slate-600 font-normal">|</span>{" "}
-              <span className="text-slate-400 font-bold">Monitor Global</span>
+              <span className="text-muted-foreground font-normal">|</span>{" "}
+              <span className="text-muted-foreground font-bold">Monitor Global</span>
             </h1>
           </div>
         </div>
 
         {/* TV Mode Controls */}
         <div className="flex items-center gap-3 self-stretch sm:self-auto justify-between sm:justify-start">
-          <div className="text-right font-mono text-sm tracking-widest text-slate-400 font-bold bg-slate-900/40 border border-slate-850 px-3 py-1.5 rounded-[var(--radius-card)] shrink-0">
+          <div className="text-right font-mono text-sm tracking-widest text-muted-foreground font-bold bg-muted border border-border px-3 py-1.5 rounded-[var(--radius-card)] shrink-0">
             {currentTime.toLocaleTimeString("pt-BR")}
           </div>
 
-          <div className="flex items-center gap-1 bg-slate-900/80 border border-slate-800 p-0.5 rounded-[var(--radius-card)]">
+          <div className="flex items-center gap-1 bg-muted border border-border p-0.5 rounded-[var(--radius-card)]">
             <Button
               onClick={() => setActiveTab("all")}
               className={cn(
                 "px-3 py-1.5 ds-label-caps rounded-full tracking-wider transition-all cursor-pointer",
                 activeTab === "all"
                   ? "bg-brand text-white shadow-none"
-                  : "text-slate-400 hover:text-slate-200",
+                  : "text-muted-foreground hover:text-foreground",
               )}
             >
               Todos ({travelers.length})
@@ -315,7 +315,7 @@ function RadarTVPage() {
                 "px-3 py-1.5 ds-label-caps rounded-full tracking-wider transition-all cursor-pointer",
                 activeTab === "in_transit"
                   ? "bg-emerald-600 text-white shadow-none"
-                  : "text-slate-400 hover:text-slate-200",
+                  : "text-muted-foreground hover:text-foreground",
               )}
             >
               Viajando Agora (
@@ -336,7 +336,7 @@ function RadarTVPage() {
 
           <Button
             onClick={toggleFullscreen}
-            className="p-2.5 rounded-[var(--radius-card)] bg-slate-900/80 border border-slate-800 text-slate-300 hover:text-white hover:bg-slate-800 transition-all cursor-pointer"
+            className="p-2.5 rounded-[var(--radius-card)] bg-muted border border-border text-foreground hover:text-white hover:bg-accent transition-all cursor-pointer"
             title="Alternar Tela Cheia (Modo TV)"
           >
             {isFullscreen ? <Minimize2 className="h-4 w-4" /> : <Maximize2 className="h-4 w-4" />}
@@ -347,11 +347,11 @@ function RadarTVPage() {
       {/* Grid Principal */}
       <div className="flex-1 min-h-0 grid grid-cols-1 xl:grid-cols-4 gap-6 relative z-10">
         {/* Painel Central do Mapa (Radar Sweep) */}
-        <div className="xl:col-span-3 rounded-[var(--radius-card)] border border-slate-800/60 bg-[#090b1c]/80 backdrop-blur-md p-6 flex flex-col justify-between relative overflow-hidden group">
+        <div className="xl:col-span-3 rounded-[var(--radius-card)] border border-border bg-background backdrop-blur-md p-6 flex flex-col justify-between relative overflow-hidden group">
           {/* Radar Sweep Effect overlay */}
           <div className="absolute inset-0 pointer-events-none bg-[radial-gradient(circle_at_center,transparent_40%,rgba(6,8,20,0.4)_100%)] z-10" />
-          <div className="absolute inset-0 pointer-events-none border border-slate-800/20 rounded-full w-[600px] h-[600px] top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 border-dashed z-10" />
-          <div className="absolute inset-0 pointer-events-none border border-slate-850/40 rounded-full w-[350px] h-[350px] top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-10" />
+          <div className="absolute inset-0 pointer-events-none border border-border rounded-full w-[600px] h-[600px] top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 border-dashed z-10" />
+          <div className="absolute inset-0 pointer-events-none border border-border rounded-full w-[350px] h-[350px] top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-10" />
 
           {/* Neon rotating sweep line */}
           <div className="absolute top-1/2 left-1/2 w-[400px] h-[2px] bg-gradient-to-r from-transparent to-brand/35 -translate-y-1/2 origin-left animate-[spin_8s_linear_infinite] pointer-events-none z-10" />
@@ -360,7 +360,7 @@ function RadarTVPage() {
           <div className="flex-1 flex items-stretch relative min-h-[350px] z-0">
             <Suspense
               fallback={
-                <div className="flex-1 flex items-center justify-center text-slate-500 text-xs gap-2 animate-pulse bg-[#0a0c20] rounded-[var(--radius-card)] border border-slate-800">
+                <div className="flex-1 flex items-center justify-center text-muted-foreground text-xs gap-2 animate-pulse bg-background rounded-[var(--radius-card)] border border-border">
                   <Compass className="h-5 w-5 animate-spin" />
                   <span>Carregando mapa interativo global...</span>
                 </div>
@@ -371,22 +371,22 @@ function RadarTVPage() {
           </div>
 
           {/* Status Geral / Neuromarketing */}
-          <div className="flex flex-wrap items-center justify-between gap-4 mt-4 pt-4 border-t border-slate-800/40 relative z-10">
+          <div className="flex flex-wrap items-center justify-between gap-4 mt-4 pt-4 border-t border-border relative z-10">
             <div className="flex items-center gap-6">
               <div className="flex items-center gap-2">
                 <div className="h-3 w-3 rounded-full bg-violet-400" />
-                <span className="text-xs text-slate-400 font-medium">
+                <span className="text-xs text-muted-foreground font-medium">
                   Sucessos da Agência (Embarques)
                 </span>
               </div>
               <div className="flex items-center gap-2">
                 <div className="h-3 w-3 rounded-full bg-blue-400" />
-                <span className="text-xs text-slate-400 font-medium">
+                <span className="text-xs text-muted-foreground font-medium">
                   Conexões Logísticas (Aéreos)
                 </span>
               </div>
             </div>
-            <div className="text-xs text-slate-400 flex items-center gap-1">
+            <div className="text-xs text-muted-foreground flex items-center gap-1">
               <Sparkles className="h-3.5 w-3.5 text-brand" />
               <span>Monitorando com precisão os destinos comerciais favoritos da sua agência.</span>
             </div>
@@ -394,12 +394,12 @@ function RadarTVPage() {
         </div>
 
         {/* Lista Lateral de Passageiros */}
-        <div className="rounded-[var(--radius-card)] border border-slate-800/60 bg-[#090b1c]/80 backdrop-blur-md p-5 flex flex-col min-h-0 relative">
+        <div className="rounded-[var(--radius-card)] border border-border bg-background backdrop-blur-md p-5 flex flex-col min-h-0 relative">
           <div className="flex items-center justify-between mb-4 shrink-0">
-            <h3 className="text-xs font-black uppercase tracking-wider text-slate-300 flex items-center gap-1.5">
+            <h3 className="text-xs font-black uppercase tracking-wider text-foreground flex items-center gap-1.5">
               <Users className="h-4 w-4 text-brand" /> Lista de Trânsito
             </h3>
-            <span className="ds-meta font-mono font-bold bg-slate-900 px-2 py-0.5 rounded border border-slate-800 text-slate-400">
+            <span className="ds-meta font-mono font-bold bg-muted px-2 py-0.5 rounded border border-border text-muted-foreground">
               {filteredTravelers.length} registros
             </span>
           </div>
@@ -410,15 +410,15 @@ function RadarTVPage() {
               Array.from({ length: 4 }).map((_, i) => (
                 <div
                   key={i}
-                  className="p-3 border border-slate-900 bg-slate-950/20 rounded-[var(--radius-card)] space-y-2 animate-pulse"
+                  className="p-3 border border-border bg-card rounded-[var(--radius-card)] space-y-2 animate-pulse"
                 >
                   <div className="h-3.5 bg-slate-800 rounded w-2/3" />
                   <div className="h-2.5 bg-slate-800 rounded w-1/2" />
                 </div>
               ))
             ) : filteredTravelers.length === 0 ? (
-              <div className="text-center py-12 text-slate-500 flex flex-col items-center justify-center gap-2">
-                <Compass className="h-8 w-8 text-slate-650 opacity-40 animate-spin-slow" />
+              <div className="text-center py-12 text-muted-foreground flex flex-col items-center justify-center gap-2">
+                <Compass className="h-8 w-8 text-muted-foreground opacity-40 animate-spin-slow" />
                 <p className="text-xs font-semibold">Nenhum cliente ativo no mapa.</p>
               </div>
             ) : (
@@ -430,7 +430,7 @@ function RadarTVPage() {
                     "w-full text-left p-3 rounded-[var(--radius-card)] border transition-all flex flex-col justify-between gap-1 group relative overflow-hidden cursor-pointer",
                     selectedPin?.id === t.id
                       ? "bg-brand/10 border-brand/40 shadow-none"
-                      : "bg-[#0c0f24] border-slate-850/80 hover:border-slate-800 hover:bg-slate-900/60",
+                      : "bg-background border-border hover:border-border hover:bg-muted",
                   )}
                 >
                   {/* Indicator strip */}
@@ -442,7 +442,7 @@ function RadarTVPage() {
                   />
 
                   <div className="flex items-start justify-between gap-2 pl-1.5">
-                    <p className="text-xs font-black text-slate-100 group-hover:text-white truncate max-w-[150px] leading-tight">
+                    <p className="text-xs font-black text-foreground group-hover:text-white truncate max-w-[150px] leading-tight">
                       {t.name}
                     </p>
                     <span
@@ -457,13 +457,13 @@ function RadarTVPage() {
                     </span>
                   </div>
 
-                  <div className="flex items-center gap-1.5 ds-meta text-slate-400 font-medium pl-1.5 mt-0.5">
-                    <MapPin className="h-3 w-3 shrink-0 text-slate-500" />
+                  <div className="flex items-center gap-1.5 ds-meta text-muted-foreground font-medium pl-1.5 mt-0.5">
+                    <MapPin className="h-3 w-3 shrink-0 text-muted-foreground" />
                     <span className="truncate">{t.destination}</span>
                   </div>
 
                   {t.startDate && (
-                    <div className="text-[9px] text-slate-500 pl-1.5 mt-1 font-mono flex items-center gap-1">
+                    <div className="text-[9px] text-muted-foreground pl-1.5 mt-1 font-mono flex items-center gap-1">
                       <Clock className="h-2.5 w-2.5" />
                       <span>
                         Início:{" "}
@@ -481,7 +481,7 @@ function RadarTVPage() {
 
           {/* Modal Lateral de Detalhes do Cliente Selecionado */}
           {selectedPin && (
-            <div className="absolute inset-x-0 bottom-0 bg-[#070918]/95 border-t border-slate-800 p-4 rounded-b-2xl animate-in slide-in-from-bottom duration-300 z-30">
+            <div className="absolute inset-x-0 bottom-0 bg-background border-t border-border p-4 rounded-b-2xl animate-in slide-in-from-bottom duration-300 z-30">
               <div className="flex items-start justify-between gap-2 mb-3">
                 <div>
                   <span className="text-[8px] font-black uppercase text-brand tracking-widest">
@@ -491,24 +491,24 @@ function RadarTVPage() {
                 </div>
                 <Button
                   onClick={() => setSelectedPin(null)}
-                  className="text-slate-400 hover:text-slate-100 cursor-pointer"
+                  className="text-muted-foreground hover:text-foreground cursor-pointer"
                 >
                   <Minimize2 className="h-3.5 w-3.5" />
                 </Button>
               </div>
 
               <div className="space-y-2 text-xs">
-                <div className="flex items-center justify-between py-1 border-b border-slate-900">
-                  <span className="text-slate-500">Localização/Destino</span>
-                  <span className="font-semibold text-slate-200">{selectedPin.destination}</span>
+                <div className="flex items-center justify-between py-1 border-b border-border">
+                  <span className="text-muted-foreground">Localização/Destino</span>
+                  <span className="font-semibold text-foreground">{selectedPin.destination}</span>
                 </div>
-                <div className="flex items-center justify-between py-1 border-b border-slate-900">
-                  <span className="text-slate-500">País</span>
-                  <span className="font-semibold text-slate-200">{selectedPin.country}</span>
+                <div className="flex items-center justify-between py-1 border-b border-border">
+                  <span className="text-muted-foreground">País</span>
+                  <span className="font-semibold text-foreground">{selectedPin.country}</span>
                 </div>
-                <div className="flex items-center justify-between py-1 border-b border-slate-900">
-                  <span className="text-slate-500">Data de Início</span>
-                  <span className="font-semibold text-slate-200">
+                <div className="flex items-center justify-between py-1 border-b border-border">
+                  <span className="text-muted-foreground">Data de Início</span>
+                  <span className="font-semibold text-foreground">
                     {selectedPin.startDate
                       ? new Date(selectedPin.startDate).toLocaleDateString("pt-BR")
                       : "—"}
@@ -516,8 +516,8 @@ function RadarTVPage() {
                 </div>
                 {selectedPin.type === "trip" && (
                   <div className="flex items-center justify-between py-1">
-                    <span className="text-slate-500">Data de Término</span>
-                    <span className="font-semibold text-slate-200">
+                    <span className="text-muted-foreground">Data de Término</span>
+                    <span className="font-semibold text-foreground">
                       {selectedPin.endDate
                         ? new Date(selectedPin.endDate).toLocaleDateString("pt-BR")
                         : "—"}

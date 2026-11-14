@@ -277,24 +277,24 @@ export function OmnichannelChat({
 
   return (
     <div className="flex flex-col h-[620px] border border-border/80 rounded-[var(--radius-card)] bg-surface/50 overflow-hidden">
-      <div className="flex items-center gap-3 px-4 py-3 border-b border-border bg-surface-alt/20">
-        <div className="h-9 w-9 rounded-full bg-[#25d366]/10 flex items-center justify-center">
-          <MessageCircle className="h-4 w-4 text-[#25d366]" />
+      <div className="flex items-center gap-3 px-4 py-3 border-b border-border bg-surface-alt/40">
+        <div className="h-9 w-9 rounded-full bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 flex items-center justify-center">
+          <MessageCircle className="h-4 w-4" />
         </div>
         <div className="flex-1">
-          <h3 className="text-sm font-bold text-foreground">WhatsApp</h3>
+          <h3 className="text-sm font-bold text-foreground">WhatsApp CRM</h3>
           <p className="ds-meta text-muted-foreground">
             {messages.length > 0
               ? `${messages.length} mensagens · Última às ${lastMsgTime}`
               : "Nenhuma mensagem ainda"}
           </p>
         </div>
-        <span className="ds-meta font-bold bg-success/10 text-success border border-success/20 px-2 py-1 rounded-full">
+        <span className="ds-meta font-bold bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20 px-2 py-0.5 rounded-full">
           {messages.length > 0 ? "ATIVO" : "AGUARDANDO"}
         </span>
       </div>
 
-      <div className="flex-1 overflow-y-auto p-4 space-y-2 bg-[#E5DDD5]/5">
+      <div className="flex-1 overflow-y-auto p-4 space-y-2 bg-muted/10">
         {messages.length === 0 ? (
           <div className="flex flex-col items-center justify-center h-full text-center space-y-3 opacity-60">
             <MessageCircle className="h-12 w-12 text-muted-foreground" />
@@ -312,20 +312,20 @@ export function OmnichannelChat({
               className={`flex ${msg.direction === "outbound" ? "justify-end" : "justify-start"}`}
             >
               <div
-                className={`max-w-[75%] px-3 py-2 rounded-2xl text-sm leading-relaxed ${
+                className={`max-w-[85%] sm:max-w-[75%] min-w-0 px-3.5 py-2.5 rounded-2xl text-sm leading-relaxed break-words [overflow-wrap:anywhere] ${
                   msg.direction === "outbound"
-                    ? "bg-brand text-brand-foreground rounded-br-sm"
-                    : "bg-surface border border-border/60 text-foreground rounded-bl-sm"
+                    ? "bg-brand text-brand-foreground rounded-br-sm shadow-none"
+                    : "bg-card border border-border/80 text-foreground rounded-bl-sm shadow-none"
                 }`}
               >
                 {msg.media_type === "audio" && msg.media_url ? (
-                  <audio controls src={msg.media_url} className="max-w-full" />
+                  <audio controls src={msg.media_url} className="max-w-full w-full" />
                 ) : msg.media_url ? (
-                  <img src={msg.media_url} className="rounded-2xl max-w-full" alt="media" />
+                  <img src={msg.media_url} className="rounded-xl max-w-full" alt="media" />
                 ) : (
-                  <span>{msg.content}</span>
+                  <span className="break-words">{msg.content}</span>
                 )}
-                <div className="text-[9px] mt-0.5 opacity-70 text-right flex items-center justify-end gap-1">
+                <div className="text-[9px] mt-0.5 opacity-70 text-right flex items-center justify-end gap-1 font-mono">
                   <span>
                     {new Date(msg.created_at).toLocaleTimeString("pt-BR", {
                       hour: "2-digit",

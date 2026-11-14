@@ -9,10 +9,10 @@ import { useAgency } from "@/lib/agency-context";
 import { PageHeader, EmptyState, ModuleActionButton } from "@/components/shell/PageHeader";
 import { Field } from "@/components/ui/field";
 import { FormInput as Input } from "@/components/ui/input";
-import { FormTextarea as Textarea } from "@/components/ui/textarea";
-import { SimpleSheet as Sheet, SheetPage } from "@/components/ui/sheet";
+import { SheetPage } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
 import { StatusBadge } from "@/components/ui/badge";
+import { FormTextarea as Textarea } from "@/components/ui/textarea";
 import { RichTextEditor } from "@/components/ui/RichTextEditor";
 
 export const Route = createFileRoute("/agency/$slug/knowledge")({

@@ -7,7 +7,7 @@ import {
 } from "@/services/payment";
 import { Copy, CheckCircle2, AlertCircle, CreditCard, ExternalLink, QrCode } from "lucide-react";
 import { toast } from "sonner";
-import { SimpleSheet as Sheet } from "@/components/ui/sheet";
+import { SheetPage } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
 import { FormInput as Input } from "@/components/ui/input";
@@ -215,47 +215,46 @@ function Page() {
       </section>
 
       {selectedInst && (
-        <Sheet onClose={() => setSelectedInst(null)} title="Pagamento">
-          <div className="p-6">
-            <div className="mb-8 text-center">
-              <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full glass text-brand">
-                <QrCode className="h-8 w-8" />
+        <SheetPage isOpen={true} onClose={() => setSelectedInst(null)} title="Pagamento">
+          <div className="space-y-6">
+            <div className="text-center">
+              <div className="mx-auto mb-3 flex h-14 w-14 items-center justify-center rounded-full bg-white/[0.04] border border-white/[0.08] text-white">
+                <QrCode className="h-7 w-7" />
               </div>
-              <h2 className="text-2xl font-bold text-foreground">
+              <h2 className="text-2xl font-bold text-white font-mono">
                 {selectedInst.amount.toLocaleString("pt-BR", {
                   style: "currency",
                   currency: "BRL",
                 })}
               </h2>
-              <p className="text-sm font-medium text-muted-foreground mt-1">
+              <p className="text-xs font-medium text-zinc-400 mt-1">
                 Vencimento: {new Date(selectedInst.due_date).toLocaleDateString("pt-BR")}
               </p>
             </div>
 
             <div className="space-y-4">
               {selectedInst.payment_method === "pix" && selectedInst.external_link ? (
-                <div className="rounded-[var(--radius-card)] border-none/50 glass/30 p-5 text-center">
-                  <div className="mb-4 text-xs font-semibold uppercase tracking-widest text-muted-foreground">
+                <div className="rounded-2xl border border-white/[0.08] bg-[#12141c] p-4 text-center">
+                  <div className="mb-3 text-xs font-semibold uppercase tracking-wider text-zinc-400">
                     PIX Copia e Cola
                   </div>
-                  <div className="break-all rounded-full glass-card border-none p-3 font-mono ds-meta text-foreground ring-1 ring-border ">
+                  <div className="break-all rounded-xl bg-white/[0.04] border border-white/[0.08] p-3 font-mono text-xs text-zinc-200">
                     {selectedInst.external_link}
                   </div>
                   <Button
-                    variant="default"
                     onClick={() => copyToClipboard(selectedInst.external_link!)}
-                    className="mt-4 w-full gap-2"
+                    className="mt-3 w-full h-9 rounded-full bg-white text-black font-semibold hover:bg-white/90 shadow-sm cursor-pointer flex items-center justify-center gap-1.5"
                   >
                     <Copy className="h-4 w-4" /> Copiar Código
                   </Button>
 
-                  <div className="mt-6 border-t border-border/50 pt-4 text-left">
-                    <label className="block ds-label-caps tracking-wider text-muted-foreground mb-2">
+                  <div className="mt-6 border-t border-white/[0.08] pt-4 text-left">
+                    <label className="block text-xs font-semibold uppercase tracking-wider text-zinc-400 mb-2">
                       Enviar Comprovante de Pagamento
                     </label>
-                    <div className="space-y-2">
-                      <label className="flex flex-col items-center justify-center border-2 border-dashed border-border rounded-[var(--radius-card)] p-4 glass-card border-none hover:glass transition-colors cursor-pointer text-center">
-                        <span className="text-xs font-bold text-brand">
+                    <div>
+                      <label className="flex flex-col items-center justify-center border-2 border-dashed border-white/10 rounded-2xl p-4 bg-white/[0.02] hover:bg-white/[0.04] transition-colors cursor-pointer text-center">
+                        <span className="text-xs font-medium text-zinc-300">
                           {isUploading ? "Enviando..." : "Selecionar Comprovante (Imagem/PDF)"}
                         </span>
                         <Input
@@ -274,29 +273,28 @@ function Page() {
                   </div>
                 </div>
               ) : selectedInst.payment_method === "credit_card" && selectedInst.external_link ? (
-                <div className="rounded-[var(--radius-card)] border-none/50 glass/30 p-5 text-center">
-                  <div className="mb-4 text-xs font-semibold uppercase tracking-widest text-muted-foreground">
+                <div className="rounded-2xl border border-white/[0.08] bg-[#12141c] p-5 text-center">
+                  <div className="mb-3 text-xs font-semibold uppercase tracking-wider text-zinc-400">
                     Pagamento via Cartão
                   </div>
-                  <p className="mb-4 text-sm text-muted-foreground">
+                  <p className="mb-4 text-xs text-zinc-400">
                     Você será redirecionado para o ambiente seguro do banco.
                   </p>
                   <Button
-                    variant="default"
                     onClick={() => window.open(selectedInst.external_link!, "_blank")}
-                    className="w-full gap-2"
+                    className="w-full h-9 rounded-full bg-white text-black font-semibold hover:bg-white/90 shadow-sm cursor-pointer flex items-center justify-center gap-1.5"
                   >
                     <ExternalLink className="h-4 w-4" /> Acessar Link Seguro
                   </Button>
                 </div>
               ) : (
-                <div className="text-center text-sm text-muted-foreground">
+                <div className="text-center text-xs text-zinc-400 py-4">
                   Método de pagamento não configurado ou boleto pendente de emissão.
                 </div>
               )}
             </div>
           </div>
-        </Sheet>
+        </SheetPage>
       )}
     </div>
   );

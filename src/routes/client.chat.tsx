@@ -15,6 +15,7 @@ import {
   fetchClientTimelineEvents,
   sendClientChatMessage,
   resolveClientWebchatConversation,
+  createClientWebchatConversation,
   fetchClientAgencies,
 } from "@/services/client-area";
 import { toast } from "sonner";
@@ -117,21 +118,61 @@ function ClientChatRoute() {
   };
 
   const handleSend = async () => {
-    if (!inputText.trim() || !conversationId || !agencyId) return;
+    if (!inputText.trim() || !agencyId) return;
     const txt = inputText.trim();
     setInputText("");
 
     try {
-      const msg = await sendClientChatMessage(agencyId, conversationId, txt);
-      setTimeline((prev) => [
-        ...prev,
-        {
-          type: "message",
-          date: new Date(msg.created_at || new Date().toISOString()),
-          data: msg,
-          id: msg.id,
-        },
-      ]);
+      let activeConvId = conversationId;
+      if (!activeConvId) {
+        // Create conversation if it doesn't exist yet
+        const res = await createClientWebchatConversation(agencyId);
+        activeConvId = res.id;
+        setConversationId(activeConvId);
+        
+        // Subscribe to real-time events for the new conversation
+        supabase
+          .channel(`public:messages:conversation_id=eq.${activeConvId}`)
+          .on(
+            "postgres_changes",
+            {
+              event: "INSERT",
+              schema: "public",
+              table: "messages",
+              filter: `conversation_id=eq.${activeConvId}`,
+            },
+            (payload) => {
+              setTimeline((prev) => {
+                if (prev.find((e) => e.type === "message" && e.id === payload.new.id)) return prev;
+                return [
+                  ...prev,
+                  {
+                    type: "message",
+                    date: new Date(payload.new.created_at),
+                    data: payload.new,
+                    id: payload.new.id,
+                  },
+                ];
+              });
+              scrollToBottom();
+            },
+          )
+          .subscribe();
+      }
+
+      const msg = await sendClientChatMessage(agencyId, activeConvId, txt);
+      setTimeline((prev) => {
+        if (prev.find((e) => e.type === "message" && e.id === msg.id)) return prev;
+        return [
+          ...prev,
+          {
+            type: "message",
+            date: new Date(msg.created_at || new Date().toISOString()),
+            data: msg,
+            id: msg.id,
+          },
+        ];
+      });
       scrollToBottom();
     } catch (err: any) {
       toast.error("Falha ao enviar");

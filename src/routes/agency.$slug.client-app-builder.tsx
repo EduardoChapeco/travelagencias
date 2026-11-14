@@ -39,6 +39,10 @@ type ClientPortalSettings = {
   enable_pwa: boolean;
 };
 
+// Types for real preview data
+type PreviewTrip = { id: string; title: string; travel_start: string | null };
+type PreviewTour = { id: string; title: string; base_price: number | null };
+
 const DEFAULT_BLOCKS: BlockConfig[] = [
   { id: "hero_1", type: "hero", hidden: false },
   { id: "trips_1", type: "my_trips", hidden: false },
@@ -84,6 +88,34 @@ function ClientAppBuilderPage() {
 
       if (error && error.code !== "PGRST116") throw error;
       return data as ClientPortalSettings | null;
+    },
+  });
+
+  const previewTripsQ = useQuery({
+    enabled: !!agency,
+    queryKey: ["preview-trips", agency?.id],
+    queryFn: async () => {
+      const { data } = await supabase
+        .from("trips")
+        .select("id, title, travel_start")
+        .eq("agency_id", agency!.id)
+        .order("travel_start", { ascending: false })
+        .limit(1);
+      return (data || []) as PreviewTrip[];
+    },
+  });
+
+  const previewToursQ = useQuery({
+    enabled: !!agency,
+    queryKey: ["preview-tours", agency?.id],
+    queryFn: async () => {
+      const { data } = await supabase
+        .from("group_tours")
+        .select("id, title, base_price")
+        .eq("agency_id", agency!.id)
+        .order("created_at", { ascending: false })
+        .limit(1);
+      return (data || []) as PreviewTour[];
     },
   });
 
@@ -274,25 +306,35 @@ function ClientAppBuilderPage() {
                       className="w-full h-32 rounded-[var(--radius-card)] flex items-end p-4 text-white"
                       style={{ backgroundColor: settings.theme_colors.primary }}
                     >
-                      <h2 className="text-xl font-bold">Olá, João!</h2>
+                      <h2 className="text-xl font-bold">Olá!</h2>
                     </div>
                   );
                 }
                 if (block.type === "my_trips") {
+                  const trip = previewTripsQ.data?.[0];
                   return (
                     <div key={block.id} className="space-y-3">
                       <h3 className="font-bold text-lg">Próximas Viagens</h3>
-                      <div className="w-full h-24 glass-card border-none border-none rounded-[var(--radius-card)] shadow-none p-4 flex gap-3 items-center">
-                        <div className="h-16 w-16 bg-accent rounded-[var(--radius-card)] shrink-0"></div>
-                        <div>
-                          <p className="font-semibold text-sm">Paris & Roma</p>
-                          <p className="text-xs text-muted-foreground">Em 15 dias</p>
+                      {trip ? (
+                        <div className="w-full h-24 glass-card border-none rounded-[var(--radius-card)] shadow-none p-4 flex gap-3 items-center">
+                          <div className="h-16 w-16 bg-accent rounded-[var(--radius-card)] shrink-0"></div>
+                          <div>
+                            <p className="font-semibold text-sm line-clamp-1">{trip.title}</p>
+                            <p className="text-xs text-muted-foreground">
+                              {trip.travel_start ? new Date(trip.travel_start).toLocaleDateString() : "Em breve"}
+                            </p>
+                          </div>
                         </div>
-                      </div>
+                      ) : (
+                        <div className="w-full p-4 glass-card border-none rounded-[var(--radius-card)] text-sm text-muted-foreground text-center">
+                          Nenhuma viagem ativa encontrada no sistema.
+                        </div>
+                      )}
                     </div>
                   );
                 }
                 if (block.type === "store") {
+                  const tour = previewToursQ.data?.[0];
                   return (
                     <div key={block.id} className="space-y-3">
                       <div className="flex justify-between items-end">
@@ -304,16 +346,24 @@ function ClientAppBuilderPage() {
                           Ver tudo
                         </span>
                       </div>
-                      <div className="w-full h-40 glass-card border-none border-none rounded-[var(--radius-card)] shadow-none overflow-hidden flex flex-col">
-                        <div className="flex-1 bg-accent relative">
-                          <span className="absolute top-2 right-2 bg-black/60 text-white ds-meta px-2 py-1 rounded">
-                            R$ 2.500
-                          </span>
+                      {tour ? (
+                        <div className="w-full h-40 glass-card border-none rounded-[var(--radius-card)] shadow-none overflow-hidden flex flex-col">
+                          <div className="flex-1 bg-accent relative">
+                            {tour.base_price && (
+                              <span className="absolute top-2 right-2 bg-black/60 text-white ds-meta px-2 py-1 rounded">
+                                R$ {tour.base_price}
+                              </span>
+                            )}
+                          </div>
+                          <div className="p-3">
+                            <p className="font-semibold text-sm line-clamp-1">{tour.title}</p>
+                          </div>
                         </div>
-                        <div className="p-3">
-                          <p className="font-semibold text-sm">Réveillon em Cancún</p>
+                      ) : (
+                        <div className="w-full p-4 glass-card border-none rounded-[var(--radius-card)] text-sm text-muted-foreground text-center">
+                          Nenhum grupo ativo publicado no momento.
                         </div>
-                      </div>
+                      )}
                     </div>
                   );
                 }

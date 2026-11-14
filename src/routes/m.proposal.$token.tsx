@@ -29,6 +29,7 @@ import {
 import { getProposalTemplate } from "@/components/proposals/templates";
 import { CanvasFormat, CANVAS_DIMENSIONS } from "@/components/studio/StudioFrame";
 import { logProposalActivity } from "@/services/proposals";
+import { MapItinerary } from "@/components/proposals/MapItinerary";
 
 const proposalSearchSchema = z.object({
   export: z.preprocess((val) => val === "true" || val === true, z.boolean()).optional(),
@@ -348,7 +349,7 @@ function PublicProposalView() {
   // ─── Standard Client Interactive View ───────────────────────────────────────
   return (
     <div
-      className="min-h-screen bg-[#f8fafc] dark:bg-[#0b0f19] text-foreground font-sans pb-20"
+      className="min-h-screen bg-background dark:bg-background text-foreground font-sans pb-20"
       style={brandStyles}
     >
       {/* Sticky Header */}
@@ -453,6 +454,35 @@ function PublicProposalView() {
             )}
           </div>
 
+          {/* Map Itinerary */}
+          <div className="rounded-[var(--radius-card)] border-none glass-card border-none p-5">
+            <h3 className="ds-label-caps tracking-wider text-muted-foreground mb-4">
+              Itinerário Interativo
+            </h3>
+            <div className="w-full">
+              <MapItinerary 
+                brandColor={brand}
+                locations={[
+                  ...(p.hotels || []).map((h: any, i: number) => ({
+                    id: `hotel-${i}`,
+                    type: "hotel" as const,
+                    name: h.name || "Hotel",
+                    description: h.city,
+                    lat: h.lat,
+                    lng: h.lng
+                  })),
+                  ...(p.flights || []).map((f: any, i: number) => ({
+                    id: `flight-${i}`,
+                    type: "flight" as const,
+                    name: f.destination || "Voo",
+                    lat: f.lat,
+                    lng: f.lng
+                  }))
+                ]} 
+              />
+            </div>
+          </div>
+
           {/* Quick Info Box / Action Box */}
           <div className="rounded-[var(--radius-card)] border-none glass-card border-none p-5 space-y-3">
             <h4 className="ds-label-caps tracking-wider text-muted-foreground">Resumo da Viagem</h4>
@@ -534,7 +564,7 @@ function DecideActions({
       </Button>
       <Button
         onClick={() => setConfirm("rejected")}
-        className="h-10 w-full rounded-[var(--radius-card)] border-none glass-card border-none text-xs font-medium text-muted-foreground hover:text-foreground transition-all hover:bg-slate-50 cursor-pointer"
+        className="h-10 w-full rounded-[var(--radius-card)] border-none glass-card border-none text-xs font-medium text-muted-foreground hover:text-foreground transition-all hover:bg-muted cursor-pointer"
       >
         Recusar proposta
       </Button>

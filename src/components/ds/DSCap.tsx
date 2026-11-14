@@ -12,14 +12,14 @@ type DSCapTone =
   | "purple";
 
 const TONE_CLASSES: Record<DSCapTone, string> = {
-  neutral: "bg-surface text-muted-foreground border-border",
-  success: "bg-[#EDF8F1] text-[#157F3D] border-[#157F3D]/25",
-  warning: "bg-[#FFF4E6] text-[#A85B14] border-[#A85B14]/25",
-  danger: "bg-[#FFF1EF] text-[#B42318] border-[#B42318]/25",
-  info: "bg-[#EEF4FF] text-[#2452C6] border-[#2452C6]/25",
-  accent: "bg-[#FFF0F6] text-[#B51F5A] border-[#FF4F9A]/25",
-  brand: "bg-brand-light text-brand border-brand/25",
-  purple: "bg-[#F5EFFF] text-[#6D36C8] border-[#6D36C8]/25",
+  neutral: "bg-surface-alt/60 text-muted-foreground border-border/80",
+  success: "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/20",
+  warning: "bg-amber-500/10 text-amber-600 dark:text-amber-400 border-amber-500/20",
+  danger: "bg-destructive/10 text-destructive border-destructive/20",
+  info: "bg-blue-500/10 text-blue-600 dark:text-blue-400 border-blue-500/20",
+  accent: "bg-pink-500/10 text-pink-600 dark:text-pink-400 border-pink-500/20",
+  brand: "bg-brand/10 text-brand border-brand/20",
+  purple: "bg-purple-500/10 text-purple-600 dark:text-purple-400 border-purple-500/20",
 };
 
 /** Editorial status chip — use for all status, labels, categories, flags */

@@ -1194,29 +1194,29 @@ function InboxModule() {
                   >
                     <div
                       className={cn(
-                        "max-w-[70%] rounded-[var(--radius-card)] px-4 py-2.5 text-sm leading-relaxed relative group",
+                        "max-w-[85%] sm:max-w-[70%] min-w-0 rounded-[var(--radius-card)] px-4 py-2.5 text-sm leading-relaxed relative group break-words [overflow-wrap:anywhere]",
                         m.direction === "outbound"
-                          ? "bg-brand text-brand-foreground rounded-br-sm"
-                          : "glass-card border-none text-foreground rounded-bl-sm border-none",
+                          ? "bg-brand text-brand-foreground rounded-br-sm shadow-none"
+                          : "bg-card border border-border/80 text-foreground rounded-bl-sm shadow-none",
                       )}
                     >
                       {m.media_url && (
-                        <div className="mb-2 max-w-full">
+                        <div className="mb-2 max-w-full overflow-hidden rounded-[var(--radius-md)]">
                           {m.media_url.endsWith(".webm") || m.media_url.includes("audio") ? (
-                            <audio src={m.media_url} controls className="max-w-full h-10" />
+                            <audio src={m.media_url} controls className="max-w-full w-full h-10" />
                           ) : (
                             <img
                               src={m.media_url}
                               alt="Media"
-                              className="rounded-[var(--radius-card)] max-w-full object-contain max-h-48"
+                              className="rounded-[var(--radius-md)] max-w-full object-contain max-h-56"
                             />
                           )}
                         </div>
                       )}
-                      <p className="whitespace-pre-wrap">{m.body}</p>
+                      <p className="whitespace-pre-wrap break-words">{m.body}</p>
                       <div
                         className={cn(
-                          "mt-1 flex items-center justify-end gap-1 text-[9px] opacity-70",
+                          "mt-1 flex items-center justify-end gap-1 text-[9px] opacity-75 font-mono",
                           m.direction === "outbound"
                             ? "text-brand-foreground"
                             : "text-muted-foreground",
@@ -1229,7 +1229,7 @@ function InboxModule() {
                           ) : m.status === "delivered" ? (
                             <CheckCheck className="h-3 w-3" />
                           ) : m.status === "failed" ? (
-                            <AlertTriangle className="h-3 w-3 text-red-500" />
+                            <AlertTriangle className="h-3 w-3 text-destructive" />
                           ) : (
                             <CheckCheck className="h-3 w-3 opacity-50" />
                           ))}

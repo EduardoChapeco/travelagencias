@@ -284,27 +284,44 @@ export async function refineItineraryText(
 
 export interface CreateProposalPayload {
   title: string;
-  destination?: string;
-  client_id?: string;
-  lead_id?: string;
-  travel_start?: string;
-  travel_end?: string;
+  destination?: string | null;
+  client_id?: string | null;
+  lead_id?: string | null;
+  travel_start?: string | null;
+  travel_end?: string | null;
   pax_adults: number;
   pax_seniors?: number;
   pax_children: number;
   pax_infants: number;
   currency: string;
-  valid_until?: string;
-  notes?: string;
+  total_amount?: number;
+  total?: number;
+  subtotal?: number;
+  discount?: number;
+  status?: string;
+  valid_until?: string | null;
+  notes?: string | null;
   visibility?: "private" | "agency" | "public";
   group_tour_id?: string | null;
+  template?: string;
+  flights?: Flight[] | any[];
+  hotels?: Hotel[] | any[];
+  transfers?: Transfer[] | any[];
+  tours?: Tour[] | any[];
+  itinerary?: ItineraryDay[] | any[];
+  includes?: string[];
+  excludes?: string[];
+  pix_discount_percent?: number;
+  installments_card?: number;
+  installments_boleto?: number;
 }
 
 export async function createProposal(
   agencyId: string,
   payload: CreateProposalPayload,
   ownerId?: string | null,
-): Promise<{ id: string }> {
+): Promise<{ id: string; token: string }> {
+  const publicToken = crypto.randomUUID();
   const insertData = {
     agency_id: agencyId,
     title: payload.title,
@@ -313,41 +330,66 @@ export async function createProposal(
     lead_id: payload.lead_id || null,
     travel_start: payload.travel_start || null,
     travel_end: payload.travel_end || null,
-    pax_adults: payload.pax_adults,
+    pax_adults: payload.pax_adults ?? 2,
     pax_seniors: payload.pax_seniors ?? 0,
-    pax_children: payload.pax_children,
-    pax_infants: payload.pax_infants,
+    pax_children: payload.pax_children ?? 0,
+    pax_infants: payload.pax_infants ?? 0,
     currency: payload.currency || "BRL",
+    subtotal: payload.subtotal ?? payload.total_amount ?? payload.total ?? 0,
+    discount: payload.discount ?? 0,
+    total: payload.total ?? payload.total_amount ?? 0,
+    status: payload.status || "draft",
     valid_until: payload.valid_until || null,
     notes: payload.notes || null,
     visibility: payload.visibility || "private",
     owner_id: ownerId || null,
     is_public_template: false,
     group_tour_id: payload.group_tour_id || null,
-    // Safely enforce defaults for JSONB NOT NULL fields
-    flights: [],
-    hotels: [],
-    transfers: [],
-    tours: [],
-    itinerary: [],
-    includes: [],
-    excludes: [],
+    template: payload.template || "editorial-flat",
+    public_token: publicToken,
+    flights: payload.flights || [],
+    hotels: payload.hotels || [],
+    transfers: payload.transfers || [],
+    tours: payload.tours || [],
+    itinerary: payload.itinerary || [],
+    includes: payload.includes || [],
+    excludes: payload.excludes || [],
+    pix_discount_percent: payload.pix_discount_percent ?? 3,
+    installments_card: payload.installments_card ?? 10,
+    installments_boleto: payload.installments_boleto ?? 1,
   };
 
   const { data, error } = await supabase
     .from("proposals")
     .insert(insertData as any)
-    .select("id")
+    .select("id, public_token")
     .single();
 
   if (error) {
     throw new Error(error.message);
   }
 
+  // Se houver lead_id, atualiza o Lead do CRM com o valor estimado e destino da proposta
+  if (payload.lead_id) {
+    try {
+      await supabase
+        .from("leads")
+        .update({
+          destination: payload.destination || undefined,
+          estimated_value: payload.total ?? payload.total_amount ?? undefined,
+          travel_start: payload.travel_start || undefined,
+          travel_end: payload.travel_end || undefined,
+        } as any)
+        .eq("id", payload.lead_id);
+    } catch (leadErr) {
+      console.warn("Falha ao atualizar lead com proposta:", leadErr);
+    }
+  }
+
   // Log activity
   await logProposalActivity(data.id, agencyId, "created", { title: payload.title });
 
-  return data as { id: string };
+  return { id: data.id, token: data.public_token || publicToken };
 }
 
 export async function fetchProposalsList(

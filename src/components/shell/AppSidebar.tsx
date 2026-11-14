@@ -186,7 +186,7 @@ export function AppSidebar({
         footer={
           <Button
             onClick={() => signOut().then(() => navigate({ to: "/auth/login", replace: true }))}
-            className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full text-os-faint transition-all hover:glass-dark hover:text-os cursor-pointer"
+            className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full text-zinc-400 transition-all hover:bg-white/10 hover:text-white cursor-pointer"
             title="Sair da conta"
           >
             <LogOut className="h-[18px] w-[18px] shrink-0" strokeWidth={2} />
@@ -197,9 +197,9 @@ export function AppSidebar({
   }
 
   return (
-    <div className="flex flex-col items-center justify-between gap-4 h-full w-full select-none py-1">
-      {/* 1. Botão de Ação Primária no Topo (não encosta na pill) */}
-      <div className="shrink-0 h-14 w-14 flex items-center justify-center">
+    <div className="flex flex-col items-center justify-between h-full w-full select-none py-3 px-2">
+      {/* 1. Botão de Ação Primária no Topo (Monocromático Apple/JAH) */}
+      <div className="shrink-0 h-10 w-10 flex items-center justify-center">
         {primaryAction ? (
           <TooltipProvider delayDuration={80}>
             <Tooltip>
@@ -207,47 +207,65 @@ export function AppSidebar({
                 <Button
                   onClick={primaryAction.onClick}
                   disabled={primaryAction.disabled || primaryAction.loading}
-                  className="h-14 w-14 rounded-full flex items-center justify-center bg-primary text-primary-foreground border border-border hover:scale-[1.05] active:scale-[0.98] transition-all cursor-pointer shadow-[0_4px_12px_rgba(47,96,230,0.3)] disabled:opacity-50 shrink-0"
+                  className="h-10 w-10 rounded-full flex items-center justify-center bg-white text-black font-bold hover:bg-white/90 active:scale-[0.98] transition-all cursor-pointer shadow-sm disabled:opacity-50 shrink-0"
                 >
-                  {primaryAction.icon || <Plus className="h-6 w-6" />}
+                  {primaryAction.icon || <Plus className="h-5 w-5 stroke-[2.5]" />}
                 </Button>
               </TooltipTrigger>
               <TooltipContent
                 side="right"
                 sideOffset={12}
-                className="rounded-[var(--radius-card)] px-3 py-1.5 text-xs font-semibold bg-black/80 backdrop-blur-md text-os border border-border"
+                className="rounded-[var(--radius-card)] px-3 py-1.5 text-xs font-semibold bg-black/90 backdrop-blur-md text-white border border-white/10"
               >
                 {primaryAction.label}
               </TooltipContent>
             </Tooltip>
           </TooltipProvider>
         ) : (
-          /* Espaçador invisível para manter o equilíbrio visual */
-          <div className="h-14 w-14" />
+          <div className="h-10 w-10 rounded-full bg-white/[0.04] border border-white/[0.06] flex items-center justify-center text-zinc-500">
+            <LayoutDashboard className="h-4 w-4" />
+          </div>
         )}
       </div>
 
-      {/* 2. Dock de Navegação Central (altura fluida, rolável) */}
-      <div className="flex-1 min-h-0 w-full flex items-center justify-center">
+      {/* Divisor superior sutil */}
+      <div className="w-6 h-[1px] bg-white/[0.08] my-2 shrink-0" />
+
+      {/* 2. Lista de Navegação Central */}
+      <div className="flex-1 min-h-0 w-full flex flex-col items-center justify-start overflow-y-auto no-scrollbar py-1">
         <DockNavigation
           isHome={false}
           items={visibleHubs}
           contextItems={contextItems as ContextItem[]}
-          footer={
-            <Button
-              onClick={() => signOut().then(() => navigate({ to: "/auth/login", replace: true }))}
-              className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full text-os-faint transition-all hover:glass-dark hover:text-os cursor-pointer"
-              title="Sair da conta"
-            >
-              <LogOut className="h-[18px] w-[18px] shrink-0" strokeWidth={2} />
-            </Button>
-          }
         />
       </div>
 
-      {/* 3. Assistente de IA na Base (não encosta na pill) */}
-      <div className="shrink-0">
+      {/* Divisor inferior sutil */}
+      <div className="w-6 h-[1px] bg-white/[0.08] my-2 shrink-0" />
+
+      {/* 3. Rodapé da Barra: Assistente IA + Logout */}
+      <div className="shrink-0 flex flex-col items-center gap-2">
         <AIFloatingWidget inline />
+
+        <TooltipProvider delayDuration={80}>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Button
+                onClick={() => signOut().then(() => navigate({ to: "/auth/login", replace: true }))}
+                className="h-10 w-10 rounded-full flex items-center justify-center text-zinc-400 hover:text-rose-400 hover:bg-rose-500/10 transition-all duration-150 cursor-pointer"
+              >
+                <LogOut className="h-[18px] w-[18px] shrink-0" strokeWidth={2} />
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent
+              side="right"
+              sideOffset={12}
+              className="rounded-[var(--radius-card)] px-3 py-1.5 text-xs font-semibold bg-black/90 backdrop-blur-md text-white border border-white/10"
+            >
+              Sair da Conta
+            </TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
       </div>
     </div>
   );

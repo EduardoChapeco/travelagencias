@@ -61,8 +61,8 @@ function DockItem({
   const isPending = pendingLocation ? isItemActive(item, pendingLocation) : false;
   const Icon = item.icon!;
 
-  const baseSize = size === "sm" ? "h-9 w-9" : "h-11 w-11";
-  const iconSize = size === "sm" ? "h-4 w-4" : "h-5 w-5";
+  const baseSize = size === "sm" ? "h-8 w-8" : "h-10 w-10";
+  const iconSize = size === "sm" ? "h-4 w-4" : "h-[18px] w-[18px]";
 
   return (
     <Tooltip>
@@ -72,30 +72,26 @@ function DockItem({
           onMouseEnter={() => setHovered(true)}
           onMouseLeave={() => setHovered(false)}
           className={cn(
-            "relative flex shrink-0 items-center justify-center transition-all duration-200",
+            "relative flex shrink-0 items-center justify-center transition-all duration-150 cursor-pointer",
             baseSize,
             active
-              ? "rounded-2xl glass-dark text-os"
-              : "rounded-full text-os-muted hover:text-os hover:glass-dark hover:rounded-2xl",
+              ? "rounded-2xl bg-white/15 text-white border border-white/10 shadow-inner font-semibold"
+              : "rounded-full text-zinc-400 hover:text-white hover:bg-white/[0.08] hover:rounded-2xl",
             isPending && "opacity-60 animate-pulse",
-            hovered && !active && "scale-110",
           )}
-          style={{
-            transform: hovered && !active ? "scale(1.1)" : active ? "scale(1.05)" : "scale(1)",
-          }}
         >
           {isPending ? (
             <Loader2 className={cn(iconSize, "animate-spin")} />
           ) : (
             <Icon
-              className={cn(iconSize, "transition-all duration-200")}
-              strokeWidth={active ? 2.5 : 2}
+              className={cn(iconSize, "transition-all duration-150")}
+              strokeWidth={active ? 2.3 : 1.8}
             />
           )}
 
           {/* Unread badge */}
           {!!item.badge && item.badge > 0 && (
-            <span className="absolute -top-0.5 -right-0.5 flex h-4 min-w-[16px] items-center justify-center rounded-full bg-red-500 px-1 text-[9px] font-bold text-white leading-none border-2 border-transparent">
+            <span className="absolute -top-0.5 -right-0.5 flex h-4 min-w-[16px] items-center justify-center rounded-full bg-rose-500 px-1 text-[9px] font-bold text-white leading-none">
               {item.badge > 99 ? "99+" : item.badge}
             </span>
           )}
@@ -106,7 +102,7 @@ function DockItem({
               className={cn(
                 "absolute rounded-full bg-white",
                 isVertical
-                  ? "-right-1 top-1/2 -translate-y-1/2 w-1.5 h-1.5"
+                  ? "-left-1 top-1/2 -translate-y-1/2 w-1 h-3"
                   : "-bottom-1.5 left-1/2 -translate-x-1/2 w-1.5 h-1.5",
               )}
             />
@@ -116,7 +112,7 @@ function DockItem({
       <TooltipContent
         side={isVertical ? "right" : "top"}
         sideOffset={12}
-        className="rounded-[var(--radius-card)] px-3 py-1.5 text-xs font-semibold bg-black/80 backdrop-blur-md text-os border border-border"
+        className="rounded-[var(--radius-card)] px-3 py-1.5 text-xs font-semibold bg-black/90 backdrop-blur-md text-white border border-white/10"
       >
         {item.label}
       </TooltipContent>
@@ -127,7 +123,7 @@ function DockItem({
 // ─────────────────────────────────────────────────────────────────────────────
 // FloatingDock
 // isHome=true  → horizontal pill, fixed bottom-center (macOS style)
-// isHome=false → vertical sidebar, fixed left edge (grudada na esquerda)
+// isHome=false → continuous vertical sidebar list
 // ─────────────────────────────────────────────────────────────────────────────
 export function DockNavigation({
   items,
@@ -166,7 +162,7 @@ export function DockNavigation({
     return (
       <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-30 pointer-events-none">
         <TooltipProvider delayDuration={80}>
-          <div className="pointer-events-auto flex items-center gap-1.5 px-4 py-3 rounded-full bg-black/30 backdrop-blur-2xl border border-white/15 shadow-[0_8px_32px_rgba(0,0,0,0.4)]">
+          <div className="pointer-events-auto flex items-center gap-1.5 px-4 py-3 rounded-full bg-black/40 backdrop-blur-2xl border border-white/15 shadow-[0_8px_32px_rgba(0,0,0,0.4)]">
             {dockItems.map((item, idx) => (
               <DockItem
                 key={`${item.to}-${idx}`}
@@ -188,31 +184,24 @@ export function DockNavigation({
     );
   }
 
-  // ── Vertical dock (md+) & Horizontal Bottom Bar (mobile) ───────────────────
-  // Structural (not fixed). Handled by AppShell's CSS Grid layout.
+  // ── Vertical continuous sidebar (md+) & Horizontal Bottom Bar (mobile) ─────
   return (
-    <div
-      className="w-full h-[72px] md:h-auto z-30 flex md:flex-col items-center justify-between px-4 md:px-0 py-0 md:py-6 bg-black/80 md:bg-black/20 backdrop-blur-2xl border-t md:border-t-0 md:border border-border md:border-white/15 md:rounded-[var(--dock-radius)] md:shadow-[0_8px_32px_rgba(0,0,0,0.2)] flex-row shrink-0 relative transition-all duration-300"
-      style={{
-        width: "100%",
-        maxWidth: "var(--dock-collapsed-width)",
-      }}
-    >
+    <div className="w-full flex md:flex-col items-center justify-between gap-2 flex-row shrink-0">
       <TooltipProvider delayDuration={80}>
         {/* Top: Back button when context mode is active */}
         <div className="flex md:flex-col items-center gap-2 flex-row w-full md:w-auto">
           {hasContext && showContextOnly && (
             <Button
               onClick={() => setShowContextOnly(false)}
-              className="relative flex h-11 w-11 shrink-0 items-center justify-center rounded-full text-os-faint hover:text-os hover:glass-dark hover:rounded-2xl transition-all duration-200 cursor-pointer mb-2 border border-white/5"
-              title="Voltar para o menu principal"
+              className="relative flex h-10 w-10 shrink-0 items-center justify-center rounded-full text-zinc-400 hover:text-white hover:bg-white/10 transition-all duration-150 cursor-pointer mb-1 border border-white/5"
+              title="Voltar para o menu geral"
             >
-              <ChevronLeft className="h-5 w-5" strokeWidth={2.5} />
+              <ChevronLeft className="h-5 w-5" strokeWidth={2.2} />
             </Button>
           )}
 
           {/* List items (contextual submenus or general modules) */}
-          <div className="flex flex-row md:flex-col items-center gap-1.5 md:max-h-[calc(100vh-200px)] overflow-x-auto md:overflow-x-visible md:overflow-y-auto no-scrollbar w-full md:w-auto justify-start md:justify-center px-2 md:px-0">
+          <div className="flex flex-row md:flex-col items-center gap-2 overflow-x-auto md:overflow-x-visible md:overflow-y-auto no-scrollbar w-full md:w-auto justify-start md:justify-center px-1 md:px-0">
             {displayItems.map((item, idx) => (
               <DockItem
                 key={`${item.to}-${idx}`}
@@ -223,15 +212,6 @@ export function DockNavigation({
               />
             ))}
           </div>
-        </div>
-
-        {/* Bottom / Footer (Logout) alinhados na base */}
-        <div className="flex flex-row md:flex-col items-center gap-3 md:mt-auto shrink-0 ml-auto md:ml-0">
-          {/* Divider */}
-          <div className="h-8 md:h-[1px] w-[1px] md:w-8 glass-dark shrink-0" />
-
-          {/* Logout button */}
-          <div className="shrink-0">{footer}</div>
         </div>
       </TooltipProvider>
     </div>

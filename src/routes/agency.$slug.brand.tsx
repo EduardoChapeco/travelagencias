@@ -75,6 +75,20 @@ function BrandPage() {
     },
   });
 
+  const previewToursQ = useQuery({
+    enabled: !!agency,
+    queryKey: ["brand-preview-tours", agency?.id],
+    queryFn: async () => {
+      const { data } = await supabase
+        .from("group_tours")
+        .select("id, title, description, status")
+        .eq("agency_id", agency!.id)
+        .order("created_at", { ascending: false })
+        .limit(3);
+      return (data || []) as { id: string; title: string; description: string | null }[];
+    },
+  });
+
   // Sync loaded brand kit settings
   useEffect(() => {
     if (q.data) {
@@ -456,7 +470,7 @@ function BrandPage() {
 
         {/* Right Side: Interactive Mockup Live Preview */}
         <div className="space-y-6">
-          <div className="rounded-full border-none glass-card border-none p-5 flex flex-col h-full space-y-4 shadow-none">
+          <div className="rounded-2xl border border-white/[0.08] bg-[#12141c] p-5 flex flex-col h-full space-y-4 shadow-none">
             <h3 className="ds-label-caps tracking-wider text-muted-foreground">
               Mockup de Pré-visualização Instantânea
             </h3>
@@ -464,7 +478,7 @@ function BrandPage() {
             {/* Live styles provider wrapper */}
             <div
               style={mockStyles}
-              className="flex-1 border-none rounded-full overflow-hidden bg-slate-50 flex flex-col font-sans min-h-[30rem]"
+              className="flex-1 border border-white/10 rounded-2xl overflow-hidden bg-slate-50 flex flex-col font-sans min-h-[30rem]"
             >
               {/* Mock Navbar */}
               <div
@@ -506,86 +520,90 @@ function BrandPage() {
                 </nav>
               </div>
 
-              {/* Mock Hero Area */}
-              <div
-                className="p-8 flex flex-col items-center justify-center text-center space-y-4 flex-1 transition-all"
-                style={{ backgroundColor: "var(--brand-primary)", color: "var(--brand-bg)" }}
-              >
-                <span
-                  className="ds-label-caps px-2.5 py-0.5 rounded-full"
-                  style={{ backgroundColor: "var(--brand-secondary)", color: "#111827" }}
+              {/* Mock Hero Area -> Real Data Hero */}
+              {previewToursQ.data && previewToursQ.data.length > 0 ? (
+                <div
+                  className="p-8 flex flex-col items-center justify-center text-center space-y-4 flex-1 transition-all"
+                  style={{ backgroundColor: "var(--brand-primary)", color: "var(--brand-bg)" }}
                 >
-                  Agência Premium
-                </span>
-                <h1
-                  className="text-xl md:text-2xl font-extrabold max-w-md leading-tight"
-                  style={{ fontFamily: "var(--brand-heading-font)" }}
-                >
-                  Explore Destinos que Você Nunca Imaginou Existir
-                </h1>
-                <p
-                  className="text-xs opacity-90 max-w-sm"
-                  style={{ fontFamily: "var(--brand-body-font)" }}
-                >
-                  Montamos roteiros 100% personalizados com suporte local 24h e as melhores
-                  parcerias globais de turismo.
-                </p>
-                <div className="flex gap-2.5">
-                  <Button
-                    className="px-4 py-2 rounded-full ds-meta font-bold transition-all shadow-none"
+                  <span
+                    className="ds-label-caps px-2.5 py-0.5 rounded-full"
                     style={{ backgroundColor: "var(--brand-secondary)", color: "#111827" }}
                   >
-                    Falar no WhatsApp
-                  </Button>
-                  <Button className="px-4 py-2 rounded-full border border-white/40 ds-meta font-bold glass-dark hover:glass-dark transition-all text-white">
-                    Explorar Viagens
-                  </Button>
+                    Viagem em Destaque
+                  </span>
+                  <h1
+                    className="text-xl md:text-2xl font-extrabold max-w-md leading-tight line-clamp-3"
+                    style={{ fontFamily: "var(--brand-heading-font)" }}
+                  >
+                    {previewToursQ.data[0].title}
+                  </h1>
+                  <p
+                    className="text-xs opacity-90 max-w-sm line-clamp-2"
+                    style={{ fontFamily: "var(--brand-body-font)" }}
+                  >
+                    {previewToursQ.data[0].description || "Descubra essa incrível experiência com nossa agência."}
+                  </p>
+                  <div className="flex gap-2.5">
+                    <Button
+                      className="px-4 py-2 rounded-full ds-meta font-bold transition-all shadow-none"
+                      style={{ backgroundColor: "var(--brand-secondary)", color: "#111827" }}
+                    >
+                      Reservar Agora
+                    </Button>
+                  </div>
                 </div>
-              </div>
+              ) : (
+                <div
+                  className="p-8 flex flex-col items-center justify-center text-center space-y-4 flex-1 transition-all"
+                  style={{ backgroundColor: "var(--brand-primary)", color: "var(--brand-bg)" }}
+                >
+                  <h1
+                    className="text-xl md:text-2xl font-extrabold max-w-md leading-tight"
+                    style={{ fontFamily: "var(--brand-heading-font)" }}
+                  >
+                    {agency?.name || "Sua Agência de Viagens"}
+                  </h1>
+                  <p
+                    className="text-xs opacity-90 max-w-sm"
+                    style={{ fontFamily: "var(--brand-body-font)" }}
+                  >
+                    Você ainda não cadastrou nenhum grupo ou viagem. Assim que criar, eles aparecerão aqui no preview.
+                  </p>
+                </div>
+              )}
 
-              {/* Mock Content & Cards Grid */}
+              {/* Real Content Cards Grid */}
               <div className="p-6 grid grid-cols-2 gap-4 shrink-0 bg-white border-t border-border">
-                <div
-                  className="p-4 rounded-full border-none shadow-none space-y-2"
-                  style={{ backgroundColor: "var(--brand-bg)", color: "var(--brand-text)" }}
-                >
-                  <h4
-                    className="ds-label-caps tracking-wider"
-                    style={{
-                      fontFamily: "var(--brand-heading-font)",
-                      color: "var(--brand-accent)",
-                    }}
-                  >
-                    Ecoturismo
-                  </h4>
-                  <p
-                    className="ds-meta text-muted-foreground"
-                    style={{ fontFamily: "var(--brand-body-font)" }}
-                  >
-                    Trilhas, rios preservados e imersão total na natureza intocada brasileira.
-                  </p>
-                </div>
-
-                <div
-                  className="p-4 rounded-full border-none shadow-none space-y-2"
-                  style={{ backgroundColor: "var(--brand-bg)", color: "var(--brand-text)" }}
-                >
-                  <h4
-                    className="ds-label-caps tracking-wider"
-                    style={{
-                      fontFamily: "var(--brand-heading-font)",
-                      color: "var(--brand-primary)",
-                    }}
-                  >
-                    Resorts VIP
-                  </h4>
-                  <p
-                    className="ds-meta text-muted-foreground"
-                    style={{ fontFamily: "var(--brand-body-font)" }}
-                  >
-                    Conforto supremo à beira mar com tudo incluso para você e sua família.
-                  </p>
-                </div>
+                {previewToursQ.data && previewToursQ.data.length > 1 ? (
+                  previewToursQ.data.slice(1, 3).map((tour, index) => (
+                    <div
+                      key={tour.id}
+                      className="p-4 rounded-xl border border-border/50 shadow-none space-y-2"
+                      style={{ backgroundColor: "var(--brand-bg)", color: "var(--brand-text)" }}
+                    >
+                      <h4
+                        className="ds-label-caps tracking-wider line-clamp-1"
+                        style={{
+                          fontFamily: "var(--brand-heading-font)",
+                          color: index === 0 ? "var(--brand-accent)" : "var(--brand-primary)",
+                        }}
+                      >
+                        {tour.title}
+                      </h4>
+                      <p
+                        className="ds-meta text-muted-foreground line-clamp-2"
+                        style={{ fontFamily: "var(--brand-body-font)" }}
+                      >
+                        {tour.description || "Pacote especial."}
+                      </p>
+                    </div>
+                  ))
+                ) : (
+                  <div className="col-span-2 text-center py-4 text-xs text-muted-foreground">
+                    Crie mais pacotes para vê-los no seu painel.
+                  </div>
+                )}
               </div>
             </div>
           </div>

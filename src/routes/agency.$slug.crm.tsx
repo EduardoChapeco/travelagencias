@@ -215,17 +215,17 @@ function CRMPage() {
         onFilterChange={(v) => setActiveTab(v as any)}
         actions={
           activeTab !== "admin" ? (
-            <div className="flex items-center gap-1">
+            <div className="flex items-center gap-2">
               <RadixSelect value={ownerFilter} onValueChange={setOwnerFilter}>
-                <SelectTrigger className="h-7 ds-meta font-semibold hover:glass-dark rounded-full text-os-muted hover:text-os border-border px-2.5 cursor-pointer focus:ring-0">
+                <SelectTrigger className="h-8 px-3 rounded-full bg-white/[0.04] hover:bg-white/[0.08] text-zinc-300 hover:text-white border border-white/[0.08] text-xs font-medium cursor-pointer transition-all focus:ring-0">
                   <SelectValue placeholder="Responsáveis" />
                 </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">Responsáveis</SelectItem>
+                <SelectContent className="bg-black/90 backdrop-blur-xl border border-white/10 text-white rounded-2xl p-1">
+                  <SelectItem value="all" className="rounded-xl text-xs">Todos os Responsáveis</SelectItem>
                   {usersQ.data?.map(
                     (u: any) =>
                       u.user_id && (
-                        <SelectItem key={u.user_id} value={u.user_id}>
+                        <SelectItem key={u.user_id} value={u.user_id} className="rounded-xl text-xs">
                           {u.user_name || "Sem nome"}
                         </SelectItem>
                       ),
@@ -234,16 +234,16 @@ function CRMPage() {
               </RadixSelect>
 
               <RadixSelect value={sourceFilter} onValueChange={setSourceFilter}>
-                <SelectTrigger className="h-7 ds-meta font-semibold hover:glass-dark rounded-full text-os-muted hover:text-os border-border px-2.5 cursor-pointer focus:ring-0">
+                <SelectTrigger className="h-8 px-3 rounded-full bg-white/[0.04] hover:bg-white/[0.08] text-zinc-300 hover:text-white border border-white/[0.08] text-xs font-medium cursor-pointer transition-all focus:ring-0">
                   <SelectValue placeholder="Origens" />
                 </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">Origens</SelectItem>
-                  <SelectItem value="whatsapp">WhatsApp</SelectItem>
-                  <SelectItem value="instagram">Instagram</SelectItem>
-                  <SelectItem value="website">Site</SelectItem>
-                  <SelectItem value="referral">Indicação</SelectItem>
-                  <SelectItem value="walkin">Presencial</SelectItem>
+                <SelectContent className="bg-black/90 backdrop-blur-xl border border-white/10 text-white rounded-2xl p-1">
+                  <SelectItem value="all" className="rounded-xl text-xs">Todas as Origens</SelectItem>
+                  <SelectItem value="whatsapp" className="rounded-xl text-xs">WhatsApp</SelectItem>
+                  <SelectItem value="instagram" className="rounded-xl text-xs">Instagram</SelectItem>
+                  <SelectItem value="website" className="rounded-xl text-xs">Site</SelectItem>
+                  <SelectItem value="referral" className="rounded-xl text-xs">Indicação</SelectItem>
+                  <SelectItem value="walkin" className="rounded-xl text-xs">Presencial</SelectItem>
                 </SelectContent>
               </RadixSelect>
             </div>

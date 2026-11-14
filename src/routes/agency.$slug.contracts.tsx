@@ -231,24 +231,24 @@ function ContractsPage() {
                 setStatusFilter(e.target.value);
                 setPage(1);
               }}
-              className="h-7 ds-meta font-semibold hover:glass rounded-full text-white/70 hover:text-white px-2 cursor-pointer"
+              className="h-8 text-xs font-medium bg-white/[0.04] text-zinc-300 border border-white/[0.08] hover:bg-white/[0.08] hover:text-white rounded-full px-3 cursor-pointer focus:outline-none"
             >
-              <option value="all" className="bg-neutral-900 text-white">
+              <option value="all" className="bg-[#12141c] text-white">
                 Todos Status
               </option>
-              <option value="draft" className="bg-neutral-900 text-white">
+              <option value="draft" className="bg-[#12141c] text-white">
                 Rascunho
               </option>
-              <option value="sent" className="bg-neutral-900 text-white">
+              <option value="sent" className="bg-[#12141c] text-white">
                 Enviado
               </option>
-              <option value="viewed" className="bg-neutral-900 text-white">
+              <option value="viewed" className="bg-[#12141c] text-white">
                 Visualizado
               </option>
-              <option value="signed" className="bg-neutral-900 text-white">
+              <option value="signed" className="bg-[#12141c] text-white">
                 Assinado
               </option>
-              <option value="cancelled" className="bg-neutral-900 text-white">
+              <option value="cancelled" className="bg-[#12141c] text-white">
                 Cancelado
               </option>
             </Select>

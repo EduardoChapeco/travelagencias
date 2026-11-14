@@ -1,7 +1,7 @@
 import { createFileRoute, useParams, useNavigate } from "@tanstack/react-router";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useState, useEffect, useCallback } from "react";
-import { Link2, Send, PlaneTakeoff, AlertCircle } from "lucide-react";
+import { Link2, Send, PlaneTakeoff, AlertCircle, Percent, Plane, Hotel, Car, MapPin } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 
@@ -15,6 +15,9 @@ import { ExportPdfButton } from "@/components/proposals/ExportPdfButton";
 import { MagicAIAssistant } from "@/components/proposals/MagicAIAssistant";
 import { calculateQuoteTotals } from "@/lib/pricing";
 import { Button } from "@/components/ui/button";
+import { SheetPage } from "@/components/ui/sheet";
+import { Label } from "@/components/ui/label";
+import { Input } from "@/components/ui/input";
 
 export const Route = createFileRoute("/agency/$slug/proposals/$id")({
   head: ({ context }: any) => ({
@@ -34,6 +37,13 @@ function ProposalEditor() {
   });
 
   const [draft, setDraft] = useState<Proposal | null>(null);
+  const [isMarkupPanelOpen, setIsMarkupPanelOpen] = useState(false);
+  const [markupRates, setMarkupRates] = useState({
+    flights: 0,
+    hotels: 0,
+    transfers: 0,
+    tours: 0,
+  });
 
   useEffect(() => {
     if (propQ.data) {
@@ -158,7 +168,38 @@ function ProposalEditor() {
         phone: agencyPrivate?.phone ?? "",
       };
 
-      // ── Criar contrato com dados completos e corretos ─────────────────────────
+      // ── Cláusulas Dinâmicas baseadas no pacote ───────────────────────────────────
+      const dynamicClauses: string[] = [];
+      if ((draft.flights ?? []).length > 0) {
+        dynamicClauses.push(
+          "Os bilhetes aéreos estão sujeitos às regras tarifárias da companhia aérea e podem sofrer alterações de malha sem aviso prévio. Em caso de reacomodação, a agência atuará como intermediária, sem responsabilidade direta sobre a decisão da operadora.",
+        );
+        dynamicClauses.push(
+          "Qualquer alteração de nome em passagem aérea após a emissão poderá incorrer em taxa adicional cobrada pela companhia aérea, de responsabilidade exclusiva do passageiro.",
+        );
+      }
+      if ((draft.hotels ?? []).length > 0) {
+        dynamicClauses.push(
+          "As reservas hoteleiras estão sujeitas às políticas de cancelamento do estabelecimento, conforme descrito em cada voucher emitido. Reembolsos por cancelamento seguem as regras do fornecedor.",
+        );
+      }
+      if ((draft.transfers ?? []).length > 0) {
+        dynamicClauses.push(
+          "Os serviços de transfer são operados por parceiros locais. Atrasos decorrentes de tráfego, condições climáticas ou força maior não geram direito à indenização ou reembolso.",
+        );
+      }
+      if ((draft.tours ?? []).length > 0) {
+        dynamicClauses.push(
+          "Passeios e excursões opcionais confirmados neste pacote estão sujeitos a condições climáticas e número mínimo de participantes. Em caso de cancelamento pelo operador local, será oferecida alternativa ou reembolso integral do item.",
+        );
+      }
+      if (draft.destination?.toLowerCase().includes("intern") || (draft.destination ?? "").includes("EUA") || (draft.destination ?? "").includes("Europa")) {
+        dynamicClauses.push(
+          "Para destinos internacionais, é de responsabilidade exclusiva do viajante a obtenção de visto, seguro viagem (OBRIGATÓRIO), documentação vigente e cumprimento dos requisitos sanitários do país de destino.",
+        );
+      }
+
+      // ── Criar contrato com dados completos e corretos ─────────────────────────────
       const { error: contractError } = await supabase.from("contracts").insert({
         agency_id: agency.id,
         trip_id: tripId,
@@ -179,7 +220,7 @@ function ProposalEditor() {
         agency_data,
         passengers_data: [],
         fixed_clauses: templateClauses ?? [],
-        custom_clauses: [],
+        custom_clauses: dynamicClauses,
       });
       if (contractError)
         toast.warning("Viagem criada, mas falha ao criar contrato: " + contractError.message);
@@ -265,6 +306,16 @@ function ProposalEditor() {
 
         {draft.status === "accepted" && (
           <Button
+            onClick={() => setIsMarkupPanelOpen(true)}
+            className="flex h-9 items-center gap-1.5 rounded-full bg-violet-500/10 border border-violet-400/30 px-3 text-xs font-semibold text-violet-400 hover:bg-violet-500/20 transition-all"
+          >
+            <Percent className="h-3.5 w-3.5" />
+            Markup
+          </Button>
+        )}
+
+        {draft.status === "accepted" && (
+          <Button
             onClick={() => convertToTrip.mutate()}
             disabled={convertToTrip.isPending}
             className="flex h-9 items-center gap-1.5 rounded-full bg-emerald-600 px-3 text-xs font-bold text-white hover:bg-emerald-700 disabled:opacity-60 transition-all"
@@ -303,6 +354,108 @@ function ProposalEditor() {
       </StudioToolbar>
 
       <ProposalStudio draft={draft} save={save} agency={agency} />
+
+      {/* Markup Global Panel */}
+      <SheetPage
+        isOpen={isMarkupPanelOpen}
+        onClose={() => setIsMarkupPanelOpen(false)}
+        title={
+          <div className="flex items-center gap-2">
+            <Percent className="h-4 w-4 text-violet-400" />
+            Painel de Markup Global
+          </div>
+        }
+        width="clamp(360px, 30vw, 480px)"
+      >
+        <div className="space-y-6">
+          <p className="text-sm text-muted-foreground">
+            Aplique um markup percentual por categoria de serviço antes de converter a proposta em
+            viagem. Os valores serão recalculados e salvos na proposta.
+          </p>
+
+          {/* Markup por categoria */}
+          {([
+            { key: "flights", label: "Voos", icon: Plane, count: draft.flights?.length ?? 0 },
+            { key: "hotels", label: "Hotéis", icon: Hotel, count: draft.hotels?.length ?? 0 },
+            { key: "transfers", label: "Transfers", icon: Car, count: draft.transfers?.length ?? 0 },
+            { key: "tours", label: "Passeios", icon: MapPin, count: draft.tours?.length ?? 0 },
+          ] as const).map(({ key, label, icon: Icon, count }) => (
+            <div key={key} className="flex items-center gap-4 p-4 rounded-2xl border border-border/40 glass/10">
+              <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-violet-500/10 text-violet-400">
+                <Icon className="h-4 w-4" />
+              </div>
+              <div className="flex-1">
+                <div className="flex items-center justify-between mb-1">
+                  <Label className="text-xs font-semibold">{label}</Label>
+                  <span className="ds-meta text-muted-foreground">{count} item(s)</span>
+                </div>
+                <div className="relative">
+                  <Input
+                    type="number"
+                    min="0"
+                    max="200"
+                    step="0.5"
+                    value={markupRates[key]}
+                    onChange={(e) =>
+                      setMarkupRates((prev) => ({ ...prev, [key]: parseFloat(e.target.value) || 0 }))
+                    }
+                    className="pr-8"
+                    disabled={count === 0}
+                  />
+                  <span className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-muted-foreground">%</span>
+                </div>
+              </div>
+            </div>
+          ))}
+
+          <div className="rounded-2xl border border-violet-400/20 bg-violet-500/5 p-4 text-xs text-violet-300 space-y-1">
+            <div className="font-semibold text-violet-200">Como funciona:</div>
+            <p>Cada item da categoria terá seu preço multiplicado por <code>(1 + markup/100)</code>.</p>
+            <p>Ex: Item R$1.000 com 15% → R$1.150 na proposta.</p>
+          </div>
+
+          <div className="flex gap-2 pt-2">
+            <Button
+              variant="outline"
+              className="flex-1"
+              onClick={() => setIsMarkupPanelOpen(false)}
+            >
+              Cancelar
+            </Button>
+            <Button
+              className="flex-1 bg-violet-600 hover:bg-violet-700 text-white"
+              onClick={() => {
+                if (!draft) return;
+                const applyMarkup = (price: number, pct: number) =>
+                  pct > 0 ? Math.round(price * (1 + pct / 100)) : price;
+
+                save({
+                  flights: (draft.flights ?? []).map((f) => ({
+                    ...f,
+                    price: applyMarkup(f.price ?? 0, markupRates.flights),
+                  })),
+                  hotels: (draft.hotels ?? []).map((h) => ({
+                    ...h,
+                    price: applyMarkup((h as any).price ?? 0, markupRates.hotels),
+                  })),
+                  transfers: (draft.transfers ?? []).map((t) => ({
+                    ...t,
+                    price: applyMarkup((t as any).price ?? 0, markupRates.transfers),
+                  })),
+                  tours: (draft.tours ?? []).map((t) => ({
+                    ...t,
+                    price: applyMarkup((t as any).price ?? 0, markupRates.tours),
+                  })),
+                });
+                toast.success("Markup aplicado! Os valores foram atualizados na proposta.");
+                setIsMarkupPanelOpen(false);
+              }}
+            >
+              Aplicar Markup
+            </Button>
+          </div>
+        </div>
+      </SheetPage>
     </div>
   );
 }

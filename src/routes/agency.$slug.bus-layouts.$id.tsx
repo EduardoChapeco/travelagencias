@@ -23,7 +23,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAgency } from "@/lib/agency-context";
 import { PageHeader } from "@/components/shell/PageHeader";
 import { FormInput as Input } from "@/components/ui/input";
-import { SimpleSheet as Sheet } from "@/components/ui/sheet";
+import { SheetPage } from "@/components/ui/sheet";
 import { Field } from "@/components/ui/field";
 import { NativeSelect as Select } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
@@ -840,7 +840,7 @@ export function EditVehicleModal({
   }
 
   return (
-    <Sheet onClose={onClose} title="Editar Cadastro do Veículo">
+    <SheetPage isOpen={true} onClose={onClose} title="Editar Cadastro do Veículo">
       <form onSubmit={submit} className="space-y-4">
         <Field label="Nome da Frota/Veículo *">
           <Input
@@ -851,10 +851,10 @@ export function EditVehicleModal({
           />
         </Field>
         <Field label="Tipo de Veículo">
-          <Select value={type} onChange={(e) => setType(e.target.value)}>
-            <option value="bus">Ônibus (Convencional/Leito)</option>
-            <option value="van">Van / Micro-ônibus</option>
-            <option value="plane">Avião</option>
+          <Select value={type} onChange={(e) => setType(e.target.value)} className="h-9 rounded-xl bg-white/[0.04] border border-white/[0.08]">
+            <option value="bus" className="bg-[#12141c] text-white">Ônibus (Convencional/Leito)</option>
+            <option value="van" className="bg-[#12141c] text-white">Van / Micro-ônibus</option>
+            <option value="plane" className="bg-[#12141c] text-white">Avião</option>
           </Select>
         </Field>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -877,19 +877,19 @@ export function EditVehicleModal({
             />
           </Field>
         </div>
-        <p className="text-xs text-muted-foreground pt-2">
+        <p className="text-xs text-zinc-400 pt-2 font-sans">
           Aviso: Alterar o número de fileiras ou colunas preservará os assentos configurados nas
           posições correspondentes e adaptará a grade automaticamente.
         </p>
-        <div className="flex justify-end gap-2 pt-4">
-          <Button variant="ghost" type="button" onClick={onClose}>
+        <div className="flex justify-end gap-2 pt-4 border-t border-white/[0.08]">
+          <Button variant="ghost" type="button" onClick={onClose} className="h-9 px-4 rounded-full border border-white/[0.08] bg-white/[0.04] text-zinc-300 hover:text-white cursor-pointer">
             Cancelar
           </Button>
-          <Button variant="default" type="submit" disabled={submitting}>
+          <Button type="submit" disabled={submitting} className="h-9 px-5 rounded-full bg-white text-black font-semibold hover:bg-white/90 shadow-sm cursor-pointer disabled:opacity-50">
             {submitting ? "Salvando…" : "Salvar Alterações"}
           </Button>
         </div>
       </form>
-    </Sheet>
+    </SheetPage>
   );
 }

@@ -147,14 +147,14 @@ export function AIFloatingWidget({ inline = false }: { inline?: boolean }) {
                   setSelectedPrompt("");
                 }}
                 className={cn(
-                  "h-14 w-14 rounded-full flex items-center justify-center glass-dock border border-border text-white hover:border-white/40 cursor-pointer transition-all duration-200 hover:scale-[1.03] active:scale-[0.98]",
-                  isOpen && "bg-brand/20 border-brand/35",
+                  "h-10 w-10 rounded-full flex items-center justify-center text-zinc-400 hover:text-white hover:bg-white/10 cursor-pointer transition-all duration-150 active:scale-[0.98]",
+                  isOpen && "bg-white/15 text-white border border-white/10",
                 )}
               >
                 {isOpen ? (
-                  <X className="w-5 h-5 shrink-0" strokeWidth={2.2} />
+                  <X className="w-4 h-4 shrink-0" strokeWidth={2.2} />
                 ) : (
-                  <Sparkles className="w-5 h-5 text-brand-light shrink-0" strokeWidth={2.2} />
+                  <Sparkles className="w-4 h-4 text-zinc-300 shrink-0" strokeWidth={2} />
                 )}
               </Button>
             </TooltipTrigger>

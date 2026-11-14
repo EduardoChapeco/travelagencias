@@ -11,10 +11,12 @@ import { Button } from "@/components/ui/button";
 interface SheetPageProps {
   isOpen: boolean;
   onClose: () => void;
-  title: string;
+  title: React.ReactNode;
   children: React.ReactNode;
   width?: string;
   contentClassName?: string;
+  actions?: React.ReactNode;
+  footer?: React.ReactNode;
 }
 
 export function SimpleSheet({
@@ -23,22 +25,13 @@ export function SimpleSheet({
   children,
 }: {
   onClose: () => void;
-  title: string;
+  title: React.ReactNode;
   children: React.ReactNode;
 }) {
   return (
-    <div
-      className="fixed inset-0 z-50 flex justify-end bg-overlay/40 backdrop-blur-[2px]"
-      onClick={onClose}
-    >
-      <div
-        className="h-full w-full max-w-md md:max-w-lg overflow-y-auto border-l border-border glass text-white bg-black/40 backdrop-blur-2xl p-6"
-        onClick={(event) => event.stopPropagation()}
-      >
-        <h2 className="mb-6 ds-h3 border-b border-border pb-3">{title}</h2>
-        {children}
-      </div>
-    </div>
+    <SheetPage isOpen={true} onClose={onClose} title={title}>
+      {children}
+    </SheetPage>
   );
 }
 
@@ -49,6 +42,8 @@ export function SheetPage({
   children,
   width = "clamp(480px, 45vw, 720px)",
   contentClassName,
+  actions,
+  footer,
 }: SheetPageProps) {
   const [mounted, setMounted] = useState(false);
 
@@ -66,36 +61,48 @@ export function SheetPage({
   return createPortal(
     <div
       className={cn(
-        "fixed inset-0 z-50 flex justify-end transition-opacity duration-300",
+        "fixed inset-0 z-50 flex justify-end transition-all duration-250",
         isOpen ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none",
       )}
     >
       <div
         className={cn(
-          "absolute inset-0 bg-black/60 backdrop-blur-sm transition-opacity duration-300",
+          "absolute inset-0 bg-black/60 backdrop-blur-[8px] transition-opacity duration-250",
           isOpen ? "opacity-100" : "opacity-0",
         )}
         onClick={onClose}
       />
       <div
         className={cn(
-          "relative flex h-full flex-col glass text-white bg-black/40 backdrop-blur-2xl border-l border-border transition-transform duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] max-w-full",
+          "relative flex h-full flex-col text-foreground border-l border-border/80 transition-transform duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] max-w-full",
+          "bg-card shadow-none",
           isOpen ? "translate-x-0" : "translate-x-full",
         )}
         style={{ width }}
       >
-        <div className="flex min-h-[var(--ds-toolbar-height)] shrink-0 items-center justify-between border-b border-border px-6 glass-toolbar">
-          <h2 className="text-base font-semibold">{title}</h2>
-          <Button
-            onClick={onClose}
-            className="flex h-8 w-8 items-center justify-center rounded-full text-muted-foreground hover:bg-surface-alt hover:text-foreground transition-colors"
-          >
-            <X className="h-4 w-4" />
-          </Button>
+        <div className="flex min-h-[var(--ds-toolbar-height,56px)] shrink-0 items-center justify-between border-b border-border/80 px-6 gap-3">
+          <div className="text-base font-bold tracking-tight text-foreground">{title}</div>
+          <div className="flex items-center gap-2">
+            {actions}
+            <Button
+              type="button"
+              variant="ghost"
+              size="icon"
+              onClick={onClose}
+              className="flex h-8 w-8 items-center justify-center rounded-full text-muted-foreground hover:bg-muted hover:text-foreground transition-colors cursor-pointer"
+            >
+              <X className="h-4 w-4" />
+            </Button>
+          </div>
         </div>
-        <div className={cn("flex-1", contentClassName || "overflow-auto p-6 no-scrollbar")}>
+        <div className={cn("flex-1 min-h-0", contentClassName || "overflow-y-auto p-6 no-scrollbar")}>
           {children}
         </div>
+        {footer && (
+          <div className="shrink-0 border-t border-border/80 bg-surface-alt/40 p-4 px-6">
+            {footer}
+          </div>
+        )}
       </div>
     </div>,
     document.body,
@@ -114,7 +121,7 @@ const SheetOverlay = React.forwardRef<
 >(({ className, ...props }, ref) => (
   <SheetPrimitive.Overlay
     className={cn(
-      "fixed inset-0 z-50 bg-black/60 backdrop-blur-sm data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0",
+      "fixed inset-0 z-50 bg-black/40 backdrop-blur-sm data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0",
       className,
     )}
     {...props}
@@ -124,7 +131,7 @@ const SheetOverlay = React.forwardRef<
 SheetOverlay.displayName = SheetPrimitive.Overlay.displayName;
 
 const sheetVariants = cva(
-  "fixed z-50 gap-4 glass text-white bg-black/40 backdrop-blur-2xl p-6 transition ease-in-out data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:duration-300 data-[state=open]:duration-500",
+  "fixed z-50 gap-4 bg-surface text-foreground p-6 transition ease-in-out data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:duration-300 data-[state=open]:duration-500",
   {
     variants: {
       side: {

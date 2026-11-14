@@ -118,7 +118,7 @@ function Page() {
 
   if (q.isLoading) {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-[#f8f9fa]">
+      <div className="flex min-h-screen items-center justify-center bg-background">
         <div className="h-8 w-8 animate-spin rounded-full border-4 border-brand border-t-transparent" />
       </div>
     );
@@ -126,7 +126,7 @@ function Page() {
 
   if (q.isError) {
     return (
-      <div className="flex min-h-screen flex-col items-center justify-center bg-[#f8f9fa] px-6 text-center">
+      <div className="flex min-h-screen flex-col items-center justify-center bg-background px-6 text-center">
         <div className="h-12 w-12 rounded-full bg-red-50 flex items-center justify-center mb-4 border border-red-200">
           <AlertTriangle className="w-6 h-6 text-red-600" />
         </div>
@@ -148,7 +148,7 @@ function Page() {
 
   if (!q.data || !q.data.tour) {
     return (
-      <div className="flex min-h-screen flex-col items-center justify-center bg-[#f8f9fa] px-6 text-center">
+      <div className="flex min-h-screen flex-col items-center justify-center bg-background px-6 text-center">
         <div className="h-12 w-12 rounded-full bg-gray-50 flex items-center justify-center mb-4 border border-gray-200">
           <XCircle className="w-6 h-6 text-gray-500" />
         </div>
@@ -340,7 +340,7 @@ function Page() {
 
   return (
     <div
-      className="mx-auto min-h-screen bg-[#f4f5f8] pb-24 lg:pb-12 font-sans antialiased text-slate-800"
+      className="mx-auto min-h-screen bg-background pb-24 lg:pb-12 font-sans antialiased text-foreground"
       style={
         {
           "--color-brand": agency.brand_color || "#151515",
@@ -349,7 +349,7 @@ function Page() {
       }
     >
       {/* Cover Banner */}
-      <div className="relative w-full bg-slate-900 border-b border-slate-200">
+      <div className="relative w-full bg-muted border-b border-border">
         {t.cover_image_url ? (
           <div className="relative h-72 md:h-96 w-full overflow-hidden">
             <img src={t.cover_image_url} alt={t.title} className="h-full w-full object-cover" />
@@ -425,9 +425,9 @@ function Page() {
             </div>
           </div>
         ) : (
-          <div className="max-w-6xl mx-auto px-6 py-16 text-white bg-slate-950">
+          <div className="max-w-6xl mx-auto px-6 py-16 text-white bg-muted">
             <h1 className="text-4xl font-extrabold uppercase tracking-tight">{t.title}</h1>
-            <div className="mt-2 text-slate-400 font-semibold">{t.destination}</div>
+            <div className="mt-2 text-foreground font-semibold">{t.destination}</div>
           </div>
         )}
       </div>
@@ -440,10 +440,10 @@ function Page() {
             <div className="lg:col-span-2 space-y-6">
               {/* YouTube Promo Video Embed */}
               {embedVideoUrl && (
-                <section className="bg-white border border-slate-200 rounded-[var(--radius-card)] overflow-hidden shadow-xs">
-                  <div className="p-4 bg-slate-50 border-b border-slate-100 flex items-center gap-2">
+                <section className="bg-white border border-border rounded-[var(--radius-card)] overflow-hidden shadow-xs">
+                  <div className="p-4 bg-muted border-b border-border flex items-center gap-2">
                     <Video className="w-5 h-5 text-brand" />
-                    <h2 className="font-extrabold text-sm uppercase tracking-wider text-slate-800">
+                    <h2 className="font-extrabold text-sm uppercase tracking-wider text-foreground">
                       Vídeo Promocional
                     </h2>
                   </div>
@@ -461,13 +461,13 @@ function Page() {
 
               {/* Hotel Comfort Info */}
               {hotel && hotel.name && (
-                <section className="bg-white border border-slate-200 rounded-[var(--radius-card)] p-5 md:p-6 space-y-4 shadow-xs relative">
-                  <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4 border-b border-slate-100 pb-4">
+                <section className="bg-white border border-border rounded-[var(--radius-card)] p-5 md:p-6 space-y-4 shadow-xs relative">
+                  <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4 border-b border-border pb-4">
                     <div className="space-y-1">
-                      <span className="ds-meta font-extrabold uppercase tracking-wider text-slate-400 block">
+                      <span className="ds-meta font-extrabold uppercase tracking-wider text-foreground block">
                         Hospedagem Inclusa
                       </span>
-                      <h2 className="text-lg font-black text-slate-900 uppercase flex items-center gap-2">
+                      <h2 className="text-lg font-black text-foreground uppercase flex items-center gap-2">
                         <Hotel className="w-5 h-5 text-brand shrink-0" />
                         {hotel.name}
                       </h2>
@@ -478,20 +478,20 @@ function Page() {
                       </div>
                     </div>
 
-                    <div className="text-left sm:text-right text-xs bg-slate-50 border border-slate-200 px-3 py-2 rounded-[var(--radius-card)] shrink-0">
+                    <div className="text-left sm:text-right text-xs bg-muted border border-border px-3 py-2 rounded-[var(--radius-card)] shrink-0">
                       <div>
                         Check-in:{" "}
-                        <strong className="text-slate-800">{hotel.check_in || "14:00"}</strong>
+                        <strong className="text-foreground">{hotel.check_in || "14:00"}</strong>
                       </div>
                       <div>
                         Check-out:{" "}
-                        <strong className="text-slate-800">{hotel.check_out || "12:00"}</strong>
+                        <strong className="text-foreground">{hotel.check_out || "12:00"}</strong>
                       </div>
                     </div>
                   </div>
 
                   {hotel.description && (
-                    <p className="text-xs text-slate-650 leading-relaxed font-medium">
+                    <p className="text-xs text-foreground leading-relaxed font-medium">
                       {hotel.description}
                     </p>
                   )}
@@ -500,7 +500,7 @@ function Page() {
                     Array.isArray(hotel.amenities) &&
                     hotel.amenities.length > 0 && (
                       <div className="space-y-2 pt-2">
-                        <span className="ds-meta font-bold text-slate-400 uppercase tracking-widest block">
+                        <span className="ds-meta font-bold text-foreground uppercase tracking-widest block">
                           Comodidades & Lazer
                         </span>
                         <div className="flex flex-wrap gap-2">
@@ -517,8 +517,8 @@ function Page() {
                     )}
 
                   {hotel.gallery && Array.isArray(hotel.gallery) && hotel.gallery.length > 0 && (
-                    <div className="space-y-2 pt-3 border-t border-slate-100">
-                      <span className="ds-meta font-bold text-slate-400 uppercase tracking-widest block">
+                    <div className="space-y-2 pt-3 border-t border-border">
+                      <span className="ds-meta font-bold text-foreground uppercase tracking-widest block">
                         Galeria de Fotos
                       </span>
                       <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
@@ -528,7 +528,7 @@ function Page() {
                             href={imgUrl}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="relative aspect-video rounded-[var(--radius-card)] overflow-hidden border border-slate-200 group bg-slate-100 block"
+                            className="relative aspect-video rounded-[var(--radius-card)] overflow-hidden border border-border group bg-muted block"
                           >
                             <img
                               src={imgUrl}
@@ -545,23 +545,23 @@ function Page() {
 
               {/* Itinerary Chronological */}
               {days.length > 0 && (
-                <section className="bg-white border border-slate-200 rounded-[var(--radius-card)] p-5 md:p-6 space-y-4 shadow-xs">
-                  <h2 className="text-base font-black uppercase tracking-wider text-slate-800 border-b border-slate-100 pb-3 flex items-center gap-2">
+                <section className="bg-white border border-border rounded-[var(--radius-card)] p-5 md:p-6 space-y-4 shadow-xs">
+                  <h2 className="text-base font-black uppercase tracking-wider text-foreground border-b border-border pb-3 flex items-center gap-2">
                     <ChevronRight className="w-5 h-5 text-brand" /> Roteiro Completo
                   </h2>
 
-                  <div className="relative border-l-2 border-slate-100 pl-4 ml-2 space-y-6">
+                  <div className="relative border-l-2 border-border pl-4 ml-2 space-y-6">
                     {days.map((d: any, i: number) => (
                       <div key={i} className="relative group">
                         {/* Timeline dot */}
-                        <span className="absolute -left-[23px] top-1.5 w-2.5 h-2.5 rounded-full bg-slate-300 border-2 border-white group-hover:bg-[var(--color-brand)] transition-colors" />
+                        <span className="absolute -left-[23px] top-1.5 w-2.5 h-2.5 rounded-full bg-muted border-2 border-white group-hover:bg-[var(--color-brand)] transition-colors" />
 
-                        <h3 className="font-extrabold text-sm text-slate-900 uppercase">
+                        <h3 className="font-extrabold text-sm text-foreground uppercase">
                           Dia {d.day_number || d.day} — {d.title}
                         </h3>
 
                         {(d.description_md || d.description) && (
-                          <div className="text-xs text-slate-500 mt-1 leading-relaxed prose prose-sm max-w-none prose-slate">
+                          <div className="text-xs text-foreground mt-1 leading-relaxed prose prose-sm max-w-none prose-slate">
                             <ReactMarkdown>{d.description_md || d.description}</ReactMarkdown>
                           </div>
                         )}
@@ -575,11 +575,11 @@ function Page() {
               {(includes.length > 0 || excludes.length > 0) && (
                 <section className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   {includes.length > 0 && (
-                    <div className="bg-white border border-slate-200 rounded-[var(--radius-card)] p-5 shadow-xs space-y-3">
+                    <div className="bg-white border border-border rounded-[var(--radius-card)] p-5 shadow-xs space-y-3">
                       <h3 className="ds-label-caps tracking-wider text-emerald-800 flex items-center gap-1.5">
                         <Check className="w-4 h-4 text-emerald-600 shrink-0" /> O que está Incluso
                       </h3>
-                      <ul className="text-xs text-slate-650 space-y-2 font-medium">
+                      <ul className="text-xs text-foreground space-y-2 font-medium">
                         {includes.map((inc) => (
                           <li key={inc} className="flex items-start gap-1">
                             <span className="text-emerald-500 mr-1.5">✓</span>
@@ -590,12 +590,12 @@ function Page() {
                     </div>
                   )}
                   {excludes.length > 0 && (
-                    <div className="bg-white border border-slate-200 rounded-[var(--radius-card)] p-5 shadow-xs space-y-3">
+                    <div className="bg-white border border-border rounded-[var(--radius-card)] p-5 shadow-xs space-y-3">
                       <h3 className="ds-label-caps tracking-wider text-rose-800 flex items-center gap-1.5">
                         <XCircle className="w-4 h-4 text-rose-650 shrink-0" /> O que não está
                         Incluso
                       </h3>
-                      <ul className="text-xs text-slate-550 space-y-2 font-medium">
+                      <ul className="text-xs text-foreground space-y-2 font-medium">
                         {excludes.map((exc) => (
                           <li key={exc} className="flex items-start gap-1">
                             <span className="text-rose-500 mr-1.5">✗</span>
@@ -611,22 +611,22 @@ function Page() {
 
             {/* Right Reservation sticky widget */}
             <div className="space-y-6">
-              <div className="sticky top-6 bg-white border border-slate-200 rounded-[var(--radius-card)] p-5 md:p-6 shadow-none space-y-5">
-                <div className="border-b border-slate-100 pb-4 text-center">
-                  <span className="ds-meta font-extrabold uppercase tracking-widest text-slate-400 block">
+              <div className="sticky top-6 bg-white border border-border rounded-[var(--radius-card)] p-5 md:p-6 shadow-none space-y-5">
+                <div className="border-b border-border pb-4 text-center">
+                  <span className="ds-meta font-extrabold uppercase tracking-widest text-foreground block">
                     Reservas Online
                   </span>
                   <div className="text-3xl font-mono font-black text-[var(--color-brand)] mt-1">
                     {formatCurrency(totalPrice)}
                   </div>
-                  <div className="text-[9px] uppercase font-extrabold text-slate-400 tracking-wider mt-1">
+                  <div className="text-[9px] uppercase font-extrabold text-foreground tracking-wider mt-1">
                     Subtotal com taxas inclusas
                   </div>
                 </div>
 
                 {/* Capacidade e Vagas */}
-                <div className="bg-slate-50 border border-slate-100 rounded-[var(--radius-card)] p-3 text-center space-y-1.5">
-                  <span className="text-[9px] font-bold text-slate-400 uppercase tracking-widest block">
+                <div className="bg-muted border border-border rounded-[var(--radius-card)] p-3 text-center space-y-1.5">
+                  <span className="text-[9px] font-bold text-foreground uppercase tracking-widest block">
                     Disponibilidade
                   </span>
                   {(t.financial && (t.financial as any).capacity_mode === "UNLIMITED") ||
@@ -652,16 +652,16 @@ function Page() {
                       }
                       return (
                         <div className="space-y-1">
-                          <strong className="text-xs font-bold text-slate-800 block">
+                          <strong className="text-xs font-bold text-foreground block">
                             {remaining} {remaining === 1 ? "vaga disponível" : "vagas disponíveis"}
                           </strong>
-                          <div className="w-full bg-slate-200 rounded-full h-1.5 overflow-hidden">
+                          <div className="w-full bg-muted rounded-full h-1.5 overflow-hidden">
                             <div
                               className="bg-[var(--color-brand)] h-1.5 rounded-full transition-all"
                               style={{ width: `${Math.min(100, (confirmed / limit) * 100)}%` }}
                             />
                           </div>
-                          <span className="text-[9px] font-semibold text-slate-500 block font-sans">
+                          <span className="text-[9px] font-semibold text-foreground block font-sans">
                             {confirmed} de {limit} vagas ocupadas
                           </span>
                         </div>
@@ -673,7 +673,7 @@ function Page() {
                 {/* Pricing Tiers Selection */}
                 {pricingTiers.length > 0 ? (
                   <div className="space-y-3">
-                    <label className="ds-meta font-bold text-slate-400 uppercase tracking-wider block">
+                    <label className="ds-meta font-bold text-foreground uppercase tracking-wider block">
                       1. Escolha a Acomodação
                     </label>
                     <div className="space-y-2">
@@ -688,17 +688,17 @@ function Page() {
                               "w-full text-left p-3 rounded-[var(--radius-card)] border transition-all duration-200 cursor-pointer flex flex-col justify-between gap-1",
                               isSelected
                                 ? "border-brand bg-brand/5 shadow-xs font-bold"
-                                : "border-slate-200 bg-white hover:border-slate-400",
+                                : "border-border bg-white hover:border-border",
                             )}
                           >
                             <div className="flex items-center justify-between w-full">
-                              <span className="text-xs font-bold text-slate-800">{tier.name}</span>
+                              <span className="text-xs font-bold text-foreground">{tier.name}</span>
                               <span className="text-xs font-mono font-bold text-brand">
                                 {formatCurrency(tier.price)}
                               </span>
                             </div>
                             {tier.description && (
-                              <span className="ds-meta text-slate-500 font-medium block leading-snug">
+                              <span className="ds-meta text-foreground font-medium block leading-snug">
                                 {tier.description}
                               </span>
                             )}
@@ -708,7 +708,7 @@ function Page() {
                     </div>
                   </div>
                 ) : (
-                  <div className="space-y-1 bg-slate-50 border border-slate-100 rounded-[var(--radius-card)] p-3 text-xs text-slate-655 text-center">
+                  <div className="space-y-1 bg-muted border border-border rounded-[var(--radius-card)] p-3 text-xs text-foreground text-center">
                     Tarifa Base Individual:{" "}
                     <strong className="text-brand font-mono">
                       {formatCurrency(Number(t.base_price))}
@@ -718,8 +718,8 @@ function Page() {
 
                 {/* Upgrades Extras Selection */}
                 {extraOptions.length > 0 && (
-                  <div className="space-y-2.5 pt-2 border-t border-slate-100">
-                    <label className="ds-meta font-bold text-slate-400 uppercase tracking-wider block">
+                  <div className="space-y-2.5 pt-2 border-t border-border">
+                    <label className="ds-meta font-bold text-foreground uppercase tracking-wider block">
                       2. Serviços Opcionais
                     </label>
                     <div className="space-y-2">
@@ -742,15 +742,15 @@ function Page() {
                               "w-full text-left p-3 rounded-[var(--radius-card)] border transition-all duration-200 cursor-pointer flex items-center justify-between gap-3",
                               isChecked
                                 ? "border-emerald-300 bg-emerald-50/20 font-bold"
-                                : "border-slate-200 bg-white hover:border-slate-400",
+                                : "border-border bg-white hover:border-border",
                             )}
                           >
                             <div className="min-w-0 flex-1">
-                              <span className="text-xs font-bold block text-slate-850 truncate">
+                              <span className="text-xs font-bold block text-foreground truncate">
                                 {ext.name}
                               </span>
                               {ext.description && (
-                                <span className="text-[9px] text-slate-500 truncate block font-medium mt-0.5">
+                                <span className="text-[9px] text-foreground truncate block font-medium mt-0.5">
                                   {ext.description}
                                 </span>
                               )}
@@ -767,7 +767,7 @@ function Page() {
 
                 {/* Passenger Selector (if no seats) */}
                 {seatMap.length === 0 && (
-                  <div className="pt-3 border-t border-slate-100">
+                  <div className="pt-3 border-t border-border">
                     <Field label="3. Quantidade de Passageiros">
                       <Select
                         value={passengerCount}
@@ -807,16 +807,16 @@ function Page() {
           <div id="checkout_anchor" className="mt-8 space-y-8 scroll-mt-6">
             {/* Seat Map Selector */}
             {seatMap.length > 0 && (
-              <div className="rounded-[var(--radius-card)] border border-slate-200 bg-white p-6 shadow-xs">
-                <h2 className="text-base font-black text-slate-850 mb-1 text-center uppercase tracking-wider">
+              <div className="rounded-[var(--radius-card)] border border-border bg-white p-6 shadow-xs">
+                <h2 className="text-base font-black text-foreground mb-1 text-center uppercase tracking-wider">
                   Escolha suas Poltronas
                 </h2>
-                <p className="text-xs text-slate-400 text-center mb-5 font-semibold">
+                <p className="text-xs text-foreground text-center mb-5 font-semibold">
                   Selecione poltronas livres para os passageiros.
                 </p>
                 <div className="flex justify-center overflow-x-auto py-2">
                   <div
-                    className="p-4 border border-slate-100 rounded-[var(--radius-card)] bg-slate-50/50"
+                    className="p-4 border border-border rounded-[var(--radius-card)] bg-muted/50"
                     style={{
                       display: "grid",
                       gridTemplateColumns: `repeat(${layout?.cols ?? 5}, minmax(0, 1fr))`,
@@ -829,7 +829,7 @@ function Page() {
                           <div
                             key={idx}
                             className={cn(
-                              "h-10 w-10 flex items-center justify-center ds-meta rounded text-slate-400 font-bold",
+                              "h-10 w-10 flex items-center justify-center ds-meta rounded text-foreground font-bold",
                               cell.type === "aisle" && "text-transparent",
                               cell.type === "wc" && "bg-blue-50 text-blue-700",
                               cell.type === "door" && "bg-amber-50 text-amber-700",
@@ -850,10 +850,10 @@ function Page() {
                           className={cn(
                             "h-10 w-10 rounded-full border text-xs font-mono font-bold transition-colors flex flex-col items-center justify-center cursor-pointer",
                             isAssigned
-                              ? "bg-slate-100 text-slate-400 cursor-not-allowed border-slate-200"
+                              ? "bg-muted text-foreground cursor-not-allowed border-border"
                               : isSelected
                                 ? "border-[var(--color-brand)] bg-[var(--color-brand)] text-[var(--color-brand-foreground)] shadow-xs"
-                                : "border-slate-300 bg-white hover:border-slate-400",
+                                : "border-border bg-white hover:border-border",
                           )}
                         >
                           {cell.label}
@@ -862,15 +862,15 @@ function Page() {
                     })}
                   </div>
                 </div>
-                <div className="mt-4 flex items-center justify-center gap-5 text-[9px] font-bold uppercase tracking-widest text-slate-400">
+                <div className="mt-4 flex items-center justify-center gap-5 text-[9px] font-bold uppercase tracking-widest text-foreground">
                   <div className="flex items-center gap-1.5">
-                    <div className="h-3.5 w-3.5 rounded bg-white border border-slate-300" /> Livre
+                    <div className="h-3.5 w-3.5 rounded bg-white border border-border" /> Livre
                   </div>
                   <div className="flex items-center gap-1.5">
                     <div className="h-3.5 w-3.5 rounded bg-[var(--color-brand)]" /> Selecionada
                   </div>
                   <div className="flex items-center gap-1.5">
-                    <div className="h-3.5 w-3.5 rounded bg-slate-100 border border-slate-200" />{" "}
+                    <div className="h-3.5 w-3.5 rounded bg-muted border border-border" />{" "}
                     Ocupada
                   </div>
                 </div>
@@ -880,13 +880,13 @@ function Page() {
             {/* Registration Form */}
             <form
               onSubmit={handleFormSubmit}
-              className="space-y-6 rounded-[var(--radius-card)] border border-slate-200 bg-white p-6 md:p-8 shadow-xs"
+              className="space-y-6 rounded-[var(--radius-card)] border border-border bg-white p-6 md:p-8 shadow-xs"
             >
-              <div className="mb-2 border-b border-slate-100 pb-4">
-                <h2 className="text-base font-black text-slate-850 uppercase tracking-wider">
+              <div className="mb-2 border-b border-border pb-4">
+                <h2 className="text-base font-black text-foreground uppercase tracking-wider">
                   Identificação & Cadastro
                 </h2>
-                <p className="text-xs text-slate-400 font-semibold">
+                <p className="text-xs text-foreground font-semibold">
                   Insira as informações de contato do responsável pela reserva.
                 </p>
               </div>
@@ -934,8 +934,8 @@ function Page() {
               </Field>
 
               {passengerCount > 1 && (
-                <div className="space-y-3 pt-3 border-t border-slate-100">
-                  <h3 className="ds-meta font-extrabold uppercase tracking-widest text-slate-400">
+                <div className="space-y-3 pt-3 border-t border-border">
+                  <h3 className="ds-meta font-extrabold uppercase tracking-widest text-foreground">
                     Demais passageiros
                   </h3>
                   {extraPassengers.map((name, idx) => (
@@ -977,7 +977,7 @@ function Page() {
                     ? "border-red-300 bg-red-50/50"
                     : lgpdConsent
                       ? "border-emerald-300 bg-emerald-50/30"
-                      : "border-slate-200 bg-slate-50/50",
+                      : "border-border bg-muted/50",
                 )}
               >
                 <Input
@@ -988,15 +988,15 @@ function Page() {
                     setLgpdConsent(e.target.checked);
                     if (e.target.checked) setLgpdError(false);
                   }}
-                  className="mt-0.5 h-4.5 w-4.5 flex-shrink-0 rounded border-slate-350 text-[var(--color-brand)] focus:ring-[var(--color-brand)] cursor-pointer"
+                  className="mt-0.5 h-4.5 w-4.5 flex-shrink-0 rounded border-border text-[var(--color-brand)] focus:ring-[var(--color-brand)] cursor-pointer"
                 />
                 <label
                   htmlFor="lgpd_consent"
-                  className="text-xs text-slate-650 leading-relaxed cursor-pointer select-none font-medium font-sans"
+                  className="text-xs text-foreground leading-relaxed cursor-pointer select-none font-medium font-sans"
                 >
                   Li e concordo com o processamento dos meus dados pessoais para fins de cadastro,
                   contato e reserva desta viagem, em conformidade com a{" "}
-                  <strong className="text-slate-800">
+                  <strong className="text-foreground">
                     Lei Geral de Proteção de Dados (LGPD — Lei n.º 13.709/2018)
                   </strong>
                   . Seus dados serão tratados exclusivamente para gestão da viagem e não serão
@@ -1039,15 +1039,15 @@ function Page() {
 
         {/* Step 2: PIX Checkout voucher upload */}
         {checkoutStep === "pix" && (
-          <div className="max-w-xl mx-auto bg-white border border-slate-200 rounded-[var(--radius-card)] p-6 md:p-8 shadow-xs space-y-6">
+          <div className="max-w-xl mx-auto bg-white border border-border rounded-[var(--radius-card)] p-6 md:p-8 shadow-xs space-y-6">
             <div className="text-center">
               <div className="h-12 w-12 bg-emerald-50 rounded-full flex items-center justify-center mx-auto mb-3 border border-emerald-100">
                 <QrCode className="w-6 h-6 text-emerald-600" />
               </div>
-              <h2 className="text-lg font-black text-slate-850 uppercase tracking-wider">
+              <h2 className="text-lg font-black text-foreground uppercase tracking-wider">
                 Pagamento Pix Garantido
               </h2>
-              <p className="text-xs text-slate-500 mt-1 font-semibold">
+              <p className="text-xs text-foreground mt-1 font-semibold">
                 Conclua sua compra enviando a transferência instantânea Pix no valor de{" "}
                 <strong>{formatCurrency(totalPrice)}</strong>.
               </p>
@@ -1055,17 +1055,17 @@ function Page() {
 
             {/* Pix Copy and paste */}
             <div className="space-y-2.5">
-              <label className="ds-meta font-bold text-slate-400 uppercase tracking-widest block">
+              <label className="ds-meta font-bold text-foreground uppercase tracking-widest block">
                 {pixKey.startsWith("000201")
                   ? "Código Copia e Cola Pix:"
                   : "Chave Pix para Transferência:"}
               </label>
-              <div className="flex items-center gap-2 border border-slate-200 bg-slate-50 rounded-[var(--radius-card)] px-4 py-3 text-xs font-mono select-all overflow-x-auto whitespace-nowrap">
+              <div className="flex items-center gap-2 border border-border bg-muted rounded-[var(--radius-card)] px-4 py-3 text-xs font-mono select-all overflow-x-auto whitespace-nowrap">
                 <span>{pixKey}</span>
                 <Button
                   type="button"
                   onClick={copyPix}
-                  className="ml-auto text-slate-400 hover:text-slate-900 cursor-pointer p-1 shrink-0"
+                  className="ml-auto text-foreground hover:text-foreground cursor-pointer p-1 shrink-0"
                 >
                   {copied ? (
                     <Check className="w-4 h-4 text-emerald-600" />
@@ -1077,15 +1077,15 @@ function Page() {
             </div>
 
             {/* Upload box */}
-            <div className="border-t border-slate-100 pt-5 space-y-4">
-              <h3 className="text-xs font-bold text-slate-800 uppercase tracking-wider">
+            <div className="border-t border-border pt-5 space-y-4">
+              <h3 className="text-xs font-bold text-foreground uppercase tracking-wider">
                 Anexar Comprovante Pix
               </h3>
 
               {!uploadedFile ? (
-                <div className="border-2 border-dashed border-slate-300 rounded-[var(--radius-card)] p-6 text-center hover:bg-slate-50/50 transition-colors relative">
-                  <FileText className="w-8 h-8 text-slate-300 mx-auto mb-2" />
-                  <span className="text-xs text-slate-655 block font-semibold">
+                <div className="border-2 border-dashed border-border rounded-[var(--radius-card)] p-6 text-center hover:bg-muted/50 transition-colors relative">
+                  <FileText className="w-8 h-8 text-foreground mx-auto mb-2" />
+                  <span className="text-xs text-foreground block font-semibold">
                     Arraste ou clique para enviar o PDF ou Imagem do Pix
                   </span>
                   <Input
@@ -1096,7 +1096,7 @@ function Page() {
                   />
 
                   {uploadProgress > 0 && (
-                    <div className="mt-3 w-full bg-slate-200 rounded-full h-1.5">
+                    <div className="mt-3 w-full bg-muted rounded-full h-1.5">
                       <div
                         className="bg-[var(--color-brand)] h-1.5 rounded-full transition-all"
                         style={{ width: `${uploadProgress}%` }}
@@ -1116,7 +1116,7 @@ function Page() {
                       setUploadedFile(null);
                       setUploadedFileName(null);
                     }}
-                    className="text-slate-500 hover:text-danger font-semibold"
+                    className="text-foreground hover:text-danger font-semibold"
                   >
                     Remover
                   </Button>
@@ -1124,7 +1124,7 @@ function Page() {
               )}
             </div>
 
-            <div className="flex items-center gap-2.5 pt-2 border-t border-slate-100">
+            <div className="flex items-center gap-2.5 pt-2 border-t border-border">
               <Button
                 variant="ghost"
                 onClick={() => setCheckoutStep("form")}
@@ -1146,47 +1146,47 @@ function Page() {
 
         {/* Step 3: Success Screen */}
         {checkoutStep === "success" && (
-          <div className="max-w-md mx-auto bg-white border border-slate-200 rounded-[var(--radius-card)] p-8 shadow-none text-center space-y-6">
+          <div className="max-w-md mx-auto bg-white border border-border rounded-[var(--radius-card)] p-8 shadow-none text-center space-y-6">
             <div className="h-16 w-16 bg-emerald-50 rounded-full flex items-center justify-center mx-auto border border-emerald-100">
               <Check className="w-8 h-8 text-emerald-600" />
             </div>
             <div>
-              <h2 className="text-xl font-black text-slate-855 uppercase tracking-wider font-sans">
+              <h2 className="text-xl font-black text-foreground uppercase tracking-wider font-sans">
                 Inscrição Solicitada!
               </h2>
-              <p className="text-xs text-slate-500 mt-2 leading-relaxed font-semibold">
+              <p className="text-xs text-foreground mt-2 leading-relaxed font-semibold">
                 Nossa equipe recebeu a sua inscrição e o comprovante de PIX. Enviaremos a
                 confirmação oficial no WhatsApp informado em instantes.
               </p>
             </div>
 
-            <div className="bg-slate-50 border border-slate-200 rounded-[var(--radius-card)] p-4.5 text-left text-xs space-y-2.5 font-medium">
+            <div className="bg-muted border border-border rounded-[var(--radius-card)] p-4.5 text-left text-xs space-y-2.5 font-medium">
               <div className="flex justify-between gap-3">
-                <span className="text-slate-500 font-sans">Viagem/Grupo:</span>
-                <strong className="text-slate-800 text-right uppercase">{t.title}</strong>
+                <span className="text-foreground font-sans">Viagem/Grupo:</span>
+                <strong className="text-foreground text-right uppercase">{t.title}</strong>
               </div>
               {selectedPricingTier && (
                 <div className="flex justify-between gap-3 font-sans">
-                  <span className="text-slate-500">Acomodação:</span>
-                  <strong className="text-slate-800 text-right">{selectedPricingTier.name}</strong>
+                  <span className="text-foreground">Acomodação:</span>
+                  <strong className="text-foreground text-right">{selectedPricingTier.name}</strong>
                 </div>
               )}
               {selectedExtras.length > 0 && (
                 <div className="flex justify-between gap-3 font-sans">
-                  <span className="text-slate-500">Opcionais:</span>
-                  <strong className="text-slate-800 text-right">
+                  <span className="text-foreground">Opcionais:</span>
+                  <strong className="text-foreground text-right">
                     {selectedExtras.map((x) => x.name).join(", ")}
                   </strong>
                 </div>
               )}
               <div className="flex justify-between gap-3 font-sans">
-                <span className="text-slate-500">Poltronas:</span>
-                <strong className="text-slate-800 text-right">
+                <span className="text-foreground">Poltronas:</span>
+                <strong className="text-foreground text-right">
                   {selectedSeats.join(", ") || "Em alocação"}
                 </strong>
               </div>
-              <div className="flex justify-between gap-3 border-t border-slate-200 pt-2.5 font-bold font-sans">
-                <span className="text-slate-800">Total Pago:</span>
+              <div className="flex justify-between gap-3 border-t border-border pt-2.5 font-bold font-sans">
+                <span className="text-foreground">Total Pago:</span>
                 <strong className="text-emerald-700 font-mono text-sm">
                   {formatCurrency(totalPrice)}
                 </strong>
@@ -1203,7 +1203,7 @@ function Page() {
                 setSelectedExtras([]);
                 setForm({ passenger_name: "", passenger_cpf: "", email: "", phone: "", notes: "" });
               }}
-              className="w-full h-11 ds-label-caps tracking-wider bg-slate-900 text-white rounded-[var(--radius-card)] cursor-pointer hover:bg-slate-800 shadow-none"
+              className="w-full h-11 ds-label-caps tracking-wider bg-muted text-white rounded-[var(--radius-card)] cursor-pointer hover:bg-muted shadow-none"
             >
               Comprar outra passagem
             </Button>
@@ -1211,9 +1211,9 @@ function Page() {
         )}
         {/* Bottom Sticky Mobile CTA Bar */}
         {checkoutStep === "form" && (
-          <div className="lg:hidden fixed bottom-0 left-0 right-0 z-40 bg-white/95 backdrop-blur-md border-t border-slate-200 p-4 flex items-center justify-between shadow-[0_-4px_12px_rgba(0,0,0,0.08)] animate-in fade-in slide-in-from-bottom-5 duration-300">
+          <div className="lg:hidden fixed bottom-0 left-0 right-0 z-40 bg-white/95 backdrop-blur-md border-t border-border p-4 flex items-center justify-between shadow-[0_-4px_12px_rgba(0,0,0,0.08)] animate-in fade-in slide-in-from-bottom-5 duration-300">
             <div className="flex flex-col">
-              <span className="text-[9px] font-extrabold text-slate-400 uppercase tracking-wider leading-none">
+              <span className="text-[9px] font-extrabold text-foreground uppercase tracking-wider leading-none">
                 Subtotal
               </span>
               <span className="text-lg font-mono font-black text-[var(--color-brand)] mt-1">

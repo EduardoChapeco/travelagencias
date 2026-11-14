@@ -6,7 +6,7 @@ import { Field } from "@/components/ui/field";
 import { FormInput as Input } from "@/components/ui/input";
 import { NativeSelect as Select } from "@/components/ui/select";
 import { FormTextarea as Textarea } from "@/components/ui/textarea";
-import { SimpleSheet as Sheet } from "@/components/ui/sheet";
+import { SheetPage } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
 import { fetchTripPassengersMin, createBoardingCard } from "@/services/boarding";
 
@@ -67,13 +67,13 @@ export function NewCard({
   }
 
   return (
-    <Sheet onClose={onClose} title="Lançar Localizador no Embarque">
+    <SheetPage isOpen={true} onClose={onClose} title="Lançar Localizador no Embarque">
       <form onSubmit={submit} className="space-y-4">
         <Field label="Viagem Atrelada *">
-          <Select required value={tripId} onChange={(e) => setTripId(e.target.value)}>
-            <option value="">Selecione…</option>
+          <Select required value={tripId} onChange={(e) => setTripId(e.target.value)} className="h-9 rounded-xl bg-white/[0.04] border border-white/[0.08]">
+            <option value="" className="bg-[#12141c] text-white">Selecione…</option>
             {trips.map((t) => (
-              <option key={t.id} value={t.id}>
+              <option key={t.id} value={t.id} className="bg-[#12141c] text-white">
                 {t.code ? `${t.code} - ` : ""}
                 {t.title}
               </option>
@@ -100,26 +100,25 @@ export function NewCard({
               onChange={(e) => setDepartureDate(e.target.value)}
             />
           </Field>
-          <Field label="Nº de passageiros">
+          <Field label="Qtd. Passageiros">
             <Input
               type="number"
-              min={1}
               value={paxCount}
               onChange={(e) => setPaxCount(e.target.value)}
-              placeholder="10"
+              placeholder="Ex: 2"
             />
           </Field>
         </div>
-        <Field label="Alertas (um por linha)" hint="Ex: Passaporte vencendo, visto pendente">
+        <Field label="Alertas Especiais (1 por linha)">
           <Textarea
-            rows={2}
             value={alerts}
             onChange={(e) => setAlerts(e.target.value)}
-            placeholder="Passaporte do João vence em 30 dias\nVisto pendente para EUA"
+            rows={3}
+            placeholder="Ex: Assentos marcados na fila de emergência&#10;Bagagem despachada inclusa"
           />
         </Field>
-        <div className="rounded-2xl border border-border bg-surface-alt/40 p-3">
-          <div className="mb-1.5 ds-meta font-semibold text-muted-foreground">
+        <div className="rounded-2xl border border-white/[0.08] bg-[#12141c] p-3">
+          <div className="mb-1.5 text-xs font-semibold text-zinc-400">
             {passengersList.length > 0
               ? `Checklist gerado de ${passengersList.length} passageiros reais:`
               : "Checklist padrão gerado automaticamente:"}
@@ -129,28 +128,28 @@ export function NewCard({
               passengersList.map((p, i) => (
                 <div
                   key={i}
-                  className="flex items-center gap-1.5 ds-meta text-muted-foreground font-medium"
+                  className="flex items-center gap-1.5 text-xs text-zinc-300 font-medium"
                 >
                   <Square className="h-3 w-3 text-brand" /> {p.full_name}
                 </div>
               ))
             ) : (
-              <div className="flex items-center gap-1.5 ds-meta text-muted-foreground">
-                <AlertTriangle className="h-3 w-3 text-warning" /> Sem passageiros na viagem. Usando
+              <div className="flex items-center gap-1.5 text-xs text-amber-400">
+                <AlertTriangle className="h-3 w-3 text-amber-400" /> Sem passageiros na viagem. Usando
                 checklist genérico.
               </div>
             )}
           </div>
         </div>
-        <div className="flex justify-end gap-3 pt-4 border-t border-border/50">
-          <Button variant="ghost" type="button" onClick={onClose}>
+        <div className="flex justify-end gap-2 pt-4 border-t border-white/[0.08]">
+          <Button variant="ghost" type="button" onClick={onClose} className="h-9 px-4 rounded-full border border-white/[0.08] bg-white/[0.04] text-zinc-300 hover:text-white cursor-pointer">
             Cancelar
           </Button>
-          <Button variant="default" type="submit" disabled={submitting}>
+          <Button type="submit" disabled={submitting} className="h-9 px-5 rounded-full bg-white text-black font-semibold hover:bg-white/90 shadow-sm cursor-pointer disabled:opacity-50">
             {submitting ? "Processando…" : "Adicionar à Fila"}
           </Button>
         </div>
       </form>
-    </Sheet>
+    </SheetPage>
   );
 }

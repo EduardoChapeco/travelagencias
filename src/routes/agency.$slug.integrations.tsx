@@ -22,9 +22,10 @@ import {
   Clock,
   Calendar,
   History,
+  Users,
   X,
 } from "lucide-react";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { SheetPage } from "@/components/ui/sheet";
 import {
   fetchApiKeys,
   saveApiKey,
@@ -34,6 +35,7 @@ import {
   saveOperator,
   deleteOperator,
   testOperatorConnection,
+  resetOperatorCircuit,
   fetchIntegrationCredentials,
   saveIntegrationCredential,
 } from "@/services/settings";
@@ -95,36 +97,37 @@ function IntegrationsPage() {
   if (!agency) return null;
 
   return (
-    <div className="flex-1 overflow-y-auto p-4 md:p-6 pb-24 bg-background">
-      <Tabs defaultValue="ai" className="max-w-4xl">
-        <TabsList className="w-full justify-start rounded-none border-b border-border bg-transparent p-0 overflow-x-auto no-scrollbar flex-nowrap flex mb-6">
+    <div className="flex-1 overflow-y-auto w-full p-4 md:p-6 pb-24 bg-background">
+      <div className="w-full space-y-6 text-foreground">
+        <Tabs defaultValue="ai" className="w-full">
+          <TabsList className="flex items-center gap-1 bg-white/[0.04] border border-white/[0.08] p-1 h-9 rounded-full overflow-x-auto no-scrollbar max-w-full shrink-0 mb-6">
           <TabsTrigger
             value="ai"
-            className="relative rounded-none border-b-2 border-transparent px-4 pb-3 pt-2 text-sm font-semibold text-muted-foreground shadow-none data-[state=active]:border-brand data-[state=active]:text-foreground data-[state=active]:shadow-none shrink-0 flex items-center gap-1.5 cursor-pointer"
+            className="px-3.5 h-7 rounded-full text-xs font-medium whitespace-nowrap text-zinc-400 data-[state=active]:bg-white data-[state=active]:text-black data-[state=active]:font-semibold transition-all duration-150 flex items-center gap-1.5 cursor-pointer"
           >
             <Cpu className="h-3.5 w-3.5" /> IA
           </TabsTrigger>
           <TabsTrigger
             value="comms"
-            className="relative rounded-none border-b-2 border-transparent px-4 pb-3 pt-2 text-sm font-semibold text-muted-foreground shadow-none data-[state=active]:border-brand data-[state=active]:text-foreground data-[state=active]:shadow-none shrink-0 flex items-center gap-1.5 cursor-pointer"
+            className="px-3.5 h-7 rounded-full text-xs font-medium whitespace-nowrap text-zinc-400 data-[state=active]:bg-white data-[state=active]:text-black data-[state=active]:font-semibold transition-all duration-150 flex items-center gap-1.5 cursor-pointer"
           >
             <MessageCircle className="h-3.5 w-3.5" /> Comunicação
           </TabsTrigger>
           <TabsTrigger
             value="whatsapp"
-            className="relative rounded-none border-b-2 border-transparent px-4 pb-3 pt-2 text-sm font-semibold text-muted-foreground shadow-none data-[state=active]:border-brand data-[state=active]:text-foreground data-[state=active]:shadow-none shrink-0 flex items-center gap-1.5 cursor-pointer"
+            className="px-3.5 h-7 rounded-full text-xs font-medium whitespace-nowrap text-zinc-400 data-[state=active]:bg-white data-[state=active]:text-black data-[state=active]:font-semibold transition-all duration-150 flex items-center gap-1.5 cursor-pointer"
           >
             <Zap className="h-3.5 w-3.5" /> WhatsApp
           </TabsTrigger>
           <TabsTrigger
             value="apikeys"
-            className="relative rounded-none border-b-2 border-transparent px-4 pb-3 pt-2 text-sm font-semibold text-muted-foreground shadow-none data-[state=active]:border-brand data-[state=active]:text-foreground data-[state=active]:shadow-none shrink-0 flex items-center gap-1.5 cursor-pointer"
+            className="px-3.5 h-7 rounded-full text-xs font-medium whitespace-nowrap text-zinc-400 data-[state=active]:bg-white data-[state=active]:text-black data-[state=active]:font-semibold transition-all duration-150 flex items-center gap-1.5 cursor-pointer"
           >
             <KeyRound className="h-3.5 w-3.5" /> Parâmetros de Conexão
           </TabsTrigger>
           <TabsTrigger
             value="infotravel"
-            className="relative rounded-none border-b-2 border-transparent px-4 pb-3 pt-2 text-sm font-semibold text-muted-foreground shadow-none data-[state=active]:border-brand data-[state=active]:text-foreground data-[state=active]:shadow-none shrink-0 flex items-center gap-1.5 cursor-pointer"
+            className="px-3.5 h-7 rounded-full text-xs font-medium whitespace-nowrap text-zinc-400 data-[state=active]:bg-white data-[state=active]:text-black data-[state=active]:font-semibold transition-all duration-150 flex items-center gap-1.5 cursor-pointer"
           >
             <Wifi className="h-3.5 w-3.5" /> Operadora Infotravel
           </TabsTrigger>
@@ -161,6 +164,7 @@ function IntegrationsPage() {
           <InfotravelTab agencyId={agency.id} />
         </TabsContent>
       </Tabs>
+      </div>
     </div>
   );
 }
@@ -996,6 +1000,11 @@ function InfotravelTab({ agencyId }: { agencyId: string }) {
   const [backfillStart, setBackfillStart] = useState(thirtyDaysAgoStr);
   const [backfillEnd, setBackfillEnd] = useState(todayStr);
   const [selectedOperatorId, setSelectedOperatorId] = useState<string | null>(null);
+  const [directBookingId, setDirectBookingId] = useState("");
+  const [directBookingTitle, setDirectBookingTitle] = useState("");
+  const [directBookingPaxName, setDirectBookingPaxName] = useState("");
+  const [importDirectBusy, setImportDirectBusy] = useState(false);
+  const [syncClientsBusy, setSyncClientsBusy] = useState(false);
 
   const qc = useQueryClient();
   const { confirm, ConfirmDialog } = useConfirm();
@@ -1019,23 +1028,23 @@ function InfotravelTab({ agencyId }: { agencyId: string }) {
     enabled: !!editingOperatorId,
   });
 
-  // Quando abre edição, pré-preenche o formulário com os dados salvos
+  // Quando abre edição, pré-preenche o formulário diretamente dos dados protegidos
   useEffect(() => {
-    if (editingOperatorId && editCredentialsQuery.data && editCredentialsQuery.data.length > 0) {
-      const getVal = (p: string) =>
-        editCredentialsQuery.data.find((k) => k.provider === p)?.key_value || "";
-      const op = operatorsQuery.data?.find((o) => o.operator_id === editingOperatorId);
-      setForm({
-        operator_name: op?.operator_name || "",
-        infotravel_url: getVal("infotravel_url") || "http://api.infotravel.com.br/api/v1",
-        infotravel_username: getVal("infotravel_username"),
-        infotravel_password: getVal("infotravel_password"),
-        infotravel_client: getVal("infotravel_client"),
-        infotravel_agency: getVal("infotravel_agency"),
-        markup: getVal("infotravel_markup") || "0",
-      });
+    if (editingOperatorId && operatorsQuery.data) {
+      const op = operatorsQuery.data.find((o) => o.operator_id === editingOperatorId);
+      if (op) {
+        setForm({
+          operator_name: op.operator_name || "",
+          infotravel_url: op.infotravel_url || "https://reservas.incomumviagens.com.br/api/v1",
+          infotravel_username: op.infotravel_username || "",
+          infotravel_password: op.has_password ? "••••••••" : "",
+          infotravel_client: op.infotravel_client || "",
+          infotravel_agency: op.infotravel_agency || "",
+          markup: String(op.markup || 0),
+        });
+      }
     }
-  }, [editingOperatorId, editCredentialsQuery.data]);
+  }, [editingOperatorId, operatorsQuery.data]);
 
   // Query de histórico de execuções (sync_jobs)
   const jobsQuery = useQuery({
@@ -1115,20 +1124,60 @@ function InfotravelTab({ agencyId }: { agencyId: string }) {
     });
   }
 
+  async function handleResetCircuit(operatorId: string) {
+    const toastId = toast.loading("Resetando disjuntor de segurança e reativando operadora...");
+    try {
+      await resetOperatorCircuit(agencyId, operatorId);
+      toast.success("Disjuntor de segurança resetado! Testando conexão...", { id: toastId });
+      qc.invalidateQueries({ queryKey: ["infotravel-operators", agencyId] });
+      await handleTestConnection(operatorId);
+    } catch (err: any) {
+      toast.error(err.message || "Erro ao reativar operadora", { id: toastId });
+    }
+  }
+
   async function handleTestConnection(operatorId: string) {
     setTestingId(operatorId);
-    const toastId = toast.loading("Testando conexão com a operadora...");
+    const toastId = toast.loading("Testando conexão com a operadora no servidor...");
     try {
       const result = await testOperatorConnection(agencyId, operatorId);
       if (result.success) {
         toast.success(result.message, { id: toastId });
+        qc.invalidateQueries({ queryKey: ["infotravel-operators", agencyId] });
       } else {
         toast.error(result.message, { id: toastId });
+        qc.invalidateQueries({ queryKey: ["infotravel-operators", agencyId] });
       }
     } catch (err: any) {
       toast.error(err.message || "Erro ao testar conexão", { id: toastId });
+      qc.invalidateQueries({ queryKey: ["infotravel-operators", agencyId] });
     } finally {
       setTestingId(null);
+    }
+  }
+
+  async function handleSyncClients() {
+    if (!activeOperator) {
+      toast.error("Selecione uma operadora ativa para sincronizar clientes.");
+      return;
+    }
+    setSyncClientsBusy(true);
+    const toastId = toast.loading(`Sincronizando clientes da operadora ${activeOperator.operator_name}...`);
+    try {
+      const { data, error } = await supabase.functions.invoke("infotravel-connector", {
+        body: {
+          action: "sync_clients",
+          agencyId,
+          operatorId: activeOperator.operator_id,
+        },
+      });
+      if (error) throw error;
+      toast.success(data?.message || `${data?.total_synced || 0} clientes sincronizados com sucesso!`, { id: toastId });
+      qc.invalidateQueries({ queryKey: ["clients", agencyId] });
+    } catch (err: any) {
+      toast.error(err.message || "Erro ao sincronizar clientes da operadora", { id: toastId });
+    } finally {
+      setSyncClientsBusy(false);
     }
   }
 
@@ -1192,6 +1241,48 @@ function InfotravelTab({ agencyId }: { agencyId: string }) {
       toast.error(err.message || "Erro ao sincronizar reservas", { id: toastId });
     } finally {
       setSyncBusy(false);
+    }
+  }
+
+  async function handleImportDirectBooking() {
+    if (!directBookingId.trim()) {
+      toast.error("Informe o número ou localizador da reserva da operadora.");
+      return;
+    }
+    if (!activeOperator) {
+      toast.error("Selecione uma operadora ativa.");
+      return;
+    }
+    setImportDirectBusy(true);
+    const cleanBooking = directBookingId.trim();
+    const toastId = toast.loading(
+      `Importando reserva #${cleanBooking} da ${activeOperator.operator_name}...`,
+    );
+    try {
+      const { data, error } = await supabase.functions.invoke("infotravel-connector", {
+        body: {
+          action: "import_booking",
+          agencyId,
+          operatorId: activeOperator.operator_id,
+          params: { bookingId: cleanBooking },
+        },
+      });
+      if (error) throw error;
+
+      toast.success(
+        `Reserva #${cleanBooking} importada com sucesso! Viagem, Contrato, Vouchers e Financeiro sincronizados.`,
+        { id: toastId },
+      );
+      setDirectBookingId("");
+      setDirectBookingTitle("");
+      setDirectBookingPaxName("");
+      jobsQuery.refetch();
+      qc.invalidateQueries({ queryKey: ["trips", agencyId] });
+      qc.invalidateQueries({ queryKey: ["clients", agencyId] });
+    } catch (err: any) {
+      toast.error(err.message || "Erro ao importar reserva.", { id: toastId });
+    } finally {
+      setImportDirectBusy(false);
     }
   }
 
@@ -1287,45 +1378,55 @@ function InfotravelTab({ agencyId }: { agencyId: string }) {
             <div className="col-span-2">
               <Field
                 label="URL da API (Endpoint da Operadora)"
-                hint="Link fornecido pela operadora — ex: https://reservas.incomumviagens.com.br/api/v1"
+                hint="Link da operadora — ex: https://reservas.incomumviagens.com.br/infotravel/api/v1 ou https://reservas.incomumviagens.com.br/api/v1"
               >
                 <Input
-                  placeholder="https://reservas.suaoperadora.com.br/api/v1"
+                  placeholder="https://reservas.suaoperadora.com.br/infotravel/api/v1"
                   value={form.infotravel_url}
                   onChange={(e) => setForm({ ...form, infotravel_url: e.target.value })}
                   required
                 />
               </Field>
             </div>
-            <Field label="Usuário de Integração">
+            <Field label="Usuário de Integração" hint="Usuário de login fornecido pela operadora">
               <Input
-                placeholder="Usuário fornecido pela operadora..."
+                placeholder="Ex: excelenciatour.smo"
                 value={form.infotravel_username}
                 onChange={(e) => setForm({ ...form, infotravel_username: e.target.value })}
                 required
               />
             </Field>
-            <Field label="Senha de Integração">
+            <Field
+              label="Senha de Integração"
+              hint={editingOperatorId ? "Deixe em branco ou '••••••••' para manter a senha atual salva" : "Senha fornecida pela operadora"}
+            >
               <Input
                 type="password"
-                placeholder="Senha fornecida pela operadora..."
+                placeholder={editingOperatorId ? "•••••••• (senha salva — digite para alterar)" : "Senha da API"}
                 value={form.infotravel_password}
                 onChange={(e) => setForm({ ...form, infotravel_password: e.target.value })}
+                required={!editingOperatorId}
+              />
+            </Field>
+            <Field
+              label="Código da Agência (AGENCY_ID)"
+              hint="Código da agência no Infotravel (ex: 235868)"
+            >
+              <Input
+                placeholder="Ex: 235868"
+                value={form.infotravel_agency}
+                onChange={(e) => setForm({ ...form, infotravel_agency: e.target.value })}
                 required
               />
             </Field>
-            <Field label="Código do Cliente (client_id)" hint="Identificador de cliente na API">
+            <Field
+              label="Código do Usuário/Cliente (CLIENT_ID)"
+              hint="Opcional (ex: 235869) — se sua operadora passou apenas um ID, deixe vazio ou repita o ID da agência"
+            >
               <Input
-                placeholder="Ex: 1234"
+                placeholder="Ex: 235869 (opcional)"
                 value={form.infotravel_client}
                 onChange={(e) => setForm({ ...form, infotravel_client: e.target.value })}
-              />
-            </Field>
-            <Field label="Código da Agência (agency_id)" hint="Identificador de sua agência">
-              <Input
-                placeholder="Ex: 5678"
-                value={form.infotravel_agency}
-                onChange={(e) => setForm({ ...form, infotravel_agency: e.target.value })}
               />
             </Field>
             <Field
@@ -1335,7 +1436,7 @@ function InfotravelTab({ agencyId }: { agencyId: string }) {
               <Input
                 type="number"
                 step="0.01"
-                placeholder="Ex: 15.00"
+                placeholder="Ex: 14.00"
                 value={form.markup}
                 onChange={(e) => setForm({ ...form, markup: e.target.value })}
               />
@@ -1343,7 +1444,7 @@ function InfotravelTab({ agencyId }: { agencyId: string }) {
           </div>
 
           <div className="flex gap-2 pt-2">
-            <Button variant="default" disabled={formBusy} className="flex-1">
+            <Button disabled={formBusy} className="flex-1 h-10 rounded-full bg-white text-black font-semibold text-sm hover:bg-white/90 shadow-sm cursor-pointer">
               {formBusy
                 ? "Salvando..."
                 : editingOperatorId
@@ -1360,7 +1461,7 @@ function InfotravelTab({ agencyId }: { agencyId: string }) {
           Carregando operadoras...
         </div>
       ) : operators.length === 0 && !showForm ? (
-        <div className="rounded-[var(--radius-card)] border border-dashed border-border glass-card border-none/50 p-10 text-center space-y-3">
+        <div className="rounded-2xl border border-dashed border-white/10 bg-[#12141c]/50 p-10 text-center space-y-3">
           <WifiOff className="h-8 w-8 text-muted-foreground/30 mx-auto" />
           <p className="text-sm font-semibold text-foreground">Nenhuma operadora configurada</p>
           <p className="text-xs text-muted-foreground max-w-sm mx-auto leading-relaxed font-sans">
@@ -1376,26 +1477,28 @@ function InfotravelTab({ agencyId }: { agencyId: string }) {
               onClick={() => {
                 if (!showForm) setSelectedOperatorId(op.operator_id);
               }}
-              className={`rounded-[var(--radius-card)] border glass-card border-none p-4 transition-all cursor-pointer ${
+              className={`rounded-2xl border bg-[#12141c] p-4 transition-all cursor-pointer ${
                 selectedOperatorId === op.operator_id
-                  ? "border-brand ring-1 ring-brand/30"
-                  : "border-border hover:border-brand/30"
+                  ? "border-white/30 ring-1 ring-white/20"
+                  : "border-white/[0.08] hover:border-white/20"
               }`}
             >
               <div className="flex items-center justify-between gap-3">
                 <div className="flex items-center gap-3 min-w-0">
-                  <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-[var(--radius-card)] bg-brand/10 border border-brand/20">
-                    <Wifi className="h-4 w-4 text-brand" />
+                  <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-white/5 border border-white/10">
+                    <Wifi className="h-4 w-4 text-white" />
                   </div>
                   <div className="min-w-0">
                     <div className="font-semibold text-sm text-foreground truncate">
                       {op.operator_name}
                     </div>
-                    <div className="ds-meta text-muted-foreground font-sans flex flex-wrap items-center gap-x-2 gap-y-1 mt-0.5">
+                    <div className="text-xs text-muted-foreground font-sans flex flex-wrap items-center gap-x-2 gap-y-1 mt-0.5">
                       {op.is_active ? (
-                        <span className="text-emerald-600 font-semibold">● Ativa</span>
+                        <span className="text-emerald-400 font-semibold">● Ativa</span>
                       ) : (
-                        <span className="text-muted-foreground">○ Inativa</span>
+                        <span className="text-rose-400 font-semibold bg-rose-500/10 px-2 py-0.5 rounded-full border border-rose-500/20">
+                          🛑 Pausada pelo Disjuntor de Segurança
+                        </span>
                       )}
                       {op.updated_at && (
                         <span>
@@ -1404,72 +1507,91 @@ function InfotravelTab({ agencyId }: { agencyId: string }) {
                       )}
                       {op.last_sync_at && (
                         <span>
-                          · Último Sync: {new Date(op.last_sync_at).toLocaleString("pt-BR")}
+                          · Último Teste: {new Date(op.last_sync_at).toLocaleString("pt-BR")}
                         </span>
                       )}
-                      {op.last_sync_error ? (
-                        <span
-                          className="text-rose-600 bg-rose-50 dark:bg-rose-950/20 px-1.5 py-0.5 rounded border border-rose-200 dark:border-rose-900/40 font-semibold flex items-center gap-0.5 select-none"
-                          title={op.last_sync_error}
-                        >
-                          <AlertCircle className="h-3 w-3 shrink-0" />
-                          Falha na Conexão
-                        </span>
-                      ) : op.last_sync_at ? (
-                        <span className="text-emerald-600 bg-emerald-50 dark:bg-emerald-950/20 px-1.5 py-0.5 rounded border border-emerald-200 dark:border-emerald-900/40 font-semibold flex items-center gap-0.5 select-none">
-                          <CheckCircle className="h-3 w-3 shrink-0" />
-                          Conexão Saudável
-                        </span>
-                      ) : null}
                     </div>
                   </div>
                 </div>
 
                 <div className="flex items-center gap-2 shrink-0">
+                  {!op.is_active ? (
+                    <Button
+                      type="button"
+                      variant="default"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleResetCircuit(op.operator_id);
+                      }}
+                      className="flex items-center gap-1.5 h-8 px-3 rounded-full bg-white text-black hover:bg-white/90 shadow-sm text-xs font-semibold cursor-pointer"
+                    >
+                      <RefreshCw className="h-3.5 w-3.5" />
+                      Reativar e Testar
+                    </Button>
+                  ) : (
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleTestConnection(op.operator_id);
+                      }}
+                      disabled={testingId === op.operator_id}
+                      className="flex items-center gap-1.5 h-8 px-3 rounded-full bg-white/[0.04] text-zinc-300 hover:text-white border border-white/[0.08] hover:bg-white/[0.08] text-xs font-semibold cursor-pointer"
+                    >
+                      {testingId === op.operator_id ? (
+                        <RefreshCw className="h-3.5 w-3.5 animate-spin" />
+                      ) : (
+                        <Zap className="h-3.5 w-3.5" />
+                      )}
+                      Testar
+                    </Button>
+                  )}
                   <Button
                     type="button"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      handleTestConnection(op.operator_id);
-                    }}
-                    disabled={testingId === op.operator_id}
-                    className="flex items-center gap-1 px-2.5 py-1.5 rounded-[var(--radius-card)] border-none ds-meta font-semibold text-muted-foreground hover:border-brand/40 hover:text-brand transition-all disabled:opacity-50 cursor-pointer"
-                  >
-                    {testingId === op.operator_id ? (
-                      <RefreshCw className="h-3 w-3 animate-spin" />
-                    ) : (
-                      <Zap className="h-3 w-3" />
-                    )}
-                    Testar
-                  </Button>
-                  <Button
-                    type="button"
+                    variant="ghost"
                     onClick={(e) => {
                       e.stopPropagation();
                       setAddingNew(false);
                       setEditingOperatorId(op.operator_id);
                     }}
-                    className="flex items-center gap-1 px-2.5 py-1.5 rounded-[var(--radius-card)] border-none ds-meta font-semibold text-muted-foreground hover:border-brand/40 hover:text-brand transition-all cursor-pointer"
+                    className="flex items-center gap-1.5 h-8 px-3 rounded-full bg-white/[0.04] text-zinc-300 hover:text-white border border-white/[0.08] hover:bg-white/[0.08] text-xs font-semibold cursor-pointer"
                   >
                     Editar
                   </Button>
                   <Button
                     type="button"
+                    variant="ghost"
                     onClick={(e) => {
                       e.stopPropagation();
                       handleDeleteOperator(op.operator_id, op.operator_name);
                     }}
-                    className="flex items-center gap-1 px-2.5 py-1.5 rounded-[var(--radius-card)] border border-danger/20 ds-meta font-semibold text-danger/70 hover:bg-danger/10 hover:text-danger transition-all cursor-pointer"
+                    className="flex items-center justify-center h-8 w-8 p-0 rounded-full text-zinc-400 hover:text-rose-400 hover:bg-rose-500/10 border border-white/[0.08] cursor-pointer"
                   >
-                    <Trash2 className="h-3 w-3" />
+                    <Trash2 className="h-3.5 w-3.5" />
                   </Button>
                 </div>
               </div>
 
+              {op.last_sync_error && (
+                <div className="mt-3 p-3 rounded-xl bg-rose-500/10 border border-rose-500/20 text-xs text-rose-300 font-sans space-y-1.5">
+                  <div className="font-semibold flex items-center gap-1.5 text-rose-200">
+                    <AlertCircle className="h-3.5 w-3.5 shrink-0 text-rose-400" />
+                    Diagnóstico Oficial da Operadora:
+                  </div>
+                  <div className="text-rose-300/90 leading-relaxed font-mono text-[11px] bg-black/30 p-2 rounded-lg break-words">
+                    {op.last_sync_error}
+                  </div>
+                  <div className="text-[11px] text-zinc-400 leading-normal">
+                    💡 <strong>Como resolver:</strong> Contate o suporte da operadora e solicite a ativação da permissão de Webservice/API para o seu usuário.
+                  </div>
+                </div>
+              )}
+
               {selectedOperatorId === op.operator_id && (
-                <div className="mt-2 pt-2 border-t border-border/50">
-                  <span className="ds-meta text-brand font-semibold uppercase tracking-wider">
-                    ✓ Operadora selecionada para sincronização
+                <div className="mt-2 pt-2 border-t border-white/[0.08]">
+                  <span className="text-xs text-zinc-300 font-semibold uppercase tracking-wider">
+                    ✓ Operadora selecionada para cotação e sincronização
                   </span>
                 </div>
               )}
@@ -1480,13 +1602,13 @@ function InfotravelTab({ agencyId }: { agencyId: string }) {
 
       {/* Painel de Controle de Sincronização */}
       <div
-        className={`border-t border-border/60 pt-8 space-y-6 ${
+        className={`border-t border-white/[0.08] pt-8 space-y-6 ${
           !isConfigured ? "opacity-50 pointer-events-none" : ""
         }`}
       >
         <div>
           <h3 className="text-sm font-bold text-foreground flex items-center gap-2">
-            <Cpu className="h-4 w-4 text-brand" /> Painel de Sincronização de Reservas
+            <Cpu className="h-4 w-4 text-white" /> Painel de Sincronização de Reservas
           </h3>
           {activeOperator && (
             <p className="text-xs text-muted-foreground mt-0.5 font-sans">
@@ -1495,26 +1617,84 @@ function InfotravelTab({ agencyId }: { agencyId: string }) {
           )}
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          {/* Lado Esquerdo: Backfill */}
-          <div className="rounded-[var(--radius-card)] border-none glass-card border-none p-5 flex flex-col justify-between">
-            <div className="space-y-3">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+          {/* Card 1: Importar Direto por Localizador */}
+          <div className="rounded-2xl border border-white/[0.08] bg-[#12141c] p-4 flex flex-col justify-between">
+            <div className="space-y-2.5">
               <span className="text-xs font-bold text-foreground flex items-center gap-1.5">
-                <Calendar className="h-4 w-4 text-brand" /> Importar Reservas Anteriores (Lote)
+                <Zap className="h-4 w-4 text-white" /> Importar Reserva (1-Clique)
               </span>
-              <p className="text-xs text-muted-foreground leading-relaxed font-sans">
-                Importa automaticamente as reservas criadas na operadora parceira dentro de um
-                período selecionado.
+              <p className="text-[11px] text-muted-foreground leading-relaxed font-sans">
+                Insira o localizador da operadora para sincronizar Viagem, Contratos, Vouchers e Financeiro.
               </p>
-              <div className="grid grid-cols-2 gap-2 pt-2">
-                <Field label="Período Inicial">
+              <div className="space-y-2 pt-1">
+                <Field label="Localizador / ID da Reserva *">
+                  <Input
+                    type="text"
+                    placeholder="Ex: 235868-9941 ou 9941"
+                    value={directBookingId}
+                    onChange={(e) => setDirectBookingId(e.target.value)}
+                  />
+                </Field>
+              </div>
+            </div>
+            <Button
+              type="button"
+              disabled={importDirectBusy || !isConfigured || !directBookingId.trim()}
+              onClick={handleImportDirectBooking}
+              className="mt-3 flex h-8 items-center justify-center gap-2 rounded-full bg-white text-black text-xs font-semibold hover:bg-white/90 shadow-sm transition-all disabled:opacity-50 cursor-pointer"
+            >
+              {importDirectBusy ? (
+                <RefreshCw className="h-3 w-3 animate-spin" />
+              ) : (
+                <Zap className="h-3 w-3" />
+              )}
+              Importar Reserva
+            </Button>
+          </div>
+
+          {/* Card 2: Sincronizar Clientes da Operadora */}
+          <div className="rounded-2xl border border-white/[0.08] bg-[#12141c] p-4 flex flex-col justify-between">
+            <div className="space-y-2.5">
+              <span className="text-xs font-bold text-foreground flex items-center gap-1.5">
+                <Users className="h-4 w-4 text-white" /> Carteira de Clientes
+              </span>
+              <p className="text-[11px] text-muted-foreground leading-relaxed font-sans">
+                Puxa e sincroniza todos os clientes cadastrados no GDS Infotravel com CPFs, e-mails e contatos.
+              </p>
+              <div className="rounded-xl bg-white/[0.02] border border-white/[0.06] p-2.5 text-muted-foreground leading-normal font-sans text-[11px]">
+                <ShieldCheck className="inline h-3.5 w-3.5 mr-1 text-white shrink-0 align-text-bottom" />
+                Deduplica automaticamente por CPF e e-mail sem sobrescrever dados manuais.
+              </div>
+            </div>
+            <Button
+              type="button"
+              disabled={syncClientsBusy || !isConfigured}
+              onClick={handleSyncClients}
+              className="mt-3 flex h-8 items-center justify-center gap-2 rounded-full bg-white/[0.06] hover:bg-white/[0.12] text-xs font-semibold text-foreground border border-white/10 transition-all disabled:opacity-50 cursor-pointer"
+            >
+              <RefreshCw className={`h-3 w-3 ${syncClientsBusy ? "animate-spin" : ""}`} /> Sincronizar Clientes
+            </Button>
+          </div>
+
+          {/* Card 3: Backfill Histórico */}
+          <div className="rounded-2xl border border-white/[0.08] bg-[#12141c] p-4 flex flex-col justify-between">
+            <div className="space-y-2.5">
+              <span className="text-xs font-bold text-foreground flex items-center gap-1.5">
+                <Calendar className="h-4 w-4 text-brand" /> Importar em Lote
+              </span>
+              <p className="text-[11px] text-muted-foreground leading-relaxed font-sans">
+                Importa automaticamente todas as reservas criadas na operadora dentro do período.
+              </p>
+              <div className="grid grid-cols-2 gap-1.5 pt-1">
+                <Field label="Início">
                   <Input
                     type="date"
                     value={backfillStart}
                     onChange={(e) => setBackfillStart(e.target.value)}
                   />
                 </Field>
-                <Field label="Período Final">
+                <Field label="Fim">
                   <Input
                     type="date"
                     value={backfillEnd}
@@ -1527,35 +1707,33 @@ function InfotravelTab({ agencyId }: { agencyId: string }) {
               type="button"
               disabled={syncBusy || !isConfigured}
               onClick={handleRunBackfill}
-              className="mt-4 flex h-9 items-center justify-center gap-2 rounded-[var(--radius-card)] bg-brand/10 text-xs font-bold text-brand hover:bg-brand/20 transition-all border border-brand/20 disabled:opacity-50 cursor-pointer"
+              className="mt-3 flex h-8 items-center justify-center gap-2 rounded-full bg-white/[0.06] hover:bg-white/[0.12] text-xs font-semibold text-foreground border border-white/10 transition-all disabled:opacity-50 cursor-pointer"
             >
-              <Play className="h-3.5 w-3.5" /> Iniciar Importação de Reservas
+              <Play className="h-3.5 w-3.5" /> Iniciar Lote
             </Button>
           </div>
 
-          {/* Lado Direito: Polling Engine */}
-          <div className="rounded-[var(--radius-card)] border-none glass-card border-none p-5 flex flex-col justify-between">
-            <div className="space-y-3">
+          {/* Card 4: Polling Engine */}
+          <div className="rounded-2xl border border-white/[0.08] bg-[#12141c] p-4 flex flex-col justify-between">
+            <div className="space-y-2.5">
               <span className="text-xs font-bold text-foreground flex items-center gap-1.5">
-                <RefreshCw className="h-4 w-4 text-brand" /> Sincronizador de Reservas
+                <RefreshCw className="h-4 w-4 text-white" /> Sincronizador Ativo
               </span>
-              <p className="text-xs text-muted-foreground leading-relaxed font-sans">
-                Verifica viagens com embarque nos próximos 30 dias. Atualiza status, vouchers e
-                bilhetes emitidos.
+              <p className="text-[11px] text-muted-foreground leading-relaxed font-sans">
+                Verifica viagens dos próximos 30 dias. Atualiza status, vouchers e bilhetes emitidos.
               </p>
-              <div className="rounded-[var(--radius-card)] glass/40 p-3 border-none/40 ds-meta text-muted-foreground leading-normal font-sans">
-                <Clock className="inline h-3.5 w-3.5 mr-1 text-brand shrink-0 align-text-bottom" />O
-                sistema realiza esta atualização automaticamente a cada 4 horas.
+              <div className="rounded-xl bg-white/[0.02] border border-white/[0.06] p-2.5 text-muted-foreground leading-normal font-sans text-[11px]">
+                <Clock className="inline h-3.5 w-3.5 mr-1 text-white shrink-0 align-text-bottom" />
+                Atualização automática periódica a cada 4 horas.
               </div>
             </div>
             <Button
               type="button"
               disabled={syncBusy || !isConfigured}
               onClick={handleRunPolling}
-              className="mt-4 flex h-9 items-center justify-center gap-2 rounded-[var(--radius-card)] glass hover:glass/80 text-xs font-bold text-foreground border-none transition-all disabled:opacity-50 cursor-pointer"
+              className="mt-3 flex h-8 items-center justify-center gap-2 rounded-full bg-white/[0.06] hover:bg-white/[0.12] text-xs font-semibold text-foreground border border-white/10 transition-all disabled:opacity-50 cursor-pointer"
             >
-              <RefreshCw className={`h-3.5 w-3.5 ${syncBusy ? "animate-spin" : ""}`} /> Atualizar
-              Viagens Ativas
+              <RefreshCw className={`h-3.5 w-3.5 ${syncBusy ? "animate-spin" : ""}`} /> Atualizar Viagens
             </Button>
           </div>
         </div>
@@ -1666,16 +1844,16 @@ function InfotravelTab({ agencyId }: { agencyId: string }) {
       </div>
 
       {/* Modal de Detalhes de Erros */}
-      <Dialog
-        open={!!errorDetailsJobId && !!selectedJobForError}
-        onOpenChange={(open) => !open && setErrorDetailsJobId(null)}
+      <SheetPage
+        isOpen={!!errorDetailsJobId && !!selectedJobForError}
+        onClose={() => setErrorDetailsJobId(null)}
+        title={
+          <div className="flex items-center gap-1.5 text-danger">
+            <AlertCircle className="h-5 w-5" /> Relatório de Ocorrências no Processamento
+          </div>
+        }
+        contentClassName="p-0"
       >
-        <DialogContent className="max-w-2xl p-0 overflow-hidden border-none/10 max-h-[80vh] bg-background">
-          <DialogHeader className="px-6 py-4 border-b border-border/80">
-            <DialogTitle className="text-md font-bold text-foreground flex items-center gap-1.5 text-danger">
-              <AlertCircle className="h-5 w-5" /> Relatório de Ocorrências no Processamento
-            </DialogTitle>
-          </DialogHeader>
 
           <div className="p-6 pt-2 flex flex-col h-full overflow-hidden">
             <div className="flex-1 overflow-y-auto space-y-3 pr-1 no-scrollbar">
@@ -1715,8 +1893,7 @@ function InfotravelTab({ agencyId }: { agencyId: string }) {
               </Button>
             </div>
           </div>
-        </DialogContent>
-      </Dialog>
+      </SheetPage>
     </div>
   );
 }

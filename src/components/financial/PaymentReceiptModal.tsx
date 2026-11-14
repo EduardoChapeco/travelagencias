@@ -49,8 +49,7 @@ function translatePaymentMethod(method: string | null | undefined): string {
   return method;
 }
 
-import { Dialog, DialogContent } from "@/components/ui/dialog";
-
+import { SheetPage } from "@/components/ui/sheet";
 export function PaymentReceiptModal({ isOpen, onClose, data }: PaymentReceiptModalProps) {
   const [isThermal, setIsThermal] = useState(() => {
     if (typeof window !== "undefined") {
@@ -277,8 +276,8 @@ export function PaymentReceiptModal({ isOpen, onClose, data }: PaymentReceiptMod
   };
 
   return (
-    <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
-      <DialogContent className="max-w-2xl p-0 gap-0 border-border bg-white shadow-2xl flex flex-col sm:rounded-2xl z-[100]">
+    <SheetPage isOpen={isOpen} onClose={() => onClose()} title="Recibo de Pagamento" contentClassName="p-0">
+      <div className="flex flex-col h-full bg-white relative">
         {/* Header Options */}
         <div className="flex items-center justify-between border-b border-border bg-slate-50 px-5 py-3.5">
           <div>
@@ -593,7 +592,7 @@ export function PaymentReceiptModal({ isOpen, onClose, data }: PaymentReceiptMod
             <ImageIcon className="h-3.5 w-3.5" /> Salvar Imagem
           </Button>
         </div>
-      </DialogContent>
-    </Dialog>
+      </div>
+    </SheetPage>
   );
 }

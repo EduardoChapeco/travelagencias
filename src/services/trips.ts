@@ -86,7 +86,7 @@ export async function fetchPaymentPlan(tripId: string): Promise<PaymentPlan[]> {
   const { data, error } = await supabase
     .from("payment_plans")
     .select("*, payment_installments(*)")
-    .eq("trip_id", tripId)
+    .or(`trip_id.eq.${tripId},group_enrollment_id.eq.${tripId}`)
     .order("created_at", { ascending: false });
   if (error) throw new Error(error.message);
   return (data ?? []) as unknown as PaymentPlan[];
@@ -96,7 +96,7 @@ export async function fetchAllPaymentPlans(tripId: string): Promise<PaymentPlan[
   const { data, error } = await supabase
     .from("payment_plans")
     .select("*, payment_installments(*)")
-    .eq("trip_id", tripId)
+    .or(`trip_id.eq.${tripId},group_enrollment_id.eq.${tripId}`)
     .order("created_at", { ascending: false });
   if (error) throw new Error(error.message);
   return (data ?? []) as unknown as PaymentPlan[];
@@ -232,6 +232,61 @@ export async function createPaymentPlan(payload: CreatePlanPayload): Promise<voi
   if (error) throw new Error(error.message);
   // agencyId is resolved server-side from p_trip_id (tenant isolation enforced by RPC)
   void agencyId;
+}
+
+export async function createGroupPaymentPlan(payload: CreatePlanPayload & { groupEnrollmentId: string; clientId: string }): Promise<void> {
+  const { agencyId, groupEnrollmentId, clientId, totalAmount, installmentsCount, method, firstDueDate, isThirdParty } = payload;
+  
+  // 1. Create Payment Plan
+  const { data: plan, error: planErr } = await supabase
+    .from("payment_plans")
+    .insert({
+      agency_id: agencyId,
+      group_enrollment_id: groupEnrollmentId,
+      client_id: clientId,
+      total_amount: totalAmount,
+      status: "active"
+    } as never)
+    .select()
+    .single();
+    
+  if (planErr) throw new Error(planErr.message);
+
+  // 2. Generate Installments
+  const installments = [];
+  const amountPerInst = totalAmount / installmentsCount;
+  const firstDate = new Date(firstDueDate);
+
+  for (let i = 0; i < installmentsCount; i++) {
+    const dueDate = new Date(firstDate);
+    dueDate.setMonth(dueDate.getMonth() + i);
+    installments.push({
+      agency_id: agencyId,
+      payment_plan_id: (plan as any).id,
+      amount: amountPerInst,
+      due_date: dueDate.toISOString().split("T")[0],
+      number: i + 1,
+      payment_method: method,
+      status: "pending",
+      receipt_status: "pending",
+      is_third_party: isThirdParty ?? false,
+      late_fee: 0,
+    });
+  }
+
+  const { error: instErr } = await supabase
+    .from("payment_installments")
+    .insert(installments as never);
+
+  if (instErr) throw new Error(instErr.message);
+
+  // 3. Link Plan to Enrollment
+  const { error: linkErr } = await supabase
+    .from("group_tour_enrollments")
+    .update({ payment_plan_id: (plan as any).id })
+    .eq("id", groupEnrollmentId);
+
+  if (linkErr) throw new Error(linkErr.message);
 }
 
 export async function markInstallmentPaid(instId: string): Promise<void> {

@@ -59,6 +59,32 @@ async function validateUserAgency(
   return { userId: user.id, role: roleData.role };
 }
 
+function getAuthCandidates(baseUrl: string): string[] {
+  let base = (baseUrl || "").trim().replace(/\/$/, "");
+  if (base.startsWith("http://")) {
+    base = base.replace(/^http:\/\//, "https://");
+  }
+
+  const candidates: string[] = [];
+
+  if (base.includes("/infotravel/api/v1")) {
+    candidates.push(`${base}/authenticate`);
+    candidates.push(base.replace("/infotravel/api/v1", "/api/v1/authenticate"));
+  } else if (base.includes("/api/v1")) {
+    candidates.push(`${base}/authenticate`);
+    candidates.push(base.replace("/api/v1", "/infotravel/api/v1/authenticate"));
+  } else if (base.includes("/infotravel")) {
+    candidates.push(`${base}/api/v1/authenticate`);
+    candidates.push(`${base}/authenticate`);
+  } else {
+    candidates.push(`${base}/infotravel/api/v1/authenticate`);
+    candidates.push(`${base}/api/v1/authenticate`);
+    candidates.push(`${base}/authenticate`);
+  }
+
+  return Array.from(new Set(candidates));
+}
+
 // ─── Teste de conexão Infotravel ────────────────────────────────────────────
 async function testInfotravelConnection(
   url: string,
@@ -66,7 +92,7 @@ async function testInfotravelConnection(
   password: string,
   client: string,
   agency: string,
-): Promise<{ success: boolean; message: string }> {
+): Promise<{ success: boolean; message: string; endpointUsed?: string }> {
   if (!username || !password) {
     return {
       success: false,
@@ -74,44 +100,75 @@ async function testInfotravelConnection(
     };
   }
 
-  try {
-    const authRes = await fetch(`${url}/login`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        login: username,
-        senha: password,
-        cliente: client,
-        agencia: agency,
-      }),
-    });
+  const u = username.trim();
+  const p = password.trim();
+  const a = (agency || "").trim();
+  const c = (client || "").trim() || a; // Se cliente estiver vazio, usa a agência como fallback
 
-    if (!authRes.ok) {
-      const errText = await authRes.text().catch(() => "");
+  const candidateUrls = getAuthCandidates(url || "https://api.infotravel.com.br/api/v1");
+  let lastError = "";
+
+  for (const endpoint of candidateUrls) {
+    try {
+      const authRes = await fetch(endpoint, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          username: u,
+          password: p,
+          client: c,
+          agency: a || c,
+        }),
+      });
+
+      if (authRes.status === 404) {
+        // Tenta o próximo candidato de URL
+        lastError = `Endpoint 404 em ${endpoint}`;
+        continue;
+      }
+
+      if (!authRes.ok) {
+        const errJson = await authRes.json().catch(() => null);
+        let detailMsg = "Credenciais não aceitas pela operadora.";
+        if (errJson && errJson.message) {
+          detailMsg = errJson.message.replace(/Requisition must be revised!\s*/i, "").trim();
+          if (errJson.exceptionCode) {
+            detailMsg += ` (Código ${errJson.exceptionCode})`;
+          }
+        } else if (authRes.status === 401 || authRes.status === 403) {
+          detailMsg = "Usuário, senha ou IDs incorretos ou não autorizados pela operadora.";
+        }
+        return {
+          success: false,
+          message: `Falha na operadora: ${detailMsg}`,
+          endpointUsed: endpoint,
+        };
+      }
+
+      const authData = await authRes.json().catch(() => ({}));
+      const token = authData?.accessToken || authData?.token || authData?.access_token;
+      if (!token) {
+        return {
+          success: false,
+          message: "Autenticação falhou: a API respondeu mas não retornou um token de acesso (accessToken).",
+          endpointUsed: endpoint,
+        };
+      }
+
       return {
-        success: false,
-        message: `Falha na autenticação (HTTP ${authRes.status}): ${errText.slice(0, 200)}`,
+        success: true,
+        message: "Conexão com a operadora Infotravel validada com sucesso! Token JWT recebido.",
+        endpointUsed: endpoint,
       };
+    } catch (err: any) {
+      lastError = `Erro de rede em ${endpoint}: ${err.message}`;
     }
-
-    const authData = await authRes.json();
-    if (!authData?.token && !authData?.access_token) {
-      return {
-        success: false,
-        message: "Autenticação falhou: a API não retornou um token de acesso válido.",
-      };
-    }
-
-    return {
-      success: true,
-      message: "Conexão estabelecida com sucesso! Credenciais validadas.",
-    };
-  } catch (err: any) {
-    return {
-      success: false,
-      message: `Erro de rede ao tentar conectar: ${err.message}`,
-    };
   }
+
+  return {
+    success: false,
+    message: `Não foi possível conectar aos servidores da operadora. Último erro: ${lastError}`,
+  };
 }
 
 // ─── Handler principal ──────────────────────────────────────────────────────
@@ -308,33 +365,65 @@ serve(async (req) => {
     }
 
     // ── AÇÃO: list-operators ───────────────────────────────────────────────
-    // Lista todas as operadoras Infotravel cadastradas (agrupadas por operator_id)
+    // Lista todas as operadoras Infotravel cadastradas (com senhas mascaradas no servidor)
     if (action === "list-operators") {
-      const { data, error } = await admin
+      const { data: keys, error } = await admin
         .from("api_keys")
-        .select("operator_id, operator_name, is_active, updated_at, last_sync_error, last_sync_at")
+        .select("id, provider, key_value, operator_id, operator_name, is_active, updated_at, last_sync_error, last_sync_at, created_at")
         .eq("agency_id", agencyId)
         .eq("category", "infotravel_operator")
         .not("operator_id", "is", null)
-        .order("operator_name", { ascending: true });
+        .order("created_at", { ascending: true });
 
       if (error) throw error;
 
-      // Deduplicate por operator_id
-      const seen = new Set<string>();
-      const operators = (data ?? []).filter((row) => {
-        if (!row.operator_id || seen.has(row.operator_id)) return false;
-        seen.add(row.operator_id);
-        return true;
-      });
+      const map = new Map<string, any>();
 
-      return new Response(JSON.stringify({ success: true, operators }), {
+      for (const k of keys ?? []) {
+        const opId = k.operator_id;
+        if (!opId) continue;
+
+        if (!map.has(opId)) {
+          map.set(opId, {
+            id: k.id,
+            operator_id: opId,
+            operator_name: k.operator_name || "Operadora Infotravel",
+            infotravel_url: "",
+            infotravel_username: "",
+            infotravel_password: "",
+            has_password: false,
+            infotravel_client: "",
+            infotravel_agency: "",
+            markup: 0,
+            is_active: k.is_active ?? true,
+            created_at: k.created_at,
+            last_sync_at: k.last_sync_at,
+            last_sync_error: k.last_sync_error,
+          });
+        }
+
+        const op = map.get(opId)!;
+        if (k.provider === "infotravel_url") op.infotravel_url = k.key_value;
+        if (k.provider === "infotravel_username") op.infotravel_username = k.key_value;
+        if (k.provider === "infotravel_password") {
+          op.has_password = !!k.key_value && k.key_value.trim().length > 0;
+          op.infotravel_password = op.has_password ? "••••••••" : "";
+        }
+        if (k.provider === "infotravel_client") op.infotravel_client = k.key_value;
+        if (k.provider === "infotravel_agency") op.infotravel_agency = k.key_value;
+        if (k.provider === "infotravel_markup") op.markup = parseFloat(k.key_value) || 0;
+        if (k.last_sync_at) op.last_sync_at = k.last_sync_at;
+        if (k.last_sync_error) op.last_sync_error = k.last_sync_error;
+        if (typeof k.is_active === "boolean") op.is_active = k.is_active;
+      }
+
+      return new Response(JSON.stringify({ success: true, operators: Array.from(map.values()) }), {
         headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
     }
 
     // ── AÇÃO: save-operator ────────────────────────────────────────────────
-    // Salva todas as credenciais de uma operadora Infotravel em batch
+    // Salva todas as credenciais de uma operadora Infotravel com write-only password
     if (action === "save-operator") {
       const {
         operator_id,
@@ -352,25 +441,24 @@ serve(async (req) => {
       if (!operator_name) throw new Error("operator_name é obrigatório.");
       if (!infotravel_url) throw new Error("A URL da API da operadora é obrigatória.");
       if (!infotravel_username) throw new Error("O usuário da API é obrigatório.");
-      if (!infotravel_password) throw new Error("A senha da API é obrigatória.");
 
       const credentials = [
-        { provider: "infotravel_url", key_value: infotravel_url, label: "URL da API" },
-        { provider: "infotravel_username", key_value: infotravel_username, label: "Usuário" },
-        { provider: "infotravel_password", key_value: infotravel_password, label: "Senha" },
+        { provider: "infotravel_url", key_value: infotravel_url.trim(), label: "URL da API" },
+        { provider: "infotravel_username", key_value: infotravel_username.trim(), label: "Usuário" },
+        { provider: "infotravel_password", key_value: infotravel_password, label: "Senha", isPassword: true },
         {
           provider: "infotravel_client",
-          key_value: infotravel_client || "",
+          key_value: (infotravel_client || "").trim(),
           label: "Código do Cliente",
         },
         {
           provider: "infotravel_agency",
-          key_value: infotravel_agency || "",
+          key_value: (infotravel_agency || "").trim(),
           label: "Código da Agência",
         },
         {
           provider: "infotravel_markup",
-          key_value: String(markup),
+          key_value: String(markup || 0),
           label: "Markup (%)",
         },
       ];
@@ -378,20 +466,30 @@ serve(async (req) => {
       for (const cred of credentials) {
         const { data: existing } = await admin
           .from("api_keys")
-          .select("id")
+          .select("id, key_value")
           .eq("agency_id", agencyId)
           .eq("provider", cred.provider)
           .eq("operator_id", operator_id)
           .maybeSingle();
 
+        // Se for senha e o usuário enviou "••••••••" ou vazio na edição, mantém a senha existente
+        let finalKeyValue = cred.key_value;
+        if (cred.isPassword) {
+          if ((!finalKeyValue || finalKeyValue === "••••••••") && existing?.key_value) {
+            finalKeyValue = existing.key_value;
+          } else if (!finalKeyValue && !existing?.key_value) {
+            throw new Error("A senha da operadora é obrigatória para o cadastro inicial.");
+          }
+        }
+
         const payload = {
           agency_id: agencyId,
           provider: cred.provider,
-          key_value: cred.key_value,
+          key_value: finalKeyValue,
           label: cred.label,
           category: "infotravel_operator",
           operator_id,
-          operator_name,
+          operator_name: operator_name.trim(),
           is_active,
           metadata: {},
         };
@@ -412,6 +510,34 @@ serve(async (req) => {
         JSON.stringify({
           success: true,
           message: `Operadora "${operator_name}" salva com sucesso.`,
+        }),
+        { headers: { ...corsHeaders, "Content-Type": "application/json" } },
+      );
+    }
+
+    // ── AÇÃO: reset-operator-circuit ───────────────────────────────────────
+    // Reativa uma operadora pausada pelo disjuntor de segurança
+    if (action === "reset-operator-circuit") {
+      const { operator_id } = body;
+      if (!operator_id) throw new Error("operator_id é obrigatório.");
+
+      const { error } = await admin
+        .from("api_keys")
+        .update({
+          is_active: true,
+          last_sync_error: null,
+          updated_at: new Date().toISOString(),
+        })
+        .eq("agency_id", agencyId)
+        .eq("operator_id", operator_id)
+        .eq("category", "infotravel_operator");
+
+      if (error) throw error;
+
+      return new Response(
+        JSON.stringify({
+          success: true,
+          message: "Integração reativada com sucesso. O disjuntor de segurança foi resetado.",
         }),
         { headers: { ...corsHeaders, "Content-Type": "application/json" } },
       );
@@ -477,7 +603,7 @@ serve(async (req) => {
       const result = await testInfotravelConnection(url, username, password, client, agency);
 
       return new Response(JSON.stringify(result), {
-        status: result.success ? 200 : 400,
+        status: 200,
         headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
     }
@@ -485,9 +611,12 @@ serve(async (req) => {
     throw new Error(`Ação não reconhecida: "${action}".`);
   } catch (error: any) {
     console.error("[integration-manager] Erro:", error.message);
-    return new Response(JSON.stringify({ success: false, error: error.message }), {
-      status: error.message.includes("Unauthorized") ? 401 : 400,
-      headers: { ...corsHeaders, "Content-Type": "application/json" },
-    });
+    return new Response(
+      JSON.stringify({ success: false, error: error.message, message: error.message }),
+      {
+        status: 200,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      },
+    );
   }
 });

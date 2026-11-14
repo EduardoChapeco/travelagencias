@@ -117,31 +117,30 @@ function Column({
     <div
       ref={setNodeRef}
       className={cn(
-        "flex h-full w-[310px] shrink-0 flex-col rounded-[var(--radius-card)] transition-all duration-300",
-        "kanban-column",
-        isOver ? "border-brand bg-brand/5 scale-[1.01]" : "",
+        "flex h-full w-[310px] shrink-0 flex-col rounded-2xl transition-all duration-200 bg-[#12141c] border border-white/[0.08]",
+        isOver ? "border-white/30 bg-white/[0.06] scale-[1.01]" : "",
       )}
-      style={{ borderTop: `4px solid ${stage.color || "#9ca3af"}` }}
+      style={{ borderTop: `3px solid ${stage.color || "#9ca3af"}` }}
     >
-      <div className="flex flex-col justify-center border-b border-border/40 glass px-5 py-4 rounded-t-[var(--radius-card)]">
+      <div className="flex flex-col justify-center border-b border-white/[0.06] bg-white/[0.02] px-4 py-3 rounded-t-2xl">
         <div className="flex items-center justify-between mb-0.5">
           <div className="flex items-center gap-2">
             <span
-              className="h-2.5 w-2.5 rounded-full ring-2 ring-surface"
+              className="h-2 w-2 rounded-full"
               style={{ background: stage.color }}
             />
-            <span className="ds-meta font-extrabold uppercase tracking-widest text-foreground">
+            <span className="text-xs font-bold uppercase tracking-wider text-zinc-200">
               {stage.name}
             </span>
           </div>
-          <span className="flex h-5 min-w-[20px] items-center justify-center rounded-full glass-dark px-1.5 ds-meta font-bold text-white/85 border border-white/5">
+          <span className="flex h-5 min-w-[20px] items-center justify-center rounded-full bg-white/[0.08] px-1.5 text-[10px] font-bold text-zinc-300">
             {leads.length}
           </span>
         </div>
         {totalValue > 0 && (
-          <div className="ds-meta font-medium text-muted-foreground mt-0.5 ml-4.5">
+          <div className="text-[11px] font-medium text-zinc-400 mt-0.5 ml-4">
             Total:{" "}
-            <span className="text-foreground font-bold">
+            <span className="text-white font-bold">
               R$ {totalValue.toLocaleString("pt-BR", { minimumFractionDigits: 2 })}
             </span>
           </div>

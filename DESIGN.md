@@ -1,72 +1,77 @@
 ---
-name: TravelOS
+name: JAH-V4-TravelOS
 colors:
-  primary: "#2F60E6"
-  primary-light: "rgba(61, 111, 242, 0.1)"
-  primary-foreground: "#ffffff"
-  background: "#F6F5F1"
-  foreground: "#0B0B0C"
-  surface: "#ffffff"
-  surface-alt: "rgba(255, 255, 255, 0.7)"
-  muted: "rgba(11, 11, 12, 0.05)"
-  muted-foreground: "rgba(11, 11, 12, 0.5)"
-  border: "rgba(11, 11, 12, 0.08)"
-  success: "#157f3d"
-  success-bg: "#edf8f1"
-  warning: "#a85b14"
-  warning-bg: "#fff4e6"
-  danger: "#b42318"
-  danger-bg: "#fff1ef"
+  primary: "#ffffff"
+  primary-light: "rgba(255, 255, 255, 0.12)"
+  primary-foreground: "#000000"
+  brand: "#ffffff"
+  brand-foreground: "#000000"
+  accent: "#f59e0b"
+  accent-foreground: "#000000"
+  background: "#0a0b0e"
+  foreground: "#f8fafc"
+  surface: "#12141c"
+  surface-alt: "#181b24"
+  muted: "rgba(255, 255, 255, 0.06)"
+  muted-foreground: "#a1a1aa"
+  border: "rgba(255, 255, 255, 0.08)"
+  border-subtle: "rgba(255, 255, 255, 0.04)"
+  success: "#10b981"
+  success-bg: "rgba(16, 185, 129, 0.12)"
+  warning: "#f59e0b"
+  warning-bg: "rgba(245, 158, 11, 0.12)"
+  danger: "#ef4444"
+  danger-bg: "rgba(239, 68, 68, 0.12)"
 typography:
   display:
-    fontFamily: "Inter, -apple-system, sans-serif"
-    fontSize: 2.5rem
-    fontWeight: 600
-    lineHeight: 1.1
-    letterSpacing: -0.02em
+    fontFamily: "-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif"
+    fontSize: 2.25rem
+    fontWeight: 700
+    lineHeight: 1.15
+    letterSpacing: -0.025em
   h1:
-    fontFamily: "Inter, -apple-system, sans-serif"
-    fontSize: 2rem
-    fontWeight: 600
+    fontFamily: "-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif"
+    fontSize: 1.75rem
+    fontWeight: 700
     lineHeight: 1.2
     letterSpacing: -0.02em
   h2:
-    fontFamily: "Inter, -apple-system, sans-serif"
-    fontSize: 1.5rem
+    fontFamily: "-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif"
+    fontSize: 1.375rem
     fontWeight: 600
-    letterSpacing: -0.01em
+    letterSpacing: -0.015em
   h3:
-    fontFamily: "Inter, -apple-system, sans-serif"
+    fontFamily: "-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif"
     fontSize: 1.125rem
     fontWeight: 600
   body-large:
-    fontFamily: "Inter, -apple-system, sans-serif"
-    fontSize: 1.125rem
-    fontWeight: 400
-    lineHeight: 1.6
-  body:
-    fontFamily: "Inter, -apple-system, sans-serif"
+    fontFamily: "-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif"
     fontSize: 1rem
     fontWeight: 400
     lineHeight: 1.5
-  meta:
-    fontFamily: "Inter, -apple-system, sans-serif"
-    fontSize: 0.75rem
+  body:
+    fontFamily: "-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif"
+    fontSize: 0.875rem
     fontWeight: 400
-  label-caps:
-    fontFamily: "JetBrains Mono, monospace"
+    lineHeight: 1.5
+  meta:
+    fontFamily: "-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif"
     fontSize: 0.75rem
     fontWeight: 500
+  label-caps:
+    fontFamily: "JetBrains Mono, monospace"
+    fontSize: 0.6875rem
+    fontWeight: 600
     lineHeight: 1
-    letterSpacing: 0.08em
+    letterSpacing: 0.06em
 rounded:
-  xs: 8px
-  sm: 12px
-  md: 16px
-  lg: 20px
-  xl: 24px
-  2xl: 28px
-  3xl: 32px
+  xs: 6px
+  sm: 8px
+  md: 10px
+  lg: 12px
+  xl: 14px
+  2xl: 16px
+  3xl: 20px
   full: 999px
 components:
   button-primary:
@@ -76,52 +81,30 @@ components:
   card:
     backgroundColor: "{colors.surface}"
     rounded: "{rounded.2xl}"
-    padding: "24px"
+    padding: "16px"
   sheet:
     backgroundColor: "{colors.surface}"
-    rounded: "{rounded.3xl}"
-    padding: "32px"
+    rounded: "{rounded.2xl}"
+    padding: "24px"
   badge:
-    rounded: "{rounded.xs}"
+    rounded: "{rounded.full}"
 ---
 
-## Overview
+## 1. Princípios do Design System JAH V4 no TravelOS
 
-TravelOS is an ambient, operating-system-like web application. The UI evokes a premium, slightly chubby ("gordinha") materiality where all structural depth is achieved through glassmorphism (backdrop filters) and subtle borders rather than drop shadows.
+O TravelOS opera sob uma divisão clara entre **Shell Multitarefa (Home / Desktop)** e **Módulos Operacionais de Alta Produtividade (Janelas Internas)**:
 
-The workspace is a fluid, transparent canvas resting on top of a global wallpaper. The visual language is deeply inspired by modern spatial operating systems (e.g., Apple VisionOS, MacOS heavy glass), prioritizing visual immersion without sacrificing data density.
+1. **Desktop / Shell Multitarefa**:
+   - Wallpaper global nítido com Dock inferior e atalhos rápidos.
+   - Preservação integral do layout espacial do sistema operacional.
 
-## Colors
+2. **Janelas & Módulos Internos (Padrão JAH V4)**:
+   - **Superfícies Claras/Neutras & Sólidas**: Fundo sólido `#171b26` (no dark mode) ou `#ffffff` (no light mode).
+   - **Bordas Sutis de 1px**: `border border-white/10` no dark mode e `border border-slate-200` no light mode.
+   - **Raios Contidos (10-12px a 16px)**: Squircles contidos e harmoniosos, sem brutalismo ou arredondamentos gigantescos fora de botões pill.
+   - **Tipografia Escaneável**: `Outfit` para cabeçalhos marcantes, `Inter` para leitura corporal e `JetBrains Mono` com `tabular-nums` para valores monetários, datas e localizadores.
+   - **Hierarquia Silenciosa**: Zero sombras decorativas (`box-shadow: none !important`), zero gradientes caóticos e eliminação de vidros pesados nos formulários.
+   - **Edição em 4 Profundidades**: Cell ➔ Row ➔ Side-Panel (Drawer) ➔ Full-Page.
+   - **Truthful Preview**: Prévia em tempo real fiel à experiência final do cliente (orçamentos, propostas e vouchers).
+   - **Touch Targets Mínimos (44px)**: Botões, seletores e links mobile com área de toque mínima de 44x44px.
 
-The core palette relies heavily on alphas (transparencies) over a neutral wallpaper, with a single electric blue accent.
-
-- **Primary (#3D6FF2):** The only driver for interaction. Used for active states and CTAs.
-- **Background & Foreground:** High-contrast neutral pairing, but largely superseded by the glass workspace in the main app.
-
-## Typography
-
-Strictly sans-serif (`Inter`) for the UI, with monospace (`JetBrains Mono`) for technical metadata and labels.
-
-- No serifs anywhere.
-- Headlines are tightly tracked (`-0.02em`) to maintain a structural, application-like feel.
-
-## Layout & Spacing
-
-- The system relies on flexible CSS Grids and structural padding.
-- `spacing.lg` (24px) and `spacing.xl` (32px) dominate inter-component relationships.
-
-## Elevation & Depth
-
-- **NO SHADOWS.** Drop shadows are completely banned (`box-shadow: none !important`).
-- All elevation is communicated through variable blur radii and 1px semi-transparent inner borders (`rgba(255, 255, 255, 0.15)`).
-
-## Shapes
-
-- UI elements are extremely rounded. Cards are `28px` (2xl), sheets are `32px` (3xl), buttons and inputs are perfectly pill-shaped (`999px`).
-- Sharp corners are forbidden unless constrained by a screen edge.
-
-## Do's and Don'ts
-
-- **Do:** Use the unified `Glass Panel` overlay for modals and sheets.
-- **Don't:** Stack dimmers, black backgrounds, or multiple opacity layers. The wallpaper must shine through cleanly.
-- **Don't:** Create "cards within cards". If data needs separation, use negative space, dividers, or native grid gaps.

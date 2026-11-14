@@ -51,7 +51,7 @@ import {
   PanelLeft,
   AlertCircle,
 } from "lucide-react";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { SheetPage } from "@/components/ui/sheet";
 import { toast } from "sonner";
 import { useAgency } from "@/lib/agency-context";
 import { supabase } from "@/integrations/supabase/client";
@@ -89,7 +89,6 @@ import {
 import { BlockFormEditor } from "@/components/portal/BlockFormEditors";
 import { IframeSandbox } from "@/components/portal/IframeSandbox";
 import { CMS_TEMPLATES, getTemplateById } from "@/lib/cms-templates";
-import { SheetPage } from "@/components/ui/sheet";
 
 import {
   DndContext,
@@ -847,7 +846,7 @@ function PageEditorRoute() {
 
           {!isNew && (
             <a
-              href={`https://${agency.slug}.turis.com/${pageSlug || slugify(title)}`}
+              href={`https://${agency?.slug || slug}.turis.com/${pageSlug || slugify(title)}`}
               target="_blank"
               rel="noopener noreferrer"
               title="Visualizar Página Ao Vivo"
@@ -1309,9 +1308,9 @@ function PageEditorRoute() {
                   <div className="w-full">
                     <BlockRenderer
                       blocks={blocks}
-                      agencySlug={agency.slug || "preview"}
+                      agencySlug={agency?.slug || slug || "preview"}
                       pageId={isNew ? undefined : initialData?.id}
-                      agencyId={agency.id}
+                      agencyId={agency?.id || ""}
                       onSelectBlock={setSelectedBlockId}
                       selectedBlockId={selectedBlockId}
                       mode={mode}
@@ -1693,13 +1692,7 @@ function PageEditorRoute() {
         }}
       />
 
-      <Dialog open={showNewPageModal} onOpenChange={setShowNewPageModal}>
-        <DialogContent className="max-w-md p-0 overflow-hidden border-none/10 max-h-[90vh] bg-background">
-          <DialogHeader className="px-6 py-4 border-b border-border/40">
-            <DialogTitle className="text-sm font-bold text-foreground">
-              Criar Nova Página
-            </DialogTitle>
-          </DialogHeader>
+      <SheetPage isOpen={showNewPageModal} onClose={() => setShowNewPageModal(false)} title="Criar Nova Página">
           <div className="p-6 space-y-4">
             <div className="space-y-3">
               <Field label="Título da Página">
@@ -1740,14 +1733,9 @@ function PageEditorRoute() {
               </Button>
             </div>
           </div>
-        </DialogContent>
-      </Dialog>
+      </SheetPage>
 
-      <Dialog open={!!showRenameModal} onOpenChange={(open) => !open && setShowRenameModal(null)}>
-        <DialogContent className="max-w-md p-0 overflow-hidden border-none/10 max-h-[90vh] bg-background">
-          <DialogHeader className="px-6 py-4 border-b border-border/40">
-            <DialogTitle className="text-sm font-bold text-foreground">Renomear Página</DialogTitle>
-          </DialogHeader>
+      <SheetPage isOpen={!!showRenameModal} onClose={() => setShowRenameModal(null)} title="Renomear Página">
           <div className="p-6 space-y-4">
             <div className="space-y-3">
               <Field label="Título da Página">
@@ -1757,7 +1745,7 @@ function PageEditorRoute() {
                 <Input
                   value={renameSlug}
                   onChange={(e) => setRenameSlug(e.target.value)}
-                  disabled={showRenameModal.slug === "home"}
+                  disabled={showRenameModal?.slug === "home"}
                 />
               </Field>
             </div>
@@ -1770,8 +1758,7 @@ function PageEditorRoute() {
               </Button>
             </div>
           </div>
-        </DialogContent>
-      </Dialog>
+      </SheetPage>
 
       {/* Floating Action Menu for mobile devices */}
       <div className="sm:hidden fixed bottom-4 left-1/2 -translate-x-1/2 z-50 flex items-center gap-2 glass-card border-none/90 dark:bg-zinc-950/90 backdrop-blur-3xl border border-border dark:border-border p-2.5 rounded-3xl shadow-none w-[calc(100vw-32px)] max-w-sm justify-between">

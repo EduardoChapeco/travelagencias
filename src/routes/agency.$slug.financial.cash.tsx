@@ -22,9 +22,9 @@ import { PageHeader, ModuleActionButton } from "@/components/shell/PageHeader";
 import { Field } from "@/components/ui/field";
 import { FormInput as Input } from "@/components/ui/input";
 import { NativeSelect as Select } from "@/components/ui/select";
-import { FormTextarea as Textarea } from "@/components/ui/textarea";
-import { SimpleSheet as Sheet } from "@/components/ui/sheet";
+import { SheetPage } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
+import { FormTextarea as Textarea } from "@/components/ui/textarea";
 import { formatCurrency } from "@/lib/formatters";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
@@ -676,19 +676,19 @@ function CashPage() {
 
       {/* Sheet: Open Session */}
       {openRegisterSheet && (
-        <Sheet onClose={() => setOpenRegisterSheet(false)} title="Abrir Caixa Diário">
+        <SheetPage isOpen={true} onClose={() => setOpenRegisterSheet(false)} title="Abrir Caixa Diário">
           <OpenForm
             onSubmit={(data) => openSession.mutate(data)}
             schema={openSchema}
             loading={openSession.isPending}
             onClose={() => setOpenRegisterSheet(false)}
           />
-        </Sheet>
+        </SheetPage>
       )}
 
       {/* Sheet: Close Session */}
       {closeRegisterSheet && activeSession && (
-        <Sheet onClose={() => setCloseRegisterSheet(false)} title="Fechar Caixa Diário">
+        <SheetPage isOpen={true} onClose={() => setCloseRegisterSheet(false)} title="Fechar Caixa Diário">
           <CloseForm
             onSubmit={(data) => closeSession.mutate(data)}
             schema={closeSchema}
@@ -696,12 +696,13 @@ function CashPage() {
             onClose={() => setCloseRegisterSheet(false)}
             currentBalance={balance}
           />
-        </Sheet>
+        </SheetPage>
       )}
 
       {/* Sheet: New Transaction */}
       {newTxType && newTxType !== "reconciliation" && (
-        <Sheet
+        <SheetPage
+          isOpen={true}
           onClose={() => setNewTxType(null)}
           title={`Lançar ${
             newTxType === "receipt"
@@ -729,12 +730,12 @@ function CashPage() {
             agencyId={agency?.id ?? ""}
             onClose={() => setNewTxType(null)}
           />
-        </Sheet>
+        </SheetPage>
       )}
 
       {/* Sheet: Reconciliation */}
       {newTxType === "reconciliation" && (
-        <Sheet onClose={() => setNewTxType(null)} title="Conciliação B2B (Operadoras)">
+        <SheetPage isOpen={true} onClose={() => setNewTxType(null)} title="Conciliação B2B (Operadoras)">
           <ReconciliationForm
             suppliers={(suppliersQ.data ?? []).map((s) => ({
               id: s.id,
@@ -758,7 +759,7 @@ function CashPage() {
             schema={reconciliationSchema}
             onClose={() => setNewTxType(null)}
           />
-        </Sheet>
+        </SheetPage>
       )}
 
       {/* Sheet: New Register */}
@@ -1123,7 +1124,7 @@ function NewRegisterSheet({
   });
 
   return (
-    <Sheet onClose={onClose} title="Criar Novo Caixa">
+    <SheetPage isOpen={true} onClose={onClose} title="Criar Novo Caixa">
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
         <Field label="Nome do Caixa *" error={errors.name?.message?.toString()}>
           <Input
@@ -1133,20 +1134,20 @@ function NewRegisterSheet({
           />
         </Field>
         <Field label="Tipo de Caixa">
-          <Select {...register("type")}>
-            <option value="physical">Físico (com sessão de abertura/fechamento)</option>
-            <option value="bank_account">Bancário (movimentação livre)</option>
+          <Select {...register("type")} className="h-9 rounded-xl bg-white/[0.04] border border-white/[0.08]">
+            <option value="physical" className="bg-[#12141c] text-white">Físico (com sessão de abertura/fechamento)</option>
+            <option value="bank_account" className="bg-[#12141c] text-white">Bancário (movimentação livre)</option>
           </Select>
         </Field>
-        <div className="flex justify-end gap-2 pt-2">
-          <Button variant="ghost" type="button" onClick={onClose}>
+        <div className="flex justify-end gap-2 pt-4 border-t border-white/[0.08]">
+          <Button variant="ghost" type="button" onClick={onClose} className="h-9 px-4 rounded-full border border-white/[0.08] bg-white/[0.04] text-zinc-300 hover:text-white cursor-pointer">
             Cancelar
           </Button>
-          <Button variant="default" type="submit" disabled={isSubmitting}>
+          <Button type="submit" disabled={isSubmitting} className="h-9 px-5 rounded-full bg-white text-black font-semibold hover:bg-white/90 shadow-sm cursor-pointer disabled:opacity-50">
             {isSubmitting ? "Criando..." : "Criar Caixa"}
           </Button>
         </div>
       </form>
-    </Sheet>
+    </SheetPage>
   );
 }

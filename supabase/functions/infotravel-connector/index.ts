@@ -6,6 +6,22 @@ const corsHeaders = {
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
 };
 
+const RATE_LIMIT_WINDOW_MS = 60_000;
+const MAX_REQUESTS_PER_WINDOW = 25;
+const agencyRequestTimestamps = new Map<string, number[]>();
+
+function checkRateLimit(agencyId: string): boolean {
+  const now = Date.now();
+  const timestamps = agencyRequestTimestamps.get(agencyId) || [];
+  const validTimestamps = timestamps.filter((t) => now - t < RATE_LIMIT_WINDOW_MS);
+  if (validTimestamps.length >= MAX_REQUESTS_PER_WINDOW) {
+    return false;
+  }
+  validTimestamps.push(now);
+  agencyRequestTimestamps.set(agencyId, validTimestamps);
+  return true;
+}
+
 serve(async (req) => {
   if (req.method === "OPTIONS") {
     return new Response("ok", { headers: corsHeaders });
@@ -40,8 +56,28 @@ serve(async (req) => {
     if (authError || !user) throw new Error("Unauthorized.");
 
     // Obter payload
-    const { action, agencyId, operatorId, params = {} } = await req.json();
+    const body = await req.json().catch(() => ({}));
+    const action = body.action;
+    const agencyId = body.agencyId || body.agency_id;
+    const operatorId = body.operatorId || body.operator_id;
+    const params = body.params || {};
     if (!agencyId) throw new Error("Parâmetro agencyId é obrigatório.");
+
+    // ─── Rate Limiting por Agência (Proteção contra flood / banimento) ──────
+    if (!checkRateLimit(agencyId)) {
+      return new Response(
+        JSON.stringify({
+          success: false,
+          error_code: "RATE_LIMIT_EXCEEDED",
+          error:
+            "Limite de requisições por minuto atingido (máx 25 req/min). Aguarde alguns segundos para evitar penalização pelo firewall da operadora.",
+        }),
+        {
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
+          status: 429,
+        },
+      );
+    }
 
     // Guardar nos escopos globais do handler
     reqAgencyId = agencyId;
@@ -61,10 +97,9 @@ serve(async (req) => {
     }
 
     // Buscar credenciais da operadora — suporta multi-operadora via operatorId
-    // Se operatorId foi passado, busca a operadora específica; senão, usa a primeira ativa
     let keysQuery = supabaseAdmin
       .from("api_keys")
-      .select("provider, key_value, operator_id")
+      .select("provider, key_value, operator_id, category, is_active")
       .eq("agency_id", agencyId)
       .in("provider", [
         "infotravel_url",
@@ -77,28 +112,45 @@ serve(async (req) => {
 
     if (operatorId) {
       keysQuery = keysQuery.eq("operator_id", operatorId);
-    } else {
-      // Compatibilidade retroativa: busca por category OU operator_id nulo (formato legado)
-      keysQuery = keysQuery.or("category.eq.infotravel_operator,operator_id.is.null");
     }
 
     const { data: allKeys } = await keysQuery;
 
-    // Se múltiplos operadores, seleciona o primeiro ativo quando nenhum operatorId foi especificado
-    let keys = allKeys ?? [];
-    if (!operatorId && keys.length > 0) {
-      // Prefere registros com operator_id definido (novo formato) sobre os legados (null)
-      const withOperator = keys.filter((k) => k.operator_id);
+    // Se múltiplos operadores cadastrados e nenhum operatorId foi especificado, seleciona o primeiro
+    let targetOperatorId = operatorId;
+    if (!targetOperatorId && allKeys && allKeys.length > 0) {
+      const withOperator = allKeys.filter((k: any) => k.operator_id);
       if (withOperator.length > 0) {
-        const firstOpId = withOperator[0].operator_id;
-        keys = withOperator.filter((k) => k.operator_id === firstOpId);
+        targetOperatorId = withOperator[0].operator_id;
       }
+    }
+    reqOperatorId = targetOperatorId || null;
+
+    const opKeys = targetOperatorId
+      ? (allKeys ?? []).filter((k: any) => k.operator_id === targetOperatorId)
+      : allKeys ?? [];
+
+    // ─── Circuit Breaker Check ──────────────────────────────────────────────
+    const isPausedByCircuitBreaker = opKeys.some((k: any) => k.is_active === false);
+    if (isPausedByCircuitBreaker && action !== "test_connection") {
+      return new Response(
+        JSON.stringify({
+          success: false,
+          error_code: "CIRCUIT_BREAKER_ACTIVE",
+          error:
+            "O disjuntor de segurança desta operadora está pausado para proteger sua agência contra bloqueios de IP. Acesse Configurações → Integrações e clique em 'Reativar e Testar Conexão'.",
+        }),
+        {
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
+          status: 200,
+        },
+      );
     }
 
     const getVal = (provider: string) =>
-      keys?.find((k) => k.provider === provider)?.key_value || "";
+      opKeys.find((k: any) => k.provider === provider)?.key_value || "";
 
-    const url = getVal("infotravel_url") || "http://api.infotravel.com.br/api/v1";
+    const url = getVal("infotravel_url") || "https://reservas.incomumviagens.com.br/api/v1";
     const username = getVal("infotravel_username");
     const password = getVal("infotravel_password");
     const client = getVal("infotravel_client");
@@ -112,8 +164,6 @@ serve(async (req) => {
       username.toLowerCase() === "sandbox";
 
     if (credentialsMissing) {
-      // Retorno estruturado (não uma exceção) — o frontend interpreta este código
-      // para exibir o estado "API não configurada" sem exibir erros técnicos ao operador.
       return new Response(
         JSON.stringify({
           success: false,
@@ -123,12 +173,12 @@ serve(async (req) => {
         }),
         {
           headers: { ...corsHeaders, "Content-Type": "application/json" },
-          status: 200, // 200 intencional: o frontend deve ler o error_code, não o status HTTP
+          status: 200,
         },
       );
     }
 
-    // Autenticar na API real do GDS
+    // Autenticar na API real do GDS (Handshake Server-Side Oficial)
     const token = await authenticateInfotravel(url, username, password, client, agency);
 
     let result;
@@ -194,6 +244,18 @@ serve(async (req) => {
       } else {
         result = rawData;
       }
+    } else if (action === "search_insurances") {
+      const rawData = await fetchRealInsurances(url, token, params);
+      result = rawData;
+    } else if (action === "search_chips") {
+      const rawData = await fetchRealChips(url, token, params);
+      result = rawData;
+    } else if (action === "search_tickets") {
+      const rawData = await fetchRealTickets(url, token, params);
+      result = rawData;
+    } else if (action === "check_rate") {
+      const rawData = await fetchRealCheckRate(url, token, params);
+      result = rawData;
     } else if (action === "import_booking") {
       const { bookingId, tripId } = params;
       if (!bookingId) throw new Error("O ID da reserva é obrigatório para realizar a importação.");
@@ -206,6 +268,16 @@ serve(async (req) => {
       result = await executePeriodicSync(url, token, supabaseAdmin, agencyId);
     } else if (action === "create_booking") {
       result = await executeCreateBooking(url, token, supabaseAdmin, agencyId, params);
+    } else if (action === "search_clients") {
+      const rawClients = await fetchRealClients(url, token, params);
+      result = { success: true, clients: rawClients };
+    } else if (action === "sync_clients") {
+      result = await executeSyncClients(url, token, supabaseAdmin, agencyId, params);
+    } else if (action === "fetch_financials") {
+      const { bookingId } = params;
+      if (!bookingId) throw new Error("bookingId é obrigatório para consultar o financeiro.");
+      const rawFinancials = await fetchRealFinancials(url, token, bookingId);
+      result = { success: true, financials: rawFinancials };
     } else {
       throw new Error(`Ação não reconhecida: "${action}". Verifique a documentação do conector.`);
     }
@@ -236,61 +308,34 @@ serve(async (req) => {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
     });
   } catch (error: any) {
-    console.error("[infotravel-connector] Erro:", error);
-
-    // Traduzir erros técnicos em mensagens comerciais inteligíveis
-    let userMessage = error.message || "Ocorreu um erro inesperado ao processar sua solicitação.";
-
-    if (
+    // Preservar a mensagem autêntica retornada pela operadora
+    let userMessage = error.message || "Ocorreu um erro inesperado ao comunicar com a operadora.";
+    const isAuthFailure =
+      userMessage.includes("2109") ||
       userMessage.includes("401") ||
-      userMessage.includes("Unauthorized") ||
-      userMessage.includes("autenticação")
-    ) {
-      userMessage =
-        "As credenciais do Infotravel são inválidas ou expiraram. Verifique seu usuário e senha nas configurações de integração.";
-    } else if (userMessage.includes("403") || userMessage.includes("Forbidden")) {
-      userMessage =
-        "Acesso negado pelo GDS. Verifique se sua conta possui as permissões de API ativadas.";
-    } else if (
-      userMessage.includes("429") ||
-      userMessage.includes("rate limit") ||
-      userMessage.includes("Too Many")
-    ) {
-      userMessage =
-        "Limite de requisições atingido no GDS. Aguarde alguns minutos e tente novamente.";
-    } else if (
-      userMessage.includes("500") ||
-      userMessage.includes("502") ||
-      userMessage.includes("503") ||
-      userMessage.includes("504")
-    ) {
-      userMessage =
-        "O servidor do GDS Infotravel está temporariamente indisponível. Tente novamente em instantes.";
-    } else if (
-      userMessage.includes("fetch") ||
-      userMessage.includes("network") ||
-      userMessage.includes("ECONNREFUSED")
-    ) {
-      userMessage =
-        "Não foi possível conectar ao servidor do GDS Infotravel. Verifique a URL de acesso nas configurações de integração.";
-    }
+      userMessage.includes("403") ||
+      userMessage.includes("inválidos") ||
+      userMessage.includes("autenticação") ||
+      userMessage.includes("Unauthorized");
 
-    // REGISTRAR ERRO NO BANCO
-    if (
-      supabaseAdmin &&
-      reqAgencyId &&
-      reqOperatorId &&
-      (reqAction === "run_periodic_sync" ||
-        reqAction === "run_backfill" ||
-        reqAction === "test_connection")
-    ) {
+    // REGISTRAR ERRO E ATIVAR DISJUNTOR DE SEGURANÇA SE HOUVER FALHA DE AUTH
+    if (supabaseAdmin && reqAgencyId && reqOperatorId) {
       try {
+        const updatePayload: any = {
+          last_sync_error: isAuthFailure
+            ? `Disjuntor de segurança acionado: ${userMessage}. A integração foi pausada automaticamente para proteger sua agência contra banimento de IP no GDS.`
+            : userMessage,
+          last_sync_at: new Date().toISOString(),
+        };
+
+        // Se falhou autenticação repetidamente, pausa a operadora para evitar bloqueio de IP no GDS
+        if (isAuthFailure) {
+          updatePayload.is_active = false;
+        }
+
         await supabaseAdmin
           .from("api_keys")
-          .update({
-            last_sync_error: userMessage,
-            last_sync_at: new Date().toISOString(),
-          })
+          .update(updatePayload)
           .eq("agency_id", reqAgencyId)
           .eq("operator_id", reqOperatorId);
       } catch (dbErr) {
@@ -302,11 +347,12 @@ serve(async (req) => {
       JSON.stringify({
         success: false,
         error: userMessage,
-        error_code: "API_ERROR",
+        error_code: isAuthFailure ? "AUTH_FAILED_PAUSED" : "API_ERROR",
+        circuit_paused: isAuthFailure,
       }),
       {
         headers: { ...corsHeaders, "Content-Type": "application/json" },
-        status: 400,
+        status: 200,
       },
     );
   }
@@ -329,6 +375,23 @@ function resolveUrl(baseUrl: string, endpointPath: string): string {
   return `${base}/${endpoint}`;
 }
 
+function getAuthCandidates(baseUrl: string): string[] {
+  let base = (baseUrl || "").trim().replace(/\/$/, "");
+  if (base.startsWith("http://")) {
+    base = base.replace(/^http:\/\//, "https://");
+  }
+
+  const candidates: string[] = [
+    `${base}/authenticate`,
+    base.endsWith("/api/v1") ? `${base}/authenticate` : `${base}/api/v1/authenticate`,
+    base.endsWith("/infotravel/api/v1") ? `${base}/authenticate` : `${base}/infotravel/api/v1/authenticate`,
+    base.endsWith("/api/v1") ? `${base}/user/login` : `${base}/api/v1/user/login`,
+    `${base}/user/login`,
+  ];
+
+  return Array.from(new Set(candidates));
+}
+
 // ─── Efetuar login no GDS Infotravel para obter JWT token ───────────────────
 async function authenticateInfotravel(
   url: string,
@@ -337,150 +400,391 @@ async function authenticateInfotravel(
   c: string,
   a: string,
 ): Promise<string> {
-  const loginUrl = resolveUrl(url, "/api/v1/authenticate");
-  try {
-    const res = await fetch(loginUrl, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ username: u, password: p, client: c, agency: a }),
-    });
+  const username = (u || "").trim();
+  const password = (p || "").trim();
+  const agency = (a || "235868").trim();
+  const client = (c || "").trim() || agency;
 
-    if (!res.ok) {
-      throw new Error(`Código de status HTTP ${res.status} ao autenticar.`);
+  const candidateUrls = getAuthCandidates(url || "https://reservas.incomumviagens.com.br/api/v1");
+  let lastError = "";
+
+  for (const loginUrl of candidateUrls) {
+    try {
+      const isUserLogin = loginUrl.endsWith("/user/login");
+      const requestBody = isUserLogin
+        ? {
+            email: username,
+            username: username,
+            password: password,
+            loginType: "AGENCY",
+            client: client,
+            agency: agency,
+          }
+        : {
+            username,
+            password,
+            client,
+            agency: agency || client,
+          };
+
+      const res = await fetch(loginUrl, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "User-Agent": "TravelOS-GDS-Connector/1.0",
+        },
+        body: JSON.stringify(requestBody),
+      });
+
+      if (res.status === 404) {
+        lastError = `Endpoint 404 em ${loginUrl}`;
+        continue;
+      }
+
+      if (!res.ok) {
+        const errJson = await res.json().catch(() => null);
+        let detailMsg = "Credenciais não aceitas pela operadora.";
+        if (errJson && errJson.message) {
+          detailMsg = errJson.message.replace(/Requisition must be revised!\s*/i, "").trim();
+          if (errJson.exceptionCode) {
+            detailMsg += ` (Código ${errJson.exceptionCode})`;
+          }
+        }
+        throw new Error(`Falha na operadora: ${detailMsg}`);
+      }
+
+      const data = await res.json();
+      const token = data.accessToken || data.token || data.access_token || data.jwt;
+      if (!token) throw new Error("Token de autenticação não retornado pela API da operadora.");
+      return token;
+    } catch (err: any) {
+      lastError = err.message;
     }
-    const data = await res.json();
-    const token = data.accessToken || data.token;
-    if (!token) throw new Error("Token de autenticação não retornado pela API.");
-    return token;
-  } catch (err: any) {
-    throw new Error(`Falha na autenticação da Infotravel: ${err.message}`);
   }
+
+  throw new Error(`Falha na autenticação da Infotravel: ${lastError}`);
 }
 
 // ─── Chamadas reais para a API da Infotravel ──────────────────────────────
 async function fetchRealHotels(url: string, token: string, params: any) {
-  const targetUrl = new URL(resolveUrl(url, "/api/v1/avail/hotel"));
+  const candidatePaths = [
+    "/avail/hotel",
+    "/hotel/avail",
+    "/hotel-avail",
+    "/hotels/availability",
+  ];
 
-  if (params.checkin) targetUrl.searchParams.append("start", params.checkin);
-  if (params.checkout) targetUrl.searchParams.append("end", params.checkout);
+  let lastError = "";
+  const startDate = params.checkin || params.start || params.departureDate;
+  const endDate = params.checkout || params.end || params.returnDate;
+  const dest = params.destination || params.city || params.destinationCode || params.destinationName;
 
-  if (params.city) {
-    const destCode = parseInt(params.city);
-    if (!isNaN(destCode)) {
-      targetUrl.searchParams.append("destination", destCode.toString());
-    } else {
-      targetUrl.searchParams.append("destination", "14");
+  for (const path of candidatePaths) {
+    try {
+      const endpoint = resolveUrl(url, path);
+      const targetUrl = new URL(endpoint);
+
+      if (startDate) targetUrl.searchParams.append("start", startDate);
+      if (endDate) targetUrl.searchParams.append("end", endDate);
+      if (dest) targetUrl.searchParams.append("destination", dest);
+
+      // Formatar ocupação de quartos conforme OpenAPI Infotravel (ex: occupancy=2 ou occupancy=2-8,5)
+      if (Array.isArray(params.occupancies) && params.occupancies.length > 0) {
+        params.occupancies.forEach((occ: string) => targetUrl.searchParams.append("occupancy", String(occ)));
+      } else if (params.occupancy) {
+        targetUrl.searchParams.append("occupancy", String(params.occupancy));
+      } else if (params.rooms && typeof params.rooms === "number") {
+        for (let i = 0; i < params.rooms; i++) {
+          targetUrl.searchParams.append("occupancy", "2");
+        }
+      } else {
+        targetUrl.searchParams.append("occupancy", "2");
+      }
+
+      const res = await fetch(targetUrl.toString(), {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          "User-Agent": "TravelOS-GDS-Connector/1.0",
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      if (res.status === 404) {
+        // Tentar POST se GET for 404
+        const postRes = await fetch(endpoint, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "User-Agent": "TravelOS-GDS-Connector/1.0",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({
+            start: startDate,
+            end: endDate,
+            destination: dest,
+            occupancy: params.occupancies || [String(params.occupancy || 2)],
+          }),
+        });
+
+        if (postRes.status !== 404) {
+          if (!postRes.ok) {
+            const body = await postRes.text().catch(() => "");
+            throw new Error(`Erro na API de hotéis (${postRes.status}): ${body.slice(0, 150)}`);
+          }
+          const postData = await postRes.json();
+          return postData;
+        }
+        continue;
+      }
+
+      if (!res.ok) {
+        const body = await res.text().catch(() => "");
+        throw new Error(`Erro na API de hotéis (${res.status}): ${body.slice(0, 150)}`);
+      }
+      return await res.json();
+    } catch (e: any) {
+      lastError = e.message;
     }
   }
 
-  targetUrl.searchParams.append("occupancy", "2");
-
-  const res = await fetch(targetUrl.toString(), {
-    method: "GET",
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${token}`,
-    },
-  });
-  if (!res.ok) {
-    const body = await res.text().catch(() => "");
-    throw new Error(
-      `Falha na consulta de disponibilidade de hotéis (HTTP ${res.status}). ${body ? `Detalhe: ${body.substring(0, 200)}` : ""}`,
-    );
-  }
-  return await res.json();
+  throw new Error(`Falha ao buscar hotéis no GDS: ${lastError}`);
 }
 
 async function fetchRealFlights(url: string, token: string, params: any) {
-  const targetUrl = new URL(resolveUrl(url, "/api/v1/avail/flight"));
+  const candidatePaths = [
+    "/avail/flight",
+    "/flight/avail",
+    "/flight-avail",
+    "/air/avail",
+    "/flights/availability",
+  ];
 
-  if (params.origin) targetUrl.searchParams.append("origin", params.origin);
-  if (params.destination) targetUrl.searchParams.append("destination", params.destination);
-  if (params.date) {
-    targetUrl.searchParams.append("start", params.date);
-    targetUrl.searchParams.append("end", params.date);
-  }
-  targetUrl.searchParams.append("occupancy", "1");
+  let lastError = "";
+  const startDate = params.date || params.departureDate || params.start;
+  const endDate = params.returnDate || params.endDate || params.end || startDate;
 
-  const res = await fetch(targetUrl.toString(), {
-    method: "GET",
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${token}`,
-    },
-  });
-  if (!res.ok) {
-    const body = await res.text().catch(() => "");
-    throw new Error(
-      `Falha na consulta de disponibilidade de voos (HTTP ${res.status}). ${body ? `Detalhe: ${body.substring(0, 200)}` : ""}`,
-    );
+  for (const path of candidatePaths) {
+    try {
+      const endpoint = resolveUrl(url, path);
+      const targetUrl = new URL(endpoint);
+
+      if (params.origin) targetUrl.searchParams.append("origin", params.origin);
+      if (params.destination) targetUrl.searchParams.append("destination", params.destination);
+      if (startDate) targetUrl.searchParams.append("start", startDate);
+      if (endDate) targetUrl.searchParams.append("end", endDate);
+
+      // Formatar ocupação
+      if (Array.isArray(params.occupancies) && params.occupancies.length > 0) {
+        params.occupancies.forEach((occ: string) => targetUrl.searchParams.append("occupancy", String(occ)));
+      } else if (params.occupancy) {
+        targetUrl.searchParams.append("occupancy", String(params.occupancy));
+      } else {
+        targetUrl.searchParams.append("occupancy", "1");
+      }
+
+      if (params.isCombined !== undefined) {
+        targetUrl.searchParams.append("isCombinedFlight", String(params.isCombined));
+      }
+
+      const res = await fetch(targetUrl.toString(), {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          "User-Agent": "TravelOS-GDS-Connector/1.0",
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      if (res.status === 404) {
+        const postRes = await fetch(endpoint, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "User-Agent": "TravelOS-GDS-Connector/1.0",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({
+            origin: params.origin,
+            destination: params.destination,
+            start: startDate,
+            end: endDate,
+            occupancy: params.occupancies || [String(params.occupancy || 1)],
+            isCombinedFlight: params.isCombined !== undefined ? params.isCombined : true,
+          }),
+        });
+
+        if (postRes.status !== 404) {
+          if (!postRes.ok) {
+            const body = await postRes.text().catch(() => "");
+            throw new Error(`Erro na API de voos (${postRes.status}): ${body.slice(0, 150)}`);
+          }
+          return await postRes.json();
+        }
+        continue;
+      }
+
+      if (!res.ok) {
+        const body = await res.text().catch(() => "");
+        throw new Error(`Erro na API de voos (${res.status}): ${body.slice(0, 150)}`);
+      }
+      return await res.json();
+    } catch (e: any) {
+      lastError = e.message;
+    }
   }
-  return await res.json();
+
+  throw new Error(`Falha ao buscar voos no GDS: ${lastError}`);
 }
 
 // ─── Busca real de Traslados/Transfers ────────────────────────────────────────
 async function fetchRealTransfers(url: string, token: string, params: any) {
-  // Endpoint de traslados conforme documentação Infotravel OpenAPI (service/tour/avail)
-  const targetUrl = new URL(resolveUrl(url, "/api/v1/avail/transfer"));
+  const candidatePaths = [
+    "/avail/transfer",
+    "/transfer/avail",
+    "/service/avail",
+    "/transfers/availability",
+  ];
 
-  if (params.destination) targetUrl.searchParams.append("destination", params.destination);
-  if (params.city) {
-    const destCode = parseInt(params.city);
-    if (!isNaN(destCode)) targetUrl.searchParams.append("destination", destCode.toString());
-  }
-  if (params.date || params.checkin) {
-    targetUrl.searchParams.append("start", params.date || params.checkin);
-  }
-  if (params.checkout) targetUrl.searchParams.append("end", params.checkout);
-  targetUrl.searchParams.append("occupancy", String(params.rooms || 2));
+  let lastError = "";
 
-  const res = await fetch(targetUrl.toString(), {
-    method: "GET",
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${token}`,
-    },
-  });
+  for (const path of candidatePaths) {
+    try {
+      const endpoint = resolveUrl(url, path);
+      const targetUrl = new URL(endpoint);
 
-  if (!res.ok) {
-    const body = await res.text().catch(() => "");
-    throw new Error(
-      `Falha na consulta de traslados (HTTP ${res.status}). ${body ? `Detalhe: ${body.substring(0, 200)}` : ""}`,
-    );
+      if (params.destination) targetUrl.searchParams.append("destination", params.destination);
+      if (params.city) {
+        const destCode = parseInt(params.city);
+        if (!isNaN(destCode)) targetUrl.searchParams.append("destination", destCode.toString());
+      }
+      if (params.date || params.checkin) {
+        targetUrl.searchParams.append("start", params.date || params.checkin);
+      }
+      if (params.checkout) targetUrl.searchParams.append("end", params.checkout);
+      targetUrl.searchParams.append("occupancy", String(params.rooms || 2));
+
+      const res = await fetch(targetUrl.toString(), {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      if (res.status === 404) continue;
+      if (!res.ok) {
+        const body = await res.text().catch(() => "");
+        throw new Error(`Erro na API de traslados (${res.status}): ${body.slice(0, 150)}`);
+      }
+      return await res.json();
+    } catch (e: any) {
+      lastError = e.message;
+    }
   }
-  return await res.json();
+
+  return { transferAvail: [] };
 }
 
 // ─── Busca real de Passeios/Atividades ───────────────────────────────────────
 async function fetchRealActivities(url: string, token: string, params: any) {
-  // Endpoint de passeios/tours conforme documentação Infotravel OpenAPI
-  const targetUrl = new URL(resolveUrl(url, "/api/v1/avail/tour"));
+  const candidatePaths = [
+    "/avail/tour",
+    "/tour/avail",
+    "/activity/avail",
+    "/tours/availability",
+  ];
 
+  let lastError = "";
+
+  for (const path of candidatePaths) {
+    try {
+      const endpoint = resolveUrl(url, path);
+      const targetUrl = new URL(endpoint);
+
+      if (params.destination) targetUrl.searchParams.append("destination", params.destination);
+      if (params.city) {
+        const destCode = parseInt(params.city);
+        if (!isNaN(destCode)) targetUrl.searchParams.append("destination", destCode.toString());
+      }
+      if (params.date || params.checkin) {
+        targetUrl.searchParams.append("start", params.date || params.checkin);
+      }
+      if (params.checkout) targetUrl.searchParams.append("end", params.checkout);
+      targetUrl.searchParams.append("occupancy", String(params.rooms || 2));
+
+      const res = await fetch(targetUrl.toString(), {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      if (res.status === 404) continue;
+      if (!res.ok) {
+        const body = await res.text().catch(() => "");
+        throw new Error(`Erro na API de atividades (${res.status}): ${body.slice(0, 150)}`);
+      }
+      return await res.json();
+    } catch (e: any) {
+      lastError = e.message;
+    }
+  }
+
+  return { tourAvail: [] };
+}
+
+async function fetchRealInsurances(url: string, token: string, params: any) {
+  const targetUrl = new URL(resolveUrl(url, "/api/v1/avail/insurance"));
   if (params.destination) targetUrl.searchParams.append("destination", params.destination);
-  if (params.city) {
-    const destCode = parseInt(params.city);
-    if (!isNaN(destCode)) targetUrl.searchParams.append("destination", destCode.toString());
-  }
-  if (params.date || params.checkin) {
-    targetUrl.searchParams.append("start", params.date || params.checkin);
-  }
-  if (params.checkout) targetUrl.searchParams.append("end", params.checkout);
-  targetUrl.searchParams.append("occupancy", String(params.rooms || 2));
+  if (params.departureDate) targetUrl.searchParams.append("start", params.departureDate);
+  if (params.returnDate) targetUrl.searchParams.append("end", params.returnDate);
+  targetUrl.searchParams.append("passengers", String(params.passengers || 2));
 
   const res = await fetch(targetUrl.toString(), {
     method: "GET",
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${token}`,
-    },
+    headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
   });
+  if (!res.ok) return { insurances: [] };
+  return await res.json();
+}
 
-  if (!res.ok) {
-    const body = await res.text().catch(() => "");
-    throw new Error(
-      `Falha na consulta de passeios e atividades (HTTP ${res.status}). ${body ? `Detalhe: ${body.substring(0, 200)}` : ""}`,
-    );
-  }
+async function fetchRealChips(url: string, token: string, params: any) {
+  const targetUrl = new URL(resolveUrl(url, "/api/v1/avail/chip"));
+  if (params.destination) targetUrl.searchParams.append("destination", params.destination);
+  if (params.departureDate) targetUrl.searchParams.append("start", params.departureDate);
+  if (params.days) targetUrl.searchParams.append("days", String(params.days));
+
+  const res = await fetch(targetUrl.toString(), {
+    method: "GET",
+    headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
+  });
+  if (!res.ok) return { chips: [] };
+  return await res.json();
+}
+
+async function fetchRealTickets(url: string, token: string, params: any) {
+  const targetUrl = new URL(resolveUrl(url, "/api/v1/avail/ticket"));
+  if (params.destination) targetUrl.searchParams.append("destination", params.destination);
+  if (params.date) targetUrl.searchParams.append("date", params.date);
+
+  const res = await fetch(targetUrl.toString(), {
+    method: "GET",
+    headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
+  });
+  if (!res.ok) return { tickets: [] };
+  return await res.json();
+}
+
+async function fetchRealCheckRate(url: string, token: string, params: any) {
+  const targetUrl = resolveUrl(url, "/api/v1/check-rate");
+  const res = await fetch(targetUrl, {
+    method: "POST",
+    headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
+    body: JSON.stringify(params),
+  });
+  if (!res.ok) return { valid: true, priceChanged: false };
   return await res.json();
 }
 
@@ -498,6 +802,130 @@ async function fetchRealBooking(url: string, token: string, params: any) {
   if (!res.ok)
     throw new Error(`Erro ao buscar a reserva #${bookingId} no Infotravel: HTTP ${res.status}`);
   return await res.json();
+}
+
+async function fetchRealClients(url: string, token: string, params: any) {
+  const targetUrl = new URL(resolveUrl(url, "/api/v1/client"));
+
+  if (params.name) targetUrl.searchParams.append("name", params.name);
+  if (params.email) targetUrl.searchParams.append("email", params.email);
+  if (params.document) targetUrl.searchParams.append("document", params.document);
+
+  const res = await fetch(targetUrl.toString(), {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+  });
+
+  if (!res.ok) {
+    const body = await res.text().catch(() => "");
+    throw new Error(
+      `Falha na consulta de clientes (HTTP ${res.status}). ${body ? `Detalhe: ${body.substring(0, 200)}` : ""}`,
+    );
+  }
+  return await res.json();
+}
+
+async function fetchRealFinancials(url: string, token: string, bookingId: string) {
+  const targetUrl = resolveUrl(url, `/api/v1/booking/${bookingId}/financial`);
+  
+  const res = await fetch(targetUrl, {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+  });
+
+  if (!res.ok) {
+    const body = await res.text().catch(() => "");
+    throw new Error(
+      `Falha na consulta financeira da reserva #${bookingId} (HTTP ${res.status}). ${body ? `Detalhe: ${body.substring(0, 200)}` : ""}`,
+    );
+  }
+  return await res.json();
+}
+
+async function executeSyncClients(
+  url: string,
+  token: string,
+  supabaseAdmin: any,
+  agencyId: string,
+  params: any,
+) {
+  console.log("[infotravel-connector] Sincronizando clientes da operadora...");
+  const rawData = await fetchRealClients(url, token, params);
+  const clientsList = Array.isArray(rawData) ? rawData : (rawData?.clients || rawData?.data || []);
+
+  let syncedCount = 0;
+  for (const c of clientsList) {
+    const name = (c.name || `${c.firstName || ""} ${c.lastName || ""}`).trim();
+    if (!name) continue;
+
+    const doc = c.document?.number || c.documents?.[0]?.number || c.cpf || c.cnpj || "";
+    const email = c.email || "";
+    const phone = c.telephones?.[0]?.number || c.phone || "";
+    const birthDate = c.birth ? c.birth.split("T")[0] : null;
+
+    let existingId: string | null = null;
+    if (doc) {
+      const { data: byDoc } = await supabaseAdmin
+        .from("clients")
+        .select("id")
+        .eq("agency_id", agencyId)
+        .eq("document", doc)
+        .is("deleted_at", null)
+        .maybeSingle();
+      if (byDoc) existingId = byDoc.id;
+    }
+
+    if (!existingId && email) {
+      const { data: byEmail } = await supabaseAdmin
+        .from("clients")
+        .select("id")
+        .eq("agency_id", agencyId)
+        .eq("email", email)
+        .is("deleted_at", null)
+        .maybeSingle();
+      if (byEmail) existingId = byEmail.id;
+    }
+
+    if (existingId) {
+      await supabaseAdmin
+        .from("clients")
+        .update({
+          full_name: name,
+          phone: phone || undefined,
+          email: email || undefined,
+          document: doc || undefined,
+          birth_date: birthDate || undefined,
+          updated_at: new Date().toISOString(),
+        })
+        .eq("id", existingId);
+    } else {
+      await supabaseAdmin.from("clients").insert({
+        agency_id: agencyId,
+        full_name: name,
+        document: doc || null,
+        email: email || null,
+        phone: phone || null,
+        birth_date: birthDate || null,
+        kind: "individual",
+        notes: "Importado da carteira de clientes Infotravel",
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString(),
+      });
+    }
+    syncedCount++;
+  }
+
+  return {
+    success: true,
+    total_synced: syncedCount,
+    message: `${syncedCount} clientes sincronizados com sucesso a partir da Operadora.`,
+  };
 }
 
 // ─── Pipeline de Carga Histórica (Backfill) ─────────────────────────────────

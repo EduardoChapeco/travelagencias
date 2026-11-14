@@ -17,7 +17,7 @@ import { PageHeader, ModuleActionButton } from "@/components/shell/PageHeader";
 import { Field } from "@/components/ui/field";
 import { FormInput as Input } from "@/components/ui/input";
 import { NativeSelect as Select } from "@/components/ui/select";
-import { SimpleSheet as Sheet } from "@/components/ui/sheet";
+import { SheetPage } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
 import { StatusBadge } from "@/components/ui/badge";
 import { formatDate } from "@/lib/formatters";
@@ -209,8 +209,9 @@ function TeamPage() {
                     <td className="px-3 py-2.5">
                       {m.role === "agent" ? (
                         <Button
+                          variant="ghost"
                           onClick={() => setSelectedAgent(m)}
-                          className="inline-flex items-center gap-1 text-xs font-semibold text-brand hover:underline"
+                          className="inline-flex items-center gap-1.5 text-xs font-semibold text-zinc-300 hover:text-white bg-white/[0.04] border border-white/[0.08] hover:bg-white/[0.08] rounded-full h-7 px-2.5 cursor-pointer"
                         >
                           <Percent className="h-3 w-3" /> Configurar
                         </Button>
@@ -223,8 +224,9 @@ function TeamPage() {
                     </td>
                     <td className="px-3 py-2.5 text-right">
                       <Button
+                        variant="ghost"
                         onClick={() => removeMember(m.user_id)}
-                        className="text-xs text-destructive hover:underline inline-flex items-center gap-1"
+                        className="text-xs font-semibold text-rose-400 hover:text-rose-300 bg-rose-500/10 border border-rose-500/20 hover:bg-rose-500/20 rounded-full h-7 px-2.5 inline-flex items-center gap-1.5 cursor-pointer"
                       >
                         <Trash2 className="h-3 w-3" /> Remover
                       </Button>
@@ -405,18 +407,19 @@ function AgentCommissionSheet({
   }
 
   return (
-    <Sheet onClose={onClose} title={`Comissão: ${agent.profile?.full_name || "Agente"}`}>
+    <SheetPage isOpen={true} onClose={onClose} title={`Comissão: ${agent.profile?.full_name || "Agente"}`}>
       {isLoading ? (
-        <div className="py-8 text-center text-sm text-muted-foreground">Carregando...</div>
+        <div className="py-8 text-center text-sm text-zinc-400 font-sans">Carregando...</div>
       ) : (
         <form onSubmit={submit} className="space-y-4">
           <Field label="Tipo de Comissionamento">
             <Select
               value={commissionType}
               onChange={(e) => setCommissionType(e.target.value as "fixed" | "scale")}
+              className="h-9 rounded-xl bg-white/[0.04] border border-white/[0.08]"
             >
-              <option value="scale">Escala Progressiva (Faturamento Mensal)</option>
-              <option value="fixed">Taxa Fixa (%)</option>
+              <option value="scale" className="bg-[#12141c] text-white">Escala Progressiva (Faturamento Mensal)</option>
+              <option value="fixed" className="bg-[#12141c] text-white">Taxa Fixa (%)</option>
             </Select>
           </Field>
 
@@ -438,13 +441,13 @@ function AgentCommissionSheet({
           ) : (
             <div className="space-y-3">
               <div className="flex items-center justify-between">
-                <span className="text-xs font-semibold uppercase text-muted-foreground">
+                <span className="text-xs font-semibold uppercase tracking-wider text-zinc-400">
                   Faixas de Faturamento
                 </span>
                 <Button
                   type="button"
                   onClick={handleAddRange}
-                  className="inline-flex items-center gap-1 text-xs text-brand hover:underline font-semibold"
+                  className="h-7 px-2.5 rounded-full bg-white/[0.04] text-xs text-zinc-300 border border-white/[0.08] hover:text-white cursor-pointer inline-flex items-center gap-1"
                 >
                   <PlusCircle className="h-3.5 w-3.5" /> Adicionar Faixa
                 </Button>
@@ -454,11 +457,11 @@ function AgentCommissionSheet({
                 {scaleRanges.map((range, index) => (
                   <div
                     key={index}
-                    className="flex items-center gap-2 rounded-[var(--radius-card)] border-none glass-card border-none p-2.5"
+                    className="flex items-center gap-2 rounded-2xl bg-white/[0.03] border border-white/[0.06] p-2.5"
                   >
                     <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 flex-1">
                       <div>
-                        <label className="ds-meta text-muted-foreground font-semibold uppercase block">
+                        <label className="text-[10px] font-semibold uppercase text-zinc-400 block mb-1">
                           Min (R$)
                         </label>
                         <Input
@@ -468,11 +471,11 @@ function AgentCommissionSheet({
                           onChange={(e) =>
                             handleRangeChange(index, "min", parseFloat(e.target.value) || 0)
                           }
-                          className="px-2"
+                          className="h-7 text-xs"
                         />
                       </div>
                       <div>
-                        <label className="ds-meta text-muted-foreground font-semibold uppercase block">
+                        <label className="text-[10px] font-semibold uppercase text-zinc-400 block mb-1">
                           Max (R$)
                         </label>
                         <Input
@@ -487,11 +490,11 @@ function AgentCommissionSheet({
                               e.target.value === "" ? null : parseFloat(e.target.value),
                             )
                           }
-                          className="px-2"
+                          className="h-7 text-xs"
                         />
                       </div>
                       <div>
-                        <label className="ds-meta text-muted-foreground font-semibold uppercase block">
+                        <label className="text-[10px] font-semibold uppercase text-zinc-400 block mb-1">
                           Taxa (%)
                         </label>
                         <Input
@@ -503,17 +506,17 @@ function AgentCommissionSheet({
                           onChange={(e) =>
                             handleRangeChange(index, "pct", parseFloat(e.target.value) || 0)
                           }
-                          className="px-2"
+                          className="h-7 text-xs"
                         />
                       </div>
                     </div>
                     <Button
                       type="button"
                       onClick={() => handleRemoveRange(index)}
-                      className="mt-4 text-destructive hover:bg-destructive/10 p-1.5 rounded transition-colors self-center"
+                      className="mt-4 h-7 w-7 rounded-full text-rose-400 bg-rose-500/10 border border-rose-500/20 hover:bg-rose-500/20 p-0 flex items-center justify-center cursor-pointer"
                       disabled={scaleRanges.length <= 1}
                     >
-                      <X className="h-4 w-4" />
+                      <Trash2 className="h-3.5 w-3.5" />
                     </Button>
                   </div>
                 ))}
@@ -521,17 +524,17 @@ function AgentCommissionSheet({
             </div>
           )}
 
-          <div className="flex justify-end gap-2 pt-2 border-t border-border/50">
-            <Button variant="ghost" type="button" onClick={onClose}>
+          <div className="flex justify-end gap-2 pt-4 border-t border-white/[0.08]">
+            <Button variant="ghost" type="button" onClick={onClose} className="h-9 px-4 rounded-full border border-white/[0.08] bg-white/[0.04] text-zinc-300 hover:text-white cursor-pointer">
               Cancelar
             </Button>
-            <Button variant="default" type="submit" disabled={submitting}>
+            <Button type="submit" disabled={submitting} className="h-9 px-5 rounded-full bg-white text-black font-semibold hover:bg-white/90 shadow-sm cursor-pointer disabled:opacity-50">
               {submitting ? "Salvando…" : "Salvar Configuração"}
             </Button>
           </div>
         </form>
       )}
-    </Sheet>
+    </SheetPage>
   );
 }
 
@@ -545,15 +548,26 @@ function NewInvite({
   onCreated: () => void;
 }) {
   const [email, setEmail] = useState("");
-  const [role, setRole] = useState("agent");
+  const [role, setRole] = useState<"agency_admin" | "agent" | "agent_viewer">("agent");
   const [submitting, setSubmitting] = useState(false);
 
   async function submit(e: React.FormEvent) {
     e.preventDefault();
     setSubmitting(true);
     try {
-      await inviteTeamMember(agencyId, email, role);
-      toast.success("Convite criado");
+      const token = crypto.randomUUID();
+      const expiresAt = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString();
+      const { error } = await supabase.from("agency_invites").insert({
+        agency_id: agencyId,
+        email,
+        role,
+        token,
+        expires_at: expiresAt,
+      });
+      if (error) throw error;
+      toast.success("Convite criado! Link copiado para a área de transferência.");
+      const inviteUrl = `${window.location.origin}/m/invite/${token}`;
+      navigator.clipboard.writeText(inviteUrl);
       onCreated();
     } catch (error: any) {
       toast.error(error.message);
@@ -563,27 +577,27 @@ function NewInvite({
   }
 
   return (
-    <Sheet onClose={onClose} title="Convidar membro">
-      <form onSubmit={submit} className="space-y-3">
-        <Field label="Email *">
-          <Input required type="email" value={email} onChange={(e) => setEmail(e.target.value)} />
+    <SheetPage isOpen={true} onClose={onClose} title="Convidar Membro">
+      <form onSubmit={submit} className="space-y-4">
+        <Field label="Email do Profissional *">
+          <Input required type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="email@agencia.com" />
         </Field>
-        <Field label="Papel">
-          <Select value={role} onChange={(e) => setRole(e.target.value)}>
-            <option value="agency_admin">Admin</option>
-            <option value="agent">Agente</option>
-            <option value="agent_viewer">Visualizador</option>
+        <Field label="Nível de Acesso (Papel)">
+          <Select value={role} onChange={(e) => setRole(e.target.value as "agency_admin" | "agent" | "agent_viewer")} className="h-9 rounded-xl bg-white/[0.04] border border-white/[0.08]">
+            <option value="agency_admin" className="bg-[#12141c] text-white">Admin Geral</option>
+            <option value="agent" className="bg-[#12141c] text-white">Agente / Vendedor</option>
+            <option value="agent_viewer" className="bg-[#12141c] text-white">Visualizador</option>
           </Select>
         </Field>
-        <div className="flex justify-end gap-2 pt-2">
-          <Button variant="ghost" type="button" onClick={onClose}>
+        <div className="flex justify-end gap-2 pt-4 border-t border-white/[0.08]">
+          <Button variant="ghost" type="button" onClick={onClose} className="h-9 px-4 rounded-full border border-white/[0.08] bg-white/[0.04] text-zinc-300 hover:text-white cursor-pointer">
             Cancelar
           </Button>
-          <Button variant="default" type="submit" disabled={submitting}>
-            {submitting ? "Criando…" : "Criar convite"}
+          <Button type="submit" disabled={submitting} className="h-9 px-5 rounded-full bg-white text-black font-semibold hover:bg-white/90 shadow-sm cursor-pointer disabled:opacity-50">
+            {submitting ? "Criando…" : "Criar Convite"}
           </Button>
         </div>
       </form>
-    </Sheet>
+    </SheetPage>
   );
 }

@@ -47,15 +47,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
+import { SheetPage } from "@/components/ui/sheet";
 import {
   Select,
   SelectContent,
@@ -374,86 +366,85 @@ function TripReaccommodationPage() {
             colete assinaturas jurídicas do cliente.
           </p>
         </div>
-        <Dialog open={isCreateCaseOpen} onOpenChange={setIsCreateCaseOpen}>
-          <DialogTrigger asChild>
-            <Button className="cursor-pointer">
-              <Plus className="mr-2 h-4 w-4" /> Registrar Alteração de Voo
-            </Button>
-          </DialogTrigger>
-          <DialogContent className="sm:max-w-[480px]">
-            <DialogHeader>
-              <DialogTitle>Registrar Alteração de Voo</DialogTitle>
-              <DialogDescription>
-                Abra um caso de reacomodação para iniciar o fluxo de alternativas e aceites com o
-                cliente.
-              </DialogDescription>
-            </DialogHeader>
-            <div className="space-y-4 py-4">
-              <div className="space-y-1.5">
-                <Label htmlFor="itinerary">Selecione o Voo Afetado</Label>
-                <Select value={selectedItineraryId} onValueChange={setSelectedItineraryId}>
-                  <SelectTrigger id="itinerary">
-                    <SelectValue placeholder="Selecione o itinerário ativo..." />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {activeItinerariesQ.data?.map((it) => (
-                      <SelectItem key={it.id} value={it.id}>
-                        V{it.version} - {it.segments?.[0]?.origin_iata} →{" "}
-                        {it.segments?.[it.segments.length - 1]?.destination_iata} (
-                        {it.segments?.[0]?.flight_number})
-                      </SelectItem>
-                    ))}
-                    {activeItinerariesQ.data?.length === 0 && (
-                      <div className="p-2 text-xs text-muted-foreground text-center">
-                        Nenhum voo ativo nesta viagem.
-                      </div>
-                    )}
-                  </SelectContent>
-                </Select>
-              </div>
-
-              <div className="space-y-1.5">
-                <Label htmlFor="reason">Motivo da Alteração</Label>
-                <Select value={changeReason} onValueChange={setChangeReason}>
-                  <SelectTrigger id="reason">
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="schedule_change">Alteração de Horário / Malha</SelectItem>
-                    <SelectItem value="cancellation">Voo Cancelado</SelectItem>
-                    <SelectItem value="baggage_policy_change">
-                      Mudança na Franquia de Bagagem
+        <Button className="cursor-pointer" onClick={() => setIsCreateCaseOpen(true)}>
+          <Plus className="mr-2 h-4 w-4" /> Registrar Alteração de Voo
+        </Button>
+        <SheetPage 
+          isOpen={isCreateCaseOpen} 
+          onClose={() => setIsCreateCaseOpen(false)}
+          title="Registrar Alteração de Voo"
+        >
+          <div className="mb-4">
+            <p className="text-sm text-muted-foreground">
+              Abra um caso de reacomodação para iniciar o fluxo de alternativas e aceites com o
+              cliente.
+            </p>
+          </div>
+          <div className="space-y-4 py-4">
+            <div className="space-y-1.5">
+              <Label htmlFor="itinerary">Selecione o Voo Afetado</Label>
+              <Select value={selectedItineraryId} onValueChange={setSelectedItineraryId}>
+                <SelectTrigger id="itinerary">
+                  <SelectValue placeholder="Selecione o itinerário ativo..." />
+                </SelectTrigger>
+                <SelectContent>
+                  {activeItinerariesQ.data?.map((it) => (
+                    <SelectItem key={it.id} value={it.id}>
+                      V{it.version} - {it.segments?.[0]?.origin_iata} →{" "}
+                      {it.segments?.[it.segments.length - 1]?.destination_iata} (
+                      {it.segments?.[0]?.flight_number})
                     </SelectItem>
-                    <SelectItem value="other">Outro Motivo Operacional</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-
-              <div className="space-y-1.5">
-                <Label htmlFor="priority">Prioridade de Atendimento</Label>
-                <Select value={priority} onValueChange={(v: any) => setPriority(v)}>
-                  <SelectTrigger id="priority">
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="low">Baixa (Mais de 30 dias para viagem)</SelectItem>
-                    <SelectItem value="normal">Normal (Viagem em até 15 dias)</SelectItem>
-                    <SelectItem value="high">Alta (Viagem em até 7 dias)</SelectItem>
-                    <SelectItem value="urgent">Urgente (Viagem nas próximas 72h)</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
+                  ))}
+                  {activeItinerariesQ.data?.length === 0 && (
+                    <div className="p-2 text-xs text-muted-foreground text-center">
+                      Nenhum voo ativo nesta viagem.
+                    </div>
+                  )}
+                </SelectContent>
+              </Select>
             </div>
-            <DialogFooter>
-              <Button variant="outline" onClick={() => setIsCreateCaseOpen(false)}>
-                Cancelar
-              </Button>
-              <Button onClick={() => createCaseMut.mutate()} disabled={createCaseMut.isPending}>
-                {createCaseMut.isPending ? "Criando..." : "Criar Caso"}
-              </Button>
-            </DialogFooter>
-          </DialogContent>
-        </Dialog>
+
+            <div className="space-y-1.5">
+              <Label htmlFor="reason">Motivo da Alteração</Label>
+              <Select value={changeReason} onValueChange={setChangeReason}>
+                <SelectTrigger id="reason">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="schedule_change">Alteração de Horário / Malha</SelectItem>
+                  <SelectItem value="cancellation">Voo Cancelado</SelectItem>
+                  <SelectItem value="baggage_policy_change">
+                    Mudança na Franquia de Bagagem
+                  </SelectItem>
+                  <SelectItem value="other">Outro Motivo Operacional</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+
+            <div className="space-y-1.5">
+              <Label htmlFor="priority">Prioridade de Atendimento</Label>
+              <Select value={priority} onValueChange={(v: any) => setPriority(v)}>
+                <SelectTrigger id="priority">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="low">Baixa (Mais de 30 dias para viagem)</SelectItem>
+                  <SelectItem value="normal">Normal (Viagem em até 15 dias)</SelectItem>
+                  <SelectItem value="high">Alta (Viagem em até 7 dias)</SelectItem>
+                  <SelectItem value="urgent">Urgente (Viagem nas próximas 72h)</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+          </div>
+          <div className="flex justify-end gap-2 mt-8 pt-4 border-t border-border/40">
+            <Button variant="outline" onClick={() => setIsCreateCaseOpen(false)}>
+              Cancelar
+            </Button>
+            <Button onClick={() => createCaseMut.mutate()} disabled={createCaseMut.isPending}>
+              {createCaseMut.isPending ? "Criando..." : "Criar Caso"}
+            </Button>
+          </div>
+        </SheetPage>
       </div>
 
       {/* Cases List */}
@@ -634,7 +625,7 @@ function TripReaccommodationPage() {
                                 </span>
                               )}
                               {analysis?.total_duration_delta_minutes !== 0 && (
-                                <span className="ds-meta font-medium bg-slate-50 text-slate-600 border border-slate-100 rounded-full px-2 py-0.5">
+                                <span className="ds-meta font-medium bg-muted text-foreground border border-border rounded-full px-2 py-0.5">
                                   Tempo:{" "}
                                   {analysis.total_duration_delta_minutes > 0
                                     ? `+${Math.round(analysis.total_duration_delta_minutes / 60)}h`
@@ -642,7 +633,7 @@ function TripReaccommodationPage() {
                                 </span>
                               )}
                               {analysis?.segment_count_delta !== 0 && (
-                                <span className="ds-meta font-medium bg-slate-50 text-slate-600 border border-slate-100 rounded-full px-2 py-0.5">
+                                <span className="ds-meta font-medium bg-muted text-foreground border border-border rounded-full px-2 py-0.5">
                                   Conexões:{" "}
                                   {analysis.segment_count_delta > 0
                                     ? `+${analysis.segment_count_delta}`
@@ -977,251 +968,255 @@ function TripReaccommodationPage() {
         )}
       </div>
 
-      {/* Modal to Add Flight Alternative */}
-      <Dialog open={isAddAlternativeOpen} onOpenChange={setIsAddAlternativeOpen}>
-        <DialogContent className="sm:max-w-[720px] max-h-[85vh] overflow-y-auto">
-          <DialogHeader>
-            <DialogTitle>Adicionar Itinerário Alternativo</DialogTitle>
-            <DialogDescription>
-              Insira os trechos do novo voo proposto pela companhia aérea ou operadora para rodar a
-              análise determinística.
-            </DialogDescription>
-          </DialogHeader>
+      {/* SheetPage to Add Flight Alternative */}
+      <SheetPage 
+        isOpen={isAddAlternativeOpen} 
+        onClose={() => setIsAddAlternativeOpen(false)}
+        title="Adicionar Itinerário Alternativo"
+        width="clamp(480px, 50vw, 720px)"
+      >
+        <div className="mb-4">
+          <p className="text-sm text-muted-foreground">
+            Insira os trechos do novo voo proposto pela companhia aérea ou operadora para rodar a
+            análise determinística.
+          </p>
+        </div>
 
-          <div className="space-y-6 py-4">
-            <div className="grid grid-cols-2 gap-4">
-              <div className="space-y-1.5">
-                <Label htmlFor="source">Origem da Proposta</Label>
-                <Select value={altSource} onValueChange={(v: any) => setAltSource(v)}>
-                  <SelectTrigger id="source">
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="manual">Manual (Agência digitou)</SelectItem>
-                    <SelectItem value="operator">Operadora / Cia Aérea</SelectItem>
-                    <SelectItem value="ai">Sugestão Inteligente IA</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-            </div>
-
-            <div className="space-y-4">
-              <div className="flex items-center justify-between">
-                <Label className="ds-label-caps tracking-wider text-muted-foreground">
-                  Trechos de Voo (Conexões)
-                </Label>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={addSegmentRow}
-                  className="cursor-pointer ds-meta"
-                >
-                  <Plus className="mr-1 h-3 w-3" /> Adicionar Trecho
-                </Button>
-              </div>
-
-              {altSegments.map((seg, index) => (
-                <div
-                  key={index}
-                  className="p-4 rounded-[var(--radius-card)] border-none/60 glass/20 space-y-4 relative"
-                >
-                  {altSegments.length > 1 && (
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      className="absolute top-2 right-2 text-rose-500 hover:text-rose-600 hover:bg-rose-50"
-                      onClick={() => removeSegmentRow(index)}
-                    >
-                      <X className="h-3.5 w-3.5" />
-                    </Button>
-                  )}
-                  <div className="text-xs font-bold text-foreground">Trecho #{index + 1}</div>
-
-                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-                    <div className="space-y-1">
-                      <Label className="ds-meta text-muted-foreground">Cia Aérea (IATA)</Label>
-                      <Input
-                        placeholder="Ex: LA, AD, G3"
-                        value={seg.airline_code}
-                        onChange={(e) =>
-                          updateSegmentField(index, "airline_code", e.target.value.toUpperCase())
-                        }
-                      />
-                    </div>
-                    <div className="space-y-1">
-                      <Label className="ds-meta text-muted-foreground">Nº do Voo</Label>
-                      <Input
-                        placeholder="Ex: 3450"
-                        value={seg.flight_number}
-                        onChange={(e) => updateSegmentField(index, "flight_number", e.target.value)}
-                      />
-                    </div>
-                    <div className="space-y-1">
-                      <Label className="ds-meta text-muted-foreground">Origem (IATA)</Label>
-                      <Input
-                        placeholder="Ex: GRU"
-                        value={seg.origin_iata}
-                        onChange={(e) =>
-                          updateSegmentField(index, "origin_iata", e.target.value.toUpperCase())
-                        }
-                      />
-                    </div>
-                    <div className="space-y-1">
-                      <Label className="ds-meta text-muted-foreground">Destino (IATA)</Label>
-                      <Input
-                        placeholder="Ex: FLN"
-                        value={seg.destination_iata}
-                        onChange={(e) =>
-                          updateSegmentField(
-                            index,
-                            "destination_iata",
-                            e.target.value.toUpperCase(),
-                          )
-                        }
-                      />
-                    </div>
-                  </div>
-
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    <div className="space-y-1">
-                      <Label className="ds-meta text-muted-foreground">Partida (Data e Hora)</Label>
-                      <Input
-                        type="datetime-local"
-                        value={seg.departure_at}
-                        onChange={(e) => updateSegmentField(index, "departure_at", e.target.value)}
-                      />
-                    </div>
-                    <div className="space-y-1">
-                      <Label className="ds-meta text-muted-foreground">Chegada (Data e Hora)</Label>
-                      <Input
-                        type="datetime-local"
-                        value={seg.arrival_at}
-                        onChange={(e) => updateSegmentField(index, "arrival_at", e.target.value)}
-                      />
-                    </div>
-                  </div>
-
-                  <div className="grid grid-cols-3 gap-4">
-                    <div className="space-y-1">
-                      <Label className="ds-meta text-muted-foreground">Classe/Cabine</Label>
-                      <Select
-                        value={seg.cabin}
-                        onValueChange={(v) => updateSegmentField(index, "cabin", v)}
-                      >
-                        <SelectTrigger>
-                          <SelectValue />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="Economy">Econômica</SelectItem>
-                          <SelectItem value="PremiumEconomy">Econômica Premium</SelectItem>
-                          <SelectItem value="Business">Executiva</SelectItem>
-                          <SelectItem value="First">Primeira Classe</SelectItem>
-                        </SelectContent>
-                      </Select>
-                    </div>
-                    <div className="space-y-1">
-                      <Label className="ds-meta text-muted-foreground">Bagagem Franquia</Label>
-                      <Input
-                        placeholder="Ex: 1x 23kg, Só de mão"
-                        value={seg.baggage}
-                        onChange={(e) => updateSegmentField(index, "baggage", e.target.value)}
-                      />
-                    </div>
-                    <div className="space-y-1">
-                      <Label className="ds-meta text-muted-foreground">Localizador (PNR)</Label>
-                      <Input
-                        placeholder="Ex: XYZW12"
-                        value={seg.record_locator}
-                        onChange={(e) =>
-                          updateSegmentField(index, "record_locator", e.target.value.toUpperCase())
-                        }
-                      />
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          <DialogFooter>
-            <Button variant="outline" onClick={() => setIsAddAlternativeOpen(false)}>
-              Cancelar
-            </Button>
-            <Button
-              onClick={() => addAlternativeMut.mutate()}
-              disabled={addAlternativeMut.isPending}
-            >
-              {addAlternativeMut.isPending ? "Adicionando..." : "Adicionar Alternativa"}
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
-
-      {/* Modal to Log Operator Request */}
-      <Dialog open={isOperatorLogOpen} onOpenChange={setIsOperatorLogOpen}>
-        <DialogContent className="sm:max-w-[480px]">
-          <DialogHeader>
-            <DialogTitle>Registrar Log de Comunicação Operadora</DialogTitle>
-            <DialogDescription>
-              Registre e-mails, ligações ou chats trocados com o fornecedor/operadora para aprovação
-              da reacomodação.
-            </DialogDescription>
-          </DialogHeader>
-          <div className="space-y-4 py-4">
+        <div className="space-y-6 py-4">
+          <div className="grid grid-cols-2 gap-4">
             <div className="space-y-1.5">
-              <Label htmlFor="operator">Operadora / Fornecedor</Label>
-              <Select value={operatorId} onValueChange={setOperatorId}>
-                <SelectTrigger id="operator">
-                  <SelectValue placeholder="Selecione o fornecedor..." />
-                </SelectTrigger>
-                <SelectContent>
-                  {suppliersQ.data?.map((sup) => (
-                    <SelectItem key={sup.id} value={sup.id}>
-                      {sup.name} ({sup.kind})
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-
-            <div className="space-y-1.5">
-              <Label htmlFor="thread">ID da Conversa / E-mail Thread</Label>
-              <Input
-                id="thread"
-                placeholder="Ex: thread_abc123 ou Ticket ID"
-                value={emailThreadId}
-                onChange={(e) => setEmailThreadId(e.target.value)}
-              />
-            </div>
-
-            <div className="space-y-1.5">
-              <Label htmlFor="opStatus">Status da Solicitação no Fornecedor</Label>
-              <Select value={operatorStatus} onValueChange={(v: any) => setOperatorStatus(v)}>
-                <SelectTrigger id="opStatus">
+              <Label htmlFor="source">Origem da Proposta</Label>
+              <Select value={altSource} onValueChange={(v: any) => setAltSource(v)}>
+                <SelectTrigger id="source">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="notified">Notificado (Aguardando operadora)</SelectItem>
-                  <SelectItem value="pending">Pendente (Em análise)</SelectItem>
-                  <SelectItem value="confirmed">Confirmado / Reacomodado pela Cia</SelectItem>
-                  <SelectItem value="rejected">Rejeitado pela Cia</SelectItem>
+                  <SelectItem value="manual">Manual (Agência digitou)</SelectItem>
+                  <SelectItem value="operator">Operadora / Cia Aérea</SelectItem>
+                  <SelectItem value="ai">Sugestão Inteligente IA</SelectItem>
                 </SelectContent>
               </Select>
             </div>
           </div>
-          <DialogFooter>
-            <Button variant="outline" onClick={() => setIsOperatorLogOpen(false)}>
-              Cancelar
-            </Button>
-            <Button
-              onClick={() => logOperatorRequestMut.mutate()}
-              disabled={logOperatorRequestMut.isPending}
-            >
-              {logOperatorRequestMut.isPending ? "Gravando..." : "Salvar Log"}
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
+
+          <div className="space-y-4">
+            <div className="flex items-center justify-between">
+              <Label className="ds-label-caps tracking-wider text-muted-foreground">
+                Trechos de Voo (Conexões)
+              </Label>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={addSegmentRow}
+                className="cursor-pointer ds-meta"
+              >
+                <Plus className="mr-1 h-3 w-3" /> Adicionar Trecho
+              </Button>
+            </div>
+
+            {altSegments.map((seg, index) => (
+              <div
+                key={index}
+                className="p-4 rounded-[var(--radius-card)] border-none/60 glass/20 space-y-4 relative"
+              >
+                {altSegments.length > 1 && (
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    className="absolute top-2 right-2 text-rose-500 hover:text-rose-600 hover:bg-rose-50"
+                    onClick={() => removeSegmentRow(index)}
+                  >
+                    <X className="h-3.5 w-3.5" />
+                  </Button>
+                )}
+                <div className="text-xs font-bold text-foreground">Trecho #{index + 1}</div>
+
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+                  <div className="space-y-1">
+                    <Label className="ds-meta text-muted-foreground">Cia Aérea (IATA)</Label>
+                    <Input
+                      placeholder="Ex: LA, AD, G3"
+                      value={seg.airline_code}
+                      onChange={(e) =>
+                        updateSegmentField(index, "airline_code", e.target.value.toUpperCase())
+                      }
+                    />
+                  </div>
+                  <div className="space-y-1">
+                    <Label className="ds-meta text-muted-foreground">Nº do Voo</Label>
+                    <Input
+                      placeholder="Ex: 3450"
+                      value={seg.flight_number}
+                      onChange={(e) => updateSegmentField(index, "flight_number", e.target.value)}
+                    />
+                  </div>
+                  <div className="space-y-1">
+                    <Label className="ds-meta text-muted-foreground">Origem (IATA)</Label>
+                    <Input
+                      placeholder="Ex: GRU"
+                      value={seg.origin_iata}
+                      onChange={(e) =>
+                        updateSegmentField(index, "origin_iata", e.target.value.toUpperCase())
+                      }
+                    />
+                  </div>
+                  <div className="space-y-1">
+                    <Label className="ds-meta text-muted-foreground">Destino (IATA)</Label>
+                    <Input
+                      placeholder="Ex: FLN"
+                      value={seg.destination_iata}
+                      onChange={(e) =>
+                        updateSegmentField(
+                          index,
+                          "destination_iata",
+                          e.target.value.toUpperCase(),
+                        )
+                      }
+                    />
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div className="space-y-1">
+                    <Label className="ds-meta text-muted-foreground">Partida (Data e Hora)</Label>
+                    <Input
+                      type="datetime-local"
+                      value={seg.departure_at}
+                      onChange={(e) => updateSegmentField(index, "departure_at", e.target.value)}
+                    />
+                  </div>
+                  <div className="space-y-1">
+                    <Label className="ds-meta text-muted-foreground">Chegada (Data e Hora)</Label>
+                    <Input
+                      type="datetime-local"
+                      value={seg.arrival_at}
+                      onChange={(e) => updateSegmentField(index, "arrival_at", e.target.value)}
+                    />
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-3 gap-4">
+                  <div className="space-y-1">
+                    <Label className="ds-meta text-muted-foreground">Classe/Cabine</Label>
+                    <Select
+                      value={seg.cabin}
+                      onValueChange={(v) => updateSegmentField(index, "cabin", v)}
+                    >
+                      <SelectTrigger>
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="Economy">Econômica</SelectItem>
+                        <SelectItem value="PremiumEconomy">Econômica Premium</SelectItem>
+                        <SelectItem value="Business">Executiva</SelectItem>
+                        <SelectItem value="First">Primeira Classe</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <div className="space-y-1">
+                    <Label className="ds-meta text-muted-foreground">Bagagem Franquia</Label>
+                    <Input
+                      placeholder="Ex: 1x 23kg, Só de mão"
+                      value={seg.baggage}
+                      onChange={(e) => updateSegmentField(index, "baggage", e.target.value)}
+                    />
+                  </div>
+                  <div className="space-y-1">
+                    <Label className="ds-meta text-muted-foreground">Localizador (PNR)</Label>
+                    <Input
+                      placeholder="Ex: XYZW12"
+                      value={seg.record_locator}
+                      onChange={(e) =>
+                        updateSegmentField(index, "record_locator", e.target.value.toUpperCase())
+                      }
+                    />
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        <div className="flex justify-end gap-2 mt-8 pt-4 border-t border-border/40">
+          <Button variant="outline" onClick={() => setIsAddAlternativeOpen(false)}>
+            Cancelar
+          </Button>
+          <Button
+            onClick={() => addAlternativeMut.mutate()}
+            disabled={addAlternativeMut.isPending}
+          >
+            {addAlternativeMut.isPending ? "Adicionando..." : "Adicionar Alternativa"}
+          </Button>
+        </div>
+      </SheetPage>
+
+      {/* SheetPage to Log Operator Request */}
+      <SheetPage 
+        isOpen={isOperatorLogOpen} 
+        onClose={() => setIsOperatorLogOpen(false)}
+        title="Registrar Log de Comunicação Operadora"
+        width="clamp(400px, 35vw, 480px)"
+      >
+        <div className="mb-4">
+          <p className="text-sm text-muted-foreground">
+            Registre e-mails, ligações ou chats trocados com o fornecedor/operadora para aprovação
+            da reacomodação.
+          </p>
+        </div>
+        <div className="space-y-4 py-4">
+          <div className="space-y-1.5">
+            <Label htmlFor="operator">Operadora / Fornecedor</Label>
+            <Select value={operatorId} onValueChange={setOperatorId}>
+              <SelectTrigger id="operator">
+                <SelectValue placeholder="Selecione o fornecedor..." />
+              </SelectTrigger>
+              <SelectContent>
+                {suppliersQ.data?.map((sup) => (
+                  <SelectItem key={sup.id} value={sup.id}>
+                    {sup.name} ({sup.kind})
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+
+          <div className="space-y-1.5">
+            <Label htmlFor="thread">ID da Conversa / E-mail Thread</Label>
+            <Input
+              id="thread"
+              placeholder="Ex: thread_abc123 ou Ticket ID"
+              value={emailThreadId}
+              onChange={(e) => setEmailThreadId(e.target.value)}
+            />
+          </div>
+
+          <div className="space-y-1.5">
+            <Label htmlFor="opStatus">Status da Solicitação no Fornecedor</Label>
+            <Select value={operatorStatus} onValueChange={(v: any) => setOperatorStatus(v)}>
+              <SelectTrigger id="opStatus">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="notified">Notificado (Aguardando operadora)</SelectItem>
+                <SelectItem value="pending">Pendente (Em análise)</SelectItem>
+                <SelectItem value="confirmed">Confirmado / Reacomodado pela Cia</SelectItem>
+                <SelectItem value="rejected">Rejeitado pela Cia</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+        </div>
+        <div className="flex justify-end gap-2 mt-8 pt-4 border-t border-border/40">
+          <Button variant="outline" onClick={() => setIsOperatorLogOpen(false)}>
+            Cancelar
+          </Button>
+          <Button
+            onClick={() => logOperatorRequestMut.mutate()}
+            disabled={logOperatorRequestMut.isPending}
+          >
+            {logOperatorRequestMut.isPending ? "Gravando..." : "Salvar Log"}
+          </Button>
+        </div>
+      </SheetPage>
     </div>
   );
 }

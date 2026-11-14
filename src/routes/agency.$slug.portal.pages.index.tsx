@@ -379,6 +379,8 @@ function PagesPage() {
   const totalClicks = analyticsQ.data?.totalClicks || 0;
   const globalCtr = totalViews > 0 ? ((totalClicks / totalViews) * 100).toFixed(1) : "0.0";
 
+  if (!agency) return null;
+
   return (
     <div className="flex-1 flex flex-col overflow-hidden min-h-0">
       <PageHeader
@@ -667,9 +669,9 @@ function PagesPage() {
                       {/* Actions and redirection buttons */}
                       <div className="mt-5 pt-3 border-t border-border/40 flex justify-between items-center">
                         <div className="flex gap-2">
-                          {p.is_published && agency && (
+                          {p.is_published && (
                             <a
-                              href={`${window.location.origin}/p/${agency.slug}/${p.slug}`}
+                              href={`${typeof window !== "undefined" ? window.location.origin : ""}/p/${agency?.slug || ""}/${p.slug}`}
                               target="_blank"
                               rel="noreferrer"
                               className="flex items-center justify-center p-1.5 rounded-full border-none hover:glass-card border-none-hover text-muted-foreground hover:text-foreground transition-colors"

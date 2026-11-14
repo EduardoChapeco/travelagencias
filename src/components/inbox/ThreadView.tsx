@@ -120,7 +120,7 @@ export function ThreadView({
       </div>
 
       {/* Messages Area */}
-      <ScrollArea className="flex-1 bg-[#efeae2] dark:bg-black/20 p-4">
+      <ScrollArea className="flex-1 bg-muted/10 p-4">
         <div className="max-w-3xl mx-auto flex flex-col gap-2 pb-4">
           {messages.map((msg, index) => {
             const isOutbound = msg.direction === "outbound";
@@ -131,21 +131,20 @@ export function ThreadView({
               >
                 <div
                   className={cn(
-                    "max-w-[75%] rounded-2xl p-3 text-sm shadow-sm relative group",
+                    "max-w-[85%] sm:max-w-[75%] min-w-0 rounded-2xl p-3 text-sm shadow-none relative group break-words [overflow-wrap:anywhere]",
                     isOutbound
-                      ? "bg-[#d9fdd3] dark:bg-primary text-slate-900 dark:text-primary-foreground rounded-tr-none"
-                      : "bg-white dark:bg-card text-foreground rounded-tl-none",
+                      ? "bg-brand text-brand-foreground rounded-tr-none"
+                      : "bg-card border border-border/80 text-foreground rounded-tl-none",
                   )}
                 >
-                  {msg.body && <p className="whitespace-pre-wrap">{msg.body}</p>}
+                  {msg.body && <p className="whitespace-pre-wrap break-words">{msg.body}</p>}
                   {msg.media_url && (
                     <div className="mt-2 rounded overflow-hidden">
-                      {/* Placeholder for media rendering */}
                       <a
                         href={msg.media_url}
                         target="_blank"
                         rel="noreferrer"
-                        className="text-xs underline text-blue-600"
+                        className="text-xs underline text-brand font-medium"
                       >
                         Ver Anexo
                       </a>
@@ -153,9 +152,9 @@ export function ThreadView({
                   )}
                   <div
                     className={cn(
-                      "ds-meta mt-1 flex items-center gap-1 justify-end opacity-70",
+                      "ds-meta mt-1 flex items-center gap-1 justify-end opacity-70 font-mono",
                       isOutbound
-                        ? "text-slate-700 dark:text-primary-foreground"
+                        ? "text-brand-foreground"
                         : "text-muted-foreground",
                     )}
                   >

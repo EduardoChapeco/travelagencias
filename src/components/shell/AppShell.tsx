@@ -120,144 +120,151 @@ export function AppShell({
     );
   }
 
-  return (
-    <div
-      className="h-screen w-full relative overflow-hidden bg-black selection:bg-brand/30 select-none"
-      style={
-        {
-          "--os-glass-opacity": `${glassOpacity / 100}`,
-        } as React.CSSProperties
-      }
-    >
-      {/* 1. Wallpaper Global — base layer sem opacidades ou dimmers aninhados */}
+  if (isHome) {
+    return (
       <div
-        className="absolute inset-0 bg-cover bg-center transition-transform duration-[20s] ease-linear hover:scale-105 pointer-events-none"
-        style={{
-          backgroundImage: `url('${activeWallpaper}')`,
-          filter: `blur(${blurIntensity}px)`,
-        }}
-      />
-
-      {/* 1.5. Centralized Glass Panel / Backdrop Blur */}
-      <div
-        className="absolute inset-0 pointer-events-none"
-        style={{
-          background: `rgba(0, 0, 0, ${dimOpacity / 100})`,
-          backdropFilter: `blur(${blurIntensity}px) saturate(180%)`,
-          WebkitBackdropFilter: `blur(${blurIntensity}px) saturate(180%)`,
-        }}
-      />
-
-      {/* 2. Top Status Bar — Ultra-minimalista com logo à esquerda, portal contextual no meio e hora à direita */}
-      <header className="absolute top-0 left-0 right-0 h-[var(--shell-header-height)] px-4 flex justify-between items-center text-os z-40 bg-transparent border-none pointer-events-none">
-        {/* Left: Logo da agência (quadrado verde) */}
-        <div className="flex items-center gap-2 pointer-events-auto shrink-0">
-          <Link
-            to={`/agency/${agency?.slug}` as any}
-            className="flex items-center gap-2 font-extrabold text-sm tracking-tight text-os-muted hover:text-os transition-colors"
-          >
-            {brandInfo?.logo_url ? (
-              <img
-                src={brandInfo.logo_url}
-                alt={brandInfo.platform_name || "Turis"}
-                className="h-6 w-auto object-contain max-w-32 rounded"
-                onError={(e) => {
-                  e.currentTarget.style.display = "none";
-                }}
-              />
-            ) : null}
-            <span className="hidden sm:inline-block">{brandInfo?.platform_name || "Turis"}</span>
-          </Link>
-        </div>
-
-        {/* Center: Toolbar Portal Target */}
-        <div
-          id="shell-header-portal"
-          className="flex-1 px-4 z-50 flex items-center justify-center pointer-events-auto min-w-0"
-        />
-
-        {/* Right: Pill ultra-fina — hora, data e notificações */}
-        <div className="flex items-center gap-3 glass-pill px-3 h-8 rounded-full pointer-events-auto ds-meta font-medium tracking-wide shrink-0">
-          <span className="text-os-muted capitalize hidden sm:inline">{dateStr}</span>
-          <span className="text-os">{timeStr}</span>
-          <div className="w-[1px] h-2.5 bg-white/15" />
-          <NotificationBadge minimal />
-        </div>
-      </header>
-
-      {/* 4. Main Workspace — full screen, below status bar */}
-      <div
-        className={cn(
-          "w-full h-full pt-[var(--shell-header-height)] z-10 relative overflow-hidden pb-20 md:pb-0",
-          !isBuilder && !isPastDue && !isHome ? "md:grid" : "flex flex-col",
-        )}
+        className="h-screen w-full relative overflow-hidden bg-black selection:bg-brand/30 select-none"
         style={
-          !isBuilder && !isPastDue && !isHome
-            ? {
-                gridTemplateColumns:
-                  "var(--shell-edge-gap) max-content var(--shell-content-gutter) minmax(0, 1fr) var(--shell-edge-gap)",
-                gridTemplateRows: "1fr",
-              }
-            : undefined
+          {
+            "--os-glass-opacity": `${glassOpacity / 100}`,
+          } as React.CSSProperties
         }
       >
-        {/* Spacer for left edge gap */}
-        {!isBuilder && !isPastDue && !isHome && <div className="hidden md:block col-start-1" />}
+        {/* 1. Wallpaper Desktop na Home */}
+        <div
+          className="absolute inset-0 bg-cover bg-center transition-transform duration-[20s] ease-linear hover:scale-105 pointer-events-none"
+          style={{
+            backgroundImage: `url('${activeWallpaper}')`,
+            filter: `blur(${blurIntensity}px)`,
+          }}
+        />
 
+        <div
+          className="absolute inset-0 pointer-events-none"
+          style={{
+            background: `rgba(0, 0, 0, ${dimOpacity / 100})`,
+            backdropFilter: `blur(${blurIntensity}px) saturate(180%)`,
+            WebkitBackdropFilter: `blur(${blurIntensity}px) saturate(180%)`,
+          }}
+        />
+
+        {/* Status Bar na Home */}
+        <header className="absolute top-0 left-0 right-0 h-14 px-6 flex justify-between items-center text-os z-40 bg-transparent pointer-events-none">
+          <div className="flex items-center gap-2 pointer-events-auto shrink-0">
+            <Link
+              to={`/agency/${agency?.slug}` as any}
+              className="flex items-center gap-2 font-extrabold text-sm tracking-tight text-white/80 hover:text-white transition-colors"
+            >
+              {brandInfo?.logo_url ? (
+                <img
+                  src={brandInfo.logo_url}
+                  alt={brandInfo.platform_name || "Turis"}
+                  className="h-6 w-auto object-contain max-w-32 rounded"
+                />
+              ) : null}
+              <span className="hidden sm:inline-block font-bold">{brandInfo?.platform_name || "Turis"}</span>
+            </Link>
+          </div>
+
+          <div
+            id="shell-header-portal"
+            className="flex-1 px-4 z-50 flex items-center justify-center pointer-events-auto min-w-0"
+          />
+
+          <div className="flex items-center gap-2.5 h-8 px-3.5 rounded-full bg-black/40 backdrop-blur-xl border border-white/15 text-xs font-medium text-white pointer-events-auto shrink-0">
+            <span className="text-zinc-400 capitalize hidden sm:inline">{dateStr}</span>
+            <span>{timeStr}</span>
+            <div className="w-[1px] h-3 bg-white/15" />
+            <NotificationBadge minimal />
+          </div>
+        </header>
+
+        {/* Conteúdo da Home */}
+        <div className="flex-1 flex flex-col relative overflow-hidden w-full h-full pt-14 pb-24">
+          <LegalBlocker>{children ?? <Outlet />}</LegalBlocker>
+        </div>
+
+        {/* Dock na Home */}
+        <AppSidebar isHome={true} />
+
+        <AIFloatingWidget />
+        <DesktopCustomizerModal open={customizerOpen} setOpen={setCustomizerOpen} />
+        <CommandMenu />
+      </div>
+    );
+  }
+
+  // ── Layout Contínuo de Módulos (CRM, Viagens, Financeiro, etc.) ───────────
+  return (
+    <div className="h-screen w-full flex bg-[#0a0b0e] text-foreground overflow-hidden select-none">
+      {/* 1. Sidebar Contínua à Esquerda (Desktop) */}
+      {!isBuilder && !isPastDue && (
+        <aside className="hidden md:flex h-full w-16 md:w-20 shrink-0 bg-[#0a0b0e] border-r border-white/[0.08] flex-col justify-between items-center z-30">
+          <AppSidebar isHome={false} />
+        </aside>
+      )}
+
+      {/* 2. Área Principal da Aplicação */}
+      <div className="flex-1 h-full flex flex-col min-w-0 bg-[#0d0f15] overflow-hidden">
+        {/* Barra Superior Unificada */}
         {!isBuilder && !isPastDue && (
-          <div
-            className={cn(
-              !isHome &&
-                "hidden md:flex col-start-2 h-full items-center py-[var(--shell-edge-gap)]",
-            )}
-          >
-            <AppSidebar isHome={isHome} />
-          </div>
-        )}
-
-        {/* Spacer for content gutter */}
-        {!isBuilder && !isPastDue && !isHome && <div className="hidden md:block col-start-3" />}
-
-        {isHome ? (
-          // ── HOME: FloatingDock + widgets on wallpaper ──────────────────────
-          <div className="flex-1 flex flex-col relative overflow-hidden w-full h-full">
-            <LegalBlocker>{children ?? <Outlet />}</LegalBlocker>
-          </div>
-        ) : (
-          // ── MODULE VIEW ───────────────────────────────────────────────────
-          // Workspace Content in Grid Column 4
-          <div
-            className={cn(
-              "flex-1 h-full overflow-hidden flex flex-col min-w-0",
-              !isBuilder && !isPastDue && "md:col-start-4 py-[var(--shell-edge-gap)]",
-            )}
-          >
-            {/* Mobile Title (Menu button removed since dock is at bottom) */}
-            <div className="md:hidden flex items-center gap-3 px-4 pt-3 pb-1 shrink-0">
-              {title && <h1 className="text-base font-semibold text-os">{title}</h1>}
+          <header className="h-14 bg-[#0a0b0e]/95 backdrop-blur-xl border-b border-white/[0.08] px-6 flex items-center justify-between shrink-0 z-20">
+            {/* Logo da Agência / Marca */}
+            <div className="flex items-center gap-3 shrink-0">
+              <Link
+                to={`/agency/${agency?.slug}` as any}
+                className="flex items-center gap-2 font-extrabold text-sm tracking-tight text-zinc-400 hover:text-white transition-colors"
+              >
+                {brandInfo?.logo_url ? (
+                  <img
+                    src={brandInfo.logo_url}
+                    alt={brandInfo.platform_name || "Turis"}
+                    className="h-6 w-auto object-contain max-w-32 rounded"
+                  />
+                ) : (
+                  <span className="font-bold text-white tracking-tight">{brandInfo?.platform_name || "Turis"}</span>
+                )}
+              </Link>
             </div>
 
-            <main className="no-scrollbar flex-1 overflow-hidden relative os-workspace flex flex-col rounded-[var(--radius-card)] glass-dark glass-card border border-white/5 md:shadow-2xl">
-              {isPastDue && (
-                <div className="glass-section text-white text-xs px-4 py-2.5 flex items-center justify-between font-bold gap-3 shrink-0 rounded-t-[var(--radius-card)] border-b border-rose-500/40">
-                  <div className="flex items-center gap-2">
-                    <AlertTriangle className="h-4 w-4 shrink-0 text-rose-400" />
-                    <span>Assinatura atrasada. Regularize o pagamento.</span>
-                  </div>
-                  <a
-                    href={`/agency/${agency!.slug}/settings/billing`}
-                    className="bg-rose-500 text-white px-3 py-1 rounded-full font-black hover:bg-rose-400 transition-colors uppercase ds-meta"
-                  >
-                    Regularizar
-                  </a>
-                </div>
-              )}
-              <LegalBlocker>{children ?? <Outlet />}</LegalBlocker>
-            </main>
-          </div>
+            {/* Portal de Busca, Filtros e Ações de Módulo */}
+            <div id="shell-header-portal" className="flex-1 px-6 flex items-center justify-center min-w-0" />
+
+            {/* Hora, Data e Notificações */}
+            <div className="flex items-center gap-2.5 h-8 px-3.5 rounded-full bg-white/[0.05] border border-white/[0.08] text-xs font-medium text-zinc-300 shrink-0">
+              <span className="text-zinc-500 capitalize hidden sm:inline">{dateStr}</span>
+              <span className="text-zinc-200">{timeStr}</span>
+              <div className="w-[1px] h-3 bg-white/10" />
+              <NotificationBadge minimal />
+            </div>
+          </header>
         )}
-        {/* Spacer for right edge gap */}
-        {!isBuilder && !isPastDue && !isHome && <div className="hidden md:block col-start-5" />}
+
+        {/* Workspace Principal da Página */}
+        <main className="flex-1 h-full overflow-auto bg-[#0d0f15] text-foreground relative flex flex-col">
+          {isPastDue && (
+            <div className="bg-rose-500/10 text-white text-xs px-6 py-2.5 flex items-center justify-between font-bold gap-3 shrink-0 border-b border-rose-500/30">
+              <div className="flex items-center gap-2 text-rose-400">
+                <AlertTriangle className="h-4 w-4 shrink-0" />
+                <span>Assinatura atrasada. Regularize o pagamento para continuar utilizando todos os recursos.</span>
+              </div>
+              <a
+                href={`/agency/${agency!.slug}/settings/billing`}
+                className="bg-rose-500 text-white px-3 py-1 rounded-full font-bold hover:bg-rose-400 transition-colors uppercase text-[10px]"
+              >
+                Regularizar
+              </a>
+            </div>
+          )}
+          <LegalBlocker>{children ?? <Outlet />}</LegalBlocker>
+        </main>
+
+        {/* Barra de Navegação Inferior (Mobile) */}
+        {!isBuilder && !isPastDue && (
+          <nav className="md:hidden fixed bottom-0 left-0 right-0 h-16 bg-[#0a0b0e]/95 backdrop-blur-xl border-t border-white/[0.08] flex items-center justify-around px-2 z-40">
+            <AppSidebar isHome={false} mobileOpen />
+          </nav>
+        )}
       </div>
 
       {/* 5. Floating contextual AI Assistant Widget */}

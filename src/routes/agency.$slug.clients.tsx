@@ -12,7 +12,6 @@ import { Field } from "@/components/ui/field";
 import { FormInput as Input } from "@/components/ui/input";
 import { NativeSelect as Select } from "@/components/ui/select";
 import { FormTextarea as Textarea } from "@/components/ui/textarea";
-import { SimpleSheet as Sheet } from "@/components/ui/sheet";
 import { formatDate } from "@/lib/formatters";
 import { useDebounce } from "@/hooks/use-debounce";
 import { ClientFormSheet } from "@/components/clients/ClientFormSheet";

@@ -289,13 +289,13 @@ function PortalSettingsPage() {
                   Preview no Google
                 </div>
                 <div className="space-y-0.5">
-                  <div className="text-sm font-medium text-[#1a0dab]">
-                    Início{form.seo_title_suffix || ` · ${agency.name}`}
+                  <div className="text-sm font-medium text-foreground">
+                    Início{form.seo_title_suffix || ` · ${agency?.name || "Agência"}`}
                   </div>
-                  <div className="ds-meta text-[#006621]">
-                    {window.location.origin}/p/{agency.slug}
+                  <div className="ds-meta text-foreground">
+                    {typeof window !== "undefined" ? window.location.origin : ""}/p/{agency?.slug || ""}
                   </div>
-                  <div className="ds-meta text-[#545454] line-clamp-2">
+                  <div className="ds-meta text-foreground line-clamp-2">
                     {form.seo_default_description || "Descrição não definida"}
                   </div>
                 </div>

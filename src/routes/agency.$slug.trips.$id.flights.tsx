@@ -36,7 +36,7 @@ import {
   FileText,
   AlertTriangle,
 } from "lucide-react";
-import { Dialog, DialogContent } from "@/components/ui/dialog";
+import { SheetPage } from "@/components/ui/sheet";
 import { toast } from "sonner";
 import { logTripAudit } from "@/services/audit";
 import { Button } from "@/components/ui/button";
@@ -938,18 +938,20 @@ function TripFlightsPage() {
       )}
 
       {/* ── Modal de Comparação (Diff) ── */}
-      <Dialog open={showDiffModal} onOpenChange={setShowDiffModal}>
-        <DialogContent className="max-w-4xl p-0 overflow-hidden border-none/10 max-h-[85vh] bg-background">
+      <SheetPage 
+        isOpen={showDiffModal} 
+        onClose={() => setShowDiffModal(false)}
+        title={
+          <div className="flex items-center gap-2">
+            <GitCompare className="h-5 w-5 text-brand" />
+            <h3 className="text-sm font-bold text-foreground">
+              Comparação de Itinerários Aéreos
+            </h3>
+          </div>
+        }
+        contentClassName="p-0"
+      >
           <div className="flex flex-col h-full w-full">
-            {/* Modal Header */}
-            <div className="p-4 border-b border-border/60 flex items-center justify-between">
-              <div className="flex items-center gap-2">
-                <GitCompare className="h-5 w-5 text-brand" />
-                <h3 className="text-sm font-bold text-foreground">
-                  Comparação de Itinerários Aéreos
-                </h3>
-              </div>
-            </div>
 
             {/* Selects selector */}
             <div className="p-4 glass/20 border-b border-border/60 grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -1205,8 +1207,7 @@ function TripFlightsPage() {
               </Button>
             </div>
           </div>
-        </DialogContent>
-      </Dialog>
+      </SheetPage>
     </div>
   );
 }

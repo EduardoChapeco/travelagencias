@@ -76,9 +76,11 @@ import {
   updatePromotionStatus,
 } from "@/services/quotes-promotions";
 
+import { InfotravelPackageWorkspace } from "@/components/quotes/InfotravelPackageWorkspace";
+
 export const Route = createFileRoute("/agency/$slug/quotes/")({
   head: ({ context }: any) => ({
-    meta: [{ title: `Workspace de Cotações · ${context?.brand?.platform_name || "Turis"}` }],
+    meta: [{ title: `Workspace de Cotações & Pacotes · ${context?.brand?.platform_name || "Turis"}` }],
   }),
   component: QuotesIndexPage,
 });
@@ -96,8 +98,8 @@ function QuotesIndexPage() {
   const navigate = useNavigate();
   const qc = useQueryClient();
 
-  const [activeTab, setActiveTab] = useState<"quotes" | "knowledge" | "rules" | "promotions">(
-    "quotes",
+  const [activeTab, setActiveTab] = useState<"packages" | "quotes" | "knowledge" | "rules" | "promotions">(
+    "packages",
   );
   const [searchQuery, setSearchQuery] = useState("");
   const debouncedSearch = useDebounce(searchQuery, 400);
@@ -561,14 +563,19 @@ Texto: "${aiText}"`;
   return (
     <div className="w-full flex h-full flex-col overflow-hidden">
       <PageHeader
-        title="Cotações"
-        search={{
-          value: searchQuery,
-          onChange: setSearchQuery,
-          placeholder: "Buscar...",
-        }}
+        title="Cotações e Pacotes"
+        search={
+          activeTab === "quotes"
+            ? {
+                value: searchQuery,
+                onChange: setSearchQuery,
+                placeholder: "Buscar cotações...",
+              }
+            : undefined
+        }
         filters={[
-          { label: "Ativas", value: "quotes" },
+          { label: "Montador de Pacotes GDS", value: "packages" },
+          { label: "Cotações Ativas", value: "quotes" },
           { label: "Cérebro & RAG", value: "knowledge" },
           { label: "Regras IA", value: "rules" },
           { label: "Promoções", value: "promotions" },
@@ -583,19 +590,22 @@ Texto: "${aiText}"`;
             <div className="flex items-center gap-1.5">
               <Button
                 variant="ghost"
-                size="sm"
                 onClick={handleFeedDefaultGuidelines}
                 disabled={feedingDefaults}
+                className="h-8 px-3 rounded-full bg-white/[0.04] text-zinc-300 hover:text-white border border-white/[0.08] hover:bg-white/[0.08] font-semibold text-xs flex items-center gap-1.5 cursor-pointer"
               >
                 {feedingDefaults ? (
-                  <Loader2 className="h-3 w-3 animate-spin" />
+                  <Loader2 className="h-3.5 w-3.5 animate-spin" />
                 ) : (
-                  <Plus className="h-3 w-3" />
+                  <Plus className="h-3.5 w-3.5" />
                 )}
                 Padrões
               </Button>
-              <Button size="sm" onClick={() => setNewKnowledgeOpen(true)}>
-                <Sparkles className="h-3 w-3" />
+              <Button
+                onClick={() => setNewKnowledgeOpen(true)}
+                className="h-8 px-3.5 rounded-full bg-white text-black hover:bg-white/90 font-semibold text-xs flex items-center gap-1.5 shadow-sm cursor-pointer"
+              >
+                <Sparkles className="h-3.5 w-3.5 stroke-[2.5]" />
                 Alimentar Diretriz
               </Button>
             </div>
@@ -619,8 +629,10 @@ Texto: "${aiText}"`;
       />
 
       {/* Main Content */}
-      <div className="page-content page-section dock-offset">
-        {activeTab === "quotes" ? (
+      <div className="flex-1 overflow-y-auto w-full p-4 md:p-6 pb-24 bg-background">
+        {activeTab === "packages" ? (
+          <InfotravelPackageWorkspace />
+        ) : activeTab === "quotes" ? (
           isQuotesError ? (
             <div className="p-4 rounded-[var(--radius-card)] glass-error text-xs flex items-center gap-2 m-6">
               <AlertTriangle className="h-4 w-4 shrink-0" />

@@ -26,7 +26,7 @@ import { processPassengerWithAI } from "@/lib/ocr-ai";
 import { NewPassengerSheet } from "@/components/trips/NewPassengerSheet";
 import { toast } from "sonner";
 import { useConfirm } from "@/hooks/use-confirm";
-import { Dialog, DialogContent } from "@/components/ui/dialog";
+import { SheetPage } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
 import { FormInput as Input } from "@/components/ui/input";
 import { NativeSelect as Select } from "@/components/ui/select";
@@ -823,14 +823,19 @@ function DataConferencePanel({
   if (!passenger) return null;
 
   return (
-    <Dialog open={true} onOpenChange={(open) => !open && onClose()}>
-      <DialogContent className="max-w-[90vw] md:max-w-6xl p-0 overflow-hidden border-none/10 max-h-[90vh] glass dark:glass-dark text-white flex flex-col md:flex-row gap-0">
+    <SheetPage 
+      isOpen={true} 
+      onClose={() => onClose()}
+      title={
+        <div className="flex items-center gap-2">
+          <FileText className="h-5 w-5 text-brand" /> Documento do Passageiro
+        </div>
+      }
+      contentClassName="p-0 flex flex-col md:flex-row gap-0"
+    >
         {/* LADO ESQUERDO: Visualizador de Documentos */}
         <div className="flex-1 flex flex-col p-6 border-r border-border/80 glass/10">
           <div className="flex items-center justify-between mb-4">
-            <h3 className="text-lg font-bold text-foreground flex items-center gap-2">
-              <FileText className="h-5 w-5 text-brand" /> Documento do Passageiro
-            </h3>
             {uploading && (
               <span className="text-xs text-brand flex items-center gap-1.5 font-bold">
                 <Loader2 className="h-3.5 w-3.5 animate-spin" /> Lendo Documento...
@@ -1066,7 +1071,6 @@ function DataConferencePanel({
             </Button>
           </div>
         </div>
-      </DialogContent>
-    </Dialog>
+    </SheetPage>
   );
 }

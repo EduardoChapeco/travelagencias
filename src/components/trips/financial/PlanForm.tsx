@@ -5,7 +5,7 @@ import { toast } from "sonner";
 import { Field } from "@/components/ui/field";
 import { FormInput as Input } from "@/components/ui/input";
 import { NativeSelect as Select } from "@/components/ui/select";
-import { createPaymentPlan } from "@/services/trips";
+import { createPaymentPlan, createGroupPaymentPlan } from "@/services/trips";
 import { Button } from "@/components/ui/button";
 
 const PAYMENT_METHODS = [
@@ -32,12 +32,18 @@ export function PlanForm({
   agencyId,
   tripId,
   totalSale,
+  isGroupEnrollment,
+  groupEnrollmentId,
+  groupClientId,
   onCreated,
   onCancel,
 }: {
   agencyId: string;
   tripId: string;
   totalSale: number;
+  isGroupEnrollment?: boolean;
+  groupEnrollmentId?: string;
+  groupClientId?: string;
   onCreated: () => void;
   onCancel: () => void;
 }) {
@@ -58,15 +64,29 @@ export function PlanForm({
 
   const onSubmit = async (data: PaymentPlanFormData) => {
     try {
-      await createPaymentPlan({
-        agencyId,
-        tripId,
-        totalAmount: data.total_amount,
-        installmentsCount: data.installments,
-        method: data.method,
-        firstDueDate: data.first_due,
-        isThirdParty: data.is_third_party,
-      });
+      if (isGroupEnrollment && groupEnrollmentId && groupClientId) {
+        await createGroupPaymentPlan({
+          agencyId,
+          groupEnrollmentId,
+          clientId: groupClientId,
+          tripId: "",
+          totalAmount: data.total_amount,
+          installmentsCount: data.installments,
+          method: data.method,
+          firstDueDate: data.first_due,
+          isThirdParty: data.is_third_party,
+        });
+      } else {
+        await createPaymentPlan({
+          agencyId,
+          tripId,
+          totalAmount: data.total_amount,
+          installmentsCount: data.installments,
+          method: data.method,
+          firstDueDate: data.first_due,
+          isThirdParty: data.is_third_party,
+        });
+      }
       toast.success("Plano de parcelamento criado");
       onCreated();
     } catch (e: any) {

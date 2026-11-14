@@ -22,7 +22,7 @@ import { Field } from "@/components/ui/field";
 import { FormInput as Input } from "@/components/ui/input";
 import { NativeSelect as Select } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { SheetPage } from "@/components/ui/sheet";
 import { StatusBadge } from "@/components/ui/badge";
 import { formatCurrency, formatDate } from "@/lib/formatters";
 import { FormTextarea as Textarea } from "@/components/ui/textarea";
@@ -382,17 +382,19 @@ function ReconciliationPage() {
         )}
 
         {/* Approve / Conciliation Drawer Modal */}
-        <Dialog open={!!selectedReceipt} onOpenChange={(open) => !open && setSelectedReceipt(null)}>
-          <DialogContent className="max-w-md p-0 overflow-hidden border-none/10 max-h-[90vh] glass dark:glass-dark text-white">
-            <DialogHeader className="px-5 py-4 border-b glass">
-              <DialogTitle className="flex items-center gap-2">
-                <CheckCircle className="w-5 h-5 text-emerald-450" />
-                <span className="font-bold text-white text-sm uppercase tracking-wider">
-                  Aprovar Comprovante
-                </span>
-              </DialogTitle>
-            </DialogHeader>
-
+        <SheetPage 
+          isOpen={!!selectedReceipt} 
+          onClose={() => setSelectedReceipt(null)} 
+          title={
+            <div className="flex items-center gap-2">
+              <CheckCircle className="w-5 h-5 text-emerald-450" />
+              <span className="font-bold text-foreground text-sm uppercase tracking-wider">
+                Conciliar Pagamento
+              </span>
+            </div>
+          } 
+          contentClassName="p-0"
+        >
             {selectedReceipt && (
               <div className="p-5 space-y-4">
                 <div className="bg-gray-50 border-none rounded-[var(--radius-card)] p-4 text-xs space-y-2 font-mono">
@@ -482,21 +484,22 @@ function ReconciliationPage() {
                 </div>
               </div>
             )}
-          </DialogContent>
-        </Dialog>
+        </SheetPage>
 
         {/* Reject Drawer Modal */}
-        <Dialog open={!!rejectReceipt} onOpenChange={(open) => !open && setRejectReceipt(null)}>
-          <DialogContent className="max-w-md p-0 overflow-hidden border-none/10 max-h-[90vh] glass dark:glass-dark text-white">
-            <DialogHeader className="px-5 py-4 border-b glass">
-              <DialogTitle className="flex items-center gap-2">
-                <XCircle className="w-5 h-5 text-rose-450" />
-                <span className="font-bold text-white text-sm uppercase tracking-wider">
-                  Recusar Comprovante
-                </span>
-              </DialogTitle>
-            </DialogHeader>
-
+        <SheetPage 
+          isOpen={!!rejectReceipt} 
+          onClose={() => setRejectReceipt(null)}
+          title={
+            <div className="flex items-center gap-2">
+              <XCircle className="w-5 h-5 text-rose-450" />
+              <span className="font-bold text-foreground text-sm uppercase tracking-wider">
+                Rejeitar Pagamento
+              </span>
+            </div>
+          }
+          contentClassName="p-0"
+        >
             {rejectReceipt && (
               <div className="p-5 space-y-4 text-sm text-foreground/80">
                 <p className="text-xs text-muted-foreground leading-relaxed">
@@ -539,8 +542,7 @@ function ReconciliationPage() {
                 </div>
               </div>
             )}
-          </DialogContent>
-        </Dialog>
+        </SheetPage>
       </div>
     </div>
   );

@@ -28,7 +28,7 @@ import {
   RefreshCw,
   MoreVertical,
 } from "lucide-react";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { SheetPage } from "@/components/ui/sheet";
 import { supabase } from "@/integrations/supabase/client";
 import { useAgency } from "@/lib/agency-context";
 import { FormInput as Input } from "@/components/ui/input";
@@ -559,7 +559,7 @@ function TourPanel({ tour, slug }: TourPanelProps) {
               className={cn(
                 "px-2 py-0.5 rounded cursor-pointer transition-colors",
                 tour.rooming_list_status === "closed"
-                  ? "bg-slate-900 text-white"
+                  ? "bg-muted text-white"
                   : "bg-emerald-500/10 text-emerald-600 border border-emerald-500/20",
               )}
             >
@@ -995,13 +995,7 @@ function TourPanel({ tour, slug }: TourPanelProps) {
           </DragOverlay>
 
           {/* Edit Room Modal */}
-          <Dialog open={!!editingRoom} onOpenChange={(open) => !open && setEditingRoom(null)}>
-            <DialogContent className="max-w-md p-0 overflow-hidden border-none/10 max-h-[90vh] bg-background">
-              <DialogHeader className="px-6 py-4 border-b border-border/40">
-                <DialogTitle className="text-sm font-bold text-foreground">
-                  Editar Quarto {editingRoom?.room_number}
-                </DialogTitle>
-              </DialogHeader>
+          <SheetPage isOpen={!!editingRoom} onClose={() => setEditingRoom(null)} title={`Editar Quarto ${editingRoom?.room_number}`} contentClassName="p-0">
               {editingRoom && (
                 <div className="p-6">
                   <form onSubmit={(e) => updateRoomMutation.mutate(e)} className="space-y-4">
@@ -1106,8 +1100,7 @@ function TourPanel({ tour, slug }: TourPanelProps) {
                   </form>
                 </div>
               )}
-            </DialogContent>
-          </Dialog>
+          </SheetPage>
         </DndContext>
       )}
     </div>

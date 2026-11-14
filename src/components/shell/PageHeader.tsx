@@ -92,9 +92,9 @@ export function PageHeader({
             <div className="flex items-center gap-3">
               {/* ── Search Input ── */}
               {search && (
-                <div className="relative w-64 shrink-0">
+                <div className="relative w-60 shrink-0">
                   <Search
-                    className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground/60 pointer-events-none"
+                    className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-zinc-400 pointer-events-none"
                     strokeWidth={2.2}
                   />
                   <Input
@@ -103,27 +103,27 @@ export function PageHeader({
                     onChange={(e) => search.onChange(e.target.value)}
                     placeholder={search.placeholder ?? "Buscar..."}
                     className={cn(
-                      "w-full rounded-full bg-surface-alt/50 border-border/50",
-                      "pl-9 pr-9 text-[12px] font-semibold placeholder:text-muted-foreground/60",
-                      "focus:outline-none focus:ring-primary/50 focus:bg-surface-alt",
+                      "w-full h-8 rounded-full bg-white/[0.05] border-white/10",
+                      "pl-8 pr-8 text-xs font-medium text-white placeholder:text-zinc-500",
+                      "focus:outline-none focus:ring-1 focus:ring-white/20 focus:bg-white/[0.08]",
                       "transition-all duration-150",
                     )}
-                  />{" "}
+                  />
                   {search.value && (
                     <Button
                       type="button"
                       onClick={() => search.onChange("")}
-                      className="absolute right-3 top-1/2 -translate-y-1/2 hover:text-foreground cursor-pointer"
+                      className="absolute right-2.5 top-1/2 -translate-y-1/2 text-zinc-400 hover:text-white cursor-pointer"
                     >
-                      <X className="h-3.5 w-3.5" strokeWidth={2.5} />
+                      <X className="h-3 w-3" strokeWidth={2.5} />
                     </Button>
                   )}
                 </div>
               )}
 
-              {/* ── Filter Pills (Height 32px standard) ── */}
+              {/* ── Segmented Filter Tabs (Padrão JAH V4) ── */}
               {filters && filters.length > 0 && (
-                <div className="flex items-center gap-1 bg-surface-alt/30 border border-border/30 p-0.5 h-8 rounded-full overflow-x-auto no-scrollbar max-w-full">
+                <div className="flex items-center gap-1 bg-white/[0.04] border border-white/[0.08] p-0.5 h-8 rounded-full overflow-x-auto no-scrollbar max-w-full">
                   {filters.map((f) => {
                     const isActive = activeFilter === f.value;
                     return (
@@ -131,10 +131,10 @@ export function PageHeader({
                         key={f.value}
                         onClick={() => onFilterChange?.(f.value)}
                         className={cn(
-                          "px-3 h-7 rounded-full ds-meta font-extrabold whitespace-nowrap transition-all duration-200 cursor-pointer flex items-center gap-1.5",
+                          "px-3 h-7 rounded-full text-xs font-medium whitespace-nowrap transition-all duration-150 cursor-pointer flex items-center gap-1.5",
                           isActive
-                            ? "bg-primary text-primary-foreground shadow-sm"
-                            : "text-muted-foreground hover:text-foreground hover:bg-surface-alt",
+                            ? "bg-white text-black font-semibold shadow-sm"
+                            : "text-zinc-400 hover:text-white hover:bg-white/[0.06]",
                         )}
                       >
                         {f.label}
@@ -143,8 +143,8 @@ export function PageHeader({
                             className={cn(
                               "px-1.5 py-0.5 rounded-full text-[9px] leading-none font-bold",
                               isActive
-                                ? "bg-black/20 text-primary-foreground"
-                                : "bg-border text-muted-foreground",
+                                ? "bg-black/15 text-black"
+                                : "bg-white/10 text-zinc-400",
                             )}
                           >
                             {f.count}
@@ -165,7 +165,7 @@ export function PageHeader({
           {primaryAction && (
             <div
               className={cn(
-                "flex items-center ml-2 border-l border-border/50 pl-4 h-8",
+                "flex items-center ml-2 border-l border-white/10 pl-3 h-8",
                 hasSidebar ? "md:hidden" : "",
               )}
             >
@@ -186,8 +186,6 @@ export function PageHeader({
 
 // ─────────────────────────────────────────────────────────────────────────────
 // ModuleActionButton — thin semantic wrapper sobre o Button canônico.
-// Contrato público mantido para zero-breaking-change nos 22 consumers.
-// Visual delegado ao Button primitive (size="sm" → h-8 px-3 text-xs rounded-full).
 export function ModuleActionButton({
   label,
   icon,
@@ -208,7 +206,7 @@ export function ModuleActionButton({
       size="sm"
       onClick={onClick}
       disabled={disabled || loading}
-      className={cn("gap-1.5 font-bold whitespace-nowrap", className)}
+      className={cn("gap-1.5 font-semibold whitespace-nowrap bg-white text-black hover:bg-white/90 active:scale-[0.98] shadow-sm rounded-full h-8 px-3 text-xs", className)}
     >
       {icon}
       <span>{label}</span>
